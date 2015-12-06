@@ -25,22 +25,19 @@ class CRealListener;
 // !Forward Declarations
 
 class CListener {
-public:
-	typedef enum {
-		ACCEPT_IRC,
-		ACCEPT_HTTP,
-		ACCEPT_ALL
-	} EAcceptType;
+  public:
+	typedef enum { ACCEPT_IRC, ACCEPT_HTTP, ACCEPT_ALL } EAcceptType;
 
-	CListener(unsigned short uPort, const CString& sBindHost, const CString& sURIPrefix, bool bSSL, EAddrType eAddr, EAcceptType eAccept)
-			: m_bSSL(bSSL),
-			  m_eAddr(eAddr),
-			  m_uPort(uPort),
-			  m_sBindHost(sBindHost),
-			  m_sURIPrefix(sURIPrefix),
-			  m_pListener(nullptr),
-			  m_eAcceptType(eAccept) {
-	}
+	CListener(unsigned short uPort, const CString& sBindHost,
+	          const CString& sURIPrefix, bool bSSL, EAddrType eAddr,
+	          EAcceptType eAccept)
+	    : m_bSSL(bSSL),
+	      m_eAddr(eAddr),
+	      m_uPort(uPort),
+	      m_sBindHost(sBindHost),
+	      m_sURIPrefix(sURIPrefix),
+	      m_pListener(nullptr),
+	      m_eAcceptType(eAccept) {}
 
 	~CListener();
 
@@ -64,19 +61,19 @@ public:
 	bool Listen();
 	void ResetRealListener();
 
-private:
-protected:
-	bool            m_bSSL;
-	EAddrType       m_eAddr;
-	unsigned short  m_uPort;
-	CString         m_sBindHost;
-	CString         m_sURIPrefix;
-	CRealListener*  m_pListener;
-	EAcceptType     m_eAcceptType;
+  private:
+  protected:
+	bool m_bSSL;
+	EAddrType m_eAddr;
+	unsigned short m_uPort;
+	CString m_sBindHost;
+	CString m_sURIPrefix;
+	CRealListener* m_pListener;
+	EAcceptType m_eAcceptType;
 };
 
 class CRealListener : public CZNCSock {
-public:
+  public:
 	CRealListener(CListener& listener) : CZNCSock(), m_Listener(listener) {}
 	virtual ~CRealListener();
 
@@ -84,20 +81,22 @@ public:
 	Csock* GetSockObj(const CString& sHost, unsigned short uPort) override;
 	void SockError(int iErrno, const CString& sDescription) override;
 
-private:
+  private:
 	CListener& m_Listener;
 };
 
 class CIncomingConnection : public CZNCSock {
-public:
-	CIncomingConnection(const CString& sHostname, unsigned short uPort, CListener::EAcceptType eAcceptType, const CString& sURIPrefix);
+  public:
+	CIncomingConnection(const CString& sHostname, unsigned short uPort,
+	                    CListener::EAcceptType eAcceptType,
+	                    const CString& sURIPrefix);
 	virtual ~CIncomingConnection() {}
 	void ReadLine(const CString& sData) override;
 	void ReachedMaxBuffer() override;
 
-private:
+  private:
 	CListener::EAcceptType m_eAcceptType;
 	const CString m_sURIPrefix;
 };
 
-#endif // !ZNC_LISTENER_H
+#endif  // !ZNC_LISTENER_H

@@ -19,10 +19,12 @@
 #include <znc/User.h>
 #include <time.h>
 
-CBufLine::CBufLine(const CMessage& Format, const CString& sText) : m_Message(Format), m_sText(sText) {
-}
+CBufLine::CBufLine(const CMessage& Format, const CString& sText)
+    : m_Message(Format), m_sText(sText) {}
 
-CBufLine::CBufLine(const CString& sFormat, const CString& sText, const timeval* ts, const MCString& mssTags) : m_sText(sText) {
+CBufLine::CBufLine(const CString& sFormat, const CString& sText,
+                   const timeval* ts, const MCString& mssTags)
+    : m_sText(sText) {
 	m_Message.Parse(sFormat);
 	m_Message.SetTags(mssTags);
 
@@ -43,7 +45,8 @@ void CBufLine::UpdateTime() {
 	m_Message.SetTime(tv);
 }
 
-CMessage CBufLine::ToMessage(const CClient& Client, const MCString& mssParams) const {
+CMessage CBufLine::ToMessage(const CClient& Client,
+                             const MCString& mssParams) const {
 	CMessage Line = m_Message;
 
 	CString sSender = Line.GetNick().GetNickMask();
@@ -53,19 +56,22 @@ CMessage CBufLine::ToMessage(const CClient& Client, const MCString& mssParams) c
 	if (Client.HasServerTime()) {
 		mssThisParams["text"] = m_sText;
 	} else {
-		mssThisParams["text"] = Client.GetUser()->AddTimestamp(Line.GetTime().tv_sec, m_sText);
+		mssThisParams["text"] =
+		    Client.GetUser()->AddTimestamp(Line.GetTime().tv_sec, m_sText);
 	}
 
 	// make a copy of params, because the following loop modifies the original
 	VCString vsParams = Line.GetParams();
 	for (unsigned int uIdx = 0; uIdx < vsParams.size(); ++uIdx) {
-		Line.SetParam(uIdx, CString::NamedFormat(vsParams[uIdx], mssThisParams));
+		Line.SetParam(uIdx,
+		              CString::NamedFormat(vsParams[uIdx], mssThisParams));
 	}
 
 	return Line;
 }
 
-CString CBufLine::GetLine(const CClient& Client, const MCString& mssParams) const {
+CString CBufLine::GetLine(const CClient& Client,
+                          const MCString& mssParams) const {
 	CMessage Line = ToMessage(Client, mssParams);
 
 	// Note: Discard all tags (except the time tag, conditionally) to
@@ -84,12 +90,12 @@ CString CBufLine::GetLine(const CClient& Client, const MCString& mssParams) cons
 	return Line.ToString();
 }
 
-CBuffer::CBuffer(unsigned int uLineCount) : m_uLineCount(uLineCount) {
-}
+CBuffer::CBuffer(unsigned int uLineCount) : m_uLineCount(uLineCount) {}
 
 CBuffer::~CBuffer() {}
 
-CBuffer::size_type CBuffer::AddLine(const CMessage& Format, const CString& sText) {
+CBuffer::size_type CBuffer::AddLine(const CMessage& Format,
+                                    const CString& sText) {
 	if (!m_uLineCount) {
 		return 0;
 	}
@@ -102,7 +108,9 @@ CBuffer::size_type CBuffer::AddLine(const CMessage& Format, const CString& sText
 	return size();
 }
 
-CBuffer::size_type CBuffer::UpdateLine(const CString& sCommand, const CMessage& Format, const CString& sText) {
+CBuffer::size_type CBuffer::UpdateLine(const CString& sCommand,
+                                       const CMessage& Format,
+                                       const CString& sText) {
 	for (CBufLine& Line : *this) {
 		if (Line.GetCommand().Equals(sCommand)) {
 			Line = CBufLine(Format, sText);
@@ -113,7 +121,8 @@ CBuffer::size_type CBuffer::UpdateLine(const CString& sCommand, const CMessage& 
 	return AddLine(Format, sText);
 }
 
-CBuffer::size_type CBuffer::UpdateExactLine(const CMessage& Format, const CString& sText) {
+CBuffer::size_type CBuffer::UpdateExactLine(const CMessage& Format,
+                                            const CString& sText) {
 	for (CBufLine& Line : *this) {
 		if (Line.Equals(Format)) {
 			return size();
@@ -123,7 +132,9 @@ CBuffer::size_type CBuffer::UpdateExactLine(const CMessage& Format, const CStrin
 	return AddLine(Format, sText);
 }
 
-CBuffer::size_type CBuffer::AddLine(const CString& sFormat, const CString& sText, const timeval* ts, const MCString& mssTags) {
+CBuffer::size_type CBuffer::AddLine(const CString& sFormat,
+                                    const CString& sText, const timeval* ts,
+                                    const MCString& mssTags) {
 	CMessage Message(sFormat);
 	if (ts) {
 		Message.SetTime(*ts);
@@ -132,11 +143,14 @@ CBuffer::size_type CBuffer::AddLine(const CString& sFormat, const CString& sText
 	return AddLine(Message, sText);
 }
 
-CBuffer::size_type CBuffer::UpdateLine(const CString& sMatch, const CString& sFormat, const CString& sText) {
+CBuffer::size_type CBuffer::UpdateLine(const CString& sMatch,
+                                       const CString& sFormat,
+                                       const CString& sText) {
 	return UpdateLine(CMessage(sMatch).GetCommand(), CMessage(sFormat), sText);
 }
 
-CBuffer::size_type CBuffer::UpdateExactLine(const CString& sFormat, const CString& sText) {
+CBuffer::size_type CBuffer::UpdateExactLine(const CString& sFormat,
+                                            const CString& sText) {
 	return UpdateExactLine(CMessage(sFormat, sText));
 }
 
@@ -144,7 +158,8 @@ const CBufLine& CBuffer::GetBufLine(unsigned int uIdx) const {
 	return (*this)[uIdx];
 }
 
-CString CBuffer::GetLine(size_type uIdx, const CClient& Client, const MCString& msParams) const {
+CString CBuffer::GetLine(size_type uIdx, const CClient& Client,
+                         const MCString& msParams) const {
 	return (*this)[uIdx].GetLine(Client, msParams);
 }
 

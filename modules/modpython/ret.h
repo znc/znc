@@ -17,21 +17,23 @@
 #pragma once
 
 class CPyRetString {
-public:
+  public:
 	CString& s;
 	CPyRetString(CString& S) : s(S) {}
 	static PyObject* wrap(CString& S) {
 		CPyRetString* x = new CPyRetString(S);
-		return SWIG_NewInstanceObj(x, SWIG_TypeQuery("CPyRetString*"), SWIG_POINTER_OWN);
+		return SWIG_NewInstanceObj(x, SWIG_TypeQuery("CPyRetString*"),
+		                           SWIG_POINTER_OWN);
 	}
 };
 
 class CPyRetBool {
-public:
+  public:
 	bool& b;
 	CPyRetBool(bool& B) : b(B) {}
 	static PyObject* wrap(bool& B) {
 		CPyRetBool* x = new CPyRetBool(B);
-		return SWIG_NewInstanceObj(x, SWIG_TypeQuery("CPyRetBool*"), SWIG_POINTER_OWN);
+		return SWIG_NewInstanceObj(x, SWIG_TypeQuery("CPyRetBool*"),
+		                           SWIG_POINTER_OWN);
 	}
 };

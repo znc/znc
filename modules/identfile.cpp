@@ -22,26 +22,29 @@
 class CIdentFileModule : public CModule {
 	CString m_sOrigISpoof;
 	CFile* m_pISpoofLockFile;
-	CIRCSock *m_pIRCSock;
+	CIRCSock* m_pIRCSock;
 
-public:
+  public:
 	MODCONSTRUCTOR(CIdentFileModule) {
 		AddHelpCommand();
-		AddCommand("GetFile",   static_cast<CModCommand::ModCmdFunc>(&CIdentFileModule::GetFile));
-		AddCommand("SetFile",   static_cast<CModCommand::ModCmdFunc>(&CIdentFileModule::SetFile),
-			"<file>");
-		AddCommand("GetFormat", static_cast<CModCommand::ModCmdFunc>(&CIdentFileModule::GetFormat));
-		AddCommand("SetFormat", static_cast<CModCommand::ModCmdFunc>(&CIdentFileModule::SetFormat),
-			"<format>");
-		AddCommand("Show",      static_cast<CModCommand::ModCmdFunc>(&CIdentFileModule::Show));
+		AddCommand("GetFile", static_cast<CModCommand::ModCmdFunc>(
+		                          &CIdentFileModule::GetFile));
+		AddCommand("SetFile", static_cast<CModCommand::ModCmdFunc>(
+		                          &CIdentFileModule::SetFile),
+		           "<file>");
+		AddCommand("GetFormat", static_cast<CModCommand::ModCmdFunc>(
+		                            &CIdentFileModule::GetFormat));
+		AddCommand("SetFormat", static_cast<CModCommand::ModCmdFunc>(
+		                            &CIdentFileModule::SetFormat),
+		           "<format>");
+		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(
+		                       &CIdentFileModule::Show));
 
 		m_pISpoofLockFile = nullptr;
 		m_pIRCSock = nullptr;
 	}
 
-	virtual ~CIdentFileModule() {
-		ReleaseISpoof();
-	}
+	virtual ~CIdentFileModule() { ReleaseISpoof(); }
 
 	void GetFile(const CString& sLine) {
 		PutModule("File is set to: " + GetNV("File"));
@@ -55,19 +58,24 @@ public:
 	void SetFormat(const CString& sLine) {
 		SetNV("Format", sLine.Token(1, true));
 		PutModule("Format has been set to: " + GetNV("Format"));
-		PutModule("Format would be expanded to: " + ExpandString(GetNV("Format")));
+		PutModule("Format would be expanded to: " +
+		          ExpandString(GetNV("Format")));
 	}
 
 	void GetFormat(const CString& sLine) {
 		PutModule("Format is set to: " + GetNV("Format"));
-		PutModule("Format would be expanded to: " + ExpandString(GetNV("Format")));
+		PutModule("Format would be expanded to: " +
+		          ExpandString(GetNV("Format")));
 	}
 
 	void Show(const CString& sLine) {
-		PutModule("m_pISpoofLockFile = " + CString((long long)m_pISpoofLockFile));
+		PutModule("m_pISpoofLockFile = " +
+		          CString((long long)m_pISpoofLockFile));
 		PutModule("m_pIRCSock = " + CString((long long)m_pIRCSock));
 		if (m_pIRCSock) {
-			PutModule("user/network - " + m_pIRCSock->GetNetwork()->GetUser()->GetUserName() + "/" + m_pIRCSock->GetNetwork()->GetName());
+			PutModule("user/network - " +
+			          m_pIRCSock->GetNetwork()->GetUser()->GetUserName() + "/" +
+			          m_pIRCSock->GetNetwork()->GetName());
 		} else {
 			PutModule("identfile is free");
 		}
@@ -81,7 +89,7 @@ public:
 		}
 	}
 
-	void SetIRCSock(CIRCSock *pIRCSock) {
+	void SetIRCSock(CIRCSock* pIRCSock) {
 		if (m_pIRCSock) {
 			CZNC::Get().ResumeConnectQueue();
 		}
@@ -106,8 +114,8 @@ public:
 		}
 
 		char buf[1024];
-		memset((char*) buf, 0, 1024);
-		m_pISpoofLockFile->Read(buf ,1024);
+		memset((char*)buf, 0, 1024);
+		m_pISpoofLockFile->Read(buf, 1024);
 		m_sOrigISpoof = buf;
 
 		if (!m_pISpoofLockFile->Seek(0) || !m_pISpoofLockFile->Truncate()) {
@@ -124,7 +132,9 @@ public:
 			sData.Replace("%", GetUser()->GetIdent());
 		}
 
-		DEBUG("Writing [" + sData + "] to ident spoof file [" + m_pISpoofLockFile->GetLongName() + "] for user/network [" + GetUser()->GetUserName() + "/" + GetNetwork()->GetName() + "]");
+		DEBUG("Writing [" + sData + "] to ident spoof file [" +
+		      m_pISpoofLockFile->GetLongName() + "] for user/network [" +
+		      GetUser()->GetUserName() + "/" + GetNetwork()->GetName() + "]");
 
 		m_pISpoofLockFile->Write(sData + "\n");
 
@@ -132,8 +142,12 @@ public:
 	}
 
 	void ReleaseISpoof() {
-		DEBUG("Releasing ident spoof for user/network [" + (m_pIRCSock ? m_pIRCSock->GetNetwork()->GetUser()->GetUserName() + "/" +
-				m_pIRCSock->GetNetwork()->GetName() : "<no user/network>") + "]");
+		DEBUG("Releasing ident spoof for user/network [" +
+		      (m_pIRCSock
+		           ? m_pIRCSock->GetNetwork()->GetUser()->GetUserName() + "/" +
+		                 m_pIRCSock->GetNetwork()->GetName()
+		           : "<no user/network>") +
+		      "]");
 
 		SetIRCSock(nullptr);
 
@@ -162,16 +176,19 @@ public:
 		return true;
 	}
 
-	EModRet OnIRCConnecting(CIRCSock *pIRCSock) override {
+	EModRet OnIRCConnecting(CIRCSock* pIRCSock) override {
 		if (m_pISpoofLockFile != nullptr) {
 			DEBUG("Aborting connection, ident spoof lock file exists");
-			PutModule("Aborting connection, another user or network is currently connecting and using the ident spoof file");
+			PutModule(
+			    "Aborting connection, another user or network is currently "
+			    "connecting and using the ident spoof file");
 			return HALTCORE;
 		}
 
 		if (!WriteISpoof()) {
 			DEBUG("identfile [" + GetNV("File") + "] could not be written");
-			PutModule("[" + GetNV("File") + "] could not be written, retrying...");
+			PutModule("[" + GetNV("File") +
+			          "] could not be written, retrying...");
 			return HALTCORE;
 		}
 
@@ -185,7 +202,7 @@ public:
 		}
 	}
 
-	void OnIRCConnectionError(CIRCSock *pIRCSock) override {
+	void OnIRCConnectionError(CIRCSock* pIRCSock) override {
 		if (m_pIRCSock == pIRCSock) {
 			ReleaseISpoof();
 		}
@@ -198,8 +215,11 @@ public:
 	}
 };
 
-template<> void TModInfo<CIdentFileModule>(CModInfo& Info) {
+template <>
+void TModInfo<CIdentFileModule>(CModInfo& Info) {
 	Info.SetWikiPage("identfile");
 }
 
-GLOBALMODULEDEFS(CIdentFileModule, "Write the ident of a user to a file when they are trying to connect.")
+GLOBALMODULEDEFS(
+    CIdentFileModule,
+    "Write the ident of a user to a file when they are trying to connect.")

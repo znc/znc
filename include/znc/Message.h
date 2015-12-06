@@ -19,13 +19,15 @@
 
 // Remove this after Feb 2016 when Debian 7 is EOL
 #if __cpp_ref_qualifiers >= 200710
-# define ZNC_LVREFQUAL &
+#define ZNC_LVREFQUAL &
 #elif defined(__clang__)
-# define ZNC_LVREFQUAL &
-#elif __GNUC__ > 4 || __GNUC__ == 4 && (__GNUC_MINOR__ > 8 || __GNUC_MINOR__ == 8 && __GNUC_PATCHLEVEL__ >= 1)
-# define ZNC_LVREFQUAL &
+#define ZNC_LVREFQUAL &
+#elif __GNUC__ > 4 ||                       \
+    __GNUC__ == 4 && (__GNUC_MINOR__ > 8 || \
+                      __GNUC_MINOR__ == 8 && __GNUC_PATCHLEVEL__ >= 1)
+#define ZNC_LVREFQUAL &
 #else
-# define ZNC_LVREFQUAL
+#define ZNC_LVREFQUAL
 #endif
 
 #include <znc/zncconfig.h>
@@ -38,9 +40,11 @@ class CClient;
 class CIRCNetwork;
 
 class CMessage {
-public:
+  public:
 	explicit CMessage(const CString& sMessage = "");
-	CMessage(const CNick& Nick, const CString& sCommand, const VCString& vsParams = VCString(), const MCString& mssTags = MCString::EmptyMap);
+	CMessage(const CNick& Nick, const CString& sCommand,
+	         const VCString& vsParams = VCString(),
+	         const MCString& mssTags = MCString::EmptyMap);
 
 	enum class Type {
 		Unknown,
@@ -113,101 +117,118 @@ public:
 	CString ToString(unsigned int uFlags = IncludeAll) const;
 	void Parse(CString sMessage);
 
-	// Implicit and explicit conversion to a subclass reference.
+// Implicit and explicit conversion to a subclass reference.
 #ifndef SWIG
 	template <typename M>
 	M& As() ZNC_LVREFQUAL {
-		static_assert(std::is_base_of<CMessage, M>{}, "Must be subclass of CMessage");
-		static_assert(sizeof(M) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
+		static_assert(std::is_base_of<CMessage, M>{},
+		              "Must be subclass of CMessage");
+		static_assert(sizeof(M) == sizeof(CMessage),
+		              "No data members allowed in CMessage subclasses.");
 		return static_cast<M&>(*this);
 	}
 
 	template <typename M>
 	const M& As() const ZNC_LVREFQUAL {
-		static_assert(std::is_base_of<CMessage, M>{}, "Must be subclass of CMessage");
-		static_assert(sizeof(M) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
+		static_assert(std::is_base_of<CMessage, M>{},
+		              "Must be subclass of CMessage");
+		static_assert(sizeof(M) == sizeof(CMessage),
+		              "No data members allowed in CMessage subclasses.");
 		return static_cast<const M&>(*this);
 	}
 
-	template <typename M, typename = typename std::enable_if<std::is_base_of<CMessage, M>{}>::type>
+	template <typename M, typename = typename std::enable_if<
+	                          std::is_base_of<CMessage, M>{}>::type>
 	operator M&() ZNC_LVREFQUAL {
 		return As<M>();
 	}
-	template <typename M, typename = typename std::enable_if<std::is_base_of<CMessage, M>{}>::type>
+	template <typename M, typename = typename std::enable_if<
+	                          std::is_base_of<CMessage, M>{}>::type>
 	operator const M&() const ZNC_LVREFQUAL {
 		return As<M>();
 	}
-	// REGISTER_ZNC_MESSAGE allows SWIG to instantiate correct .As<> calls.
+// REGISTER_ZNC_MESSAGE allows SWIG to instantiate correct .As<> calls.
 #define REGISTER_ZNC_MESSAGE(M)
 #else
-	// SWIG (as of 3.0.7) doesn't parse ref-qualifiers, and doesn't differentiate constness.
-	template <typename M> M& As();
+	// SWIG (as of 3.0.7) doesn't parse ref-qualifiers, and doesn't
+	// differentiate constness.
+	template <typename M>
+	M& As();
 #endif
 
-private:
+  private:
 	void InitTime();
 	void InitType();
 
-	CNick        m_Nick;
-	CString      m_sCommand;
-	VCString     m_vsParams;
-	MCString     m_mssTags;
-	timeval      m_time;
+	CNick m_Nick;
+	CString m_sCommand;
+	VCString m_vsParams;
+	MCString m_mssTags;
+	timeval m_time;
 	CIRCNetwork* m_pNetwork = nullptr;
-	CClient*     m_pClient = nullptr;
-	CChan*       m_pChan = nullptr;
-	Type         m_eType = Type::Unknown;
-	bool         m_bColon = false;
+	CClient* m_pClient = nullptr;
+	CChan* m_pChan = nullptr;
+	Type m_eType = Type::Unknown;
+	bool m_bColon = false;
 };
 
 // For gtest
 #ifdef GTEST_FAIL
-template <typename M, typename = typename std::enable_if<std::is_base_of<CMessage, M>{}>::type>
+template <typename M, typename = typename std::enable_if<
+                          std::is_base_of<CMessage, M>{}>::type>
 inline ::std::ostream& operator<<(::std::ostream& os, const M& msg) {
 	return os << msg.ToString().Escape_n(CString::EDEBUG);
 }
 #endif
 
-// The various CMessage subclasses are "mutable views" to the data held by CMessage.
-// They provide convenient access to message type speficic attributes, but are not
+// The various CMessage subclasses are "mutable views" to the data held by
+// CMessage.
+// They provide convenient access to message type speficic attributes, but are
+// not
 // allowed to hold extra data of their own.
 class CTargetMessage : public CMessage {
-public:
+  public:
 	CString GetTarget() const { return GetParam(0); }
 	void SetTarget(const CString& sTarget) { SetParam(0, sTarget); }
 };
 REGISTER_ZNC_MESSAGE(CTargetMessage);
 
 class CActionMessage : public CTargetMessage {
-public:
-	CString GetText() const { return GetParam(1).TrimPrefix_n("\001ACTION ").TrimSuffix_n("\001"); }
-	void SetText(const CString& sText) { SetParam(1, "\001ACTION " + sText + "\001"); }
+  public:
+	CString GetText() const {
+		return GetParam(1).TrimPrefix_n("\001ACTION ").TrimSuffix_n("\001");
+	}
+	void SetText(const CString& sText) {
+		SetParam(1, "\001ACTION " + sText + "\001");
+	}
 };
 REGISTER_ZNC_MESSAGE(CActionMessage);
 
 class CCTCPMessage : public CTargetMessage {
-public:
+  public:
 	bool IsReply() const { return GetCommand().Equals("NOTICE"); }
-	CString GetText() const { return GetParam(1).TrimPrefix_n("\001").TrimSuffix_n("\001"); }
+	CString GetText() const {
+		return GetParam(1).TrimPrefix_n("\001").TrimSuffix_n("\001");
+	}
 	void SetText(const CString& sText) { SetParam(1, "\001" + sText + "\001"); }
 };
 REGISTER_ZNC_MESSAGE(CCTCPMessage);
 
 class CJoinMessage : public CTargetMessage {
-public:
+  public:
 	CString GetKey() const { return GetParam(1); }
 	void SetKey(const CString& sKey) { SetParam(1, sKey); }
 };
 REGISTER_ZNC_MESSAGE(CJoinMessage);
 
 class CModeMessage : public CTargetMessage {
-public:
+  public:
 	CString GetModes() const { return GetParams(1).TrimPrefix_n(":"); }
 };
 REGISTER_ZNC_MESSAGE(CModeMessage);
 
 class CNickMessage : public CMessage {
-public:
+  public:
 	CString GetOldNick() const { return GetNick().GetNick(); }
 	CString GetNewNick() const { return GetParam(0); }
 	void SetNewNick(const CString& sNick) { SetParam(0, sNick); }
@@ -215,20 +236,20 @@ public:
 REGISTER_ZNC_MESSAGE(CNickMessage);
 
 class CNoticeMessage : public CTargetMessage {
-public:
+  public:
 	CString GetText() const { return GetParam(1); }
 	void SetText(const CString& sText) { SetParam(1, sText); }
 };
 REGISTER_ZNC_MESSAGE(CNoticeMessage);
 
 class CNumericMessage : public CMessage {
-public:
+  public:
 	unsigned int GetCode() const { return GetCommand().ToUInt(); }
 };
 REGISTER_ZNC_MESSAGE(CNumericMessage);
 
 class CKickMessage : public CTargetMessage {
-public:
+  public:
 	CString GetKickedNick() const { return GetParam(1); }
 	void SetKickedNick(const CString& sNick) { SetParam(1, sNick); }
 	CString GetReason() const { return GetParam(2); }
@@ -237,31 +258,31 @@ public:
 REGISTER_ZNC_MESSAGE(CKickMessage);
 
 class CPartMessage : public CTargetMessage {
-public:
+  public:
 	CString GetReason() const { return GetParam(1); }
 	void SetReason(const CString& sReason) { SetParam(1, sReason); }
 };
 REGISTER_ZNC_MESSAGE(CPartMessage);
 
 class CQuitMessage : public CMessage {
-public:
+  public:
 	CString GetReason() const { return GetParam(0); }
 	void SetReason(const CString& sReason) { SetParam(0, sReason); }
 };
 REGISTER_ZNC_MESSAGE(CQuitMessage);
 
 class CTextMessage : public CTargetMessage {
-public:
+  public:
 	CString GetText() const { return GetParam(1); }
 	void SetText(const CString& sText) { SetParam(1, sText); }
 };
 REGISTER_ZNC_MESSAGE(CTextMessage);
 
 class CTopicMessage : public CTargetMessage {
-public:
+  public:
 	CString GetTopic() const { return GetParam(1); }
 	void SetTopic(const CString& sTopic) { SetParam(1, sTopic); }
 };
 REGISTER_ZNC_MESSAGE(CTopicMessage);
 
-#endif // !ZNC_MESSAGE_H
+#endif  // !ZNC_MESSAGE_H

@@ -1,0 +1,15 @@
+---
+BasedOnStyle: Google
+Standard: Cpp11
+
+UseTab: ForIndentation
+IndentWidth: 4
+TabWidth: 4
+AccessModifierOffset: -2
+
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+# Prevent breaking doxygen, as clang-format doesn't support reflowing of doxygen comments yet (as of 3.5.0).
+CommentPragmas: '^\*|^/|^!'
+...

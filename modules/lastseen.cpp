@@ -23,16 +23,17 @@ using std::pair;
 using std::multimap;
 
 class CLastSeenMod : public CModule {
-private:
-	time_t GetTime(const CUser *pUser) {
+  private:
+	time_t GetTime(const CUser* pUser) {
 		return GetNV(pUser->GetUserName()).ToULong();
 	}
 
-	void SetTime(const CUser *pUser) {
+	void SetTime(const CUser* pUser) {
 		SetNV(pUser->GetUserName(), CString(time(nullptr)));
 	}
 
-	const CString FormatLastSeen(const CUser *pUser, const char* sDefault = "") {
+	const CString FormatLastSeen(const CUser* pUser,
+	                             const char* sDefault = "") {
 		time_t last = GetTime(pUser);
 		if (last < 1) {
 			return sDefault;
@@ -46,7 +47,7 @@ private:
 	typedef multimap<time_t, CUser*> MTimeMulti;
 	typedef map<CString, CUser*> MUsers;
 
-	void ShowCommand(const CString &sLine) {
+	void ShowCommand(const CString& sLine) {
 		if (!GetUser()->IsAdmin()) {
 			PutModule("Access denied");
 			return;
@@ -68,23 +69,21 @@ private:
 		PutModule(Table);
 	}
 
-public:
+  public:
 	MODCONSTRUCTOR(CLastSeenMod) {
 		AddHelpCommand();
-		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(&CLastSeenMod::ShowCommand),"", "Shows list of users and when they last logged in");
+		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(
+		                       &CLastSeenMod::ShowCommand),
+		           "", "Shows list of users and when they last logged in");
 	}
 
 	virtual ~CLastSeenMod() {}
 
 	// Event stuff:
 
-	void OnClientLogin() override {
-		SetTime(GetUser());
-	}
+	void OnClientLogin() override { SetTime(GetUser()); }
 
-	void OnClientDisconnect() override {
-		SetTime(GetUser());
-	}
+	void OnClientDisconnect() override { SetTime(GetUser()); }
 
 	EModRet OnDeleteUser(CUser& User) override {
 		DelNV(User.GetUserName());
@@ -96,24 +95,30 @@ public:
 	bool WebRequiresAdmin() override { return true; }
 	CString GetWebMenuTitle() override { return "Last Seen"; }
 
-	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
+	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
+	                  CTemplate& Tmpl) override {
 		if (sPageName == "index") {
 			CModules& GModules = CZNC::Get().GetModules();
-			Tmpl["WebAdminLoaded"] = CString(GModules.FindModule("webadmin") != nullptr);
+			Tmpl["WebAdminLoaded"] =
+			    CString(GModules.FindModule("webadmin") != nullptr);
 
 			MTimeMulti mmSorted;
 			const MUsers& mUsers = CZNC::Get().GetUserMap();
 
-			for (MUsers::const_iterator uit = mUsers.begin(); uit != mUsers.end(); ++uit) {
-				mmSorted.insert(pair<time_t, CUser*>(GetTime(uit->second), uit->second));
+			for (MUsers::const_iterator uit = mUsers.begin();
+			     uit != mUsers.end(); ++uit) {
+				mmSorted.insert(
+				    pair<time_t, CUser*>(GetTime(uit->second), uit->second));
 			}
 
-			for (MTimeMulti::const_iterator it = mmSorted.begin(); it != mmSorted.end(); ++it) {
-				CUser *pUser = it->second;
+			for (MTimeMulti::const_iterator it = mmSorted.begin();
+			     it != mmSorted.end(); ++it) {
+				CUser* pUser = it->second;
 				CTemplate& Row = Tmpl.AddRow("UserLoop");
 
 				Row["Username"] = pUser->GetUserName();
-				Row["IsSelf"] = CString(pUser == WebSock.GetSession()->GetUser());
+				Row["IsSelf"] =
+				    CString(pUser == WebSock.GetSession()->GetUser());
 				Row["LastSeen"] = FormatLastSeen(pUser, "never");
 			}
 
@@ -123,7 +128,8 @@ public:
 		return false;
 	}
 
-	bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
+	bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName,
+	                          CTemplate& Tmpl) override {
 		if (sPageName == "webadmin/user" && WebSock.GetSession()->IsAdmin()) {
 			CUser* pUser = CZNC::Get().FindUser(Tmpl["Username"]);
 			if (pUser) {
@@ -134,11 +140,12 @@ public:
 
 		return false;
 	}
-
 };
 
-template<> void TModInfo<CLastSeenMod>(CModInfo& Info) {
+template <>
+void TModInfo<CLastSeenMod>(CModInfo& Info) {
 	Info.SetWikiPage("lastseen");
 }
 
-GLOBALMODULEDEFS(CLastSeenMod, "Collects data about when a user last logged in.")
+GLOBALMODULEDEFS(CLastSeenMod,
+                 "Collects data about when a user last logged in.")

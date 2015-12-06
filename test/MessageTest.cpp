@@ -32,7 +32,8 @@ TEST(MessageTest, SetParam) {
 	EXPECT_THAT(msg.GetParams(), ContainerEq(VCString{"foo", "bar"}));
 
 	msg.SetParam(3, "baz");
-	EXPECT_THAT(msg.GetParams(), ContainerEq(VCString{"foo", "bar", "", "baz"}));
+	EXPECT_THAT(msg.GetParams(),
+	            ContainerEq(VCString{"foo", "bar", "", "baz"}));
 }
 
 TEST(MessageTest, GetParams) {
@@ -77,8 +78,10 @@ TEST(MessageTest, ToString) {
 	EXPECT_EQ(":irc.znc.in", CMessage(":irc.znc.in").ToString());
 	EXPECT_EQ(":irc.znc.in CMD", CMessage(":irc.znc.in CMD").ToString());
 	EXPECT_EQ(":irc.znc.in CMD p1", CMessage(":irc.znc.in CMD p1").ToString());
-	EXPECT_EQ(":irc.znc.in CMD p1 p2", CMessage(":irc.znc.in CMD p1 p2").ToString());
-	EXPECT_EQ(":irc.znc.in CMD :p p p", CMessage(":irc.znc.in CMD :p p p").ToString());
+	EXPECT_EQ(":irc.znc.in CMD p1 p2",
+	          CMessage(":irc.znc.in CMD p1 p2").ToString());
+	EXPECT_EQ(":irc.znc.in CMD :p p p",
+	          CMessage(":irc.znc.in CMD :p p p").ToString());
 	EXPECT_EQ(":irc.znc.in CMD :", CMessage(":irc.znc.in CMD :").ToString());
 
 	EXPECT_EQ("CMD", CMessage(CNick(), "CMD").ToString());
@@ -86,49 +89,81 @@ TEST(MessageTest, ToString) {
 	EXPECT_EQ("CMD p1 p2", CMessage(CNick(), "CMD", {"p1", "p2"}).ToString());
 	EXPECT_EQ("CMD :p p p", CMessage(CNick(), "CMD", {"p p p"}).ToString());
 	EXPECT_EQ(":irc.znc.in", CMessage(CNick(":irc.znc.in"), "").ToString());
-	EXPECT_EQ(":irc.znc.in CMD", CMessage(CNick(":irc.znc.in"), "CMD").ToString());
-	EXPECT_EQ(":irc.znc.in CMD p1", CMessage(CNick(":irc.znc.in"), "CMD", {"p1"}).ToString());
-	EXPECT_EQ(":irc.znc.in CMD p1 p2", CMessage(CNick(":irc.znc.in"), "CMD", {"p1", "p2"}).ToString());
-	EXPECT_EQ(":irc.znc.in CMD :p p p", CMessage(CNick(":irc.znc.in"), "CMD", {"p p p"}).ToString());
-	EXPECT_EQ(":irc.znc.in CMD :", CMessage(CNick(":irc.znc.in"), "CMD", {""}).ToString());
+	EXPECT_EQ(":irc.znc.in CMD",
+	          CMessage(CNick(":irc.znc.in"), "CMD").ToString());
+	EXPECT_EQ(":irc.znc.in CMD p1",
+	          CMessage(CNick(":irc.znc.in"), "CMD", {"p1"}).ToString());
+	EXPECT_EQ(":irc.znc.in CMD p1 p2",
+	          CMessage(CNick(":irc.znc.in"), "CMD", {"p1", "p2"}).ToString());
+	EXPECT_EQ(":irc.znc.in CMD :p p p",
+	          CMessage(CNick(":irc.znc.in"), "CMD", {"p p p"}).ToString());
+	EXPECT_EQ(":irc.znc.in CMD :",
+	          CMessage(CNick(":irc.znc.in"), "CMD", {""}).ToString());
 
 	// #1045 - retain the colon if it was there
-	EXPECT_EQ(":services. 328 user #chan http://znc.in", CMessage(":services. 328 user #chan http://znc.in").ToString());
-	EXPECT_EQ(":services. 328 user #chan :http://znc.in", CMessage(":services. 328 user #chan :http://znc.in").ToString());
+	EXPECT_EQ(":services. 328 user #chan http://znc.in",
+	          CMessage(":services. 328 user #chan http://znc.in").ToString());
+	EXPECT_EQ(":services. 328 user #chan :http://znc.in",
+	          CMessage(":services. 328 user #chan :http://znc.in").ToString());
 }
 
 TEST(MessageTest, Tags) {
 	EXPECT_THAT(CMessage("").GetTags(), IsEmpty());
-	EXPECT_THAT(CMessage(":nick!ident@host PRIVMSG #chan :hello world").GetTags(), IsEmpty());
+	EXPECT_THAT(
+	    CMessage(":nick!ident@host PRIVMSG #chan :hello world").GetTags(),
+	    IsEmpty());
 
-	EXPECT_THAT(CMessage("@a=b").GetTags(), ContainerEq(MCString{{"a","b"}}));
-	EXPECT_THAT(CMessage("@a=b :nick!ident@host PRIVMSG #chan :hello world").GetTags(), ContainerEq(MCString{{"a","b"}}));
-	EXPECT_THAT(CMessage("@a=b :rest").GetTags(), ContainerEq(MCString{{"a","b"}}));
+	EXPECT_THAT(CMessage("@a=b").GetTags(), ContainerEq(MCString{{"a", "b"}}));
+	EXPECT_THAT(
+	    CMessage("@a=b :nick!ident@host PRIVMSG #chan :hello world").GetTags(),
+	    ContainerEq(MCString{{"a", "b"}}));
+	EXPECT_THAT(CMessage("@a=b :rest").GetTags(),
+	            ContainerEq(MCString{{"a", "b"}}));
 
-	EXPECT_THAT(CMessage("@ab=cdef;znc.in/gh-ij=klmn,op :rest").GetTags(), ContainerEq(MCString{{"ab","cdef"},{"znc.in/gh-ij","klmn,op"}}));
-	EXPECT_THAT(CMessage("@a===b== :rest").GetTags(), ContainerEq(MCString{{"a","==b=="}}));
+	EXPECT_THAT(
+	    CMessage("@ab=cdef;znc.in/gh-ij=klmn,op :rest").GetTags(),
+	    ContainerEq(MCString{{"ab", "cdef"}, {"znc.in/gh-ij", "klmn,op"}}));
+	EXPECT_THAT(CMessage("@a===b== :rest").GetTags(),
+	            ContainerEq(MCString{{"a", "==b=="}}));
 
-	EXPECT_THAT(CMessage("@a;b=c;d :rest").GetTags(), ContainerEq(MCString{{"a",""},{"b","c"},{"d",""}}));
+	EXPECT_THAT(CMessage("@a;b=c;d :rest").GetTags(),
+	            ContainerEq(MCString{{"a", ""}, {"b", "c"}, {"d", ""}}));
 
-	EXPECT_THAT(CMessage(R"(@semi-colon=\:;space=\s;NUL=\0;backslash=\\;CR=\r;LF=\n :rest)").GetTags(),
-	            ContainerEq(MCString{{"semi-colon",";"},{"space"," "},{"NUL",{'\0'}},{"backslash","\\"},{"CR",{'\r'}},{"LF",{'\n'}}}));
+	EXPECT_THAT(
+	    CMessage(
+	        R"(@semi-colon=\:;space=\s;NUL=\0;backslash=\\;CR=\r;LF=\n :rest)")
+	        .GetTags(),
+	    ContainerEq(MCString{{"semi-colon", ";"},
+	                         {"space", " "},
+	                         {"NUL", {'\0'}},
+	                         {"backslash", "\\"},
+	                         {"CR", {'\r'}},
+	                         {"LF", {'\n'}}}));
 
-	EXPECT_THAT(CMessage(R"(@a=\:\s\\\r\n :rest)").GetTags(), ContainerEq(MCString{{"a","; \\\r\n"}}));
+	EXPECT_THAT(CMessage(R"(@a=\:\s\\\r\n :rest)").GetTags(),
+	            ContainerEq(MCString{{"a", "; \\\r\n"}}));
 
 	CMessage msg(":rest");
-	msg.SetTags({{"a","b"}});
+	msg.SetTags({{"a", "b"}});
 	EXPECT_EQ("@a=b :rest", msg.ToString());
 
-	msg.SetTags({{"a","b"}, {"c","d"}});
+	msg.SetTags({{"a", "b"}, {"c", "d"}});
 	EXPECT_EQ("@a=b;c=d :rest", msg.ToString());
 
-	msg.SetTags({{"a","b"},{"c","d"},{"e",""}});
+	msg.SetTags({{"a", "b"}, {"c", "d"}, {"e", ""}});
 	EXPECT_EQ("@a=b;c=d;e :rest", msg.ToString());
 
-	msg.SetTags({{"semi-colon",";"},{"space"," "},{"NUL",{'\0'}},{"backslash","\\"},{"CR",{'\r'}},{"LF",{'\n'}}});
-	EXPECT_EQ(R"(@CR=\r;LF=\n;NUL=\0;backslash=\\;semi-colon=\:;space=\s :rest)", msg.ToString());
+	msg.SetTags({{"semi-colon", ";"},
+	             {"space", " "},
+	             {"NUL", {'\0'}},
+	             {"backslash", "\\"},
+	             {"CR", {'\r'}},
+	             {"LF", {'\n'}}});
+	EXPECT_EQ(
+	    R"(@CR=\r;LF=\n;NUL=\0;backslash=\\;semi-colon=\:;space=\s :rest)",
+	    msg.ToString());
 
-	msg.SetTags({{"a","; \\\r\n"}});
+	msg.SetTags({{"a", "; \\\r\n"}});
 	EXPECT_EQ(R"(@a=\:\s\\\r\n :rest)", msg.ToString());
 }
 
@@ -137,30 +172,42 @@ TEST(MessageTest, FormatFlags) {
 
 	CMessage msg(line);
 	EXPECT_EQ(line, msg.ToString());
-	EXPECT_EQ(":irc.example.com COMMAND param", msg.ToString(CMessage::ExcludeTags));
+	EXPECT_EQ(":irc.example.com COMMAND param",
+	          msg.ToString(CMessage::ExcludeTags));
 	EXPECT_EQ("@foo=bar COMMAND param", msg.ToString(CMessage::ExcludePrefix));
-	EXPECT_EQ("COMMAND param", msg.ToString(CMessage::ExcludePrefix|CMessage::ExcludeTags));
+	EXPECT_EQ("COMMAND param",
+	          msg.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
 }
 
 TEST(MessageTest, Equals) {
 	EXPECT_TRUE(CMessage("JOIN #chan").Equals(CMessage("JOIN #chan")));
 	EXPECT_FALSE(CMessage("JOIN #chan").Equals(CMessage("JOIN #znc")));
 
-	EXPECT_TRUE(CMessage(":nick JOIN #chan").Equals(CMessage(":nick JOIN #chan")));
-	EXPECT_FALSE(CMessage(":nick JOIN #chan").Equals(CMessage(":nick JOIN #znc")));
-	EXPECT_FALSE(CMessage(":nick JOIN #chan").Equals(CMessage(":someone JOIN #chan")));
+	EXPECT_TRUE(
+	    CMessage(":nick JOIN #chan").Equals(CMessage(":nick JOIN #chan")));
+	EXPECT_FALSE(
+	    CMessage(":nick JOIN #chan").Equals(CMessage(":nick JOIN #znc")));
+	EXPECT_FALSE(
+	    CMessage(":nick JOIN #chan").Equals(CMessage(":someone JOIN #chan")));
 
-	EXPECT_TRUE(CMessage("PRIVMSG nick :hi").Equals(CMessage("PRIVMSG nick :hi")));
-	EXPECT_TRUE(CMessage("PRIVMSG nick hi").Equals(CMessage("PRIVMSG nick :hi")));
-	EXPECT_TRUE(CMessage("PRIVMSG nick :hi").Equals(CMessage("PRIVMSG nick hi")));
-	EXPECT_TRUE(CMessage("PRIVMSG nick hi").Equals(CMessage("PRIVMSG nick hi")));
+	EXPECT_TRUE(
+	    CMessage("PRIVMSG nick :hi").Equals(CMessage("PRIVMSG nick :hi")));
+	EXPECT_TRUE(
+	    CMessage("PRIVMSG nick hi").Equals(CMessage("PRIVMSG nick :hi")));
+	EXPECT_TRUE(
+	    CMessage("PRIVMSG nick :hi").Equals(CMessage("PRIVMSG nick hi")));
+	EXPECT_TRUE(
+	    CMessage("PRIVMSG nick hi").Equals(CMessage("PRIVMSG nick hi")));
 
 	EXPECT_TRUE(CMessage("CMD nick p1 p2").Equals(CMessage("CMD nick p1 p2")));
-	EXPECT_TRUE(CMessage("CMD nick :p1 p2").Equals(CMessage("CMD nick :p1 p2")));
+	EXPECT_TRUE(
+	    CMessage("CMD nick :p1 p2").Equals(CMessage("CMD nick :p1 p2")));
 	EXPECT_TRUE(CMessage("CMD nick p1 :p2").Equals(CMessage("CMD nick p1 p2")));
-	EXPECT_FALSE(CMessage("CMD nick :p1 p2").Equals(CMessage("CMD nick p1 p2")));
+	EXPECT_FALSE(
+	    CMessage("CMD nick :p1 p2").Equals(CMessage("CMD nick p1 p2")));
 
-	EXPECT_TRUE(CMessage("@t=now :sender CMD p").Equals(CMessage("@t=then :sender CMD p")));
+	EXPECT_TRUE(CMessage("@t=now :sender CMD p")
+	                .Equals(CMessage("@t=then :sender CMD p")));
 }
 
 TEST(MessageTest, Type) {
@@ -364,7 +411,8 @@ TEST(MessageTest, PrivAction) {
 
 	msg.SetText("foo bar");
 	EXPECT_EQ("foo bar", msg.GetText());
-	EXPECT_EQ(":sender PRIVMSG receiver :\001ACTION foo bar\001", msg.ToString());
+	EXPECT_EQ(":sender PRIVMSG receiver :\001ACTION foo bar\001",
+	          msg.ToString());
 }
 
 TEST(MessageTest, PrivCTCP) {
@@ -431,57 +479,79 @@ TEST(MessageTest, Parse) {
 	EXPECT_EQ(":)", msg.GetParam(0));
 }
 
-// The test data for MessageTest.Parse originates from https://github.com/SaberUK/ircparser
+// The test data for MessageTest.Parse originates from
+// https://github.com/SaberUK/ircparser
 //
 // IRCParser - Internet Relay Chat Message Parser
 //
 //   Copyright (C) 2015 Peter "SaberUK" Powell <petpow@saberuk.com>
 //
-// Permission to use, copy, modify, and/or distribute this software for any purpose with or without
-// fee is hereby granted, provided that the above copyright notice and this permission notice appear
+// Permission to use, copy, modify, and/or distribute this software for any
+// purpose with or without
+// fee is hereby granted, provided that the above copyright notice and this
+// permission notice appear
 // in all copies.
 //
-// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS
-// SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE
-// AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
-// NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+// REGARD TO THIS
+// SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN
+// NO EVENT SHALL THE
+// AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES
+// OR ANY DAMAGES
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
+// OF CONTRACT,
+// NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
+// USE OR PERFORMANCE
 // OF THIS SOFTWARE.
 
 // when checking a valid message with tags and a source
 TEST(MessageTest, ParseWithTags) {
-	const CString line = "@tag1=value1;tag2;vendor1/tag3=value2;vendor2/tag4 :irc.example.com COMMAND param1 param2 :param3 param3";
+	const CString line =
+	    "@tag1=value1;tag2;vendor1/tag3=value2;vendor2/tag4 :irc.example.com "
+	    "COMMAND param1 param2 :param3 param3";
 
 	CMessage msg(line);
 	EXPECT_EQ(line, msg.ToString());
-	EXPECT_THAT(msg.GetTags(), ContainerEq(MCString{{"tag1","value1"},{"tag2",""},{"vendor1/tag3","value2"},{"vendor2/tag4",""}}));
+	EXPECT_THAT(msg.GetTags(), ContainerEq(MCString{{"tag1", "value1"},
+	                                                {"tag2", ""},
+	                                                {"vendor1/tag3", "value2"},
+	                                                {"vendor2/tag4", ""}}));
 	EXPECT_EQ("irc.example.com", msg.GetNick().GetNick());
 	EXPECT_EQ("COMMAND", msg.GetCommand());
-	EXPECT_THAT(msg.GetParams(), ContainerEq(VCString{"param1", "param2", "param3 param3"}));
+	EXPECT_THAT(msg.GetParams(),
+	            ContainerEq(VCString{"param1", "param2", "param3 param3"}));
 }
 
 // when checking a valid message with a source but no tags
 TEST(MessageTest, ParseWithoutTags) {
-	const CString line = ":irc.example.com COMMAND param1 param2 :param3 param3";
+	const CString line =
+	    ":irc.example.com COMMAND param1 param2 :param3 param3";
 
 	CMessage msg(line);
 	EXPECT_EQ(line, msg.ToString());
 	EXPECT_EQ(MCString(), msg.GetTags());
 	EXPECT_EQ("irc.example.com", msg.GetNick().GetNick());
 	EXPECT_EQ("COMMAND", msg.GetCommand());
-	EXPECT_THAT(msg.GetParams(), ContainerEq(VCString{"param1", "param2", "param3 param3"}));
+	EXPECT_THAT(msg.GetParams(),
+	            ContainerEq(VCString{"param1", "param2", "param3 param3"}));
 }
 
 // when checking a valid message with tags but no source
 TEST(MessageTest, ParseWithoutSource) {
-	const CString line = "@tag1=value1;tag2;vendor1/tag3=value2;vendor2/tag4 COMMAND param1 param2 :param3 param3";
+	const CString line =
+	    "@tag1=value1;tag2;vendor1/tag3=value2;vendor2/tag4 COMMAND param1 "
+	    "param2 :param3 param3";
 
 	CMessage msg(line);
 	EXPECT_EQ(line, msg.ToString());
-	EXPECT_THAT(msg.GetTags(), ContainerEq(MCString{{"tag1","value1"},{"tag2",""},{"vendor1/tag3","value2"},{"vendor2/tag4",""}}));
+	EXPECT_THAT(msg.GetTags(), ContainerEq(MCString{{"tag1", "value1"},
+	                                                {"tag2", ""},
+	                                                {"vendor1/tag3", "value2"},
+	                                                {"vendor2/tag4", ""}}));
 	EXPECT_EQ("", msg.GetNick().GetNick());
 	EXPECT_EQ("COMMAND", msg.GetCommand());
-	EXPECT_THAT(msg.GetParams(), ContainerEq(VCString{"param1", "param2", "param3 param3"}));
+	EXPECT_THAT(msg.GetParams(),
+	            ContainerEq(VCString{"param1", "param2", "param3 param3"}));
 }
 
 // when checking a valid message with no tags, source or parameters

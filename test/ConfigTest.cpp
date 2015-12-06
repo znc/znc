@@ -19,10 +19,10 @@
 #include <znc/Config.h>
 
 class CConfigTest : public ::testing::Test {
-public:
+  public:
 	virtual ~CConfigTest() { m_File.Delete(); }
 
-protected:
+  protected:
 	CFile& WriteFile(const CString& sConfig) {
 		char sName[] = "./temp-XXXXXX";
 		int fd = mkstemp(sName);
@@ -34,15 +34,14 @@ protected:
 		return m_File;
 	}
 
-private:
-	CFile   m_File;
+  private:
+	CFile m_File;
 };
 
 class CConfigErrorTest : public CConfigTest {
-public:
-
+  public:
 	void TEST_ERROR(const CString& sConfig, const CString& sExpectError) {
-		CFile &File = WriteFile(sConfig);
+		CFile& File = WriteFile(sConfig);
 
 		CConfig conf;
 		CString sError;
@@ -53,10 +52,9 @@ public:
 };
 
 class CConfigSuccessTest : public CConfigTest {
-public:
-
+  public:
 	void TEST_SUCCESS(const CString& sConfig, const CString& sExpectedOutput) {
-		CFile &File = WriteFile(sConfig);
+		CFile& File = WriteFile(sConfig);
 		// Verify that Parse() rewinds the file
 		File.Seek(12);
 
@@ -89,7 +87,8 @@ public:
 
 		CConfig::SubConfigMapIterator it2 = conf.BeginSubConfigs();
 		while (it2 != conf.EndSubConfigs()) {
-			std::map<CString, CConfigEntry>::const_iterator it3 = it2->second.begin();
+			std::map<CString, CConfigEntry>::const_iterator it3 =
+			    it2->second.begin();
 
 			while (it3 != it2->second.end()) {
 				sRes += "->" + it2->first + "/" + it3->first + "\n";
@@ -102,12 +101,10 @@ public:
 		}
 	}
 
-private:
+  private:
 };
 
-TEST_F(CConfigSuccessTest, Empty) {
-	TEST_SUCCESS("", "");
-}
+TEST_F(CConfigSuccessTest, Empty) { TEST_SUCCESS("", ""); }
 
 /* duplicate entries */
 TEST_F(CConfigSuccessTest, Duble1) {
@@ -119,19 +116,25 @@ TEST_F(CConfigSuccessTest, Duble2) {
 
 /* sub configs */
 TEST_F(CConfigErrorTest, SubConf1) {
-	TEST_ERROR("</foo>", "Error on line 1: Closing tag \"foo\" which is not open.");
+	TEST_ERROR("</foo>",
+	           "Error on line 1: Closing tag \"foo\" which is not open.");
 }
 TEST_F(CConfigErrorTest, SubConf2) {
-	TEST_ERROR("<foo a>\n</bar>\n", "Error on line 2: Closing tag \"bar\" which is not open.");
+	TEST_ERROR("<foo a>\n</bar>\n",
+	           "Error on line 2: Closing tag \"bar\" which is not open.");
 }
 TEST_F(CConfigErrorTest, SubConf3) {
-	TEST_ERROR("<foo bar>", "Error on line 1: Not all tags are closed at the end of the file. Inner-most open tag is \"foo\".");
+	TEST_ERROR("<foo bar>",
+	           "Error on line 1: Not all tags are closed at the end of the "
+	           "file. Inner-most open tag is \"foo\".");
 }
 TEST_F(CConfigErrorTest, SubConf4) {
-	TEST_ERROR("<foo>\n</foo>", "Error on line 1: Empty block name at begin of block.");
+	TEST_ERROR("<foo>\n</foo>",
+	           "Error on line 1: Empty block name at begin of block.");
 }
 TEST_F(CConfigErrorTest, SubConf5) {
-	TEST_ERROR("<foo 1>\n</foo>\n<foo 1>\n</foo>", "Error on line 4: Duplicate entry for tag \"foo\" name \"1\".");
+	TEST_ERROR("<foo 1>\n</foo>\n<foo 1>\n</foo>",
+	           "Error on line 4: Duplicate entry for tag \"foo\" name \"1\".");
 }
 TEST_F(CConfigSuccessTest, SubConf6) {
 	TEST_SUCCESS("<foo a>\n</foo>", "->foo/a\n<-\n");
@@ -140,7 +143,8 @@ TEST_F(CConfigSuccessTest, SubConf7) {
 	TEST_SUCCESS("<a b>\n  <c d>\n </c>\n</a>", "->a/b\n->c/d\n<-\n<-\n");
 }
 TEST_F(CConfigSuccessTest, SubConf8) {
-	TEST_SUCCESS(" \t <A B>\nfoo = bar\n\tFooO = bar\n</a>", "->a/B\nfoo=bar\nfooo=bar\n<-\n");
+	TEST_SUCCESS(" \t <A B>\nfoo = bar\n\tFooO = bar\n</a>",
+	             "->a/B\nfoo=bar\nfooo=bar\n<-\n");
 }
 
 /* comments */
@@ -148,16 +152,14 @@ TEST_F(CConfigSuccessTest, Comment1) {
 	TEST_SUCCESS("Foo = bar // baz\n// Bar = baz", "foo=bar // baz\n");
 }
 TEST_F(CConfigSuccessTest, Comment2) {
-	TEST_SUCCESS("Foo = bar /* baz */\n/*** Foo = baz ***/\n   /**** asdsdfdf \n Some quite invalid stuff ***/\n", "foo=bar /* baz */\n");
+	TEST_SUCCESS(
+	    "Foo = bar /* baz */\n/*** Foo = baz ***/\n   /**** asdsdfdf \n Some "
+	    "quite invalid stuff ***/\n",
+	    "foo=bar /* baz */\n");
 }
 TEST_F(CConfigErrorTest, Comment3) {
-	TEST_ERROR("<foo foo>\n/* Just a comment\n</foo>", "Error on line 3: Comment not closed at end of file.");
+	TEST_ERROR("<foo foo>\n/* Just a comment\n</foo>",
+	           "Error on line 3: Comment not closed at end of file.");
 }
-TEST_F(CConfigSuccessTest, Comment4) {
-	TEST_SUCCESS("/* Foo\n/* Bar */", "");
-}
-TEST_F(CConfigSuccessTest, Comment5) {
-	TEST_SUCCESS("/* Foo\n// */", "");
-}
-
-
+TEST_F(CConfigSuccessTest, Comment4) { TEST_SUCCESS("/* Foo\n/* Bar */", ""); }
+TEST_F(CConfigSuccessTest, Comment5) { TEST_SUCCESS("/* Foo\n// */", ""); }

@@ -50,8 +50,9 @@ typedef std::multimap<CString, CWebSession*>::iterator mIPSessionsIterator;
 static CSessionManager Sessions;
 
 class CWebAuth : public CAuthBase {
-public:
-	CWebAuth(CWebSock* pWebSock, const CString& sUsername, const CString& sPassword, bool bBasic);
+  public:
+	CWebAuth(CWebSock* pWebSock, const CString& sUsername,
+	         const CString& sPassword, bool bBasic);
 	virtual ~CWebAuth() {}
 
 	CWebAuth(const CWebAuth&) = delete;
@@ -61,9 +62,10 @@ public:
 	void AcceptedLogin(CUser& User) override;
 	void RefusedLogin(const CString& sReason) override;
 	void Invalidate() override;
-private:
-protected:
-	CWebSock*   m_pWebSock;
+
+  private:
+  protected:
+	CWebSock* m_pWebSock;
 	bool m_bBasic;
 };
 
@@ -74,7 +76,7 @@ void CWebSock::FinishUserSessions(const CUser& User) {
 CWebSession::~CWebSession() {
 	// Find our entry in mIPSessions
 	pair<mIPSessionsIterator, mIPSessionsIterator> p =
-		Sessions.m_mIPSessions.equal_range(m_sIP);
+	    Sessions.m_mIPSessions.equal_range(m_sIP);
 	mIPSessionsIterator it = p.first;
 	mIPSessionsIterator end = p.second;
 
@@ -87,12 +89,13 @@ CWebSession::~CWebSession() {
 	}
 }
 
-CZNCTagHandler::CZNCTagHandler(CWebSock& WebSock) : CTemplateTagHandler(), m_WebSock(WebSock) {
-}
+CZNCTagHandler::CZNCTagHandler(CWebSock& WebSock)
+    : CTemplateTagHandler(), m_WebSock(WebSock) {}
 
-bool CZNCTagHandler::HandleTag(CTemplate& Tmpl, const CString& sName, const CString& sArgs, CString& sOutput) {
+bool CZNCTagHandler::HandleTag(CTemplate& Tmpl, const CString& sName,
+                               const CString& sArgs, CString& sOutput) {
 	if (sName.Equals("URLPARAM")) {
-		//sOutput = CZNC::Get()
+		// sOutput = CZNC::Get()
 		sOutput = m_WebSock.GetParam(sArgs.Token(0), false);
 		return true;
 	}
@@ -100,20 +103,26 @@ bool CZNCTagHandler::HandleTag(CTemplate& Tmpl, const CString& sName, const CStr
 	return false;
 }
 
-CWebSession::CWebSession(const CString& sId, const CString& sIP) : m_sId(sId), m_sIP(sIP), m_pUser(nullptr), m_vsErrorMsgs(), m_vsSuccessMsgs(), m_tmLastActive() {
+CWebSession::CWebSession(const CString& sId, const CString& sIP)
+    : m_sId(sId),
+      m_sIP(sIP),
+      m_pUser(nullptr),
+      m_vsErrorMsgs(),
+      m_vsSuccessMsgs(),
+      m_tmLastActive() {
 	Sessions.m_mIPSessions.insert(make_pair(sIP, this));
 	UpdateLastActive();
 }
 
-void CWebSession::UpdateLastActive() {
-	time(&m_tmLastActive);
-}
+void CWebSession::UpdateLastActive() { time(&m_tmLastActive); }
 
 bool CWebSession::IsAdmin() const { return IsLoggedIn() && m_pUser->IsAdmin(); }
 
-CWebAuth::CWebAuth(CWebSock* pWebSock, const CString& sUsername, const CString& sPassword, bool bBasic)
-	: CAuthBase(sUsername, sPassword, pWebSock), m_pWebSock(pWebSock), m_bBasic(bBasic) {
-}
+CWebAuth::CWebAuth(CWebSock* pWebSock, const CString& sUsername,
+                   const CString& sPassword, bool bBasic)
+    : CAuthBase(sUsername, sPassword, pWebSock),
+      m_pWebSock(pWebSock),
+      m_bBasic(bBasic) {}
 
 void CWebSession::ClearMessageLoops() {
 	m_vsErrorMsgs.clear();
@@ -168,7 +177,8 @@ void CWebAuth::AcceptedLogin(CUser& User) {
 			m_pWebSock->Redirect("/?cookie_check=true");
 		}
 
-		DEBUG("Successful login attempt ==> USER [" + User.GetUserName() + "] ==> SESSION [" + spSession->GetId() + "]");
+		DEBUG("Successful login attempt ==> USER [" + User.GetUserName() +
+		      "] ==> SESSION [" + spSession->GetId() + "]");
 	}
 }
 
@@ -183,13 +193,16 @@ void CWebAuth::RefusedLogin(const CString& sReason) {
 		m_pWebSock->UnPauseRead();
 		if (m_bBasic) {
 			m_pWebSock->AddHeader("WWW-Authenticate", "Basic realm=\"ZNC\"");
-			m_pWebSock->CHTTPSock::PrintErrorPage(401, "Unauthorized", "HTTP Basic authentication attemped with invalid credentials");
+			m_pWebSock->CHTTPSock::PrintErrorPage(
+			    401, "Unauthorized",
+			    "HTTP Basic authentication attemped with invalid credentials");
 			// Why CWebSock makes this function protected?..
 		} else {
 			m_pWebSock->Redirect("/?cookie_check=true");
 		}
 
-		DEBUG("UNSUCCESSFUL login attempt ==> REASON [" + sReason + "] ==> SESSION [" + spSession->GetId() + "]");
+		DEBUG("UNSUCCESSFUL login attempt ==> REASON [" + sReason +
+		      "] ==> SESSION [" + spSession->GetId() + "]");
 	}
 }
 
@@ -198,9 +211,15 @@ void CWebAuth::Invalidate() {
 	m_pWebSock = nullptr;
 }
 
-CWebSock::CWebSock(const CString& sURIPrefix) : CHTTPSock(nullptr, sURIPrefix),
-	m_bPathsSet(false), m_Template(), m_spAuth(), m_sModName(""), m_sPath(""), m_sPage(""), m_spSession()
-{
+CWebSock::CWebSock(const CString& sURIPrefix)
+    : CHTTPSock(nullptr, sURIPrefix),
+      m_bPathsSet(false),
+      m_Template(),
+      m_spAuth(),
+      m_sModName(""),
+      m_sPath(""),
+      m_sPage(""),
+      m_spSession() {
 	m_Template.AddTagHandler(std::make_shared<CZNCTagHandler>(*this));
 }
 
@@ -211,7 +230,7 @@ CWebSock::~CWebSock() {
 
 	// we have to account for traffic here because CSocket does
 	// not have a valid CModule* pointer.
-	CUser *pUser = GetSession()->GetUser();
+	CUser* pUser = GetSession()->GetUser();
 	if (pUser) {
 		pUser->AddBytesWritten(GetBytesWritten());
 		pUser->AddBytesRead(GetBytesRead());
@@ -249,7 +268,8 @@ void CWebSock::GetAvailSkins(VCString& vRet) const {
 		}
 
 		for (const CFile* pSubDir : Dir) {
-			if (pSubDir->IsDir() && pSubDir->GetShortName() != "_default_" && pSubDir->GetShortName() != ".svn") {
+			if (pSubDir->IsDir() && pSubDir->GetShortName() != "_default_" &&
+			    pSubDir->GetShortName() != ".svn") {
 				vRet.push_back(pSubDir->GetShortName());
 			}
 		}
@@ -269,12 +289,14 @@ VCString CWebSock::GetDirs(CModule* pModule, bool bIsTemplate) {
 		// 1. ~/.znc/webskins/<user_skin_setting>/mods/<mod_name>/
 		//
 		if (!sSkinName.empty()) {
-			vsResult.push_back(GetSkinPath(sSkinName) + "/mods/" + sModName + "/");
+			vsResult.push_back(GetSkinPath(sSkinName) + "/mods/" + sModName +
+			                   "/");
 		}
 
 		// 2. ~/.znc/webskins/_default_/mods/<mod_name>/
 		//
-		vsResult.push_back(GetSkinPath("_default_") + "/mods/" + sModName + "/");
+		vsResult.push_back(GetSkinPath("_default_") + "/mods/" + sModName +
+		                   "/");
 
 		// 3. ./modules/<mod_name>/tmpl/
 		//
@@ -283,23 +305,27 @@ VCString CWebSock::GetDirs(CModule* pModule, bool bIsTemplate) {
 		// 4. ~/.znc/webskins/<user_skin_setting>/mods/<mod_name>/
 		//
 		if (!sSkinName.empty()) {
-			vsResult.push_back(GetSkinPath(sSkinName) + "/mods/" + sModName + "/");
+			vsResult.push_back(GetSkinPath(sSkinName) + "/mods/" + sModName +
+			                   "/");
 		}
 
 		// 5. ~/.znc/webskins/_default_/mods/<mod_name>/
 		//
-		vsResult.push_back(GetSkinPath("_default_") + "/mods/" + sModName + "/");
+		vsResult.push_back(GetSkinPath("_default_") + "/mods/" + sModName +
+		                   "/");
 	}
 
 	// 6. ~/.znc/webskins/<user_skin_setting>/
 	//
 	if (!sSkinName.empty()) {
-		vsResult.push_back(GetSkinPath(sSkinName) + CString(bIsTemplate ? "/tmpl/" : "/"));
+		vsResult.push_back(GetSkinPath(sSkinName) +
+		                   CString(bIsTemplate ? "/tmpl/" : "/"));
 	}
 
 	// 7. ~/.znc/webskins/_default_/
 	//
-	vsResult.push_back(GetSkinPath("_default_") + CString(bIsTemplate ? "/tmpl/" : "/"));
+	vsResult.push_back(GetSkinPath("_default_") +
+	                   CString(bIsTemplate ? "/tmpl/" : "/"));
 
 	return vsResult;
 }
@@ -375,14 +401,17 @@ void CWebSock::SetVars() {
 	}
 }
 
-bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module, CTemplate *pTemplate) {
+bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module,
+                          CTemplate* pTemplate) {
 	if (!pTemplate) {
 		pTemplate = &m_Template;
 	}
 
 	CString sTitle(Module.GetWebMenuTitle());
 
-	if (!sTitle.empty() && (IsLoggedIn() || (!Module.WebRequiresLogin() && !Module.WebRequiresAdmin())) && (GetSession()->IsAdmin() || !Module.WebRequiresAdmin())) {
+	if (!sTitle.empty() && (IsLoggedIn() || (!Module.WebRequiresLogin() &&
+	                                         !Module.WebRequiresAdmin())) &&
+	    (GetSession()->IsAdmin() || !Module.WebRequiresAdmin())) {
 		CTemplate& Row = pTemplate->AddRow(sLoopName);
 		bool bActiveModule = false;
 
@@ -392,12 +421,15 @@ bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module, CTemplate *
 
 		if (m_sModName == Module.GetModName()) {
 			CString sModuleType = GetPath().Token(1, false, "/");
-			if (sModuleType == "global" && Module.GetType() == CModInfo::GlobalModule) {
+			if (sModuleType == "global" &&
+			    Module.GetType() == CModInfo::GlobalModule) {
 				bActiveModule = true;
-			} else if (sModuleType == "user" && Module.GetType() == CModInfo::UserModule) {
+			} else if (sModuleType == "user" &&
+			           Module.GetType() == CModInfo::UserModule) {
 				bActiveModule = true;
-			} else if (sModuleType == "network" && Module.GetType() == CModInfo::NetworkModule) {
-				CIRCNetwork *Network = Module.GetNetwork();
+			} else if (sModuleType == "network" &&
+			           Module.GetType() == CModInfo::NetworkModule) {
+				CIRCNetwork* Network = Module.GetNetwork();
 				if (Network) {
 					CString sNetworkName = GetPath().Token(2, false, "/");
 					if (sNetworkName == Network->GetName()) {
@@ -420,11 +452,14 @@ bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module, CTemplate *
 		VWebSubPages& vSubPages = Module.GetSubPages();
 
 		for (TWebSubPage& SubPage : vSubPages) {
-			// bActive is whether or not the current url matches this subpage (params will be checked below)
-			bool bActive = (m_sModName == Module.GetModName() && m_sPage == SubPage->GetName() && bActiveModule);
+			// bActive is whether or not the current url matches this subpage
+			// (params will be checked below)
+			bool bActive = (m_sModName == Module.GetModName() &&
+			                m_sPage == SubPage->GetName() && bActiveModule);
 
 			if (SubPage->RequiresAdmin() && !GetSession()->IsAdmin()) {
-				continue;  // Don't add admin-only subpages to requests from non-admin users
+				continue;  // Don't add admin-only subpages to requests from
+				           // non-admin users
 			}
 
 			CTemplate& SubRow = Row.AddRow("SubPageLoop");
@@ -432,7 +467,8 @@ bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module, CTemplate *
 			SubRow["ModName"] = Module.GetModName();
 			SubRow["ModPath"] = Module.GetWebPath();
 			SubRow["PageName"] = SubPage->GetName();
-			SubRow["Title"] = SubPage->GetTitle().empty() ? SubPage->GetName() : SubPage->GetTitle();
+			SubRow["Title"] = SubPage->GetTitle().empty() ? SubPage->GetName()
+			                                              : SubPage->GetTitle();
 
 			CString& sParams = SubRow["Params"];
 
@@ -466,17 +502,21 @@ bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module, CTemplate *
 	return false;
 }
 
-CWebSock::EPageReqResult CWebSock::PrintStaticFile(const CString& sPath, CString& sPageRet, CModule* pModule) {
+CWebSock::EPageReqResult CWebSock::PrintStaticFile(const CString& sPath,
+                                                   CString& sPageRet,
+                                                   CModule* pModule) {
 	SetPaths(pModule);
 	CString sFile = m_Template.ExpandFile(sPath.TrimLeft_n("/"));
-	DEBUG("About to print [" + sFile+ "]");
+	DEBUG("About to print [" + sFile + "]");
 	// Either PrintFile() fails and sends an error page or it suceeds and
 	// sends a result. In both cases we don't have anything more to do.
 	PrintFile(sFile);
 	return PAGE_DONE;
 }
 
-CWebSock::EPageReqResult CWebSock::PrintTemplate(const CString& sPageName, CString& sPageRet, CModule* pModule) {
+CWebSock::EPageReqResult CWebSock::PrintTemplate(const CString& sPageName,
+                                                 CString& sPageRet,
+                                                 CModule* pModule) {
 	SetVars();
 
 	m_Template["PageName"] = sPageName;
@@ -488,8 +528,10 @@ CWebSock::EPageReqResult CWebSock::PrintTemplate(const CString& sPageName, CStri
 			m_Template["Title"] = pModule->GetWebMenuTitle();
 		}
 
-		std::vector<CTemplate*>* breadcrumbs = m_Template.GetLoop("BreadCrumbs");
-		if (breadcrumbs->size() == 1 && m_Template["Title"] != pModule->GetModName()) {
+		std::vector<CTemplate*>* breadcrumbs =
+		    m_Template.GetLoop("BreadCrumbs");
+		if (breadcrumbs->size() == 1 &&
+		    m_Template["Title"] != pModule->GetModName()) {
 			// Module didn't add its own breadcrumbs, so add a generic one...
 			// But it'll be useless if it's the same as module name
 			CTemplate& bread = m_Template.AddRow("BreadCrumbs");
@@ -501,7 +543,8 @@ CWebSock::EPageReqResult CWebSock::PrintTemplate(const CString& sPageName, CStri
 		SetPaths(pModule, true);
 	}
 
-	if (m_Template.GetFileName().empty() && !m_Template.SetFile(sPageName + ".tmpl")) {
+	if (m_Template.GetFileName().empty() &&
+	    !m_Template.SetFile(sPageName + ".tmpl")) {
 		return PAGE_NOTFOUND;
 	}
 
@@ -541,7 +584,8 @@ CString CWebSock::GetRequestCookie(const CString& sKey) {
 	CString sRet;
 
 	if (!m_sModName.empty()) {
-		sRet = CHTTPSock::GetRequestCookie("Mod-" + m_sModName + "-" + sPrefixedKey);
+		sRet = CHTTPSock::GetRequestCookie("Mod-" + m_sModName + "-" +
+		                                   sPrefixedKey);
 	}
 
 	if (sRet.empty()) {
@@ -555,7 +599,8 @@ bool CWebSock::SendCookie(const CString& sKey, const CString& sValue) {
 	const CString sPrefixedKey = CString(GetLocalPort()) + "-" + sKey;
 
 	if (!m_sModName.empty()) {
-		return CHTTPSock::SendCookie("Mod-" + m_sModName + "-" + sPrefixedKey, sValue);
+		return CHTTPSock::SendCookie("Mod-" + m_sModName + "-" + sPrefixedKey,
+		                             sValue);
 	}
 
 	return CHTTPSock::SendCookie(sPrefixedKey, sValue);
@@ -565,36 +610,39 @@ void CWebSock::OnPageRequest(const CString& sURI) {
 	CString sPageRet;
 	EPageReqResult eRet = OnPageRequestInternal(sURI, sPageRet);
 	switch (eRet) {
-	case PAGE_PRINT:
-		PrintPage(sPageRet);
-		break;
-	case PAGE_DEFERRED:
-		// Something else will later call Close()
-		break;
-	case PAGE_DONE:
-		// Redirect or something like that, it's done, just make sure
-		// the connection will be closed
-		Close(CLT_AFTERWRITE);
-		break;
-	case PAGE_NOTFOUND:
-	default:
-		PrintNotFound();
-		break;
+		case PAGE_PRINT:
+			PrintPage(sPageRet);
+			break;
+		case PAGE_DEFERRED:
+			// Something else will later call Close()
+			break;
+		case PAGE_DONE:
+			// Redirect or something like that, it's done, just make sure
+			// the connection will be closed
+			Close(CLT_AFTERWRITE);
+			break;
+		case PAGE_NOTFOUND:
+		default:
+			PrintNotFound();
+			break;
 	}
 }
 
-CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
+CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI,
+                                                         CString& sPageRet) {
 	// Check that their session really belongs to their IP address. IP-based
 	// authentication is bad, but here it's just an extra layer that makes
 	// stealing cookies harder to pull off.
 	//
 	// When their IP is wrong, we give them an invalid cookie. This makes
 	// sure that they will get a new cookie on their next request.
-	if (CZNC::Get().GetProtectWebSessions() && GetSession()->GetIP() != GetRemoteIP()) {
+	if (CZNC::Get().GetProtectWebSessions() &&
+	    GetSession()->GetIP() != GetRemoteIP()) {
 		DEBUG("Expected IP: " << GetSession()->GetIP());
 		DEBUG("Remote IP:   " << GetRemoteIP());
 		SendCookie("SessionId", "WRONG_IP_FOR_SESSION");
-		PrintErrorPage(403, "Access denied", "This session does not belong to your IP.");
+		PrintErrorPage(403, "Access denied",
+		               "This session does not belong to your IP.");
 		return PAGE_DONE;
 	}
 
@@ -604,12 +652,16 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 	// cookies-enabled check which would break otherwise.
 	// Don't do this, if user authenticated using http-basic auth, because:
 	// 1. they obviously know the password,
-	// 2. it's easier to automate some tasks e.g. user creation, without need to care about cookies and csrf
-	if (IsPost() && !m_bBasicAuth && GetParam("_CSRF_Check") != GetCSRFCheck() && sURI != "/login") {
+	// 2. it's easier to automate some tasks e.g. user creation, without need to
+	// care about cookies and csrf
+	if (IsPost() && !m_bBasicAuth &&
+	    GetParam("_CSRF_Check") != GetCSRFCheck() && sURI != "/login") {
 		DEBUG("Expected _CSRF_Check: " << GetCSRFCheck());
 		DEBUG("Actual _CSRF_Check:   " << GetParam("_CSRF_Check"));
-		PrintErrorPage(403, "Access denied", "POST requests need to send "
-				"a secret token to prevent cross-site request forgery attacks.");
+		PrintErrorPage(
+		    403, "Access denied",
+		    "POST requests need to send "
+		    "a secret token to prevent cross-site request forgery attacks.");
 		return PAGE_DONE;
 	}
 
@@ -622,8 +674,10 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 
 	// Handle the static pages that don't require a login
 	if (sURI == "/") {
-		if(!m_bLoggedIn && GetParam("cookie_check", false).ToBool() && GetRequestCookie("SessionId").empty()) {
-			GetSession()->AddError("Your browser does not have cookies enabled for this site!");
+		if (!m_bLoggedIn && GetParam("cookie_check", false).ToBool() &&
+		    GetRequestCookie("SessionId").empty()) {
+			GetSession()->AddError(
+			    "Your browser does not have cookies enabled for this site!");
 		}
 		return PrintTemplate("index", sPageRet);
 	} else if (sURI == "/favicon.ico") {
@@ -647,7 +701,7 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 			return PAGE_DEFERRED;
 		}
 
-		Redirect("/"); // the login form is here
+		Redirect("/");  // the login form is here
 		return PAGE_DONE;
 	} else if (sURI.StartsWith("/pub/")) {
 		return PrintStaticFile(sURI, sPageRet);
@@ -670,7 +724,8 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 		return PAGE_NOTFOUND;
 	} else if (sURI.StartsWith("/mods/") || sURI.StartsWith("/modfiles/")) {
 		// Make sure modules are treated as directories
-		if (!sURI.EndsWith("/") && !sURI.Contains(".") && !sURI.TrimLeft_n("/mods/").TrimLeft_n("/").Contains("/")) {
+		if (!sURI.EndsWith("/") && !sURI.Contains(".") &&
+		    !sURI.TrimLeft_n("/mods/").TrimLeft_n("/").Contains("/")) {
 			Redirect(sURI + "/");
 			return PAGE_DONE;
 		}
@@ -694,7 +749,8 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 		} else if (sType.Equals("network")) {
 			eModType = CModInfo::NetworkModule;
 		} else {
-			PrintErrorPage(403, "Forbidden", "Unknown module type [" + sType + "]");
+			PrintErrorPage(403, "Forbidden",
+			               "Unknown module type [" + sType + "]");
 			return PAGE_DONE;
 		}
 
@@ -703,7 +759,7 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 			return PAGE_DONE;
 		}
 
-		CIRCNetwork *pNetwork = nullptr;
+		CIRCNetwork* pNetwork = nullptr;
 		if (eModType == CModInfo::NetworkModule) {
 			CString sNetwork = m_sPath.Token(0, false, "/");
 			m_sPath = m_sPath.Token(1, true, "/");
@@ -711,7 +767,8 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 			pNetwork = GetSession()->GetUser()->FindNetwork(sNetwork);
 
 			if (!pNetwork) {
-				PrintErrorPage(404, "Not Found", "Network [" + sNetwork + "] not found.");
+				PrintErrorPage(404, "Not Found",
+				               "Network [" + sNetwork + "] not found.");
 				return PAGE_DONE;
 			}
 		}
@@ -723,24 +780,25 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 			m_sPage = "index";
 		}
 
-		DEBUG("Path [" + m_sPath + "], Module [" + m_sModName + "], Page [" + m_sPage + "]");
+		DEBUG("Path [" + m_sPath + "], Module [" + m_sModName + "], Page [" +
+		      m_sPage + "]");
 
-		CModule *pModule = nullptr;
+		CModule* pModule = nullptr;
 
 		switch (eModType) {
 			case CModInfo::GlobalModule:
 				pModule = CZNC::Get().GetModules().FindModule(m_sModName);
 				break;
 			case CModInfo::UserModule:
-				pModule = GetSession()->GetUser()->GetModules().FindModule(m_sModName);
+				pModule = GetSession()->GetUser()->GetModules().FindModule(
+				    m_sModName);
 				break;
 			case CModInfo::NetworkModule:
 				pModule = pNetwork->GetModules().FindModule(m_sModName);
 				break;
 		}
 
-		if (!pModule)
-			return PAGE_NOTFOUND;
+		if (!pModule) return PAGE_NOTFOUND;
 
 		m_Template["ModPath"] = pModule->GetWebPath();
 		m_Template["ModFilesPath"] = pModule->GetWebFilesPath();
@@ -748,10 +806,15 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 		if (pModule->WebRequiresLogin() && !ForceLogin()) {
 			return PAGE_PRINT;
 		} else if (pModule->WebRequiresAdmin() && !GetSession()->IsAdmin()) {
-			PrintErrorPage(403, "Forbidden", "You need to be an admin to access this module");
+			PrintErrorPage(403, "Forbidden",
+			               "You need to be an admin to access this module");
 			return PAGE_DONE;
-		} else if (pModule->GetType() != CModInfo::GlobalModule && pModule->GetUser() != GetSession()->GetUser()) {
-			PrintErrorPage(403, "Forbidden", "You must login as " + pModule->GetUser()->GetUserName() + " in order to view this page");
+		} else if (pModule->GetType() != CModInfo::GlobalModule &&
+		           pModule->GetUser() != GetSession()->GetUser()) {
+			PrintErrorPage(403, "Forbidden",
+			               "You must login as " +
+			                   pModule->GetUser()->GetUserName() +
+			                   " in order to view this page");
 			return PAGE_DONE;
 		} else if (pModule->OnWebPreRequest(*this, m_sPage)) {
 			return PAGE_DEFERRED;
@@ -760,20 +823,25 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 		VWebSubPages& vSubPages = pModule->GetSubPages();
 
 		for (TWebSubPage& SubPage : vSubPages) {
-			bool bActive = (m_sModName == pModule->GetModName() && m_sPage == SubPage->GetName());
+			bool bActive = (m_sModName == pModule->GetModName() &&
+			                m_sPage == SubPage->GetName());
 
-			if (bActive && SubPage->RequiresAdmin() && !GetSession()->IsAdmin()) {
-				PrintErrorPage(403, "Forbidden", "You need to be an admin to access this page");
+			if (bActive && SubPage->RequiresAdmin() &&
+			    !GetSession()->IsAdmin()) {
+				PrintErrorPage(403, "Forbidden",
+				               "You need to be an admin to access this page");
 				return PAGE_DONE;
 			}
 		}
 
-		if (pModule && pModule->GetType() != CModInfo::GlobalModule && (!IsLoggedIn() || pModule->GetUser() != GetSession()->GetUser())) {
+		if (pModule && pModule->GetType() != CModInfo::GlobalModule &&
+		    (!IsLoggedIn() || pModule->GetUser() != GetSession()->GetUser())) {
 			AddModLoop("UserModLoop", *pModule);
 		}
 
 		if (sURI.StartsWith("/modfiles/")) {
-			m_Template.AppendPath(GetSkinPath(GetSkinName()) + "/mods/" + m_sModName + "/files/");
+			m_Template.AppendPath(GetSkinPath(GetSkinName()) + "/mods/" +
+			                      m_sModName + "/files/");
 			m_Template.AppendPath(pModule->GetModDataDir() + "/files/");
 
 			if (PrintFile(m_Template.ExpandFile(m_sPage.TrimLeft_n("/")))) {
@@ -789,7 +857,8 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 			breadModule["URL"] = pModule->GetWebPath();
 
 			/* if a module returns false from OnWebRequest, it does not
-			   want the template to be printed, usually because it did a redirect. */
+			   want the template to be printed, usually because it did a
+			   redirect. */
 			if (pModule->OnWebRequest(*this, m_sPage, m_Template)) {
 				// If they already sent a reply, let's assume
 				// they did what they wanted to do.
@@ -800,7 +869,9 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 			}
 
 			if (!SentHeader()) {
-				PrintErrorPage(404, "Not Implemented", "The requested module does not acknowledge web requests");
+				PrintErrorPage(
+				    404, "Not Implemented",
+				    "The requested module does not acknowledge web requests");
 			}
 			return PAGE_DONE;
 		}
@@ -810,7 +881,8 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 			for (unsigned int a = 0; a < sPage.length(); a++) {
 				unsigned char c = sPage[a];
 
-				if ((c < '0' || c > '9') && (c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && c != '_') {
+				if ((c < '0' || c > '9') && (c < 'a' || c > 'z') &&
+				    (c < 'A' || c > 'Z') && c != '_') {
 					return PAGE_NOTFOUND;
 				}
 			}
@@ -830,7 +902,9 @@ void CWebSock::PrintErrorPage(const CString& sMessage) {
 	m_Template["Error"] = sMessage;
 }
 
-static inline bool compareLastActive(const std::pair<const CString, CWebSession *> &first, const std::pair<const CString, CWebSession *> &second) {
+static inline bool compareLastActive(
+    const std::pair<const CString, CWebSession*>& first,
+    const std::pair<const CString, CWebSession*>& second) {
 	return first.second->GetLastActive() < second.second->GetLastActive();
 }
 
@@ -840,22 +914,30 @@ std::shared_ptr<CWebSession> CWebSock::GetSession() {
 	}
 
 	const CString sCookieSessionId = GetRequestCookie("SessionId");
-	std::shared_ptr<CWebSession> *pSession = Sessions.m_mspSessions.GetItem(sCookieSessionId);
+	std::shared_ptr<CWebSession>* pSession =
+	    Sessions.m_mspSessions.GetItem(sCookieSessionId);
 
 	if (pSession != nullptr) {
 		// Refresh the timeout
 		Sessions.m_mspSessions.AddItem((*pSession)->GetId(), *pSession);
 		(*pSession)->UpdateLastActive();
 		m_spSession = *pSession;
-		DEBUG("Found existing session from cookie: [" + sCookieSessionId + "] IsLoggedIn(" + CString((*pSession)->IsLoggedIn() ? "true, " + ((*pSession)->GetUser()->GetUserName()) : "false") + ")");
+		DEBUG("Found existing session from cookie: [" + sCookieSessionId +
+		      "] IsLoggedIn(" +
+		      CString((*pSession)->IsLoggedIn()
+		                  ? "true, " + ((*pSession)->GetUser()->GetUserName())
+		                  : "false") +
+		      ")");
 		return *pSession;
 	}
 
 	if (Sessions.m_mIPSessions.count(GetRemoteIP()) > m_uiMaxSessions) {
 		pair<mIPSessionsIterator, mIPSessionsIterator> p =
-			Sessions.m_mIPSessions.equal_range(GetRemoteIP());
-		mIPSessionsIterator it = std::min_element(p.first, p.second, compareLastActive);
-		DEBUG("Remote IP:   " << GetRemoteIP() << "; discarding session [" << it->second->GetId() << "]");
+		    Sessions.m_mIPSessions.equal_range(GetRemoteIP());
+		mIPSessionsIterator it =
+		    std::min_element(p.first, p.second, compareLastActive);
+		DEBUG("Remote IP:   " << GetRemoteIP() << "; discarding session ["
+		                      << it->second->GetId() << "]");
 		Sessions.m_mspSessions.RemItem(it->second->GetId());
 	}
 
@@ -863,14 +945,15 @@ std::shared_ptr<CWebSession> CWebSock::GetSession() {
 	do {
 		sSessionID = CString::RandomString(32);
 		sSessionID += ":" + GetRemoteIP() + ":" + CString(GetRemotePort());
-		sSessionID += ":" + GetLocalIP()  + ":" + CString(GetLocalPort());
+		sSessionID += ":" + GetLocalIP() + ":" + CString(GetLocalPort());
 		sSessionID += ":" + CString(time(nullptr));
 		sSessionID = sSessionID.SHA256();
 
 		DEBUG("Auto generated session: [" + sSessionID + "]");
 	} while (Sessions.m_mspSessions.HasItem(sSessionID));
 
-	std::shared_ptr<CWebSession> spSession(new CWebSession(sSessionID, GetRemoteIP()));
+	std::shared_ptr<CWebSession> spSession(
+	    new CWebSession(sSessionID, GetRemoteIP()));
 	Sessions.m_mspSessions.AddItem(spSession->GetId(), spSession);
 
 	m_spSession = spSession;
@@ -883,8 +966,10 @@ CString CWebSock::GetCSRFCheck() {
 	return pSession->GetId().MD5();
 }
 
-bool CWebSock::OnLogin(const CString& sUser, const CString& sPass, bool bBasic) {
-	DEBUG("=================== CWebSock::OnLogin(), basic auth? " << std::boolalpha << bBasic);
+bool CWebSock::OnLogin(const CString& sUser, const CString& sPass,
+                       bool bBasic) {
+	DEBUG("=================== CWebSock::OnLogin(), basic auth? "
+	      << std::boolalpha << bBasic);
 	m_spAuth = std::make_shared<CWebAuth>(this, sUser, sPass, bBasic);
 
 	// Some authentication module could need some time, block this socket
@@ -906,10 +991,10 @@ Csock* CWebSock::GetSockObj(const CString& sHost, unsigned short uPort) {
 CString CWebSock::GetSkinName() {
 	std::shared_ptr<CWebSession> spSession = GetSession();
 
-	if (spSession->IsLoggedIn() && !spSession->GetUser()->GetSkinName().empty()) {
+	if (spSession->IsLoggedIn() &&
+	    !spSession->GetUser()->GetSkinName().empty()) {
 		return spSession->GetUser()->GetSkinName();
 	}
 
 	return CZNC::Get().GetSkinName();
 }
-

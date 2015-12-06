@@ -22,8 +22,10 @@ using ::testing::IsEmpty;
 using ::testing::ElementsAre;
 
 class ClientTest : public IRCTest {
-protected:
-	void testPass(const CString& sInput, const CString& sUser, const CString& sIdentifier, const CString& sNetwork, const CString& sPass) const {
+  protected:
+	void testPass(const CString& sInput, const CString& sUser,
+	              const CString& sIdentifier, const CString& sNetwork,
+	              const CString& sPass) const {
 		CClient client;
 		client.ParsePass(sInput);
 		EXPECT_EQ(sUser, client.m_sUser);
@@ -32,7 +34,8 @@ protected:
 		EXPECT_EQ(sPass, client.m_sPass);
 	}
 
-	void testUser(const CString& sInput, const CString& sUser, const CString& sIdentifier, const CString& sNetwork) const {
+	void testUser(const CString& sInput, const CString& sUser,
+	              const CString& sIdentifier, const CString& sNetwork) const {
 		CClient client;
 		client.ParseUser(sInput);
 		EXPECT_EQ(sUser, client.m_sUser);
@@ -90,49 +93,66 @@ TEST_F(ClientTest, AwayNotify) {
 	EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString()));
 }
 
-TEST_F(ClientTest, MultiPrefixWho) { // aka NAMESX
-	m_pTestSock->ReadLine(":server 005 guest PREFIX=(qaohv)~&@%+ NAMESX :are supported by this server");
+TEST_F(ClientTest, MultiPrefixWho) {  // aka NAMESX
+	m_pTestSock->ReadLine(
+	    ":server 005 guest PREFIX=(qaohv)~&@%+ NAMESX :are supported by this "
+	    "server");
 	m_pTestClient->Reset();
 
-	CMessage msg(":kenny.chatspike.net 352 guest #test grawity broken.symlink *.chatspike.net grawity H@%+ :0 Mantas M.");
-	CMessage extmsg(":kenny.chatspike.net 352 guest #test grawity broken.symlink *.chatspike.net grawity H@%+ :0 Mantas M.");
+	CMessage msg(
+	    ":kenny.chatspike.net 352 guest #test grawity broken.symlink "
+	    "*.chatspike.net grawity H@%+ :0 Mantas M.");
+	CMessage extmsg(
+	    ":kenny.chatspike.net 352 guest #test grawity broken.symlink "
+	    "*.chatspike.net grawity H@%+ :0 Mantas M.");
 	EXPECT_FALSE(m_pTestClient->HasNamesx());
 	m_pTestClient->PutClient(extmsg);
 	EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString()));
 	m_pTestClient->SetNamesx(true);
 	EXPECT_TRUE(m_pTestClient->HasNamesx());
 	m_pTestClient->PutClient(extmsg);
-	EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString(), extmsg.ToString()));
+	EXPECT_THAT(m_pTestClient->vsLines,
+	            ElementsAre(msg.ToString(), extmsg.ToString()));
 }
 
-TEST_F(ClientTest, MultiPrefixNames) { // aka NAMESX
-	m_pTestSock->ReadLine(":server 005 guest PREFIX=(qaohv)~&@%+ NAMESX :are supported by this server");
+TEST_F(ClientTest, MultiPrefixNames) {  // aka NAMESX
+	m_pTestSock->ReadLine(
+	    ":server 005 guest PREFIX=(qaohv)~&@%+ NAMESX :are supported by this "
+	    "server");
 	m_pTestClient->Reset();
 
-	CMessage msg(":hades.arpa 353 guest = #tethys :~aji &Attila @alyx +KindOne Argure");
-	CMessage extmsg(":hades.arpa 353 guest = #tethys :~&@%+aji &@Attila @+alyx +KindOne Argure");
+	CMessage msg(
+	    ":hades.arpa 353 guest = #tethys :~aji &Attila @alyx +KindOne Argure");
+	CMessage extmsg(
+	    ":hades.arpa 353 guest = #tethys :~&@%+aji &@Attila @+alyx +KindOne "
+	    "Argure");
 	EXPECT_FALSE(m_pTestClient->HasNamesx());
 	m_pTestClient->PutClient(extmsg);
 	EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString()));
 	m_pTestClient->SetNamesx(true);
 	EXPECT_TRUE(m_pTestClient->HasNamesx());
 	m_pTestClient->PutClient(extmsg);
-	EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString(), extmsg.ToString()));
+	EXPECT_THAT(m_pTestClient->vsLines,
+	            ElementsAre(msg.ToString(), extmsg.ToString()));
 }
 
-TEST_F(ClientTest, UserhostInNames) { // aka UHNAMES
-	m_pTestSock->ReadLine(":server 005 guest UHNAMES :are supported by this server");
+TEST_F(ClientTest, UserhostInNames) {  // aka UHNAMES
+	m_pTestSock->ReadLine(
+	    ":server 005 guest UHNAMES :are supported by this server");
 	m_pTestClient->Reset();
 
 	CMessage msg(":irc.bnc.im 353 guest = #atheme :Rylee somasonic");
-	CMessage extmsg(":irc.bnc.im 353 guest = #atheme :Rylee!rylai@localhost somasonic!andrew@somasonic.org");
+	CMessage extmsg(
+	    ":irc.bnc.im 353 guest = #atheme :Rylee!rylai@localhost "
+	    "somasonic!andrew@somasonic.org");
 	EXPECT_FALSE(m_pTestClient->HasUHNames());
 	m_pTestClient->PutClient(extmsg);
 	EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString()));
 	m_pTestClient->SetUHNames(true);
 	EXPECT_TRUE(m_pTestClient->HasUHNames());
 	m_pTestClient->PutClient(extmsg);
-	EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString(), extmsg.ToString()));
+	EXPECT_THAT(m_pTestClient->vsLines,
+	            ElementsAre(msg.ToString(), extmsg.ToString()));
 }
 
 TEST_F(ClientTest, ExtendedJoin) {
@@ -147,12 +167,16 @@ TEST_F(ClientTest, ExtendedJoin) {
 	m_pTestClient->SetExtendedJoin(true);
 	EXPECT_TRUE(m_pTestClient->HasExtendedJoin());
 	m_pTestClient->PutClient(extmsg);
-	EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString(), extmsg.ToString()));
+	EXPECT_THAT(m_pTestClient->vsLines,
+	            ElementsAre(msg.ToString(), extmsg.ToString()));
 }
 
 TEST_F(ClientTest, StatusMsg) {
-	m_pTestSock->ReadLine(":irc.znc.in 001 me :Welcome to the Internet Relay Network me");
-	m_pTestSock->ReadLine(":irc.znc.in 005 me CHANTYPES=# PREFIX=(ov)@+ STATUSMSG=@+ :are supported by this server");
+	m_pTestSock->ReadLine(
+	    ":irc.znc.in 001 me :Welcome to the Internet Relay Network me");
+	m_pTestSock->ReadLine(
+	    ":irc.znc.in 005 me CHANTYPES=# PREFIX=(ov)@+ STATUSMSG=@+ :are "
+	    "supported by this server");
 
 	m_pTestUser->SetAutoClearChanBuffer(false);
 	m_pTestClient->ReadLine("PRIVMSG @#chan :hello ops");
@@ -160,7 +184,8 @@ TEST_F(ClientTest, StatusMsg) {
 	EXPECT_EQ(1u, m_pTestChan->GetBuffer().Size());
 
 	m_pTestUser->SetTimestampPrepend(false);
-	EXPECT_EQ(":me PRIVMSG @#chan :hello ops", m_pTestChan->GetBuffer().GetLine(0, *m_pTestClient));
+	EXPECT_EQ(":me PRIVMSG @#chan :hello ops",
+	          m_pTestChan->GetBuffer().GetLine(0, *m_pTestClient));
 }
 
 TEST_F(ClientTest, OnUserCTCPReplyMessage) {
@@ -168,14 +193,15 @@ TEST_F(ClientTest, OnUserCTCPReplyMessage) {
 	m_pTestModule->eAction = CModule::HALT;
 	m_pTestClient->ReadLine(msg.ToString());
 
-	CString sReply = "NOTICE someone :\x01VERSION 123 via " + CZNC::GetTag(false) + "\x01";
+	CString sReply =
+	    "NOTICE someone :\x01VERSION 123 via " + CZNC::GetTag(false) + "\x01";
 
 	EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnUserCTCPReplyMessage"));
 	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(sReply));
 	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
 	EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
 	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
-	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty()); // halt
+	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
 
 	m_pTestModule->eAction = CModule::CONTINUE;
 	m_pTestClient->ReadLine(msg.ToString());
@@ -192,7 +218,7 @@ TEST_F(ClientTest, OnUserCTCPMessage) {
 	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
 	EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
 	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
-	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty()); // halt
+	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
 
 	m_pTestModule->eAction = CModule::CONTINUE;
 	m_pTestClient->ReadLine(msg.ToString());
@@ -209,7 +235,7 @@ TEST_F(ClientTest, OnUserActionMessage) {
 	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
 	EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
 	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
-	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty()); // halt
+	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
 
 	m_pTestModule->eAction = CModule::CONTINUE;
 	m_pTestClient->ReadLine(msg.ToString());
@@ -226,7 +252,7 @@ TEST_F(ClientTest, OnUserTextMessage) {
 	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
 	EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
 	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
-	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty()); // halt
+	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
 
 	m_pTestModule->eAction = CModule::CONTINUE;
 	m_pTestClient->ReadLine(msg.ToString());
@@ -243,7 +269,7 @@ TEST_F(ClientTest, OnUserNoticeMessage) {
 	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
 	EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
 	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
-	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty()); // halt
+	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
 
 	m_pTestModule->eAction = CModule::CONTINUE;
 	m_pTestClient->ReadLine(msg.ToString());
@@ -260,7 +286,7 @@ TEST_F(ClientTest, OnUserJoinMessage) {
 	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
 	EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
 	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
-	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty()); // halt
+	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
 
 	m_pTestModule->eAction = CModule::CONTINUE;
 	m_pTestClient->ReadLine(msg.ToString());
@@ -277,7 +303,7 @@ TEST_F(ClientTest, OnUserPartMessage) {
 	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
 	EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
 	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
-	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty()); // halt
+	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
 
 	m_pTestModule->eAction = CModule::CONTINUE;
 	m_pTestClient->ReadLine(msg.ToString());
@@ -294,7 +320,7 @@ TEST_F(ClientTest, OnUserTopicMessage) {
 	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
 	EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
 	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
-	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty()); // halt
+	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
 
 	m_pTestModule->eAction = CModule::CONTINUE;
 	m_pTestClient->ReadLine(msg.ToString());
@@ -311,9 +337,9 @@ TEST_F(ClientTest, OnUserQuitMessage) {
 	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
 	EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
 	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
-	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty()); // halt
+	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
 
 	m_pTestModule->eAction = CModule::CONTINUE;
 	m_pTestClient->ReadLine(msg.ToString());
-	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty()); // quit is never forwarded
+	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // quit is never forwarded
 }

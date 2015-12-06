@@ -22,23 +22,29 @@ using std::vector;
 class CKeepNickMod;
 
 class CKeepNickTimer : public CTimer {
-public:
-	CKeepNickTimer(CKeepNickMod *pMod);
+  public:
+	CKeepNickTimer(CKeepNickMod* pMod);
 	~CKeepNickTimer() {}
 
 	void RunJob() override;
 
-private:
+  private:
 	CKeepNickMod* m_pMod;
 };
 
 class CKeepNickMod : public CModule {
-public:
+  public:
 	MODCONSTRUCTOR(CKeepNickMod) {
 		AddHelpCommand();
-		AddCommand("Enable", static_cast<CModCommand::ModCmdFunc>(&CKeepNickMod::OnEnableCommand), "", "Try to get your primary nick");
-		AddCommand("Disable", static_cast<CModCommand::ModCmdFunc>(&CKeepNickMod::OnDisableCommand), "", "No longer trying to get your primary nick");
-		AddCommand("State", static_cast<CModCommand::ModCmdFunc>(&CKeepNickMod::OnStateCommand), "", "Show the current state");
+		AddCommand("Enable", static_cast<CModCommand::ModCmdFunc>(
+		                         &CKeepNickMod::OnEnableCommand),
+		           "", "Try to get your primary nick");
+		AddCommand("Disable", static_cast<CModCommand::ModCmdFunc>(
+		                          &CKeepNickMod::OnDisableCommand),
+		           "", "No longer trying to get your primary nick");
+		AddCommand("State", static_cast<CModCommand::ModCmdFunc>(
+		                        &CKeepNickMod::OnStateCommand),
+		           "", "Show the current state");
 	}
 
 	~CKeepNickMod() {}
@@ -47,8 +53,7 @@ public:
 		m_pTimer = nullptr;
 
 		// Check if we need to start the timer
-		if (GetNetwork()->IsIRCConnected())
-			OnIRCConnected();
+		if (GetNetwork()->IsIRCConnected()) OnIRCConnected();
 
 		return true;
 	}
@@ -60,12 +65,10 @@ public:
 
 		CIRCSock* pIRCSock = GetNetwork()->GetIRCSock();
 
-		if (!pIRCSock)
-			return;
+		if (!pIRCSock) return;
 
 		// Do we already have the nick we want?
-		if (pIRCSock->GetNick().Equals(GetNick()))
-			return;
+		if (pIRCSock->GetNick().Equals(GetNick())) return;
 
 		PutIRC("NICK " + GetNick());
 	}
@@ -74,13 +77,13 @@ public:
 		CString sConfNick = GetNetwork()->GetNick();
 		CIRCSock* pIRCSock = GetNetwork()->GetIRCSock();
 
-		if (pIRCSock)
-			sConfNick = sConfNick.Left(pIRCSock->GetMaxNickLen());
+		if (pIRCSock) sConfNick = sConfNick.Left(pIRCSock->GetMaxNickLen());
 
 		return sConfNick;
 	}
 
-	void OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans) override {
+	void OnNick(const CNick& Nick, const CString& sNewNick,
+	            const vector<CChan*>& vChans) override {
 		if (sNewNick == GetNetwork()->GetIRCSock()->GetNick()) {
 			// We are changing our own nick
 			if (Nick.NickEquals(GetNick())) {
@@ -102,7 +105,8 @@ public:
 		}
 	}
 
-	void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) override {
+	void OnQuit(const CNick& Nick, const CString& sMessage,
+	            const vector<CChan*>& vChans) override {
 		// If someone with the nick we want quits, be fast and get the nick
 		if (Nick.NickEquals(GetNick())) {
 			KeepNick();
@@ -122,16 +126,14 @@ public:
 	}
 
 	void Enable() {
-		if (m_pTimer)
-			return;
+		if (m_pTimer) return;
 
 		m_pTimer = new CKeepNickTimer(this);
 		AddTimer(m_pTimer);
 	}
 
 	void Disable() {
-		if (!m_pTimer)
-			return;
+		if (!m_pTimer) return;
 
 		m_pTimer->Stop();
 		RemTimer(m_pTimer);
@@ -140,34 +142,32 @@ public:
 
 	EModRet OnUserRaw(CString& sLine) override {
 		// We dont care if we are not connected to IRC
-		if (!GetNetwork()->IsIRCConnected())
-			return CONTINUE;
+		if (!GetNetwork()->IsIRCConnected()) return CONTINUE;
 
 		// We are trying to get the config nick and this is a /nick?
-		if (!m_pTimer || !sLine.Token(0).Equals("NICK"))
-			return CONTINUE;
+		if (!m_pTimer || !sLine.Token(0).Equals("NICK")) return CONTINUE;
 
 		// Is the nick change for the nick we are trying to get?
 		CString sNick = sLine.Token(1);
 
 		// Don't even think of using spaces in your nick!
-		if (sNick.Left(1) == ":")
-			sNick.LeftChomp();
+		if (sNick.Left(1) == ":") sNick.LeftChomp();
 
-		if (!sNick.Equals(GetNick()))
-			return CONTINUE;
+		if (!sNick.Equals(GetNick())) return CONTINUE;
 
 		// Indeed trying to change to this nick, generate a 433 for it.
 		// This way we can *always* block incoming 433s from the server.
-		PutUser(":" + GetNetwork()->GetIRCServer() + " 433 " + GetNetwork()->GetIRCNick().GetNick()
-				+ " " + sNick + " :ZNC is already trying to get this nickname");
+		PutUser(":" + GetNetwork()->GetIRCServer() + " 433 " +
+		        GetNetwork()->GetIRCNick().GetNick() + " " + sNick +
+		        " :ZNC is already trying to get this nickname");
 		return CONTINUE;
 	}
 
 	EModRet OnRaw(CString& sLine) override {
 		// Are we trying to get our primary nick and we caused this error?
 		// :irc.server.net 433 mynick badnick :Nickname is already in use.
-		if (m_pTimer && sLine.Token(1) == "433" && sLine.Token(3).Equals(GetNick()))
+		if (m_pTimer && sLine.Token(1) == "433" &&
+		    sLine.Token(3).Equals(GetNick()))
 			return HALT;
 
 		return CONTINUE;
@@ -190,21 +190,21 @@ public:
 			PutModule("Currently disabled, try 'enable'");
 	}
 
-private:
+  private:
 	// If this is nullptr, we are turned off for some reason
 	CKeepNickTimer* m_pTimer = nullptr;
 };
 
-CKeepNickTimer::CKeepNickTimer(CKeepNickMod *pMod) : CTimer(pMod, 30, 0,
-		"KeepNickTimer", "Tries to acquire this user's primary nick") {
+CKeepNickTimer::CKeepNickTimer(CKeepNickMod* pMod)
+    : CTimer(pMod, 30, 0, "KeepNickTimer",
+             "Tries to acquire this user's primary nick") {
 	m_pMod = pMod;
 }
 
-void CKeepNickTimer::RunJob() {
-	m_pMod->KeepNick();
-}
+void CKeepNickTimer::RunJob() { m_pMod->KeepNick(); }
 
-template<> void TModInfo<CKeepNickMod>(CModInfo& Info) {
+template <>
+void TModInfo<CKeepNickMod>(CModInfo& Info) {
 	Info.SetWikiPage("keepnick");
 }
 

@@ -35,17 +35,18 @@ class CChan;
 // !Forward Declarations
 
 class CAuthBase {
-public:
-	CAuthBase(const CString& sUsername, const CString& sPassword, CZNCSock* pSock) : m_sUsername(sUsername), m_sPassword(sPassword), m_pSock(pSock) {
-	}
+  public:
+	CAuthBase(const CString& sUsername, const CString& sPassword,
+	          CZNCSock* pSock)
+	    : m_sUsername(sUsername), m_sPassword(sPassword), m_pSock(pSock) {}
 
 	virtual ~CAuthBase() {}
 
 	CAuthBase(const CAuthBase&) = delete;
 	CAuthBase& operator=(const CAuthBase&) = delete;
 
-	virtual void SetLoginInfo(const CString& sUsername, const CString& sPassword,
-			CZNCSock* pSock) {
+	virtual void SetLoginInfo(const CString& sUsername,
+	                          const CString& sPassword, CZNCSock* pSock) {
 		m_sUsername = sUsername;
 		m_sPassword = sPassword;
 		m_pSock = pSock;
@@ -56,80 +57,92 @@ public:
 
 	const CString& GetUsername() const { return m_sUsername; }
 	const CString& GetPassword() const { return m_sPassword; }
-	Csock *GetSocket() const { return m_pSock; }
+	Csock* GetSocket() const { return m_pSock; }
 	CString GetRemoteIP() const;
 
 	// Invalidate this CAuthBase instance which means it will no longer use
 	// m_pSock and AcceptLogin() or RefusedLogin() will have no effect.
 	virtual void Invalidate();
 
-protected:
+  protected:
 	virtual void AcceptedLogin(CUser& User) = 0;
 	virtual void RefusedLogin(const CString& sReason) = 0;
 
-private:
-	CString   m_sUsername;
-	CString   m_sPassword;
+  private:
+	CString m_sUsername;
+	CString m_sPassword;
 	CZNCSock* m_pSock;
 };
 
-
 class CClientAuth : public CAuthBase {
-public:
-	CClientAuth(CClient* pClient, const CString& sUsername, const CString& sPassword);
+  public:
+	CClientAuth(CClient* pClient, const CString& sUsername,
+	            const CString& sPassword);
 	virtual ~CClientAuth() {}
 
 	CClientAuth(const CClientAuth&) = delete;
 	CClientAuth& operator=(const CClientAuth&) = delete;
 
-	void Invalidate() override { m_pClient = nullptr; CAuthBase::Invalidate(); }
+	void Invalidate() override {
+		m_pClient = nullptr;
+		CAuthBase::Invalidate();
+	}
 	void AcceptedLogin(CUser& User) override;
 	void RefusedLogin(const CString& sReason) override;
-private:
-protected:
+
+  private:
+  protected:
 	CClient* m_pClient;
 };
 
 class CClient : public CIRCSocket {
-public:
+  public:
 	CClient()
-			: CIRCSocket(),
-			  m_bGotPass(false),
-			  m_bGotNick(false),
-			  m_bGotUser(false),
-			  m_bInCap(false),
-			  m_bCapNotify(false),
-			  m_bAwayNotify(false),
-			  m_bAccountNotify(false),
-			  m_bExtendedJoin(false),
-			  m_bNamesx(false),
-			  m_bUHNames(false),
-			  m_bAway(false),
-			  m_bServerTime(false),
-			  m_bBatch(false),
-			  m_bEchoMessage(false),
-			  m_bSelfMessage(false),
-			  m_bPlaybackActive(false),
-			  m_pUser(nullptr),
-			  m_pNetwork(nullptr),
-			  m_sNick("unknown-nick"),
-			  m_sPass(""),
-			  m_sUser(""),
-			  m_sNetwork(""),
-			  m_sIdentifier(""),
-			  m_spAuth(),
-			  m_ssAcceptedCaps(),
-			  m_mCoreCaps({{"multi-prefix", {false, [this](bool bVal) { m_bNamesx = bVal; }}},
-			               {"userhost-in-names", {false, [this](bool bVal) { m_bUHNames = bVal; }}},
-			               {"echo-message", {false, [this](bool bVal) { m_bEchoMessage = bVal; }}},
-			               {"server-time", {false, [this](bool bVal) { m_bServerTime = bVal; }}},
-			               {"batch", {false, [this](bool bVal) { m_bBatch = bVal; }}},
-			               {"cap-notify", {false, [this](bool bVal) { m_bCapNotify = bVal; }}},
-			               {"away-notify", {true, [this](bool bVal) { m_bAwayNotify = bVal; }}},
-			               {"account-notify", {true, [this](bool bVal) { m_bAccountNotify = bVal; }}},
-			               {"extended-join", {true, [this](bool bVal) { m_bExtendedJoin = bVal; }}},
-			              })
-	{
+	    : CIRCSocket(),
+	      m_bGotPass(false),
+	      m_bGotNick(false),
+	      m_bGotUser(false),
+	      m_bInCap(false),
+	      m_bCapNotify(false),
+	      m_bAwayNotify(false),
+	      m_bAccountNotify(false),
+	      m_bExtendedJoin(false),
+	      m_bNamesx(false),
+	      m_bUHNames(false),
+	      m_bAway(false),
+	      m_bServerTime(false),
+	      m_bBatch(false),
+	      m_bEchoMessage(false),
+	      m_bSelfMessage(false),
+	      m_bPlaybackActive(false),
+	      m_pUser(nullptr),
+	      m_pNetwork(nullptr),
+	      m_sNick("unknown-nick"),
+	      m_sPass(""),
+	      m_sUser(""),
+	      m_sNetwork(""),
+	      m_sIdentifier(""),
+	      m_spAuth(),
+	      m_ssAcceptedCaps(),
+	      m_mCoreCaps({
+	          {"multi-prefix",
+	           {false, [this](bool bVal) { m_bNamesx = bVal; }}},
+	          {"userhost-in-names",
+	           {false, [this](bool bVal) { m_bUHNames = bVal; }}},
+	          {"echo-message",
+	           {false, [this](bool bVal) { m_bEchoMessage = bVal; }}},
+	          {"server-time",
+	           {false, [this](bool bVal) { m_bServerTime = bVal; }}},
+	          {"batch", {false, [this](bool bVal) { m_bBatch = bVal; }}},
+	          {"cap-notify",
+	           {false, [this](bool bVal) { m_bCapNotify = bVal; }}},
+	          {"away-notify",
+	           {true, [this](bool bVal) { m_bAwayNotify = bVal; }}},
+	          {"account-notify",
+	           {true, [this](bool bVal) { m_bAccountNotify = bVal; }}},
+	          {"extended-join",
+	           {true, [this](bool bVal) { m_bExtendedJoin = bVal; }}},
+	      }) {
 		EnableReadLine();
 		// RFC says a line can have 512 chars max, but we are
 		// a little more gentle ;)
@@ -138,7 +151,8 @@ public:
 		// For compatibility with older clients
 		m_mCoreCaps["znc.in/server-time-iso"] = m_mCoreCaps["server-time"];
 		m_mCoreCaps["znc.in/batch"] = m_mCoreCaps["batch"];
-		m_mCoreCaps["znc.in/self-message"] = {false, [this](bool bVal) { m_bSelfMessage = bVal; }};
+		m_mCoreCaps["znc.in/self-message"] = {
+		    false, [this](bool bVal) { m_bSelfMessage = bVal; }};
 	}
 
 	virtual ~CClient();
@@ -240,7 +254,9 @@ public:
 	void PutModule(const CString& sModule, const CString& sLine);
 	void PutModNotice(const CString& sModule, const CString& sLine);
 
-	bool IsCapEnabled(const CString& sCap) const { return 1 == m_ssAcceptedCaps.count(sCap); }
+	bool IsCapEnabled(const CString& sCap) const {
+		return 1 == m_ssAcceptedCaps.count(sCap);
+	}
 
 	void NotifyServerDependentCaps(const SCString& ssCaps);
 	void ClearServerDependentCaps();
@@ -258,13 +274,15 @@ public:
 	void SetNick(const CString& s);
 	void SetAway(bool bAway) { m_bAway = bAway; }
 	CUser* GetUser() const { return m_pUser; }
-	void SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect=true, bool bReconnect=true);
+	void SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect = true,
+	                bool bReconnect = true);
 	CIRCNetwork* GetNetwork() const { return m_pNetwork; }
 	const std::vector<CClient*>& GetClients() const;
 	const CIRCSock* GetIRCSock() const;
 	CIRCSock* GetIRCSock();
 	CString GetFullName() const;
-private:
+
+  private:
 	void HandleCap(const CMessage& Message);
 	void RespondCap(const CString& sResponse);
 	void ParsePass(const CString& sAuthLine);
@@ -292,41 +310,42 @@ private:
 	bool OnTopicMessage(CTopicMessage& Message);
 	bool OnOtherMessage(CMessage& Message);
 
-protected:
-	bool                 m_bGotPass;
-	bool                 m_bGotNick;
-	bool                 m_bGotUser;
-	bool                 m_bInCap;
-	bool                 m_bCapNotify;
-	bool                 m_bAwayNotify;
-	bool                 m_bAccountNotify;
-	bool                 m_bExtendedJoin;
-	bool                 m_bNamesx;
-	bool                 m_bUHNames;
-	bool                 m_bAway;
-	bool                 m_bServerTime;
-	bool                 m_bBatch;
-	bool                 m_bEchoMessage;
-	bool                 m_bSelfMessage;
-	bool                 m_bPlaybackActive;
-	CUser*               m_pUser;
-	CIRCNetwork*         m_pNetwork;
-	CString              m_sNick;
-	CString              m_sPass;
-	CString              m_sUser;
-	CString              m_sNetwork;
-	CString              m_sIdentifier;
+  protected:
+	bool m_bGotPass;
+	bool m_bGotNick;
+	bool m_bGotUser;
+	bool m_bInCap;
+	bool m_bCapNotify;
+	bool m_bAwayNotify;
+	bool m_bAccountNotify;
+	bool m_bExtendedJoin;
+	bool m_bNamesx;
+	bool m_bUHNames;
+	bool m_bAway;
+	bool m_bServerTime;
+	bool m_bBatch;
+	bool m_bEchoMessage;
+	bool m_bSelfMessage;
+	bool m_bPlaybackActive;
+	CUser* m_pUser;
+	CIRCNetwork* m_pNetwork;
+	CString m_sNick;
+	CString m_sPass;
+	CString m_sUser;
+	CString m_sNetwork;
+	CString m_sIdentifier;
 	std::shared_ptr<CAuthBase> m_spAuth;
-	SCString             m_ssAcceptedCaps;
+	SCString m_ssAcceptedCaps;
 	// The capabilities supported by the ZNC core - capability names mapped
 	// to a pair which contains a bool describing whether the capability is
 	// server-dependent, and a capability value change handler.
-	std::map<CString, std::pair<bool, std::function<void(bool bVal)>>> m_mCoreCaps;
+	std::map<CString, std::pair<bool, std::function<void(bool bVal)>>>
+	    m_mCoreCaps;
 	// A subset of CIRCSock::GetAcceptedCaps(), the caps that can be listed
 	// in CAP LS and may be notified to the client with CAP NEW (cap-notify).
-	SCString             m_ssServerDependentCaps;
+	SCString m_ssServerDependentCaps;
 
 	friend class ClientTest;
 };
 
-#endif // !ZNC_CLIENT_H
+#endif  // !ZNC_CLIENT_H

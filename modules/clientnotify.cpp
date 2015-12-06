@@ -20,7 +20,7 @@
 using std::set;
 
 class CClientNotifyMod : public CModule {
-protected:
+  protected:
 	CString m_sMethod;
 	bool m_bNewOnly{};
 	bool m_bOnDisconnect{};
@@ -34,27 +34,37 @@ protected:
 	}
 
 	void SendNotification(const CString& sMessage) {
-		if(m_sMethod == "message") {
+		if (m_sMethod == "message") {
 			GetUser()->PutStatus(sMessage, nullptr, GetClient());
-		}
-		else if(m_sMethod == "notice") {
+		} else if (m_sMethod == "notice") {
 			GetUser()->PutStatusNotice(sMessage, nullptr, GetClient());
 		}
 	}
 
-public:
+  public:
 	MODCONSTRUCTOR(CClientNotifyMod) {
 		AddHelpCommand();
-		AddCommand("Method", static_cast<CModCommand::ModCmdFunc>(&CClientNotifyMod::OnMethodCommand), "<message|notice|off>", "Sets the notify method");
-		AddCommand("NewOnly", static_cast<CModCommand::ModCmdFunc>(&CClientNotifyMod::OnNewOnlyCommand), "<on|off>", "Turns notifications for unseen IP addresses on or off");
-		AddCommand("OnDisconnect", static_cast<CModCommand::ModCmdFunc>(&CClientNotifyMod::OnDisconnectCommand), "<on|off>", "Turns notifications for clients disconnecting on or off");
-		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(&CClientNotifyMod::OnShowCommand), "", "Show the current settings");
+		AddCommand("Method", static_cast<CModCommand::ModCmdFunc>(
+		                         &CClientNotifyMod::OnMethodCommand),
+		           "<message|notice|off>", "Sets the notify method");
+		AddCommand("NewOnly", static_cast<CModCommand::ModCmdFunc>(
+		                          &CClientNotifyMod::OnNewOnlyCommand),
+		           "<on|off>",
+		           "Turns notifications for unseen IP addresses on or off");
+		AddCommand("OnDisconnect", static_cast<CModCommand::ModCmdFunc>(
+		                               &CClientNotifyMod::OnDisconnectCommand),
+		           "<on|off>",
+		           "Turns notifications for clients disconnecting on or off");
+		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(
+		                       &CClientNotifyMod::OnShowCommand),
+		           "", "Show the current settings");
 	}
 
 	bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		m_sMethod = GetNV("method");
 
-		if(m_sMethod != "notice" && m_sMethod != "message" && m_sMethod != "off") {
+		if (m_sMethod != "notice" && m_sMethod != "message" &&
+		    m_sMethod != "off") {
 			m_sMethod = "message";
 		}
 
@@ -68,10 +78,12 @@ public:
 
 	void OnClientLogin() override {
 		CString sRemoteIP = GetClient()->GetRemoteIP();
-		if(!m_bNewOnly || m_sClientsSeen.find(sRemoteIP) == m_sClientsSeen.end()) {
-			SendNotification("Another client authenticated as your user. "
-				"Use the 'ListClients' command to see all " +
-				CString(GetUser()->GetAllClients().size())  + " clients.");
+		if (!m_bNewOnly ||
+		    m_sClientsSeen.find(sRemoteIP) == m_sClientsSeen.end()) {
+			SendNotification(
+			    "Another client authenticated as your user. "
+			    "Use the 'ListClients' command to see all " +
+			    CString(GetUser()->GetAllClients().size()) + " clients.");
 
 			// the set<> will automatically disregard duplicates:
 			m_sClientsSeen.insert(sRemoteIP);
@@ -79,10 +91,12 @@ public:
 	}
 
 	void OnClientDisconnect() override {
-		if(m_bOnDisconnect) {
-			SendNotification("A client disconnected from your user. "
-				"Use the 'ListClients' command to see the " +
-				CString(GetUser()->GetAllClients().size()) + " remaining client(s).");
+		if (m_bOnDisconnect) {
+			SendNotification(
+			    "A client disconnected from your user. "
+			    "Use the 'ListClients' command to see the " +
+			    CString(GetUser()->GetAllClients().size()) +
+			    " remaining client(s).");
 		}
 	}
 
@@ -126,14 +140,18 @@ public:
 	}
 
 	void OnShowCommand(const CString& sLine) {
-		PutModule("Current settings: Method: " + m_sMethod + ", for unseen IP addresses only: " + CString(m_bNewOnly) +
-			", notify on disconnecting clients: " + CString(m_bOnDisconnect));
+		PutModule("Current settings: Method: " + m_sMethod +
+		          ", for unseen IP addresses only: " + CString(m_bNewOnly) +
+		          ", notify on disconnecting clients: " +
+		          CString(m_bOnDisconnect));
 	}
 };
 
-template<> void TModInfo<CClientNotifyMod>(CModInfo& Info) {
+template <>
+void TModInfo<CClientNotifyMod>(CModInfo& Info) {
 	Info.SetWikiPage("clientnotify");
 }
 
-USERMODULEDEFS(CClientNotifyMod, "Notifies you when another IRC client logs into or out of your account. Configurable.")
-
+USERMODULEDEFS(CClientNotifyMod,
+               "Notifies you when another IRC client logs into or out of your "
+               "account. Configurable.")

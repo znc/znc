@@ -17,14 +17,17 @@
 #include <znc/Modules.h>
 
 class CBlockMotd : public CModule {
-public:
+  public:
 	MODCONSTRUCTOR(CBlockMotd) {
 		AddHelpCommand();
-		AddCommand("GetMotd", static_cast<CModCommand::ModCmdFunc>(&CBlockMotd::OverrideCommand), "[<server>]", "Override the block with this command. Can optionally specify which server to query.");
+		AddCommand("GetMotd", static_cast<CModCommand::ModCmdFunc>(
+		                          &CBlockMotd::OverrideCommand),
+		           "[<server>]",
+		           "Override the block with this command. Can optionally "
+		           "specify which server to query.");
 	}
 
-	virtual ~CBlockMotd() {
-	}
+	virtual ~CBlockMotd() {}
 
 	void OverrideCommand(const CString& sLine) {
 		m_bTemporaryAcceptMotd = true;
@@ -37,31 +40,33 @@ public:
 		}
 	}
 
-	EModRet OnRaw(CString &sLine) override {
+	EModRet OnRaw(CString& sLine) override {
 		const CString sCmd = sLine.Token(1);
 
-		if ((sCmd == "375" /* begin of MOTD */ || sCmd == "372" /* MOTD */)
-			&& !m_bTemporaryAcceptMotd)
+		if ((sCmd == "375" /* begin of MOTD */ || sCmd == "372" /* MOTD */) &&
+		    !m_bTemporaryAcceptMotd)
 			return HALT;
-		
+
 		if (sCmd == "376" /* End of MOTD */) {
 			if (!m_bTemporaryAcceptMotd) {
-				sLine = sLine.Token(0) + " 422 " +
-					sLine.Token(2) + " :MOTD blocked by ZNC";
+				sLine = sLine.Token(0) + " 422 " + sLine.Token(2) +
+				        " :MOTD blocked by ZNC";
 			}
 			m_bTemporaryAcceptMotd = false;
 		}
 		return CONTINUE;
 	}
 
-private:
+  private:
 	bool m_bTemporaryAcceptMotd = false;
 };
 
-template<> void TModInfo<CBlockMotd>(CModInfo& Info) {
+template <>
+void TModInfo<CBlockMotd>(CModInfo& Info) {
 	Info.AddType(CModInfo::NetworkModule);
 	Info.AddType(CModInfo::GlobalModule);
 	Info.SetWikiPage("block_motd");
 }
 
-USERMODULEDEFS(CBlockMotd, "Block the MOTD from IRC so it's not sent to your client(s).")
+USERMODULEDEFS(CBlockMotd,
+               "Block the MOTD from IRC so it's not sent to your client(s).")

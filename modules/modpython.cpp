@@ -31,54 +31,54 @@
 using std::vector;
 using std::set;
 
-class CModPython: public CModule {
-
+class CModPython : public CModule {
 	PyObject* m_PyZNCModule;
 	PyObject* m_PyFormatException;
 	vector<PyObject*> m_vpObject;
 
-public:
-
+  public:
 	CString GetPyExceptionStr() {
-			PyObject* ptype;
-			PyObject* pvalue;
-			PyObject* ptraceback;
-			PyErr_Fetch(&ptype, &pvalue, &ptraceback);
-			CString result;
-			if (!pvalue) {
-				Py_INCREF(Py_None);
-				pvalue = Py_None;
-			}
-			if (!ptraceback) {
-				Py_INCREF(Py_None);
-				ptraceback = Py_None;
-			}
-			PyErr_NormalizeException(&ptype, &pvalue, &ptraceback);
-			PyObject* strlist = PyObject_CallFunctionObjArgs(m_PyFormatException, ptype, pvalue, ptraceback, nullptr);
-			Py_CLEAR(ptype);
-			Py_CLEAR(pvalue);
-			Py_CLEAR(ptraceback);
-			if (!strlist) {
-				return "Couldn't get exact error message";
-			}
+		PyObject* ptype;
+		PyObject* pvalue;
+		PyObject* ptraceback;
+		PyErr_Fetch(&ptype, &pvalue, &ptraceback);
+		CString result;
+		if (!pvalue) {
+			Py_INCREF(Py_None);
+			pvalue = Py_None;
+		}
+		if (!ptraceback) {
+			Py_INCREF(Py_None);
+			ptraceback = Py_None;
+		}
+		PyErr_NormalizeException(&ptype, &pvalue, &ptraceback);
+		PyObject* strlist = PyObject_CallFunctionObjArgs(
+		    m_PyFormatException, ptype, pvalue, ptraceback, nullptr);
+		Py_CLEAR(ptype);
+		Py_CLEAR(pvalue);
+		Py_CLEAR(ptraceback);
+		if (!strlist) {
+			return "Couldn't get exact error message";
+		}
 
-			if (PySequence_Check(strlist)) {
-				PyObject* strlist_fast = PySequence_Fast(strlist, "Shouldn't happen (1)");
-				PyObject** items = PySequence_Fast_ITEMS(strlist_fast);
-				Py_ssize_t L = PySequence_Fast_GET_SIZE(strlist_fast);
-				for (Py_ssize_t i = 0; i < L; ++i) {
-					PyObject* utf8 = PyUnicode_AsUTF8String(items[i]);
-					result += PyBytes_AsString(utf8);
-					Py_CLEAR(utf8);
-				}
-				Py_CLEAR(strlist_fast);
-			} else {
-				result = "Can't get exact error message";
+		if (PySequence_Check(strlist)) {
+			PyObject* strlist_fast =
+			    PySequence_Fast(strlist, "Shouldn't happen (1)");
+			PyObject** items = PySequence_Fast_ITEMS(strlist_fast);
+			Py_ssize_t L = PySequence_Fast_GET_SIZE(strlist_fast);
+			for (Py_ssize_t i = 0; i < L; ++i) {
+				PyObject* utf8 = PyUnicode_AsUTF8String(items[i]);
+				result += PyBytes_AsString(utf8);
+				Py_CLEAR(utf8);
 			}
+			Py_CLEAR(strlist_fast);
+		} else {
+			result = "Can't get exact error message";
+		}
 
-			Py_CLEAR(strlist);
+		Py_CLEAR(strlist);
 
-			return result;
+		return result;
 	}
 
 	MODCONSTRUCTOR(CModPython) {
@@ -105,7 +105,8 @@ public:
 			sMessage = "Couldn't import python module traceback";
 			return false;
 		}
-		m_PyFormatException = PyObject_GetAttrString(pyModuleTraceback, "format_exception");
+		m_PyFormatException =
+		    PyObject_GetAttrString(pyModuleTraceback, "format_exception");
 		if (!m_PyFormatException) {
 			sMessage = "Couldn't get traceback.format_exception";
 			Py_CLEAR(pyModuleTraceback);
@@ -125,7 +126,9 @@ public:
 			return false;
 		}
 		Py_CLEAR(pySysModule);
-		PyObject* pyIgnored = PyObject_CallMethod(pySysPath, const_cast<char*>("append"), const_cast<char*>("s"), sTmp.c_str());
+		PyObject* pyIgnored =
+		    PyObject_CallMethod(pySysPath, const_cast<char*>("append"),
+		                        const_cast<char*>("s"), sTmp.c_str());
 		if (!pyIgnored) {
 			sMessage = GetPyExceptionStr();
 			Py_CLEAR(pyIgnored);
@@ -143,8 +146,10 @@ public:
 		return true;
 	}
 
-	virtual EModRet OnModuleLoading(const CString& sModName, const CString& sArgs,
-			CModInfo::EModuleType eType, bool& bSuccess, CString& sRetMsg) override {
+	virtual EModRet OnModuleLoading(const CString& sModName,
+	                                const CString& sArgs,
+	                                CModInfo::EModuleType eType, bool& bSuccess,
+	                                CString& sRetMsg) override {
 		PyObject* pyFunc = PyObject_GetAttrString(m_PyZNCModule, "load_module");
 		if (!pyFunc) {
 			sRetMsg = GetPyExceptionStr();
@@ -152,14 +157,19 @@ public:
 			bSuccess = false;
 			return HALT;
 		}
-		PyObject* pyRes = PyObject_CallFunction(pyFunc, const_cast<char*>("ssiNNNN"),
-				sModName.c_str(),
-				sArgs.c_str(),
-				(int)eType,
-				(eType == CModInfo::GlobalModule ? Py_None : SWIG_NewInstanceObj(GetUser(), SWIG_TypeQuery("CUser*"), 0)),
-				(eType == CModInfo::NetworkModule ? SWIG_NewInstanceObj(GetNetwork(), SWIG_TypeQuery("CIRCNetwork*"), 0) : Py_None),
-				CPyRetString::wrap(sRetMsg),
-				SWIG_NewInstanceObj(reinterpret_cast<CModule*>(this), SWIG_TypeQuery("CModPython*"), 0));
+		PyObject* pyRes = PyObject_CallFunction(
+		    pyFunc, const_cast<char*>("ssiNNNN"), sModName.c_str(),
+		    sArgs.c_str(), (int)eType,
+		    (eType == CModInfo::GlobalModule
+		         ? Py_None
+		         : SWIG_NewInstanceObj(GetUser(), SWIG_TypeQuery("CUser*"), 0)),
+		    (eType == CModInfo::NetworkModule
+		         ? SWIG_NewInstanceObj(GetNetwork(),
+		                               SWIG_TypeQuery("CIRCNetwork*"), 0)
+		         : Py_None),
+		    CPyRetString::wrap(sRetMsg),
+		    SWIG_NewInstanceObj(reinterpret_cast<CModule*>(this),
+		                        SWIG_TypeQuery("CModPython*"), 0));
 		if (!pyRes) {
 			sRetMsg = GetPyExceptionStr();
 			DEBUG("modpython: " << sRetMsg);
@@ -194,18 +204,21 @@ public:
 		return HALT;
 	}
 
-	EModRet OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg) override {
+	EModRet OnModuleUnloading(CModule* pModule, bool& bSuccess,
+	                          CString& sRetMsg) override {
 		CPyModule* pMod = AsPyModule(pModule);
 		if (pMod) {
 			CString sModName = pMod->GetModName();
-			PyObject* pyFunc = PyObject_GetAttrString(m_PyZNCModule, "unload_module");
+			PyObject* pyFunc =
+			    PyObject_GetAttrString(m_PyZNCModule, "unload_module");
 			if (!pyFunc) {
 				sRetMsg = GetPyExceptionStr();
 				DEBUG("modpython: " << sRetMsg);
 				bSuccess = false;
 				return HALT;
 			}
-			PyObject* pyRes = PyObject_CallFunctionObjArgs(pyFunc, pMod->GetPyObj(), nullptr);
+			PyObject* pyRes =
+			    PyObject_CallFunctionObjArgs(pyFunc, pMod->GetPyObj(), nullptr);
 			if (!pyRes) {
 				sRetMsg = GetPyExceptionStr();
 				DEBUG("modpython: " << sRetMsg);
@@ -228,18 +241,19 @@ public:
 	}
 
 	virtual EModRet OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
-			bool& bSuccess, CString& sRetMsg) override {
-		PyObject* pyFunc = PyObject_GetAttrString(m_PyZNCModule, "get_mod_info");
+	                             bool& bSuccess, CString& sRetMsg) override {
+		PyObject* pyFunc =
+		    PyObject_GetAttrString(m_PyZNCModule, "get_mod_info");
 		if (!pyFunc) {
 			sRetMsg = GetPyExceptionStr();
 			DEBUG("modpython: " << sRetMsg);
 			bSuccess = false;
 			return HALT;
 		}
-		PyObject* pyRes = PyObject_CallFunction(pyFunc, const_cast<char*>("sNN"),
-				sModule.c_str(),
-				CPyRetString::wrap(sRetMsg),
-				SWIG_NewInstanceObj(&ModInfo, SWIG_TypeQuery("CModInfo*"), 0));
+		PyObject* pyRes = PyObject_CallFunction(
+		    pyFunc, const_cast<char*>("sNN"), sModule.c_str(),
+		    CPyRetString::wrap(sRetMsg),
+		    SWIG_NewInstanceObj(&ModInfo, SWIG_TypeQuery("CModInfo*"), 0));
 		if (!pyRes) {
 			sRetMsg = GetPyExceptionStr();
 			DEBUG("modpython: " << sRetMsg);
@@ -268,29 +282,34 @@ public:
 				return HALT;
 		}
 		bSuccess = false;
-		sRetMsg = CString("Shouldn't happen. ") + __PRETTY_FUNCTION__ + " on " + __FILE__ + ":" + CString(__LINE__);
+		sRetMsg = CString("Shouldn't happen. ") + __PRETTY_FUNCTION__ + " on " +
+		          __FILE__ + ":" + CString(__LINE__);
 		DEBUG(sRetMsg);
 		return HALT;
 	}
 
-	void TryAddModInfo(const CString& sPath, const CString& sName, set<CModInfo>& ssMods, set<CString>& ssAlready, CModInfo::EModuleType eType) {
+	void TryAddModInfo(const CString& sPath, const CString& sName,
+	                   set<CModInfo>& ssMods, set<CString>& ssAlready,
+	                   CModInfo::EModuleType eType) {
 		if (ssAlready.count(sName)) {
 			return;
 		}
-		PyObject* pyFunc = PyObject_GetAttrString(m_PyZNCModule, "get_mod_info_path");
+		PyObject* pyFunc =
+		    PyObject_GetAttrString(m_PyZNCModule, "get_mod_info_path");
 		if (!pyFunc) {
 			CString sRetMsg = GetPyExceptionStr();
-			DEBUG("modpython tried to get info about [" << sPath << "] (1) but: " << sRetMsg);
+			DEBUG("modpython tried to get info about ["
+			      << sPath << "] (1) but: " << sRetMsg);
 			return;
 		}
 		CModInfo ModInfo;
-		PyObject* pyRes = PyObject_CallFunction(pyFunc, const_cast<char*>("ssN"),
-				sPath.c_str(),
-				sName.c_str(),
-				SWIG_NewInstanceObj(&ModInfo, SWIG_TypeQuery("CModInfo*"), 0));
+		PyObject* pyRes = PyObject_CallFunction(
+		    pyFunc, const_cast<char*>("ssN"), sPath.c_str(), sName.c_str(),
+		    SWIG_NewInstanceObj(&ModInfo, SWIG_TypeQuery("CModInfo*"), 0));
 		if (!pyRes) {
 			CString sRetMsg = GetPyExceptionStr();
-			DEBUG("modpython tried to get info about [" << sPath << "] (2) but: " << sRetMsg);
+			DEBUG("modpython tried to get info about ["
+			      << sPath << "] (2) but: " << sRetMsg);
 			Py_CLEAR(pyFunc);
 			return;
 		}
@@ -298,7 +317,8 @@ public:
 		long int x = PyLong_AsLong(pyRes);
 		if (PyErr_Occurred()) {
 			CString sRetMsg = GetPyExceptionStr();
-			DEBUG("modpython tried to get info about [" << sPath << "] (3) but: " << sRetMsg);
+			DEBUG("modpython tried to get info about ["
+			      << sPath << "] (3) but: " << sRetMsg);
 			Py_CLEAR(pyRes);
 			return;
 		}
@@ -309,7 +329,8 @@ public:
 		}
 	}
 
-	void OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType) override {
+	void OnGetAvailableMods(set<CModInfo>& ssMods,
+	                        CModInfo::EModuleType eType) override {
 		CDir Dir;
 		CModules::ModDirList dirs = CModules::GetModDirs();
 
@@ -342,7 +363,9 @@ public:
 
 	virtual ~CModPython() {
 		if (!m_PyZNCModule) {
-			DEBUG("~CModPython(): seems like CModPython::OnLoad() didn't initialize python");
+			DEBUG(
+			    "~CModPython(): seems like CModPython::OnLoad() didn't "
+			    "initialize python");
 			return;
 		}
 		PyObject* pyFunc = PyObject_GetAttrString(m_PyZNCModule, "unload_all");
@@ -354,7 +377,9 @@ public:
 		PyObject* pyRes = PyObject_CallFunctionObjArgs(pyFunc, nullptr);
 		if (!pyRes) {
 			CString sRetMsg = GetPyExceptionStr();
-			DEBUG("modpython tried to unload all modules in its destructor, but: " << sRetMsg);
+			DEBUG(
+			    "modpython tried to unload all modules in its destructor, but: "
+			    << sRetMsg);
 		}
 		Py_CLEAR(pyRes);
 		Py_CLEAR(pyFunc);
@@ -363,7 +388,6 @@ public:
 		Py_CLEAR(m_PyZNCModule);
 		Py_Finalize();
 	}
-
 };
 
 CString CPyModule::GetPyExceptionStr() {
@@ -383,7 +407,8 @@ VWebSubPages& CPyModule::GetSubPages() {
 void CPyTimer::RunJob() {
 	CPyModule* pMod = AsPyModule(GetModule());
 	if (pMod) {
-		PyObject* pyRes = PyObject_CallMethod(m_pyObj, const_cast<char*>("RunJob"), const_cast<char*>(""));
+		PyObject* pyRes = PyObject_CallMethod(
+		    m_pyObj, const_cast<char*>("RunJob"), const_cast<char*>(""));
 		if (!pyRes) {
 			CString sRetMsg = m_pModPython->GetPyExceptionStr();
 			DEBUG("python timer failed: " << sRetMsg);
@@ -396,7 +421,8 @@ void CPyTimer::RunJob() {
 CPyTimer::~CPyTimer() {
 	CPyModule* pMod = AsPyModule(GetModule());
 	if (pMod) {
-		PyObject* pyRes = PyObject_CallMethod(m_pyObj, const_cast<char*>("OnShutdown"), const_cast<char*>(""));
+		PyObject* pyRes = PyObject_CallMethod(
+		    m_pyObj, const_cast<char*>("OnShutdown"), const_cast<char*>(""));
 		if (!pyRes) {
 			CString sRetMsg = m_pModPython->GetPyExceptionStr();
 			DEBUG("python timer shutdown failed: " << sRetMsg);
@@ -406,56 +432,69 @@ CPyTimer::~CPyTimer() {
 	}
 }
 
-#define CHECKCLEARSOCK(Func)\
-if (!pyRes) {\
-	CString sRetMsg = m_pModPython->GetPyExceptionStr();\
-	DEBUG("python socket failed in " Func ": " << sRetMsg);\
-	Close();\
-}\
-Py_CLEAR(pyRes)
+#define CHECKCLEARSOCK(Func)                                    \
+	if (!pyRes) {                                               \
+		CString sRetMsg = m_pModPython->GetPyExceptionStr();    \
+		DEBUG("python socket failed in " Func ": " << sRetMsg); \
+		Close();                                                \
+	}                                                           \
+	Py_CLEAR(pyRes)
 
-#define CBSOCK(Func) void CPySocket::Func() {\
-	PyObject* pyRes = PyObject_CallMethod(m_pyObj, const_cast<char*>("On" #Func), const_cast<char*>(""));\
-	CHECKCLEARSOCK(#Func);\
-}
+#define CBSOCK(Func)                                                        \
+	void CPySocket::Func() {                                                \
+		PyObject* pyRes = PyObject_CallMethod(                              \
+		    m_pyObj, const_cast<char*>("On" #Func), const_cast<char*>("")); \
+		CHECKCLEARSOCK(#Func);                                              \
+	}
 CBSOCK(Connected);
 CBSOCK(Disconnected);
 CBSOCK(Timeout);
 CBSOCK(ConnectionRefused);
 
-void CPySocket::ReadData(const char *data, size_t len) {
-	PyObject* pyRes = PyObject_CallMethod(m_pyObj, const_cast<char*>("OnReadData"), const_cast<char*>("y#"), data, (int)len);
+void CPySocket::ReadData(const char* data, size_t len) {
+	PyObject* pyRes =
+	    PyObject_CallMethod(m_pyObj, const_cast<char*>("OnReadData"),
+	                        const_cast<char*>("y#"), data, (int)len);
 	CHECKCLEARSOCK("OnReadData");
 }
 
 void CPySocket::ReadLine(const CString& sLine) {
-	PyObject* pyRes = PyObject_CallMethod(m_pyObj, const_cast<char*>("OnReadLine"), const_cast<char*>("s"), sLine.c_str());
+	PyObject* pyRes =
+	    PyObject_CallMethod(m_pyObj, const_cast<char*>("OnReadLine"),
+	                        const_cast<char*>("s"), sLine.c_str());
 	CHECKCLEARSOCK("OnReadLine");
 }
 
 Csock* CPySocket::GetSockObj(const CString& sHost, unsigned short uPort) {
 	CPySocket* result = nullptr;
-	PyObject* pyRes = PyObject_CallMethod(m_pyObj, const_cast<char*>("_Accepted"), const_cast<char*>("sH"), sHost.c_str(), uPort);
+	PyObject* pyRes =
+	    PyObject_CallMethod(m_pyObj, const_cast<char*>("_Accepted"),
+	                        const_cast<char*>("sH"), sHost.c_str(), uPort);
 	if (!pyRes) {
 		CString sRetMsg = m_pModPython->GetPyExceptionStr();
 		DEBUG("python socket failed in OnAccepted: " << sRetMsg);
 		Close();
 	}
-	int res = SWIG_ConvertPtr(pyRes, (void**)&result, SWIG_TypeQuery("CPySocket*"), 0);
+	int res = SWIG_ConvertPtr(pyRes, (void**)&result,
+	                          SWIG_TypeQuery("CPySocket*"), 0);
 	if (!SWIG_IsOK(res)) {
-		DEBUG("python socket was expected to return new socket from OnAccepted, but error=" << res);
+		DEBUG(
+		    "python socket was expected to return new socket from OnAccepted, "
+		    "but error="
+		    << res);
 		Close();
 		result = nullptr;
 	}
-    if (!result) {
-        DEBUG("modpython: OnAccepted didn't return new socket");
-    }
+	if (!result) {
+		DEBUG("modpython: OnAccepted didn't return new socket");
+	}
 	Py_CLEAR(pyRes);
 	return result;
 }
 
 CPySocket::~CPySocket() {
-	PyObject* pyRes = PyObject_CallMethod(m_pyObj, const_cast<char*>("OnShutdown"), const_cast<char*>(""));
+	PyObject* pyRes = PyObject_CallMethod(
+	    m_pyObj, const_cast<char*>("OnShutdown"), const_cast<char*>(""));
 	if (!pyRes) {
 		CString sRetMsg = m_pModPython->GetPyExceptionStr();
 		DEBUG("python socket failed in OnShutdown: " << sRetMsg);
@@ -464,7 +503,8 @@ CPySocket::~CPySocket() {
 	Py_CLEAR(m_pyObj);
 }
 
-template<> void TModInfo<CModPython>(CModInfo& Info) {
+template <>
+void TModInfo<CModPython>(CModInfo& Info) {
 	Info.SetWikiPage("modpython");
 }
 

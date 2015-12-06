@@ -23,19 +23,18 @@
 
 //! @author imaginos@imaginos.net
 class CExecSock : public CZNCSock {
-public:
+  public:
 	CExecSock() : CZNCSock(0), m_iPid(-1) {}
 
-	int Execute(const CString & sExec) {
+	int Execute(const CString& sExec) {
 		int iReadFD, iWriteFD;
 		m_iPid = popen2(iReadFD, iWriteFD, sExec);
 		if (m_iPid != -1) {
 			ConnectFD(iReadFD, iWriteFD, "0.0.0.0:0");
 		}
-		return(m_iPid);
+		return (m_iPid);
 	}
-	void Kill(int iSignal)
-	{
+	void Kill(int iSignal) {
 		kill(m_iPid, iSignal);
 		Close();
 	}
@@ -45,11 +44,11 @@ public:
 		SetWSock(-1);
 	}
 
-	int popen2(int & iReadFD, int & iWriteFD, const CString & sCommand);
+	int popen2(int& iReadFD, int& iWriteFD, const CString& sCommand);
 	void close2(int iPid, int iReadFD, int iWriteFD);
 
-private:
-	int  m_iPid;
+  private:
+	int m_iPid;
 };
 
-#endif // !ZNC_EXECSOCK_H
+#endif  // !ZNC_EXECSOCK_H

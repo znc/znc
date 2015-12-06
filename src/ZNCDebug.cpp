@@ -23,21 +23,23 @@
 bool CDebug::stdoutIsTTY = true;
 bool CDebug::debug =
 #ifdef _DEBUG
-		true;
+    true;
 #else
-		false;
+    false;
 #endif
 
 CDebugStream::~CDebugStream() {
 	timeval tTime;
 	gettimeofday(&tTime, nullptr);
-	time_t tSec = (time_t)tTime.tv_sec; // some systems (e.g. openbsd) define tv_sec as long int instead of time_t
+	time_t tSec = (time_t)tTime.tv_sec;  // some systems (e.g. openbsd) define
+	                                     // tv_sec as long int instead of time_t
 	tm tM;
-	tzset();// localtime_r requires this
+	tzset();  // localtime_r requires this
 	localtime_r(&tSec, &tM);
 	char sTime[20] = {};
 	strftime(sTime, sizeof(sTime), "%Y-%m-%d %H:%M:%S", &tM);
 	char sUsec[7] = {};
 	snprintf(sUsec, sizeof(sUsec), "%06lu", (unsigned long int)tTime.tv_usec);
-	std::cout << "[" << sTime << "." << sUsec << "] " << CString(this->str()).Escape_n(CString::EDEBUG) << std::endl;
+	std::cout << "[" << sTime << "." << sUsec << "] "
+	          << CString(this->str()).Escape_n(CString::EDEBUG) << std::endl;
 }

@@ -65,15 +65,10 @@ using CConditionVariable = std::condition_variable_any;
  * For modules you should use CModuleJob instead.
  */
 class CJob {
-public:
+  public:
 	friend class CThreadPool;
 
-	enum EJobState {
-		READY,
-		RUNNING,
-		DONE,
-		CANCELLED
-	};
+	enum EJobState { READY, RUNNING, DONE, CANCELLED };
 
 	CJob() : m_eState(READY) {}
 
@@ -92,52 +87,52 @@ public:
 	/// runThread() can return early if this returns true.
 	bool wasCancelled() const;
 
-private:
+  private:
 	// Undefined copy constructor and assignment operator
 	CJob(const CJob&);
 	CJob& operator=(const CJob&);
 
-	// Synchronized via the thread pool's mutex! Do not access without that mutex!
+	// Synchronized via the thread pool's mutex! Do not access without that
+	// mutex!
 	EJobState m_eState;
 };
 
 class CThreadPool {
-private:
+  private:
 	friend class CJob;
 
 	CThreadPool();
 	~CThreadPool();
 
-public:
+  public:
 	static CThreadPool& Get();
 
 	/// Add a job to the thread pool and run it. The job will be deleted when done.
-	void addJob(CJob *job);
+	void addJob(CJob* job);
 
 	/// Cancel a job that was previously passed to addJob(). This *might*
 	/// mean that runThread() and/or runMain() will not be called on the job.
 	/// This function BLOCKS until the job finishes!
-	void cancelJob(CJob *job);
+	void cancelJob(CJob* job);
 
 	/// Cancel some jobs that were previously passed to addJob(). This *might*
 	/// mean that runThread() and/or runMain() will not be called on some of
 	/// the jobs. This function BLOCKS until all jobs finish!
-	void cancelJobs(const std::set<CJob *> &jobs);
+	void cancelJobs(const std::set<CJob*>& jobs);
 
-	int getReadFD() const {
-		return m_iJobPipe[0];
-	}
+	int getReadFD() const { return m_iJobPipe[0]; }
 
 	void handlePipeReadable() const;
 
-private:
+  private:
 	void jobDone(CJob* pJob);
 
-	// Check if the calling thread is still needed, must be called with m_mutex held
+	// Check if the calling thread is still needed, must be called with m_mutex
+	// held
 	bool threadNeeded() const;
 
-	CJob *getJobFromPipe() const;
-	void finishJob(CJob *) const;
+	CJob* getJobFromPipe() const;
+	void finishJob(CJob*) const;
 
 	void threadFunc();
 
@@ -166,8 +161,8 @@ private:
 	int m_iJobPipe[2];
 
 	// list of pending jobs
-	std::list<CJob *> m_jobs;
+	std::list<CJob*> m_jobs;
 };
 
-#endif // HAVE_PTHREAD
-#endif // !ZNC_THREADS_H
+#endif  // HAVE_PTHREAD
+#endif  // !ZNC_THREADS_H

@@ -34,7 +34,7 @@ struct CConfigEntry {
 };
 
 class CConfig {
-public:
+  public:
 	CConfig() : m_ConfigEntries(), m_SubConfigs() {}
 
 	typedef std::map<CString, VCString> EntryMap;
@@ -44,19 +44,13 @@ public:
 	typedef EntryMap::const_iterator EntryMapIterator;
 	typedef SubConfigMap::const_iterator SubConfigMapIterator;
 
-	EntryMapIterator BeginEntries() const {
-		return m_ConfigEntries.begin();
-	}
-	EntryMapIterator EndEntries() const {
-		return m_ConfigEntries.end();
-	}
+	EntryMapIterator BeginEntries() const { return m_ConfigEntries.begin(); }
+	EntryMapIterator EndEntries() const { return m_ConfigEntries.end(); }
 
 	SubConfigMapIterator BeginSubConfigs() const {
 		return m_SubConfigs.begin();
 	}
-	SubConfigMapIterator EndSubConfigs() const {
-		return m_SubConfigs.end();
-	}
+	SubConfigMapIterator EndSubConfigs() const { return m_SubConfigs.end(); }
 
 	void AddKeyValuePair(const CString& sName, const CString& sValue) {
 		if (sName.empty() || sValue.empty()) {
@@ -66,8 +60,9 @@ public:
 		m_ConfigEntries[sName].push_back(sValue);
 	}
 
-	bool AddSubConfig(const CString& sTag, const CString& sName, CConfig Config) {
-		SubConfig &conf = m_SubConfigs[sTag];
+	bool AddSubConfig(const CString& sTag, const CString& sName,
+	                  CConfig Config) {
+		SubConfig& conf = m_SubConfigs[sTag];
 		SubConfig::const_iterator it = conf.find(sName);
 
 		if (it != conf.end()) {
@@ -78,11 +73,11 @@ public:
 		return true;
 	}
 
-	bool FindStringVector(const CString& sName, VCString& vsList, bool bErase = true) {
+	bool FindStringVector(const CString& sName, VCString& vsList,
+	                      bool bErase = true) {
 		EntryMap::iterator it = m_ConfigEntries.find(sName);
 		vsList.clear();
-		if (it == m_ConfigEntries.end())
-			return false;
+		if (it == m_ConfigEntries.end()) return false;
 		vsList = it->second;
 
 		if (bErase) {
@@ -92,19 +87,19 @@ public:
 		return true;
 	}
 
-	bool FindStringEntry(const CString& sName, CString& sRes, const CString& sDefault = "") {
+	bool FindStringEntry(const CString& sName, CString& sRes,
+	                     const CString& sDefault = "") {
 		EntryMap::iterator it = m_ConfigEntries.find(sName);
 		sRes = sDefault;
-		if (it == m_ConfigEntries.end() || it->second.empty())
-			return false;
+		if (it == m_ConfigEntries.end() || it->second.empty()) return false;
 		sRes = it->second.front();
 		it->second.erase(it->second.begin());
-		if (it->second.empty())
-			m_ConfigEntries.erase(it);
+		if (it->second.empty()) m_ConfigEntries.erase(it);
 		return true;
 	}
 
-	bool FindBoolEntry(const CString& sName, bool& bRes, bool bDefault = false) {
+	bool FindBoolEntry(const CString& sName, bool& bRes,
+	                   bool bDefault = false) {
 		CString s;
 		if (FindStringEntry(sName, s)) {
 			bRes = s.ToBool();
@@ -114,7 +109,8 @@ public:
 		return false;
 	}
 
-	bool FindUIntEntry(const CString& sName, unsigned int& uRes, unsigned int uDefault = 0) {
+	bool FindUIntEntry(const CString& sName, unsigned int& uRes,
+	                   unsigned int uDefault = 0) {
 		CString s;
 		if (FindStringEntry(sName, s)) {
 			uRes = s.ToUInt();
@@ -124,7 +120,8 @@ public:
 		return false;
 	}
 
-	bool FindUShortEntry(const CString& sName, unsigned short& uRes, unsigned short uDefault = 0) {
+	bool FindUShortEntry(const CString& sName, unsigned short& uRes,
+	                     unsigned short uDefault = 0) {
 		CString s;
 		if (FindStringEntry(sName, s)) {
 			uRes = s.ToUShort();
@@ -134,7 +131,8 @@ public:
 		return false;
 	}
 
-	bool FindDoubleEntry(const CString& sName, double& fRes, double fDefault = 0) {
+	bool FindDoubleEntry(const CString& sName, double& fRes,
+	                     double fDefault = 0) {
 		CString s;
 		if (FindStringEntry(sName, s)) {
 			fRes = s.ToDouble();
@@ -144,7 +142,8 @@ public:
 		return false;
 	}
 
-	bool FindSubConfig(const CString& sName, SubConfig& Config, bool bErase = true) {
+	bool FindSubConfig(const CString& sName, SubConfig& Config,
+	                   bool bErase = true) {
 		SubConfigMap::iterator it = m_SubConfigs.find(sName);
 		if (it == m_SubConfigs.end()) {
 			Config.clear();
@@ -166,9 +165,9 @@ public:
 	bool Parse(CFile& file, CString& sErrorMsg);
 	void Write(CFile& file, unsigned int iIndentation = 0);
 
-private:
+  private:
 	EntryMap m_ConfigEntries;
 	SubConfigMap m_SubConfigs;
 };
 
-#endif // !ZNC_CONFIG_H
+#endif  // !ZNC_CONFIG_H

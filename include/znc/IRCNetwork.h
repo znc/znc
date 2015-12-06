@@ -38,11 +38,11 @@ class CIRCNetworkJoinTimer;
 class CMessage;
 
 class CIRCNetwork {
-public:
+  public:
 	static bool IsValidNetwork(const CString& sNetwork);
 
-	CIRCNetwork(CUser *pUser, const CString& sName);
-	CIRCNetwork(CUser *pUser, const CIRCNetwork& Network);
+	CIRCNetwork(CUser* pUser, const CString& sName);
+	CIRCNetwork(CUser* pUser, const CIRCNetwork& Network);
 	~CIRCNetwork();
 
 	CIRCNetwork(const CIRCNetwork&) = delete;
@@ -66,15 +66,15 @@ public:
 
 	void DelServers();
 
-	bool ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade = false);
+	bool ParseConfig(CConfig* pConfig, CString& sError, bool bUpgrade = false);
 	CConfig ToConfig() const;
 
 	void BounceAllClients();
 
 	bool IsUserAttached() const { return !m_vClients.empty(); }
 	bool IsUserOnline() const;
-	void ClientConnected(CClient *pClient);
-	void ClientDisconnected(CClient *pClient);
+	void ClientConnected(CClient* pClient);
+	void ClientDisconnected(CClient* pClient);
 
 	CUser* GetUser() const;
 	const CString& GetName() const;
@@ -82,7 +82,7 @@ public:
 	const std::vector<CClient*>& GetClients() const { return m_vClients; }
 	std::vector<CClient*> FindClients(const CString& sIdentifier) const;
 
-	void SetUser(CUser *pUser);
+	void SetUser(CUser* pUser);
 	bool SetName(const CString& sName);
 
 	// Modules
@@ -90,10 +90,14 @@ public:
 	const CModules& GetModules() const { return *m_pModules; }
 	// !Modules
 
-	bool PutUser(const CString& sLine, CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
-	bool PutUser(const CMessage& Message, CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
-	bool PutStatus(const CString& sLine, CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
-	bool PutModule(const CString& sModule, const CString& sLine, CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
+	bool PutUser(const CString& sLine, CClient* pClient = nullptr,
+	             CClient* pSkipClient = nullptr);
+	bool PutUser(const CMessage& Message, CClient* pClient = nullptr,
+	             CClient* pSkipClient = nullptr);
+	bool PutStatus(const CString& sLine, CClient* pClient = nullptr,
+	               CClient* pSkipClient = nullptr);
+	bool PutModule(const CString& sModule, const CString& sLine,
+	               CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
 
 	const std::vector<CChan*>& GetChans() const;
 	CChan* FindChan(CString sName) const;
@@ -117,18 +121,27 @@ public:
 	const std::vector<CServer*>& GetServers() const;
 	bool HasServers() const { return !m_vServers.empty(); }
 	CServer* FindServer(const CString& sName) const;
-	bool DelServer(const CString& sName, unsigned short uPort, const CString& sPass);
+	bool DelServer(const CString& sName, unsigned short uPort,
+	               const CString& sPass);
 	bool AddServer(const CString& sName);
-	bool AddServer(const CString& sName, unsigned short uPort, const CString& sPass = "", bool bSSL = false);
+	bool AddServer(const CString& sName, unsigned short uPort,
+	               const CString& sPass = "", bool bSSL = false);
 	CServer* GetNextServer(bool bAdvance = true);
 	CServer* GetCurrentServer() const;
 	void SetIRCServer(const CString& s);
 	bool SetNextServer(const CServer* pServer);
 	bool IsLastServer() const;
 
-	const SCString& GetTrustedFingerprints() const { return m_ssTrustedFingerprints; }
-	void AddTrustedFingerprint(const CString& sFP) { m_ssTrustedFingerprints.insert(sFP.Escape_n(CString::EHEXCOLON, CString::EHEXCOLON)); }
-	void DelTrustedFingerprint(const CString& sFP) { m_ssTrustedFingerprints.erase(sFP); }
+	const SCString& GetTrustedFingerprints() const {
+		return m_ssTrustedFingerprints;
+	}
+	void AddTrustedFingerprint(const CString& sFP) {
+		m_ssTrustedFingerprints.insert(
+		    sFP.Escape_n(CString::EHEXCOLON, CString::EHEXCOLON));
+	}
+	void DelTrustedFingerprint(const CString& sFP) {
+		m_ssTrustedFingerprints.erase(sFP);
+	}
 	void ClearTrustedFingerprints() { m_ssTrustedFingerprints.clear(); }
 
 	void SetIRCConnectEnabled(bool b);
@@ -155,35 +168,71 @@ public:
 	bool PutIRC(const CString& sLine);
 
 	// Buffers
-	void AddRawBuffer(const CMessage& Format, const CString& sText = "") { m_RawBuffer.AddLine(Format, sText); }
-	void UpdateRawBuffer(const CString& sCommand, const CMessage& Format, const CString& sText = "") { m_RawBuffer.UpdateLine(sCommand, Format, sText); }
-	void UpdateExactRawBuffer(const CMessage& Format, const CString& sText = "") { m_RawBuffer.UpdateExactLine(Format, sText); }
+	void AddRawBuffer(const CMessage& Format, const CString& sText = "") {
+		m_RawBuffer.AddLine(Format, sText);
+	}
+	void UpdateRawBuffer(const CString& sCommand, const CMessage& Format,
+	                     const CString& sText = "") {
+		m_RawBuffer.UpdateLine(sCommand, Format, sText);
+	}
+	void UpdateExactRawBuffer(const CMessage& Format,
+	                          const CString& sText = "") {
+		m_RawBuffer.UpdateExactLine(Format, sText);
+	}
 	void ClearRawBuffer() { m_RawBuffer.Clear(); }
 
 	/// @deprecated
-	void AddRawBuffer(const CString& sFormat, const CString& sText = "") { m_RawBuffer.AddLine(sFormat, sText); }
+	void AddRawBuffer(const CString& sFormat, const CString& sText = "") {
+		m_RawBuffer.AddLine(sFormat, sText);
+	}
 	/// @deprecated
-	void UpdateRawBuffer(const CString& sMatch, const CString& sFormat, const CString& sText = "") { m_RawBuffer.UpdateLine(sMatch, sFormat, sText); }
+	void UpdateRawBuffer(const CString& sMatch, const CString& sFormat,
+	                     const CString& sText = "") {
+		m_RawBuffer.UpdateLine(sMatch, sFormat, sText);
+	}
 	/// @deprecated
-	void UpdateExactRawBuffer(const CString& sFormat, const CString& sText = "") { m_RawBuffer.UpdateExactLine(sFormat, sText); }
+	void UpdateExactRawBuffer(const CString& sFormat,
+	                          const CString& sText = "") {
+		m_RawBuffer.UpdateExactLine(sFormat, sText);
+	}
 
-	void AddMotdBuffer(const CMessage& Format, const CString& sText = "") { m_MotdBuffer.AddLine(Format, sText); }
-	void UpdateMotdBuffer(const CString& sCommand, const CMessage& Format, const CString& sText = "") { m_MotdBuffer.UpdateLine(sCommand, Format, sText); }
+	void AddMotdBuffer(const CMessage& Format, const CString& sText = "") {
+		m_MotdBuffer.AddLine(Format, sText);
+	}
+	void UpdateMotdBuffer(const CString& sCommand, const CMessage& Format,
+	                      const CString& sText = "") {
+		m_MotdBuffer.UpdateLine(sCommand, Format, sText);
+	}
 	void ClearMotdBuffer() { m_MotdBuffer.Clear(); }
 
 	/// @deprecated
-	void AddMotdBuffer(const CString& sFormat, const CString& sText = "") { m_MotdBuffer.AddLine(sFormat, sText); }
+	void AddMotdBuffer(const CString& sFormat, const CString& sText = "") {
+		m_MotdBuffer.AddLine(sFormat, sText);
+	}
 	/// @deprecated
-	void UpdateMotdBuffer(const CString& sMatch, const CString& sFormat, const CString& sText = "") { m_MotdBuffer.UpdateLine(sMatch, sFormat, sText); }
+	void UpdateMotdBuffer(const CString& sMatch, const CString& sFormat,
+	                      const CString& sText = "") {
+		m_MotdBuffer.UpdateLine(sMatch, sFormat, sText);
+	}
 
-	void AddNoticeBuffer(const CMessage& Format, const CString& sText = "") { m_NoticeBuffer.AddLine(Format, sText); }
-	void UpdateNoticeBuffer(const CString& sCommand, const CMessage& Format, const CString& sText = "") { m_NoticeBuffer.UpdateLine(sCommand, Format, sText); }
+	void AddNoticeBuffer(const CMessage& Format, const CString& sText = "") {
+		m_NoticeBuffer.AddLine(Format, sText);
+	}
+	void UpdateNoticeBuffer(const CString& sCommand, const CMessage& Format,
+	                        const CString& sText = "") {
+		m_NoticeBuffer.UpdateLine(sCommand, Format, sText);
+	}
 	void ClearNoticeBuffer() { m_NoticeBuffer.Clear(); }
 
 	/// @deprecated
-	void AddNoticeBuffer(const CString& sFormat, const CString& sText = "") { m_NoticeBuffer.AddLine(sFormat, sText); }
+	void AddNoticeBuffer(const CString& sFormat, const CString& sText = "") {
+		m_NoticeBuffer.AddLine(sFormat, sText);
+	}
 	/// @deprecated
-	void UpdateNoticeBuffer(const CString& sMatch, const CString& sFormat, const CString& sText = "") { m_NoticeBuffer.UpdateLine(sMatch, sFormat, sText); }
+	void UpdateNoticeBuffer(const CString& sMatch, const CString& sFormat,
+	                        const CString& sText = "") {
+		m_NoticeBuffer.UpdateLine(sMatch, sFormat, sText);
+	}
 
 	void ClearQueryBuffer();
 	// !Buffers
@@ -208,10 +257,14 @@ public:
 	double GetFloodRate() const { return m_fFloodRate; }
 	unsigned short int GetFloodBurst() const { return m_uFloodBurst; }
 	void SetFloodRate(double fFloodRate) { m_fFloodRate = fFloodRate; }
-	void SetFloodBurst(unsigned short int uFloodBurst) { m_uFloodBurst = uFloodBurst; }
+	void SetFloodBurst(unsigned short int uFloodBurst) {
+		m_uFloodBurst = uFloodBurst;
+	}
 
 	unsigned short int GetJoinDelay() const { return m_uJoinDelay; }
-	void SetJoinDelay(unsigned short int uJoinDelay) { m_uJoinDelay = uJoinDelay; }
+	void SetJoinDelay(unsigned short int uJoinDelay) {
+		m_uJoinDelay = uJoinDelay;
+	}
 
 	unsigned long long BytesRead() const { return m_uBytesRead; }
 	unsigned long long BytesWritten() const { return m_uBytesWritten; }
@@ -221,48 +274,50 @@ public:
 
 	CString ExpandString(const CString& sStr) const;
 	CString& ExpandString(const CString& sStr, CString& sRet) const;
-private:
+
+  private:
 	bool JoinChan(CChan* pChan);
-	bool LoadModule(const CString& sModName, const CString& sArgs, const CString& sNotice, CString& sError);
+	bool LoadModule(const CString& sModName, const CString& sArgs,
+	                const CString& sNotice, CString& sError);
 
-protected:
-	CString            m_sName;
-	CUser*             m_pUser;
+  protected:
+	CString m_sName;
+	CUser* m_pUser;
 
-	CString            m_sNick;
-	CString            m_sAltNick;
-	CString            m_sIdent;
-	CString            m_sRealName;
-	CString            m_sBindHost;
-	CString            m_sEncoding;
-	CString            m_sQuitMsg;
-	SCString           m_ssTrustedFingerprints;
+	CString m_sNick;
+	CString m_sAltNick;
+	CString m_sIdent;
+	CString m_sRealName;
+	CString m_sBindHost;
+	CString m_sEncoding;
+	CString m_sQuitMsg;
+	SCString m_ssTrustedFingerprints;
 
-	CModules*          m_pModules;
+	CModules* m_pModules;
 
-	std::vector<CClient*>   m_vClients;
+	std::vector<CClient*> m_vClients;
 
-	CIRCSock*          m_pIRCSock;
+	CIRCSock* m_pIRCSock;
 
-	std::vector<CChan*>     m_vChans;
-	std::vector<CQuery*>    m_vQueries;
+	std::vector<CChan*> m_vChans;
+	std::vector<CQuery*> m_vQueries;
 
-	CString            m_sChanPrefixes;
+	CString m_sChanPrefixes;
 
-	bool               m_bIRCConnectEnabled;
-	CString            m_sIRCServer;
-	std::vector<CServer*>   m_vServers;
-	size_t             m_uServerIdx; ///< Index in m_vServers of our current server + 1
+	bool m_bIRCConnectEnabled;
+	CString m_sIRCServer;
+	std::vector<CServer*> m_vServers;
+	size_t m_uServerIdx;  ///< Index in m_vServers of our current server + 1
 
-	CNick              m_IRCNick;
-	bool               m_bIRCAway;
+	CNick m_IRCNick;
+	bool m_bIRCAway;
 
-	double             m_fFloodRate; ///< Set to -1 to disable protection.
+	double m_fFloodRate;  ///< Set to -1 to disable protection.
 	unsigned short int m_uFloodBurst;
 
-	CBuffer            m_RawBuffer;
-	CBuffer            m_MotdBuffer;
-	CBuffer            m_NoticeBuffer;
+	CBuffer m_RawBuffer;
+	CBuffer m_MotdBuffer;
+	CBuffer m_NoticeBuffer;
 
 	CIRCNetworkPingTimer* m_pPingTimer;
 	CIRCNetworkJoinTimer* m_pJoinTimer;
@@ -272,4 +327,4 @@ protected:
 	unsigned long long m_uBytesWritten;
 };
 
-#endif // !ZNC_IRCNETWORK_H
+#endif  // !ZNC_IRCNETWORK_H

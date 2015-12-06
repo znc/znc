@@ -26,9 +26,8 @@ class CIRCNetwork;
 class CChan;
 // !Forward Decl
 
-class CNick
-{
-public:
+class CNick {
+  public:
 	CNick();
 	CNick(const CString& sNick);
 	~CNick();
@@ -39,7 +38,8 @@ public:
 	void Reset();
 	void Parse(const CString& sNickMask);
 	CString GetHostMask() const;
-	size_t GetCommonChans(std::vector<CChan*>& vChans, CIRCNetwork* pNetwork) const;
+	size_t GetCommonChans(std::vector<CChan*>& vChans,
+	                      CIRCNetwork* pNetwork) const;
 	bool NickEquals(const CString& nickname) const;
 
 	// Setters
@@ -62,13 +62,14 @@ public:
 	// !Getters
 
 	void Clone(const CNick& SourceNick);
-private:
-protected:
-	CString      m_sChanPerms;
+
+  private:
+  protected:
+	CString m_sChanPerms;
 	CIRCNetwork* m_pNetwork;
-	CString      m_sNick;
-	CString      m_sIdent;
-	CString      m_sHost;
+	CString m_sNick;
+	CString m_sIdent;
+	CString m_sHost;
 };
 
-#endif // !ZNC_NICK_H
+#endif  // !ZNC_NICK_H

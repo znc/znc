@@ -24,28 +24,20 @@ struct ConfigStackEntry {
 	CString sName;
 	CConfig Config;
 
-	ConfigStackEntry(const CString& Tag, const CString Name) : sTag(Tag), sName(Name), Config() {
-	}
+	ConfigStackEntry(const CString& Tag, const CString Name)
+	    : sTag(Tag), sName(Name), Config() {}
 };
 
-CConfigEntry::CConfigEntry()
-	: m_pSubConfig(nullptr) {
-}
+CConfigEntry::CConfigEntry() : m_pSubConfig(nullptr) {}
 
 CConfigEntry::CConfigEntry(const CConfig& Config)
-	: m_pSubConfig(new CConfig(Config)) {
+    : m_pSubConfig(new CConfig(Config)) {}
+
+CConfigEntry::CConfigEntry(const CConfigEntry& other) : m_pSubConfig(nullptr) {
+	if (other.m_pSubConfig) m_pSubConfig = new CConfig(*other.m_pSubConfig);
 }
 
-CConfigEntry::CConfigEntry(const CConfigEntry& other)
-	: m_pSubConfig(nullptr) {
-	if (other.m_pSubConfig)
-		m_pSubConfig = new CConfig(*other.m_pSubConfig);
-}
-
-CConfigEntry::~CConfigEntry()
-{
-	delete m_pSubConfig;
-}
+CConfigEntry::~CConfigEntry() { delete m_pSubConfig; }
 
 CConfigEntry& CConfigEntry::operator=(const CConfigEntry& other) {
 	delete m_pSubConfig;
@@ -56,13 +48,12 @@ CConfigEntry& CConfigEntry::operator=(const CConfigEntry& other) {
 	return *this;
 }
 
-bool CConfig::Parse(CFile& file, CString& sErrorMsg)
-{
+bool CConfig::Parse(CFile& file, CString& sErrorMsg) {
 	CString sLine;
 	unsigned int uLineNum = 0;
-	CConfig *pActiveConfig = this;
+	CConfig* pActiveConfig = this;
 	std::stack<ConfigStackEntry> ConfigStack;
-	bool bCommented = false;     // support for /**/ style comments
+	bool bCommented = false;  // support for /**/ style comments
 
 	if (!file.Seek(0)) {
 		sErrorMsg = "Could not seek to the beginning of the config.";
@@ -72,14 +63,15 @@ bool CConfig::Parse(CFile& file, CString& sErrorMsg)
 	while (file.ReadLine(sLine)) {
 		uLineNum++;
 
-#define ERROR(arg) do { \
-	std::stringstream stream; \
-	stream << "Error on line " << uLineNum << ": " << arg; \
-	sErrorMsg = stream.str(); \
-	m_SubConfigs.clear(); \
-	m_ConfigEntries.clear(); \
-	return false; \
-} while (0)
+#define ERROR(arg)                                             \
+	do {                                                       \
+		std::stringstream stream;                              \
+		stream << "Error on line " << uLineNum << ": " << arg; \
+		sErrorMsg = stream.str();                              \
+		m_SubConfigs.clear();                                  \
+		m_ConfigEntries.clear();                               \
+		return false;                                          \
+	} while (0)
 
 		// Remove all leading spaces and trailing line endings
 		sLine.TrimLeft();
@@ -92,7 +84,8 @@ bool CConfig::Parse(CFile& file, CString& sErrorMsg)
 			continue;
 		}
 
-		if ((sLine.empty()) || (sLine.StartsWith("#")) || (sLine.StartsWith("//"))) {
+		if ((sLine.empty()) || (sLine.StartsWith("#")) ||
+		    (sLine.StartsWith("//"))) {
 			continue;
 		}
 
@@ -109,7 +102,8 @@ bool CConfig::Parse(CFile& file, CString& sErrorMsg)
 
 			if (sTag.TrimPrefix("/")) {
 				if (!sValue.empty())
-					ERROR("Malformated closing tag. Expected \"</" << sTag << ">\".");
+					ERROR("Malformated closing tag. Expected \"</" << sTag
+					                                               << ">\".");
 				if (ConfigStack.empty())
 					ERROR("Closing tag \"" << sTag << "\" which is not open.");
 
@@ -128,11 +122,12 @@ bool CConfig::Parse(CFile& file, CString& sErrorMsg)
 				else
 					pActiveConfig = &ConfigStack.top().Config;
 
-				SubConfig &conf = pActiveConfig->m_SubConfigs[sTag.AsLower()];
+				SubConfig& conf = pActiveConfig->m_SubConfigs[sTag.AsLower()];
 				SubConfig::const_iterator it = conf.find(sName);
 
 				if (it != conf.end())
-					ERROR("Duplicate entry for tag \"" << sTag << "\" name \"" << sName << "\".");
+					ERROR("Duplicate entry for tag \"" << sTag << "\" name \""
+					                                   << sName << "\".");
 
 				conf[sName] = CConfigEntry(myConfig);
 			} else {
@@ -157,19 +152,20 @@ bool CConfig::Parse(CFile& file, CString& sErrorMsg)
 		// leading/trailing spaces.
 		sName.Trim();
 
-		if (sName.empty() || sValue.empty())
-			ERROR("Malformed line");
+		if (sName.empty() || sValue.empty()) ERROR("Malformed line");
 
 		CString sNameLower = sName.AsLower();
 		pActiveConfig->m_ConfigEntries[sNameLower].push_back(sValue);
 	}
 
-	if (bCommented)
-		ERROR("Comment not closed at end of file.");
+	if (bCommented) ERROR("Comment not closed at end of file.");
 
 	if (!ConfigStack.empty()) {
 		const CString& sTag = ConfigStack.top().sTag;
-		ERROR("Not all tags are closed at the end of the file. Inner-most open tag is \"" << sTag << "\".");
+		ERROR(
+		    "Not all tags are closed at the end of the file. Inner-most open "
+		    "tag is \""
+		    << sTag << "\".");
 	}
 
 	return true;

@@ -24,20 +24,26 @@
 class CModule;
 
 class CZNCSock : public Csock {
-public:
+  public:
 	CZNCSock(int timeout = 60);
 	CZNCSock(const CString& sHost, u_short port, int timeout = 60);
 	~CZNCSock() {}
 
-	int ConvertAddress(const struct sockaddr_storage* pAddr, socklen_t iAddrLen, CString& sIP, u_short* piPort) const override;
+	int ConvertAddress(const struct sockaddr_storage* pAddr, socklen_t iAddrLen,
+	                   CString& sIP, u_short* piPort) const override;
 #ifdef HAVE_LIBSSL
-	int VerifyPeerCertificate(int iPreVerify, X509_STORE_CTX * pStoreCTX) override;
+	int VerifyPeerCertificate(int iPreVerify,
+	                          X509_STORE_CTX* pStoreCTX) override;
 	void SSLHandShakeFinished() override;
 	bool SNIConfigureClient(CString& sHostname) override;
 #endif
-	void SetHostToVerifySSL(const CString& sHost) { m_sHostToVerifySSL = sHost; }
+	void SetHostToVerifySSL(const CString& sHost) {
+		m_sHostToVerifySSL = sHost;
+	}
 	CString GetSSLPeerFingerprint() const;
-	void SetSSLTrustedPeerFingerprints(const SCString& ssFPs) { m_ssTrustedFingerprints = ssFPs; }
+	void SetSSLTrustedPeerFingerprints(const SCString& ssFPs) {
+		m_ssTrustedFingerprints = ssFPs;
+	}
 
 #ifndef HAVE_ICU
 	// Don't fail to compile when ICU is not enabled
@@ -45,30 +51,29 @@ public:
 #endif
 	virtual CString GetRemoteIP() const { return Csock::GetRemoteIP(); }
 
-protected:
+  protected:
 	// All existing errno codes seem to be in range 1-300
 	enum {
 		errnoBadSSLCert = 12569,
 	};
 
-private:
+  private:
 	CString m_sHostToVerifySSL;
 	SCString m_ssTrustedFingerprints;
 	SCString m_ssCertVerificationErrors;
 };
 
-enum EAddrType {
-	ADDR_IPV4ONLY,
-	ADDR_IPV6ONLY,
-	ADDR_ALL
-};
+enum EAddrType { ADDR_IPV4ONLY, ADDR_IPV6ONLY, ADDR_ALL };
 
 class CSockManager : public TSocketManager<CZNCSock> {
-public:
+  public:
 	CSockManager();
 	virtual ~CSockManager();
 
-	bool ListenHost(u_short iPort, const CString& sSockName, const CString& sBindHost, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = nullptr, u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL) {
+	bool ListenHost(u_short iPort, const CString& sSockName,
+	                const CString& sBindHost, bool bSSL = false,
+	                int iMaxConns = SOMAXCONN, CZNCSock* pcSock = nullptr,
+	                u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL) {
 		CSListener L(iPort, sBindHost);
 
 		L.SetSockName(sSockName);
@@ -93,11 +98,17 @@ public:
 		return Listen(L, pcSock);
 	}
 
-	bool ListenAll(u_short iPort, const CString& sSockName, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = nullptr, u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL) {
-		return ListenHost(iPort, sSockName, "", bSSL, iMaxConns, pcSock, iTimeout, eAddr);
+	bool ListenAll(u_short iPort, const CString& sSockName, bool bSSL = false,
+	               int iMaxConns = SOMAXCONN, CZNCSock* pcSock = nullptr,
+	               u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL) {
+		return ListenHost(iPort, sSockName, "", bSSL, iMaxConns, pcSock,
+		                  iTimeout, eAddr);
 	}
 
-	u_short ListenRand(const CString& sSockName, const CString& sBindHost, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = nullptr, u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL) {
+	u_short ListenRand(const CString& sSockName, const CString& sBindHost,
+	                   bool bSSL = false, int iMaxConns = SOMAXCONN,
+	                   CZNCSock* pcSock = nullptr, u_int iTimeout = 0,
+	                   EAddrType eAddr = ADDR_ALL) {
 		unsigned short uPort = 0;
 		CSListener L(0, sBindHost);
 
@@ -125,15 +136,23 @@ public:
 		return uPort;
 	}
 
-	u_short ListenAllRand(const CString& sSockName, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = nullptr, u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL) {
-		return(ListenRand(sSockName, "", bSSL, iMaxConns, pcSock, iTimeout, eAddr));
+	u_short ListenAllRand(const CString& sSockName, bool bSSL = false,
+	                      int iMaxConns = SOMAXCONN, CZNCSock* pcSock = nullptr,
+	                      u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL) {
+		return (ListenRand(sSockName, "", bSSL, iMaxConns, pcSock, iTimeout,
+		                   eAddr));
 	}
 
-	void Connect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout = 60, bool bSSL = false, const CString& sBindHost = "", CZNCSock *pcSock = nullptr);
+	void Connect(const CString& sHostname, u_short iPort,
+	             const CString& sSockName, int iTimeout = 60, bool bSSL = false,
+	             const CString& sBindHost = "", CZNCSock* pcSock = nullptr);
 
-	unsigned int GetAnonConnectionCount(const CString &sIP) const;
-private:
-	void FinishConnect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout, bool bSSL, const CString& sBindHost, CZNCSock *pcSock);
+	unsigned int GetAnonConnectionCount(const CString& sIP) const;
+
+  private:
+	void FinishConnect(const CString& sHostname, u_short iPort,
+	                   const CString& sSockName, int iTimeout, bool bSSL,
+	                   const CString& sBindHost, CZNCSock* pcSock);
 
 #ifdef HAVE_PTHREAD
 	class CThreadMonitorFD;
@@ -141,38 +160,55 @@ private:
 #endif
 #ifdef HAVE_THREADED_DNS
 	struct TDNSTask {
-		TDNSTask() : sHostname(""), iPort(0), sSockName(""), iTimeout(0), bSSL(false), sBindhost(""), pcSock(nullptr), bDoneTarget(false), bDoneBind(false), aiTarget(nullptr), aiBind(nullptr) {}
+		TDNSTask()
+		    : sHostname(""),
+		      iPort(0),
+		      sSockName(""),
+		      iTimeout(0),
+		      bSSL(false),
+		      sBindhost(""),
+		      pcSock(nullptr),
+		      bDoneTarget(false),
+		      bDoneBind(false),
+		      aiTarget(nullptr),
+		      aiBind(nullptr) {}
 
 		TDNSTask(const TDNSTask&) = delete;
 		TDNSTask& operator=(const TDNSTask&) = delete;
 
-		CString   sHostname;
-		u_short   iPort;
-		CString   sSockName;
-		int       iTimeout;
-		bool      bSSL;
-		CString   sBindhost;
+		CString sHostname;
+		u_short iPort;
+		CString sSockName;
+		int iTimeout;
+		bool bSSL;
+		CString sBindhost;
 		CZNCSock* pcSock;
 
-		bool      bDoneTarget;
-		bool      bDoneBind;
+		bool bDoneTarget;
+		bool bDoneBind;
 		addrinfo* aiTarget;
 		addrinfo* aiBind;
 	};
 	class CDNSJob : public CJob {
-	public:
-		CDNSJob() : sHostname(""), task(nullptr), pManager(nullptr), bBind(false), iRes(0), aiResult(nullptr) {}
+	  public:
+		CDNSJob()
+		    : sHostname(""),
+		      task(nullptr),
+		      pManager(nullptr),
+		      bBind(false),
+		      iRes(0),
+		      aiResult(nullptr) {}
 
 		CDNSJob(const CDNSJob&) = delete;
 		CDNSJob& operator=(const CDNSJob&) = delete;
 
-		CString       sHostname;
-		TDNSTask*     task;
+		CString sHostname;
+		TDNSTask* task;
 		CSockManager* pManager;
-		bool          bBind;
+		bool bBind;
 
-		int           iRes;
-		addrinfo*     aiResult;
+		int iRes;
+		addrinfo* aiResult;
 
 		void runThread() override;
 		void runMain() override;
@@ -181,7 +217,7 @@ private:
 	void SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* aiResult);
 	static void* TDNSThread(void* argument);
 #endif
-protected:
+  protected:
 };
 
 /**
@@ -194,7 +230,7 @@ protected:
  * - MaxBuffer for readline is set to 10240, in the event this is reached the socket is closed (@see ReachedMaxBuffer)
  */
 class CSocket : public CZNCSock {
-public:
+  public:
 	/**
 	 * @brief ctor
 	 * @param pModule the module this sock instance is associated to
@@ -207,7 +243,8 @@ public:
 	 * @param uPort the port being connected to
 	 * @param iTimeout the timeout period for this specific sock
 	 */
-	CSocket(CModule* pModule, const CString& sHostname, unsigned short uPort, int iTimeout = 60);
+	CSocket(CModule* pModule, const CString& sHostname, unsigned short uPort,
+	        int iTimeout = 60);
 	virtual ~CSocket();
 
 	CSocket(const CSocket&) = delete;
@@ -224,16 +261,18 @@ public:
 	bool ConnectionFrom(const CString& sHost, unsigned short uPort) override;
 
 	//! Ease of use Connect, assigns to the manager and is subsequently tracked
-	bool Connect(const CString& sHostname, unsigned short uPort, bool bSSL = false, unsigned int uTimeout = 60);
+	bool Connect(const CString& sHostname, unsigned short uPort,
+	             bool bSSL = false, unsigned int uTimeout = 60);
 	//! Ease of use Listen, assigned to the manager and is subsequently tracked
 	bool Listen(unsigned short uPort, bool bSSL, unsigned int uTimeout = 0);
 
 	// Getters
 	CModule* GetModule() const;
 	// !Getters
-private:
-protected:
-	CModule*  m_pModule; //!< pointer to the module that this sock instance belongs to
+  private:
+  protected:
+	CModule*
+	    m_pModule;  //!< pointer to the module that this sock instance belongs to
 };
 
 /**
@@ -241,7 +280,7 @@ protected:
  * @brief Base IRC socket for client<->ZNC, and ZNC<->server
  */
 class CIRCSocket : public CZNCSock {
-public:
+  public:
 #ifdef HAVE_ICU
 	/**
 	 * @brief Allow IRC control characters to appear even if protocol encoding explicitly disallows them.
@@ -253,19 +292,14 @@ public:
 	 * In case if protocol encoding uses these code points for something else, the encoding takes preference,
 	 * and they are not IRC control characters anymore.
 	 */
-	void IcuExtToUCallback(
-		UConverterToUnicodeArgs* toArgs,
-		const char* codeUnits,
-		int32_t length,
-		UConverterCallbackReason reason,
-		UErrorCode* err) override;
-	void IcuExtFromUCallback(
-		UConverterFromUnicodeArgs* fromArgs,
-		const UChar* codeUnits,
-		int32_t length,
-		UChar32 codePoint,
-		UConverterCallbackReason reason,
-		UErrorCode* err) override;
+	void IcuExtToUCallback(UConverterToUnicodeArgs* toArgs,
+	                       const char* codeUnits, int32_t length,
+	                       UConverterCallbackReason reason,
+	                       UErrorCode* err) override;
+	void IcuExtFromUCallback(UConverterFromUnicodeArgs* fromArgs,
+	                         const UChar* codeUnits, int32_t length,
+	                         UChar32 codePoint, UConverterCallbackReason reason,
+	                         UErrorCode* err) override;
 #endif
 };
 

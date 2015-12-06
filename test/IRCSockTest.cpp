@@ -29,24 +29,23 @@ using testing::ResultOf;
 using testing::_;
 
 class IRCSockTest : public IRCTest {
-protected:
+  protected:
 };
 
 TEST_F(IRCSockTest, OnAccountMessage) {
 	CMessage msg(":nick!user@host ACCOUNT accountname");
 	m_pTestSock->ReadLine(msg.ToString());
 
-	EXPECT_THAT(m_pTestModule->vsHooks, IsEmpty()); // no OnAccountMessage() hook (yet?)
-	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty()); // account-notify disabled
+	EXPECT_THAT(m_pTestModule->vsHooks,
+	            IsEmpty());  // no OnAccountMessage() hook (yet?)
+	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty());  // account-notify disabled
 }
 
 TEST_F(IRCSockTest, OnActionMessage) {
 	// 2 callbacks are called in row: OnCTCP, OnAction.
 	// If OnCTCP returns HALT, OnAction isn't called.
 	struct ActionModule : TestModule {
-		ActionModule() {
-			Reset();
-		}
+		ActionModule() { Reset(); }
 		void Reset() {
 			Mock::VerifyAndClear(this);
 			EXPECT_CALL(*this, OnPrivCTCPMessage(_)).Times(0);
@@ -77,7 +76,10 @@ TEST_F(IRCSockTest, OnActionMessage) {
 		EXPECT_EQ(pExpectedChan, m.GetChan());
 		return CModule::HALT;
 	});
-	auto Reset = [&]() { testModule.Reset(); m_pTestClient->Reset(); };
+	auto Reset = [&]() {
+		testModule.Reset();
+		m_pTestClient->Reset();
+	};
 
 	Reset();
 	{
@@ -133,15 +135,17 @@ TEST_F(IRCSockTest, OnAwayMessage) {
 	CMessage msg(":nick!user@host AWAY :reason");
 	m_pTestSock->ReadLine(msg.ToString());
 
-	EXPECT_THAT(m_pTestModule->vsHooks, IsEmpty()); // no OnAwayMessage() hook (yet?)
-	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty()); // away-notify disabled
+	EXPECT_THAT(m_pTestModule->vsHooks,
+	            IsEmpty());  // no OnAwayMessage() hook (yet?)
+	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty());  // away-notify disabled
 }
 
 TEST_F(IRCSockTest, OnCapabilityMessage) {
 	CMessage msg(":server CAP * LS :multi-prefix sasl");
 	m_pTestSock->ReadLine(msg.ToString());
 
-	EXPECT_THAT(m_pTestModule->vsHooks, IsEmpty()); // no OnCapabilityMessage() hook (yet?)
+	EXPECT_THAT(m_pTestModule->vsHooks,
+	            IsEmpty());  // no OnCapabilityMessage() hook (yet?)
 	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty());
 }
 
@@ -154,7 +158,7 @@ TEST_F(IRCSockTest, OnCTCPMessage) {
 	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
 	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(m_pTestNetwork));
 	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(m_pTestChan));
-	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty()); // halt
+	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty());  // halt
 
 	m_pTestModule->eAction = CModule::CONTINUE;
 	m_pTestSock->ReadLine(msg.ToString());
@@ -172,7 +176,7 @@ TEST_F(IRCSockTest, OnCTCPMessage) {
 	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
 	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(m_pTestNetwork));
 	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
-	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty()); // halt
+	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty());  // halt
 
 	m_pTestModule->eAction = CModule::CONTINUE;
 	m_pTestSock->ReadLine(msg.ToString());
@@ -190,7 +194,7 @@ TEST_F(IRCSockTest, OnCTCPMessage) {
 	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
 	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(m_pTestNetwork));
 	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
-	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty()); // halt
+	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty());  // halt
 
 	m_pTestModule->eAction = CModule::CONTINUE;
 	m_pTestSock->ReadLine(msg.ToString());
@@ -202,15 +206,20 @@ TEST_F(IRCSockTest, OnErrorMessage) {
 	CMessage msg(":server ERROR :foo bar");
 	m_pTestSock->ReadLine(msg.ToString());
 
-	EXPECT_THAT(m_pTestModule->vsHooks, IsEmpty()); // no OnErrorMessage() hook (yet?)
-	EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(":*status!znc@znc.in PRIVMSG me :Error from Server [foo bar]"));
+	EXPECT_THAT(m_pTestModule->vsHooks,
+	            IsEmpty());  // no OnErrorMessage() hook (yet?)
+	EXPECT_THAT(
+	    m_pTestClient->vsLines,
+	    ElementsAre(
+	        ":*status!znc@znc.in PRIVMSG me :Error from Server [foo bar]"));
 }
 
 TEST_F(IRCSockTest, OnInviteMessage) {
 	CMessage msg(":nick INVITE me #znc");
 	m_pTestSock->ReadLine(msg.ToString());
 
-	EXPECT_THAT(m_pTestModule->vsHooks, IsEmpty()); // no OnInviteMessage() hook (yet?)
+	EXPECT_THAT(m_pTestModule->vsHooks,
+	            IsEmpty());  // no OnInviteMessage() hook (yet?)
 	EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString()));
 }
 
@@ -238,7 +247,8 @@ TEST_F(IRCSockTest, OnModeMessage) {
 	CMessage msg(":nick MODE #chan +k key");
 	m_pTestSock->ReadLine(msg.ToString());
 
-	EXPECT_THAT(m_pTestModule->vsHooks, IsEmpty()); // no OnModeMessage() hook (yet?)
+	EXPECT_THAT(m_pTestModule->vsHooks,
+	            IsEmpty());  // no OnModeMessage() hook (yet?)
 	EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString()));
 }
 
@@ -267,7 +277,7 @@ TEST_F(IRCSockTest, OnNoticeMessage) {
 	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
 	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(m_pTestNetwork));
 	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(m_pTestChan));
-	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty()); // halt
+	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty());  // halt
 
 	m_pTestModule->eAction = CModule::CONTINUE;
 	m_pTestSock->ReadLine(msg.ToString());
@@ -285,7 +295,7 @@ TEST_F(IRCSockTest, OnNoticeMessage) {
 	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
 	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(m_pTestNetwork));
 	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
-	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty()); // halt
+	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty());  // halt
 
 	m_pTestModule->eAction = CModule::CONTINUE;
 	m_pTestSock->ReadLine(msg.ToString());
@@ -302,7 +312,7 @@ TEST_F(IRCSockTest, OnNumericMessage) {
 	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
 	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(m_pTestNetwork));
 	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
-	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty()); // halt
+	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty());  // halt
 
 	m_pTestModule->eAction = CModule::CONTINUE;
 	m_pTestSock->ReadLine(msg.ToString());
@@ -360,7 +370,7 @@ TEST_F(IRCSockTest, OnTextMessage) {
 	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
 	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(m_pTestNetwork));
 	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(m_pTestChan));
-	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty()); // halt
+	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty());  // halt
 
 	m_pTestModule->eAction = CModule::CONTINUE;
 	m_pTestSock->ReadLine(msg.ToString());
@@ -378,7 +388,7 @@ TEST_F(IRCSockTest, OnTextMessage) {
 	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
 	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(m_pTestNetwork));
 	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
-	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty()); // halt
+	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty());  // halt
 
 	m_pTestModule->eAction = CModule::CONTINUE;
 	m_pTestSock->ReadLine(msg.ToString());
@@ -395,7 +405,7 @@ TEST_F(IRCSockTest, OnTopicMessage) {
 	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
 	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(m_pTestNetwork));
 	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(m_pTestChan));
-	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty()); // halt
+	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty());  // halt
 
 	m_pTestModule->eAction = CModule::CONTINUE;
 	m_pTestSock->ReadLine(msg.ToString());
@@ -407,68 +417,74 @@ TEST_F(IRCSockTest, OnWallopsMessage) {
 	CMessage msg(":blub!dummy@rox-8DBEFE92 WALLOPS :this is a test");
 	m_pTestSock->ReadLine(msg.ToString());
 
-	EXPECT_THAT(m_pTestModule->vsHooks, IsEmpty()); // no OnWallopsMessage() hook (yet?)
+	EXPECT_THAT(m_pTestModule->vsHooks,
+	            IsEmpty());  // no OnWallopsMessage() hook (yet?)
 	EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString()));
 }
 
 TEST_F(IRCSockTest, ISupport) {
 	MCString m1 = {
-		{"CHANTYPES", "#"},
-		{"EXCEPTS", ""},
-		{"INVEX", ""},
-		{"CHANMODES", "eIbq,k,flj,CFLMPQScgimnprstz"},
-		{"CHANLIMIT", "#:120"},
-		{"PREFIX", "(ov)@+"},
-		{"MAXLIST", "bqeI:100"},
-		{"MODES", "4"},
-		{"NETWORK", "znc"},
-		{"KNOCK", ""},
-		{"STATUSMSG", "@+"},
-		{"CALLERID", "g"},
+	    {"CHANTYPES", "#"},      {"EXCEPTS", ""},
+	    {"INVEX", ""},           {"CHANMODES", "eIbq,k,flj,CFLMPQScgimnprstz"},
+	    {"CHANLIMIT", "#:120"},  {"PREFIX", "(ov)@+"},
+	    {"MAXLIST", "bqeI:100"}, {"MODES", "4"},
+	    {"NETWORK", "znc"},      {"KNOCK", ""},
+	    {"STATUSMSG", "@+"},     {"CALLERID", "g"},
 	};
 
-	m_pTestSock->ReadLine(":irc.znc.in 005 user CHANTYPES=# EXCEPTS INVEX CHANMODES=eIbq,k,flj,CFLMPQScgimnprstz CHANLIMIT=#:120 PREFIX=(ov)@+ MAXLIST=bqeI:100 MODES=4 NETWORK=znc KNOCK STATUSMSG=@+ CALLERID=g :are supported by this server");
+	m_pTestSock->ReadLine(
+	    ":irc.znc.in 005 user CHANTYPES=# EXCEPTS INVEX "
+	    "CHANMODES=eIbq,k,flj,CFLMPQScgimnprstz CHANLIMIT=#:120 PREFIX=(ov)@+ "
+	    "MAXLIST=bqeI:100 MODES=4 NETWORK=znc KNOCK STATUSMSG=@+ CALLERID=g "
+	    ":are supported by this server");
 	EXPECT_THAT(m_pTestSock->GetISupport(), ContainerEq(m1));
 	for (const auto& it : m1) {
 		EXPECT_EQ(it.second, m_pTestSock->GetISupport(it.first));
 	}
 
 	MCString m2 = {
-		{"CASEMAPPING", "rfc1459"},
-		{"CHARSET", "ascii"},
-		{"NICKLEN", "16"},
-		{"CHANNELLEN", "50"},
-		{"TOPICLEN", "390"},
-		{"ETRACE", ""},
-		{"CPRIVMSG", ""},
-		{"CNOTICE", ""},
-		{"DEAF", "D"},
-		{"MONITOR", "100"},
-		{"FNC", ""},
-		{"TARGMAX", "NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:4,NOTICE:4,ACCEPT:,MONITOR:"},
+	    {"CASEMAPPING", "rfc1459"},
+	    {"CHARSET", "ascii"},
+	    {"NICKLEN", "16"},
+	    {"CHANNELLEN", "50"},
+	    {"TOPICLEN", "390"},
+	    {"ETRACE", ""},
+	    {"CPRIVMSG", ""},
+	    {"CNOTICE", ""},
+	    {"DEAF", "D"},
+	    {"MONITOR", "100"},
+	    {"FNC", ""},
+	    {"TARGMAX",
+	     "NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:4,NOTICE:4,ACCEPT:,MONITOR:"},
 	};
 
 	MCString m12;
-	std::merge(m1.begin(), m1.end(), m2.begin(), m2.end(), std::inserter(m12, m12.begin()));
+	std::merge(m1.begin(), m1.end(), m2.begin(), m2.end(),
+	           std::inserter(m12, m12.begin()));
 
-	m_pTestSock->ReadLine(":server 005 user CASEMAPPING=rfc1459 CHARSET=ascii NICKLEN=16 CHANNELLEN=50 TOPICLEN=390 ETRACE CPRIVMSG CNOTICE DEAF=D MONITOR=100 FNC TARGMAX=NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:4,NOTICE:4,ACCEPT:,MONITOR: :are supported by this server");
+	m_pTestSock->ReadLine(
+	    ":server 005 user CASEMAPPING=rfc1459 CHARSET=ascii NICKLEN=16 "
+	    "CHANNELLEN=50 TOPICLEN=390 ETRACE CPRIVMSG CNOTICE DEAF=D MONITOR=100 "
+	    "FNC "
+	    "TARGMAX=NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:4,NOTICE:4,ACCEPT:,"
+	    "MONITOR: :are supported by this server");
 	EXPECT_THAT(m_pTestSock->GetISupport(), ContainerEq(m12));
 	for (const auto& it : m2) {
 		EXPECT_EQ(it.second, m_pTestSock->GetISupport(it.first));
 	}
 
 	MCString m3 = {
-		{"EXTBAN", "$,ajrxz"},
-		{"WHOX", ""},
-		{"CLIENTVER", "3.0"},
-		{"SAFELIST", ""},
-		{"ELIST", "CTU"},
+	    {"EXTBAN", "$,ajrxz"}, {"WHOX", ""},     {"CLIENTVER", "3.0"},
+	    {"SAFELIST", ""},      {"ELIST", "CTU"},
 	};
 
 	MCString m123;
-	std::merge(m12.begin(), m12.end(), m3.begin(), m3.end(), std::inserter(m123, m123.begin()));
+	std::merge(m12.begin(), m12.end(), m3.begin(), m3.end(),
+	           std::inserter(m123, m123.begin()));
 
-	m_pTestSock->ReadLine(":server 005 zzzzzz EXTBAN=$,ajrxz WHOX CLIENTVER=3.0 SAFELIST ELIST=CTU :are supported by this server");
+	m_pTestSock->ReadLine(
+	    ":server 005 zzzzzz EXTBAN=$,ajrxz WHOX CLIENTVER=3.0 SAFELIST "
+	    "ELIST=CTU :are supported by this server");
 	EXPECT_THAT(m_pTestSock->GetISupport(), ContainerEq(m123));
 	for (const auto& it : m3) {
 		EXPECT_EQ(it.second, m_pTestSock->GetISupport(it.first));
@@ -480,8 +496,11 @@ TEST_F(IRCSockTest, ISupport) {
 }
 
 TEST_F(IRCSockTest, StatusMsg) {
-	m_pTestSock->ReadLine(":irc.znc.in 001 me :Welcome to the Internet Relay Network me");
-	m_pTestSock->ReadLine(":irc.znc.in 005 me CHANTYPES=# PREFIX=(ov)@+ STATUSMSG=@+ :are supported by this server");
+	m_pTestSock->ReadLine(
+	    ":irc.znc.in 001 me :Welcome to the Internet Relay Network me");
+	m_pTestSock->ReadLine(
+	    ":irc.znc.in 005 me CHANTYPES=# PREFIX=(ov)@+ STATUSMSG=@+ :are "
+	    "supported by this server");
 
 	m_pTestUser->SetAutoClearChanBuffer(false);
 	m_pTestSock->ReadLine(":someone PRIVMSG @#chan :hello ops");
@@ -489,5 +508,6 @@ TEST_F(IRCSockTest, StatusMsg) {
 	EXPECT_EQ(1u, m_pTestChan->GetBuffer().Size());
 
 	m_pTestUser->SetTimestampPrepend(false);
-	EXPECT_EQ(":someone PRIVMSG @#chan :hello ops", m_pTestChan->GetBuffer().GetLine(0, *m_pTestClient));
+	EXPECT_EQ(":someone PRIVMSG @#chan :hello ops",
+	          m_pTestChan->GetBuffer().GetLine(0, *m_pTestClient));
 }

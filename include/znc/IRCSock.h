@@ -33,7 +33,7 @@ class CClient;
 
 // TODO: This class needs new name
 class CIRCSock : public CIRCSocket {
-public:
+  public:
 	CIRCSock(CIRCNetwork* pNetwork);
 	virtual ~CIRCSock();
 
@@ -41,11 +41,12 @@ public:
 	CIRCSock& operator=(const CIRCSock&) = delete;
 
 	typedef enum {
-		// These values must line up with their position in the CHANMODE argument to raw 005
-		ListArg    = 0,
-		HasArg     = 1,
+		// These values must line up with their position in the CHANMODE
+	    // argument to raw 005
+		ListArg = 0,
+		HasArg = 1,
 		ArgWhenSet = 2,
-		NoArg      = 3
+		NoArg = 3
 	} EChanModeArgs;
 
 	void ReadLine(const CString& sData) override;
@@ -57,7 +58,7 @@ public:
 	void ReachedMaxBuffer() override;
 
 	void PutIRC(const CString& sLine);
-	void PutIRCQuick(const CString& sLine); //!< Should be used for PONG only
+	void PutIRCQuick(const CString& sLine);  //!< Should be used for PONG only
 	void ResetChans();
 	void Quit(const CString& sQuitMsg = "");
 
@@ -79,9 +80,15 @@ public:
 	unsigned int GetMaxNickLen() const { return m_uMaxNickLen; }
 	EChanModeArgs GetModeType(unsigned char uMode) const;
 	unsigned char GetPermFromMode(unsigned char uMode) const;
-	const std::map<unsigned char, EChanModeArgs>& GetChanModes() const { return m_mueChanModes; }
-	bool IsPermChar(const char c) const { return (c != '\0' && GetPerms().find(c) != CString::npos); }
-	bool IsPermMode(const char c) const { return (c != '\0' && GetPermModes().find(c) != CString::npos); }
+	const std::map<unsigned char, EChanModeArgs>& GetChanModes() const {
+		return m_mueChanModes;
+	}
+	bool IsPermChar(const char c) const {
+		return (c != '\0' && GetPerms().find(c) != CString::npos);
+	}
+	bool IsPermMode(const char c) const {
+		return (c != '\0' && GetPermModes().find(c) != CString::npos);
+	}
 	const CString& GetPerms() const { return m_sPerms; }
 	const CString& GetPermModes() const { return m_sPermModes; }
 	CString GetNickMask() const { return m_Nick.GetNickMask(); }
@@ -94,19 +101,24 @@ public:
 	bool HasAccountNotify() const { return m_bAccountNotify; }
 	bool HasExtendedJoin() const { return m_bExtendedJoin; }
 	bool HasServerTime() const { return m_bServerTime; }
-	const std::set<unsigned char>& GetUserModes() const { return m_scUserModes; }
+	const std::set<unsigned char>& GetUserModes() const {
+		return m_scUserModes;
+	}
 	// This is true if we are past raw 001
 	bool IsAuthed() const { return m_bAuthed; }
 	const SCString& GetAcceptedCaps() const { return m_ssAcceptedCaps; }
-	bool IsCapAccepted(const CString& sCap) { return 1 == m_ssAcceptedCaps.count(sCap); }
+	bool IsCapAccepted(const CString& sCap) {
+		return 1 == m_ssAcceptedCaps.count(sCap);
+	}
 	const MCString& GetISupport() const { return m_mISupport; }
-	CString GetISupport(const CString& sKey, const CString& sDefault = "") const;
+	CString GetISupport(const CString& sKey,
+	                    const CString& sDefault = "") const;
 	// !Getters
 
 	// TODO move this function to CIRCNetwork and make it non-static?
 	static bool IsFloodProtected(double fRate);
 
-private:
+  private:
 	// Message Handlers
 	bool OnAccountMessage(CMessage& Message);
 	bool OnActionMessage(CActionMessage& Message);
@@ -137,38 +149,39 @@ private:
 	void SendAltNick(const CString& sBadNick);
 	void SendNextCap();
 	void TrySend();
-protected:
-	bool                                m_bAuthed;
-	bool                                m_bNamesx;
-	bool                                m_bUHNames;
-	bool                                m_bAwayNotify;
-	bool                                m_bAccountNotify;
-	bool                                m_bExtendedJoin;
-	bool                                m_bServerTime;
-	CString                             m_sPerms;
-	CString                             m_sPermModes;
-	std::set<unsigned char>             m_scUserModes;
-	std::map<unsigned char, EChanModeArgs>   m_mueChanModes;
-	CIRCNetwork*                        m_pNetwork;
-	CNick                               m_Nick;
-	CString                             m_sPass;
-	std::map<CString, CChan*>           m_msChans;
-	unsigned int                        m_uMaxNickLen;
-	unsigned int                        m_uCapPaused;
-	SCString                            m_ssAcceptedCaps;
-	SCString                            m_ssPendingCaps;
-	time_t                              m_lastCTCP;
-	unsigned int                        m_uNumCTCP;
-	static const time_t                 m_uCTCPFloodTime;
-	static const unsigned int           m_uCTCPFloodCount;
-	MCString                            m_mISupport;
-	std::deque<CString>                 m_vsSendQueue;
-	short int                           m_iSendsAllowed;
-	unsigned short int                  m_uFloodBurst;
-	double                              m_fFloodRate;
-	bool                                m_bFloodProtection;
+
+  protected:
+	bool m_bAuthed;
+	bool m_bNamesx;
+	bool m_bUHNames;
+	bool m_bAwayNotify;
+	bool m_bAccountNotify;
+	bool m_bExtendedJoin;
+	bool m_bServerTime;
+	CString m_sPerms;
+	CString m_sPermModes;
+	std::set<unsigned char> m_scUserModes;
+	std::map<unsigned char, EChanModeArgs> m_mueChanModes;
+	CIRCNetwork* m_pNetwork;
+	CNick m_Nick;
+	CString m_sPass;
+	std::map<CString, CChan*> m_msChans;
+	unsigned int m_uMaxNickLen;
+	unsigned int m_uCapPaused;
+	SCString m_ssAcceptedCaps;
+	SCString m_ssPendingCaps;
+	time_t m_lastCTCP;
+	unsigned int m_uNumCTCP;
+	static const time_t m_uCTCPFloodTime;
+	static const unsigned int m_uCTCPFloodCount;
+	MCString m_mISupport;
+	std::deque<CString> m_vsSendQueue;
+	short int m_iSendsAllowed;
+	unsigned short int m_uFloodBurst;
+	double m_fFloodRate;
+	bool m_bFloodProtection;
 
 	friend class CIRCFloodTimer;
 };
 
-#endif // !ZNC_IRCSOCK_H
+#endif  // !ZNC_IRCSOCK_H

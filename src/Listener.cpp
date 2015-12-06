@@ -18,8 +18,7 @@
 #include <znc/znc.h>
 
 CListener::~CListener() {
-	if (m_pListener)
-		CZNC::Get().GetManager().DelSockByAddr(m_pListener);
+	if (m_pListener) CZNC::Get().GetManager().DelSockByAddr(m_pListener);
 }
 
 bool CListener::Listen() {
@@ -44,32 +43,32 @@ bool CListener::Listen() {
 	// Make sure there is a consistent error message, not something random
 	// which might even be "Error: Success".
 	errno = EINVAL;
-	return CZNC::Get().GetManager().ListenHost(m_uPort, "_LISTENER", m_sBindHost, bSSL, SOMAXCONN,
-			m_pListener, 0, m_eAddr);
+	return CZNC::Get().GetManager().ListenHost(m_uPort, "_LISTENER",
+	                                           m_sBindHost, bSSL, SOMAXCONN,
+	                                           m_pListener, 0, m_eAddr);
 }
 
-void CListener::ResetRealListener() {
-	m_pListener = nullptr;
-}
+void CListener::ResetRealListener() { m_pListener = nullptr; }
 
-CRealListener::~CRealListener() {
-	m_Listener.ResetRealListener();
-}
+CRealListener::~CRealListener() { m_Listener.ResetRealListener(); }
 
 bool CRealListener::ConnectionFrom(const CString& sHost, unsigned short uPort) {
 	bool bHostAllowed = CZNC::Get().IsHostAllowed(sHost);
-	DEBUG(GetSockName() << " == ConnectionFrom(" << sHost << ", " << uPort << ") [" << (bHostAllowed ? "Allowed" : "Not allowed") << "]");
+	DEBUG(GetSockName() << " == ConnectionFrom(" << sHost << ", " << uPort
+	                    << ") [" << (bHostAllowed ? "Allowed" : "Not allowed")
+	                    << "]");
 	return bHostAllowed;
 }
 
 Csock* CRealListener::GetSockObj(const CString& sHost, unsigned short uPort) {
-	CIncomingConnection *pClient = new CIncomingConnection(sHost, uPort,
-							       m_Listener.GetAcceptType(),
-							       m_Listener.GetURIPrefix());
+	CIncomingConnection* pClient = new CIncomingConnection(
+	    sHost, uPort, m_Listener.GetAcceptType(), m_Listener.GetURIPrefix());
 	if (CZNC::Get().AllowConnectionFrom(sHost)) {
 		GLOBALMODULECALL(OnClientConnect(pClient, sHost, uPort), NOTHING);
 	} else {
-		pClient->Write(":irc.znc.in 464 unknown-nick :Too many anonymous connections from your IP\r\n");
+		pClient->Write(
+		    ":irc.znc.in 464 unknown-nick :Too many anonymous connections from "
+		    "your IP\r\n");
 		pClient->Close(Csock::CLT_AFTERWRITE);
 		GLOBALMODULECALL(OnFailedLogin("", sHost), NOTHING);
 	}
@@ -77,18 +76,28 @@ Csock* CRealListener::GetSockObj(const CString& sHost, unsigned short uPort) {
 }
 
 void CRealListener::SockError(int iErrno, const CString& sDescription) {
-	DEBUG(GetSockName() << " == SockError(" << sDescription << ", " << strerror(iErrno) << ")");
+	DEBUG(GetSockName() << " == SockError(" << sDescription << ", "
+	                    << strerror(iErrno) << ")");
 	if (iErrno == EMFILE) {
-		// We have too many open fds, let's close this listening port to be able to continue
+		// We have too many open fds, let's close this listening port to be able
+		// to continue
 		// to work, next rehash will (try to) reopen it.
-		CZNC::Get().Broadcast("We hit the FD limit, closing listening socket on ["
-				+ GetLocalIP() + " : " + CString(GetLocalPort()) + "]");
-		CZNC::Get().Broadcast("An admin has to rehash to reopen the listening port");
+		CZNC::Get().Broadcast(
+		    "We hit the FD limit, closing listening socket on [" +
+		    GetLocalIP() + " : " + CString(GetLocalPort()) + "]");
+		CZNC::Get().Broadcast(
+		    "An admin has to rehash to reopen the listening port");
 		Close();
 	}
 }
 
-CIncomingConnection::CIncomingConnection(const CString& sHostname, unsigned short uPort, CListener::EAcceptType eAcceptType, const CString& sURIPrefix) : CZNCSock(sHostname, uPort), m_eAcceptType(eAcceptType), m_sURIPrefix(sURIPrefix) {
+CIncomingConnection::CIncomingConnection(const CString& sHostname,
+                                         unsigned short uPort,
+                                         CListener::EAcceptType eAcceptType,
+                                         const CString& sURIPrefix)
+    : CZNCSock(sHostname, uPort),
+      m_eAcceptType(eAcceptType),
+      m_sURIPrefix(sURIPrefix) {
 	// The socket will time out in 120 secs, no matter what.
 	// This has to be fixed up later, if desired.
 	SetTimeout(120, 0);
@@ -98,25 +107,24 @@ CIncomingConnection::CIncomingConnection(const CString& sHostname, unsigned shor
 }
 
 void CIncomingConnection::ReachedMaxBuffer() {
-	if (GetCloseType() != CLT_DONT)
-		return; // Already closing
+	if (GetCloseType() != CLT_DONT) return;  // Already closing
 
 	// We don't actually SetMaxBufferThreshold() because that would be
 	// inherited by sockets after SwapSockByAddr().
-	if (GetInternalReadBuffer().length() <= 4096)
-		return;
+	if (GetInternalReadBuffer().length() <= 4096) return;
 
 	// We should never get here with legitimate requests :/
 	Close();
 }
 
 void CIncomingConnection::ReadLine(const CString& sLine) {
-	bool bIsHTTP = (sLine.WildCmp("GET * HTTP/1.?\r\n") || sLine.WildCmp("POST * HTTP/1.?\r\n"));
-	bool bAcceptHTTP = (m_eAcceptType == CListener::ACCEPT_ALL)
-		|| (m_eAcceptType == CListener::ACCEPT_HTTP);
-	bool bAcceptIRC = (m_eAcceptType == CListener::ACCEPT_ALL)
-		|| (m_eAcceptType == CListener::ACCEPT_IRC);
-	Csock *pSock = nullptr;
+	bool bIsHTTP = (sLine.WildCmp("GET * HTTP/1.?\r\n") ||
+	                sLine.WildCmp("POST * HTTP/1.?\r\n"));
+	bool bAcceptHTTP = (m_eAcceptType == CListener::ACCEPT_ALL) ||
+	                   (m_eAcceptType == CListener::ACCEPT_HTTP);
+	bool bAcceptIRC = (m_eAcceptType == CListener::ACCEPT_ALL) ||
+	                  (m_eAcceptType == CListener::ACCEPT_IRC);
+	Csock* pSock = nullptr;
 
 	if (!bIsHTTP) {
 		// Let's assume it's an IRC connection
@@ -138,7 +146,9 @@ void CIncomingConnection::ReadLine(const CString& sLine) {
 		// This is a HTTP request, let the webmods handle it
 
 		if (!bAcceptHTTP) {
-			Write("HTTP/1.0 403 Access Denied\r\n\r\nWeb Access is not enabled.\r\n");
+			Write(
+			    "HTTP/1.0 403 Access Denied\r\n\r\nWeb Access is not "
+			    "enabled.\r\n");
 			Close(CLT_AFTERWRITE);
 
 			DEBUG("Refused HTTP connection to non HTTP port");

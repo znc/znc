@@ -28,19 +28,31 @@
 #endif
 
 #ifdef HAVE_LIBSSL
-// Copypasted from https://wiki.mozilla.org/Security/Server_Side_TLS#Intermediate_compatibility_.28default.29 at 22 Dec 2014
+// Copypasted from
+// https://wiki.mozilla.org/Security/Server_Side_TLS#Intermediate_compatibility_.28default.29
+// at 22 Dec 2014
 static CString ZNC_DefaultCipher() {
-    return
-        "ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:"
-        "DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:"
-        "ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:"
-        "ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:"
-        "DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:"
-        "AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA";
+	return "ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-"
+	       "RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:"
+	       "DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:"
+	       "ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:"
+	       "ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-"
+	       "SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:"
+	       "ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:"
+	       "DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:"
+	       "DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-"
+	       "SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:"
+	       "AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!"
+	       "RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!"
+	       "KRB5-DES-CBC3-SHA";
 }
 #endif
 
-CZNCSock::CZNCSock(int timeout) : Csock(timeout), m_sHostToVerifySSL(""), m_ssTrustedFingerprints(), m_ssCertVerificationErrors() {
+CZNCSock::CZNCSock(int timeout)
+    : Csock(timeout),
+      m_sHostToVerifySSL(""),
+      m_ssTrustedFingerprints(),
+      m_ssCertVerificationErrors() {
 #ifdef HAVE_LIBSSL
 	DisableSSLCompression();
 	FollowSSLCipherServerPreference();
@@ -53,7 +65,11 @@ CZNCSock::CZNCSock(int timeout) : Csock(timeout), m_sHostToVerifySSL(""), m_ssTr
 #endif
 }
 
-CZNCSock::CZNCSock(const CString& sHost, u_short port, int timeout) : Csock(sHost, port, timeout), m_sHostToVerifySSL(""), m_ssTrustedFingerprints(), m_ssCertVerificationErrors() {
+CZNCSock::CZNCSock(const CString& sHost, u_short port, int timeout)
+    : Csock(sHost, port, timeout),
+      m_sHostToVerifySSL(""),
+      m_ssTrustedFingerprints(),
+      m_ssCertVerificationErrors() {
 #ifdef HAVE_LIBSSL
 	DisableSSLCompression();
 	FollowSSLCipherServerPreference();
@@ -61,15 +77,15 @@ CZNCSock::CZNCSock(const CString& sHost, u_short port, int timeout) : Csock(sHos
 #endif
 }
 
-unsigned int CSockManager::GetAnonConnectionCount(const CString &sIP) const {
+unsigned int CSockManager::GetAnonConnectionCount(const CString& sIP) const {
 	const_iterator it;
 	unsigned int ret = 0;
 
 	for (it = begin(); it != end(); ++it) {
-		Csock *pSock = *it;
+		Csock* pSock = *it;
 		// Logged in CClients have "USR::<username>" as their sockname
-		if (pSock->GetType() == Csock::INBOUND && pSock->GetRemoteIP() == sIP
-				&& !pSock->GetSockName().StartsWith("USR::")) {
+		if (pSock->GetType() == Csock::INBOUND && pSock->GetRemoteIP() == sIP &&
+		    !pSock->GetSockName().StartsWith("USR::")) {
 			ret++;
 		}
 	}
@@ -79,17 +95,19 @@ unsigned int CSockManager::GetAnonConnectionCount(const CString &sIP) const {
 	return ret;
 }
 
-int CZNCSock::ConvertAddress(const struct sockaddr_storage* pAddr, socklen_t iAddrLen, CString& sIP, u_short* piPort) const {
+int CZNCSock::ConvertAddress(const struct sockaddr_storage* pAddr,
+                             socklen_t iAddrLen, CString& sIP,
+                             u_short* piPort) const {
 	int ret = Csock::ConvertAddress(pAddr, iAddrLen, sIP, piPort);
-	if (ret == 0)
-		sIP.TrimPrefix("::ffff:");
+	if (ret == 0) sIP.TrimPrefix("::ffff:");
 	return ret;
 }
 
 #ifdef HAVE_LIBSSL
-int CZNCSock::VerifyPeerCertificate(int iPreVerify, X509_STORE_CTX * pStoreCTX) {
+int CZNCSock::VerifyPeerCertificate(int iPreVerify, X509_STORE_CTX* pStoreCTX) {
 	if (iPreVerify == 0) {
-		m_ssCertVerificationErrors.insert(X509_verify_cert_error_string(X509_STORE_CTX_get_error(pStoreCTX)));
+		m_ssCertVerificationErrors.insert(
+		    X509_verify_cert_error_string(X509_STORE_CTX_get_error(pStoreCTX)));
 	}
 	return 1;
 }
@@ -122,7 +140,8 @@ void CZNCSock::SSLHandShakeFinished() {
 	}
 	DEBUG(GetSockName() + ": Bad cert");
 	CString sErrorMsg = "Invalid SSL certificate: ";
-	sErrorMsg += CString(", ").Join(begin(m_ssCertVerificationErrors), end(m_ssCertVerificationErrors));
+	sErrorMsg += CString(", ").Join(begin(m_ssCertVerificationErrors),
+	                                end(m_ssCertVerificationErrors));
 	CallSockError(errnoBadSSLCert, sErrorMsg);
 	Close();
 }
@@ -143,15 +162,16 @@ CString CZNCSock::GetSSLPeerFingerprint() const {
 		DEBUG(GetSockName() + ": GetSSLPeerFingerprint: Anonymous cert");
 		return "";
 	}
-	unsigned char buf[256/8];
-	unsigned int _32 = 256/8;
+	unsigned char buf[256 / 8];
+	unsigned int _32 = 256 / 8;
 	int iSuccess = X509_digest(pCert, evp, buf, &_32);
 	X509_free(pCert);
 	if (!iSuccess) {
 		DEBUG(GetSockName() + ": GetSSLPeerFingerprint: Couldn't find digest");
 		return "";
 	}
-	return CString(reinterpret_cast<const char*>(buf), sizeof buf).Escape_n(CString::EASCII, CString::EHEXCOLON);
+	return CString(reinterpret_cast<const char*>(buf), sizeof buf)
+	    .Escape_n(CString::EASCII, CString::EHEXCOLON);
 #else
 	return "";
 #endif
@@ -159,10 +179,8 @@ CString CZNCSock::GetSSLPeerFingerprint() const {
 
 #ifdef HAVE_PTHREAD
 class CSockManager::CThreadMonitorFD : public CSMonitorFD {
-public:
-	CThreadMonitorFD() {
-		Add(CThreadPool::Get().getReadFD(), ECT_Read);
-	}
+  public:
+	CThreadMonitorFD() { Add(CThreadPool::Get().getReadFD(), ECT_Read); }
 
 	bool FDsThatTriggered(const std::map<int, short>& miiReadyFds) override {
 		if (miiReadyFds.find(CThreadPool::Get().getReadFD())->second) {
@@ -193,7 +211,7 @@ void CSockManager::CDNSJob::runThread() {
 			iRes = ETIMEDOUT;
 			break;
 		}
-		sleep(5); // wait 5 seconds before next try
+		sleep(5);  // wait 5 seconds before next try
 	}
 }
 
@@ -203,7 +221,8 @@ void CSockManager::CDNSJob::runMain() {
 		if (this->aiResult) {
 			DEBUG("And aiResult is not nullptr...");
 		}
-		this->aiResult = nullptr; // just for case. Maybe to call freeaddrinfo()?
+		this->aiResult =
+		    nullptr;  // just for case. Maybe to call freeaddrinfo()?
 	}
 	pManager->SetTDNSThreadFinished(this->task, this->bBind, this->aiResult);
 }
@@ -212,22 +231,25 @@ void CSockManager::StartTDNSThread(TDNSTask* task, bool bBind) {
 	CString sHostname = bBind ? task->sBindhost : task->sHostname;
 	CDNSJob* arg = new CDNSJob;
 	arg->sHostname = sHostname;
-	arg->task      = task;
-	arg->bBind     = bBind;
-	arg->pManager  = this;
+	arg->task = task;
+	arg->bBind = bBind;
+	arg->pManager = this;
 
 	CThreadPool::Get().addJob(arg);
 }
 
-static CString RandomFromSet(const SCString& sSet, std::default_random_engine& gen) {
+static CString RandomFromSet(const SCString& sSet,
+                             std::default_random_engine& gen) {
 	std::uniform_int_distribution<> distr(0, sSet.size() - 1);
 	auto it = sSet.cbegin();
 	std::advance(it, distr(gen));
 	return *it;
 }
 
-static std::tuple<CString, bool> RandomFrom2SetsWithBias(const SCString& ss4, const SCString& ss6, std::default_random_engine& gen) {
-	// It's not quite what RFC says how to choose between IPv4 and IPv6, but proper way is harder to implement.
+static std::tuple<CString, bool> RandomFrom2SetsWithBias(
+    const SCString& ss4, const SCString& ss6, std::default_random_engine& gen) {
+	// It's not quite what RFC says how to choose between IPv4 and IPv6, but
+	// proper way is harder to implement.
 	// It would require to maintain some state between Csock objects.
 	bool bUseIPv6;
 	if (ss4.empty()) {
@@ -243,7 +265,8 @@ static std::tuple<CString, bool> RandomFrom2SetsWithBias(const SCString& ss4, co
 	return std::make_tuple(RandomFromSet(sSet, gen), bUseIPv6);
 }
 
-void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* aiResult) {
+void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind,
+                                         addrinfo* aiResult) {
 	if (bBind) {
 		task->aiBind = aiResult;
 		task->bDoneBind = true;
@@ -262,7 +285,8 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* a
 	SCString ssTargets6;
 	for (addrinfo* ai = task->aiTarget; ai; ai = ai->ai_next) {
 		char s[INET6_ADDRSTRLEN] = {};
-		getnameinfo(ai->ai_addr, ai->ai_addrlen, s, sizeof(s), nullptr, 0, NI_NUMERICHOST);
+		getnameinfo(ai->ai_addr, ai->ai_addrlen, s, sizeof(s), nullptr, 0,
+		            NI_NUMERICHOST);
 		switch (ai->ai_family) {
 			case AF_INET:
 				ssTargets4.insert(s);
@@ -278,7 +302,8 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* a
 	SCString ssBinds6;
 	for (addrinfo* ai = task->aiBind; ai; ai = ai->ai_next) {
 		char s[INET6_ADDRSTRLEN] = {};
-		getnameinfo(ai->ai_addr, ai->ai_addrlen, s, sizeof(s), nullptr, 0, NI_NUMERICHOST);
+		getnameinfo(ai->ai_addr, ai->ai_addrlen, s, sizeof(s), nullptr, 0,
+		            NI_NUMERICHOST);
 		switch (ai->ai_family) {
 			case AF_INET:
 				ssBinds4.insert(s);
@@ -303,7 +328,8 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* a
 			throw "Can't resolve server hostname";
 		} else if (task->sBindhost.empty()) {
 			// Choose random target
-			std::tie(sTargetHost, std::ignore) = RandomFrom2SetsWithBias(ssTargets4, ssTargets6, gen);
+			std::tie(sTargetHost, std::ignore) =
+			    RandomFrom2SetsWithBias(ssTargets4, ssTargets6, gen);
 		} else if (ssBinds4.empty() && ssBinds6.empty()) {
 			throw "Can't resolve bind hostname. Try /znc ClearBindHost and /znc ClearUserBindHost";
 		} else if (ssBinds4.empty()) {
@@ -325,14 +351,17 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* a
 		} else {
 			// Choose random target
 			bool bUseIPv6;
-			std::tie(sTargetHost, bUseIPv6) = RandomFrom2SetsWithBias(ssTargets4, ssTargets6, gen);
+			std::tie(sTargetHost, bUseIPv6) =
+			    RandomFrom2SetsWithBias(ssTargets4, ssTargets6, gen);
 			// Choose random bindhost matching chosen target
 			const SCString& ssBinds = bUseIPv6 ? ssBinds6 : ssBinds4;
 			sBindhost = RandomFromSet(ssBinds, gen);
 		}
 
-		DEBUG("TDNS: " << task->sSockName << ", connecting to [" << sTargetHost << "] using bindhost [" << sBindhost << "]");
-		FinishConnect(sTargetHost, task->iPort, task->sSockName, task->iTimeout, task->bSSL, sBindhost, task->pcSock);
+		DEBUG("TDNS: " << task->sSockName << ", connecting to [" << sTargetHost
+		               << "] using bindhost [" << sBindhost << "]");
+		FinishConnect(sTargetHost, task->iPort, task->sSockName, task->iTimeout,
+		              task->bSSL, sBindhost, task->pcSock);
 	} catch (const char* s) {
 		DEBUG(task->sSockName << ", dns resolving error: " << s);
 		task->pcSock->SetSockName(task->sSockName);
@@ -350,23 +379,25 @@ CSockManager::CSockManager() {
 #endif
 }
 
-CSockManager::~CSockManager() {
-}
+CSockManager::~CSockManager() {}
 
-void CSockManager::Connect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout, bool bSSL, const CString& sBindHost, CZNCSock *pcSock) {
+void CSockManager::Connect(const CString& sHostname, u_short iPort,
+                           const CString& sSockName, int iTimeout, bool bSSL,
+                           const CString& sBindHost, CZNCSock* pcSock) {
 	if (pcSock) {
 		pcSock->SetHostToVerifySSL(sHostname);
 	}
 #ifdef HAVE_THREADED_DNS
-	DEBUG("TDNS: initiating resolving of [" << sHostname << "] and bindhost [" << sBindHost << "]");
+	DEBUG("TDNS: initiating resolving of [" << sHostname << "] and bindhost ["
+	                                        << sBindHost << "]");
 	TDNSTask* task = new TDNSTask;
-	task->sHostname   = sHostname;
-	task->iPort       = iPort;
-	task->sSockName   = sSockName;
-	task->iTimeout    = iTimeout;
-	task->bSSL        = bSSL;
-	task->sBindhost   = sBindHost;
-	task->pcSock      = pcSock;
+	task->sHostname = sHostname;
+	task->iPort = iPort;
+	task->sSockName = sSockName;
+	task->iTimeout = iTimeout;
+	task->bSSL = bSSL;
+	task->sBindhost = sBindHost;
+	task->pcSock = pcSock;
 	if (sBindHost.empty()) {
 		task->bDoneBind = true;
 	} else {
@@ -375,11 +406,15 @@ void CSockManager::Connect(const CString& sHostname, u_short iPort, const CStrin
 	StartTDNSThread(task, false);
 #else /* HAVE_THREADED_DNS */
 	// Just let Csocket handle DNS itself
-	FinishConnect(sHostname, iPort, sSockName, iTimeout, bSSL, sBindHost, pcSock);
+	FinishConnect(sHostname, iPort, sSockName, iTimeout, bSSL, sBindHost,
+	              pcSock);
 #endif
 }
 
-void CSockManager::FinishConnect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout, bool bSSL, const CString& sBindHost, CZNCSock *pcSock) {
+void CSockManager::FinishConnect(const CString& sHostname, u_short iPort,
+                                 const CString& sSockName, int iTimeout,
+                                 bool bSSL, const CString& sBindHost,
+                                 CZNCSock* pcSock) {
 	CSConnection C(sHostname, iPort, iTimeout);
 
 	C.SetSockName(sSockName);
@@ -396,7 +431,6 @@ void CSockManager::FinishConnect(const CString& sHostname, u_short iPort, const 
 	TSocketManager<CZNCSock>::Connect(C, pcSock);
 }
 
-
 /////////////////// CSocket ///////////////////
 CSocket::CSocket(CModule* pModule) : CZNCSock(), m_pModule(pModule) {
 	if (m_pModule) m_pModule->AddSocket(this);
@@ -404,14 +438,16 @@ CSocket::CSocket(CModule* pModule) : CZNCSock(), m_pModule(pModule) {
 	SetMaxBufferThreshold(10240);
 }
 
-CSocket::CSocket(CModule* pModule, const CString& sHostname, unsigned short uPort, int iTimeout) : CZNCSock(sHostname, uPort, iTimeout), m_pModule(pModule) {
+CSocket::CSocket(CModule* pModule, const CString& sHostname,
+                 unsigned short uPort, int iTimeout)
+    : CZNCSock(sHostname, uPort, iTimeout), m_pModule(pModule) {
 	if (m_pModule) m_pModule->AddSocket(this);
 	EnableReadLine();
 	SetMaxBufferThreshold(10240);
 }
 
 CSocket::~CSocket() {
-	CUser *pUser = nullptr;
+	CUser* pUser = nullptr;
 	CIRCNetwork* pNetwork = nullptr;
 
 	// CWebSock could cause us to have a nullptr pointer here
@@ -421,10 +457,12 @@ CSocket::~CSocket() {
 		m_pModule->UnlinkSocket(this);
 	}
 
-	if (pNetwork && m_pModule && (m_pModule->GetType() == CModInfo::NetworkModule)) {
+	if (pNetwork && m_pModule &&
+	    (m_pModule->GetType() == CModInfo::NetworkModule)) {
 		pNetwork->AddBytesWritten(GetBytesWritten());
 		pNetwork->AddBytesRead(GetBytesRead());
-	} else if (pUser && m_pModule && (m_pModule->GetType() == CModInfo::UserModule)) {
+	} else if (pUser && m_pModule &&
+	           (m_pModule->GetType() == CModInfo::UserModule)) {
 		pUser->AddBytesWritten(GetBytesWritten());
 		pUser->AddBytesRead(GetBytesRead());
 	} else {
@@ -435,12 +473,15 @@ CSocket::~CSocket() {
 
 void CSocket::ReachedMaxBuffer() {
 	DEBUG(GetSockName() << " == ReachedMaxBuffer()");
-	if (m_pModule) m_pModule->PutModule("Some socket reached its max buffer limit and was closed!");
+	if (m_pModule)
+		m_pModule->PutModule(
+		    "Some socket reached its max buffer limit and was closed!");
 	Close();
 }
 
 void CSocket::SockError(int iErrno, const CString& sDescription) {
-	DEBUG(GetSockName() << " == SockError(" << sDescription << ", " << strerror(iErrno) << ")");
+	DEBUG(GetSockName() << " == SockError(" << sDescription << ", "
+	                    << strerror(iErrno) << ")");
 	if (iErrno == EMFILE) {
 		// We have too many open fds, this can cause a busy loop.
 		Close();
@@ -451,9 +492,12 @@ bool CSocket::ConnectionFrom(const CString& sHost, unsigned short uPort) {
 	return CZNC::Get().AllowConnectionFrom(sHost);
 }
 
-bool CSocket::Connect(const CString& sHostname, unsigned short uPort, bool bSSL, unsigned int uTimeout) {
+bool CSocket::Connect(const CString& sHostname, unsigned short uPort, bool bSSL,
+                      unsigned int uTimeout) {
 	if (!m_pModule) {
-		DEBUG("ERROR: CSocket::Connect called on instance without m_pModule handle!");
+		DEBUG(
+		    "ERROR: CSocket::Connect called on instance without m_pModule "
+		    "handle!");
 		return false;
 	}
 
@@ -476,13 +520,16 @@ bool CSocket::Connect(const CString& sHostname, unsigned short uPort, bool bSSL,
 		sSockName = GetSockName();
 	}
 
-	m_pModule->GetManager()->Connect(sHostname, uPort, sSockName, uTimeout, bSSL, sBindHost, this);
+	m_pModule->GetManager()->Connect(sHostname, uPort, sSockName, uTimeout,
+	                                 bSSL, sBindHost, this);
 	return true;
 }
 
 bool CSocket::Listen(unsigned short uPort, bool bSSL, unsigned int uTimeout) {
 	if (!m_pModule) {
-		DEBUG("ERROR: CSocket::Listen called on instance without m_pModule handle!");
+		DEBUG(
+		    "ERROR: CSocket::Listen called on instance without m_pModule "
+		    "handle!");
 		return false;
 	}
 
@@ -497,22 +544,22 @@ bool CSocket::Listen(unsigned short uPort, bool bSSL, unsigned int uTimeout) {
 		sSockName = GetSockName();
 	}
 
-	return m_pModule->GetManager()->ListenAll(uPort, sSockName, bSSL, SOMAXCONN, this);
+	return m_pModule->GetManager()->ListenAll(uPort, sSockName, bSSL, SOMAXCONN,
+	                                          this);
 }
 
 CModule* CSocket::GetModule() const { return m_pModule; }
 /////////////////// !CSocket ///////////////////
 
 #ifdef HAVE_ICU
-void CIRCSocket::IcuExtToUCallback(
-		UConverterToUnicodeArgs* toArgs,
-		const char* codeUnits,
-		int32_t length,
-		UConverterCallbackReason reason,
-		UErrorCode* err) {
+void CIRCSocket::IcuExtToUCallback(UConverterToUnicodeArgs* toArgs,
+                                   const char* codeUnits, int32_t length,
+                                   UConverterCallbackReason reason,
+                                   UErrorCode* err) {
 	// From http://www.mirc.com/colors.html
 	// The Control+O key combination in mIRC inserts ascii character 15,
-	// which turns off all previous attributes, including color, bold, underline, and italics.
+	// which turns off all previous attributes, including color, bold,
+	// underline, and italics.
 	//
 	// \x02 bold
 	// \x03 mIRC-compatible color
@@ -525,8 +572,10 @@ void CIRCSocket::IcuExtToUCallback(
 	// Also see http://www.visualirc.net/tech-attrs.php
 	//
 	// Keep in sync with CUser::AddTimestamp and CIRCSocket::IcuExtFromUCallback
-	static const std::set<char> scAllowedChars = {'\x02', '\x03', '\x04', '\x0F', '\x12', '\x16', '\x1D', '\x1F'};
-	if (reason == UCNV_ILLEGAL && length == 1 && scAllowedChars.count(*codeUnits)) {
+	static const std::set<char> scAllowedChars = {
+	    '\x02', '\x03', '\x04', '\x0F', '\x12', '\x16', '\x1D', '\x1F'};
+	if (reason == UCNV_ILLEGAL && length == 1 &&
+	    scAllowedChars.count(*codeUnits)) {
 		*err = U_ZERO_ERROR;
 		UChar c = *codeUnits;
 		ucnv_cbToUWriteUChars(toArgs, &c, 1, 0, err);
@@ -535,21 +584,21 @@ void CIRCSocket::IcuExtToUCallback(
 	Csock::IcuExtToUCallback(toArgs, codeUnits, length, reason, err);
 }
 
-void CIRCSocket::IcuExtFromUCallback(
-		UConverterFromUnicodeArgs* fromArgs,
-		const UChar* codeUnits,
-		int32_t length,
-		UChar32 codePoint,
-		UConverterCallbackReason reason,
-		UErrorCode* err) {
+void CIRCSocket::IcuExtFromUCallback(UConverterFromUnicodeArgs* fromArgs,
+                                     const UChar* codeUnits, int32_t length,
+                                     UChar32 codePoint,
+                                     UConverterCallbackReason reason,
+                                     UErrorCode* err) {
 	// See comment in CIRCSocket::IcuExtToUCallback
-	static const std::set<UChar32> scAllowedChars = {0x02, 0x03, 0x04, 0x0F, 0x12, 0x16, 0x1D, 0x1F};
+	static const std::set<UChar32> scAllowedChars = {0x02, 0x03, 0x04, 0x0F,
+	                                                 0x12, 0x16, 0x1D, 0x1F};
 	if (reason == UCNV_ILLEGAL && scAllowedChars.count(codePoint)) {
 		*err = U_ZERO_ERROR;
 		char c = codePoint;
 		ucnv_cbFromUWriteBytes(fromArgs, &c, 1, 0, err);
 		return;
 	}
-	Csock::IcuExtFromUCallback(fromArgs, codeUnits, length, codePoint, reason, err);
+	Csock::IcuExtFromUCallback(fromArgs, codeUnits, length, codePoint, reason,
+	                           err);
 }
 #endif

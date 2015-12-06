@@ -27,28 +27,30 @@
 #include <sasl/sasl.h>
 
 class CSASLAuthMod : public CModule {
-public:
+  public:
 	MODCONSTRUCTOR(CSASLAuthMod) {
-		m_Cache.SetTTL(60000/*ms*/);
+		m_Cache.SetTTL(60000 /*ms*/);
 
 		m_cbs[0].id = SASL_CB_GETOPT;
-		m_cbs[0].proc = reinterpret_cast<int(*)()>(CSASLAuthMod::getopt);
+		m_cbs[0].proc = reinterpret_cast<int (*)()>(CSASLAuthMod::getopt);
 		m_cbs[0].context = this;
 		m_cbs[1].id = SASL_CB_LIST_END;
 		m_cbs[1].proc = nullptr;
 		m_cbs[1].context = nullptr;
 
 		AddHelpCommand();
-		AddCommand("CreateUser",       static_cast<CModCommand::ModCmdFunc>(&CSASLAuthMod::CreateUserCommand),
-			"[yes|no]");
-		AddCommand("CloneUser",        static_cast<CModCommand::ModCmdFunc>(&CSASLAuthMod::CloneUserCommand),
-			"[username]");
-		AddCommand("DisableCloneUser", static_cast<CModCommand::ModCmdFunc>(&CSASLAuthMod::DisableCloneUserCommand));
+		AddCommand("CreateUser", static_cast<CModCommand::ModCmdFunc>(
+		                             &CSASLAuthMod::CreateUserCommand),
+		           "[yes|no]");
+		AddCommand("CloneUser", static_cast<CModCommand::ModCmdFunc>(
+		                            &CSASLAuthMod::CloneUserCommand),
+		           "[username]");
+		AddCommand("DisableCloneUser",
+		           static_cast<CModCommand::ModCmdFunc>(
+		               &CSASLAuthMod::DisableCloneUserCommand));
 	}
 
-	virtual ~CSASLAuthMod() {
-		sasl_done();
-	}
+	virtual ~CSASLAuthMod() { sasl_done(); }
 
 	void OnModCommand(const CString& sCommand) override {
 		if (GetUser()->IsAdmin()) {
@@ -67,7 +69,8 @@ public:
 			if (it->Equals("saslauthd") || it->Equals("auxprop")) {
 				m_sMethod += *it + " ";
 			} else {
-				CUtils::PrintError("Ignoring invalid SASL pwcheck method: " + *it);
+				CUtils::PrintError("Ignoring invalid SASL pwcheck method: " +
+				                   *it);
 				sMessage = "Ignored invalid SASL pwcheck method";
 			}
 		}
@@ -90,8 +93,8 @@ public:
 	EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) override {
 		const CString& sUsername = Auth->GetUsername();
 		const CString& sPassword = Auth->GetPassword();
-		CUser *pUser(CZNC::Get().FindUser(sUsername));
-		sasl_conn_t *sasl_conn(nullptr);
+		CUser* pUser(CZNC::Get().FindUser(sUsername));
+		sasl_conn_t* sasl_conn(nullptr);
 		bool bSuccess = false;
 
 		if (!pUser && !CreateUser()) {
@@ -102,11 +105,15 @@ public:
 		if (m_Cache.HasItem(sCacheKey)) {
 			bSuccess = true;
 			DEBUG("saslauth: Found [" + sUsername + "] in cache");
-		} else if (sasl_server_new("znc", nullptr, nullptr, nullptr, nullptr, m_cbs, 0, &sasl_conn) == SASL_OK &&
-				sasl_checkpass(sasl_conn, sUsername.c_str(), sUsername.size(), sPassword.c_str(), sPassword.size()) == SASL_OK) {
+		} else if (sasl_server_new("znc", nullptr, nullptr, nullptr, nullptr,
+		                           m_cbs, 0, &sasl_conn) == SASL_OK &&
+		           sasl_checkpass(sasl_conn, sUsername.c_str(),
+		                          sUsername.size(), sPassword.c_str(),
+		                          sPassword.size()) == SASL_OK) {
 			m_Cache.AddItem(sCacheKey);
 
-			DEBUG("saslauth: Successful SASL authentication [" + sUsername + "]");
+			DEBUG("saslauth: Successful SASL authentication [" + sUsername +
+			      "]");
 
 			bSuccess = true;
 		}
@@ -119,28 +126,32 @@ public:
 				pUser = new CUser(sUsername);
 
 				if (ShouldCloneUser()) {
-					CUser *pBaseUser = CZNC::Get().FindUser(CloneUser());
+					CUser* pBaseUser = CZNC::Get().FindUser(CloneUser());
 
 					if (!pBaseUser) {
-						DEBUG("saslauth: Clone User [" << CloneUser() << "] User not found");
+						DEBUG("saslauth: Clone User [" << CloneUser()
+						                               << "] User not found");
 						delete pUser;
 						pUser = nullptr;
 					}
 
 					if (pUser && !pUser->Clone(*pBaseUser, sErr)) {
-						DEBUG("saslauth: Clone User [" << CloneUser() << "] failed: " << sErr);
+						DEBUG("saslauth: Clone User [" << CloneUser()
+						                               << "] failed: " << sErr);
 						delete pUser;
 						pUser = nullptr;
 					}
 				}
 
 				if (pUser) {
-					// "::" is an invalid MD5 hash, so user won't be able to login by usual method
+					// "::" is an invalid MD5 hash, so user won't be able to
+					// login by usual method
 					pUser->SetPass("::", CUser::HASH_MD5, "::");
 				}
 
 				if (pUser && !CZNC::Get().AddUser(pUser, sErr)) {
-					DEBUG("saslauth: Add user [" << sUsername << "] failed: " << sErr);
+					DEBUG("saslauth: Add user [" << sUsername
+					                             << "] failed: " << sErr);
 					delete pUser;
 					pUser = nullptr;
 				}
@@ -157,7 +168,7 @@ public:
 
 	const CString& GetMethod() const { return m_sMethod; }
 
-	void CreateUserCommand(const CString &sLine) {
+	void CreateUserCommand(const CString& sLine) {
 		CString sCreate = sLine.Token(1);
 
 		if (!sCreate.empty()) {
@@ -171,7 +182,7 @@ public:
 		}
 	}
 
-	void CloneUserCommand(const CString &sLine) {
+	void CloneUserCommand(const CString& sLine) {
 		CString sUsername = sLine.Token(1);
 
 		if (!sUsername.empty()) {
@@ -185,31 +196,25 @@ public:
 		}
 	}
 
-	void DisableCloneUserCommand(const CString &sLine) {
+	void DisableCloneUserCommand(const CString& sLine) {
 		DelNV("CloneUser");
 		PutModule("Clone user disabled");
 	}
 
-	bool CreateUser() const {
-		return GetNV("CreateUser").ToBool();
-	}
+	bool CreateUser() const { return GetNV("CreateUser").ToBool(); }
 
-	CString CloneUser() const {
-		return GetNV("CloneUser");
-	}
+	CString CloneUser() const { return GetNV("CloneUser"); }
 
-	bool ShouldCloneUser() {
-		return !GetNV("CloneUser").empty();
-	}
+	bool ShouldCloneUser() { return !GetNV("CloneUser").empty(); }
 
-protected:
-	TCacheMap<CString>     m_Cache;
+  protected:
+	TCacheMap<CString> m_Cache;
 
 	sasl_callback_t m_cbs[2];
 	CString m_sMethod;
 
-	static int getopt(void *context, const char *plugin_name,
-			const char *option, const char **result, unsigned *len) {
+	static int getopt(void* context, const char* plugin_name,
+	                  const char* option, const char** result, unsigned* len) {
 		if (CString(option).Equals("pwcheck_method")) {
 			*result = ((CSASLAuthMod*)context)->GetMethod().c_str();
 			return SASL_OK;
@@ -219,10 +224,15 @@ protected:
 	}
 };
 
-template<> void TModInfo<CSASLAuthMod>(CModInfo& Info) {
+template <>
+void TModInfo<CSASLAuthMod>(CModInfo& Info) {
 	Info.SetWikiPage("cyrusauth");
 	Info.SetHasArgs(true);
-	Info.SetArgsHelpText("This global module takes up to two arguments - the methods of authentication - auxprop and saslauthd");
+	Info.SetArgsHelpText(
+	    "This global module takes up to two arguments - the methods of "
+	    "authentication - auxprop and saslauthd");
 }
 
-GLOBALMODULEDEFS(CSASLAuthMod, "Allow users to authenticate via SASL password verification method")
+GLOBALMODULEDEFS(
+    CSASLAuthMod,
+    "Allow users to authenticate via SASL password verification method")

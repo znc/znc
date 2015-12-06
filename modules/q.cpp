@@ -22,11 +22,11 @@
 using std::set;
 
 #ifndef Q_DEBUG_COMMUNICATION
-	#define Q_DEBUG_COMMUNICATION 0
+#define Q_DEBUG_COMMUNICATION 0
 #endif
 
 class CQModule : public CModule {
-public:
+  public:
 	MODCONSTRUCTOR(CQModule) {}
 	virtual ~CQModule() {}
 
@@ -40,33 +40,42 @@ public:
 		}
 
 		CString sTmp;
-		m_bUseCloakedHost   = (sTmp = GetNV("UseCloakedHost")).empty() ? true : sTmp.ToBool();
-		m_bUseChallenge     = (sTmp = GetNV("UseChallenge")).empty()  ? true : sTmp.ToBool();
-		m_bRequestPerms     = GetNV("RequestPerms").ToBool();
-		m_bJoinOnInvite     = (sTmp = GetNV("JoinOnInvite")).empty() ? true : sTmp.ToBool();
-		m_bJoinAfterCloaked = (sTmp = GetNV("JoinAfterCloaked")).empty() ? true : sTmp.ToBool();
+		m_bUseCloakedHost =
+		    (sTmp = GetNV("UseCloakedHost")).empty() ? true : sTmp.ToBool();
+		m_bUseChallenge =
+		    (sTmp = GetNV("UseChallenge")).empty() ? true : sTmp.ToBool();
+		m_bRequestPerms = GetNV("RequestPerms").ToBool();
+		m_bJoinOnInvite =
+		    (sTmp = GetNV("JoinOnInvite")).empty() ? true : sTmp.ToBool();
+		m_bJoinAfterCloaked =
+		    (sTmp = GetNV("JoinAfterCloaked")).empty() ? true : sTmp.ToBool();
 
-		// Make sure NVs are stored in config. Note: SetUseCloakedHost() is called further down.
+		// Make sure NVs are stored in config. Note: SetUseCloakedHost() is
+		// called further down.
 		SetUseChallenge(m_bUseChallenge);
 		SetRequestPerms(m_bRequestPerms);
 		SetJoinOnInvite(m_bJoinOnInvite);
 		SetJoinAfterCloaked(m_bJoinAfterCloaked);
 
-		OnIRCDisconnected(); // reset module's state
+		OnIRCDisconnected();  // reset module's state
 
 		if (IsIRCConnected()) {
 			// check for usermode +x if we are already connected
-			set<unsigned char> scUserModes = GetNetwork()->GetIRCSock()->GetUserModes();
-			if (scUserModes.find('x') != scUserModes.end())
-				m_bCloaked = true;
+			set<unsigned char> scUserModes =
+			    GetNetwork()->GetIRCSock()->GetUserModes();
+			if (scUserModes.find('x') != scUserModes.end()) m_bCloaked = true;
 
-			// This will only happen once, and only if the user loads the module after connecting to IRC.
+			// This will only happen once, and only if the user loads the module
+			// after connecting to IRC.
 			// Also don't notify the user in case he already had mode +x set.
 			if (GetNV("UseCloakedHost").empty()) {
 				if (!m_bCloaked)
-					PutModule("Notice: Your host will be cloaked the next time you reconnect to IRC. "
-						"If you want to cloak your host now, /msg *q Cloak. You can set your preference "
-						"with /msg *q Set UseCloakedHost true/false.");
+					PutModule(
+					    "Notice: Your host will be cloaked the next time you "
+					    "reconnect to IRC. "
+					    "If you want to cloak your host now, /msg *q Cloak. "
+					    "You can set your preference "
+					    "with /msg *q Set UseCloakedHost true/false.");
 				m_bUseCloakedHost = true;
 				SetUseCloakedHost(m_bUseCloakedHost);
 				m_bJoinAfterCloaked = true;
@@ -84,15 +93,14 @@ public:
 
 	void OnIRCDisconnected() override {
 		m_bCloaked = false;
-		m_bAuthed  = false;
-		m_bRequestedWhoami    = false;
+		m_bAuthed = false;
+		m_bRequestedWhoami = false;
 		m_bRequestedChallenge = false;
 		m_bCatchResponse = false;
 	}
 
 	void OnIRCConnected() override {
-		if (m_bUseCloakedHost)
-			Cloak();
+		if (m_bUseCloakedHost) Cloak();
 		WhoAmI();
 	}
 
@@ -106,22 +114,32 @@ public:
 			Table.AddColumn("Description");
 			Table.AddRow();
 			Table.SetCell("Command", "Auth [<username> <password>]");
-			Table.SetCell("Description", "Tries to authenticate you with Q. Both parameters are optional.");
+			Table.SetCell("Description",
+			              "Tries to authenticate you with Q. Both parameters "
+			              "are optional.");
 			Table.AddRow();
 			Table.SetCell("Command", "Cloak");
-			Table.SetCell("Description", "Tries to set usermode +x to hide your real hostname.");
+			Table.SetCell(
+			    "Description",
+			    "Tries to set usermode +x to hide your real hostname.");
 			Table.AddRow();
 			Table.SetCell("Command", "Status");
-			Table.SetCell("Description", "Prints the current status of the module.");
+			Table.SetCell("Description",
+			              "Prints the current status of the module.");
 			Table.AddRow();
 			Table.SetCell("Command", "Update");
-			Table.SetCell("Description", "Re-requests the current user information from Q.");
+			Table.SetCell("Description",
+			              "Re-requests the current user information from Q.");
 			Table.AddRow();
 			Table.SetCell("Command", "Set <setting> <value>");
-			Table.SetCell("Description", "Changes the value of the given setting. See the list of settings below.");
+			Table.SetCell("Description",
+			              "Changes the value of the given setting. See the "
+			              "list of settings below.");
 			Table.AddRow();
 			Table.SetCell("Command", "Get");
-			Table.SetCell("Description", "Prints out the current configuration. See the list of settings below.");
+			Table.SetCell("Description",
+			              "Prints out the current configuration. See the list "
+			              "of settings below.");
 			PutModule(Table);
 
 			PutModule("The following settings are available:");
@@ -140,31 +158,42 @@ public:
 			Table2.AddRow();
 			Table2.SetCell("Setting", "UseCloakedHost");
 			Table2.SetCell("Type", "Boolean");
-			Table2.SetCell("Description", "Whether to cloak your hostname (+x) automatically on connect.");
+			Table2.SetCell("Description",
+			               "Whether to cloak your hostname (+x) automatically "
+			               "on connect.");
 			Table2.AddRow();
 			Table2.SetCell("Setting", "UseChallenge");
 			Table2.SetCell("Type", "Boolean");
-			Table2.SetCell("Description", "Whether to use the CHALLENGEAUTH mechanism to avoid sending passwords in cleartext.");
+			Table2.SetCell("Description",
+			               "Whether to use the CHALLENGEAUTH mechanism to "
+			               "avoid sending passwords in cleartext.");
 			Table2.AddRow();
 			Table2.SetCell("Setting", "RequestPerms");
 			Table2.SetCell("Type", "Boolean");
-			Table2.SetCell("Description", "Whether to request voice/op from Q on join/devoice/deop.");
+			Table2.SetCell(
+			    "Description",
+			    "Whether to request voice/op from Q on join/devoice/deop.");
 			Table2.AddRow();
 			Table2.SetCell("Setting", "JoinOnInvite");
 			Table2.SetCell("Type", "Boolean");
-			Table2.SetCell("Description", "Whether to join channels when Q invites you.");
+			Table2.SetCell("Description",
+			               "Whether to join channels when Q invites you.");
 			Table2.AddRow();
 			Table2.SetCell("Setting", "JoinAfterCloaked");
 			Table2.SetCell("Type", "Boolean");
-			Table2.SetCell("Description", "Whether to delay joining channels until after you are cloaked.");
+			Table2.SetCell("Description",
+			               "Whether to delay joining channels until after you "
+			               "are cloaked.");
 			PutModule(Table2);
 
-			PutModule("This module takes 2 optional parameters: <username> <password>");
+			PutModule(
+			    "This module takes 2 optional parameters: <username> "
+			    "<password>");
 			PutModule("Module settings are stored between restarts.");
 
 		} else if (sCommand == "set") {
 			CString sSetting = sLine.Token(1).AsLower();
-			CString sValue   = sLine.Token(2);
+			CString sValue = sLine.Token(2);
 			if (sSetting.empty() || sValue.empty()) {
 				PutModule("Syntax: Set <setting> <value>");
 			} else if (sSetting == "username") {
@@ -200,7 +229,7 @@ public:
 			Table.SetCell("Value", m_sUsername);
 			Table.AddRow();
 			Table.SetCell("Setting", "Password");
-			Table.SetCell("Value", "*****"); // m_sPassword
+			Table.SetCell("Value", "*****");  // m_sPassword
 			Table.AddRow();
 			Table.SetCell("Setting", "UseCloakedHost");
 			Table.SetCell("Value", CString(m_bUseCloakedHost));
@@ -220,8 +249,8 @@ public:
 
 		} else if (sCommand == "status") {
 			PutModule("Connected: " + CString(IsIRCConnected() ? "yes" : "no"));
-			PutModule("Cloaked: "   + CString(m_bCloaked       ? "yes" : "no"));
-			PutModule("Authed: "    + CString(m_bAuthed        ? "yes" : "no"));
+			PutModule("Cloaked: " + CString(m_bCloaked ? "yes" : "no"));
+			PutModule("Authed: " + CString(m_bAuthed ? "yes" : "no"));
 
 		} else {
 			// The following commands require an IRC connection.
@@ -254,7 +283,8 @@ public:
 
 	EModRet OnRaw(CString& sLine) override {
 		// use OnRaw because OnUserMode is not defined (yet?)
-		if (sLine.Token(1) == "396" && sLine.Token(3).find("users.quakenet.org") != CString::npos) {
+		if (sLine.Token(1) == "396" &&
+		    sLine.Token(3).find("users.quakenet.org") != CString::npos) {
 			m_bCloaked = true;
 			PutModule("Cloak successful: Your hostname is now cloaked.");
 
@@ -285,48 +315,49 @@ public:
 	}
 
 	void OnJoin(const CNick& Nick, CChan& Channel) override {
-		if (m_bRequestPerms && IsSelf(Nick))
-			HandleNeed(Channel, "ov");
+		if (m_bRequestPerms && IsSelf(Nick)) HandleNeed(Channel, "ov");
 	}
 
-	void OnDeop2(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange) override {
+	void OnDeop2(const CNick* pOpNick, const CNick& Nick, CChan& Channel,
+	             bool bNoChange) override {
 		if (m_bRequestPerms && IsSelf(Nick) && (!pOpNick || !IsSelf(*pOpNick)))
 			HandleNeed(Channel, "o");
 	}
 
-	void OnDevoice2(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange) override {
+	void OnDevoice2(const CNick* pOpNick, const CNick& Nick, CChan& Channel,
+	                bool bNoChange) override {
 		if (m_bRequestPerms && IsSelf(Nick) && (!pOpNick || !IsSelf(*pOpNick)))
 			HandleNeed(Channel, "v");
 	}
 
 	EModRet OnInvite(const CNick& Nick, const CString& sChan) override {
-		if (!Nick.NickEquals("Q") || !Nick.GetHost().Equals("CServe.quakenet.org"))
+		if (!Nick.NickEquals("Q") ||
+		    !Nick.GetHost().Equals("CServe.quakenet.org"))
 			return CONTINUE;
-		if (m_bJoinOnInvite)
-			GetNetwork()->AddChan(sChan, false);
+		if (m_bJoinOnInvite) GetNetwork()->AddChan(sChan, false);
 		return CONTINUE;
 	}
 
 	CString GetWebMenuTitle() override { return "Q"; }
 
-	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
+	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
+	                  CTemplate& Tmpl) override {
 		if (sPageName == "index") {
 			bool bSubmitted = (WebSock.GetParam("submitted").ToInt() != 0);
 
 			if (bSubmitted) {
 				CString FormUsername = WebSock.GetParam("user");
-				if (!FormUsername.empty())
-					SetUsername(FormUsername);
+				if (!FormUsername.empty()) SetUsername(FormUsername);
 
 				CString FormPassword = WebSock.GetParam("password");
-				if (!FormPassword.empty())
-					SetPassword(FormPassword);
+				if (!FormPassword.empty()) SetPassword(FormPassword);
 
 				SetUseCloakedHost(WebSock.GetParam("usecloakedhost").ToBool());
 				SetUseChallenge(WebSock.GetParam("usechallenge").ToBool());
 				SetRequestPerms(WebSock.GetParam("requestperms").ToBool());
 				SetJoinOnInvite(WebSock.GetParam("joinoninvite").ToBool());
-				SetJoinAfterCloaked(WebSock.GetParam("joinaftercloaked").ToBool());
+				SetJoinAfterCloaked(
+				    WebSock.GetParam("joinaftercloaked").ToBool());
 			}
 
 			Tmpl["Username"] = m_sUsername;
@@ -334,19 +365,23 @@ public:
 			CTemplate& o1 = Tmpl.AddRow("OptionLoop");
 			o1["Name"] = "usecloakedhost";
 			o1["DisplayName"] = "UseCloakedHost";
-			o1["Tooltip"] = "Whether to cloak your hostname (+x) automatically on connect.";
+			o1["Tooltip"] =
+			    "Whether to cloak your hostname (+x) automatically on connect.";
 			o1["Checked"] = CString(m_bUseCloakedHost);
 
 			CTemplate& o2 = Tmpl.AddRow("OptionLoop");
 			o2["Name"] = "usechallenge";
 			o2["DisplayName"] = "UseChallenge";
-			o2["Tooltip"] = "Whether to use the CHALLENGEAUTH mechanism to avoid sending passwords in cleartext.";
+			o2["Tooltip"] =
+			    "Whether to use the CHALLENGEAUTH mechanism to avoid sending "
+			    "passwords in cleartext.";
 			o2["Checked"] = CString(m_bUseChallenge);
 
 			CTemplate& o3 = Tmpl.AddRow("OptionLoop");
 			o3["Name"] = "requestperms";
 			o3["DisplayName"] = "RequestPerms";
-			o3["Tooltip"] = "Whether to request voice/op from Q on join/devoice/deop.";
+			o3["Tooltip"] =
+			    "Whether to request voice/op from Q on join/devoice/deop.";
 			o3["Checked"] = CString(m_bRequestPerms);
 
 			CTemplate& o4 = Tmpl.AddRow("OptionLoop");
@@ -358,7 +393,9 @@ public:
 			CTemplate& o5 = Tmpl.AddRow("OptionLoop");
 			o5["Name"] = "joinaftercloaked";
 			o5["DisplayName"] = "JoinAfterCloaked";
-			o5["Tooltip"] = "Whether to delay joining channels until after you are cloaked.";
+			o5["Tooltip"] =
+			    "Whether to delay joining channels until after you are "
+			    "cloaked.";
 			o5["Checked"] = CString(m_bJoinAfterCloaked);
 
 			if (bSubmitted) {
@@ -371,7 +408,7 @@ public:
 		return false;
 	}
 
-private:
+  private:
 	bool m_bCloaked{};
 	bool m_bAuthed{};
 	bool m_bRequestedWhoami{};
@@ -387,8 +424,7 @@ private:
 	}
 
 	void Cloak() {
-		if (m_bCloaked)
-			return;
+		if (m_bCloaked) return;
 
 		PutModule("Cloak: Trying to cloak your hostname, setting +x...");
 		PutIRC("MODE " + GetNetwork()->GetIRCSock()->GetNick() + " +x");
@@ -400,16 +436,15 @@ private:
 	}
 
 	void Auth(const CString& sUsername = "", const CString& sPassword = "") {
-		if (m_bAuthed)
-			return;
+		if (m_bAuthed) return;
 
-		if (!sUsername.empty())
-			SetUsername(sUsername);
-		if (!sPassword.empty())
-			SetPassword(sPassword);
+		if (!sUsername.empty()) SetUsername(sUsername);
+		if (!sPassword.empty()) SetPassword(sPassword);
 
 		if (m_sUsername.empty() || m_sPassword.empty()) {
-			PutModule("You have to set a username and password to use this module! See 'help' for details.");
+			PutModule(
+			    "You have to set a username and password to use this module! "
+			    "See 'help' for details.");
 			return;
 		}
 
@@ -424,23 +459,24 @@ private:
 	}
 
 	void ChallengeAuth(CString sChallenge) {
-		if (m_bAuthed)
-			return;
+		if (m_bAuthed) return;
 
-		CString sUsername     = m_sUsername.AsLower()
-		                                   .Replace_n("[",  "{")
-		                                   .Replace_n("]",  "}")
-		                                   .Replace_n("\\", "|");
+		CString sUsername = m_sUsername.AsLower()
+		                        .Replace_n("[", "{")
+		                        .Replace_n("]", "}")
+		                        .Replace_n("\\", "|");
 		CString sPasswordHash = m_sPassword.Left(10).SHA256();
-		CString sKey          = CString(sUsername + ":" + sPasswordHash).SHA256();
-		CString sResponse     = HMAC_SHA256(sKey, sChallenge);
+		CString sKey = CString(sUsername + ":" + sPasswordHash).SHA256();
+		CString sResponse = HMAC_SHA256(sKey, sChallenge);
 
 		PutModule("Auth: Received challenge, sending CHALLENGEAUTH request...");
-		PutQ("CHALLENGEAUTH " + m_sUsername + " " + sResponse + " HMAC-SHA-256");
+		PutQ("CHALLENGEAUTH " + m_sUsername + " " + sResponse +
+		     " HMAC-SHA-256");
 	}
 
 	EModRet HandleMessage(const CNick& Nick, CString sMessage) {
-		if (!Nick.NickEquals("Q") || !Nick.GetHost().Equals("CServe.quakenet.org"))
+		if (!Nick.NickEquals("Q") ||
+		    !Nick.GetHost().Equals("CServe.quakenet.org"))
 			return CONTINUE;
 
 		sMessage.Trim();
@@ -450,25 +486,24 @@ private:
 #endif
 
 		// WHOAMI
-		if (sMessage.find("WHOAMI is only available to authed users") != CString::npos) {
+		if (sMessage.find("WHOAMI is only available to authed users") !=
+		    CString::npos) {
 			m_bAuthed = false;
 			Auth();
 			m_bCatchResponse = m_bRequestedWhoami;
-		}
-		else if (sMessage.find("Information for user") != CString::npos) {
+		} else if (sMessage.find("Information for user") != CString::npos) {
 			m_bAuthed = true;
 			m_msChanModes.clear();
 			m_bCatchResponse = m_bRequestedWhoami;
 			m_bRequestedWhoami = true;
-		}
-		else if (m_bRequestedWhoami && sMessage.WildCmp("#*")) {
+		} else if (m_bRequestedWhoami && sMessage.WildCmp("#*")) {
 			CString sChannel = sMessage.Token(0);
-			CString sFlags   = sMessage.Token(1, true).Trim_n().TrimLeft_n("+");
+			CString sFlags = sMessage.Token(1, true).Trim_n().TrimLeft_n("+");
 			m_msChanModes[sChannel] = sFlags;
-		}
-		else if (m_bRequestedWhoami && m_bCatchResponse
-				&& (sMessage.Equals("End of list.")
-				||  sMessage.Equals("account, or HELLO to create an account."))) {
+		} else if (m_bRequestedWhoami && m_bCatchResponse &&
+		           (sMessage.Equals("End of list.") ||
+		            sMessage.Equals(
+		                "account, or HELLO to create an account."))) {
 			m_bRequestedWhoami = m_bCatchResponse = false;
 			return HALT;
 		}
@@ -478,22 +513,24 @@ private:
 			m_bAuthed = false;
 			PutModule("Auth failed: " + sMessage);
 			return HALT;
-		}
-		else if (sMessage.WildCmp("You are now logged in as *.")) {
+		} else if (sMessage.WildCmp("You are now logged in as *.")) {
 			m_bAuthed = true;
 			PutModule("Auth successful: " + sMessage);
 			WhoAmI();
 			return HALT;
-		}
-		else if (m_bRequestedChallenge && sMessage.Token(0).Equals("CHALLENGE")) {
+		} else if (m_bRequestedChallenge &&
+		           sMessage.Token(0).Equals("CHALLENGE")) {
 			m_bRequestedChallenge = false;
-			if (sMessage.find("not available once you have authed") != CString::npos) {
+			if (sMessage.find("not available once you have authed") !=
+			    CString::npos) {
 				m_bAuthed = true;
 			} else {
 				if (sMessage.find("HMAC-SHA-256") != CString::npos) {
 					ChallengeAuth(sMessage.Token(1));
 				} else {
-					PutModule("Auth failed: Q does not support HMAC-SHA-256 for CHALLENGEAUTH, falling back to standard AUTH.");
+					PutModule(
+					    "Auth failed: Q does not support HMAC-SHA-256 for "
+					    "CHALLENGEAUTH, falling back to standard AUTH.");
 					SetUseChallenge(false);
 					Auth();
 				}
@@ -502,23 +539,25 @@ private:
 		}
 
 		// prevent buffering of Q's responses
-		return !m_bCatchResponse && GetUser()->IsUserAttached() ? CONTINUE : HALT;
+		return !m_bCatchResponse && GetUser()->IsUserAttached() ? CONTINUE
+		                                                        : HALT;
 	}
 
 	void HandleNeed(const CChan& Channel, const CString& sPerms) {
 		MCString::iterator it = m_msChanModes.find(Channel.GetName());
-		if (it == m_msChanModes.end())
-			return;
+		if (it == m_msChanModes.end()) return;
 		CString sModes = it->second;
 
-		bool bMaster = (sModes.find("m") != CString::npos) || (sModes.find("n") != CString::npos);
+		bool bMaster = (sModes.find("m") != CString::npos) ||
+		               (sModes.find("n") != CString::npos);
 
 		if (sPerms.find("o") != CString::npos) {
-			bool bOp     = (sModes.find("o") != CString::npos);
+			bool bOp = (sModes.find("o") != CString::npos);
 			bool bAutoOp = (sModes.find("a") != CString::npos);
 			if (bMaster || bOp) {
 				if (!bAutoOp) {
-					PutModule("RequestPerms: Requesting op on " + Channel.GetName());
+					PutModule("RequestPerms: Requesting op on " +
+					          Channel.GetName());
 					PutQ("OP " + Channel.GetName());
 				}
 				return;
@@ -526,11 +565,12 @@ private:
 		}
 
 		if (sPerms.find("v") != CString::npos) {
-			bool bVoice     = (sModes.find("v") != CString::npos);
+			bool bVoice = (sModes.find("v") != CString::npos);
 			bool bAutoVoice = (sModes.find("g") != CString::npos);
 			if (bMaster || bVoice) {
 				if (!bAutoVoice) {
-					PutModule("RequestPerms: Requesting voice on " + Channel.GetName());
+					PutModule("RequestPerms: Requesting voice on " +
+					          Channel.GetName());
 					PutQ("VOICE " + Channel.GetName());
 				}
 				return;
@@ -538,8 +578,7 @@ private:
 		}
 	}
 
-
-/* Utility Functions */
+	/* Utility Functions */
 	bool IsIRCConnected() {
 		CIRCSock* pIRCSock = GetNetwork()->GetIRCSock();
 		return pIRCSock && pIRCSock->IsAuthed();
@@ -550,18 +589,16 @@ private:
 	}
 
 	bool PackHex(const CString& sHex, CString& sPackedHex) {
-		if (sHex.length() % 2)
-			return false;
+		if (sHex.length() % 2) return false;
 
 		sPackedHex.clear();
 
 		CString::size_type len = sHex.length() / 2;
 		for (CString::size_type i = 0; i < len; i++) {
 			unsigned int value;
-			int n = sscanf(&sHex[i*2], "%02x", &value);
-			if (n != 1 || value > 0xff)
-				return false;
-			sPackedHex += (unsigned char) value;
+			int n = sscanf(&sHex[i * 2], "%02x", &value);
+			if (n != 1 || value > 0xff) return false;
+			sPackedHex += (unsigned char)value;
 		}
 
 		return true;
@@ -587,14 +624,14 @@ private:
 		return CString(sOuterKey + sInnerHash).SHA256();
 	}
 
-/* Settings */
+	/* Settings */
 	CString m_sUsername;
 	CString m_sPassword;
-	bool    m_bUseCloakedHost{};
-	bool    m_bUseChallenge{};
-	bool    m_bRequestPerms{};
-	bool    m_bJoinOnInvite{};
-	bool    m_bJoinAfterCloaked{};
+	bool m_bUseCloakedHost{};
+	bool m_bUseChallenge{};
+	bool m_bRequestPerms{};
+	bool m_bJoinOnInvite{};
+	bool m_bJoinAfterCloaked{};
 
 	void SetUsername(const CString& sUsername) {
 		m_sUsername = sUsername;
@@ -610,8 +647,7 @@ private:
 		m_bUseCloakedHost = bUseCloakedHost;
 		SetNV("UseCloakedHost", CString(bUseCloakedHost));
 
-		if (!m_bCloaked && m_bUseCloakedHost && IsIRCConnected())
-			Cloak();
+		if (!m_bCloaked && m_bUseCloakedHost && IsIRCConnected()) Cloak();
 	}
 
 	void SetUseChallenge(const bool bUseChallenge) {
@@ -635,7 +671,8 @@ private:
 	}
 };
 
-template<> void TModInfo<CQModule>(CModInfo& Info) {
+template <>
+void TModInfo<CQModule>(CModInfo& Info) {
 	Info.SetWikiPage("Q");
 	Info.SetHasArgs(true);
 	Info.SetArgsHelpText("Please provide your username and password for Q.");

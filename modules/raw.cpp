@@ -17,7 +17,7 @@
 #include <znc/Modules.h>
 
 class CRawMod : public CModule {
-public:
+  public:
 	MODCONSTRUCTOR(CRawMod) {}
 	virtual ~CRawMod() {}
 
@@ -26,9 +26,7 @@ public:
 		return CONTINUE;
 	}
 
-	void OnModCommand(const CString& sCommand) override {
-		PutIRC(sCommand);
-	}
+	void OnModCommand(const CString& sCommand) override { PutIRC(sCommand); }
 
 	EModRet OnUserRaw(CString& sLine) override {
 		PutModule("YOU -> [" + sLine + "]");
@@ -36,10 +34,10 @@ public:
 	}
 };
 
-template<> void TModInfo<CRawMod>(CModInfo& Info) {
+template <>
+void TModInfo<CRawMod>(CModInfo& Info) {
 	Info.SetWikiPage("raw");
 	Info.AddType(CModInfo::UserModule);
 }
 
 NETWORKMODULEDEFS(CRawMod, "View all of the raw traffic")
-

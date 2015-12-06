@@ -77,26 +77,34 @@ class CPerform : public CModule {
 		u_int iNumA = sCommand.Token(1).ToUInt();
 		u_int iNumB = sCommand.Token(2).ToUInt();
 
-		if (iNumA > m_vPerform.size() || iNumA <= 0 || iNumB > m_vPerform.size() || iNumB <= 0) {
+		if (iNumA > m_vPerform.size() || iNumA <= 0 ||
+		    iNumB > m_vPerform.size() || iNumB <= 0) {
 			PutModule("Illegal # Requested");
 		} else {
-			std::iter_swap(m_vPerform.begin() + (iNumA - 1), m_vPerform.begin() + (iNumB - 1));
+			std::iter_swap(m_vPerform.begin() + (iNumA - 1),
+			               m_vPerform.begin() + (iNumB - 1));
 			PutModule("Commands Swapped.");
 			Save();
 		}
 	}
 
-public:
+  public:
 	MODCONSTRUCTOR(CPerform) {
 		AddHelpCommand();
-		AddCommand("Add",     static_cast<CModCommand::ModCmdFunc>(&CPerform::Add),
-			"<command>", "Adds perform command to be sent to the server on connect");
-		AddCommand("Del",     static_cast<CModCommand::ModCmdFunc>(&CPerform::Del),
-			"<number>", "Delete a perform command");
-		AddCommand("List",    static_cast<CModCommand::ModCmdFunc>(&CPerform::List),"", "List the perform commands");
-		AddCommand("Execute", static_cast<CModCommand::ModCmdFunc>(&CPerform::Execute),"", "Send the perform commands to the server now");
-		AddCommand("Swap",    static_cast<CModCommand::ModCmdFunc>(&CPerform::Swap),
-			"<number> <number>", "Swap two perform commands");
+		AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(&CPerform::Add),
+		           "<command>",
+		           "Adds perform command to be sent to the server on connect");
+		AddCommand("Del", static_cast<CModCommand::ModCmdFunc>(&CPerform::Del),
+		           "<number>", "Delete a perform command");
+		AddCommand("List",
+		           static_cast<CModCommand::ModCmdFunc>(&CPerform::List), "",
+		           "List the perform commands");
+		AddCommand("Execute",
+		           static_cast<CModCommand::ModCmdFunc>(&CPerform::Execute), "",
+		           "Send the perform commands to the server now");
+		AddCommand("Swap",
+		           static_cast<CModCommand::ModCmdFunc>(&CPerform::Swap),
+		           "<number> <number>", "Swap two perform commands");
 	}
 
 	virtual ~CPerform() {}
@@ -104,18 +112,17 @@ public:
 	CString ParsePerform(const CString& sArg) const {
 		CString sPerf = sArg;
 
-		if (sPerf.Left(1) == "/")
-			sPerf.LeftChomp();
+		if (sPerf.Left(1) == "/") sPerf.LeftChomp();
 
 		if (sPerf.Token(0).Equals("MSG")) {
 			sPerf = "PRIVMSG " + sPerf.Token(1, true);
 		}
 
 		if ((sPerf.Token(0).Equals("PRIVMSG") ||
-				sPerf.Token(0).Equals("NOTICE")) &&
-				sPerf.Token(2).Left(1) != ":") {
-			sPerf = sPerf.Token(0) + " " + sPerf.Token(1)
-				+ " :" + sPerf.Token(2, true);
+		     sPerf.Token(0).Equals("NOTICE")) &&
+		    sPerf.Token(2).Left(1) != ":") {
+			sPerf = sPerf.Token(0) + " " + sPerf.Token(1) + " :" +
+			        sPerf.Token(2, true);
 		}
 
 		return sPerf;
@@ -135,7 +142,8 @@ public:
 
 	CString GetWebMenuTitle() override { return "Perform"; }
 
-	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
+	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
+	                  CTemplate& Tmpl) override {
 		if (sPageName != "index") {
 			// only accept requests to index
 			return false;
@@ -160,7 +168,7 @@ public:
 		return true;
 	}
 
-private:
+  private:
 	void Save() {
 		CString sBuffer = "";
 
@@ -173,9 +181,12 @@ private:
 	VCString m_vPerform;
 };
 
-template<> void TModInfo<CPerform>(CModInfo& Info) {
+template <>
+void TModInfo<CPerform>(CModInfo& Info) {
 	Info.AddType(CModInfo::UserModule);
 	Info.SetWikiPage("perform");
 }
 
-NETWORKMODULEDEFS(CPerform, "Keeps a list of commands to be executed when ZNC connects to IRC.")
+NETWORKMODULEDEFS(
+    CPerform,
+    "Keeps a list of commands to be executed when ZNC connects to IRC.")

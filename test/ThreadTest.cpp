@@ -19,11 +19,13 @@
 #include <sys/select.h>
 
 class CWaitingJob : public CJob {
-public:
+  public:
 	CWaitingJob(bool& destroyed)
-		: m_bDestroyed(destroyed), m_Mutex(), m_CV(), m_bThreadReady(false), m_bThreadDone(false) {
-	};
-
+	    : m_bDestroyed(destroyed),
+	      m_Mutex(),
+	      m_CV(),
+	      m_bThreadReady(false),
+	      m_bThreadDone(false){};
 
 	~CWaitingJob() {
 		EXPECT_TRUE(m_bThreadReady);
@@ -35,8 +37,7 @@ public:
 	void signal() {
 		CMutexLocker locker(m_Mutex);
 		// Wait for the thread to run
-		while (!m_bThreadReady)
-			m_CV.wait(m_Mutex);
+		while (!m_bThreadReady) m_CV.wait(m_Mutex);
 
 		// and signal it to exit
 		m_bThreadDone = true;
@@ -50,13 +51,12 @@ public:
 		m_CV.notify_all();
 
 		// wait for our exit signal
-		while (!m_bThreadDone)
-			m_CV.wait(m_Mutex);
+		while (!m_bThreadDone) m_CV.wait(m_Mutex);
 	}
 
 	virtual void runMain() {}
 
-private:
+  private:
 	bool& m_bDestroyed;
 	CMutex m_Mutex;
 	CConditionVariable m_CV;
@@ -66,20 +66,21 @@ private:
 
 TEST(Thread, RunJob) {
 	bool destroyed = false;
-	CWaitingJob *pJob = new CWaitingJob(destroyed);
+	CWaitingJob* pJob = new CWaitingJob(destroyed);
 
 	CThreadPool::Get().addJob(pJob);
 	pJob->signal();
 
-	while (!destroyed)
-		CThreadPool::Get().handlePipeReadable();
+	while (!destroyed) CThreadPool::Get().handlePipeReadable();
 }
 
 class CCancelJob : public CJob {
-public:
+  public:
 	CCancelJob(bool& destroyed)
-		: m_bDestroyed(destroyed), m_Mutex(), m_CVThreadReady(), m_bThreadReady(false) {
-	}
+	    : m_bDestroyed(destroyed),
+	      m_Mutex(),
+	      m_CVThreadReady(),
+	      m_bThreadReady(false) {}
 
 	~CCancelJob() {
 		EXPECT_TRUE(wasCancelled());
@@ -89,8 +90,7 @@ public:
 	void wait() {
 		CMutexLocker locker(m_Mutex);
 		// Wait for the thread to run
-		while (!m_bThreadReady)
-			m_CVThreadReady.wait(m_Mutex);
+		while (!m_bThreadReady) m_CVThreadReady.wait(m_Mutex);
 	}
 
 	virtual void runThread() {
@@ -113,9 +113,9 @@ public:
 		}
 	}
 
-	virtual void runMain() { }
+	virtual void runMain() {}
 
-private:
+  private:
 	bool& m_bDestroyed;
 	CMutex m_Mutex;
 	CConditionVariable m_CVThreadReady;
@@ -124,7 +124,7 @@ private:
 
 TEST(Thread, CancelJobEarly) {
 	bool destroyed = false;
-	CCancelJob *pJob = new CCancelJob(destroyed);
+	CCancelJob* pJob = new CCancelJob(destroyed);
 
 	CThreadPool::Get().addJob(pJob);
 	// Don't wait for the job to run. The idea here is that we are calling
@@ -137,7 +137,7 @@ TEST(Thread, CancelJobEarly) {
 
 TEST(Thread, CancelJobWhileRunning) {
 	bool destroyed = false;
-	CCancelJob *pJob = new CCancelJob(destroyed);
+	CCancelJob* pJob = new CCancelJob(destroyed);
 
 	CThreadPool::Get().addJob(pJob);
 	// Wait for the job to run
@@ -149,26 +149,24 @@ TEST(Thread, CancelJobWhileRunning) {
 }
 
 class CEmptyJob : public CJob {
-public:
-	CEmptyJob(bool& destroyed)
-		: m_bDestroyed(destroyed) {
-	}
+  public:
+	CEmptyJob(bool& destroyed) : m_bDestroyed(destroyed) {}
 
 	~CEmptyJob() {
 		EXPECT_TRUE(wasCancelled());
 		m_bDestroyed = true;
 	}
 
-	virtual void runThread() { }
-	virtual void runMain() { }
+	virtual void runThread() {}
+	virtual void runMain() {}
 
-private:
+  private:
 	bool& m_bDestroyed;
 };
 
 TEST(Thread, CancelJobWhenDone) {
 	bool destroyed = false;
-	CEmptyJob *pJob = new CEmptyJob(destroyed);
+	CEmptyJob* pJob = new CEmptyJob(destroyed);
 
 	CThreadPool::Get().addJob(pJob);
 
@@ -176,7 +174,8 @@ TEST(Thread, CancelJobWhenDone) {
 	fd_set fds;
 	FD_ZERO(&fds);
 	FD_SET(CThreadPool::Get().getReadFD(), &fds);
-	EXPECT_EQ(1, select(1 + CThreadPool::Get().getReadFD(), &fds, nullptr, nullptr, nullptr));
+	EXPECT_EQ(1, select(1 + CThreadPool::Get().getReadFD(), &fds, nullptr,
+	                    nullptr, nullptr));
 
 	// And only cancel it afterwards
 	CThreadPool::Get().cancelJob(pJob);

@@ -18,10 +18,8 @@
 #include <znc/znc.h>
 
 class CSocketSorter {
-public:
-	CSocketSorter(Csock* p) {
-		m_pSock = p;
-	}
+  public:
+	CSocketSorter(Csock* p) { m_pSock = p; }
 	bool operator<(const CSocketSorter& other) const {
 		// The 'biggest' item is displayed first.
 		// return false: this is first
@@ -29,10 +27,8 @@ public:
 
 		// Listeners go to the top
 		if (m_pSock->GetType() != other.m_pSock->GetType()) {
-			if (m_pSock->GetType() == Csock::LISTENER)
-				return false;
-			if (other.m_pSock->GetType() == Csock::LISTENER)
-				return true;
+			if (m_pSock->GetType() == Csock::LISTENER) return false;
+			if (other.m_pSock->GetType() == Csock::LISTENER) return true;
 		}
 		const CString& sMyName = m_pSock->GetSockName();
 		const CString& sMyName2 = sMyName.Token(1, true, "::");
@@ -42,35 +38,35 @@ public:
 		bool bHisEmpty = sHisName2.empty();
 
 		// Then sort by first token after "::"
-		if (bMyEmpty && !bHisEmpty)
-			return false;
-		if (bHisEmpty && !bMyEmpty)
-			return true;
+		if (bMyEmpty && !bHisEmpty) return false;
+		if (bHisEmpty && !bMyEmpty) return true;
 
 		if (!bMyEmpty && !bHisEmpty) {
 			int c = sMyName2.StrCmp(sHisName2);
-			if (c < 0)
-				return false;
-			if (c > 0)
-				return true;
+			if (c < 0) return false;
+			if (c > 0) return true;
 		}
 		// and finally sort by the whole socket name
 		return sMyName.StrCmp(sHisName) > 0;
 	}
 	Csock* GetSock() const { return m_pSock; }
-private:
+
+  private:
 	Csock* m_pSock;
 };
 
 class CListSockets : public CModule {
-public:
+  public:
 	MODCONSTRUCTOR(CListSockets) {
 		AddHelpCommand();
-		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(&CListSockets::OnListCommand), "[-n]", "Show the list of active sockets. Pass -n to show IP addresses");
+		AddCommand(
+		    "List",
+		    static_cast<CModCommand::ModCmdFunc>(&CListSockets::OnListCommand),
+		    "[-n]",
+		    "Show the list of active sockets. Pass -n to show IP addresses");
 	}
 
-	bool OnLoad(const CString& sArgs, CString& sMessage) override
-	{
+	bool OnLoad(const CString& sArgs, CString& sMessage) override {
 #ifndef MOD_LISTSOCKETS_ALLOW_EVERYONE
 		if (!GetUser()->IsAdmin()) {
 			sMessage = "You must be admin to use this module";
@@ -91,8 +87,7 @@ public:
 			// another socket took over the connection from this
 			// socket. So ignore this to avoid listing the
 			// connection twice.
-			if (pSock->GetCloseType() == Csock::CLT_DEREFERENCE)
-				continue;
+			if (pSock->GetCloseType() == Csock::CLT_DEREFERENCE) continue;
 			ret.push(pSock);
 		}
 
@@ -102,7 +97,8 @@ public:
 	bool WebRequiresAdmin() override { return true; }
 	CString GetWebMenuTitle() override { return "List sockets"; }
 
-	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
+	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
+	                  CTemplate& Tmpl) override {
 		if (sPageName == "index") {
 			if (CZNC::Get().GetManager().empty()) {
 				return false;
@@ -160,7 +156,8 @@ public:
 	CString GetCreatedTime(Csock* pSocket) {
 		unsigned long long iStartTime = pSocket->GetStartTime();
 		time_t iTime = iStartTime / 1000;
-		return CUtils::FormatTime(iTime, "%Y-%m-%d %H:%M:%S", GetUser()->GetTimezone());
+		return CUtils::FormatTime(iTime, "%Y-%m-%d %H:%M:%S",
+		                          GetUser()->GetTimezone());
 	}
 
 	CString GetLocalHost(Csock* pSocket, bool bShowHosts) {
@@ -240,21 +237,20 @@ public:
 			Table.SetCell("Local", GetLocalHost(pSocket, bShowHosts));
 			Table.SetCell("Remote", GetRemoteHost(pSocket, bShowHosts));
 			Table.SetCell("In", CString::ToByteStr(pSocket->GetBytesRead()));
-			Table.SetCell("Out", CString::ToByteStr(pSocket->GetBytesWritten()));
+			Table.SetCell("Out",
+			              CString::ToByteStr(pSocket->GetBytesWritten()));
 		}
 
 		PutModule(Table);
 		return;
 	}
 
-	virtual ~CListSockets() {
-	}
-
+	virtual ~CListSockets() {}
 };
 
-template<> void TModInfo<CListSockets>(CModInfo& Info) {
+template <>
+void TModInfo<CListSockets>(CModInfo& Info) {
 	Info.SetWikiPage("listsockets");
 }
 
 USERMODULEDEFS(CListSockets, "List active sockets")
-

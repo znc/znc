@@ -23,16 +23,17 @@ using ::testing::SizeIs;
 using ::testing::ContainerEq;
 
 class BufferTest : public ::testing::Test {
-protected:
+  protected:
 	void SetUp() { CZNC::CreateInstance(); }
 	void TearDown() { CZNC::DestroyInstance(); }
 };
 
 TEST_F(BufferTest, BufLine) {
 	CBuffer buffer(1);
-	buffer.AddLine(CMessage("@key=value :nick PRIVMSG {target} {text}"), "hello there");
+	buffer.AddLine(CMessage("@key=value :nick PRIVMSG {target} {text}"),
+	               "hello there");
 	const CBufLine& line = buffer.GetBufLine(0);
-	EXPECT_THAT(line.GetTags(), ContainerEq(MCString{{"key","value"}}));
+	EXPECT_THAT(line.GetTags(), ContainerEq(MCString{{"key", "value"}}));
 	EXPECT_EQ(":nick PRIVMSG {target} {text}", line.GetFormat());
 	EXPECT_EQ("hello there", line.GetText());
 	EXPECT_EQ("PRIVMSG", line.GetCommand());

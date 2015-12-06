@@ -22,16 +22,14 @@ using std::map;
 using std::set;
 
 class CAutoVoiceUser {
-public:
+  public:
 	CAutoVoiceUser() {}
 
-	CAutoVoiceUser(const CString& sLine) {
-		FromString(sLine);
-	}
+	CAutoVoiceUser(const CString& sLine) { FromString(sLine); }
 
-	CAutoVoiceUser(const CString& sUsername, const CString& sHostmask, const CString& sChannels) :
-			m_sUsername(sUsername),
-			m_sHostmask(sHostmask) {
+	CAutoVoiceUser(const CString& sUsername, const CString& sHostmask,
+	               const CString& sChannels)
+	    : m_sUsername(sUsername), m_sHostmask(sHostmask) {
 		AddChans(sChannels);
 	}
 
@@ -107,22 +105,34 @@ public:
 
 		return !m_sHostmask.empty();
 	}
-private:
-protected:
-	CString      m_sUsername;
-	CString      m_sHostmask;
+
+  private:
+  protected:
+	CString m_sUsername;
+	CString m_sHostmask;
 	set<CString> m_ssChans;
 };
 
 class CAutoVoiceMod : public CModule {
-public:
+  public:
 	MODCONSTRUCTOR(CAutoVoiceMod) {
 		AddHelpCommand();
-		AddCommand("ListUsers", static_cast<CModCommand::ModCmdFunc>(&CAutoVoiceMod::OnListUsersCommand), "", "List all users");
-		AddCommand("AddChans", static_cast<CModCommand::ModCmdFunc>(&CAutoVoiceMod::OnAddChansCommand), "<user> <channel> [channel] ...", "Adds channels to a user");
-		AddCommand("DelChans", static_cast<CModCommand::ModCmdFunc>(&CAutoVoiceMod::OnDelChansCommand), "<user> <channel> [channel] ...", "Removes channels from a user");
-		AddCommand("AddUser", static_cast<CModCommand::ModCmdFunc>(&CAutoVoiceMod::OnAddUserCommand), "<user> <hostmask> [channels]", "Adds a user");
-		AddCommand("DelUser", static_cast<CModCommand::ModCmdFunc>(&CAutoVoiceMod::OnDelUserCommand), "<user>", "Removes a user");
+		AddCommand("ListUsers", static_cast<CModCommand::ModCmdFunc>(
+		                            &CAutoVoiceMod::OnListUsersCommand),
+		           "", "List all users");
+		AddCommand("AddChans", static_cast<CModCommand::ModCmdFunc>(
+		                           &CAutoVoiceMod::OnAddChansCommand),
+		           "<user> <channel> [channel] ...", "Adds channels to a user");
+		AddCommand("DelChans", static_cast<CModCommand::ModCmdFunc>(
+		                           &CAutoVoiceMod::OnDelChansCommand),
+		           "<user> <channel> [channel] ...",
+		           "Removes channels from a user");
+		AddCommand("AddUser", static_cast<CModCommand::ModCmdFunc>(
+		                          &CAutoVoiceMod::OnAddUserCommand),
+		           "<user> <hostmask> [channels]", "Adds a user");
+		AddCommand("DelUser", static_cast<CModCommand::ModCmdFunc>(
+		                          &CAutoVoiceMod::OnDelUserCommand),
+		           "<user>", "Removes a user");
 	}
 
 	bool OnLoad(const CString& sArgs, CString& sMessage) override {
@@ -142,7 +152,8 @@ public:
 			const CString& sLine = it->second;
 			CAutoVoiceUser* pUser = new CAutoVoiceUser;
 
-			if (!pUser->FromString(sLine) || FindUser(pUser->GetUsername().AsLower())) {
+			if (!pUser->FromString(sLine) ||
+			    FindUser(pUser->GetUsername().AsLower())) {
 				delete pUser;
 			} else {
 				m_msUsers[pUser->GetUsername().AsLower()] = pUser;
@@ -165,17 +176,20 @@ public:
 		if (Channel.HasPerm(CChan::Op) || Channel.HasPerm(CChan::HalfOp)) {
 			for (const auto& it : m_msUsers) {
 				// and the nick who joined is a valid user
-				if (it.second->HostMatches(Nick.GetHostMask()) && it.second->ChannelMatches(Channel.GetName())) {
-					PutIRC("MODE " + Channel.GetName() + " +v " + Nick.GetNick());
+				if (it.second->HostMatches(Nick.GetHostMask()) &&
+				    it.second->ChannelMatches(Channel.GetName())) {
+					PutIRC("MODE " + Channel.GetName() + " +v " +
+					       Nick.GetNick());
 					break;
 				}
 			}
 		}
 	}
 
-	void OnOp2(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange) override {
+	void OnOp2(const CNick* pOpNick, const CNick& Nick, CChan& Channel,
+	           bool bNoChange) override {
 		if (Nick.NickEquals(GetNetwork()->GetNick())) {
-			const map<CString,CNick>& msNicks = Channel.GetNicks();
+			const map<CString, CNick>& msNicks = Channel.GetNicks();
 
 			for (const auto& it : msNicks) {
 				if (!it.second.HasPerm(CChan::Voice)) {
@@ -186,7 +200,8 @@ public:
 	}
 
 	bool CheckAutoVoice(const CNick& Nick, CChan& Channel) {
-		CAutoVoiceUser *pUser = FindUserByHost(Nick.GetHostMask(), Channel.GetName());
+		CAutoVoiceUser* pUser =
+		    FindUserByHost(Nick.GetHostMask(), Channel.GetName());
 		if (!pUser) {
 			return false;
 		}
@@ -282,22 +297,26 @@ public:
 		}
 
 		pUser->DelChans(sChans);
-		PutModule("Channel(s) Removed from user [" + pUser->GetUsername() + "]");
+		PutModule("Channel(s) Removed from user [" + pUser->GetUsername() +
+		          "]");
 
 		SetNV(pUser->GetUsername(), pUser->ToString());
 	}
 
 	CAutoVoiceUser* FindUser(const CString& sUser) {
-		map<CString, CAutoVoiceUser*>::iterator it = m_msUsers.find(sUser.AsLower());
+		map<CString, CAutoVoiceUser*>::iterator it =
+		    m_msUsers.find(sUser.AsLower());
 
 		return (it != m_msUsers.end()) ? it->second : nullptr;
 	}
 
-	CAutoVoiceUser* FindUserByHost(const CString& sHostmask, const CString& sChannel = "") {
+	CAutoVoiceUser* FindUserByHost(const CString& sHostmask,
+	                               const CString& sChannel = "") {
 		for (const auto& it : m_msUsers) {
 			CAutoVoiceUser* pUser = it.second;
 
-			if (pUser->HostMatches(sHostmask) && (sChannel.empty() || pUser->ChannelMatches(sChannel))) {
+			if (pUser->HostMatches(sHostmask) &&
+			    (sChannel.empty() || pUser->ChannelMatches(sChannel))) {
 				return pUser;
 			}
 		}
@@ -306,7 +325,8 @@ public:
 	}
 
 	void DelUser(const CString& sUser) {
-		map<CString, CAutoVoiceUser*>::iterator it = m_msUsers.find(sUser.AsLower());
+		map<CString, CAutoVoiceUser*>::iterator it =
+		    m_msUsers.find(sUser.AsLower());
 
 		if (it == m_msUsers.end()) {
 			PutModule("That user does not exist");
@@ -318,7 +338,8 @@ public:
 		PutModule("User [" + sUser + "] removed");
 	}
 
-	CAutoVoiceUser* AddUser(const CString& sUser, const CString& sHost, const CString& sChans) {
+	CAutoVoiceUser* AddUser(const CString& sUser, const CString& sHost,
+	                        const CString& sChans) {
 		if (m_msUsers.find(sUser) != m_msUsers.end()) {
 			PutModule("That user already exists");
 			return nullptr;
@@ -330,14 +351,18 @@ public:
 		return pUser;
 	}
 
-private:
+  private:
 	map<CString, CAutoVoiceUser*> m_msUsers;
 };
 
-template<> void TModInfo<CAutoVoiceMod>(CModInfo& Info) {
+template <>
+void TModInfo<CAutoVoiceMod>(CModInfo& Info) {
 	Info.SetWikiPage("autovoice");
 	Info.SetHasArgs(true);
-	Info.SetArgsHelpText("Each argument is either a channel you want autovoice for (which can include wildcards) or, if it starts with !, it is an exception for autovoice.");
+	Info.SetArgsHelpText(
+	    "Each argument is either a channel you want autovoice for (which can "
+	    "include wildcards) or, if it starts with !, it is an exception for "
+	    "autovoice.");
 }
 
 NETWORKMODULEDEFS(CAutoVoiceMod, "Auto voice the good people")

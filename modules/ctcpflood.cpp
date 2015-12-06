@@ -19,16 +19,21 @@
 #include <time.h>
 
 class CCtcpFloodMod : public CModule {
-public:
+  public:
 	MODCONSTRUCTOR(CCtcpFloodMod) {
 		AddHelpCommand();
-		AddCommand("Secs", static_cast<CModCommand::ModCmdFunc>(&CCtcpFloodMod::OnSecsCommand), "<limit>", "Set seconds limit");
-		AddCommand("Lines", static_cast<CModCommand::ModCmdFunc>(&CCtcpFloodMod::OnLinesCommand), "<limit>", "Set lines limit");
-		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(&CCtcpFloodMod::OnShowCommand), "", "Show the current limits");
+		AddCommand("Secs", static_cast<CModCommand::ModCmdFunc>(
+		                       &CCtcpFloodMod::OnSecsCommand),
+		           "<limit>", "Set seconds limit");
+		AddCommand("Lines", static_cast<CModCommand::ModCmdFunc>(
+		                        &CCtcpFloodMod::OnLinesCommand),
+		           "<limit>", "Set lines limit");
+		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(
+		                       &CCtcpFloodMod::OnShowCommand),
+		           "", "Show the current limits");
 	}
 
-	~CCtcpFloodMod() {
-	}
+	~CCtcpFloodMod() {}
 
 	void Save() {
 		// We save the settings twice because the module arguments can
@@ -49,10 +54,8 @@ public:
 			m_iThresholdSecs = GetNV("secs").ToUInt();
 		}
 
-		if (m_iThresholdSecs == 0)
-			m_iThresholdSecs = 2;
-		if (m_iThresholdMsgs == 0)
-			m_iThresholdMsgs = 4;
+		if (m_iThresholdSecs == 0) m_iThresholdSecs = 2;
+		if (m_iThresholdMsgs == 0) m_iThresholdMsgs = 4;
 
 		Save();
 
@@ -61,8 +64,7 @@ public:
 
 	EModRet Message(const CNick& Nick, const CString& sMessage) {
 		// We never block /me, because it doesn't cause a reply
-		if (sMessage.Token(0).Equals("ACTION"))
-			return CONTINUE;
+		if (sMessage.Token(0).Equals("ACTION")) return CONTINUE;
 
 		if (m_tLastCTCP + m_iThresholdSecs < time(nullptr)) {
 			m_tLastCTCP = time(nullptr);
@@ -74,7 +76,8 @@ public:
 		if (m_iNumCTCP < m_iThresholdMsgs)
 			return CONTINUE;
 		else if (m_iNumCTCP == m_iThresholdMsgs)
-			PutModule("Limit reached by [" + Nick.GetHostMask() + "], blocking all CTCP");
+			PutModule("Limit reached by [" + Nick.GetHostMask() +
+			          "], blocking all CTCP");
 
 		// Reset the timeout so that we continue blocking messages
 		m_tLastCTCP = time(nullptr);
@@ -86,7 +89,8 @@ public:
 		return Message(Nick, sMessage);
 	}
 
-	EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage) override {
+	EModRet OnChanCTCP(CNick& Nick, CChan& Channel,
+	                   CString& sMessage) override {
 		return Message(Nick, sMessage);
 	}
 
@@ -99,8 +103,7 @@ public:
 		}
 
 		m_iThresholdSecs = sArg.ToUInt();
-		if (m_iThresholdSecs == 0)
-			m_iThresholdSecs = 1;
+		if (m_iThresholdSecs == 0) m_iThresholdSecs = 1;
 
 		PutModule("Set seconds limit to [" + CString(m_iThresholdSecs) + "]");
 		Save();
@@ -115,19 +118,20 @@ public:
 		}
 
 		m_iThresholdMsgs = sArg.ToUInt();
-		if (m_iThresholdMsgs == 0)
-			m_iThresholdMsgs = 2;
+		if (m_iThresholdMsgs == 0) m_iThresholdMsgs = 2;
 
 		PutModule("Set lines limit to [" + CString(m_iThresholdMsgs) + "]");
 		Save();
 	}
 
 	void OnShowCommand(const CString& sCommand) {
-		PutModule("Current limit is " + CString(m_iThresholdMsgs) + " CTCPs "
-				"in " + CString(m_iThresholdSecs) + " secs");
+		PutModule("Current limit is " + CString(m_iThresholdMsgs) +
+		          " CTCPs "
+		          "in " +
+		          CString(m_iThresholdSecs) + " secs");
 	}
 
-private:
+  private:
 	time_t m_tLastCTCP = 0;
 	unsigned int m_iNumCTCP = 0;
 
@@ -135,10 +139,15 @@ private:
 	unsigned int m_iThresholdMsgs{};
 };
 
-template<> void TModInfo<CCtcpFloodMod>(CModInfo& Info) {
+template <>
+void TModInfo<CCtcpFloodMod>(CModInfo& Info) {
 	Info.SetWikiPage("ctcpflood");
 	Info.SetHasArgs(true);
-	Info.SetArgsHelpText("This user module takes none to two arguments. The first argument is the number of lines after which the flood-protection is triggered. The second argument is the time (s) to in which the number of lines is reached. The default setting is 4 CTCPs in 2 seconds");
+	Info.SetArgsHelpText(
+	    "This user module takes none to two arguments. The first argument is "
+	    "the number of lines after which the flood-protection is triggered. "
+	    "The second argument is the time (s) to in which the number of lines "
+	    "is reached. The default setting is 4 CTCPs in 2 seconds");
 }
 
 USERMODULEDEFS(CCtcpFloodMod, "Don't forward CTCP floods to clients")

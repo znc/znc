@@ -28,7 +28,7 @@
 #include <vector>
 
 class CFile {
-public:
+  public:
 	CFile();
 	CFile(const CString& sLongName);
 	~CFile();
@@ -61,16 +61,10 @@ public:
 	bool IsSock(bool bUseLstat = false) const;
 
 	// for gettin file types, using fstat instead
-	static bool FType(const CString& sFileName, EFileTypes eType, bool bUseLstat = false);
+	static bool FType(const CString& sFileName, EFileTypes eType,
+	                  bool bUseLstat = false);
 
-	enum EFileAttr {
-		FA_Name,
-		FA_Size,
-		FA_ATime,
-		FA_MTime,
-		FA_CTime,
-		FA_UID
-	};
+	enum EFileAttr { FA_Name, FA_Size, FA_ATime, FA_MTime, FA_CTime, FA_UID };
 
 	//
 	// Functions to retrieve file information
@@ -100,20 +94,23 @@ public:
 	bool Copy(const CString& sNewFileName, bool bOverwrite = false);
 
 	static bool Delete(const CString& sFileName);
-	static bool Move(const CString& sOldFileName, const CString& sNewFileName, bool bOverwrite = false);
-	static bool Copy(const CString& sOldFileName, const CString& sNewFileName, bool bOverwrite = false);
+	static bool Move(const CString& sOldFileName, const CString& sNewFileName,
+	                 bool bOverwrite = false);
+	static bool Copy(const CString& sOldFileName, const CString& sNewFileName,
+	                 bool bOverwrite = false);
 	bool Chmod(mode_t mode);
 	static bool Chmod(const CString& sFile, mode_t mode);
 	bool Seek(off_t uPos);
 	bool Truncate();
 	bool Sync();
-	bool Open(const CString& sFileName, int iFlags = O_RDONLY, mode_t iMode = 0644);
+	bool Open(const CString& sFileName, int iFlags = O_RDONLY,
+	          mode_t iMode = 0644);
 	bool Open(int iFlags = O_RDONLY, mode_t iMode = 0644);
-	ssize_t Read(char *pszBuffer, int iBytes);
-	bool ReadLine(CString & sData, const CString & sDelimiter = "\n");
+	ssize_t Read(char* pszBuffer, int iBytes);
+	bool ReadLine(CString& sData, const CString& sDelimiter = "\n");
 	bool ReadFile(CString& sData, size_t iMaxSize = 512 * 1024);
-	ssize_t Write(const char *pszBuffer, size_t iBytes);
-	ssize_t Write(const CString & sData);
+	ssize_t Write(const char* pszBuffer, size_t iBytes);
+	ssize_t Write(const CString& sData);
 	void Close();
 	void ClearBuffer();
 
@@ -133,34 +130,30 @@ public:
 	static void InitHomePath(const CString& sFallback);
 	static const CString& GetHomePath() { return m_sHomePath; }
 
-private:
+  private:
 	// fcntl() locking wrapper
 	bool Lock(short iType, bool bBlocking);
 
 	CString m_sBuffer;
-	int     m_iFD;
-	bool    m_bHadError;
+	int m_iFD;
+	bool m_bHadError;
 
 	static CString m_sHomePath;
 
-protected:
-	CString m_sLongName;  //!< Absolute filename (m_sPath + "/" + m_sShortName)
-	CString m_sShortName; //!< Filename alone, without path
+  protected:
+	CString m_sLongName;   //!< Absolute filename (m_sPath + "/" + m_sShortName)
+	CString m_sShortName;  //!< Filename alone, without path
 };
 
 class CDir : public std::vector<CFile*> {
-public:
-
+  public:
 	CDir(const CString& sDir) : m_eSortAttr(CFile::FA_Name), m_bDesc(false) {
 		Fill(sDir);
 	}
 
-	CDir() : m_eSortAttr(CFile::FA_Name), m_bDesc(false) {
-	}
+	CDir() : m_eSortAttr(CFile::FA_Name), m_bDesc(false) {}
 
-	~CDir() {
-		CleanUp();
-	}
+	~CDir() { CleanUp(); }
 
 	void CleanUp() {
 		for (unsigned int a = 0; a < size(); a++) {
@@ -170,9 +163,7 @@ public:
 		clear();
 	}
 
-	size_t Fill(const CString& sDir) {
-		return FillByWildcard(sDir, "*");
-	}
+	size_t Fill(const CString& sDir) { return FillByWildcard(sDir, "*"); }
 
 	size_t FillByWildcard(const CString& sDir, const CString& sWildcard) {
 		CleanUp();
@@ -182,17 +173,23 @@ public:
 			return 0;
 		}
 
-		struct dirent * de;
+		struct dirent* de;
 
 		while ((de = readdir(dir)) != nullptr) {
-			if ((strcmp(de->d_name, ".") == 0) || (strcmp(de->d_name, "..") == 0)) {
+			if ((strcmp(de->d_name, ".") == 0) ||
+			    (strcmp(de->d_name, "..") == 0)) {
 				continue;
 			}
-			if ((!sWildcard.empty()) && (!CString(de->d_name).WildCmp(sWildcard))) {
+			if ((!sWildcard.empty()) &&
+			    (!CString(de->d_name).WildCmp(sWildcard))) {
 				continue;
 			}
 
-			CFile *file = new CFile(sDir.TrimSuffix_n("/") + "/" + de->d_name/*, this*/); // @todo need to pass pointer to 'this' if we want to do Sort()
+			CFile* file =
+			    new CFile(sDir.TrimSuffix_n("/") + "/" +
+			              de->d_name /*, this*/);  // @todo need to pass pointer
+			                                       // to 'this' if we want to do
+			                                       // Sort()
 			push_back(file);
 		}
 
@@ -200,7 +197,8 @@ public:
 		return size();
 	}
 
-	static unsigned int Chmod(mode_t mode, const CString& sWildcard, const CString& sDir = ".") {
+	static unsigned int Chmod(mode_t mode, const CString& sWildcard,
+	                          const CString& sDir = ".") {
 		CDir cDir;
 		cDir.FillByWildcard(sDir, sWildcard);
 		return cDir.Chmod(mode);
@@ -217,7 +215,8 @@ public:
 		return uRet;
 	}
 
-	static unsigned int Delete(const CString& sWildcard, const CString& sDir = ".") {
+	static unsigned int Delete(const CString& sWildcard,
+	                           const CString& sDir = ".") {
 		CDir cDir;
 		cDir.FillByWildcard(sDir, sWildcard);
 		return cDir.Delete();
@@ -239,13 +238,15 @@ public:
 
 	// Check if sPath + "/" + sAdd (~/ is handled) is an absolute path which
 	// resides under sPath. Returns absolute path on success, else "".
-	static CString CheckPathPrefix(const CString& sPath, const CString& sAdd, const CString& sHomeDir = "");
-	static CString ChangeDir(const CString& sPath, const CString& sAdd, const CString& sHomeDir = "");
+	static CString CheckPathPrefix(const CString& sPath, const CString& sAdd,
+	                               const CString& sHomeDir = "");
+	static CString ChangeDir(const CString& sPath, const CString& sAdd,
+	                         const CString& sHomeDir = "");
 	static bool MakeDir(const CString& sPath, mode_t iMode = 0700);
 
 	static CString GetCWD() {
 		CString sRet;
-		char * pszCurDir = getcwd(nullptr, 0);
+		char* pszCurDir = getcwd(nullptr, 0);
 		if (pszCurDir) {
 			sRet = pszCurDir;
 			free(pszCurDir);
@@ -254,9 +255,9 @@ public:
 		return sRet;
 	}
 
-private:
-protected:
+  private:
+  protected:
 	CFile::EFileAttr m_eSortAttr;
-	bool             m_bDesc;
+	bool m_bDesc;
 };
-#endif // !ZNC_FILEUTILS_H
+#endif  // !ZNC_FILEUTILS_H

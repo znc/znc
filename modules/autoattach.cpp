@@ -20,53 +20,44 @@
 using std::vector;
 
 class CAttachMatch {
-public:
-	CAttachMatch(CModule *pModule, const CString& sChannels, const CString& sSearch, const CString& sHostmasks, bool bNegated)
-	{
+  public:
+	CAttachMatch(CModule* pModule, const CString& sChannels,
+	             const CString& sSearch, const CString& sHostmasks,
+	             bool bNegated) {
 		m_pModule = pModule;
 		m_sChannelWildcard = sChannels;
 		m_sSearchWildcard = sSearch;
 		m_sHostmaskWildcard = sHostmasks;
 		m_bNegated = bNegated;
 
-		if (m_sChannelWildcard.empty())
-			m_sChannelWildcard = "*";
-		if (m_sSearchWildcard.empty())
-			m_sSearchWildcard = "*";
-		if (m_sHostmaskWildcard.empty())
-			m_sHostmaskWildcard = "*!*@*";
+		if (m_sChannelWildcard.empty()) m_sChannelWildcard = "*";
+		if (m_sSearchWildcard.empty()) m_sSearchWildcard = "*";
+		if (m_sHostmaskWildcard.empty()) m_sHostmaskWildcard = "*!*@*";
 	}
 
-	bool IsMatch(const CString& sChan, const CString& sHost, const CString& sMessage) const {
+	bool IsMatch(const CString& sChan, const CString& sHost,
+	             const CString& sMessage) const {
 		if (!sHost.WildCmp(m_sHostmaskWildcard, CString::CaseInsensitive))
 			return false;
 		if (!sChan.WildCmp(m_sChannelWildcard, CString::CaseInsensitive))
 			return false;
-		if (!sMessage.WildCmp(m_pModule->ExpandString(m_sSearchWildcard), CString::CaseInsensitive))
+		if (!sMessage.WildCmp(m_pModule->ExpandString(m_sSearchWildcard),
+		                      CString::CaseInsensitive))
 			return false;
 		return true;
 	}
 
-	bool IsNegated() const {
-		return m_bNegated;
-	}
+	bool IsNegated() const { return m_bNegated; }
 
-	const CString& GetHostMask() const {
-		return m_sHostmaskWildcard;
-	}
+	const CString& GetHostMask() const { return m_sHostmaskWildcard; }
 
-	const CString& GetSearch() const {
-		return m_sSearchWildcard;
-	}
+	const CString& GetSearch() const { return m_sSearchWildcard; }
 
-	const CString& GetChans() const {
-		return m_sChannelWildcard;
-	}
+	const CString& GetChans() const { return m_sChannelWildcard; }
 
 	CString ToString() {
 		CString sRes;
-		if (m_bNegated)
-			sRes += "!";
+		if (m_bNegated) sRes += "!";
 		sRes += m_sChannelWildcard;
 		sRes += " ";
 		sRes += m_sSearchWildcard;
@@ -75,20 +66,20 @@ public:
 		return sRes;
 	}
 
-private:
+  private:
 	bool m_bNegated;
-	CModule *m_pModule;
+	CModule* m_pModule;
 	CString m_sChannelWildcard;
 	CString m_sSearchWildcard;
 	CString m_sHostmaskWildcard;
 };
 
 class CChanAttach : public CModule {
-public:
+  public:
 	typedef vector<CAttachMatch> VAttachMatch;
 	typedef VAttachMatch::iterator VAttachIter;
 
-private:
+  private:
 	void HandleAdd(const CString& sLine) {
 		CString sMsg = sLine.Token(1, true);
 		bool bHelp = false;
@@ -112,7 +103,7 @@ private:
 	}
 
 	void HandleDel(const CString& sLine) {
-		CString sMsg  = sLine.Token(1, true);
+		CString sMsg = sLine.Token(1, true);
 		bool bNegated = sMsg.TrimPrefix("!");
 		CString sChan = sMsg.Token(0);
 		CString sSearch = sMsg.Token(1);
@@ -148,25 +139,30 @@ private:
 		}
 	}
 
-public:
+  public:
 	MODCONSTRUCTOR(CChanAttach) {
 		AddHelpCommand();
-		AddCommand("Add",    static_cast<CModCommand::ModCmdFunc>(&CChanAttach::HandleAdd),
-			"[!]<#chan> <search> <host>", "Add an entry, use !#chan to negate and * for wildcards");
-		AddCommand("Del",    static_cast<CModCommand::ModCmdFunc>(&CChanAttach::HandleDel),
-			"[!]<#chan> <search> <host>", "Remove an entry, needs to be an exact match");
-		AddCommand("List",    static_cast<CModCommand::ModCmdFunc>(&CChanAttach::HandleList),
-			"",           "List all entries");
+		AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(
+		                      &CChanAttach::HandleAdd),
+		           "[!]<#chan> <search> <host>",
+		           "Add an entry, use !#chan to negate and * for wildcards");
+		AddCommand("Del", static_cast<CModCommand::ModCmdFunc>(
+		                      &CChanAttach::HandleDel),
+		           "[!]<#chan> <search> <host>",
+		           "Remove an entry, needs to be an exact match");
+		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(
+		                       &CChanAttach::HandleList),
+		           "", "List all entries");
 	}
 
-	virtual ~CChanAttach() {
-	}
+	virtual ~CChanAttach() {}
 
 	bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		VCString vsChans;
 		sArgs.Split(" ", vsChans, false);
 
-		for (VCString::const_iterator it = vsChans.begin(); it != vsChans.end(); ++it) {
+		for (VCString::const_iterator it = vsChans.begin(); it != vsChans.end();
+		     ++it) {
 			CString sAdd = *it;
 			bool bNegated = sAdd.TrimPrefix("!");
 			CString sChan = sAdd.Token(0);
@@ -199,13 +195,11 @@ public:
 		const CString& sMessage = Message;
 		VAttachIter it;
 
-		if (!Channel.IsDetached())
-			return;
+		if (!Channel.IsDetached()) return;
 
 		// Any negated match?
 		for (it = m_vMatches.begin(); it != m_vMatches.end(); ++it) {
-			if (it->IsNegated() && it->IsMatch(sChan, sHost, sMessage))
-				return;
+			if (it->IsNegated() && it->IsMatch(sChan, sHost, sMessage)) return;
 		}
 
 		// Now check for a positive match
@@ -217,7 +211,8 @@ public:
 		}
 	}
 
-	EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) override {
+	EModRet OnChanNotice(CNick& Nick, CChan& Channel,
+	                     CString& sMessage) override {
 		TryAttach(Nick, Channel, sMessage);
 		return CONTINUE;
 	}
@@ -227,34 +222,34 @@ public:
 		return CONTINUE;
 	}
 
-	EModRet OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage) override {
+	EModRet OnChanAction(CNick& Nick, CChan& Channel,
+	                     CString& sMessage) override {
 		TryAttach(Nick, Channel, sMessage);
 		return CONTINUE;
 	}
 
-	VAttachIter FindEntry(const CString& sChan, const CString& sSearch, const CString& sHost) {
+	VAttachIter FindEntry(const CString& sChan, const CString& sSearch,
+	                      const CString& sHost) {
 		VAttachIter it = m_vMatches.begin();
 		for (; it != m_vMatches.end(); ++it) {
-			if (sHost.empty() || it->GetHostMask() != sHost)
-				continue;
-			if (sSearch.empty() || it->GetSearch() != sSearch)
-				continue;
-			if (sChan.empty() || it->GetChans() != sChan)
-				continue;
+			if (sHost.empty() || it->GetHostMask() != sHost) continue;
+			if (sSearch.empty() || it->GetSearch() != sSearch) continue;
+			if (sChan.empty() || it->GetChans() != sChan) continue;
 			return it;
 		}
 		return m_vMatches.end();
 	}
 
-	bool Add(bool bNegated, const CString& sChan, const CString& sSearch, const CString& sHost) {
+	bool Add(bool bNegated, const CString& sChan, const CString& sSearch,
+	         const CString& sHost) {
 		CAttachMatch attach(this, sChan, sSearch, sHost, bNegated);
 
 		// Check for duplicates
 		VAttachIter it = m_vMatches.begin();
 		for (; it != m_vMatches.end(); ++it) {
-			if (it->GetHostMask() == attach.GetHostMask()
-					&& it->GetChans() == attach.GetChans()
-					&& it->GetSearch() == attach.GetSearch())
+			if (it->GetHostMask() == attach.GetHostMask() &&
+			    it->GetChans() == attach.GetChans() &&
+			    it->GetSearch() == attach.GetSearch())
 				return false;
 		}
 
@@ -266,25 +261,28 @@ public:
 		return true;
 	}
 
-	bool Del(bool bNegated, const CString& sChan, const CString& sSearch, const CString& sHost) {
+	bool Del(bool bNegated, const CString& sChan, const CString& sSearch,
+	         const CString& sHost) {
 		VAttachIter it = FindEntry(sChan, sSearch, sHost);
-		if (it == m_vMatches.end() || it->IsNegated() != bNegated)
-			return false;
+		if (it == m_vMatches.end() || it->IsNegated() != bNegated) return false;
 
 		DelNV(it->ToString());
 		m_vMatches.erase(it);
 
 		return true;
 	}
-private:
+
+  private:
 	VAttachMatch m_vMatches;
 };
 
-template<> void TModInfo<CChanAttach>(CModInfo& Info) {
+template <>
+void TModInfo<CChanAttach>(CModInfo& Info) {
 	Info.AddType(CModInfo::UserModule);
 	Info.SetWikiPage("autoattach");
 	Info.SetHasArgs(true);
-	Info.SetArgsHelpText("List of channel masks and channel masks with ! before them.");
+	Info.SetArgsHelpText(
+	    "List of channel masks and channel masks with ! before them.");
 }
 
 NETWORKMODULEDEFS(CChanAttach, "Reattaches you to channels on activity.")

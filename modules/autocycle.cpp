@@ -20,12 +20,19 @@
 using std::vector;
 
 class CAutoCycleMod : public CModule {
-public:
+  public:
 	MODCONSTRUCTOR(CAutoCycleMod) {
 		AddHelpCommand();
-		AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(&CAutoCycleMod::OnAddCommand), "[!]<#chan>", "Add an entry, use !#chan to negate and * for wildcards");
-		AddCommand("Del", static_cast<CModCommand::ModCmdFunc>(&CAutoCycleMod::OnDelCommand), "[!]<#chan>", "Remove an entry, needs to be an exact match");
-		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(&CAutoCycleMod::OnListCommand), "", "List all entries");
+		AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(
+		                      &CAutoCycleMod::OnAddCommand),
+		           "[!]<#chan>",
+		           "Add an entry, use !#chan to negate and * for wildcards");
+		AddCommand("Del", static_cast<CModCommand::ModCmdFunc>(
+		                      &CAutoCycleMod::OnDelCommand),
+		           "[!]<#chan>", "Remove an entry, needs to be an exact match");
+		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(
+		                       &CAutoCycleMod::OnListCommand),
+		           "", "List all entries");
 		m_recentlyCycled.SetTTL(15 * 1000);
 	}
 
@@ -48,8 +55,7 @@ public:
 		}
 
 		// Default is auto cycle for all channels
-		if (m_vsChans.empty())
-			Add("*");
+		if (m_vsChans.empty()) Add("*");
 
 		return true;
 	}
@@ -96,35 +102,35 @@ public:
 		}
 	}
 
-	void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) override {
+	void OnPart(const CNick& Nick, CChan& Channel,
+	            const CString& sMessage) override {
 		AutoCycle(Channel);
 	}
 
-	void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) override {
-		for (CChan* pChan : vChans)
-			AutoCycle(*pChan);
+	void OnQuit(const CNick& Nick, const CString& sMessage,
+	            const vector<CChan*>& vChans) override {
+		for (CChan* pChan : vChans) AutoCycle(*pChan);
 	}
 
-	void OnKick(const CNick& Nick, const CString& sOpNick, CChan& Channel, const CString& sMessage) override {
+	void OnKick(const CNick& Nick, const CString& sOpNick, CChan& Channel,
+	            const CString& sMessage) override {
 		AutoCycle(Channel);
 	}
 
-protected:
+  protected:
 	void AutoCycle(CChan& Channel) {
-		if (!IsAutoCycle(Channel.GetName()))
-			return;
+		if (!IsAutoCycle(Channel.GetName())) return;
 
 		// Did we recently annoy opers via cycling of an empty channel?
-		if (m_recentlyCycled.HasItem(Channel.GetName()))
-			return;
+		if (m_recentlyCycled.HasItem(Channel.GetName())) return;
 
 		// Is there only one person left in the channel?
-		if (Channel.GetNickCount() != 1)
-			return;
+		if (Channel.GetNickCount() != 1) return;
 
 		// Is that person us and we don't have op?
 		const CNick& pNick = Channel.GetNicks().begin()->second;
-		if (!pNick.HasPerm(CChan::Op) && pNick.NickEquals(GetNetwork()->GetCurNick())) {
+		if (!pNick.HasPerm(CChan::Op) &&
+		    pNick.NickEquals(GetNetwork()->GetCurNick())) {
 			Channel.Cycle();
 			m_recentlyCycled.AddItem(Channel.GetName());
 		}
@@ -134,13 +140,11 @@ protected:
 		CString sChan = sInput;
 		if (sChan.TrimPrefix("!")) {
 			for (const CString& s : m_vsNegChans) {
-				if (s.Equals(sChan))
-					return true;
+				if (s.Equals(sChan)) return true;
 			}
 		} else {
 			for (const CString& s : m_vsChans) {
-				if (s.Equals(sChan))
-					return true;
+				if (s.Equals(sChan)) return true;
 			}
 		}
 		return false;
@@ -166,8 +170,7 @@ protected:
 	bool Del(const CString& sChan) {
 		vector<CString>::iterator it, end;
 
-		if (sChan.empty() || sChan == "!")
-			return false;
+		if (sChan.empty() || sChan == "!") return false;
 
 		if (sChan.Left(1) == "!") {
 			CString sTmp = sChan.substr(1);
@@ -175,11 +178,9 @@ protected:
 			end = m_vsNegChans.end();
 
 			for (; it != end; ++it)
-				if (*it == sTmp)
-					break;
+				if (*it == sTmp) break;
 
-			if (it == end)
-				return false;
+			if (it == end) return false;
 
 			m_vsNegChans.erase(it);
 		} else {
@@ -187,11 +188,9 @@ protected:
 			end = m_vsChans.end();
 
 			for (; it != end; ++it)
-				if (*it == sChan)
-					break;
+				if (*it == sChan) break;
 
-			if (it == end)
-				return false;
+			if (it == end) return false;
 
 			m_vsChans.erase(it);
 		}
@@ -217,16 +216,19 @@ protected:
 		return false;
 	}
 
-private:
+  private:
 	vector<CString> m_vsChans;
 	vector<CString> m_vsNegChans;
 	TCacheMap<CString> m_recentlyCycled;
 };
 
-template<> void TModInfo<CAutoCycleMod>(CModInfo& Info) {
+template <>
+void TModInfo<CAutoCycleMod>(CModInfo& Info) {
 	Info.SetWikiPage("autocycle");
 	Info.SetHasArgs(true);
-	Info.SetArgsHelpText("List of channel masks and channel masks with ! before them.");
+	Info.SetArgsHelpText(
+	    "List of channel masks and channel masks with ! before them.");
 }
 
-NETWORKMODULEDEFS(CAutoCycleMod, "Rejoins channels to gain Op if you're the only user left")
+NETWORKMODULEDEFS(CAutoCycleMod,
+                  "Rejoins channels to gain Op if you're the only user left")

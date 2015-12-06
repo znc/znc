@@ -25,8 +25,9 @@ using std::vector;
 class CShellMod;
 
 class CShellSock : public CExecSock {
-public:
-	CShellSock(CShellMod* pShellMod, CClient* pClient, const CString& sExec) : CExecSock() {
+  public:
+	CShellSock(CShellMod* pShellMod, CClient* pClient, const CString& sExec)
+	    : CExecSock() {
 		EnableReadLine();
 		m_pParent = pShellMod;
 		m_pClient = pClient;
@@ -43,21 +44,20 @@ public:
 		close(GetWSock());
 		SetWSock(open("/dev/null", O_WRONLY));
 	}
-	// These next two function's bodies are at the bottom of the file since they reference CShellMod
+	// These next two function's bodies are at the bottom of the file since they
+	// reference CShellMod
 	void ReadLine(const CString& sData) override;
 	void Disconnected() override;
 
 	CShellMod* m_pParent;
 
-private:
-	CClient*   m_pClient;
+  private:
+	CClient* m_pClient;
 };
 
 class CShellMod : public CModule {
-public:
-	MODCONSTRUCTOR(CShellMod) {
-		m_sPath = CZNC::Get().GetHomePath();
-	}
+  public:
+	MODCONSTRUCTOR(CShellMod) { m_sPath = CZNC::Get().GetHomePath(); }
 
 	virtual ~CShellMod() {
 		vector<Csock*> vSocks = GetManager()->FindSocksByName("SHELL");
@@ -67,8 +67,7 @@ public:
 		}
 	}
 
-	bool OnLoad(const CString& sArgs, CString& sMessage) override
-	{
+	bool OnLoad(const CString& sArgs, CString& sMessage) override {
 #ifndef MOD_SHELL_ALLOW_EVERYONE
 		if (!GetUser()->IsAdmin()) {
 			sMessage = "You must be admin to use the shell module";
@@ -83,7 +82,10 @@ public:
 		CString sCommand = sLine.Token(0);
 		if (sCommand.Equals("cd")) {
 			CString sArg = sLine.Token(1, true);
-			CString sPath = CDir::ChangeDir(m_sPath, (sArg.empty() ? CString(CZNC::Get().GetHomePath()) : sArg), CZNC::Get().GetHomePath());
+			CString sPath = CDir::ChangeDir(
+			    m_sPath,
+			    (sArg.empty() ? CString(CZNC::Get().GetHomePath()) : sArg),
+			    CZNC::Get().GetHomePath());
 			CFile Dir(sPath);
 
 			if (Dir.IsDir()) {
@@ -103,14 +105,19 @@ public:
 	void PutShell(const CString& sMsg) {
 		CString sPath = m_sPath.Replace_n(" ", "_");
 		CString sSource = ":" + GetModNick() + "!shell@" + sPath;
-		CString sLine = sSource + " PRIVMSG " + GetClient()->GetNick() + " :" + sMsg;
+		CString sLine =
+		    sSource + " PRIVMSG " + GetClient()->GetNick() + " :" + sMsg;
 		GetClient()->PutClient(sLine);
 	}
 
 	void RunCommand(const CString& sCommand) {
-		GetManager()->AddSock(new CShellSock(this, GetClient(), "cd " + m_sPath + " && " + sCommand), "SHELL");
+		GetManager()->AddSock(
+		    new CShellSock(this, GetClient(),
+		                   "cd " + m_sPath + " && " + sCommand),
+		    "SHELL");
 	}
-private:
+
+  private:
 	CString m_sPath;
 };
 
@@ -128,16 +135,16 @@ void CShellSock::ReadLine(const CString& sData) {
 void CShellSock::Disconnected() {
 	// If there is some incomplete line in the buffer, read it
 	// (e.g. echo echo -n "hi" triggered this)
-	CString &sBuffer = GetInternalReadBuffer();
-	if (!sBuffer.empty())
-		ReadLine(sBuffer);
+	CString& sBuffer = GetInternalReadBuffer();
+	if (!sBuffer.empty()) ReadLine(sBuffer);
 
 	m_pParent->SetClient(m_pClient);
 	m_pParent->PutShell("znc$");
 	m_pParent->SetClient(nullptr);
 }
 
-template<> void TModInfo<CShellMod>(CModInfo& Info) {
+template <>
+void TModInfo<CShellMod>(CModInfo& Info) {
 	Info.SetWikiPage("shell");
 }
 

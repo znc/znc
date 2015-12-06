@@ -22,44 +22,48 @@
 #include <znc/IRCSock.h>
 
 class CCertMod : public CModule {
-public:
-	void Delete(const CString &line) {
+  public:
+	void Delete(const CString& line) {
 		if (CFile::Delete(PemFile())) {
 			PutModule("Pem file deleted");
 		} else {
-			PutModule("The pem file doesn't exist or there was a error deleting the pem file.");
+			PutModule(
+			    "The pem file doesn't exist or there was a error deleting the "
+			    "pem file.");
 		}
 	}
 
-	void Info(const CString &line) {
+	void Info(const CString& line) {
 		if (HasPemFile()) {
 			PutModule("You have a certificate in: " + PemFile());
 		} else {
-			PutModule("You do not have a certificate. Please use the web interface to add a certificate");
+			PutModule(
+			    "You do not have a certificate. Please use the web interface "
+			    "to add a certificate");
 			if (GetUser()->IsAdmin()) {
-				PutModule("Alternatively you can either place one at " + PemFile());
+				PutModule("Alternatively you can either place one at " +
+				          PemFile());
 			}
 		}
 	}
 
 	MODCONSTRUCTOR(CCertMod) {
 		AddHelpCommand();
-		AddCommand("delete", static_cast<CModCommand::ModCmdFunc>(&CCertMod::Delete),
-			"", "Delete the current certificate");
-		AddCommand("info", static_cast<CModCommand::ModCmdFunc>(&CCertMod::Info), "", "Show the current certificate");
+		AddCommand("delete",
+		           static_cast<CModCommand::ModCmdFunc>(&CCertMod::Delete), "",
+		           "Delete the current certificate");
+		AddCommand("info",
+		           static_cast<CModCommand::ModCmdFunc>(&CCertMod::Info), "",
+		           "Show the current certificate");
 	}
 
 	virtual ~CCertMod() {}
 
-	CString PemFile() const {
-		return GetSavePath() + "/user.pem";
-	}
+	CString PemFile() const { return GetSavePath() + "/user.pem"; }
 
-	bool HasPemFile() const {
-		return (CFile::Exists(PemFile()));
-	}
+	bool HasPemFile() const { return (CFile::Exists(PemFile())); }
 
-	EModRet OnIRCConnecting(CIRCSock *pIRCSock) override {
+	EModRet OnIRCConnecting(CIRCSock* pIRCSock) override {
 		if (HasPemFile()) {
 			pIRCSock->SetPemLocation(PemFile());
 		}
@@ -69,7 +73,8 @@ public:
 
 	CString GetWebMenuTitle() override { return "Certificate"; }
 
-	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
+	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
+	                  CTemplate& Tmpl) override {
 		if (sPageName == "index") {
 			Tmpl["Cert"] = CString(HasPemFile());
 			return true;
@@ -93,7 +98,8 @@ public:
 	}
 };
 
-template<> void TModInfo<CCertMod>(CModInfo& Info) {
+template <>
+void TModInfo<CCertMod>(CModInfo& Info) {
 	Info.AddType(CModInfo::UserModule);
 	Info.SetWikiPage("cert");
 }

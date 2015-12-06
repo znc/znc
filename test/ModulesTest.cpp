@@ -19,64 +19,225 @@
 #include <znc/znc.h>
 
 class ModulesTest : public ::testing::Test {
-protected:
+  protected:
 	void SetUp() { CZNC::CreateInstance(); }
 	void TearDown() { CZNC::DestroyInstance(); }
 };
 
 class CLegacyModule : public CModule {
-public:
-	CLegacyModule() : CModule(nullptr, nullptr, nullptr, "legacy", "", CModInfo::NetworkModule) {}
+  public:
+	CLegacyModule()
+	    : CModule(nullptr, nullptr, nullptr, "legacy", "",
+	              CModInfo::NetworkModule) {}
 
-	EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage) override { sTarget = "#legacy"; sMessage = "CLegacyModule::OnUserCTCPReply"; return eAction; }
-	EModRet OnUserCTCP(CString& sTarget, CString& sMessage) override { sTarget = "#legacy"; sMessage = "CLegacyModule::OnUserCTCP"; return eAction; }
-	EModRet OnUserAction(CString& sTarget, CString& sMessage) override { sTarget = "#legacy"; sMessage = "CLegacyModule::OnUserAction"; return eAction; }
-	EModRet OnUserMsg(CString& sTarget, CString& sMessage) override { sTarget = "#legacy"; sMessage = "CLegacyModule::OnUserMsg"; return eAction; }
-	EModRet OnUserNotice(CString& sTarget, CString& sMessage) override { sTarget = "#legacy"; sMessage = "CLegacyModule::OnUserNotice"; return eAction; }
-	EModRet OnUserJoin(CString& sChannel, CString& sKey) override { sChannel = "#legacy"; sKey = "CLegacyModule::OnUserJoin"; return eAction; }
-	EModRet OnUserPart(CString& sChannel, CString& sMessage) override { sChannel = "#legacy"; sMessage = "CLegacyModule::OnUserPart"; return eAction; }
-	EModRet OnUserTopic(CString& sChannel, CString& sTopic) override { sChannel = "#legacy"; sTopic = "CLegacyModule::OnUserTopic"; return eAction; }
-	EModRet OnUserQuit(CString& sMessage) override { sMessage = "CLegacyModule::OnUserQuit"; return eAction; }
+	EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage) override {
+		sTarget = "#legacy";
+		sMessage = "CLegacyModule::OnUserCTCPReply";
+		return eAction;
+	}
+	EModRet OnUserCTCP(CString& sTarget, CString& sMessage) override {
+		sTarget = "#legacy";
+		sMessage = "CLegacyModule::OnUserCTCP";
+		return eAction;
+	}
+	EModRet OnUserAction(CString& sTarget, CString& sMessage) override {
+		sTarget = "#legacy";
+		sMessage = "CLegacyModule::OnUserAction";
+		return eAction;
+	}
+	EModRet OnUserMsg(CString& sTarget, CString& sMessage) override {
+		sTarget = "#legacy";
+		sMessage = "CLegacyModule::OnUserMsg";
+		return eAction;
+	}
+	EModRet OnUserNotice(CString& sTarget, CString& sMessage) override {
+		sTarget = "#legacy";
+		sMessage = "CLegacyModule::OnUserNotice";
+		return eAction;
+	}
+	EModRet OnUserJoin(CString& sChannel, CString& sKey) override {
+		sChannel = "#legacy";
+		sKey = "CLegacyModule::OnUserJoin";
+		return eAction;
+	}
+	EModRet OnUserPart(CString& sChannel, CString& sMessage) override {
+		sChannel = "#legacy";
+		sMessage = "CLegacyModule::OnUserPart";
+		return eAction;
+	}
+	EModRet OnUserTopic(CString& sChannel, CString& sTopic) override {
+		sChannel = "#legacy";
+		sTopic = "CLegacyModule::OnUserTopic";
+		return eAction;
+	}
+	EModRet OnUserQuit(CString& sMessage) override {
+		sMessage = "CLegacyModule::OnUserQuit";
+		return eAction;
+	}
 
-	EModRet OnCTCPReply(CNick& Nick, CString& sMessage) override { Nick.Parse("legacy!znc@znc.in"); sMessage = "CLegacyModule::OnCTCPReply"; return eAction; }
-	EModRet OnPrivCTCP(CNick& Nick, CString& sMessage) override { Nick.Parse("legacy!znc@znc.in"); sMessage = "CLegacyModule::OnPrivCTCP"; return eAction; }
-	EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage) override { Nick.Parse("legacy!znc@znc.in"); sMessage = "CLegacyModule::OnChanCTCP"; return eAction; }
-	EModRet OnPrivAction(CNick& Nick, CString& sMessage) override { Nick.Parse("legacy!znc@znc.in"); sMessage = "CLegacyModule::OnPrivAction"; return eAction; }
-	EModRet OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage) override { Nick.Parse("legacy!znc@znc.in"); sMessage = "CLegacyModule::OnChanAction"; return eAction; }
-	EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override { Nick.Parse("legacy!znc@znc.in"); sMessage = "CLegacyModule::OnPrivMsg"; return eAction; }
-	EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override { Nick.Parse("legacy!znc@znc.in"); sMessage = "CLegacyModule::OnChanMsg"; return eAction; }
-	EModRet OnPrivNotice(CNick& Nick, CString& sMessage) override { Nick.Parse("legacy!znc@znc.in"); sMessage = "CLegacyModule::OnPrivNotice"; return eAction; }
-	EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) override { Nick.Parse("legacy!znc@znc.in"); sMessage = "CLegacyModule::OnChanNotice"; return eAction; }
-	EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) override { Nick.Parse("legacy!znc@znc.in"); sTopic = "CLegacyModule::OnTopic"; return eAction; }
+	EModRet OnCTCPReply(CNick& Nick, CString& sMessage) override {
+		Nick.Parse("legacy!znc@znc.in");
+		sMessage = "CLegacyModule::OnCTCPReply";
+		return eAction;
+	}
+	EModRet OnPrivCTCP(CNick& Nick, CString& sMessage) override {
+		Nick.Parse("legacy!znc@znc.in");
+		sMessage = "CLegacyModule::OnPrivCTCP";
+		return eAction;
+	}
+	EModRet OnChanCTCP(CNick& Nick, CChan& Channel,
+	                   CString& sMessage) override {
+		Nick.Parse("legacy!znc@znc.in");
+		sMessage = "CLegacyModule::OnChanCTCP";
+		return eAction;
+	}
+	EModRet OnPrivAction(CNick& Nick, CString& sMessage) override {
+		Nick.Parse("legacy!znc@znc.in");
+		sMessage = "CLegacyModule::OnPrivAction";
+		return eAction;
+	}
+	EModRet OnChanAction(CNick& Nick, CChan& Channel,
+	                     CString& sMessage) override {
+		Nick.Parse("legacy!znc@znc.in");
+		sMessage = "CLegacyModule::OnChanAction";
+		return eAction;
+	}
+	EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override {
+		Nick.Parse("legacy!znc@znc.in");
+		sMessage = "CLegacyModule::OnPrivMsg";
+		return eAction;
+	}
+	EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override {
+		Nick.Parse("legacy!znc@znc.in");
+		sMessage = "CLegacyModule::OnChanMsg";
+		return eAction;
+	}
+	EModRet OnPrivNotice(CNick& Nick, CString& sMessage) override {
+		Nick.Parse("legacy!znc@znc.in");
+		sMessage = "CLegacyModule::OnPrivNotice";
+		return eAction;
+	}
+	EModRet OnChanNotice(CNick& Nick, CChan& Channel,
+	                     CString& sMessage) override {
+		Nick.Parse("legacy!znc@znc.in");
+		sMessage = "CLegacyModule::OnChanNotice";
+		return eAction;
+	}
+	EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) override {
+		Nick.Parse("legacy!znc@znc.in");
+		sTopic = "CLegacyModule::OnTopic";
+		return eAction;
+	}
 
 	EModRet eAction = CONTINUE;
 };
 
 class CMessageModule : public CModule {
-public:
-	CMessageModule() : CModule(nullptr, nullptr, nullptr, "CMessage", "", CModInfo::NetworkModule) {}
+  public:
+	CMessageModule()
+	    : CModule(nullptr, nullptr, nullptr, "CMessage", "",
+	              CModInfo::NetworkModule) {}
 
-	EModRet OnUserCTCPReplyMessage(CCTCPMessage& Message) override { Message.SetTarget("#target"); Message.SetText("CMessageModule::OnUserCTCPReplyMessage"); return eAction; }
-	EModRet OnUserCTCPMessage(CCTCPMessage& Message) override { Message.SetTarget("#target"); Message.SetText("CMessageModule::OnUserCTCPMessage"); return eAction; }
-	EModRet OnUserActionMessage(CActionMessage& Message) override { Message.SetTarget("#target"); Message.SetText("CMessageModule::OnUserActionMessage"); return eAction; }
-	EModRet OnUserTextMessage(CTextMessage& Message) override { Message.SetTarget("#target"); Message.SetText("CMessageModule::OnUserTextMessage"); return eAction; }
-	EModRet OnUserNoticeMessage(CNoticeMessage& Message) override { Message.SetTarget("#target"); Message.SetText("CMessageModule::OnUserNoticeMessage"); return eAction; }
-	EModRet OnUserJoinMessage(CJoinMessage& Message) override { Message.SetTarget("#target"); Message.SetKey("CMessageModule::OnUserJoinMessage"); return eAction; }
-	EModRet OnUserPartMessage(CPartMessage& Message) override { Message.SetTarget("#target"); Message.SetReason("CMessageModule::OnUserPartMessage"); return eAction; }
-	EModRet OnUserTopicMessage(CTopicMessage& Message) override { Message.SetTarget("#target"); Message.SetTopic("CMessageModule::OnUserTopicMessage"); return eAction; }
-	EModRet OnUserQuitMessage(CQuitMessage& Message) override { Message.SetReason("CMessageModule::OnUserQuitMessage"); return eAction; }
+	EModRet OnUserCTCPReplyMessage(CCTCPMessage& Message) override {
+		Message.SetTarget("#target");
+		Message.SetText("CMessageModule::OnUserCTCPReplyMessage");
+		return eAction;
+	}
+	EModRet OnUserCTCPMessage(CCTCPMessage& Message) override {
+		Message.SetTarget("#target");
+		Message.SetText("CMessageModule::OnUserCTCPMessage");
+		return eAction;
+	}
+	EModRet OnUserActionMessage(CActionMessage& Message) override {
+		Message.SetTarget("#target");
+		Message.SetText("CMessageModule::OnUserActionMessage");
+		return eAction;
+	}
+	EModRet OnUserTextMessage(CTextMessage& Message) override {
+		Message.SetTarget("#target");
+		Message.SetText("CMessageModule::OnUserTextMessage");
+		return eAction;
+	}
+	EModRet OnUserNoticeMessage(CNoticeMessage& Message) override {
+		Message.SetTarget("#target");
+		Message.SetText("CMessageModule::OnUserNoticeMessage");
+		return eAction;
+	}
+	EModRet OnUserJoinMessage(CJoinMessage& Message) override {
+		Message.SetTarget("#target");
+		Message.SetKey("CMessageModule::OnUserJoinMessage");
+		return eAction;
+	}
+	EModRet OnUserPartMessage(CPartMessage& Message) override {
+		Message.SetTarget("#target");
+		Message.SetReason("CMessageModule::OnUserPartMessage");
+		return eAction;
+	}
+	EModRet OnUserTopicMessage(CTopicMessage& Message) override {
+		Message.SetTarget("#target");
+		Message.SetTopic("CMessageModule::OnUserTopicMessage");
+		return eAction;
+	}
+	EModRet OnUserQuitMessage(CQuitMessage& Message) override {
+		Message.SetReason("CMessageModule::OnUserQuitMessage");
+		return eAction;
+	}
 
-	EModRet OnCTCPReplyMessage(CCTCPMessage& Message) override { Message.GetNick().SetNick("nick"); Message.SetText("CMessageModule::OnCTCPReplyMessage"); return eAction; }
-	EModRet OnPrivCTCPMessage(CCTCPMessage& Message) override { Message.GetNick().SetNick("nick"); Message.SetText("CMessageModule::OnPrivCTCPMessage"); return eAction; }
-	EModRet OnChanCTCPMessage(CCTCPMessage& Message) override { Message.GetNick().SetNick("nick"); Message.SetText("CMessageModule::OnChanCTCPMessage"); return eAction; }
-	EModRet OnPrivActionMessage(CActionMessage& Message) override { Message.GetNick().SetNick("nick"); Message.SetText("CMessageModule::OnPrivActionMessage"); return eAction; }
-	EModRet OnChanActionMessage(CActionMessage& Message) override { Message.GetNick().SetNick("nick"); Message.SetText("CMessageModule::OnChanActionMessage"); return eAction; }
-	EModRet OnPrivMessage(CTextMessage& Message) override { Message.GetNick().SetNick("nick"); Message.SetText("CMessageModule::OnPrivMessage"); return eAction; }
-	EModRet OnChanMessage(CTextMessage& Message) override { Message.GetNick().SetNick("nick"); Message.SetText("CMessageModule::OnChanMessage"); return eAction; }
-	EModRet OnPrivNoticeMessage(CNoticeMessage& Message) override { Message.GetNick().SetNick("nick"); Message.SetText("CMessageModule::OnPrivNoticeMessage"); return eAction; }
-	EModRet OnChanNoticeMessage(CNoticeMessage& Message) override { Message.GetNick().SetNick("nick"); Message.SetText("CMessageModule::OnChanNoticeMessage"); return eAction; }
-	EModRet OnTopicMessage(CTopicMessage& Message) override { Message.GetNick().SetNick("nick"); Message.SetTopic("CMessageModule::OnTopicMessage"); return eAction; }
-	EModRet OnNumericMessage(CNumericMessage& Message) override { Message.GetNick().SetNick("nick"); Message.SetCommand("123"); return eAction; }
+	EModRet OnCTCPReplyMessage(CCTCPMessage& Message) override {
+		Message.GetNick().SetNick("nick");
+		Message.SetText("CMessageModule::OnCTCPReplyMessage");
+		return eAction;
+	}
+	EModRet OnPrivCTCPMessage(CCTCPMessage& Message) override {
+		Message.GetNick().SetNick("nick");
+		Message.SetText("CMessageModule::OnPrivCTCPMessage");
+		return eAction;
+	}
+	EModRet OnChanCTCPMessage(CCTCPMessage& Message) override {
+		Message.GetNick().SetNick("nick");
+		Message.SetText("CMessageModule::OnChanCTCPMessage");
+		return eAction;
+	}
+	EModRet OnPrivActionMessage(CActionMessage& Message) override {
+		Message.GetNick().SetNick("nick");
+		Message.SetText("CMessageModule::OnPrivActionMessage");
+		return eAction;
+	}
+	EModRet OnChanActionMessage(CActionMessage& Message) override {
+		Message.GetNick().SetNick("nick");
+		Message.SetText("CMessageModule::OnChanActionMessage");
+		return eAction;
+	}
+	EModRet OnPrivMessage(CTextMessage& Message) override {
+		Message.GetNick().SetNick("nick");
+		Message.SetText("CMessageModule::OnPrivMessage");
+		return eAction;
+	}
+	EModRet OnChanMessage(CTextMessage& Message) override {
+		Message.GetNick().SetNick("nick");
+		Message.SetText("CMessageModule::OnChanMessage");
+		return eAction;
+	}
+	EModRet OnPrivNoticeMessage(CNoticeMessage& Message) override {
+		Message.GetNick().SetNick("nick");
+		Message.SetText("CMessageModule::OnPrivNoticeMessage");
+		return eAction;
+	}
+	EModRet OnChanNoticeMessage(CNoticeMessage& Message) override {
+		Message.GetNick().SetNick("nick");
+		Message.SetText("CMessageModule::OnChanNoticeMessage");
+		return eAction;
+	}
+	EModRet OnTopicMessage(CTopicMessage& Message) override {
+		Message.GetNick().SetNick("nick");
+		Message.SetTopic("CMessageModule::OnTopicMessage");
+		return eAction;
+	}
+	EModRet OnNumericMessage(CNumericMessage& Message) override {
+		Message.GetNick().SetNick("nick");
+		Message.SetCommand("123");
+		return eAction;
+	}
 
 	EModRet eAction = CONTINUE;
 };
@@ -98,7 +259,8 @@ TEST_F(ModulesTest, Hooks) {
 	LegacyMod.eAction = CModule::CONTINUE;
 	Modules.OnUserCTCPReplyMessage(UserCTCPReply);
 	EXPECT_EQ("#target", UserCTCPReply.GetTarget());
-	EXPECT_EQ("CMessageModule::OnUserCTCPReplyMessage", UserCTCPReply.GetText());
+	EXPECT_EQ("CMessageModule::OnUserCTCPReplyMessage",
+	          UserCTCPReply.GetText());
 
 	CCTCPMessage UserCTCPMsg;
 	LegacyMod.eAction = CModule::HALT;

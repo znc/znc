@@ -25,16 +25,22 @@ using std::set;
 using std::pair;
 
 class CSSLClientCertMod : public CModule {
-public:
+  public:
 	MODCONSTRUCTOR(CSSLClientCertMod) {
 		AddHelpCommand();
-		AddCommand("Add",  static_cast<CModCommand::ModCmdFunc>(&CSSLClientCertMod::HandleAddCommand),
-			"[pubkey]", "If pubkey is not provided will use the current key");
-		AddCommand("Del",  static_cast<CModCommand::ModCmdFunc>(&CSSLClientCertMod::HandleDelCommand),
-			"id");
-		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(&CSSLClientCertMod::HandleListCommand),"", "List your public keys");
-		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(&CSSLClientCertMod::HandleShowCommand),
-			"", "Print your current key");
+		AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(
+		                      &CSSLClientCertMod::HandleAddCommand),
+		           "[pubkey]",
+		           "If pubkey is not provided will use the current key");
+		AddCommand("Del", static_cast<CModCommand::ModCmdFunc>(
+		                      &CSSLClientCertMod::HandleDelCommand),
+		           "id");
+		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(
+		                       &CSSLClientCertMod::HandleListCommand),
+		           "", "List your public keys");
+		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(
+		                       &CSSLClientCertMod::HandleShowCommand),
+		           "", "Print your current key");
 	}
 
 	virtual ~CSSLClientCertMod() {}
@@ -45,7 +51,8 @@ public:
 		// We need the SSL_VERIFY_PEER flag on all listeners, or else
 		// the client doesn't send a ssl cert
 		for (CListener* pListener : vListeners)
-			pListener->GetRealListener()->SetRequireClientCertFlags(SSL_VERIFY_PEER);
+			pListener->GetRealListener()->SetRequireClientCertFlags(
+			    SSL_VERIFY_PEER);
 
 		for (MCString::const_iterator it = BeginNV(); it != EndNV(); ++it) {
 			VCString vsKeys;
@@ -64,9 +71,7 @@ public:
 		return true;
 	}
 
-	void OnPostRehash() override {
-		OnBoot();
-	}
+	void OnPostRehash() override { OnBoot(); }
 
 	bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		OnBoot();
@@ -82,16 +87,15 @@ public:
 				sVal += sKey + " ";
 			}
 
-			if (!sVal.empty())
-				SetNV(it.first, sVal, false);
+			if (!sVal.empty()) SetNV(it.first, sVal, false);
 		}
 
 		return SaveRegistry();
 	}
 
-	bool AddKey(CUser *pUser, const CString& sKey) {
-		const pair<SCString::const_iterator, bool> pair
-			= m_PubKeys[pUser->GetUserName()].insert(sKey.AsLower());
+	bool AddKey(CUser* pUser, const CString& sKey) {
+		const pair<SCString::const_iterator, bool> pair =
+		    m_PubKeys[pUser->GetUserName()].insert(sKey.AsLower());
 
 		if (pair.second) {
 			Save();
@@ -102,11 +106,10 @@ public:
 
 	EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) override {
 		const CString sUser = Auth->GetUsername();
-		Csock *pSock = Auth->GetSocket();
-		CUser *pUser = CZNC::Get().FindUser(sUser);
+		Csock* pSock = Auth->GetSocket();
+		CUser* pUser = CZNC::Get().FindUser(sUser);
 
-		if (pSock == nullptr || pUser == nullptr)
-			return CONTINUE;
+		if (pSock == nullptr || pUser == nullptr) return CONTINUE;
 
 		const CString sPubKey = GetKey(pSock);
 		DEBUG("User: " << sUser << " Key: " << sPubKey);
@@ -210,14 +213,13 @@ public:
 		}
 
 		it->second.erase(it2);
-		if (it->second.size() == 0)
-			m_PubKeys.erase(it);
+		if (it->second.size() == 0) m_PubKeys.erase(it);
 		PutModule("Removed");
 
 		Save();
 	}
 
-	CString GetKey(Csock *pSock) {
+	CString GetKey(Csock* pSock) {
 		CString sRes;
 		long int res = pSock->GetPeerFingerprint(sRes);
 
@@ -225,20 +227,21 @@ public:
 
 		// This is 'inspired' by charybdis' libratbox
 		switch (res) {
-		case X509_V_OK:
-		case X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
-		case X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE:
-		case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
-			return sRes.AsLower();
-		default:
-			return "";
+			case X509_V_OK:
+			case X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
+			case X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE:
+			case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
+				return sRes.AsLower();
+			default:
+				return "";
 		}
 	}
 
 	CString GetWebMenuTitle() override { return "certauth"; }
 
-	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
-		CUser *pUser = WebSock.GetSession()->GetUser();
+	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
+	                  CTemplate& Tmpl) override {
+		CUser* pUser = WebSock.GetSession()->GetUser();
 
 		if (sPageName == "index") {
 			MSCString::const_iterator it = m_PubKeys.find(pUser->GetUserName());
@@ -273,14 +276,16 @@ public:
 		return false;
 	}
 
-private:
+  private:
 	// Maps user names to a list of allowed pubkeys
-	typedef map<CString, set<CString> > MSCString;
-	MSCString                           m_PubKeys;
+	typedef map<CString, set<CString>> MSCString;
+	MSCString m_PubKeys;
 };
 
-template<> void TModInfo<CSSLClientCertMod>(CModInfo& Info) {
+template <>
+void TModInfo<CSSLClientCertMod>(CModInfo& Info) {
 	Info.SetWikiPage("certauth");
 }
 
-GLOBALMODULEDEFS(CSSLClientCertMod, "Allow users to authenticate via SSL client certificates.")
+GLOBALMODULEDEFS(CSSLClientCertMod,
+                 "Allow users to authenticate via SSL client certificates.")

@@ -22,7 +22,7 @@ using std::vector;
 using std::set;
 
 class CWatchSource {
-public:
+  public:
 	CWatchSource(const CString& sSource, bool bNegated) {
 		m_sSource = sSource;
 		m_bNegated = bNegated;
@@ -36,15 +36,16 @@ public:
 
 	// Setters
 	// !Setters
-private:
-protected:
-	bool    m_bNegated;
+  private:
+  protected:
+	bool m_bNegated;
 	CString m_sSource;
 };
 
 class CWatchEntry {
-public:
-	CWatchEntry(const CString& sHostMask, const CString& sTarget, const CString& sPattern) {
+  public:
+	CWatchEntry(const CString& sHostMask, const CString& sTarget,
+	            const CString& sPattern) {
 		m_bDisabled = false;
 		m_bDetachedClientOnly = false;
 		m_bDetachedChannelOnly = false;
@@ -68,7 +69,8 @@ public:
 	}
 	virtual ~CWatchEntry() {}
 
-	bool IsMatch(const CNick& Nick, const CString& sText, const CString& sSource, const CIRCNetwork* pNetwork) {
+	bool IsMatch(const CNick& Nick, const CString& sText,
+	             const CString& sSource, const CIRCNetwork* pNetwork) {
 		if (IsDisabled()) {
 			return false;
 		}
@@ -81,7 +83,8 @@ public:
 			for (unsigned int a = 0; a < m_vsSources.size(); a++) {
 				const CWatchSource& WatchSource = m_vsSources[a];
 
-				if (sSource.WildCmp(WatchSource.GetSource(), CString::CaseInsensitive)) {
+				if (sSource.WildCmp(WatchSource.GetSource(),
+				                    CString::CaseInsensitive)) {
 					if (WatchSource.IsNegated()) {
 						return false;
 					} else {
@@ -91,18 +94,17 @@ public:
 			}
 		}
 
-		if (!bGoodSource)
-			return false;
+		if (!bGoodSource) return false;
 		if (!Nick.GetHostMask().WildCmp(m_sHostMask, CString::CaseInsensitive))
 			return false;
-		return (sText.WildCmp(pNetwork->ExpandString(m_sPattern), CString::CaseInsensitive));
+		return (sText.WildCmp(pNetwork->ExpandString(m_sPattern),
+		                      CString::CaseInsensitive));
 	}
 
-	bool operator ==(const CWatchEntry& WatchEntry) {
-		return (GetHostMask().Equals(WatchEntry.GetHostMask())
-				&& GetTarget().Equals(WatchEntry.GetTarget())
-				&& GetPattern().Equals(WatchEntry.GetPattern())
-		);
+	bool operator==(const CWatchEntry& WatchEntry) {
+		return (GetHostMask().Equals(WatchEntry.GetHostMask()) &&
+		        GetTarget().Equals(WatchEntry.GetTarget()) &&
+		        GetPattern().Equals(WatchEntry.GetPattern()));
 	}
 
 	// Getters
@@ -157,19 +159,19 @@ public:
 		}
 	}
 	// !Setters
-private:
-protected:
-	CString              m_sHostMask;
-	CString              m_sTarget;
-	CString              m_sPattern;
-	bool                 m_bDisabled;
-	bool                 m_bDetachedClientOnly;
-	bool                 m_bDetachedChannelOnly;
+  private:
+  protected:
+	CString m_sHostMask;
+	CString m_sTarget;
+	CString m_sPattern;
+	bool m_bDisabled;
+	bool m_bDetachedClientOnly;
+	bool m_bDetachedChannelOnly;
 	vector<CWatchSource> m_vsSources;
 };
 
 class CWatcherMod : public CModule {
-public:
+  public:
 	MODCONSTRUCTOR(CWatcherMod) {
 		m_Buffer.SetLineCount(500);
 		Load();
@@ -177,9 +179,11 @@ public:
 
 	virtual ~CWatcherMod() {}
 
-	void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs) override {
-		Process(OpNick, "* " + OpNick.GetNick() + " sets mode: " + sModes + " " +
-			sArgs + " on " + Channel.GetName(), Channel.GetName());
+	void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes,
+	               const CString& sArgs) override {
+		Process(OpNick, "* " + OpNick.GetNick() + " sets mode: " + sModes +
+		                    " " + sArgs + " on " + Channel.GetName(),
+		        Channel.GetName());
 	}
 
 	void OnClientLogin() override {
@@ -193,43 +197,63 @@ public:
 		m_Buffer.Clear();
 	}
 
-	void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage) override {
-		Process(OpNick, "* " + OpNick.GetNick() + " kicked " + sKickedNick + " from " +
-			Channel.GetName() + " because [" + sMessage + "]", Channel.GetName());
+	void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel,
+	            const CString& sMessage) override {
+		Process(OpNick,
+		        "* " + OpNick.GetNick() + " kicked " + sKickedNick + " from " +
+		            Channel.GetName() + " because [" + sMessage + "]",
+		        Channel.GetName());
 	}
 
-	void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) override {
-		Process(Nick, "* Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") "
-			"(" + sMessage + ")", "");
+	void OnQuit(const CNick& Nick, const CString& sMessage,
+	            const vector<CChan*>& vChans) override {
+		Process(Nick, "* Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() +
+		                  "@" + Nick.GetHost() +
+		                  ") "
+		                  "(" +
+		                  sMessage + ")",
+		        "");
 	}
 
 	void OnJoin(const CNick& Nick, CChan& Channel) override {
-		Process(Nick, "* " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") joins " +
-			Channel.GetName(), Channel.GetName());
+		Process(Nick, "* " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" +
+		                  Nick.GetHost() + ") joins " + Channel.GetName(),
+		        Channel.GetName());
 	}
 
-	void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) override {
-		Process(Nick, "* " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") parts " +
-			Channel.GetName() + "(" + sMessage + ")", Channel.GetName());
+	void OnPart(const CNick& Nick, CChan& Channel,
+	            const CString& sMessage) override {
+		Process(Nick, "* " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" +
+		                  Nick.GetHost() + ") parts " + Channel.GetName() +
+		                  "(" + sMessage + ")",
+		        Channel.GetName());
 	}
 
-	void OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans) override {
-		Process(OldNick, "* " + OldNick.GetNick() + " is now known as " + sNewNick, "");
+	void OnNick(const CNick& OldNick, const CString& sNewNick,
+	            const vector<CChan*>& vChans) override {
+		Process(OldNick,
+		        "* " + OldNick.GetNick() + " is now known as " + sNewNick, "");
 	}
 
 	EModRet OnCTCPReply(CNick& Nick, CString& sMessage) override {
-		Process(Nick, "* CTCP: " + Nick.GetNick() + " reply [" + sMessage + "]", "priv");
+		Process(Nick, "* CTCP: " + Nick.GetNick() + " reply [" + sMessage + "]",
+		        "priv");
 		return CONTINUE;
 	}
 
 	EModRet OnPrivCTCP(CNick& Nick, CString& sMessage) override {
-		Process(Nick, "* CTCP: " + Nick.GetNick() + " [" + sMessage + "]", "priv");
+		Process(Nick, "* CTCP: " + Nick.GetNick() + " [" + sMessage + "]",
+		        "priv");
 		return CONTINUE;
 	}
 
-	EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage) override {
-		Process(Nick, "* CTCP: " + Nick.GetNick() + " [" + sMessage + "] to "
-			"[" + Channel.GetName() + "]", Channel.GetName());
+	EModRet OnChanCTCP(CNick& Nick, CChan& Channel,
+	                   CString& sMessage) override {
+		Process(Nick, "* CTCP: " + Nick.GetNick() + " [" + sMessage +
+		                  "] to "
+		                  "[" +
+		                  Channel.GetName() + "]",
+		        Channel.GetName());
 		return CONTINUE;
 	}
 
@@ -238,8 +262,11 @@ public:
 		return CONTINUE;
 	}
 
-	EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) override {
-		Process(Nick, "-" + Nick.GetNick() + ":" + Channel.GetName() + "- " + sMessage, Channel.GetName());
+	EModRet OnChanNotice(CNick& Nick, CChan& Channel,
+	                     CString& sMessage) override {
+		Process(Nick, "-" + Nick.GetNick() + ":" + Channel.GetName() + "- " +
+		                  sMessage,
+		        Channel.GetName());
 		return CONTINUE;
 	}
 
@@ -249,14 +276,17 @@ public:
 	}
 
 	EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override {
-		Process(Nick, "<" + Nick.GetNick() + ":" + Channel.GetName() + "> " + sMessage, Channel.GetName());
+		Process(Nick, "<" + Nick.GetNick() + ":" + Channel.GetName() + "> " +
+		                  sMessage,
+		        Channel.GetName());
 		return CONTINUE;
 	}
 
 	void OnModCommand(const CString& sCommand) override {
 		CString sCmdName = sCommand.Token(0);
 		if (sCmdName.Equals("ADD") || sCmdName.Equals("WATCH")) {
-			Watch(sCommand.Token(1), sCommand.Token(2), sCommand.Token(3, true));
+			Watch(sCommand.Token(1), sCommand.Token(2),
+			      sCommand.Token(3, true));
 		} else if (sCmdName.Equals("HELP")) {
 			Help();
 		} else if (sCmdName.Equals("LIST")) {
@@ -310,7 +340,8 @@ public:
 				m_Buffer.SetLineCount(sCount.ToUInt());
 			}
 
-			PutModule("Buffer count is set to [" + CString(m_Buffer.GetLineCount()) + "]");
+			PutModule("Buffer count is set to [" +
+			          CString(m_Buffer.GetLineCount()) + "]");
 		} else if (sCmdName.Equals("DEL")) {
 			Remove(sCommand.Token(1).ToUInt());
 		} else {
@@ -318,29 +349,38 @@ public:
 		}
 	}
 
-private:
-	void Process(const CNick& Nick, const CString& sMessage, const CString& sSource) {
+  private:
+	void Process(const CNick& Nick, const CString& sMessage,
+	             const CString& sSource) {
 		set<CString> sHandledTargets;
 		CIRCNetwork* pNetwork = GetNetwork();
 		CChan* pChannel = pNetwork->FindChan(sSource);
 
-		for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); ++it) {
+		for (list<CWatchEntry>::iterator it = m_lsWatchers.begin();
+		     it != m_lsWatchers.end(); ++it) {
 			CWatchEntry& WatchEntry = *it;
 
-			if (pNetwork->IsUserAttached() && WatchEntry.IsDetachedClientOnly()) {
+			if (pNetwork->IsUserAttached() &&
+			    WatchEntry.IsDetachedClientOnly()) {
 				continue;
 			}
 
-			if (pChannel && !pChannel->IsDetached() && WatchEntry.IsDetachedChannelOnly()) {
+			if (pChannel && !pChannel->IsDetached() &&
+			    WatchEntry.IsDetachedChannelOnly()) {
 				continue;
 			}
 
 			if (WatchEntry.IsMatch(Nick, sMessage, sSource, pNetwork) &&
-				sHandledTargets.count(WatchEntry.GetTarget()) < 1) {
+			    sHandledTargets.count(WatchEntry.GetTarget()) < 1) {
 				if (pNetwork->IsUserAttached()) {
-					pNetwork->PutUser(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG " + pNetwork->GetCurNick() + " :" + sMessage);
+					pNetwork->PutUser(":" + WatchEntry.GetTarget() +
+					                  "!watch@znc.in PRIVMSG " +
+					                  pNetwork->GetCurNick() + " :" + sMessage);
 				} else {
-					m_Buffer.AddLine(":" + _NAMEDFMT(WatchEntry.GetTarget()) + "!watch@znc.in PRIVMSG {target} :{text}", sMessage);
+					m_Buffer.AddLine(
+					    ":" + _NAMEDFMT(WatchEntry.GetTarget()) +
+					        "!watch@znc.in PRIVMSG {target} :{text}",
+					    sMessage);
 				}
 				sHandledTargets.insert(WatchEntry.GetTarget());
 			}
@@ -348,80 +388,86 @@ private:
 	}
 
 	void SetDisabled(unsigned int uIdx, bool bDisabled) {
-		if (uIdx == (unsigned int) ~0) {
-			for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); ++it) {
+		if (uIdx == (unsigned int)~0) {
+			for (list<CWatchEntry>::iterator it = m_lsWatchers.begin();
+			     it != m_lsWatchers.end(); ++it) {
 				(*it).SetDisabled(bDisabled);
 			}
 
-			PutModule(((bDisabled) ? "Disabled all entries." : "Enabled all entries."));
+			PutModule(((bDisabled) ? "Disabled all entries."
+			                       : "Enabled all entries."));
 			Save();
 			return;
 		}
 
-		uIdx--; // "convert" index to zero based
+		uIdx--;  // "convert" index to zero based
 		if (uIdx >= m_lsWatchers.size()) {
 			PutModule("Invalid Id");
 			return;
 		}
 
 		list<CWatchEntry>::iterator it = m_lsWatchers.begin();
-		for (unsigned int a = 0; a < uIdx; a++)
-			++it;
+		for (unsigned int a = 0; a < uIdx; a++) ++it;
 
 		(*it).SetDisabled(bDisabled);
-		PutModule("Id " + CString(uIdx +1) + ((bDisabled) ? " Disabled" : " Enabled"));
+		PutModule("Id " + CString(uIdx + 1) +
+		          ((bDisabled) ? " Disabled" : " Enabled"));
 		Save();
 	}
 
 	void SetDetachedClientOnly(unsigned int uIdx, bool bDetachedClientOnly) {
-		if (uIdx == (unsigned int) ~0) {
-			for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); ++it) {
+		if (uIdx == (unsigned int)~0) {
+			for (list<CWatchEntry>::iterator it = m_lsWatchers.begin();
+			     it != m_lsWatchers.end(); ++it) {
 				(*it).SetDetachedClientOnly(bDetachedClientOnly);
 			}
 
-			PutModule(CString("Set DetachedClientOnly for all entries to: ") + ((bDetachedClientOnly) ? "Yes" : "No"));
+			PutModule(CString("Set DetachedClientOnly for all entries to: ") +
+			          ((bDetachedClientOnly) ? "Yes" : "No"));
 			Save();
 			return;
 		}
 
-		uIdx--; // "convert" index to zero based
+		uIdx--;  // "convert" index to zero based
 		if (uIdx >= m_lsWatchers.size()) {
 			PutModule("Invalid Id");
 			return;
 		}
 
 		list<CWatchEntry>::iterator it = m_lsWatchers.begin();
-		for (unsigned int a = 0; a < uIdx; a++)
-			++it;
+		for (unsigned int a = 0; a < uIdx; a++) ++it;
 
 		(*it).SetDetachedClientOnly(bDetachedClientOnly);
-		PutModule("Id " + CString(uIdx +1) + " set to: " + ((bDetachedClientOnly) ? "Yes" : "No"));
+		PutModule("Id " + CString(uIdx + 1) + " set to: " +
+		          ((bDetachedClientOnly) ? "Yes" : "No"));
 		Save();
 	}
 
 	void SetDetachedChannelOnly(unsigned int uIdx, bool bDetachedChannelOnly) {
-		if (uIdx == (unsigned int) ~0) {
-			for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); ++it) {
+		if (uIdx == (unsigned int)~0) {
+			for (list<CWatchEntry>::iterator it = m_lsWatchers.begin();
+			     it != m_lsWatchers.end(); ++it) {
 				(*it).SetDetachedChannelOnly(bDetachedChannelOnly);
 			}
 
-			PutModule(CString("Set DetachedChannelOnly for all entries to: ") + ((bDetachedChannelOnly) ? "Yes" : "No"));
+			PutModule(CString("Set DetachedChannelOnly for all entries to: ") +
+			          ((bDetachedChannelOnly) ? "Yes" : "No"));
 			Save();
 			return;
 		}
 
-		uIdx--; // "convert" index to zero based
+		uIdx--;  // "convert" index to zero based
 		if (uIdx >= m_lsWatchers.size()) {
 			PutModule("Invalid Id");
 			return;
 		}
 
 		list<CWatchEntry>::iterator it = m_lsWatchers.begin();
-		for (unsigned int a = 0; a < uIdx; a++)
-			++it;
+		for (unsigned int a = 0; a < uIdx; a++) ++it;
 
 		(*it).SetDetachedChannelOnly(bDetachedChannelOnly);
-		PutModule("Id " + CString(uIdx +1) + " set to: " + ((bDetachedChannelOnly) ? "Yes" : "No"));
+		PutModule("Id " + CString(uIdx + 1) + " set to: " +
+		          ((bDetachedChannelOnly) ? "Yes" : "No"));
 		Save();
 	}
 
@@ -438,7 +484,8 @@ private:
 
 		unsigned int uIdx = 1;
 
-		for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); ++it, uIdx++) {
+		for (list<CWatchEntry>::iterator it = m_lsWatchers.begin();
+		     it != m_lsWatchers.end(); ++it, uIdx++) {
 			CWatchEntry& WatchEntry = *it;
 
 			Table.AddRow();
@@ -448,8 +495,10 @@ private:
 			Table.SetCell("Pattern", WatchEntry.GetPattern());
 			Table.SetCell("Sources", WatchEntry.GetSourcesStr());
 			Table.SetCell("Off", (WatchEntry.IsDisabled()) ? "Off" : "");
-			Table.SetCell("DetachedClientOnly", (WatchEntry.IsDetachedClientOnly()) ? "Yes" : "No");
-			Table.SetCell("DetachedChannelOnly", (WatchEntry.IsDetachedChannelOnly()) ? "Yes" : "No");
+			Table.SetCell("DetachedClientOnly",
+			              (WatchEntry.IsDetachedClientOnly()) ? "Yes" : "No");
+			Table.SetCell("DetachedChannelOnly",
+			              (WatchEntry.IsDetachedChannelOnly()) ? "Yes" : "No");
 		}
 
 		if (Table.size()) {
@@ -470,15 +519,17 @@ private:
 
 		unsigned int uIdx = 1;
 
-		for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); ++it, uIdx++) {
+		for (list<CWatchEntry>::iterator it = m_lsWatchers.begin();
+		     it != m_lsWatchers.end(); ++it, uIdx++) {
 			CWatchEntry& WatchEntry = *it;
 
-			PutModule("/msg " + GetModNick() + " ADD " + WatchEntry.GetHostMask() + " " +
-				WatchEntry.GetTarget() + " " + WatchEntry.GetPattern());
+			PutModule("/msg " + GetModNick() + " ADD " +
+			          WatchEntry.GetHostMask() + " " + WatchEntry.GetTarget() +
+			          " " + WatchEntry.GetPattern());
 
 			if (WatchEntry.GetSourcesStr().size()) {
-				PutModule("/msg " + GetModNick() + " SETSOURCES " + CString(uIdx) + " " +
-					WatchEntry.GetSourcesStr());
+				PutModule("/msg " + GetModNick() + " SETSOURCES " +
+				          CString(uIdx) + " " + WatchEntry.GetSourcesStr());
 			}
 
 			if (WatchEntry.IsDisabled()) {
@@ -486,11 +537,13 @@ private:
 			}
 
 			if (WatchEntry.IsDetachedClientOnly()) {
-				PutModule("/msg " + GetModNick() + " SETDETACHEDCLIENTONLY " + CString(uIdx) + " TRUE");
+				PutModule("/msg " + GetModNick() + " SETDETACHEDCLIENTONLY " +
+				          CString(uIdx) + " TRUE");
 			}
 
 			if (WatchEntry.IsDetachedChannelOnly()) {
-				PutModule("/msg " + GetModNick() + " SETDETACHEDCHANNELONLY " + CString(uIdx) + " TRUE");
+				PutModule("/msg " + GetModNick() + " SETDETACHEDCHANNELONLY " +
+				          CString(uIdx) + " TRUE");
 			}
 		}
 
@@ -498,34 +551,32 @@ private:
 	}
 
 	void SetSources(unsigned int uIdx, const CString& sSources) {
-		uIdx--; // "convert" index to zero based
+		uIdx--;  // "convert" index to zero based
 		if (uIdx >= m_lsWatchers.size()) {
 			PutModule("Invalid Id");
 			return;
 		}
 
 		list<CWatchEntry>::iterator it = m_lsWatchers.begin();
-		for (unsigned int a = 0; a < uIdx; a++)
-			++it;
+		for (unsigned int a = 0; a < uIdx; a++) ++it;
 
 		(*it).SetSources(sSources);
-		PutModule("Sources set for Id " + CString(uIdx +1) + ".");
+		PutModule("Sources set for Id " + CString(uIdx + 1) + ".");
 		Save();
 	}
 
 	void Remove(unsigned int uIdx) {
-		uIdx--; // "convert" index to zero based
+		uIdx--;  // "convert" index to zero based
 		if (uIdx >= m_lsWatchers.size()) {
 			PutModule("Invalid Id");
 			return;
 		}
 
 		list<CWatchEntry>::iterator it = m_lsWatchers.begin();
-		for (unsigned int a = 0; a < uIdx; a++)
-			++it;
+		for (unsigned int a = 0; a < uIdx; a++) ++it;
 
 		m_lsWatchers.erase(it);
-		PutModule("Id " + CString(uIdx +1) + " Removed.");
+		PutModule("Id " + CString(uIdx + 1) + " Removed.");
 		Save();
 	}
 
@@ -545,11 +596,13 @@ private:
 
 		Table.AddRow();
 		Table.SetCell("Command", "Dump");
-		Table.SetCell("Description", "Dump a list of all current entries to be used later.");
+		Table.SetCell("Description",
+		              "Dump a list of all current entries to be used later.");
 
 		Table.AddRow();
 		Table.SetCell("Command", "Del <Id>");
-		Table.SetCell("Description", "Deletes Id from the list of watched entries.");
+		Table.SetCell("Description",
+		              "Deletes Id from the list of watched entries.");
 
 		Table.AddRow();
 		Table.SetCell("Command", "Clear");
@@ -564,20 +617,26 @@ private:
 		Table.SetCell("Description", "Disable (but don't delete) an entry.");
 
 		Table.AddRow();
-		Table.SetCell("Command", "SetDetachedClientOnly <Id | *> <True | False>");
-		Table.SetCell("Description", "Enable or disable detached client only for an entry.");
+		Table.SetCell("Command",
+		              "SetDetachedClientOnly <Id | *> <True | False>");
+		Table.SetCell("Description",
+		              "Enable or disable detached client only for an entry.");
 
 		Table.AddRow();
-		Table.SetCell("Command", "SetDetachedChannelOnly <Id | *> <True | False>");
-		Table.SetCell("Description", "Enable or disable detached channel only for an entry.");
+		Table.SetCell("Command",
+		              "SetDetachedChannelOnly <Id | *> <True | False>");
+		Table.SetCell("Description",
+		              "Enable or disable detached channel only for an entry.");
 
 		Table.AddRow();
 		Table.SetCell("Command", "Buffer [Count]");
-		Table.SetCell("Description", "Show/Set the amount of buffered lines while detached.");
+		Table.SetCell("Description",
+		              "Show/Set the amount of buffered lines while detached.");
 
 		Table.AddRow();
 		Table.SetCell("Command", "SetSources <Id> [#chan priv #foo* !#bar]");
-		Table.SetCell("Description", "Set the source channels that you care about.");
+		Table.SetCell("Description",
+		              "Set the source channels that you care about.");
 
 		Table.AddRow();
 		Table.SetCell("Command", "Help");
@@ -586,24 +645,30 @@ private:
 		PutModule(Table);
 	}
 
-	void Watch(const CString& sHostMask, const CString& sTarget, const CString& sPattern, bool bNotice = false) {
+	void Watch(const CString& sHostMask, const CString& sTarget,
+	           const CString& sPattern, bool bNotice = false) {
 		CString sMessage;
 
 		if (sHostMask.size()) {
 			CWatchEntry WatchEntry(sHostMask, sTarget, sPattern);
 
 			bool bExists = false;
-			for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); ++it) {
+			for (list<CWatchEntry>::iterator it = m_lsWatchers.begin();
+			     it != m_lsWatchers.end(); ++it) {
 				if (*it == WatchEntry) {
-					sMessage = "Entry for [" + WatchEntry.GetHostMask() + "] already exists.";
+					sMessage = "Entry for [" + WatchEntry.GetHostMask() +
+					           "] already exists.";
 					bExists = true;
 					break;
 				}
 			}
 
 			if (!bExists) {
-				sMessage = "Adding entry: [" + WatchEntry.GetHostMask() + "] watching for "
-					"[" + WatchEntry.GetPattern() + "] -> [" + WatchEntry.GetTarget() + "]";
+				sMessage = "Adding entry: [" + WatchEntry.GetHostMask() +
+				           "] watching for "
+				           "[" +
+				           WatchEntry.GetPattern() + "] -> [" +
+				           WatchEntry.GetTarget() + "]";
 				m_lsWatchers.push_back(WatchEntry);
 			}
 		} else {
@@ -620,11 +685,12 @@ private:
 
 	void Save() {
 		ClearNV(false);
-		for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); ++it) {
+		for (list<CWatchEntry>::iterator it = m_lsWatchers.begin();
+		     it != m_lsWatchers.end(); ++it) {
 			CWatchEntry& WatchEntry = *it;
 			CString sSave;
 
-			sSave  = WatchEntry.GetHostMask() + "\n";
+			sSave = WatchEntry.GetHostMask() + "\n";
 			sSave += WatchEntry.GetTarget() + "\n";
 			sSave += WatchEntry.GetPattern() + "\n";
 			sSave += (WatchEntry.IsDisabled() ? "disabled\n" : "enabled\n");
@@ -674,16 +740,17 @@ private:
 			m_lsWatchers.push_back(WatchEntry);
 		}
 
-		if (bWarn)
-			PutModule("WARNING: malformed entry found while loading");
+		if (bWarn) PutModule("WARNING: malformed entry found while loading");
 	}
 
-	list<CWatchEntry>  m_lsWatchers;
-	CBuffer            m_Buffer;
+	list<CWatchEntry> m_lsWatchers;
+	CBuffer m_Buffer;
 };
 
-template<> void TModInfo<CWatcherMod>(CModInfo& Info) {
+template <>
+void TModInfo<CWatcherMod>(CModInfo& Info) {
 	Info.SetWikiPage("watch");
 }
 
-NETWORKMODULEDEFS(CWatcherMod, "Copy activity from a specific user into a separate window")
+NETWORKMODULEDEFS(CWatcherMod,
+                  "Copy activity from a specific user into a separate window")

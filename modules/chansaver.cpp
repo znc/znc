@@ -19,12 +19,10 @@
 #include <znc/IRCNetwork.h>
 
 class CChanSaverMod : public CModule {
-public:
-	MODCONSTRUCTOR(CChanSaverMod) {
-	}
+  public:
+	MODCONSTRUCTOR(CChanSaverMod) {}
 
-	virtual ~CChanSaverMod() {
-	}
+	virtual ~CChanSaverMod() {}
 
 	bool OnLoad(const CString& sArgsi, CString& sMessage) override {
 		switch (GetType()) {
@@ -67,19 +65,23 @@ public:
 	}
 
 	void OnJoin(const CNick& Nick, CChan& Channel) override {
-		if (!Channel.InConfig() && GetNetwork()->GetIRCNick().NickEquals(Nick.GetNick())) {
+		if (!Channel.InConfig() &&
+		    GetNetwork()->GetIRCNick().NickEquals(Nick.GetNick())) {
 			Channel.SetInConfig(true);
 		}
 	}
 
-	void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) override {
-		if (Channel.InConfig() && GetNetwork()->GetIRCNick().NickEquals(Nick.GetNick())) {
+	void OnPart(const CNick& Nick, CChan& Channel,
+	            const CString& sMessage) override {
+		if (Channel.InConfig() &&
+		    GetNetwork()->GetIRCNick().NickEquals(Nick.GetNick())) {
 			Channel.SetInConfig(false);
 		}
 	}
 };
 
-template<> void TModInfo<CChanSaverMod>(CModInfo& Info) {
+template <>
+void TModInfo<CChanSaverMod>(CModInfo& Info) {
 	Info.SetWikiPage("chansaver");
 	Info.AddType(CModInfo::NetworkModule);
 	Info.AddType(CModInfo::GlobalModule);

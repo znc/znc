@@ -24,7 +24,7 @@ using ::testing::ElementsAre;
 using ::testing::MatchesRegex;
 
 class QueryTest : public ::testing::Test {
-protected:
+  protected:
 	void SetUp() { CZNC::CreateInstance(); }
 	void TearDown() { CZNC::DestroyInstance(); }
 };
@@ -85,19 +85,28 @@ TEST_F(QueryTest, SendBuffer) {
 
 	client.Reset();
 	query.SendBuffer(&client);
-	EXPECT_THAT(client.vsLines, ElementsAre(MatchesRegex(R"(:sender PRIVMSG me :\[\d\d:\d\d:\d\d\] a message)"),
-	                                        MatchesRegex(R"(:sender NOTICE #znc :\[\d\d:\d\d:\d\d\] a notice)")));
+	EXPECT_THAT(
+	    client.vsLines,
+	    ElementsAre(
+	        MatchesRegex(R"(:sender PRIVMSG me :\[\d\d:\d\d:\d\d\] a message)"),
+	        MatchesRegex(
+	            R"(:sender NOTICE #znc :\[\d\d:\d\d:\d\d\] a notice)")));
 
 	client.Reset();
 	user.SetTimestampPrepend(false);
 	query.SendBuffer(&client);
-	EXPECT_THAT(client.vsLines, ElementsAre(":sender PRIVMSG me :a message", ":sender NOTICE #znc :a notice"));
+	EXPECT_THAT(client.vsLines, ElementsAre(":sender PRIVMSG me :a message",
+	                                        ":sender NOTICE #znc :a notice"));
 
 	client.Reset();
 	user.SetTimestampAppend(true);
 	query.SendBuffer(&client);
-	EXPECT_THAT(client.vsLines, ElementsAre(MatchesRegex(R"(:sender PRIVMSG me :a message \[\d\d:\d\d:\d\d\])"),
-	                                        MatchesRegex(R"(:sender NOTICE #znc :a notice \[\d\d:\d\d:\d\d\])")));
+	EXPECT_THAT(
+	    client.vsLines,
+	    ElementsAre(
+	        MatchesRegex(R"(:sender PRIVMSG me :a message \[\d\d:\d\d:\d\d\])"),
+	        MatchesRegex(
+	            R"(:sender NOTICE #znc :a notice \[\d\d:\d\d:\d\d\])")));
 
 	network.ClientDisconnected(&client);
 }

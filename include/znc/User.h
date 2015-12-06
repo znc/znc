@@ -35,7 +35,7 @@ class CUserTimer;
 class CServer;
 
 class CUser {
-public:
+  public:
 	CUser(const CString& sUserName);
 	~CUser();
 
@@ -76,21 +76,28 @@ public:
 	// !Modules
 
 	// Networks
-	CIRCNetwork* AddNetwork(const CString &sNetwork, CString& sErrorRet);
+	CIRCNetwork* AddNetwork(const CString& sNetwork, CString& sErrorRet);
 	bool DeleteNetwork(const CString& sNetwork);
-	bool AddNetwork(CIRCNetwork *pNetwork);
-	void RemoveNetwork(CIRCNetwork *pNetwork);
+	bool AddNetwork(CIRCNetwork* pNetwork);
+	void RemoveNetwork(CIRCNetwork* pNetwork);
 	CIRCNetwork* FindNetwork(const CString& sNetwork) const;
 	const std::vector<CIRCNetwork*>& GetNetworks() const;
 	bool HasSpaceForNewNetwork() const;
 	// !Networks
 
-	bool PutUser(const CString& sLine, CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
-	bool PutAllUser(const CString& sLine, CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
-	bool PutStatus(const CString& sLine, CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
-	bool PutStatusNotice(const CString& sLine, CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
-	bool PutModule(const CString& sModule, const CString& sLine, CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
-	bool PutModNotice(const CString& sModule, const CString& sLine, CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
+	bool PutUser(const CString& sLine, CClient* pClient = nullptr,
+	             CClient* pSkipClient = nullptr);
+	bool PutAllUser(const CString& sLine, CClient* pClient = nullptr,
+	                CClient* pSkipClient = nullptr);
+	bool PutStatus(const CString& sLine, CClient* pClient = nullptr,
+	               CClient* pSkipClient = nullptr);
+	bool PutStatusNotice(const CString& sLine, CClient* pClient = nullptr,
+	                     CClient* pSkipClient = nullptr);
+	bool PutModule(const CString& sModule, const CString& sLine,
+	               CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
+	bool PutModNotice(const CString& sModule, const CString& sLine,
+	                  CClient* pClient = nullptr,
+	                  CClient* pSkipClient = nullptr);
 
 	bool IsUserAttached() const;
 	void UserConnected(CClient* pClient);
@@ -105,7 +112,8 @@ public:
 	CString AddTimestamp(time_t tm, const CString& sStr) const;
 
 	void CloneNetworks(const CUser& User);
-	bool Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks = true);
+	bool Clone(const CUser& User, CString& sErrorRet,
+	           bool bCloneNetworks = true);
 	void BounceAllClients();
 
 	void AddBytesRead(unsigned long long u) { m_uBytesRead += u; }
@@ -196,61 +204,64 @@ public:
 	unsigned int MaxQueryBuffers() const { return m_uMaxQueryBuffers; }
 	// !Getters
 
-protected:
-	const CString         m_sUserName;
-	const CString         m_sCleanUserName;
-	CString               m_sNick;
-	CString               m_sAltNick;
-	CString               m_sIdent;
-	CString               m_sRealName;
-	CString               m_sBindHost;
-	CString               m_sDCCBindHost;
-	CString               m_sPass;
-	CString               m_sPassSalt;
-	CString               m_sStatusPrefix;
-	CString               m_sDefaultChanModes;
-	CString               m_sClientEncoding;
+  protected:
+	const CString m_sUserName;
+	const CString m_sCleanUserName;
+	CString m_sNick;
+	CString m_sAltNick;
+	CString m_sIdent;
+	CString m_sRealName;
+	CString m_sBindHost;
+	CString m_sDCCBindHost;
+	CString m_sPass;
+	CString m_sPassSalt;
+	CString m_sStatusPrefix;
+	CString m_sDefaultChanModes;
+	CString m_sClientEncoding;
 
-	CString               m_sQuitMsg;
-	MCString              m_mssCTCPReplies;
-	CString               m_sTimestampFormat;
-	CString               m_sTimezone;
-	eHashType             m_eHashType;
+	CString m_sQuitMsg;
+	MCString m_mssCTCPReplies;
+	CString m_sTimestampFormat;
+	CString m_sTimezone;
+	eHashType m_eHashType;
 
 	// Paths
-	CString               m_sUserPath;
+	CString m_sUserPath;
 	// !Paths
 
-	bool                  m_bMultiClients;
-	bool                  m_bDenyLoadMod;
-	bool                  m_bAdmin;
-	bool                  m_bDenySetBindHost;
-	bool                  m_bAutoClearChanBuffer;
-	bool                  m_bAutoClearQueryBuffer;
-	bool                  m_bBeingDeleted;
-	bool                  m_bAppendTimestamp;
-	bool                  m_bPrependTimestamp;
+	bool m_bMultiClients;
+	bool m_bDenyLoadMod;
+	bool m_bAdmin;
+	bool m_bDenySetBindHost;
+	bool m_bAutoClearChanBuffer;
+	bool m_bAutoClearQueryBuffer;
+	bool m_bBeingDeleted;
+	bool m_bAppendTimestamp;
+	bool m_bPrependTimestamp;
 
-	CUserTimer*           m_pUserTimer;
+	CUserTimer* m_pUserTimer;
 
-	std::vector<CIRCNetwork*>  m_vIRCNetworks;
-	std::vector<CClient*>      m_vClients;
-	std::set<CString>     m_ssAllowedHosts;
-	unsigned int          m_uChanBufferSize;
-	unsigned int          m_uQueryBufferSize;
-	unsigned long long    m_uBytesRead;
-	unsigned long long    m_uBytesWritten;
-	unsigned int          m_uMaxJoinTries;
-	unsigned int          m_uMaxNetworks;
-	unsigned int          m_uMaxQueryBuffers;
-	unsigned int          m_uMaxJoins;
-	CString               m_sSkinName;
+	std::vector<CIRCNetwork*> m_vIRCNetworks;
+	std::vector<CClient*> m_vClients;
+	std::set<CString> m_ssAllowedHosts;
+	unsigned int m_uChanBufferSize;
+	unsigned int m_uQueryBufferSize;
+	unsigned long long m_uBytesRead;
+	unsigned long long m_uBytesWritten;
+	unsigned int m_uMaxJoinTries;
+	unsigned int m_uMaxNetworks;
+	unsigned int m_uMaxQueryBuffers;
+	unsigned int m_uMaxJoins;
+	CString m_sSkinName;
 
-	CModules*             m_pModules;
+	CModules* m_pModules;
 
-private:
-	void SetKeepBuffer(bool b) { SetAutoClearChanBuffer(!b); } // XXX compatibility crap, added in 0.207
-	bool LoadModule(const CString& sModName, const CString& sArgs, const CString& sNotice, CString& sError);
+  private:
+	void SetKeepBuffer(bool b) {
+		SetAutoClearChanBuffer(!b);
+	}  // XXX compatibility crap, added in 0.207
+	bool LoadModule(const CString& sModName, const CString& sArgs,
+	                const CString& sNotice, CString& sError);
 };
 
-#endif // !ZNC_USER_H
+#endif  // !ZNC_USER_H

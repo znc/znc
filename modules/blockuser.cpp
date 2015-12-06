@@ -22,12 +22,18 @@ using std::vector;
 #define MESSAGE "Your account has been disabled. Contact your administrator."
 
 class CBlockUser : public CModule {
-public:
+  public:
 	MODCONSTRUCTOR(CBlockUser) {
 		AddHelpCommand();
-		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(&CBlockUser::OnListCommand), "", "List blocked users");
-		AddCommand("Block", static_cast<CModCommand::ModCmdFunc>(&CBlockUser::OnBlockCommand), "<user>", "Block a user");
-		AddCommand("Unblock", static_cast<CModCommand::ModCmdFunc>(&CBlockUser::OnUnblockCommand), "<user>", "Unblock a user");
+		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(
+		                       &CBlockUser::OnListCommand),
+		           "", "List blocked users");
+		AddCommand("Block", static_cast<CModCommand::ModCmdFunc>(
+		                        &CBlockUser::OnBlockCommand),
+		           "<user>", "Block a user");
+		AddCommand("Unblock", static_cast<CModCommand::ModCmdFunc>(
+		                          &CBlockUser::OnUnblockCommand),
+		           "<user>", "Unblock a user");
 	}
 
 	virtual ~CBlockUser() {}
@@ -84,8 +90,7 @@ public:
 			Table.SetCell("Blocked user", it->first);
 		}
 
-		if (PutModule(Table) == 0)
-			PutModule("No users blocked");
+		if (PutModule(Table) == 0) PutModule("No users blocked");
 	}
 
 	void OnBlockCommand(const CString& sCommand) {
@@ -121,31 +126,39 @@ public:
 			PutModule("This user is not blocked");
 	}
 
-	bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
+	bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName,
+	                          CTemplate& Tmpl) override {
 		if (sPageName == "webadmin/user" && WebSock.GetSession()->IsAdmin()) {
 			CString sAction = Tmpl["WebadminAction"];
 			if (sAction == "display") {
 				Tmpl["Blocked"] = CString(IsBlocked(Tmpl["Username"]));
-				Tmpl["Self"] = CString(Tmpl["Username"].Equals(WebSock.GetSession()->GetUser()->GetUserName()));
+				Tmpl["Self"] = CString(Tmpl["Username"].Equals(
+				    WebSock.GetSession()->GetUser()->GetUserName()));
 				return true;
 			}
-			if (sAction == "change" && WebSock.GetParam("embed_blockuser_presented").ToBool()) {
-				if (Tmpl["Username"].Equals(WebSock.GetSession()->GetUser()->GetUserName()) &&
-						WebSock.GetParam("embed_blockuser_block").ToBool()) {
+			if (sAction == "change" &&
+			    WebSock.GetParam("embed_blockuser_presented").ToBool()) {
+				if (Tmpl["Username"].Equals(
+				        WebSock.GetSession()->GetUser()->GetUserName()) &&
+				    WebSock.GetParam("embed_blockuser_block").ToBool()) {
 					WebSock.GetSession()->AddError("You can't block yourself");
 				} else if (WebSock.GetParam("embed_blockuser_block").ToBool()) {
 					if (!WebSock.GetParam("embed_blockuser_old").ToBool()) {
 						if (Block(Tmpl["Username"])) {
-							WebSock.GetSession()->AddSuccess("Blocked [" + Tmpl["Username"] + "]");
+							WebSock.GetSession()->AddSuccess(
+							    "Blocked [" + Tmpl["Username"] + "]");
 						} else {
-							WebSock.GetSession()->AddError("Couldn't block [" + Tmpl["Username"] + "]");
+							WebSock.GetSession()->AddError(
+							    "Couldn't block [" + Tmpl["Username"] + "]");
 						}
 					}
-				} else  if (WebSock.GetParam("embed_blockuser_old").ToBool()){
+				} else if (WebSock.GetParam("embed_blockuser_old").ToBool()) {
 					if (DelNV(Tmpl["Username"])) {
-						WebSock.GetSession()->AddSuccess("Unblocked [" + Tmpl["Username"] + "]");
+						WebSock.GetSession()->AddSuccess(
+						    "Unblocked [" + Tmpl["Username"] + "]");
 					} else {
-						WebSock.GetSession()->AddError("User [" + Tmpl["Username"] + "is not blocked");
+						WebSock.GetSession()->AddError(
+						    "User [" + Tmpl["Username"] + "is not blocked");
 					}
 				}
 				return true;
@@ -154,7 +167,7 @@ public:
 		return false;
 	}
 
-private:
+  private:
 	bool IsBlocked(const CString& sUser) {
 		MCString::iterator it;
 		for (it = BeginNV(); it != EndNV(); ++it) {
@@ -166,10 +179,9 @@ private:
 	}
 
 	bool Block(const CString& sUser) {
-		CUser *pUser = CZNC::Get().FindUser(sUser);
+		CUser* pUser = CZNC::Get().FindUser(sUser);
 
-		if (!pUser)
-			return false;
+		if (!pUser) return false;
 
 		// Disconnect all clients
 		vector<CClient*> vpClients = pUser->GetAllClients();
@@ -181,7 +193,8 @@ private:
 
 		// Disconnect all networks from irc
 		vector<CIRCNetwork*> vNetworks = pUser->GetNetworks();
-		for (vector<CIRCNetwork*>::iterator it2 = vNetworks.begin(); it2 != vNetworks.end(); ++it2) {
+		for (vector<CIRCNetwork*>::iterator it2 = vNetworks.begin();
+		     it2 != vNetworks.end(); ++it2) {
 			(*it2)->SetIRCConnectEnabled(false);
 		}
 
@@ -190,10 +203,12 @@ private:
 	}
 };
 
-template<> void TModInfo<CBlockUser>(CModInfo& Info) {
+template <>
+void TModInfo<CBlockUser>(CModInfo& Info) {
 	Info.SetWikiPage("blockuser");
 	Info.SetHasArgs(true);
-	Info.SetArgsHelpText("Enter one or more user names. Separate them by spaces.");
+	Info.SetArgsHelpText(
+	    "Enter one or more user names. Separate them by spaces.");
 }
 
 GLOBALMODULEDEFS(CBlockUser, "Block certain users from logging in.")

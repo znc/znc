@@ -19,26 +19,25 @@
 #include <znc/znc.h>
 
 class CFOModule : public CModule {
-public:
+  public:
 	MODCONSTRUCTOR(CFOModule) {}
 	virtual ~CFOModule() {}
 
 	bool IsOnlineModNick(const CString& sNick) {
 		const CString& sPrefix = GetUser()->GetStatusPrefix();
-		if (!sNick.StartsWith(sPrefix))
-			return false;
+		if (!sNick.StartsWith(sPrefix)) return false;
 
 		CString sModNick = sNick.substr(sPrefix.length());
 		if (sModNick.Equals("status") ||
-				GetNetwork()->GetModules().FindModule(sModNick) ||
-				GetUser()->GetModules().FindModule(sModNick) ||
-				CZNC::Get().GetModules().FindModule(sModNick))
+		    GetNetwork()->GetModules().FindModule(sModNick) ||
+		    GetUser()->GetModules().FindModule(sModNick) ||
+		    CZNC::Get().GetModules().FindModule(sModNick))
 			return true;
 		return false;
 	}
 
 	EModRet OnUserRaw(CString& sLine) override {
-		//Handle ISON
+		// Handle ISON
 		if (sLine.Token(0).Equals("ison")) {
 			VCString vsNicks;
 
@@ -57,7 +56,8 @@ public:
 			if (!GetNetwork()->GetIRCSock()) {
 				// if we are not connected to any IRC server, send
 				// an empty or module-nick filled response.
-				PutUser(":irc.znc.in 303 " + GetClient()->GetNick() + " :" + sBNCNicks);
+				PutUser(":irc.znc.in 303 " + GetClient()->GetNick() + " :" +
+				        sBNCNicks);
 			} else {
 				// We let the server handle this request and then act on
 				// the 303 response from the IRC server.
@@ -65,15 +65,18 @@ public:
 			}
 		}
 
-		//Handle WHOIS
+		// Handle WHOIS
 		if (sLine.Token(0).Equals("whois")) {
 			CString sNick = sLine.Token(1);
 
 			if (IsOnlineModNick(sNick)) {
 				CIRCNetwork* pNetwork = GetNetwork();
-				PutUser(":znc.in 311 " + pNetwork->GetCurNick() + " " + sNick + " znc znc.in * :" + sNick);
-				PutUser(":znc.in 312 " + pNetwork->GetCurNick() + " " + sNick + " *.znc.in :Bouncer");
-				PutUser(":znc.in 318 " + pNetwork->GetCurNick() + " " + sNick + " :End of /WHOIS list.");
+				PutUser(":znc.in 311 " + pNetwork->GetCurNick() + " " + sNick +
+				        " znc znc.in * :" + sNick);
+				PutUser(":znc.in 312 " + pNetwork->GetCurNick() + " " + sNick +
+				        " *.znc.in :Bouncer");
+				PutUser(":znc.in 318 " + pNetwork->GetCurNick() + " " + sNick +
+				        " :End of /WHOIS list.");
 
 				return HALT;
 			}
@@ -83,7 +86,7 @@ public:
 	}
 
 	EModRet OnRaw(CString& sLine) override {
-		//Handle 303 reply if m_Requests is not empty
+		// Handle 303 reply if m_Requests is not empty
 		if (sLine.Token(1) == "303" && !m_ISONRequests.empty()) {
 			VCString::iterator it = m_ISONRequests.begin();
 
@@ -94,7 +97,7 @@ public:
 				sLine += " ";
 			}
 
-			//add BNC nicks to the reply
+			// add BNC nicks to the reply
 			sLine += *it;
 			m_ISONRequests.erase(it);
 		}
@@ -102,11 +105,12 @@ public:
 		return CONTINUE;
 	}
 
-private:
+  private:
 	VCString m_ISONRequests;
 };
 
-template<> void TModInfo<CFOModule>(CModInfo& Info) {
+template <>
+void TModInfo<CFOModule>(CModInfo& Info) {
 	Info.SetWikiPage("modules_online");
 }
 

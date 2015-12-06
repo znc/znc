@@ -23,20 +23,72 @@
 
 using std::stringstream;
 
-CString::CString(char c) : string() { stringstream s; s << c; *this = s.str(); }
-CString::CString(unsigned char c) : string() { stringstream s; s << c; *this = s.str(); }
-CString::CString(short i) : string() { stringstream s; s << i; *this = s.str(); }
-CString::CString(unsigned short i) : string() { stringstream s; s << i; *this = s.str(); }
-CString::CString(int i) : string() { stringstream s; s << i; *this = s.str(); }
-CString::CString(unsigned int i) : string() { stringstream s; s << i; *this = s.str(); }
-CString::CString(long i) : string() { stringstream s; s << i; *this = s.str(); }
-CString::CString(unsigned long i) : string() { stringstream s; s << i; *this = s.str(); }
-CString::CString(long long i) : string() { stringstream s; s << i; *this = s.str(); }
-CString::CString(unsigned long long i) : string() { stringstream s; s << i; *this = s.str(); }
-CString::CString(double i, int precision) : string() { stringstream s; s.precision(precision); s << std::fixed << i; *this = s.str(); }
-CString::CString(float i, int precision) : string() { stringstream s; s.precision(precision); s << std::fixed << i; *this = s.str(); }
+CString::CString(char c) : string() {
+	stringstream s;
+	s << c;
+	*this = s.str();
+}
+CString::CString(unsigned char c) : string() {
+	stringstream s;
+	s << c;
+	*this = s.str();
+}
+CString::CString(short i) : string() {
+	stringstream s;
+	s << i;
+	*this = s.str();
+}
+CString::CString(unsigned short i) : string() {
+	stringstream s;
+	s << i;
+	*this = s.str();
+}
+CString::CString(int i) : string() {
+	stringstream s;
+	s << i;
+	*this = s.str();
+}
+CString::CString(unsigned int i) : string() {
+	stringstream s;
+	s << i;
+	*this = s.str();
+}
+CString::CString(long i) : string() {
+	stringstream s;
+	s << i;
+	*this = s.str();
+}
+CString::CString(unsigned long i) : string() {
+	stringstream s;
+	s << i;
+	*this = s.str();
+}
+CString::CString(long long i) : string() {
+	stringstream s;
+	s << i;
+	*this = s.str();
+}
+CString::CString(unsigned long long i) : string() {
+	stringstream s;
+	s << i;
+	*this = s.str();
+}
+CString::CString(double i, int precision) : string() {
+	stringstream s;
+	s.precision(precision);
+	s << std::fixed << i;
+	*this = s.str();
+}
+CString::CString(float i, int precision) : string() {
+	stringstream s;
+	s.precision(precision);
+	s << std::fixed << i;
+	*this = s.str();
+}
 
-unsigned char* CString::strnchr(const unsigned char* src, unsigned char c, unsigned int iMaxBytes, unsigned char* pFill, unsigned int* piCount) const {
+unsigned char* CString::strnchr(const unsigned char* src, unsigned char c,
+                                unsigned int iMaxBytes, unsigned char* pFill,
+                                unsigned int* piCount) const {
 	for (unsigned int a = 0; a < iMaxBytes && *src; a++, src++) {
 		if (pFill) {
 			pFill[a] = *src;
@@ -44,14 +96,14 @@ unsigned char* CString::strnchr(const unsigned char* src, unsigned char c, unsig
 
 		if (*src == c) {
 			if (pFill) {
-				pFill[a +1] = 0;
+				pFill[a + 1] = 0;
 			}
 
 			if (piCount) {
 				*piCount = a;
 			}
 
-			return (unsigned char*) src;
+			return (unsigned char*)src;
 		}
 	}
 
@@ -88,7 +140,8 @@ bool CString::Equals(const CString& s, CaseSensitivity cs) const {
 	}
 }
 
-bool CString::Equals(const CString& s, bool bCaseSensitive, CString::size_type uLen) const {
+bool CString::Equals(const CString& s, bool bCaseSensitive,
+                     CString::size_type uLen) const {
 	if (bCaseSensitive) {
 		return (StrCmp(s, uLen) == 0);
 	} else {
@@ -96,16 +149,19 @@ bool CString::Equals(const CString& s, bool bCaseSensitive, CString::size_type u
 	}
 }
 
-bool CString::WildCmp(const CString& sWild, const CString& sString, CaseSensitivity cs) {
-	// avoid a copy when cs == CaseSensitive (C++ deliberately specifies that binding
-	// a temporary object to a reference to const on the stack lengthens the lifetime
+bool CString::WildCmp(const CString& sWild, const CString& sString,
+                      CaseSensitivity cs) {
+	// avoid a copy when cs == CaseSensitive (C++ deliberately specifies that
+	// binding
+	// a temporary object to a reference to const on the stack lengthens the
+	// lifetime
 	// of the temporary to the lifetime of the reference itself)
 	const CString& sWld = (cs == CaseSensitive ? sWild : sWild.AsLower());
 	const CString& sStr = (cs == CaseSensitive ? sString : sString.AsLower());
 
 	// Written by Jack Handy - jakkhandy@hotmail.com
-	const char *wild = sWld.c_str(), *CString = sStr.c_str();
-	const char *cp = nullptr, *mp = nullptr;
+	const char* wild = sWld.c_str(), *CString = sStr.c_str();
+	const char* cp = nullptr, *mp = nullptr;
 
 	while ((*CString) && (*wild != '*')) {
 		if ((*wild != *CString) && (*wild != '?')) {
@@ -123,7 +179,7 @@ bool CString::WildCmp(const CString& sWild, const CString& sString, CaseSensitiv
 			}
 
 			mp = wild;
-			cp = CString+1;
+			cp = CString + 1;
 		} else if ((*wild == *CString) || (*wild == '?')) {
 			wild++;
 			CString++;
@@ -146,7 +202,7 @@ bool CString::WildCmp(const CString& sWild, CaseSensitivity cs) const {
 
 CString& CString::MakeUpper() {
 	for (char& c : *this) {
-		//TODO use unicode
+		// TODO use unicode
 		c = (char)toupper(c);
 	}
 
@@ -155,7 +211,7 @@ CString& CString::MakeUpper() {
 
 CString& CString::MakeLower() {
 	for (char& c : *this) {
-		//TODO use unicode
+		// TODO use unicode
 		c = (char)tolower(c);
 	}
 
@@ -199,10 +255,10 @@ CString::EEscape CString::ToEscape(const CString& sEsc) {
 CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 	CString sRet;
 	const char szHex[] = "0123456789ABCDEF";
-	const unsigned char *pStart = (const unsigned char*) data();
-	const unsigned char *p = (const unsigned char*) data();
+	const unsigned char* pStart = (const unsigned char*)data();
+	const unsigned char* p = (const unsigned char*)data();
 	size_type iLength = length();
-	sRet.reserve(iLength *3);
+	sRet.reserve(iLength * 3);
 	unsigned char pTmp[21];
 	unsigned int iCounted = 0;
 
@@ -211,10 +267,14 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 
 		switch (eFrom) {
 			case EHTML:
-				if ((*p == '&') && (strnchr((unsigned char*) p, ';', sizeof(pTmp) - 1, pTmp, &iCounted))) {
-					// please note that we do not have any Unicode or UTF-8 support here at all.
+				if ((*p == '&') &&
+				    (strnchr((unsigned char*)p, ';', sizeof(pTmp) - 1, pTmp,
+				             &iCounted))) {
+					// please note that we do not have any Unicode or UTF-8
+					// support here at all.
 
-					if ((iCounted >= 3) && (pTmp[1] == '#')) {  // do XML and HTML &#97; &#x3c
+					if ((iCounted >= 3) &&
+					    (pTmp[1] == '#')) {  // do XML and HTML &#97; &#x3c
 						int base = 10;
 
 						if ((pTmp[2] & 0xDF) == 'X') {
@@ -222,9 +282,13 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 						}
 
 						char* endptr = nullptr;
-						unsigned long int b = strtol((const char*) (pTmp +2 + (base == 16)), &endptr, base);
+						unsigned long int b =
+						    strtol((const char*)(pTmp + 2 + (base == 16)),
+						           &endptr, base);
 
-						if ((*endptr == ';') && (b <= 255)) { // incase they do something like &#7777777777;
+						if ((*endptr == ';') && (b <= 255)) {  // incase they do
+						                                       // something like
+						                                       // &#7777777777;
 							ch = (unsigned char)b;
 							a += iCounted;
 							break;
@@ -232,16 +296,20 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 					}
 
 					if (ch == 0) {
-						if (!strncasecmp((const char*) &pTmp, "&lt;", 2)) ch = '<';
-						else if (!strncasecmp((const char*) &pTmp, "&gt;", 2)) ch = '>';
-						else if (!strncasecmp((const char*) &pTmp, "&quot;", 4)) ch = '"';
-						else if (!strncasecmp((const char*) &pTmp, "&amp;", 3)) ch = '&';
+						if (!strncasecmp((const char*)&pTmp, "&lt;", 2))
+							ch = '<';
+						else if (!strncasecmp((const char*)&pTmp, "&gt;", 2))
+							ch = '>';
+						else if (!strncasecmp((const char*)&pTmp, "&quot;", 4))
+							ch = '"';
+						else if (!strncasecmp((const char*)&pTmp, "&amp;", 3))
+							ch = '&';
 					}
 
 					if (ch > 0) {
 						a += iCounted;
 					} else {
-						ch = *p;   // Not a valid escape, just record the &
+						ch = *p;  // Not a valid escape, just record the &
 					}
 				} else {
 					ch = *p;
@@ -251,19 +319,20 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 				ch = *p;
 				break;
 			case EURL:
-				if (*p == '%' && (a +2) < iLength && isxdigit(*(p +1)) && isxdigit(*(p +2))) {
+				if (*p == '%' && (a + 2) < iLength && isxdigit(*(p + 1)) &&
+				    isxdigit(*(p + 2))) {
 					p++;
 					if (isdigit(*p)) {
 						ch = (unsigned char)((*p - '0') << 4);
 					} else {
-						ch = (unsigned char)((tolower(*p) - 'a' +10) << 4);
+						ch = (unsigned char)((tolower(*p) - 'a' + 10) << 4);
 					}
 
 					p++;
 					if (isdigit(*p)) {
 						ch |= (unsigned char)(*p - '0');
 					} else {
-						ch |= (unsigned char)(tolower(*p) - 'a' +10);
+						ch |= (unsigned char)(tolower(*p) - 'a' + 10);
 					}
 
 					a += 2;
@@ -275,7 +344,7 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 
 				break;
 			case ESQL:
-				if (*p != '\\' || iLength < (a +1)) {
+				if (*p != '\\' || iLength < (a + 1)) {
 					ch = *p;
 				} else {
 					a++;
@@ -298,7 +367,7 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 
 				break;
 			case ENAMEDFMT:
-				if (*p != '\\' || iLength < (a +1)) {
+				if (*p != '\\' || iLength < (a + 1)) {
 					ch = *p;
 				} else {
 					a++;
@@ -308,23 +377,24 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 
 				break;
 			case EDEBUG:
-				if (*p == '\\' && (a +3) < iLength && *(p +1) == 'x' && isxdigit(*(p +2)) && isxdigit(*(p +3))) {
+				if (*p == '\\' && (a + 3) < iLength && *(p + 1) == 'x' &&
+				    isxdigit(*(p + 2)) && isxdigit(*(p + 3))) {
 					p += 2;
 					if (isdigit(*p)) {
 						ch = (unsigned char)((*p - '0') << 4);
 					} else {
-						ch = (unsigned char)((tolower(*p) - 'a' +10) << 4);
+						ch = (unsigned char)((tolower(*p) - 'a' + 10) << 4);
 					}
 
 					p++;
 					if (isdigit(*p)) {
 						ch |= (unsigned char)(*p - '0');
 					} else {
-						ch |= (unsigned char)(tolower(*p) - 'a' +10);
+						ch |= (unsigned char)(tolower(*p) - 'a' + 10);
 					}
 
 					a += 3;
-				} else if (*p == '\\' && a+1 < iLength && *(p+1) == '.') {
+				} else if (*p == '\\' && a + 1 < iLength && *(p + 1) == '.') {
 					a++;
 					p++;
 					ch = '\\';
@@ -334,7 +404,7 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 
 				break;
 			case EMSGTAG:
-				if (*p != '\\' || iLength < (a +1)) {
+				if (*p != '\\' || iLength < (a + 1)) {
 					ch = *p;
 				} else {
 					a++;
@@ -359,42 +429,45 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 
 				break;
 			case EHEXCOLON: {
-					while (!isxdigit(*p) && a < iLength) {
-						a++;
-						p++;
-					}
-					if (a == iLength) {
-						continue;
-					}
-					if (isdigit(*p)) {
-						ch = (unsigned char)((*p - '0') << 4);
-					} else {
-						ch = (unsigned char)((tolower(*p) - 'a' +10) << 4);
-					}
+				while (!isxdigit(*p) && a < iLength) {
 					a++;
 					p++;
-					while (!isxdigit(*p) && a < iLength) {
-						a++;
-						p++;
-					}
-					if (a == iLength) {
-						continue;
-					}
-					if (isdigit(*p)) {
-						ch |= (unsigned char)(*p - '0');
-					} else {
-						ch |= (unsigned char)(tolower(*p) - 'a' +10);
-					}
 				}
-				break;
+				if (a == iLength) {
+					continue;
+				}
+				if (isdigit(*p)) {
+					ch = (unsigned char)((*p - '0') << 4);
+				} else {
+					ch = (unsigned char)((tolower(*p) - 'a' + 10) << 4);
+				}
+				a++;
+				p++;
+				while (!isxdigit(*p) && a < iLength) {
+					a++;
+					p++;
+				}
+				if (a == iLength) {
+					continue;
+				}
+				if (isdigit(*p)) {
+					ch |= (unsigned char)(*p - '0');
+				} else {
+					ch |= (unsigned char)(tolower(*p) - 'a' + 10);
+				}
+			} break;
 		}
 
 		switch (eTo) {
 			case EHTML:
-				if (ch == '<') sRet += "&lt;";
-				else if (ch == '>') sRet += "&gt;";
-				else if (ch == '"') sRet += "&quot;";
-				else if (ch == '&') sRet += "&amp;";
+				if (ch == '<')
+					sRet += "&lt;";
+				else if (ch == '>')
+					sRet += "&gt;";
+				else if (ch == '"')
+					sRet += "&quot;";
+				else if (ch == '&')
+					sRet += "&amp;";
 				else {
 					sRet += ch;
 				}
@@ -416,22 +489,48 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 
 				break;
 			case ESQL:
-				if (ch == '\0') { sRet += '\\'; sRet += '0';
-				} else if (ch == '\n') { sRet += '\\'; sRet += 'n';
-				} else if (ch == '\t') { sRet += '\\'; sRet += 't';
-				} else if (ch == '\r') { sRet += '\\'; sRet += 'r';
-				} else if (ch == '\b') { sRet += '\\'; sRet += 'b';
-				} else if (ch == '\"') { sRet += '\\'; sRet += '\"';
-				} else if (ch == '\'') { sRet += '\\'; sRet += '\'';
-				} else if (ch == '\\') { sRet += '\\'; sRet += '\\';
-				} else { sRet += ch; }
+				if (ch == '\0') {
+					sRet += '\\';
+					sRet += '0';
+				} else if (ch == '\n') {
+					sRet += '\\';
+					sRet += 'n';
+				} else if (ch == '\t') {
+					sRet += '\\';
+					sRet += 't';
+				} else if (ch == '\r') {
+					sRet += '\\';
+					sRet += 'r';
+				} else if (ch == '\b') {
+					sRet += '\\';
+					sRet += 'b';
+				} else if (ch == '\"') {
+					sRet += '\\';
+					sRet += '\"';
+				} else if (ch == '\'') {
+					sRet += '\\';
+					sRet += '\'';
+				} else if (ch == '\\') {
+					sRet += '\\';
+					sRet += '\\';
+				} else {
+					sRet += ch;
+				}
 
 				break;
 			case ENAMEDFMT:
-				if (ch == '\\') { sRet += '\\'; sRet += '\\';
-				} else if (ch == '{') { sRet += '\\'; sRet += '{';
-				} else if (ch == '}') { sRet += '\\'; sRet += '}';
-				} else { sRet += ch; }
+				if (ch == '\\') {
+					sRet += '\\';
+					sRet += '\\';
+				} else if (ch == '{') {
+					sRet += '\\';
+					sRet += '{';
+				} else if (ch == '}') {
+					sRet += '\\';
+					sRet += '}';
+				} else {
+					sRet += ch;
+				}
 
 				break;
 			case EDEBUG:
@@ -447,21 +546,34 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 
 				break;
 			case EMSGTAG:
-				if (ch == ';') { sRet += '\\'; sRet += ':';
-				} else if (ch == ' ') { sRet += '\\'; sRet += 's';
-				} else if (ch == '\0') { sRet += '\\'; sRet += '0';
-				} else if (ch == '\\') { sRet += '\\'; sRet += '\\';
-				} else if (ch == '\r') { sRet += '\\'; sRet += 'r';
-				} else if (ch == '\n') { sRet += '\\'; sRet += 'n';
-				} else { sRet += ch; }
+				if (ch == ';') {
+					sRet += '\\';
+					sRet += ':';
+				} else if (ch == ' ') {
+					sRet += '\\';
+					sRet += 's';
+				} else if (ch == '\0') {
+					sRet += '\\';
+					sRet += '0';
+				} else if (ch == '\\') {
+					sRet += '\\';
+					sRet += '\\';
+				} else if (ch == '\r') {
+					sRet += '\\';
+					sRet += 'r';
+				} else if (ch == '\n') {
+					sRet += '\\';
+					sRet += 'n';
+				} else {
+					sRet += ch;
+				}
 
 				break;
 			case EHEXCOLON: {
-					sRet += tolower(szHex[ch >> 4]);
-					sRet += tolower(szHex[ch & 0xf]);
-					sRet += ":";
-				}
-				break;
+				sRet += tolower(szHex[ch >> 4]);
+				sRet += tolower(szHex[ch & 0xf]);
+				sRet += ":";
+			} break;
 		}
 	}
 
@@ -472,29 +584,32 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 	return sRet;
 }
 
-CString CString::Escape_n(EEscape eTo) const {
-	return Escape_n(EASCII, eTo);
-}
+CString CString::Escape_n(EEscape eTo) const { return Escape_n(EASCII, eTo); }
 
 CString& CString::Escape(EEscape eFrom, EEscape eTo) {
 	return (*this = Escape_n(eFrom, eTo));
 }
 
-CString& CString::Escape(EEscape eTo) {
-	return (*this = Escape_n(eTo));
-}
+CString& CString::Escape(EEscape eTo) { return (*this = Escape_n(eTo)); }
 
-CString CString::Replace_n(const CString& sReplace, const CString& sWith, const CString& sLeft, const CString& sRight, bool bRemoveDelims) const {
+CString CString::Replace_n(const CString& sReplace, const CString& sWith,
+                           const CString& sLeft, const CString& sRight,
+                           bool bRemoveDelims) const {
 	CString sRet = *this;
 	CString::Replace(sRet, sReplace, sWith, sLeft, sRight, bRemoveDelims);
 	return sRet;
 }
 
-unsigned int CString::Replace(const CString& sReplace, const CString& sWith, const CString& sLeft, const CString& sRight, bool bRemoveDelims) {
-	return CString::Replace(*this, sReplace, sWith, sLeft, sRight, bRemoveDelims);
+unsigned int CString::Replace(const CString& sReplace, const CString& sWith,
+                              const CString& sLeft, const CString& sRight,
+                              bool bRemoveDelims) {
+	return CString::Replace(*this, sReplace, sWith, sLeft, sRight,
+	                        bRemoveDelims);
 }
 
-unsigned int CString::Replace(CString& sStr, const CString& sReplace, const CString& sWith, const CString& sLeft, const CString& sRight, bool bRemoveDelims) {
+unsigned int CString::Replace(CString& sStr, const CString& sReplace,
+                              const CString& sWith, const CString& sLeft,
+                              const CString& sRight, bool bRemoveDelims) {
 	unsigned int uRet = 0;
 	CString sCopy = sStr;
 	sStr.clear();
@@ -506,23 +621,26 @@ unsigned int CString::Replace(CString& sStr, const CString& sReplace, const CStr
 	bool bInside = false;
 
 	while (*p) {
-		if (!bInside && uLeftWidth && strncmp(p, sLeft.c_str(), uLeftWidth) == 0) {
+		if (!bInside && uLeftWidth &&
+		    strncmp(p, sLeft.c_str(), uLeftWidth) == 0) {
 			if (!bRemoveDelims) {
 				sStr += sLeft;
 			}
 
-			p += uLeftWidth -1;
+			p += uLeftWidth - 1;
 			bInside = true;
-		} else if (bInside && uRightWidth && strncmp(p, sRight.c_str(), uRightWidth) == 0) {
+		} else if (bInside && uRightWidth &&
+		           strncmp(p, sRight.c_str(), uRightWidth) == 0) {
 			if (!bRemoveDelims) {
 				sStr += sRight;
 			}
 
-			p += uRightWidth -1;
+			p += uRightWidth - 1;
 			bInside = false;
-		} else if (!bInside && strncmp(p, sReplace.c_str(), uReplaceWidth) == 0) {
+		} else if (!bInside &&
+		           strncmp(p, sReplace.c_str(), uReplaceWidth) == 0) {
 			sStr += sWith;
-			p += uReplaceWidth -1;
+			p += uReplaceWidth - 1;
 			uRet++;
 		} else {
 			sStr.append(p, 1);
@@ -534,8 +652,9 @@ unsigned int CString::Replace(CString& sStr, const CString& sReplace, const CStr
 	return uRet;
 }
 
-CString CString::Token(size_t uPos, bool bRest, const CString& sSep, bool bAllowEmpty,
-                       const CString& sLeft, const CString& sRight, bool bTrimQuotes) const {
+CString CString::Token(size_t uPos, bool bRest, const CString& sSep,
+                       bool bAllowEmpty, const CString& sLeft,
+                       const CString& sRight, bool bTrimQuotes) const {
 	VCString vsTokens;
 	if (Split(sSep, vsTokens, bAllowEmpty, sLeft, sRight, bTrimQuotes) > uPos) {
 		CString sRet;
@@ -558,10 +677,11 @@ CString CString::Token(size_t uPos, bool bRest, const CString& sSep, bool bAllow
 	return Token(uPos, bRest, sSep, bAllowEmpty);
 }
 
-CString CString::Token(size_t uPos, bool bRest, const CString& sSep, bool bAllowEmpty) const {
-	const char *sep_str = sSep.c_str();
+CString CString::Token(size_t uPos, bool bRest, const CString& sSep,
+                       bool bAllowEmpty) const {
+	const char* sep_str = sSep.c_str();
 	size_t sep_len = sSep.length();
-	const char *str = c_str();
+	const char* str = c_str();
 	size_t str_len = length();
 	size_t start_pos = 0;
 	size_t end_pos;
@@ -576,7 +696,8 @@ CString CString::Token(size_t uPos, bool bRest, const CString& sSep, bool bAllow
 	while (uPos != 0 && start_pos < str_len) {
 		bool bFoundSep = false;
 
-		while (strncmp(&str[start_pos], sep_str, sep_len) == 0 && (!bFoundSep || !bAllowEmpty)) {
+		while (strncmp(&str[start_pos], sep_str, sep_len) == 0 &&
+		       (!bFoundSep || !bAllowEmpty)) {
 			start_pos += sep_len;
 			bFoundSep = true;
 		}
@@ -589,8 +710,7 @@ CString CString::Token(size_t uPos, bool bRest, const CString& sSep, bool bAllow
 	}
 
 	// String is over?
-	if (start_pos >= str_len)
-		return "";
+	if (start_pos >= str_len) return "";
 
 	// If they want everything from here on, give it to them
 	if (bRest) {
@@ -626,7 +746,7 @@ CString CString::Ellipsize(unsigned int uLen) const {
 		return sRet;
 	}
 
-	sRet = substr(0, uLen -3) + "...";
+	sRet = substr(0, uLen - 3) + "...";
 
 	return sRet;
 }
@@ -648,20 +768,24 @@ CString::size_type CString::URLSplit(MCString& msRet) const {
 	Split("&", vsPairs);
 
 	for (const CString& sPair : vsPairs) {
-		msRet[sPair.Token(0, false, "=").Escape(CString::EURL, CString::EASCII)] = sPair.Token(1, true, "=").Escape(CString::EURL, CString::EASCII);
+		msRet[sPair.Token(0, false, "=")
+		          .Escape(CString::EURL, CString::EASCII)] =
+		    sPair.Token(1, true, "=").Escape(CString::EURL, CString::EASCII);
 	}
 
 	return msRet.size();
 }
 
-CString::size_type CString::OptionSplit(MCString& msRet, bool bUpperKeys) const {
+CString::size_type CString::OptionSplit(MCString& msRet,
+                                        bool bUpperKeys) const {
 	CString sName;
 	CString sCopy(*this);
 	msRet.clear();
 
 	while (!sCopy.empty()) {
 		sName = sCopy.Token(0, false, "=", false, "\"", "\"", false).Trim_n();
-		sCopy = sCopy.Token(1, true, "=", false, "\"", "\"", false).TrimLeft_n();
+		sCopy =
+		    sCopy.Token(1, true, "=", false, "\"", "\"", false).TrimLeft_n();
 
 		if (sName.empty()) {
 			continue;
@@ -677,7 +801,7 @@ CString::size_type CString::OptionSplit(MCString& msRet, bool bUpperKeys) const 
 				sKeyName.MakeUpper();
 			}
 
-			if ((a +1) == vsNames.size()) {
+			if ((a + 1) == vsNames.size()) {
 				msRet[sKeyName] = sCopy.Token(0, false, " ", false, "\"", "\"");
 				sCopy = sCopy.Token(1, true, " ", false, "\"", "\"", false);
 			} else {
@@ -694,8 +818,10 @@ CString::size_type CString::QuoteSplit(VCString& vsRet) const {
 	return Split(" ", vsRet, false, "\"", "\"", true);
 }
 
-CString::size_type CString::Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty,
-		const CString& sLeft, const CString& sRight, bool bTrimQuotes, bool bTrimWhiteSpace) const {
+CString::size_type CString::Split(const CString& sDelim, VCString& vsRet,
+                                  bool bAllowEmpty, const CString& sLeft,
+                                  const CString& sRight, bool bTrimQuotes,
+                                  bool bTrimWhiteSpace) const {
 	vsRet.clear();
 
 	if (empty()) {
@@ -716,7 +842,8 @@ CString::size_type CString::Split(const CString& sDelim, VCString& vsRet, bool b
 	}
 
 	while (*p) {
-		if (uLeftLen && uRightLen && !bInside && strncasecmp(p, sLeft.c_str(), uLeftLen) == 0) {
+		if (uLeftLen && uRightLen && !bInside &&
+		    strncasecmp(p, sLeft.c_str(), uLeftLen) == 0) {
 			if (!bTrimQuotes) {
 				sTmp += sLeft;
 			}
@@ -726,7 +853,8 @@ CString::size_type CString::Split(const CString& sDelim, VCString& vsRet, bool b
 			continue;
 		}
 
-		if (uLeftLen && uRightLen && bInside && strncasecmp(p, sRight.c_str(), uRightLen) == 0) {
+		if (uLeftLen && uRightLen && bInside &&
+		    strncasecmp(p, sRight.c_str(), uRightLen) == 0) {
 			if (!bTrimQuotes) {
 				sTmp += sRight;
 			}
@@ -736,7 +864,8 @@ CString::size_type CString::Split(const CString& sDelim, VCString& vsRet, bool b
 			continue;
 		}
 
-		if (uDelimLen && !bInside && strncasecmp(p, sDelim.c_str(), uDelimLen) == 0) {
+		if (uDelimLen && !bInside &&
+		    strncasecmp(p, sDelim.c_str(), uDelimLen) == 0) {
 			if (bTrimWhiteSpace) {
 				sTmp.Trim();
 			}
@@ -771,10 +900,14 @@ CString::size_type CString::Split(const CString& sDelim, VCString& vsRet, bool b
 	return vsRet.size();
 }
 
-CString::size_type CString::Split(const CString& sDelim, SCString& ssRet, bool bAllowEmpty, const CString& sLeft, const CString& sRight, bool bTrimQuotes, bool bTrimWhiteSpace) const {
+CString::size_type CString::Split(const CString& sDelim, SCString& ssRet,
+                                  bool bAllowEmpty, const CString& sLeft,
+                                  const CString& sRight, bool bTrimQuotes,
+                                  bool bTrimWhiteSpace) const {
 	VCString vsTokens;
 
-	Split(sDelim, vsTokens, bAllowEmpty, sLeft, sRight, bTrimQuotes, bTrimWhiteSpace);
+	Split(sDelim, vsTokens, bAllowEmpty, sLeft, sRight, bTrimQuotes,
+	      bTrimWhiteSpace);
 
 	ssRet.clear();
 
@@ -831,16 +964,17 @@ CString CString::NamedFormat(const CString& sFormat, const MCString& msValues) {
 }
 
 CString CString::RandomString(unsigned int uLength) {
-	const char chars[] = "abcdefghijklmnopqrstuvwxyz"
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-		"0123456789!?.,:;/*-+_()";
+	const char chars[] =
+	    "abcdefghijklmnopqrstuvwxyz"
+	    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	    "0123456789!?.,:;/*-+_()";
 	// -1 because sizeof() includes the trailing '\0' byte
 	const size_t len = sizeof(chars) / sizeof(chars[0]) - 1;
 	size_t p;
 	CString sRet;
 
 	for (unsigned int a = 0; a < uLength; a++) {
-		p = (size_t) (len * (rand() / (RAND_MAX + 1.0)));
+		p = (size_t)(len * (rand() / (RAND_MAX + 1.0)));
 		sRet += chars[p];
 	}
 
@@ -870,12 +1004,13 @@ CString CString::Base64Decode_n() const {
 }
 
 bool CString::Base64Encode(CString& sRet, unsigned int uWrap) const {
-	const char b64table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+	const char b64table[] =
+	    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	sRet.clear();
 	size_t len = size();
-	const unsigned char* input = (const unsigned char*) c_str();
-	unsigned char *output, *p;
-	size_t        i = 0, mod = len % 3, toalloc;
+	const unsigned char* input = (const unsigned char*)c_str();
+	unsigned char* output, *p;
+	size_t i = 0, mod = len % 3, toalloc;
 	toalloc = (len / 3) * 4 + (3 - mod) % 3 + 1 + 8;
 
 	if (uWrap) {
@@ -889,7 +1024,7 @@ bool CString::Base64Encode(CString& sRet, unsigned int uWrap) const {
 		return 0;
 	}
 
-	p = output = new unsigned char [toalloc];
+	p = output = new unsigned char[toalloc];
 
 	while (i < len - mod) {
 		*p++ = b64table[input[i++] >> 2];
@@ -924,7 +1059,7 @@ bool CString::Base64Encode(CString& sRet, unsigned int uWrap) const {
 	}
 
 	*p = 0;
-	sRet = (char*) output;
+	sRet = (char*)output;
 	delete[] output;
 	return true;
 }
@@ -958,7 +1093,8 @@ unsigned long CString::Base64Decode(CString& sRet) const {
 			if (in[i] == '=') {
 				break;
 			}
-			*p++ = char(((c << 6) & 0xc0) | (char)base64_table[(unsigned char)in[i]]);
+			*p++ = char(((c << 6) & 0xc0) |
+			            (char)base64_table[(unsigned char)in[i]]);
 		}
 	}
 
@@ -971,26 +1107,26 @@ unsigned long CString::Base64Decode(CString& sRet) const {
 	return uRet;
 }
 
-CString CString::MD5() const {
-	return (const char*) CMD5(*this);
-}
+CString CString::MD5() const { return (const char*)CMD5(*this); }
 
 CString CString::SHA256() const {
 	unsigned char digest[SHA256_DIGEST_SIZE];
 	char digest_hex[SHA256_DIGEST_SIZE * 2 + 1];
-	const unsigned char *message = (const unsigned char *) c_str();
+	const unsigned char* message = (const unsigned char*)c_str();
 
 	sha256(message, length(), digest);
 
 	snprintf(digest_hex, sizeof(digest_hex),
-			"%02x%02x%02x%02x%02x%02x%02x%02x"
-			"%02x%02x%02x%02x%02x%02x%02x%02x"
-			"%02x%02x%02x%02x%02x%02x%02x%02x"
-			"%02x%02x%02x%02x%02x%02x%02x%02x",
-			digest[ 0], digest[ 1], digest[ 2], digest[ 3], digest[ 4], digest[ 5], digest[ 6], digest[ 7],
-			digest[ 8], digest[ 9], digest[10], digest[11], digest[12], digest[13], digest[14], digest[15],
-			digest[16], digest[17], digest[18], digest[19], digest[20], digest[21], digest[22], digest[23],
-			digest[24], digest[25], digest[26], digest[27], digest[28], digest[29], digest[30], digest[31]);
+	         "%02x%02x%02x%02x%02x%02x%02x%02x"
+	         "%02x%02x%02x%02x%02x%02x%02x%02x"
+	         "%02x%02x%02x%02x%02x%02x%02x%02x"
+	         "%02x%02x%02x%02x%02x%02x%02x%02x",
+	         digest[0], digest[1], digest[2], digest[3], digest[4], digest[5],
+	         digest[6], digest[7], digest[8], digest[9], digest[10], digest[11],
+	         digest[12], digest[13], digest[14], digest[15], digest[16],
+	         digest[17], digest[18], digest[19], digest[20], digest[21],
+	         digest[22], digest[23], digest[24], digest[25], digest[26],
+	         digest[27], digest[28], digest[29], digest[30], digest[31]);
 
 	return digest_hex;
 }
@@ -1017,14 +1153,15 @@ void CString::Decrypt(const CString& sPass, const CString& sIvec) {
 }
 
 void CString::Crypt(const CString& sPass, bool bEncrypt, const CString& sIvec) {
-	unsigned char szIvec[8] = {0,0,0,0,0,0,0,0};
+	unsigned char szIvec[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 	BF_KEY bKey;
 
 	if (sIvec.length() >= 8) {
 		memcpy(szIvec, sIvec.data(), 8);
 	}
 
-	BF_set_key(&bKey, (unsigned int)sPass.length(), (unsigned char*) sPass.data());
+	BF_set_key(&bKey, (unsigned int)sPass.length(),
+	           (unsigned char*)sPass.data());
 	unsigned int uPad = (length() % 8);
 
 	if (uPad) {
@@ -1033,14 +1170,15 @@ void CString::Crypt(const CString& sPass, bool bEncrypt, const CString& sIvec) {
 	}
 
 	size_t uLen = length();
-	unsigned char* szBuff = (unsigned char*) malloc(uLen);
-	BF_cbc_encrypt((const unsigned char*) data(), szBuff, uLen, &bKey, szIvec, ((bEncrypt) ? BF_ENCRYPT : BF_DECRYPT));
+	unsigned char* szBuff = (unsigned char*)malloc(uLen);
+	BF_cbc_encrypt((const unsigned char*)data(), szBuff, uLen, &bKey, szIvec,
+	               ((bEncrypt) ? BF_ENCRYPT : BF_DECRYPT));
 
 	clear();
-	append((const char*) szBuff, uLen);
+	append((const char*)szBuff, uLen);
 	free(szBuff);
 }
-#endif	// HAVE_LIBSSL
+#endif  // HAVE_LIBSSL
 
 CString CString::ToPercent(double d) {
 	char szRet[32];
@@ -1075,8 +1213,8 @@ CString CString::ToTimeStr(unsigned long s) {
 	const unsigned long y = d * 365;
 	CString sRet;
 
-#define TIMESPAN(time, str)                          \
-	if (s >= time) {                             \
+#define TIMESPAN(time, str)                  \
+	if (s >= time) {                         \
 		sRet += CString(s / time) + str " "; \
 		s = s % time;                        \
 	}
@@ -1087,31 +1225,39 @@ CString CString::ToTimeStr(unsigned long s) {
 	TIMESPAN(m, "m");
 	TIMESPAN(1, "s");
 
-	if (sRet.empty())
-		return "0s";
+	if (sRet.empty()) return "0s";
 
 	return sRet.RightChomp_n();
 }
 
 bool CString::ToBool() const {
 	CString sTrimmed = Trim_n();
-	return (!sTrimmed.Trim_n("0").empty() &&
-			!sTrimmed.Equals("false") &&
-			!sTrimmed.Equals("off") &&
-			!sTrimmed.Equals("no") &&
-			!sTrimmed.Equals("n"));
+	return (!sTrimmed.Trim_n("0").empty() && !sTrimmed.Equals("false") &&
+	        !sTrimmed.Equals("off") && !sTrimmed.Equals("no") &&
+	        !sTrimmed.Equals("n"));
 }
 
-short CString::ToShort() const { return (short int)strtol(this->c_str(), (char**) nullptr, 10); }
-unsigned short CString::ToUShort() const { return (unsigned short int)strtoul(this->c_str(), (char**) nullptr, 10); }
-unsigned int CString::ToUInt() const { return (unsigned int)strtoul(this->c_str(), (char**) nullptr, 10); }
-int CString::ToInt() const { return (int)strtol(this->c_str(), (char**) nullptr, 10); }
-long CString::ToLong() const { return strtol(this->c_str(), (char**) nullptr, 10); }
+short CString::ToShort() const {
+	return (short int)strtol(this->c_str(), (char**)nullptr, 10);
+}
+unsigned short CString::ToUShort() const {
+	return (unsigned short int)strtoul(this->c_str(), (char**)nullptr, 10);
+}
+unsigned int CString::ToUInt() const {
+	return (unsigned int)strtoul(this->c_str(), (char**)nullptr, 10);
+}
+int CString::ToInt() const {
+	return (int)strtol(this->c_str(), (char**)nullptr, 10);
+}
+long CString::ToLong() const {
+	return strtol(this->c_str(), (char**)nullptr, 10);
+}
 unsigned long CString::ToULong() const { return strtoul(c_str(), nullptr, 10); }
-unsigned long long CString::ToULongLong() const { return strtoull(c_str(), nullptr, 10); }
+unsigned long long CString::ToULongLong() const {
+	return strtoull(c_str(), nullptr, 10);
+}
 long long CString::ToLongLong() const { return strtoll(c_str(), nullptr, 10); }
 double CString::ToDouble() const { return strtod(c_str(), nullptr); }
-
 
 bool CString::Trim(const CString& s) {
 	bool bLeft = TrimLeft(s);
@@ -1121,8 +1267,7 @@ bool CString::Trim(const CString& s) {
 bool CString::TrimLeft(const CString& s) {
 	size_type i = find_first_not_of(s);
 
-	if (i == 0)
-		return false;
+	if (i == 0) return false;
 
 	if (i != npos)
 		this->erase(0, i);
@@ -1135,8 +1280,7 @@ bool CString::TrimLeft(const CString& s) {
 bool CString::TrimRight(const CString& s) {
 	size_type i = find_last_not_of(s);
 
-	if (i + 1 == length())
-		return false;
+	if (i + 1 == length()) return false;
 
 	if (i != npos)
 		this->erase(i + 1, npos);
@@ -1202,7 +1346,6 @@ bool CString::Contains(const CString& s, CaseSensitivity cs) const {
 	return Find(s, cs) != npos;
 }
 
-
 CString CString::TrimPrefix_n(const CString& sPrefix) const {
 	CString sRet = *this;
 	sRet.TrimPrefix(sPrefix);
@@ -1242,7 +1385,7 @@ bool CString::RightChomp(size_type uLen) {
 	bool bRet = false;
 
 	while ((uLen--) && (length())) {
-		erase(length() -1);
+		erase(length() - 1);
 		bRet = true;
 	}
 
@@ -1251,7 +1394,7 @@ bool CString::RightChomp(size_type uLen) {
 
 CString CString::StripControls_n() const {
 	CString sRet;
-	const unsigned char *pStart = (const unsigned char*) data();
+	const unsigned char* pStart = (const unsigned char*)data();
 	unsigned char ch = *pStart;
 	size_type iLength = length();
 	sRet.reserve(iLength);
@@ -1280,13 +1423,14 @@ CString CString::StripControls_n() const {
 
 			colorCode = false;
 
-			if (digits == 0 && comma) { // There was a ',' which wasn't followed by digits, we should print it.
+			if (digits == 0 && comma) {  // There was a ',' which wasn't
+			                             // followed by digits, we should print
+			                             // it.
 				sRet += ',';
 			}
 		}
 		// CO controls codes
-		if (ch < 0x20 || ch == 0x7F)
-			continue;
+		if (ch < 0x20 || ch == 0x7F) continue;
 		sRet += ch;
 	}
 	if (colorCode && digits == 0 && comma) {
@@ -1297,24 +1441,21 @@ CString CString::StripControls_n() const {
 	return sRet;
 }
 
-CString& CString::StripControls() {
-	return (*this = StripControls_n());
-}
+CString& CString::StripControls() { return (*this = StripControls_n()); }
 
 //////////////// MCString ////////////////
 const MCString MCString::EmptyMap;
 
-MCString::status_t MCString::WriteToDisk(const CString& sPath, mode_t iMode) const {
+MCString::status_t MCString::WriteToDisk(const CString& sPath,
+                                         mode_t iMode) const {
 	CFile cFile(sPath);
 
 	if (this->empty()) {
-		if (!cFile.Exists())
-			return MCS_SUCCESS;
-		if (cFile.Delete())
-			return MCS_SUCCESS;
+		if (!cFile.Exists()) return MCS_SUCCESS;
+		if (cFile.Delete()) return MCS_SUCCESS;
 	}
 
-	if (!cFile.Open(O_WRONLY|O_CREAT|O_TRUNC, iMode)) {
+	if (!cFile.Open(O_WRONLY | O_CREAT | O_TRUNC, iMode)) {
 		return MCS_EOPEN;
 	}
 
@@ -1329,7 +1470,7 @@ MCString::status_t MCString::WriteToDisk(const CString& sPath, mode_t iMode) con
 			continue;
 		}
 
-		if (cFile.Write(Encode(sKey) + " " +  Encode(sValue) + "\n") <= 0) {
+		if (cFile.Write(Encode(sKey) + " " + Encode(sValue) + "\n") <= 0) {
 			return MCS_EWRITE;
 		}
 	}
@@ -1355,8 +1496,7 @@ MCString::status_t MCString::ReadFromDisk(const CString& sPath) {
 		Decode(sKey);
 		Decode(sValue);
 
-		if (!ReadFilter(sKey, sValue))
-			return MCS_EREADFIL;
+		if (!ReadFilter(sKey, sValue)) return MCS_EREADFIL;
 
 		(*this)[sKey] = sValue;
 	}
@@ -1364,7 +1504,6 @@ MCString::status_t MCString::ReadFromDisk(const CString& sPath) {
 
 	return MCS_SUCCESS;
 }
-
 
 static const char hexdigits[] = "0123456789abcdef";
 
@@ -1387,15 +1526,15 @@ CString& MCString::Encode(CString& sValue) const {
 }
 
 CString& MCString::Decode(CString& sValue) const {
-	const char *pTmp = sValue.c_str();
-	char *endptr;
+	const char* pTmp = sValue.c_str();
+	char* endptr;
 	CString sTmp;
 
 	while (*pTmp) {
 		if (*pTmp != '%') {
 			sTmp += *pTmp++;
 		} else {
-			char ch = (char) strtol(pTmp + 1, &endptr, 16);
+			char ch = (char)strtol(pTmp + 1, &endptr, 16);
 			if (*endptr == ';') {
 				sTmp += ch;
 				pTmp = ++endptr;

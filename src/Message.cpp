@@ -17,40 +17,38 @@
 #include <znc/Message.h>
 #include <znc/Utils.h>
 
-CMessage::CMessage(const CString& sMessage)
-{
+CMessage::CMessage(const CString& sMessage) {
 	Parse(sMessage);
 	InitTime();
 }
 
-CMessage::CMessage(const CNick& Nick, const CString& sCommand, const VCString& vsParams, const MCString& mssTags)
-	: m_Nick(Nick), m_sCommand(sCommand), m_vsParams(vsParams), m_mssTags(mssTags)
-{
+CMessage::CMessage(const CNick& Nick, const CString& sCommand,
+                   const VCString& vsParams, const MCString& mssTags)
+    : m_Nick(Nick),
+      m_sCommand(sCommand),
+      m_vsParams(vsParams),
+      m_mssTags(mssTags) {
 	InitTime();
 }
 
-bool CMessage::Equals(const CMessage& Other) const
-{
+bool CMessage::Equals(const CMessage& Other) const {
 	return m_Nick.NickEquals(Other.GetNick().GetNick()) &&
 	       m_sCommand.Equals(Other.GetCommand()) &&
 	       m_vsParams == Other.GetParams();
 }
 
-void CMessage::Clone(const CMessage& Message)
-{
+void CMessage::Clone(const CMessage& Message) {
 	if (&Message != this) {
 		*this = Message;
 	}
 }
 
-void CMessage::SetCommand(const CString& sCommand)
-{
+void CMessage::SetCommand(const CString& sCommand) {
 	m_sCommand = sCommand;
 	InitType();
 }
 
-CString CMessage::GetParams(unsigned int uIdx, unsigned int uLen) const
-{
+CString CMessage::GetParams(unsigned int uIdx, unsigned int uLen) const {
 	if (m_vsParams.empty() || uLen == 0) {
 		return "";
 	}
@@ -61,7 +59,9 @@ CString CMessage::GetParams(unsigned int uIdx, unsigned int uLen) const
 	unsigned uParams = m_vsParams.size();
 	for (unsigned int i = uIdx; i < uIdx + uLen; ++i) {
 		CString sParam = m_vsParams[i];
-		if (i == uParams - 1 && (m_bColon || sParam.empty() || sParam.StartsWith(":") || sParam.Contains(" "))) {
+		if (i == uParams - 1 &&
+		    (m_bColon || sParam.empty() || sParam.StartsWith(":") ||
+		     sParam.Contains(" "))) {
 			sParam = ":" + sParam;
 		}
 		vsParams.push_back(sParam);
@@ -69,38 +69,36 @@ CString CMessage::GetParams(unsigned int uIdx, unsigned int uLen) const
 	return CString(" ").Join(vsParams.begin(), vsParams.end());
 }
 
-void CMessage::SetParams(const VCString& vsParams)
-{
+void CMessage::SetParams(const VCString& vsParams) {
 	m_vsParams = vsParams;
 	m_bColon = false;
 
-	if (m_eType == Type::Text || m_eType == Type::Notice || m_eType == Type::Action || m_eType == Type::CTCP) {
+	if (m_eType == Type::Text || m_eType == Type::Notice ||
+	    m_eType == Type::Action || m_eType == Type::CTCP) {
 		InitType();
 	}
 }
 
-CString CMessage::GetParam(unsigned int uIdx) const
-{
+CString CMessage::GetParam(unsigned int uIdx) const {
 	if (uIdx >= m_vsParams.size()) {
 		return "";
 	}
 	return m_vsParams[uIdx];
 }
 
-void CMessage::SetParam(unsigned int uIdx, const CString& sParam)
-{
+void CMessage::SetParam(unsigned int uIdx, const CString& sParam) {
 	if (uIdx >= m_vsParams.size()) {
 		m_vsParams.resize(uIdx + 1);
 	}
 	m_vsParams[uIdx] = sParam;
 
-	if (uIdx == 1 && (m_eType == Type::Text || m_eType == Type::Notice || m_eType == Type::Action || m_eType == Type::CTCP)) {
+	if (uIdx == 1 && (m_eType == Type::Text || m_eType == Type::Notice ||
+	                  m_eType == Type::Action || m_eType == Type::CTCP)) {
 		InitType();
 	}
 }
 
-CString CMessage::GetTag(const CString& sKey) const
-{
+CString CMessage::GetTag(const CString& sKey) const {
 	MCString::const_iterator it = m_mssTags.find(sKey);
 	if (it != m_mssTags.end()) {
 		return it->second;
@@ -108,13 +106,11 @@ CString CMessage::GetTag(const CString& sKey) const
 	return "";
 }
 
-void CMessage::SetTag(const CString& sKey, const CString& sValue)
-{
+void CMessage::SetTag(const CString& sKey, const CString& sValue) {
 	m_mssTags[sKey] = sValue;
 }
 
-CString CMessage::ToString(unsigned int uFlags) const
-{
+CString CMessage::ToString(unsigned int uFlags) const {
 	CString sMessage;
 
 	// <tags>
@@ -161,8 +157,7 @@ CString CMessage::ToString(unsigned int uFlags) const
 	return sMessage;
 }
 
-void CMessage::Parse(CString sMessage)
-{
+void CMessage::Parse(CString sMessage) {
 	// <tags>
 	m_mssTags.clear();
 	if (sMessage.StartsWith("@")) {
@@ -171,7 +166,8 @@ void CMessage::Parse(CString sMessage)
 		for (const CString& sTag : vsTags) {
 			CString sKey = sTag.Token(0, false, "=", true);
 			CString sValue = sTag.Token(1, true, "=", true);
-			m_mssTags[sKey] = sValue.Escape(CString::EMSGTAG, CString::CString::EASCII);
+			m_mssTags[sKey] =
+			    sValue.Escape(CString::EMSGTAG, CString::CString::EASCII);
 		}
 		sMessage = sMessage.Token(1, true);
 	}
@@ -213,8 +209,7 @@ void CMessage::Parse(CString sMessage)
 	InitType();
 }
 
-void CMessage::InitTime()
-{
+void CMessage::InitTime() {
 	auto it = m_mssTags.find("time");
 	if (it != m_mssTags.end()) {
 		m_time = CUtils::ParseServerTime(it->second);
@@ -236,9 +231,9 @@ void CMessage::InitTime()
 	}
 }
 
-void CMessage::InitType()
-{
-	if (m_sCommand.length() == 3 && isdigit(m_sCommand[0]) && isdigit(m_sCommand[1]) && isdigit(m_sCommand[2])) {
+void CMessage::InitType() {
+	if (m_sCommand.length() == 3 && isdigit(m_sCommand[0]) &&
+	    isdigit(m_sCommand[1]) && isdigit(m_sCommand[2])) {
 		m_eType = Type::Numeric;
 	} else if (m_sCommand.Equals("PRIVMSG")) {
 		CString sParam = GetParam(1);
@@ -260,21 +255,21 @@ void CMessage::InitType()
 		}
 	} else {
 		std::map<CString, Type> mTypes = {
-			{"ACCOUNT", Type::Account},
-			{"AWAY", Type::Away},
-			{"CAP", Type::Capability},
-			{"ERROR", Type::Error},
-			{"INVITE", Type::Invite},
-			{"JOIN", Type::Join},
-			{"KICK", Type::Kick},
-			{"MODE", Type::Mode},
-			{"NICK", Type::Nick},
-			{"PART", Type::Part},
-			{"PING", Type::Ping},
-			{"PONG", Type::Pong},
-			{"QUIT", Type::Quit},
-			{"TOPIC", Type::Topic},
-			{"WALLOPS", Type::Wallops},
+		    {"ACCOUNT", Type::Account},
+		    {"AWAY", Type::Away},
+		    {"CAP", Type::Capability},
+		    {"ERROR", Type::Error},
+		    {"INVITE", Type::Invite},
+		    {"JOIN", Type::Join},
+		    {"KICK", Type::Kick},
+		    {"MODE", Type::Mode},
+		    {"NICK", Type::Nick},
+		    {"PART", Type::Part},
+		    {"PING", Type::Ping},
+		    {"PONG", Type::Pong},
+		    {"QUIT", Type::Quit},
+		    {"TOPIC", Type::Topic},
+		    {"WALLOPS", Type::Wallops},
 		};
 		auto it = mTypes.find(m_sCommand.AsUpper());
 		if (it != mTypes.end()) {

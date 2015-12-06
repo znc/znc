@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004-2015 ZNC, see the NOTICE file for details.
- * Copyright (C) 2006-2007, CNU <bshalm@broadpark.no> (http://cnu.dieplz.net/znc)
+ * Copyright (C) 2006-2007, CNU <bshalm@broadpark.no>
+ *(http://cnu.dieplz.net/znc)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +27,9 @@
 using std::vector;
 
 class CLogRule {
-public:
-	CLogRule(const CString& sRule, bool bEnabled = true) : m_sRule(sRule), m_bEnabled(bEnabled) {}
+  public:
+	CLogRule(const CString& sRule, bool bEnabled = true)
+	    : m_sRule(sRule), m_bEnabled(bEnabled) {}
 
 	const CString& GetRule() const { return m_sRule; }
 	bool IsEnabled() const { return m_bEnabled; }
@@ -41,19 +43,17 @@ public:
 		return m_sRule == sOther.GetRule();
 	}
 
-	CString ToString() const {
-		return (m_bEnabled ? "" : "!") + m_sRule;
-	}
+	CString ToString() const { return (m_bEnabled ? "" : "!") + m_sRule; }
 
-private:
+  private:
 	CString m_sRule;
 	bool m_bEnabled;
 };
 
-class CLogMod: public CModule {
+class CLogMod : public CModule {
 	void Set(const CString& sLine) {
-		const CString sVar  = sLine.Token(1).AsLower();
-		bool b              = sLine.Token(2).ToBool();
+		const CString sVar = sLine.Token(1).AsLower();
+		bool b = sLine.Token(2).ToBool();
 
 		if (sVar == "joins" || sVar == "quits" || sVar == "nickchanges") {
 			SetNV(sVar, CString(b));
@@ -61,19 +61,26 @@ class CLogMod: public CModule {
 		} else
 			PutModule(sVar + " is invalid.");
 	}
-public:
-	MODCONSTRUCTOR(CLogMod)
-	{
+
+  public:
+	MODCONSTRUCTOR(CLogMod) {
 		m_bSanitize = false;
 		AddHelpCommand();
-		AddCommand("SetRules", static_cast<CModCommand::ModCmdFunc>(&CLogMod::SetRulesCmd),
-				   "<rules>", "Set logging rules, use !#chan or !query to negate and * for wildcards");
-		AddCommand("ClearRules", static_cast<CModCommand::ModCmdFunc>(&CLogMod::ClearRulesCmd),
-				   "", "Clear all logging rules");
-		AddCommand("ListRules", static_cast<CModCommand::ModCmdFunc>(&CLogMod::ListRulesCmd),
-				   "", "List all logging rules");
-		AddCommand("Set", static_cast<CModCommand::ModCmdFunc>(&CLogMod::Set),
-				   "boolean", "Set one of the following booleans, joins, quits, nickchanges");
+		AddCommand("SetRules",
+		           static_cast<CModCommand::ModCmdFunc>(&CLogMod::SetRulesCmd),
+		           "<rules>",
+		           "Set logging rules, use !#chan or !query to negate and * "
+		           "for wildcards");
+		AddCommand("ClearRules", static_cast<CModCommand::ModCmdFunc>(
+		                             &CLogMod::ClearRulesCmd),
+		           "", "Clear all logging rules");
+		AddCommand("ListRules",
+		           static_cast<CModCommand::ModCmdFunc>(&CLogMod::ListRulesCmd),
+		           "", "List all logging rules");
+		AddCommand(
+		    "Set", static_cast<CModCommand::ModCmdFunc>(&CLogMod::Set),
+		    "boolean",
+		    "Set one of the following booleans, joins, quits, nickchanges");
 	}
 
 	void SetRulesCmd(const CString& sLine);
@@ -94,38 +101,44 @@ public:
 	void OnIRCDisconnected() override;
 	EModRet OnBroadcast(CString& sMessage) override;
 
-	void OnRawMode2(const CNick* pOpNick, CChan& Channel, const CString& sModes, const CString& sArgs) override;
-	void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage) override;
-	void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) override;
+	void OnRawMode2(const CNick* pOpNick, CChan& Channel, const CString& sModes,
+	                const CString& sArgs) override;
+	void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel,
+	            const CString& sMessage) override;
+	void OnQuit(const CNick& Nick, const CString& sMessage,
+	            const vector<CChan*>& vChans) override;
 	void OnJoin(const CNick& Nick, CChan& Channel) override;
-	void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) override;
-	void OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans) override;
+	void OnPart(const CNick& Nick, CChan& Channel,
+	            const CString& sMessage) override;
+	void OnNick(const CNick& OldNick, const CString& sNewNick,
+	            const vector<CChan*>& vChans) override;
 	EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) override;
 
 	/* notices */
 	EModRet OnUserNotice(CString& sTarget, CString& sMessage) override;
 	EModRet OnPrivNotice(CNick& Nick, CString& sMessage) override;
-	EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) override;
+	EModRet OnChanNotice(CNick& Nick, CChan& Channel,
+	                     CString& sMessage) override;
 
 	/* actions */
 	EModRet OnUserAction(CString& sTarget, CString& sMessage) override;
 	EModRet OnPrivAction(CNick& Nick, CString& sMessage) override;
-	EModRet OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage) override;
+	EModRet OnChanAction(CNick& Nick, CChan& Channel,
+	                     CString& sMessage) override;
 
 	/* msgs */
 	EModRet OnUserMsg(CString& sTarget, CString& sMessage) override;
 	EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override;
 	EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override;
 
-private:
-	CString                 m_sLogPath;
-	CString                 m_sTimestamp;
-	bool                    m_bSanitize;
-	vector<CLogRule>        m_vRules;
+  private:
+	CString m_sLogPath;
+	CString m_sTimestamp;
+	bool m_bSanitize;
+	vector<CLogRule> m_vRules;
 };
 
-void CLogMod::SetRulesCmd(const CString& sLine)
-{
+void CLogMod::SetRulesCmd(const CString& sLine) {
 	VCString vsRules = SplitRules(sLine.Token(1, true));
 
 	if (vsRules.empty()) {
@@ -138,8 +151,7 @@ void CLogMod::SetRulesCmd(const CString& sLine)
 	}
 }
 
-void CLogMod::ClearRulesCmd(const CString& sLine)
-{
+void CLogMod::ClearRulesCmd(const CString& sLine) {
 	size_t uCount = m_vRules.size();
 
 	if (uCount == 0) {
@@ -152,8 +164,7 @@ void CLogMod::ClearRulesCmd(const CString& sLine)
 	}
 }
 
-void CLogMod::ListRulesCmd(const CString& sLine)
-{
+void CLogMod::ListRulesCmd(const CString& sLine) {
 	CTable Table;
 	Table.AddColumn("Rule");
 	Table.AddColumn("Logging enabled");
@@ -171,8 +182,7 @@ void CLogMod::ListRulesCmd(const CString& sLine)
 	}
 }
 
-void CLogMod::SetRules(const VCString& vsRules)
-{
+void CLogMod::SetRules(const VCString& vsRules) {
 	m_vRules.clear();
 
 	for (CString sRule : vsRules) {
@@ -181,8 +191,7 @@ void CLogMod::SetRules(const VCString& vsRules)
 	}
 }
 
-VCString CLogMod::SplitRules(const CString& sRules) const
-{
+VCString CLogMod::SplitRules(const CString& sRules) const {
 	CString sCopy = sRules;
 	sCopy.Replace(",", " ");
 
@@ -192,8 +201,7 @@ VCString CLogMod::SplitRules(const CString& sRules) const
 	return vsRules;
 }
 
-CString CLogMod::JoinRules(const CString& sSeparator) const
-{
+CString CLogMod::JoinRules(const CString& sSeparator) const {
 	VCString vsRules;
 	for (const CLogRule& Rule : m_vRules) {
 		vsRules.push_back(Rule.ToString());
@@ -202,8 +210,7 @@ CString CLogMod::JoinRules(const CString& sSeparator) const
 	return sSeparator.Join(vsRules.begin(), vsRules.end());
 }
 
-bool CLogMod::TestRules(const CString& sTarget) const
-{
+bool CLogMod::TestRules(const CString& sTarget) const {
 	for (const CLogRule& Rule : m_vRules) {
 		if (Rule.Compare(sTarget)) {
 			return Rule.IsEnabled();
@@ -213,8 +220,8 @@ bool CLogMod::TestRules(const CString& sTarget) const
 	return true;
 }
 
-void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/)
-{
+void CLogMod::PutLog(const CString& sLine,
+                     const CString& sWindow /*= "Status"*/) {
 	if (!TestRules(sWindow)) {
 		return;
 	}
@@ -225,23 +232,24 @@ void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/
 	time(&curtime);
 	// Generate file name
 	sPath = CUtils::FormatTime(curtime, m_sLogPath, GetUser()->GetTimezone());
-	if (sPath.empty())
-	{
+	if (sPath.empty()) {
 		DEBUG("Could not format log path [" << sPath << "]");
 		return;
 	}
 
 	// TODO: Properly handle IRC case mapping
 	// $WINDOW has to be handled last, since it can contain %
-	sPath.Replace("$USER", CString((GetUser() ? GetUser()->GetUserName() : "UNKNOWN")));
-	sPath.Replace("$NETWORK", CString((GetNetwork() ? GetNetwork()->GetName() : "znc")));
-	sPath.Replace("$WINDOW", CString(sWindow.Replace_n("/", "-").Replace_n("\\", "-")).AsLower());
+	sPath.Replace("$USER",
+	              CString((GetUser() ? GetUser()->GetUserName() : "UNKNOWN")));
+	sPath.Replace("$NETWORK",
+	              CString((GetNetwork() ? GetNetwork()->GetName() : "znc")));
+	sPath.Replace("$WINDOW", CString(sWindow.Replace_n("/", "-")
+	                                     .Replace_n("\\", "-")).AsLower());
 
 	// Check if it's allowed to write in this specific path
 	sPath = CDir::CheckPathPrefix(GetSavePath(), sPath);
-	if (sPath.empty())
-	{
-		DEBUG("Invalid log path ["<<m_sLogPath<<"].");
+	if (sPath.empty()) {
+		DEBUG("Invalid log path [" << m_sLogPath << "].");
 		return;
 	}
 
@@ -250,38 +258,34 @@ void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/
 	struct stat ModDirInfo;
 	CFile::GetInfo(GetSavePath(), ModDirInfo);
 	if (!CFile::Exists(sLogDir)) CDir::MakeDir(sLogDir, ModDirInfo.st_mode);
-	if (LogFile.Open(O_WRONLY | O_APPEND | O_CREAT))
-	{
-		LogFile.Write(CUtils::FormatTime(curtime, m_sTimestamp, GetUser()->GetTimezone()) + " " + (m_bSanitize ? sLine.StripControls_n() : sLine) + "\n");
+	if (LogFile.Open(O_WRONLY | O_APPEND | O_CREAT)) {
+		LogFile.Write(CUtils::FormatTime(curtime, m_sTimestamp,
+		                                 GetUser()->GetTimezone()) +
+		              " " + (m_bSanitize ? sLine.StripControls_n() : sLine) +
+		              "\n");
 	} else
 		DEBUG("Could not open log file [" << sPath << "]: " << strerror(errno));
 }
 
-void CLogMod::PutLog(const CString& sLine, const CChan& Channel)
-{
+void CLogMod::PutLog(const CString& sLine, const CChan& Channel) {
 	PutLog(sLine, Channel.GetName());
 }
 
-void CLogMod::PutLog(const CString& sLine, const CNick& Nick)
-{
+void CLogMod::PutLog(const CString& sLine, const CNick& Nick) {
 	PutLog(sLine, Nick.GetNick());
 }
 
-CString CLogMod::GetServer()
-{
+CString CLogMod::GetServer() {
 	CServer* pServer = GetNetwork()->GetCurrentServer();
 	CString sSSL;
 
-	if (!pServer)
-		return "(no server)";
+	if (!pServer) return "(no server)";
 
-	if (pServer->IsSSL())
-		sSSL = "+";
+	if (pServer->IsSSL()) sSSL = "+";
 	return pServer->GetName() + " " + sSSL + CString(pServer->GetPort());
 }
 
-bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage)
-{
+bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage) {
 	VCString vsArgs;
 	sArgs.QuoteSplit(vsArgs);
 
@@ -299,7 +303,9 @@ bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage)
 		} else {
 			// Only one arg may be LogPath
 			if (bHaveLogPath) {
-				sMessage = "Invalid args [" + sArgs + "]. Only one log path allowed.  Check that there are no spaces in the path.";
+				sMessage = "Invalid args [" + sArgs +
+				           "]. Only one log path allowed.  Check that there "
+				           "are no spaces in the path.";
 				return false;
 			}
 			m_sLogPath = sArg;
@@ -313,21 +319,27 @@ bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage)
 
 	// Add default filename to path if it's a folder
 	if (GetType() == CModInfo::UserModule) {
-		if (m_sLogPath.Right(1) == "/" || m_sLogPath.find("$WINDOW") == CString::npos || m_sLogPath.find("$NETWORK") == CString::npos) {
+		if (m_sLogPath.Right(1) == "/" ||
+		    m_sLogPath.find("$WINDOW") == CString::npos ||
+		    m_sLogPath.find("$NETWORK") == CString::npos) {
 			if (!m_sLogPath.empty()) {
 				m_sLogPath += "/";
 			}
 			m_sLogPath += "$NETWORK/$WINDOW/%Y-%m-%d.log";
 		}
 	} else if (GetType() == CModInfo::NetworkModule) {
-		if (m_sLogPath.Right(1) == "/" || m_sLogPath.find("$WINDOW") == CString::npos) {
+		if (m_sLogPath.Right(1) == "/" ||
+		    m_sLogPath.find("$WINDOW") == CString::npos) {
 			if (!m_sLogPath.empty()) {
 				m_sLogPath += "/";
 			}
 			m_sLogPath += "$WINDOW/%Y-%m-%d.log";
 		}
 	} else {
-		if (m_sLogPath.Right(1) == "/" || m_sLogPath.find("$USER") == CString::npos || m_sLogPath.find("$WINDOW") == CString::npos || m_sLogPath.find("$NETWORK") == CString::npos) {
+		if (m_sLogPath.Right(1) == "/" ||
+		    m_sLogPath.find("$USER") == CString::npos ||
+		    m_sLogPath.find("$WINDOW") == CString::npos ||
+		    m_sLogPath.find("$NETWORK") == CString::npos) {
 			if (!m_sLogPath.empty()) {
 				m_sLogPath += "/";
 			}
@@ -342,78 +354,83 @@ bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage)
 	// Check if it's allowed to write in this path in general
 	m_sLogPath = CDir::CheckPathPrefix(GetSavePath(), m_sLogPath);
 	if (m_sLogPath.empty()) {
-		sMessage = "Invalid log path ["+m_sLogPath+"].";
+		sMessage = "Invalid log path [" + m_sLogPath + "].";
 		return false;
 	} else {
-		sMessage = "Logging to ["+m_sLogPath+"]. Using timestamp format '"+m_sTimestamp+"'";
+		sMessage = "Logging to [" + m_sLogPath + "]. Using timestamp format '" +
+		           m_sTimestamp + "'";
 		return true;
 	}
 }
 
-
-void CLogMod::OnIRCConnected()
-{
+void CLogMod::OnIRCConnected() {
 	PutLog("Connected to IRC (" + GetServer() + ")");
 }
 
-void CLogMod::OnIRCDisconnected()
-{
+void CLogMod::OnIRCDisconnected() {
 	PutLog("Disconnected from IRC (" + GetServer() + ")");
 }
 
-CModule::EModRet CLogMod::OnBroadcast(CString& sMessage)
-{
+CModule::EModRet CLogMod::OnBroadcast(CString& sMessage) {
 	PutLog("Broadcast: " + sMessage);
 	return CONTINUE;
 }
 
-void CLogMod::OnRawMode2(const CNick* pOpNick, CChan& Channel, const CString& sModes, const CString& sArgs)
-{
+void CLogMod::OnRawMode2(const CNick* pOpNick, CChan& Channel,
+                         const CString& sModes, const CString& sArgs) {
 	const CString sNick = pOpNick ? pOpNick->GetNick() : "Server";
 	PutLog("*** " + sNick + " sets mode: " + sModes + " " + sArgs, Channel);
 }
 
-void CLogMod::OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage)
-{
-	PutLog("*** " + sKickedNick + " was kicked by " + OpNick.GetNick() + " (" + sMessage + ")", Channel);
+void CLogMod::OnKick(const CNick& OpNick, const CString& sKickedNick,
+                     CChan& Channel, const CString& sMessage) {
+	PutLog("*** " + sKickedNick + " was kicked by " + OpNick.GetNick() + " (" +
+	           sMessage + ")",
+	       Channel);
 }
 
-void CLogMod::OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans)
-{
+void CLogMod::OnQuit(const CNick& Nick, const CString& sMessage,
+                     const vector<CChan*>& vChans) {
 	if (!HasNV("quits") || GetNV("quits").ToBool()) {
 		for (CChan* pChan : vChans)
-			PutLog("*** Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") (" + sMessage + ")", *pChan);
+			PutLog("*** Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() +
+			           "@" + Nick.GetHost() + ") (" + sMessage + ")",
+			       *pChan);
 	}
 }
 
-void CLogMod::OnJoin(const CNick& Nick, CChan& Channel)
-{
+void CLogMod::OnJoin(const CNick& Nick, CChan& Channel) {
 	if (!HasNV("joins") || GetNV("joins").ToBool())
-		PutLog("*** Joins: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ")", Channel);
+		PutLog("*** Joins: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" +
+		           Nick.GetHost() + ")",
+		       Channel);
 }
 
-void CLogMod::OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage)
-{
-	PutLog("*** Parts: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") (" + sMessage + ")", Channel);
+void CLogMod::OnPart(const CNick& Nick, CChan& Channel,
+                     const CString& sMessage) {
+	PutLog("*** Parts: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" +
+	           Nick.GetHost() + ") (" + sMessage + ")",
+	       Channel);
 }
 
-void CLogMod::OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans)
-{
+void CLogMod::OnNick(const CNick& OldNick, const CString& sNewNick,
+                     const vector<CChan*>& vChans) {
 	if (!HasNV("nickchanges") || GetNV("nickchanges").ToBool()) {
 		for (CChan* pChan : vChans)
-			PutLog("*** " + OldNick.GetNick() + " is now known as " + sNewNick, *pChan);
+			PutLog("*** " + OldNick.GetNick() + " is now known as " + sNewNick,
+			       *pChan);
 	}
 }
 
-CModule::EModRet CLogMod::OnTopic(CNick& Nick, CChan& Channel, CString& sTopic)
-{
-	PutLog("*** " + Nick.GetNick() + " changes topic to '" + sTopic + "'", Channel);
+CModule::EModRet CLogMod::OnTopic(CNick& Nick, CChan& Channel,
+                                  CString& sTopic) {
+	PutLog("*** " + Nick.GetNick() + " changes topic to '" + sTopic + "'",
+	       Channel);
 	return CONTINUE;
 }
 
 /* notices */
-CModule::EModRet CLogMod::OnUserNotice(CString& sTarget, CString& sMessage)
-{
+CModule::EModRet CLogMod::OnUserNotice(CString& sTarget, CString& sMessage) {
 	CIRCNetwork* pNetwork = GetNetwork();
 	if (pNetwork) {
 		PutLog("-" + pNetwork->GetCurNick() + "- " + sMessage, sTarget);
@@ -422,21 +439,19 @@ CModule::EModRet CLogMod::OnUserNotice(CString& sTarget, CString& sMessage)
 	return CONTINUE;
 }
 
-CModule::EModRet CLogMod::OnPrivNotice(CNick& Nick, CString& sMessage)
-{
+CModule::EModRet CLogMod::OnPrivNotice(CNick& Nick, CString& sMessage) {
 	PutLog("-" + Nick.GetNick() + "- " + sMessage, Nick);
 	return CONTINUE;
 }
 
-CModule::EModRet CLogMod::OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage)
-{
+CModule::EModRet CLogMod::OnChanNotice(CNick& Nick, CChan& Channel,
+                                       CString& sMessage) {
 	PutLog("-" + Nick.GetNick() + "- " + sMessage, Channel);
 	return CONTINUE;
 }
 
 /* actions */
-CModule::EModRet CLogMod::OnUserAction(CString& sTarget, CString& sMessage)
-{
+CModule::EModRet CLogMod::OnUserAction(CString& sTarget, CString& sMessage) {
 	CIRCNetwork* pNetwork = GetNetwork();
 	if (pNetwork) {
 		PutLog("* " + pNetwork->GetCurNick() + " " + sMessage, sTarget);
@@ -445,21 +460,19 @@ CModule::EModRet CLogMod::OnUserAction(CString& sTarget, CString& sMessage)
 	return CONTINUE;
 }
 
-CModule::EModRet CLogMod::OnPrivAction(CNick& Nick, CString& sMessage)
-{
+CModule::EModRet CLogMod::OnPrivAction(CNick& Nick, CString& sMessage) {
 	PutLog("* " + Nick.GetNick() + " " + sMessage, Nick);
 	return CONTINUE;
 }
 
-CModule::EModRet CLogMod::OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage)
-{
+CModule::EModRet CLogMod::OnChanAction(CNick& Nick, CChan& Channel,
+                                       CString& sMessage) {
 	PutLog("* " + Nick.GetNick() + " " + sMessage, Channel);
 	return CONTINUE;
 }
 
 /* msgs */
-CModule::EModRet CLogMod::OnUserMsg(CString& sTarget, CString& sMessage)
-{
+CModule::EModRet CLogMod::OnUserMsg(CString& sTarget, CString& sMessage) {
 	CIRCNetwork* pNetwork = GetNetwork();
 	if (pNetwork) {
 		PutLog("<" + pNetwork->GetCurNick() + "> " + sMessage, sTarget);
@@ -468,19 +481,19 @@ CModule::EModRet CLogMod::OnUserMsg(CString& sTarget, CString& sMessage)
 	return CONTINUE;
 }
 
-CModule::EModRet CLogMod::OnPrivMsg(CNick& Nick, CString& sMessage)
-{
+CModule::EModRet CLogMod::OnPrivMsg(CNick& Nick, CString& sMessage) {
 	PutLog("<" + Nick.GetNick() + "> " + sMessage, Nick);
 	return CONTINUE;
 }
 
-CModule::EModRet CLogMod::OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage)
-{
+CModule::EModRet CLogMod::OnChanMsg(CNick& Nick, CChan& Channel,
+                                    CString& sMessage) {
 	PutLog("<" + Nick.GetNick() + "> " + sMessage, Channel);
 	return CONTINUE;
 }
 
-template<> void TModInfo<CLogMod>(CModInfo& Info) {
+template <>
+void TModInfo<CLogMod>(CModInfo& Info) {
 	Info.AddType(CModInfo::NetworkModule);
 	Info.AddType(CModInfo::GlobalModule);
 	Info.SetHasArgs(true);

@@ -25,25 +25,27 @@
 #include <time.h>
 
 #ifndef HAVE_LSTAT
-#  define lstat(a, b)	stat(a, b)
+#define lstat(a, b) stat(a, b)
 #endif
 
 #ifndef O_BINARY
-#  define O_BINARY	0
+#define O_BINARY 0
 #endif
 
 CString CFile::m_sHomePath;
 
-CFile::CFile() : CFile("") {
-}
+CFile::CFile() : CFile("") {}
 
-CFile::CFile(const CString& sLongName) : m_sBuffer(""), m_iFD(-1), m_bHadError(false), m_sLongName(""), m_sShortName("") {
+CFile::CFile(const CString& sLongName)
+    : m_sBuffer(""),
+      m_iFD(-1),
+      m_bHadError(false),
+      m_sLongName(""),
+      m_sShortName("") {
 	SetFileName(sLongName);
 }
 
-CFile::~CFile() {
-	Close();
-}
+CFile::~CFile() { Close(); }
 
 void CFile::SetFileName(const CString& sLongName) {
 	if (sLongName.StartsWith("~/")) {
@@ -56,7 +58,7 @@ void CFile::SetFileName(const CString& sLongName) {
 
 	CString::size_type uPos = m_sShortName.rfind('/');
 	if (uPos != CString::npos) {
-		m_sShortName = m_sShortName.substr(uPos +1);
+		m_sShortName = m_sShortName.substr(uPos + 1);
 	}
 }
 
@@ -65,24 +67,49 @@ bool CFile::IsDir(const CString& sLongName, bool bUseLstat) {
 		return CFile::FType(sLongName, FT_DIRECTORY, bUseLstat);
 
 	// Some OS don't like trailing slashes for directories
-	return CFile::FType(sLongName.TrimRight_n("/"),
-			FT_DIRECTORY, bUseLstat);
+	return CFile::FType(sLongName.TrimRight_n("/"), FT_DIRECTORY, bUseLstat);
 }
 
-bool CFile::IsReg(const CString& sLongName, bool bUseLstat) { return CFile::FType(sLongName, FT_REGULAR, bUseLstat); }
-bool CFile::IsChr(const CString& sLongName, bool bUseLstat)  { return CFile::FType(sLongName, FT_CHARACTER, bUseLstat); }
-bool CFile::IsBlk(const CString& sLongName, bool bUseLstat)  { return CFile::FType(sLongName, FT_BLOCK, bUseLstat); }
-bool CFile::IsFifo(const CString& sLongName, bool bUseLstat)  { return CFile::FType(sLongName, FT_FIFO, bUseLstat); }
-bool CFile::IsLnk(const CString& sLongName, bool bUseLstat)  { return CFile::FType(sLongName, FT_LINK, bUseLstat); }
-bool CFile::IsSock(const CString& sLongName, bool bUseLstat)  { return CFile::FType(sLongName, FT_SOCK, bUseLstat); }
+bool CFile::IsReg(const CString& sLongName, bool bUseLstat) {
+	return CFile::FType(sLongName, FT_REGULAR, bUseLstat);
+}
+bool CFile::IsChr(const CString& sLongName, bool bUseLstat) {
+	return CFile::FType(sLongName, FT_CHARACTER, bUseLstat);
+}
+bool CFile::IsBlk(const CString& sLongName, bool bUseLstat) {
+	return CFile::FType(sLongName, FT_BLOCK, bUseLstat);
+}
+bool CFile::IsFifo(const CString& sLongName, bool bUseLstat) {
+	return CFile::FType(sLongName, FT_FIFO, bUseLstat);
+}
+bool CFile::IsLnk(const CString& sLongName, bool bUseLstat) {
+	return CFile::FType(sLongName, FT_LINK, bUseLstat);
+}
+bool CFile::IsSock(const CString& sLongName, bool bUseLstat) {
+	return CFile::FType(sLongName, FT_SOCK, bUseLstat);
+}
 
-bool CFile::IsReg(bool bUseLstat) const { return CFile::IsReg(m_sLongName, bUseLstat); }
-bool CFile::IsDir(bool bUseLstat) const { return CFile::IsDir(m_sLongName, bUseLstat); }
-bool CFile::IsChr(bool bUseLstat) const { return CFile::IsChr(m_sLongName, bUseLstat); }
-bool CFile::IsBlk(bool bUseLstat) const { return CFile::IsBlk(m_sLongName, bUseLstat); }
-bool CFile::IsFifo(bool bUseLstat) const { return CFile::IsFifo(m_sLongName, bUseLstat); }
-bool CFile::IsLnk(bool bUseLstat) const { return CFile::IsLnk(m_sLongName, bUseLstat); }
-bool CFile::IsSock(bool bUseLstat) const { return CFile::IsSock(m_sLongName, bUseLstat); }
+bool CFile::IsReg(bool bUseLstat) const {
+	return CFile::IsReg(m_sLongName, bUseLstat);
+}
+bool CFile::IsDir(bool bUseLstat) const {
+	return CFile::IsDir(m_sLongName, bUseLstat);
+}
+bool CFile::IsChr(bool bUseLstat) const {
+	return CFile::IsChr(m_sLongName, bUseLstat);
+}
+bool CFile::IsBlk(bool bUseLstat) const {
+	return CFile::IsBlk(m_sLongName, bUseLstat);
+}
+bool CFile::IsFifo(bool bUseLstat) const {
+	return CFile::IsFifo(m_sLongName, bUseLstat);
+}
+bool CFile::IsLnk(bool bUseLstat) const {
+	return CFile::IsLnk(m_sLongName, bUseLstat);
+}
+bool CFile::IsSock(bool bUseLstat) const {
+	return CFile::IsSock(m_sLongName, bUseLstat);
+}
 
 // for gettin file types, using fstat instead
 bool CFile::FType(const CString& sFileName, EFileTypes eType, bool bUseLstat) {
@@ -160,12 +187,12 @@ time_t CFile::GetCTime(const CString& sFile) {
 
 uid_t CFile::GetUID(const CString& sFile) {
 	struct stat st;
-	return (stat(sFile.c_str(), &st) != 0) ? -1 : (int) st.st_uid;
+	return (stat(sFile.c_str(), &st) != 0) ? -1 : (int)st.st_uid;
 }
 
 gid_t CFile::GetGID(const CString& sFile) {
 	struct stat st;
-	return (stat(sFile.c_str(), &st) != 0) ? -1 : (int) st.st_gid;
+	return (stat(sFile.c_str(), &st) != 0) ? -1 : (int)st.st_gid;
 }
 int CFile::GetInfo(const CString& sFile, struct stat& st) {
 	return stat(sFile.c_str(), &st);
@@ -175,22 +202,19 @@ int CFile::GetInfo(const CString& sFile, struct stat& st) {
 // Functions to manipulate the file on the filesystem
 //
 bool CFile::Delete() {
-	if (CFile::Delete(m_sLongName))
-		return true;
+	if (CFile::Delete(m_sLongName)) return true;
 	m_bHadError = true;
 	return false;
 }
 
 bool CFile::Move(const CString& sNewFileName, bool bOverwrite) {
-	if (CFile::Move(m_sLongName, sNewFileName, bOverwrite))
-		return true;
+	if (CFile::Move(m_sLongName, sNewFileName, bOverwrite)) return true;
 	m_bHadError = true;
 	return false;
 }
 
 bool CFile::Copy(const CString& sNewFileName, bool bOverwrite) {
-	if (CFile::Copy(m_sLongName, sNewFileName, bOverwrite))
-		return true;
+	if (CFile::Copy(m_sLongName, sNewFileName, bOverwrite)) return true;
 	m_bHadError = true;
 	return false;
 }
@@ -199,7 +223,8 @@ bool CFile::Delete(const CString& sFileName) {
 	return (unlink(sFileName.c_str()) == 0) ? true : false;
 }
 
-bool CFile::Move(const CString& sOldFileName, const CString& sNewFileName, bool bOverwrite) {
+bool CFile::Move(const CString& sOldFileName, const CString& sNewFileName,
+                 bool bOverwrite) {
 	if (CFile::Exists(sNewFileName)) {
 		if (!bOverwrite) {
 			errno = EEXIST;
@@ -207,15 +232,18 @@ bool CFile::Move(const CString& sOldFileName, const CString& sNewFileName, bool 
 		}
 #ifdef _WIN32
 		// rename() never overwrites files on Windows.
-		DWORD dFlags = MOVEFILE_WRITE_THROUGH | MOVEFILE_COPY_ALLOWED | MOVEFILE_REPLACE_EXISTING;
-		return (::MoveFileExA(sOldFileName.c_str(), sNewFileName.c_str(), dFlags) != 0);
+		DWORD dFlags = MOVEFILE_WRITE_THROUGH | MOVEFILE_COPY_ALLOWED |
+		               MOVEFILE_REPLACE_EXISTING;
+		return (::MoveFileExA(sOldFileName.c_str(), sNewFileName.c_str(),
+		                      dFlags) != 0);
 #endif
 	}
 
 	return (rename(sOldFileName.c_str(), sNewFileName.c_str()) == 0);
 }
 
-bool CFile::Copy(const CString& sOldFileName, const CString& sNewFileName, bool bOverwrite) {
+bool CFile::Copy(const CString& sOldFileName, const CString& sNewFileName,
+                 bool bOverwrite) {
 	if ((!bOverwrite) && (CFile::Exists(sNewFileName))) {
 		errno = EEXIST;
 		return false;
@@ -306,8 +334,7 @@ bool CFile::Sync() {
 	/* This sets errno in case m_iFD == -1 */
 	errno = EBADF;
 
-	if (m_iFD != -1 && fsync(m_iFD) == 0)
-		return true;
+	if (m_iFD != -1 && fsync(m_iFD) == 0) return true;
 	m_bHadError = true;
 	return false;
 }
@@ -343,19 +370,18 @@ bool CFile::Open(int iFlags, mode_t iMode) {
 	return true;
 }
 
-ssize_t CFile::Read(char *pszBuffer, int iBytes) {
+ssize_t CFile::Read(char* pszBuffer, int iBytes) {
 	if (m_iFD == -1) {
 		errno = EBADF;
 		return -1;
 	}
 
 	ssize_t res = read(m_iFD, pszBuffer, iBytes);
-	if (res != iBytes)
-		m_bHadError = true;
+	if (res != iBytes) m_bHadError = true;
 	return res;
 }
 
-bool CFile::ReadLine(CString& sData, const CString & sDelimiter) {
+bool CFile::ReadLine(CString& sData, const CString& sDelimiter) {
 	char buff[4096];
 	ssize_t iBytes;
 
@@ -418,27 +444,26 @@ bool CFile::ReadFile(CString& sData, size_t iMaxSize) {
 	return false;
 }
 
-ssize_t CFile::Write(const char *pszBuffer, size_t iBytes) {
+ssize_t CFile::Write(const char* pszBuffer, size_t iBytes) {
 	if (m_iFD == -1) {
 		errno = EBADF;
 		return -1;
 	}
 
 	ssize_t res = write(m_iFD, pszBuffer, iBytes);
-	if (-1 == res)
-		m_bHadError = true;
+	if (-1 == res) m_bHadError = true;
 	return res;
 }
 
-ssize_t CFile::Write(const CString & sData) {
+ssize_t CFile::Write(const CString& sData) {
 	return Write(sData.data(), sData.size());
 }
 void CFile::Close() {
 	if (m_iFD >= 0) {
 		if (close(m_iFD) < 0) {
 			m_bHadError = true;
-			DEBUG("CFile::Close(): close() failed with ["
-					<< strerror(errno) << "]");
+			DEBUG("CFile::Close(): close() failed with [" << strerror(errno)
+			                                              << "]");
 		}
 	}
 	m_iFD = -1;
@@ -451,17 +476,11 @@ bool CFile::TryExLock(const CString& sLockFile, int iFlags) {
 	return TryExLock();
 }
 
-bool CFile::TryExLock() {
-	return Lock(F_WRLCK, false);
-}
+bool CFile::TryExLock() { return Lock(F_WRLCK, false); }
 
-bool CFile::ExLock() {
-	return Lock(F_WRLCK, true);
-}
+bool CFile::ExLock() { return Lock(F_WRLCK, true); }
 
-bool CFile::UnLock() {
-	return Lock(F_UNLCK, true);
-}
+bool CFile::UnLock() { return Lock(F_UNLCK, true); }
 
 bool CFile::Lock(short iType, bool bBlocking) {
 	struct flock fl;
@@ -470,10 +489,10 @@ bool CFile::Lock(short iType, bool bBlocking) {
 		return false;
 	}
 
-	fl.l_type   = iType;
+	fl.l_type = iType;
 	fl.l_whence = SEEK_SET;
-	fl.l_start  = 0;
-	fl.l_len    = 0;
+	fl.l_start = 0;
+	fl.l_len = 0;
 	return (fcntl(m_iFD, (bBlocking ? F_SETLKW : F_SETLK), &fl) != -1);
 }
 
@@ -491,7 +510,7 @@ CString CFile::GetDir() const {
 }
 
 void CFile::InitHomePath(const CString& sFallback) {
-	const char *home = getenv("HOME");
+	const char* home = getenv("HOME");
 
 	m_sHomePath.clear();
 	if (home) {
@@ -511,7 +530,8 @@ void CFile::InitHomePath(const CString& sFallback) {
 	}
 }
 
-CString CDir::ChangeDir(const CString& sPath, const CString& sAdd, const CString& sHome) {
+CString CDir::ChangeDir(const CString& sPath, const CString& sAdd,
+                        const CString& sHome) {
 	CString sHomeDir(sHome);
 
 	if (sHomeDir.empty()) {
@@ -555,12 +575,12 @@ CString CDir::ChangeDir(const CString& sPath, const CString& sAdd, const CString
 	return (sRet.empty()) ? "/" : sRet;
 }
 
-CString CDir::CheckPathPrefix(const CString& sPath, const CString& sAdd, const CString& sHomeDir) {
+CString CDir::CheckPathPrefix(const CString& sPath, const CString& sAdd,
+                              const CString& sHomeDir) {
 	CString sPrefix = sPath.Replace_n("//", "/").TrimRight_n("/") + "/";
 	CString sAbsolutePath = ChangeDir(sPrefix, sAdd, sHomeDir);
 
-	if (!sAbsolutePath.StartsWith(sPrefix))
-		return "";
+	if (!sAbsolutePath.StartsWith(sPrefix)) return "";
 	return sAbsolutePath;
 }
 
@@ -576,8 +596,7 @@ bool CDir::MakeDir(const CString& sPath, mode_t iMode) {
 	}
 
 	// If this is an absolute path, we need to handle this now!
-	if (sPath.StartsWith("/"))
-		sDir = "/";
+	if (sPath.StartsWith("/")) sDir = "/";
 
 	// For every single subpath, do...
 	sPath.Split("/", dirs, false);
@@ -589,12 +608,10 @@ bool CDir::MakeDir(const CString& sPath, mode_t iMode) {
 
 		if (i != 0) {
 			// All errors except EEXIST are fatal
-			if (errno != EEXIST)
-				return false;
+			if (errno != EEXIST) return false;
 
 			// If it's EEXIST we have to make sure it's a dir
-			if (!CFile::IsDir(sDir))
-				return false;
+			if (!CFile::IsDir(sDir)) return false;
 		}
 
 		sDir += "/";
@@ -604,14 +621,13 @@ bool CDir::MakeDir(const CString& sPath, mode_t iMode) {
 	return true;
 }
 
-int CExecSock::popen2(int & iReadFD, int & iWriteFD, const CString & sCommand) {
-	int rpipes[2] = { -1, -1 };
-	int wpipes[2] = { -1, -1 };
+int CExecSock::popen2(int& iReadFD, int& iWriteFD, const CString& sCommand) {
+	int rpipes[2] = {-1, -1};
+	int wpipes[2] = {-1, -1};
 	iReadFD = -1;
 	iWriteFD = -1;
 
-	if (pipe(rpipes) < 0)
-		return -1;
+	if (pipe(rpipes) < 0) return -1;
 
 	if (pipe(wpipes) < 0) {
 		close(rpipes[0]);
@@ -637,14 +653,8 @@ int CExecSock::popen2(int & iReadFD, int & iWriteFD, const CString & sCommand) {
 		dup2(rpipes[1], 2);
 		close(wpipes[0]);
 		close(rpipes[1]);
-		const char * pArgv[] =
-		{
-			"sh",
-			"-c",
-			sCommand.c_str(),
-			nullptr
-		};
-		execvp("sh", (char * const *) pArgv);
+		const char* pArgv[] = {"sh", "-c", sCommand.c_str(), nullptr};
+		execvp("sh", (char* const*)pArgv);
 		// if execvp returns, there was an error
 		perror("execvp");
 		exit(1);
@@ -664,8 +674,7 @@ void CExecSock::close2(int iPid, int iReadFD, int iWriteFD) {
 	close(iWriteFD);
 	time_t iNow = time(nullptr);
 	while (waitpid(iPid, nullptr, WNOHANG) == 0) {
-		if ((time(nullptr) - iNow) > 5)
-			break;  // giveup
+		if ((time(nullptr) - iNow) > 5) break;  // giveup
 		usleep(100);
 	}
 	return;

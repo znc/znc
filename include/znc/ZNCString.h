@@ -35,33 +35,28 @@ class CString;
 class MCString;
 
 typedef std::set<CString> SCString;
-typedef std::vector<CString>                 VCString;
-typedef std::vector<std::pair<CString, CString> > VPair;
+typedef std::vector<CString> VCString;
+typedef std::vector<std::pair<CString, CString>> VPair;
 
 static const unsigned char XX = 0xff;
 static const unsigned char base64_table[256] = {
-	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
-	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
-	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,62, XX,XX,XX,63,
-	52,53,54,55, 56,57,58,59, 60,61,XX,XX, XX,XX,XX,XX,
-	XX, 0, 1, 2,  3, 4, 5, 6,  7, 8, 9,10, 11,12,13,14,
-	15,16,17,18, 19,20,21,22, 23,24,25,XX, XX,XX,XX,XX,
-	XX,26,27,28, 29,30,31,32, 33,34,35,36, 37,38,39,40,
-	41,42,43,44, 45,46,47,48, 49,50,51,XX, XX,XX,XX,XX,
-	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
-	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
-	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
-	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
-	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
-	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
-	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
-	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
+    XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX,
+    XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX,
+    XX, XX, XX, XX, XX, 62, XX, XX, XX, 63, 52, 53, 54, 55, 56, 57, 58, 59, 60,
+    61, XX, XX, XX, XX, XX, XX, XX, 0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  10,
+    11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, XX, XX, XX, XX,
+    XX, XX, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42,
+    43, 44, 45, 46, 47, 48, 49, 50, 51, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX,
+    XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX,
+    XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX,
+    XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX,
+    XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX,
+    XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX,
+    XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX,
+    XX, XX, XX, XX, XX, XX, XX, XX, XX,
 };
 
-enum class CaseSensitivity {
-	CaseInsensitive,
-	CaseSensitive
-};
+enum class CaseSensitivity { CaseInsensitive, CaseSensitive };
 
 /**
  * @brief String class that is used inside ZNC.
@@ -71,7 +66,7 @@ enum class CaseSensitivity {
  * Split().
  */
 class CString : public std::string {
-public:
+  public:
 	typedef enum {
 		EASCII,
 		EURL,
@@ -84,7 +79,8 @@ public:
 	} EEscape;
 
 	static const CaseSensitivity CaseSensitive = CaseSensitivity::CaseSensitive;
-	static const CaseSensitivity CaseInsensitive = CaseSensitivity::CaseInsensitive;
+	static const CaseSensitivity CaseInsensitive =
+	    CaseSensitivity::CaseInsensitive;
 
 	explicit CString(bool b) : std::string(b ? "true" : "false") {}
 	explicit CString(char c);
@@ -107,20 +103,20 @@ public:
 	CString(size_t n, char c) : std::string(n, c) {}
 	CString(std::initializer_list<char> list) : std::string(list) {}
 	~CString() {}
-	
+
 	/**
 	 * Casts a CString to another type.  Implemented via std::stringstream, you use this
 	 * for any class that has an operator<<(std::ostream, YourClass).
 	 * @param target The object to cast into. If the cast fails, its state is unspecified.
 	 * @return True if the cast succeeds, and false if it fails.
 	 */
-	template <typename T> bool Convert(T *target) const
-	{
+	template <typename T>
+	bool Convert(T* target) const {
 		std::stringstream ss(*this);
 		ss >> *target;
-		return (bool) ss; // we don't care why it failed, only whether it failed
+		return (bool)ss;  // we don't care why it failed, only whether it failed
 	}
-	
+
 	/**
 	 * Joins a collection of objects together, using 'this' as a delimiter.
 	 * You can pass either pointers to arrays, or iterators to collections.
@@ -128,20 +124,19 @@ public:
 	 * @param i_end An iterator pointing past the end of a group of objects.
 	 * @return The joined string
 	 */
-	template <typename Iterator> CString Join(Iterator i_start, const Iterator &i_end) const
-	{
+	template <typename Iterator>
+	CString Join(Iterator i_start, const Iterator& i_end) const {
 		if (i_start == i_end) return CString("");
 		std::ostringstream output;
 		output << *i_start;
-		while (true)
-		{
+		while (true) {
 			++i_start;
 			if (i_start == i_end) return CString(output.str());
 			output << *this;
 			output << *i_start;
 		}
 	}
-	
+
 	/**
 	 * Compare this string caselessly to some other string.
 	 * @param s The string to compare to.
@@ -149,7 +144,8 @@ public:
 	 * @return An integer less than, equal to, or greater than zero if this
 	 *         string smaller, equal.... to the given string.
 	 */
-	int CaseCmp(const CString& s, CString::size_type uLen = CString::npos) const;
+	int CaseCmp(const CString& s,
+	            CString::size_type uLen = CString::npos) const;
 	/**
 	 * Compare this string case sensitively to some other string.
 	 * @param s The string to compare to.
@@ -169,7 +165,8 @@ public:
 	/**
 	 * @deprecated
 	 */
-	bool Equals(const CString& s, bool bCaseSensitive, CString::size_type uLen = CString::npos) const;
+	bool Equals(const CString& s, bool bCaseSensitive,
+	            CString::size_type uLen = CString::npos) const;
 	/**
 	 * Do a wildcard comparison between two strings.
 	 * For example, the following returns true:
@@ -181,7 +178,8 @@ public:
 	 * @todo Make cs CaseInsensitive by default.
 	 * @return true if the wildcard matches.
 	 */
-	static bool WildCmp(const CString& sWild, const CString& sString, CaseSensitivity cs = CaseSensitive);
+	static bool WildCmp(const CString& sWild, const CString& sString,
+	                    CaseSensitivity cs = CaseSensitive);
 	/**
 	 * Do a wild compare on this string.
 	 * @param sWild The wildcards used to for the comparison.
@@ -190,7 +188,8 @@ public:
 	 * @todo Make cs CaseInsensitive by default.
 	 * @return The result of <code>this->WildCmp(sWild, *this);</code>.
 	 */
-	bool WildCmp(const CString& sWild, CaseSensitivity cs = CaseSensitive) const;
+	bool WildCmp(const CString& sWild,
+	             CaseSensitivity cs = CaseSensitive) const;
 
 	/**
 	 * Turn all characters in this string into their upper-case equivalent.
@@ -241,7 +240,10 @@ public:
 	 *                      sRight are removed.
 	 * @returns The number of replacements done.
 	 */
-	static unsigned int Replace(CString& sStr, const CString& sReplace, const CString& sWith, const CString& sLeft = "", const CString& sRight = "", bool bRemoveDelims = false);
+	static unsigned int Replace(CString& sStr, const CString& sReplace,
+	                            const CString& sWith, const CString& sLeft = "",
+	                            const CString& sRight = "",
+	                            bool bRemoveDelims = false);
 
 	/** Replace all occurrences in the current string.
 	 * @see CString::Replace
@@ -253,7 +255,9 @@ public:
 	 * @return The result of the replacing. The current string is left
 	 *         unchanged.
 	 */
-	CString Replace_n(const CString& sReplace, const CString& sWith, const CString& sLeft = "", const CString& sRight = "", bool bRemoveDelims = false) const;
+	CString Replace_n(const CString& sReplace, const CString& sWith,
+	                  const CString& sLeft = "", const CString& sRight = "",
+	                  bool bRemoveDelims = false) const;
 	/** Replace all occurrences in the current string.
 	 * @see CString::Replace
 	 * @param sReplace The string to look for.
@@ -263,7 +267,9 @@ public:
 	 * @param bRemoveDelims If true, all matching delimiters are removed.
 	 * @returns The number of replacements done.
 	 */
-	unsigned int Replace(const CString& sReplace, const CString& sWith, const CString& sLeft = "", const CString& sRight = "", bool bRemoveDelims = false);
+	unsigned int Replace(const CString& sReplace, const CString& sWith,
+	                     const CString& sLeft = "", const CString& sRight = "",
+	                     bool bRemoveDelims = false);
 	/** Ellipsize the current string.
 	 * For example, ellipsizing "Hello, I'm Bob" to the length 9 would
 	 * result in "Hello,...".
@@ -302,13 +308,16 @@ public:
 	 *         after it.
 	 * @see Split() if you need a string split into all of its tokens.
 	 */
-	CString Token(size_t uPos, bool bRest = false, const CString& sSep = " ", bool bAllowEmpty = false) const;
+	CString Token(size_t uPos, bool bRest = false, const CString& sSep = " ",
+	              bool bAllowEmpty = false) const;
 
 	/** Get a token out of this string. This function behaves much like the
 	 *  other Token() function in this class. The extra arguments are
 	 *  handled similarly to Split().
 	 */
-	CString Token(size_t uPos, bool bRest, const CString& sSep, bool bAllowEmpty, const CString& sLeft, const CString& sRight, bool bTrimQuotes = true) const;
+	CString Token(size_t uPos, bool bRest, const CString& sSep,
+	              bool bAllowEmpty, const CString& sLeft, const CString& sRight,
+	              bool bTrimQuotes = true) const;
 
 	size_type URLSplit(MCString& msRet) const;
 	size_type OptionSplit(MCString& msRet, bool bUpperKeys = false) const;
@@ -329,17 +338,19 @@ public:
 	 *                        each token.
 	 * @return The number of tokens found.
 	 */
-	size_type Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty = true,
-					   const CString& sLeft = "", const CString& sRight = "", bool bTrimQuotes = true,
-					   bool bTrimWhiteSpace = false) const;
+	size_type Split(const CString& sDelim, VCString& vsRet,
+	                bool bAllowEmpty = true, const CString& sLeft = "",
+	                const CString& sRight = "", bool bTrimQuotes = true,
+	                bool bTrimWhiteSpace = false) const;
 
 	/** Split up this string into tokens.
 	 * This function is identical to the other CString::Split(), except that
 	 * the result is returned as a SCString instead of a VCString.
 	 */
-	size_type Split(const CString& sDelim, SCString& ssRet, bool bAllowEmpty = true,
-					   const CString& sLeft = "", const CString& sRight = "", bool bTrimQuotes = true,
-					   bool bTrimWhiteSpace = false) const;
+	size_type Split(const CString& sDelim, SCString& ssRet,
+	                bool bAllowEmpty = true, const CString& sLeft = "",
+	                const CString& sRight = "", bool bTrimQuotes = true,
+	                bool bTrimWhiteSpace = false) const;
 
 	/** Build a string from a format string, replacing values from a map.
 	 * The format specification can contain simple named parameters that match
@@ -349,7 +360,8 @@ public:
 	 * @param msValues A map of named parameters to their values.
 	 * @return The string with named parameters replaced.
 	 */
-	static CString NamedFormat(const CString& sFormat, const MCString& msValues);
+	static CString NamedFormat(const CString& sFormat,
+	                           const MCString& msValues);
 
 	/** Produces a random string.
 	 * @param uLength The length of the resulting string.
@@ -512,14 +524,16 @@ public:
 	 *                       sensitive, CaseInsensitive (default) otherwise.
 	 * @return True if the string starts with prefix, false otherwise.
 	 */
-	bool StartsWith(const CString& sPrefix, CaseSensitivity cs = CaseInsensitive) const;
+	bool StartsWith(const CString& sPrefix,
+	                CaseSensitivity cs = CaseInsensitive) const;
 	/** Check whether the string ends with a given suffix.
 	 * @param sSuffix The suffix.
 	 * @param cs CaseSensitive if you want the comparison to be case
 	 *                       sensitive, CaseInsensitive (default) otherwise.
 	 * @return True if the string ends with suffix, false otherwise.
 	 */
-	bool EndsWith(const CString& sSuffix, CaseSensitivity cs = CaseInsensitive) const;
+	bool EndsWith(const CString& sSuffix,
+	              CaseSensitivity cs = CaseInsensitive) const;
 	/**
 	 * Check whether the string contains a given string.
 	 * @param s The string to search.
@@ -564,9 +578,12 @@ public:
 	 */
 	CString StripControls_n() const;
 
-private:
-protected:
-	unsigned char* strnchr(const unsigned char* src, unsigned char c, unsigned int iMaxBytes, unsigned char* pFill = nullptr, unsigned int* piCount = nullptr) const;
+  private:
+  protected:
+	unsigned char* strnchr(const unsigned char* src, unsigned char c,
+	                       unsigned int iMaxBytes,
+	                       unsigned char* pFill = nullptr,
+	                       unsigned int* piCount = nullptr) const;
 };
 
 /**
@@ -576,11 +593,12 @@ protected:
  * This class maps strings to other strings.
  */
 class MCString : public std::map<CString, CString> {
-public:
+  public:
 	/** Construct an empty MCString. */
 	MCString() : std::map<CString, CString>() {}
 	/** Construct a MCString using an initializer list eg. MCString m = { {"key1", "val1"}, {"key2", "val2"} }; */
-	MCString(std::initializer_list<std::pair<const CString, CString>> list) : std::map<CString, CString>(list) {}
+	MCString(std::initializer_list<std::pair<const CString, CString>> list)
+	    : std::map<CString, CString>(list) {}
 	/** Destruct this MCString. */
 	virtual ~MCString() { clear(); }
 
@@ -589,18 +607,17 @@ public:
 
 	/** Status codes that can be returned by WriteToDisk() and
 	 * ReadFromDisk(). */
-	enum status_t
-	{
+	enum status_t {
 		/// No errors.
-		MCS_SUCCESS   = 0,
+		MCS_SUCCESS = 0,
 		/// Opening the file failed.
-		MCS_EOPEN     = 1,
+		MCS_EOPEN = 1,
 		/// Writing to the file failed.
-		MCS_EWRITE    = 2,
+		MCS_EWRITE = 2,
 		/// WriteFilter() failed.
 		MCS_EWRITEFIL = 3,
 		/// ReadFilter() failed.
-		MCS_EREADFIL  = 4
+		MCS_EREADFIL = 4
 	};
 
 	/** Write this map to a file.
@@ -624,7 +641,9 @@ public:
 	 * @param sValue The value that will be written. Can be modified.
 	 * @return true unless WriteToDisk() should fail with MCS_EWRITEFIL.
 	 */
-	virtual bool WriteFilter(CString& sKey, CString& sValue) const { return true; }
+	virtual bool WriteFilter(CString& sKey, CString& sValue) const {
+		return true;
+	}
 	/** Filter used while reading this map. This function is called by
 	 * ReadFromDisk() for each pair that is beging read. This function has
 	 * the chance to modify the data that is being read.
@@ -632,7 +651,9 @@ public:
 	 * @param sValue The value that was read. Can be modified.
 	 * @return true unless ReadFromDisk() should fail with MCS_EWRITEFIL.
 	 */
-	virtual bool ReadFilter(CString& sKey, CString& sValue) const { return true; }
+	virtual bool ReadFilter(CString& sKey, CString& sValue) const {
+		return true;
+	}
 
 	/** Encode a value so that it can safely be parsed by ReadFromDisk().
 	 * This is an internal function.
@@ -642,4 +663,4 @@ public:
 	virtual CString& Decode(CString& sValue) const;
 };
 
-#endif // !ZNCSTRING_H
+#endif  // !ZNCSTRING_H

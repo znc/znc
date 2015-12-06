@@ -22,7 +22,8 @@
 #include <znc/Csocket.h>
 #include <znc/ZNCString.h>
 
-bool ZNC_SSLVerifyHost(const CString& sHost, const X509* pCert, CString& sError);
+bool ZNC_SSLVerifyHost(const CString& sHost, const X509* pCert,
+                       CString& sError);
 
 #endif /* HAVE_LIBSSL */
 

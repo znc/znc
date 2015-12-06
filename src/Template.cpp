@@ -42,7 +42,7 @@ CTemplate* CTemplateLoopContext::GetRow(unsigned int uIndex) {
 
 	if (uIndex < uSize) {
 		if (m_bReverse) {
-			return (*m_pvRows)[uSize - uIndex -1];
+			return (*m_pvRows)[uSize - uIndex - 1];
 		} else {
 			return (*m_pvRows)[uIndex];
 		}
@@ -55,26 +55,31 @@ CString CTemplateLoopContext::GetValue(const CString& sName, bool bFromIf) {
 	CTemplate* pTemplate = GetCurRow();
 
 	if (!pTemplate) {
-		DEBUG("Loop [" + GetName() + "] has no row index [" + CString(GetRowIndex()) + "]");
+		DEBUG("Loop [" + GetName() + "] has no row index [" +
+		      CString(GetRowIndex()) + "]");
 		return "";
 	}
 
 	if (sName.Equals("__ID__")) {
-		return CString(GetRowIndex() +1);
+		return CString(GetRowIndex() + 1);
 	} else if (sName.Equals("__COUNT__")) {
 		return CString(GetRowCount());
 	} else if (sName.Equals("__ODD__")) {
-		return ((GetRowIndex() %2) ? "" : "1");
+		return ((GetRowIndex() % 2) ? "" : "1");
 	} else if (sName.Equals("__EVEN__")) {
-		return ((GetRowIndex() %2) ? "1" : "");
+		return ((GetRowIndex() % 2) ? "1" : "");
 	} else if (sName.Equals("__FIRST__")) {
 		return ((GetRowIndex() == 0) ? "1" : "");
 	} else if (sName.Equals("__LAST__")) {
-		return ((GetRowIndex() == m_pvRows->size() -1) ? "1" : "");
+		return ((GetRowIndex() == m_pvRows->size() - 1) ? "1" : "");
 	} else if (sName.Equals("__OUTER__")) {
-		return ((GetRowIndex() == 0 || GetRowIndex() == m_pvRows->size() -1) ? "1" : "");
+		return ((GetRowIndex() == 0 || GetRowIndex() == m_pvRows->size() - 1)
+		            ? "1"
+		            : "");
 	} else if (sName.Equals("__INNER__")) {
-		return ((GetRowIndex() == 0 || GetRowIndex() == m_pvRows->size() -1) ? "" : "1");
+		return ((GetRowIndex() == 0 || GetRowIndex() == m_pvRows->size() - 1)
+		            ? ""
+		            : "1");
 	}
 
 	return pTemplate->GetValue(sName, bFromIf);
@@ -99,7 +104,7 @@ void CTemplate::Init() {
 	CString sPath(CConfig::GetValue("WebFilesPath"));
 
 	if (!sPath.empty()) {
-		SetPath(sPath);
+	    SetPath(sPath);
 	}
 	*/
 
@@ -109,7 +114,7 @@ void CTemplate::Init() {
 
 CString CTemplate::ExpandFile(const CString& sFilename, bool bFromInc) {
 	/*if (sFilename.StartsWith("/") || sFilename.StartsWith("./")) {
-		return sFilename;
+	    return sFilename;
 	}*/
 
 	CString sFile(ResolveLiteral(sFilename).TrimLeft_n("/"));
@@ -118,7 +123,8 @@ CString CTemplate::ExpandFile(const CString& sFilename, bool bFromInc) {
 		CString& sRoot = it.first;
 		CString sFilePath(CDir::ChangeDir(sRoot, sFile));
 
-		// Make sure path ends with a slash because "/foo/pub*" matches "/foo/public_keep_out/" but "/foo/pub/*" doesn't
+		// Make sure path ends with a slash because "/foo/pub*" matches
+		// "/foo/public_keep_out/" but "/foo/pub/*" doesn't
 		if (!sRoot.empty() && !sRoot.EndsWith("/")) {
 			sRoot += "/";
 		}
@@ -133,7 +139,8 @@ CString CTemplate::ExpandFile(const CString& sFilename, bool bFromInc) {
 				DEBUG("    Found  [" + sFilePath + "]");
 				return sFilePath;
 			} else {
-				DEBUG("\t\tOutside of root [" + sFilePath + "] !~ [" + sRoot + "]");
+				DEBUG("\t\tOutside of root [" + sFilePath + "] !~ [" + sRoot +
+				      "]");
 			}
 		}
 	}
@@ -143,10 +150,12 @@ CString CTemplate::ExpandFile(const CString& sFilename, bool bFromInc) {
 			DEBUG("Unable to find [" + sFile + "] using the current directory");
 			break;
 		case 1:
-			DEBUG("Unable to find [" + sFile + "] in the defined path [" + m_lsbPaths.begin()->first + "]");
+			DEBUG("Unable to find [" + sFile + "] in the defined path [" +
+			      m_lsbPaths.begin()->first + "]");
 			break;
 		default:
-			DEBUG("Unable to find [" + sFile + "] in any of the " + CString(m_lsbPaths.size()) + " defined paths");
+			DEBUG("Unable to find [" + sFile + "] in any of the " +
+			      CString(m_lsbPaths.size()) + " defined paths");
 	}
 
 	return "";
@@ -182,20 +191,20 @@ void CTemplate::AppendPath(const CString& sPath, bool bIncludesOnly) {
 }
 
 void CTemplate::RemovePath(const CString& sPath) {
-	DEBUG("CTemplate::RemovePath(" + sPath + ") == [" + CDir::ChangeDir("./", sPath + "/") + "]");
+	DEBUG("CTemplate::RemovePath(" + sPath + ") == [" +
+	      CDir::ChangeDir("./", sPath + "/") + "]");
 
 	for (const auto& it : m_lsbPaths) {
 		if (it.first == sPath) {
 			m_lsbPaths.remove(it);
-			RemovePath(sPath); // @todo probably shouldn't use recursion, being lazy
+			RemovePath(
+			    sPath);  // @todo probably shouldn't use recursion, being lazy
 			return;
 		}
 	}
 }
 
-void CTemplate::ClearPaths() {
-	m_lsbPaths.clear();
-}
+void CTemplate::ClearPaths() { m_lsbPaths.clear(); }
 
 bool CTemplate::SetFile(const CString& sFileName) {
 	m_sFileName = ExpandFile(sFileName, false);
@@ -218,10 +227,12 @@ bool CTemplate::SetFile(const CString& sFileName) {
 
 class CLoopSorter {
 	CString m_sType;
-public:
+
+  public:
 	CLoopSorter(const CString& sType) : m_sType(sType) {}
 	bool operator()(CTemplate* pTemplate1, CTemplate* pTemplate2) {
-		return (pTemplate1->GetValue(m_sType, false) < pTemplate2->GetValue(m_sType, false));
+		return (pTemplate1->GetValue(m_sType, false) <
+		        pTemplate2->GetValue(m_sType, false));
 	}
 };
 
@@ -255,7 +266,7 @@ vector<CTemplate*>* CTemplate::GetLoop(const CString& sName) {
 		}
 	}
 
-	map<CString, vector<CTemplate*> >::iterator it = m_mvLoops.find(sName);
+	map<CString, vector<CTemplate*>>::iterator it = m_mvLoops.find(sName);
 
 	if (it != m_mvLoops.end()) {
 		return &(it->second);
@@ -274,9 +285,7 @@ bool CTemplate::PrintString(CString& sRet) {
 	return bRet;
 }
 
-bool CTemplate::Print(ostream& oOut) {
-	return Print(m_sFileName, oOut);
-}
+bool CTemplate::Print(ostream& oOut) { return Print(m_sFileName, oOut); }
 
 bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 	if (sFileName.empty()) {
@@ -328,28 +337,30 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 				sOutput += sLine.substr(0, iPos);
 			}
 
-			sLine = sLine.substr(iPos +2);
+			sLine = sLine.substr(iPos + 2);
 
 			CString::size_type iPos2 = sLine.find("?>");
 
 			// Make sure our tmpl tag is ended properly
 			if (iPos2 == CString::npos) {
-				DEBUG("Template tag not ended properly in file [" + sFileName + "] [<?" + sLine + "]");
+				DEBUG("Template tag not ended properly in file [" + sFileName +
+				      "] [<?" + sLine + "]");
 				return false;
 			}
 
-			uCurPos += iPos2 +4;
+			uCurPos += iPos2 + 4;
 
 			CString sMid = CString(sLine.substr(0, iPos2)).Trim_n();
 
 			// Make sure we don't have a nested tag
 			if (!sMid.Contains("<?")) {
-				sLine = sLine.substr(iPos2 +2);
+				sLine = sLine.substr(iPos2 + 2);
 				CString sAction = sMid.Token(0);
 				CString sArgs = sMid.Token(1, true);
 				bool bNotFound = false;
 
-				// If we're breaking or continuing from within a loop, skip all tags that aren't ENDLOOP
+				// If we're breaking or continuing from within a loop, skip all
+				// tags that aren't ENDLOOP
 				if ((bLoopCont || bLoopBreak) && !sAction.Equals("ENDLOOP")) {
 					continue;
 				}
@@ -380,7 +391,7 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 						(*this)[sName] = sValue;
 					} else if (sAction.Equals("JOIN")) {
 						VCString vsArgs;
-						//sArgs.Split(" ", vsArgs, false, "\"", "\"");
+						// sArgs.Split(" ", vsArgs, false, "\"", "\"");
 						sArgs.QuoteSplit(vsArgs);
 
 						if (vsArgs.size() > 1) {
@@ -390,7 +401,8 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 
 							for (const CString& sArg : vsArgs) {
 								if (sArg.StartsWith("ESC=")) {
-									eEscape = CString::ToEscape(sArg.LeftChomp_n(4));
+									eEscape =
+									    CString::ToEscape(sArg.LeftChomp_n(4));
 								} else {
 									CString sValue = GetValue(sArg);
 
@@ -425,7 +437,10 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 
 							break;
 						} else {
-							DEBUG("[" + sFileName + ":" + CString(uCurPos - iPos2 -4) + "] <? CONTINUE ?> must be used inside of a loop!");
+							DEBUG("[" + sFileName + ":" +
+							      CString(uCurPos - iPos2 - 4) +
+							      "] <? CONTINUE ?> must be used inside of a "
+							      "loop!");
 						}
 					} else if (sAction.Equals("BREAK")) {
 						// break from loop
@@ -437,44 +452,62 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 
 							break;
 						} else {
-							DEBUG("[" + sFileName + ":" + CString(uCurPos - iPos2 -4) + "] <? BREAK ?> must be used inside of a loop!");
+							DEBUG(
+							    "[" + sFileName + ":" +
+							    CString(uCurPos - iPos2 - 4) +
+							    "] <? BREAK ?> must be used inside of a loop!");
 						}
 					} else if (sAction.Equals("EXIT")) {
 						bExit = true;
 					} else if (sAction.Equals("DEBUG")) {
-						DEBUG("CTemplate DEBUG [" + sFileName + "@" + CString(uCurPos - iPos2 -4) + "b] -> [" + sArgs + "]");
+						DEBUG("CTemplate DEBUG [" + sFileName + "@" +
+						      CString(uCurPos - iPos2 - 4) + "b] -> [" + sArgs +
+						      "]");
 					} else if (sAction.Equals("LOOP")) {
 						CTemplateLoopContext* pContext = GetCurLoopContext();
 
-						if (!pContext || pContext->GetFilePosition() != uCurPos) {
-							// we are at a brand new loop (be it new or a first pass at an inner loop)
+						if (!pContext ||
+						    pContext->GetFilePosition() != uCurPos) {
+							// we are at a brand new loop (be it new or a first
+							// pass at an inner loop)
 
 							CString sLoopName = sArgs.Token(0);
 							bool bReverse = (sArgs.Token(1).Equals("REVERSE"));
 							bool bSort = (sArgs.Token(1).StartsWith("SORT"));
 							vector<CTemplate*>* pvLoop = GetLoop(sLoopName);
 
-							if (bSort && pvLoop != nullptr &&  pvLoop->size() > 1) {
+							if (bSort && pvLoop != nullptr &&
+							    pvLoop->size() > 1) {
 								CString sKey;
 
-								if(sArgs.Token(1).TrimPrefix_n("SORT").StartsWith("ASC=")) {
-									sKey = sArgs.Token(1).TrimPrefix_n("SORTASC=");
-								} else if(sArgs.Token(1).TrimPrefix_n("SORT").StartsWith("DESC=")) {
-									sKey = sArgs.Token(1).TrimPrefix_n("SORTDESC=");
+								if (sArgs.Token(1)
+								        .TrimPrefix_n("SORT")
+								        .StartsWith("ASC=")) {
+									sKey =
+									    sArgs.Token(1).TrimPrefix_n("SORTASC=");
+								} else if (sArgs.Token(1)
+								               .TrimPrefix_n("SORT")
+								               .StartsWith("DESC=")) {
+									sKey = sArgs.Token(1)
+									           .TrimPrefix_n("SORTDESC=");
 									bReverse = true;
 								}
 
 								if (!sKey.empty()) {
-									std::sort(pvLoop->begin(), pvLoop->end(), CLoopSorter(sKey));
+									std::sort(pvLoop->begin(), pvLoop->end(),
+									          CLoopSorter(sKey));
 								}
 							}
 
 							if (pvLoop) {
-								// If we found data for this loop, add it to our context vector
-								//unsigned long uBeforeLoopTag = uCurPos - iPos2 - 4;
+								// If we found data for this loop, add it to our
+								// context vector
+								// unsigned long uBeforeLoopTag = uCurPos -
+								// iPos2 - 4;
 								unsigned long uAfterLoopTag = uCurPos;
 
-								for (CString::size_type t = 0; t < sLine.size(); t++) {
+								for (CString::size_type t = 0; t < sLine.size();
+								     t++) {
 									char c = sLine[t];
 									if (c == '\r' || c == '\n') {
 										uAfterLoopTag++;
@@ -483,8 +516,12 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 									}
 								}
 
-								m_vLoopContexts.push_back(new CTemplateLoopContext(uAfterLoopTag, sLoopName, bReverse, pvLoop));
-							} else {  // If we don't have data, just skip this loop and everything inside
+								m_vLoopContexts.push_back(
+								    new CTemplateLoopContext(uAfterLoopTag,
+								                             sLoopName,
+								                             bReverse, pvLoop));
+							} else {  // If we don't have data, just skip this
+							          // loop and everything inside
 								uSkip++;
 							}
 						}
@@ -535,13 +572,15 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 					if (uSkip) {
 						uSkip--;
 					} else {
-						// We are at the end of the loop so we need to inc the index
+						// We are at the end of the loop so we need to inc the
+						// index
 						CTemplateLoopContext* pContext = GetCurLoopContext();
 
 						if (pContext) {
 							pContext->IncRowIndex();
 
-							// If we didn't go out of bounds we need to seek back to the top of our loop
+							// If we didn't go out of bounds we need to seek
+							// back to the top of our loop
 							if (!bLoopBreak && pContext->GetCurRow()) {
 								uCurPos = pContext->GetFilePosition();
 								uFilePos = uCurPos;
@@ -570,7 +609,8 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 					if (!bValidLastIf && uSkip == 1) {
 						CString sArg = sArgs.Token(0);
 
-						if (sArg.empty() || (sArg.Equals("IF") && ValidIf(sArgs.Token(1, true)))) {
+						if (sArg.empty() || (sArg.Equals("IF") &&
+						                     ValidIf(sArgs.Token(1, true)))) {
 							uSkip = 0;
 							bValidLastIf = true;
 						}
@@ -579,14 +619,18 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 					}
 				} else if (bNotFound) {
 					// Unknown tag that isn't being skipped...
-					vector<std::shared_ptr<CTemplateTagHandler> >& vspTagHandlers = GetTagHandlers();
+					vector<std::shared_ptr<CTemplateTagHandler>>&
+					    vspTagHandlers = GetTagHandlers();
 
-					if (!vspTagHandlers.empty()) { // @todo this should go up to the top to grab handlers
+					if (!vspTagHandlers.empty()) {  // @todo this should go up
+					                                // to the top to grab
+					                                // handlers
 						CTemplate* pTmpl = GetCurTemplate();
 						CString sCustomOutput;
 
 						for (const auto& spTagHandler : vspTagHandlers) {
-							if (spTagHandler->HandleTag(*pTmpl, sAction, sArgs, sCustomOutput)) {
+							if (spTagHandler->HandleTag(*pTmpl, sAction, sArgs,
+							                            sCustomOutput)) {
 								sOutput += sCustomOutput;
 								bNotFound = false;
 								break;
@@ -602,7 +646,8 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 				continue;
 			}
 
-			DEBUG("Malformed tag on line " + CString(uLineNum) + " of [" << File.GetLongName() + "]");
+			DEBUG("Malformed tag on line " + CString(uLineNum) + " of ["
+			      << File.GetLongName() + "]");
 			DEBUG("--------------- [" + sLine + "]");
 		}
 
@@ -614,10 +659,11 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 			}
 		}
 
-		if (!bFoundATag || bTmplLoopHasData || sOutput.find_first_not_of(" \t\r\n") != CString::npos) {
+		if (!bFoundATag || bTmplLoopHasData ||
+		    sOutput.find_first_not_of(" \t\r\n") != CString::npos) {
 			if (bInSetBlock) {
 				CString sName = sSetBlockVar.Token(0);
-				//CString sValue = sSetBlockVar.Token(1, true);
+				// CString sValue = sSetBlockVar.Token(1, true);
 				(*this)[sName] += sOutput;
 			} else {
 				oOut << sOutput;
@@ -653,7 +699,7 @@ CTemplateLoopContext* CTemplate::GetCurLoopContext() {
 
 bool CTemplate::ValidIf(const CString& sArgs) {
 	CString sArgStr = sArgs;
-	//sArgStr.Replace(" ", "", "\"", "\"", true);
+	// sArgStr.Replace(" ", "", "\"", "\"", true);
 	sArgStr.Replace(" &&", "&&", "\"", "\"", false);
 	sArgStr.Replace("&& ", "&&", "\"", "\"", false);
 	sArgStr.Replace(" ||", "||", "\"", "\"", false);
@@ -662,7 +708,8 @@ bool CTemplate::ValidIf(const CString& sArgs) {
 	CString::size_type uOrPos = sArgStr.find("||");
 	CString::size_type uAndPos = sArgStr.find("&&");
 
-	while (uOrPos != CString::npos || uAndPos != CString::npos || !sArgStr.empty()) {
+	while (uOrPos != CString::npos || uAndPos != CString::npos ||
+	       !sArgStr.empty()) {
 		bool bAnd = false;
 
 		if (uAndPos < uOrPos) {
@@ -783,12 +830,14 @@ CString CTemplate::GetValue(const CString& sArgs, bool bFromIf) {
 	CString sRest = sArgs.Token(1, true);
 	CString sRet;
 
-	while (sRest.Replace(" =", "=", "\"", "\"")) {}
-	while (sRest.Replace("= ", "=", "\"", "\"")) {}
+	while (sRest.Replace(" =", "=", "\"", "\"")) {
+	}
+	while (sRest.Replace("= ", "=", "\"", "\"")) {
+	}
 
 	VCString vArgs;
 	MCString msArgs;
-	//sRest.Split(" ", vArgs, false, "\"", "\"");
+	// sRest.Split(" ", vArgs, false, "\"", "\"");
 	sRest.QuoteSplit(vArgs);
 
 	for (const CString& sArg : vArgs) {
@@ -818,19 +867,27 @@ CString CTemplate::GetValue(const CString& sArgs, bool bFromIf) {
 		sRet = (it != end()) ? it->second : "";
 	}
 
-	vector<std::shared_ptr<CTemplateTagHandler> >& vspTagHandlers = GetTagHandlers();
+	vector<std::shared_ptr<CTemplateTagHandler>>& vspTagHandlers =
+	    GetTagHandlers();
 
-	if (!vspTagHandlers.empty()) { // @todo this should go up to the top to grab handlers
+	if (!vspTagHandlers
+	         .empty()) {  // @todo this should go up to the top to grab handlers
 		CTemplate* pTmpl = GetCurTemplate();
 
 		if (sRet.empty()) {
 			for (const auto& spTagHandler : vspTagHandlers) {
 				CString sCustomOutput;
 
-				if (!bFromIf && spTagHandler->HandleVar(*pTmpl, sArgs.Token(0), sArgs.Token(1, true), sCustomOutput)) {
+				if (!bFromIf &&
+				    spTagHandler->HandleVar(*pTmpl, sArgs.Token(0),
+				                            sArgs.Token(1, true),
+				                            sCustomOutput)) {
 					sRet = sCustomOutput;
 					break;
-				} else if (bFromIf && spTagHandler->HandleIf(*pTmpl, sArgs.Token(0), sArgs.Token(1, true), sCustomOutput)) {
+				} else if (bFromIf &&
+				           spTagHandler->HandleIf(*pTmpl, sArgs.Token(0),
+				                                  sArgs.Token(1, true),
+				                                  sCustomOutput)) {
 					sRet = sCustomOutput;
 					break;
 				}
@@ -859,7 +916,8 @@ CString CTemplate::GetValue(const CString& sArgs, bool bFromIf) {
 				sRet.Escape(CString::ToEscape(sEsc));
 			}
 		} else {
-			sRet.Escape(m_spOptions->GetEscapeFrom(), m_spOptions->GetEscapeTo());
+			sRet.Escape(m_spOptions->GetEscapeFrom(),
+			            m_spOptions->GetEscapeTo());
 		}
 	}
 

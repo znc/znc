@@ -16,29 +16,36 @@
 
 //! @author prozac@rottenboy.com
 //
-// The encryption here was designed to be compatible with mircryption's CBC mode.
+// The encryption here was designed to be compatible with mircryption's CBC
+// mode.
 //
 // Latest tested against:
-// MircryptionSuite - Mircryption ver 1.19.01 (dll v1.15.01 , mirc v7.32) CBC loaded and ready.
+// MircryptionSuite - Mircryption ver 1.19.01 (dll v1.15.01 , mirc v7.32) CBC
+// loaded and ready.
 //
 // TODO:
 //
 // 1) Encrypt key storage file
 // 2) Secure key exchange using pub/priv keys and the DH algorithm
-// 3) Some way of notifying the user that the current channel is in "encryption mode" verses plain text
+// 3) Some way of notifying the user that the current channel is in "encryption
+// mode" verses plain text
 // 4) Temporarily disable a target (nick/chan)
 //
-// NOTE: This module is currently NOT intended to secure you from your shell admin.
-//       The keys are currently stored in plain text, so anyone with access to your account (or root) can obtain them.
-//       It is strongly suggested that you enable SSL between znc and your client otherwise the encryption stops at znc and gets sent to your client in plain text.
+// NOTE: This module is currently NOT intended to secure you from your shell
+// admin.
+//       The keys are currently stored in plain text, so anyone with access to
+//       your account (or root) can obtain them.
+//       It is strongly suggested that you enable SSL between znc and your
+//       client otherwise the encryption stops at znc and gets sent to your
+//       client in plain text.
 //
 
 #include <znc/Chan.h>
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 
-#define REQUIRESSL	1
-#define NICK_PREFIX_KEY	"[nick-prefix]"
+#define REQUIRESSL 1
+#define NICK_PREFIX_KEY "[nick-prefix]"
 
 class CCryptMod : public CModule {
 	CString NickPrefix() {
@@ -46,12 +53,18 @@ class CCryptMod : public CModule {
 		return it != EndNV() ? it->second : "*";
 	}
 
-public:
+  public:
 	MODCONSTRUCTOR(CCryptMod) {
 		AddHelpCommand();
-		AddCommand("DelKey", static_cast<CModCommand::ModCmdFunc>(&CCryptMod::OnDelKeyCommand), "<#chan|Nick>", "Remove a key for nick or channel");
-		AddCommand("SetKey", static_cast<CModCommand::ModCmdFunc>(&CCryptMod::OnSetKeyCommand), "<#chan|Nick> <Key>", "Set a key for nick or channel");
-		AddCommand("ListKeys", static_cast<CModCommand::ModCmdFunc>(&CCryptMod::OnListKeysCommand), "", "List all keys");
+		AddCommand("DelKey", static_cast<CModCommand::ModCmdFunc>(
+		                         &CCryptMod::OnDelKeyCommand),
+		           "<#chan|Nick>", "Remove a key for nick or channel");
+		AddCommand("SetKey", static_cast<CModCommand::ModCmdFunc>(
+		                         &CCryptMod::OnSetKeyCommand),
+		           "<#chan|Nick> <Key>", "Set a key for nick or channel");
+		AddCommand("ListKeys", static_cast<CModCommand::ModCmdFunc>(
+		                           &CCryptMod::OnListKeysCommand),
+		           "", "List all keys");
 	}
 
 	virtual ~CCryptMod() {}
@@ -70,8 +83,13 @@ public:
 			CString sNickMask = GetNetwork()->GetIRCNick().GetNickMask();
 			if (pChan) {
 				if (!pChan->AutoClearChanBuffer())
-					pChan->AddBuffer(":" + NickPrefix() + _NAMEDFMT(sNickMask) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :{text}", sMessage);
-				GetUser()->PutUser(":" + NickPrefix() + sNickMask + " PRIVMSG " + sTarget + " :" + sMessage, nullptr, GetClient());
+					pChan->AddBuffer(":" + NickPrefix() + _NAMEDFMT(sNickMask) +
+					                     " PRIVMSG " + _NAMEDFMT(sTarget) +
+					                     " :{text}",
+					                 sMessage);
+				GetUser()->PutUser(":" + NickPrefix() + sNickMask +
+				                       " PRIVMSG " + sTarget + " :" + sMessage,
+				                   nullptr, GetClient());
 			}
 
 			CString sMsg = MakeIvec() + sMessage;
@@ -100,8 +118,13 @@ public:
 			CString sNickMask = GetNetwork()->GetIRCNick().GetNickMask();
 			if (pChan) {
 				if (!pChan->AutoClearChanBuffer())
-					pChan->AddBuffer(":" + NickPrefix() + _NAMEDFMT(sNickMask) + " NOTICE " + _NAMEDFMT(sTarget) + " :{text}", sMessage);
-				GetUser()->PutUser(":" + NickPrefix() + sNickMask + " NOTICE " + sTarget + " :" + sMessage, NULL, GetClient());
+					pChan->AddBuffer(":" + NickPrefix() + _NAMEDFMT(sNickMask) +
+					                     " NOTICE " + _NAMEDFMT(sTarget) +
+					                     " :{text}",
+					                 sMessage);
+				GetUser()->PutUser(":" + NickPrefix() + sNickMask + " NOTICE " +
+				                       sTarget + " :" + sMessage,
+				                   NULL, GetClient());
 			}
 
 			CString sMsg = MakeIvec() + sMessage;
@@ -130,8 +153,14 @@ public:
 			CString sNickMask = GetNetwork()->GetIRCNick().GetNickMask();
 			if (pChan) {
 				if (!pChan->AutoClearChanBuffer())
-					pChan->AddBuffer(":" + NickPrefix() + _NAMEDFMT(sNickMask) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :\001ACTION {text}\001", sMessage);
-				GetUser()->PutUser(":" + NickPrefix() + sNickMask + " PRIVMSG " + sTarget + " :\001ACTION " + sMessage + "\001", NULL, GetClient());
+					pChan->AddBuffer(":" + NickPrefix() + _NAMEDFMT(sNickMask) +
+					                     " PRIVMSG " + _NAMEDFMT(sTarget) +
+					                     " :\001ACTION {text}\001",
+					                 sMessage);
+				GetUser()->PutUser(":" + NickPrefix() + sNickMask +
+				                       " PRIVMSG " + sTarget + " :\001ACTION " +
+				                       sMessage + "\001",
+				                   NULL, GetClient());
 			}
 
 			CString sMsg = MakeIvec() + sMessage;
@@ -185,12 +214,14 @@ public:
 		return CONTINUE;
 	}
 
-	EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) override {
+	EModRet OnChanNotice(CNick& Nick, CChan& Channel,
+	                     CString& sMessage) override {
 		FilterIncoming(Channel.GetName(), Nick, sMessage);
 		return CONTINUE;
 	}
 
-	EModRet OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage) override {
+	EModRet OnChanAction(CNick& Nick, CChan& Channel,
+	                     CString& sMessage) override {
 		FilterIncoming(Channel.GetName(), Nick, sMessage);
 		return CONTINUE;
 	}
@@ -212,14 +243,15 @@ public:
 			sTopic.TrimPrefix(":");
 
 			FilterIncoming(pChan->GetName(), *Nick, sTopic);
-			sLine = sLine.Token(0) + " " + sLine.Token(1) + " " + sLine.Token(2) + " " + pChan->GetName() + " :" + sTopic;
-
+			sLine = sLine.Token(0) + " " + sLine.Token(1) + " " +
+			        sLine.Token(2) + " " + pChan->GetName() + " :" + sTopic;
 		}
 
 		return CONTINUE;
-}
+	}
 
-	void FilterIncoming(const CString& sTarget, CNick& Nick, CString& sMessage) {
+	void FilterIncoming(const CString& sTarget, CNick& Nick,
+	                    CString& sMessage) {
 		if (sMessage.TrimPrefix("+OK *")) {
 			MCString::iterator it = FindNV(sTarget.AsLower());
 
@@ -231,7 +263,6 @@ public:
 				Nick.SetNick(NickPrefix() + Nick.GetNick());
 			}
 		}
-
 	}
 
 	void OnDelKeyCommand(const CString& sCommand) {
@@ -252,12 +283,14 @@ public:
 		CString sTarget = sCommand.Token(1);
 		CString sKey = sCommand.Token(2, true);
 
-		// Strip "cbc:" from beginning of string incase someone pastes directly from mircryption
+		// Strip "cbc:" from beginning of string incase someone pastes directly
+		// from mircryption
 		sKey.TrimPrefix("cbc:");
 
 		if (!sKey.empty()) {
 			SetNV(sTarget.AsLower(), sKey);
-			PutModule("Set encryption key for [" + sTarget + "] to [" + sKey + "]");
+			PutModule("Set encryption key for [" + sTarget + "] to [" + sKey +
+			          "]");
 		} else {
 			PutModule("Usage: SetKey <#chan|Nick> <Key>");
 		}
@@ -293,14 +326,15 @@ public:
 		time_t t;
 		time(&t);
 		int r = rand();
-		sRet.append((char*) &t, 4);
-		sRet.append((char*) &r, 4);
+		sRet.append((char*)&t, 4);
+		sRet.append((char*)&r, 4);
 
 		return sRet;
 	}
 };
 
-template<> void TModInfo<CCryptMod>(CModInfo& Info) {
+template <>
+void TModInfo<CCryptMod>(CModInfo& Info) {
 	Info.SetWikiPage("crypt");
 }
 

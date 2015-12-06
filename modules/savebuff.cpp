@@ -36,106 +36,110 @@ using std::vector;
 #define LEGACY_VERIFICATION_TOKEN "::__:SAVEBUFF:__::"
 #define CHAN_VERIFICATION_TOKEN "::__:CHANBUFF:__::"
 #define QUERY_VERIFICATION_TOKEN "::__:QUERYBUFF:__::"
-// this is basically plain text, but so is having the pass in the command line so *shrug*
+// this is basically plain text, but so is having the pass in the command line
+// so *shrug*
 // you could at least do something kind of cool like a bunch of unprintable text
 #define CRYPT_LAME_PASS "::__:NOPASS:__::"
 #define CRYPT_ASK_PASS "--ask-pass"
 
 class CSaveBuff;
 
-class CSaveBuffJob : public CTimer
-{
-public:
-	CSaveBuffJob(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription)
-		: CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {}
+class CSaveBuffJob : public CTimer {
+  public:
+	CSaveBuffJob(CModule* pModule, unsigned int uInterval, unsigned int uCycles,
+	             const CString& sLabel, const CString& sDescription)
+	    : CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {}
 
 	virtual ~CSaveBuffJob() {}
 
-protected:
+  protected:
 	void RunJob() override;
 };
 
-class CSaveBuff : public CModule
-{
-public:
-	MODCONSTRUCTOR(CSaveBuff)
-	{
+class CSaveBuff : public CModule {
+  public:
+	MODCONSTRUCTOR(CSaveBuff) {
 		m_bBootError = false;
 
 		AddHelpCommand();
-		AddCommand("SetPass", static_cast<CModCommand::ModCmdFunc>(&CSaveBuff::OnSetPassCommand), "<password>", "Sets the password");
-		AddCommand("Replay", static_cast<CModCommand::ModCmdFunc>(&CSaveBuff::OnReplayCommand), "<buffer>", "Replays the buffer");
-		AddCommand("Save", static_cast<CModCommand::ModCmdFunc>(&CSaveBuff::OnSaveCommand), "", "Saves all buffers");
+		AddCommand("SetPass", static_cast<CModCommand::ModCmdFunc>(
+		                          &CSaveBuff::OnSetPassCommand),
+		           "<password>", "Sets the password");
+		AddCommand("Replay", static_cast<CModCommand::ModCmdFunc>(
+		                         &CSaveBuff::OnReplayCommand),
+		           "<buffer>", "Replays the buffer");
+		AddCommand("Save", static_cast<CModCommand::ModCmdFunc>(
+		                       &CSaveBuff::OnSaveCommand),
+		           "", "Saves all buffers");
 	}
-	virtual ~CSaveBuff()
-	{
-		if (!m_bBootError)
-		{
+	virtual ~CSaveBuff() {
+		if (!m_bBootError) {
 			SaveBuffersToDisk();
 		}
 	}
 
-	bool OnLoad(const CString& sArgs, CString& sMessage) override
-	{
-		if( sArgs == CRYPT_ASK_PASS )
-		{
-			char *pPass = getpass( "Enter pass for savebuff: " );
-			if( pPass )
-				m_sPassword = CBlowfish::MD5( pPass );
-			else
-			{
+	bool OnLoad(const CString& sArgs, CString& sMessage) override {
+		if (sArgs == CRYPT_ASK_PASS) {
+			char* pPass = getpass("Enter pass for savebuff: ");
+			if (pPass)
+				m_sPassword = CBlowfish::MD5(pPass);
+			else {
 				m_bBootError = true;
 				sMessage = "Nothing retrieved from console. aborting";
 			}
-		}
-		else if( sArgs.empty() )
-			m_sPassword = CBlowfish::MD5( CRYPT_LAME_PASS );
+		} else if (sArgs.empty())
+			m_sPassword = CBlowfish::MD5(CRYPT_LAME_PASS);
 		else
 			m_sPassword = CBlowfish::MD5(sArgs);
 
-		AddTimer(new CSaveBuffJob(this, 60, 0, "SaveBuff", "Saves the current buffer to disk every 1 minute"));
+		AddTimer(new CSaveBuffJob(
+		    this, 60, 0, "SaveBuff",
+		    "Saves the current buffer to disk every 1 minute"));
 
-		return( !m_bBootError );
+		return (!m_bBootError);
 	}
 
-	bool OnBoot() override
-	{
+	bool OnBoot() override {
 		CDir saveDir(GetSavePath());
 		for (CFile* pFile : saveDir) {
 			CString sName;
 			CString sBuffer;
 
-			EBufferType eType = DecryptBuffer(pFile->GetLongName(), sBuffer, sName);
+			EBufferType eType =
+			    DecryptBuffer(pFile->GetLongName(), sBuffer, sName);
 			switch (eType) {
-			case InvalidBuffer:
-				m_sPassword = "";
-				CUtils::PrintError("[" + GetModName() + ".so] Failed to Decrypt [" + pFile->GetLongName() + "]");
-				if (!sName.empty()) {
-					PutUser(":***!znc@znc.in PRIVMSG " + sName + " :Failed to decrypt this buffer, did you change the encryption pass?");
-				}
-				break;
-			case ChanBuffer:
-				if (CChan *pChan = GetNetwork()->FindChan(sName)) {
-					BootStrap(pChan, sBuffer);
-				}
-				break;
-			case QueryBuffer:
-				if (CQuery* pQuery = GetNetwork()->AddQuery(sName)) {
-					BootStrap(pQuery, sBuffer);
-				}
-				break;
-			default:
-				break;
+				case InvalidBuffer:
+					m_sPassword = "";
+					CUtils::PrintError("[" + GetModName() +
+					                   ".so] Failed to Decrypt [" +
+					                   pFile->GetLongName() + "]");
+					if (!sName.empty()) {
+						PutUser(":***!znc@znc.in PRIVMSG " + sName +
+						        " :Failed to decrypt this buffer, did you "
+						        "change the encryption pass?");
+					}
+					break;
+				case ChanBuffer:
+					if (CChan* pChan = GetNetwork()->FindChan(sName)) {
+						BootStrap(pChan, sBuffer);
+					}
+					break;
+				case QueryBuffer:
+					if (CQuery* pQuery = GetNetwork()->AddQuery(sName)) {
+						BootStrap(pQuery, sBuffer);
+					}
+					break;
+				default:
+					break;
 			}
 		}
 		return true;
 	}
 
-	template<typename T>
-	void BootStrap(T *pTarget, const CString& sContent)
-	{
+	template <typename T>
+	void BootStrap(T* pTarget, const CString& sContent) {
 		if (!pTarget->GetBuffer().IsEmpty())
-			return; // in this case the module was probably reloaded
+			return;  // in this case the module was probably reloaded
 
 		VCString vsLines;
 		VCString::iterator it;
@@ -145,8 +149,7 @@ public:
 		for (it = vsLines.begin(); it != vsLines.end(); ++it) {
 			CString sLine(*it);
 			sLine.Trim();
-			if (sLine[0] == '@' && it+1 != vsLines.end())
-			{
+			if (sLine[0] == '@' && it + 1 != vsLines.end()) {
 				CString sTimestamp = sLine.Token(0);
 				sTimestamp.TrimLeft("@");
 				timeval ts;
@@ -159,16 +162,15 @@ public:
 				sText.Trim();
 
 				pTarget->AddBuffer(sFormat, sText, &ts);
-			} else
-			{
+			} else {
 				// Old format, escape the line and use as is.
 				pTarget->AddBuffer(_NAMEDFMT(sLine));
 			}
 		}
 	}
 
-	void SaveBufferToDisk(const CBuffer& Buffer, const CString& sPath, const CString& sHeader)
-	{
+	void SaveBufferToDisk(const CBuffer& Buffer, const CString& sPath,
+	                      const CString& sHeader) {
 		CFile File(sPath);
 		CString sContent = sHeader + "\n";
 
@@ -176,10 +178,8 @@ public:
 		for (unsigned int uIdx = 0; uIdx < uSize; uIdx++) {
 			const CBufLine& Line = Buffer.GetBufLine(uIdx);
 			timeval ts = Line.GetTime();
-			sContent +=
-				"@" + CString(ts.tv_sec) + "," + CString(ts.tv_usec) + " " +
-				Line.GetFormat() + "\n" +
-				Line.GetText() + "\n";
+			sContent += "@" + CString(ts.tv_sec) + "," + CString(ts.tv_usec) +
+			            " " + Line.GetFormat() + "\n" + Line.GetText() + "\n";
 		}
 
 		CBlowfish c(m_sPassword, BF_ENCRYPT);
@@ -192,23 +192,23 @@ public:
 		File.Close();
 	}
 
-	void SaveBuffersToDisk()
-	{
-		if (!m_sPassword.empty())
-		{
+	void SaveBuffersToDisk() {
+		if (!m_sPassword.empty()) {
 			set<CString> ssPaths;
 
 			const vector<CChan*>& vChans = GetNetwork()->GetChans();
 			for (CChan* pChan : vChans) {
 				CString sPath = GetPath(pChan->GetName());
-				SaveBufferToDisk(pChan->GetBuffer(), sPath, CHAN_VERIFICATION_TOKEN + pChan->GetName());
+				SaveBufferToDisk(pChan->GetBuffer(), sPath,
+				                 CHAN_VERIFICATION_TOKEN + pChan->GetName());
 				ssPaths.insert(sPath);
 			}
 
 			const vector<CQuery*>& vQueries = GetNetwork()->GetQueries();
 			for (CQuery* pQuery : vQueries) {
 				CString sPath = GetPath(pQuery->GetName());
-				SaveBufferToDisk(pQuery->GetBuffer(), sPath, QUERY_VERIFICATION_TOKEN + pQuery->GetName());
+				SaveBufferToDisk(pQuery->GetBuffer(), sPath,
+				                 QUERY_VERIFICATION_TOKEN + pQuery->GetName());
 				ssPaths.insert(sPath);
 			}
 
@@ -219,35 +219,32 @@ public:
 					pFile->Delete();
 				}
 			}
-		}
-		else
-		{
-			PutModule( "Password is unset usually meaning the decryption failed. You can setpass to the appropriate pass and things should start working, or setpass to a new pass and save to reinstantiate" );
+		} else {
+			PutModule(
+			    "Password is unset usually meaning the decryption failed. You "
+			    "can setpass to the appropriate pass and things should start "
+			    "working, or setpass to a new pass and save to reinstantiate");
 		}
 	}
 
-	void OnSetPassCommand(const CString& sCmdLine)
-	{
+	void OnSetPassCommand(const CString& sCmdLine) {
 		CString sArgs = sCmdLine.Token(1, true);
 
-		if(sArgs.empty())
-			sArgs = CRYPT_LAME_PASS;
+		if (sArgs.empty()) sArgs = CRYPT_LAME_PASS;
 
 		PutModule("Password set to [" + sArgs + "]");
 		m_sPassword = CBlowfish::MD5(sArgs);
 	}
 
-	void OnModCommand(const CString& sCmdLine) override
-	{
+	void OnModCommand(const CString& sCmdLine) override {
 		CString sCommand = sCmdLine.Token(0);
-		CString sArgs    = sCmdLine.Token(1, true);
+		CString sArgs = sCmdLine.Token(1, true);
 
 		if (sCommand.Equals("dumpbuff")) {
 			// for testing purposes - hidden from help
 			CString sFile;
 			CString sName;
-			if (DecryptBuffer(GetPath(sArgs), sFile, sName))
-			{
+			if (DecryptBuffer(GetPath(sArgs), sFile, sName)) {
 				VCString vsLines;
 				sFile.Split("\n", vsLines);
 
@@ -261,27 +258,23 @@ public:
 		}
 	}
 
-	void OnReplayCommand(const CString& sCmdLine)
-	{
+	void OnReplayCommand(const CString& sCmdLine) {
 		CString sArgs = sCmdLine.Token(1, true);
 
 		Replay(sArgs);
 		PutModule("Replayed " + sArgs);
 	}
 
-	void OnSaveCommand(const CString& sCmdLine)
-	{
+	void OnSaveCommand(const CString& sCmdLine) {
 		SaveBuffersToDisk();
 		PutModule("Done.");
 	}
 
-	void Replay(const CString & sBuffer)
-	{
+	void Replay(const CString& sBuffer) {
 		CString sFile;
 		CString sName;
 		PutUser(":***!znc@znc.in PRIVMSG " + sBuffer + " :Buffer Playback...");
-		if (DecryptBuffer(GetPath(sBuffer), sFile, sName))
-		{
+		if (DecryptBuffer(GetPath(sBuffer), sFile, sName)) {
 			VCString vsLines;
 			sFile.Split("\n", vsLines);
 
@@ -292,16 +285,14 @@ public:
 		PutUser(":***!znc@znc.in PRIVMSG " + sBuffer + " :Playback Complete.");
 	}
 
-	CString GetPath(const CString & sTarget) const
-	{
+	CString GetPath(const CString& sTarget) const {
 		CString sBuffer = GetUser()->GetUserName() + sTarget.AsLower();
 		CString sRet = GetSavePath();
 		sRet += "/" + CBlowfish::MD5(sBuffer, true);
-		return(sRet);
+		return (sRet);
 	}
 
-	CString FindLegacyBufferName(const CString & sPath) const
-	{
+	CString FindLegacyBufferName(const CString& sPath) const {
 		const vector<CChan*>& vChans = GetNetwork()->GetChans();
 		for (CChan* pChan : vChans) {
 			const CString& sName = pChan->GetName();
@@ -312,8 +303,8 @@ public:
 		return CString();
 	}
 
-private:
-	bool    m_bBootError;
+  private:
+	bool m_bBootError;
 	CString m_sPassword;
 
 	enum EBufferType {
@@ -323,39 +314,31 @@ private:
 		QueryBuffer
 	};
 
-	EBufferType DecryptBuffer(const CString& sPath, CString& sBuffer, CString& sName)
-	{
+	EBufferType DecryptBuffer(const CString& sPath, CString& sBuffer,
+	                          CString& sName) {
 		CString sContent;
 		sBuffer = "";
 
 		CFile File(sPath);
 
 		if (sPath.empty() || !File.Open() || !File.ReadFile(sContent))
-			 return EmptyBuffer;
+			return EmptyBuffer;
 
 		File.Close();
 
-		if (!sContent.empty())
-		{
+		if (!sContent.empty()) {
 			CBlowfish c(m_sPassword, BF_DECRYPT);
 			sBuffer = c.Crypt(sContent);
 
-			if (sBuffer.TrimPrefix(LEGACY_VERIFICATION_TOKEN))
-			{
+			if (sBuffer.TrimPrefix(LEGACY_VERIFICATION_TOKEN)) {
 				sName = FindLegacyBufferName(sPath);
 				return ChanBuffer;
-			}
-			else if (sBuffer.TrimPrefix(CHAN_VERIFICATION_TOKEN))
-			{
+			} else if (sBuffer.TrimPrefix(CHAN_VERIFICATION_TOKEN)) {
 				sName = sBuffer.FirstLine();
-				if (sBuffer.TrimLeft(sName + "\n"))
-					return ChanBuffer;
-			}
-			else if (sBuffer.TrimPrefix(QUERY_VERIFICATION_TOKEN))
-			{
+				if (sBuffer.TrimLeft(sName + "\n")) return ChanBuffer;
+			} else if (sBuffer.TrimPrefix(QUERY_VERIFICATION_TOKEN)) {
 				sName = sBuffer.FirstLine();
-				if (sBuffer.TrimLeft(sName + "\n"))
-					return QueryBuffer;
+				if (sBuffer.TrimLeft(sName + "\n")) return QueryBuffer;
 			}
 
 			PutModule("Unable to decode Encrypted file [" + sPath + "]");
@@ -365,18 +348,19 @@ private:
 	}
 };
 
-
-void CSaveBuffJob::RunJob()
-{
-	CSaveBuff *p = (CSaveBuff *)GetModule();
+void CSaveBuffJob::RunJob() {
+	CSaveBuff* p = (CSaveBuff*)GetModule();
 	p->SaveBuffersToDisk();
 }
 
-template<> void TModInfo<CSaveBuff>(CModInfo& Info) {
+template <>
+void TModInfo<CSaveBuff>(CModInfo& Info) {
 	Info.SetWikiPage("savebuff");
 	Info.SetHasArgs(true);
-	Info.SetArgsHelpText("This user module takes up to one arguments. Either --ask-pass or the password itself (which may contain spaces) or nothing");
+	Info.SetArgsHelpText(
+	    "This user module takes up to one arguments. Either --ask-pass or the "
+	    "password itself (which may contain spaces) or nothing");
 }
 
-NETWORKMODULEDEFS(CSaveBuff, "Stores channel and query buffers to disk, encrypted")
-
+NETWORKMODULEDEFS(CSaveBuff,
+                  "Stores channel and query buffers to disk, encrypted")

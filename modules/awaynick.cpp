@@ -17,7 +17,7 @@
 #include <znc/Modules.h>
 
 class CAwayNickMod : public CModule {
-public:
+  public:
 	MODCONSTRUCTOR(CAwayNickMod) {}
 
 	bool OnLoad(const CString&, CString& sMessage) override {
@@ -26,8 +26,10 @@ public:
 	}
 };
 
-template<> void TModInfo<CAwayNickMod>(CModInfo& Info) {
+template <>
+void TModInfo<CAwayNickMod>(CModInfo& Info) {
 	Info.SetWikiPage("awaynick");
 }
 
-NETWORKMODULEDEFS(CAwayNickMod, "retired module - see http://wiki.znc.in/awaynick")
+NETWORKMODULEDEFS(CAwayNickMod,
+                  "retired module - see http://wiki.znc.in/awaynick")

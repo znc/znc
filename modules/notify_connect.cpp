@@ -18,23 +18,19 @@
 #include <znc/User.h>
 
 class CNotifyConnectMod : public CModule {
-public:
+  public:
 	MODCONSTRUCTOR(CNotifyConnectMod) {}
 
-	void OnClientLogin() override {
-		NotifyAdmins("attached");
-	}
+	void OnClientLogin() override { NotifyAdmins("attached"); }
 
-	void OnClientDisconnect() override {
-		NotifyAdmins("detached");
-	}
+	void OnClientDisconnect() override { NotifyAdmins("detached"); }
 
-private:
-	void SendAdmins(const CString &msg) {
+  private:
+	void SendAdmins(const CString& msg) {
 		CZNC::Get().Broadcast(msg, true, nullptr, GetClient());
 	}
 
-	void NotifyAdmins(const CString &event) {
+	void NotifyAdmins(const CString& event) {
 		CString client = GetUser()->GetUserName();
 		if (GetClient()->GetIdentifier() != "") {
 			client += "@";
@@ -46,8 +42,11 @@ private:
 	}
 };
 
-template<> void TModInfo<CNotifyConnectMod>(CModInfo& Info) {
+template <>
+void TModInfo<CNotifyConnectMod>(CModInfo& Info) {
 	Info.SetWikiPage("notify_connect");
 }
 
-GLOBALMODULEDEFS(CNotifyConnectMod, "Notifies all admin users when a client connects or disconnects.")
+GLOBALMODULEDEFS(
+    CNotifyConnectMod,
+    "Notifies all admin users when a client connects or disconnects.")

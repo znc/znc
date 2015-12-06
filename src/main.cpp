@@ -24,10 +24,10 @@
 #include <memory>
 #include <thread>
 
-static std::vector<std::unique_ptr<CMutex> > lock_cs;
+static std::vector<std::unique_ptr<CMutex>> lock_cs;
 
-static void locking_callback(int mode, int type, const char *file, int line) {
-	if(mode & CRYPTO_LOCK) {
+static void locking_callback(int mode, int type, const char* file, int line) {
+	if (mode & CRYPTO_LOCK) {
 		lock_cs[type]->lock();
 	} else {
 		lock_cs[type]->unlock();
@@ -38,22 +38,24 @@ static unsigned long thread_id_callback() {
 	return (unsigned long)pthread_self();
 }
 
-static CRYPTO_dynlock_value *dyn_create_callback(const char *file, int line) {
+static CRYPTO_dynlock_value* dyn_create_callback(const char* file, int line) {
 	return (CRYPTO_dynlock_value*)new CMutex;
 }
 
-static void dyn_lock_callback(int mode, CRYPTO_dynlock_value *dlock, const char *file, int line) {
-	CMutex *mtx = (CMutex*)dlock;
+static void dyn_lock_callback(int mode, CRYPTO_dynlock_value* dlock,
+                              const char* file, int line) {
+	CMutex* mtx = (CMutex*)dlock;
 
-	if(mode & CRYPTO_LOCK) {
+	if (mode & CRYPTO_LOCK) {
 		mtx->lock();
 	} else {
 		mtx->unlock();
 	}
 }
 
-static void dyn_destroy_callback(CRYPTO_dynlock_value *dlock, const char *file, int line) {
-	CMutex *mtx = (CMutex*)dlock;
+static void dyn_destroy_callback(CRYPTO_dynlock_value* dlock, const char* file,
+                                 int line) {
+	CMutex* mtx = (CMutex*)dlock;
 
 	delete mtx;
 }
@@ -61,7 +63,7 @@ static void dyn_destroy_callback(CRYPTO_dynlock_value *dlock, const char *file, 
 static void thread_setup() {
 	lock_cs.resize(CRYPTO_num_locks());
 
-	for(std::unique_ptr<CMutex> &mtx: lock_cs)
+	for (std::unique_ptr<CMutex>& mtx : lock_cs)
 		mtx = std::unique_ptr<CMutex>(new CMutex());
 
 	CRYPTO_set_id_callback(&thread_id_callback);
@@ -88,64 +90,73 @@ using std::set;
 #define optional_argument 2
 
 struct option {
-	const char *a;
+	const char* a;
 	int opt;
-	int *flag;
+	int* flag;
 	int val;
 };
 
-static inline int getopt_long(int argc, char * const argv[], const char *optstring, const struct option *, int *)
-{
+static inline int getopt_long(int argc, char* const argv[],
+                              const char* optstring, const struct option*,
+                              int*) {
 	return getopt(argc, argv, optstring);
 }
 #endif
 
 static const struct option g_LongOpts[] = {
-	{ "help",        no_argument,       nullptr, 'h' },
-	{ "version",     no_argument,       nullptr, 'v' },
-	{ "debug",       no_argument,       nullptr, 'D' },
-	{ "foreground",  no_argument,       nullptr, 'f' },
-	{ "no-color",    no_argument,       nullptr, 'n' },
-	{ "allow-root",  no_argument,       nullptr, 'r' },
-	{ "makeconf",    no_argument,       nullptr, 'c' },
-	{ "makepass",    no_argument,       nullptr, 's' },
-	{ "makepem",     no_argument,       nullptr, 'p' },
-	{ "datadir",     required_argument, nullptr, 'd' },
-	{ nullptr, 0, nullptr, 0 }
-};
+    {"help", no_argument, nullptr, 'h'},
+    {"version", no_argument, nullptr, 'v'},
+    {"debug", no_argument, nullptr, 'D'},
+    {"foreground", no_argument, nullptr, 'f'},
+    {"no-color", no_argument, nullptr, 'n'},
+    {"allow-root", no_argument, nullptr, 'r'},
+    {"makeconf", no_argument, nullptr, 'c'},
+    {"makepass", no_argument, nullptr, 's'},
+    {"makepem", no_argument, nullptr, 'p'},
+    {"datadir", required_argument, nullptr, 'd'},
+    {nullptr, 0, nullptr, 0}};
 
-static void GenerateHelp(const char *appname) {
+static void GenerateHelp(const char* appname) {
 	CUtils::PrintMessage("USAGE: " + CString(appname) + " [options]");
 	CUtils::PrintMessage("Options are:");
-	CUtils::PrintMessage("\t-h, --help         List available command line options (this page)");
-	CUtils::PrintMessage("\t-v, --version      Output version information and exit");
+	CUtils::PrintMessage(
+	    "\t-h, --help         List available command line options (this page)");
+	CUtils::PrintMessage(
+	    "\t-v, --version      Output version information and exit");
 	CUtils::PrintMessage("\t-f, --foreground   Don't fork into the background");
-	CUtils::PrintMessage("\t-D, --debug        Output debugging information (Implies -f)");
-	CUtils::PrintMessage("\t-n, --no-color     Don't use escape sequences in the output");
-	CUtils::PrintMessage("\t-r, --allow-root   Don't complain if ZNC is run as root");
-	CUtils::PrintMessage("\t-c, --makeconf     Interactively create a new config");
-	CUtils::PrintMessage("\t-s, --makepass     Generates a password for use in config");
+	CUtils::PrintMessage(
+	    "\t-D, --debug        Output debugging information (Implies -f)");
+	CUtils::PrintMessage(
+	    "\t-n, --no-color     Don't use escape sequences in the output");
+	CUtils::PrintMessage(
+	    "\t-r, --allow-root   Don't complain if ZNC is run as root");
+	CUtils::PrintMessage(
+	    "\t-c, --makeconf     Interactively create a new config");
+	CUtils::PrintMessage(
+	    "\t-s, --makepass     Generates a password for use in config");
 #ifdef HAVE_LIBSSL
-	CUtils::PrintMessage("\t-p, --makepem      Generates a pemfile for use with SSL");
+	CUtils::PrintMessage(
+	    "\t-p, --makepem      Generates a pemfile for use with SSL");
 #endif /* HAVE_LIBSSL */
-	CUtils::PrintMessage("\t-d, --datadir      Set a different ZNC repository (default is ~/.znc)");
+	CUtils::PrintMessage(
+	    "\t-d, --datadir      Set a different ZNC repository (default is "
+	    "~/.znc)");
 }
 
 class CSignalHandler {
-public:
+  public:
 	CSignalHandler(CZNC* pZNC) {
 		sigset_t signals;
 		sigfillset(&signals);
 		pthread_sigmask(SIG_SETMASK, &signals, nullptr);
-		m_thread = std::thread([=]() {
-			HandleSignals(pZNC);
-		});
+		m_thread = std::thread([=]() { HandleSignals(pZNC); });
 	}
 	~CSignalHandler() {
 		pthread_cancel(m_thread.native_handle());
 		m_thread.join();
 	}
-private:
+
+  private:
 	void HandleSignals(CZNC* pZNC) {
 		sigset_t signals;
 		sigemptyset(&signals);
@@ -155,7 +166,8 @@ private:
 		sigaddset(&signals, SIGQUIT);
 		sigaddset(&signals, SIGTERM);
 		sigaddset(&signals, SIGPIPE);
-		// Handle only these signals specially; the rest will have their default action, but in this thread
+		// Handle only these signals specially; the rest will have their default
+		// action, but in this thread
 		pthread_sigmask(SIG_SETMASK, &signals, nullptr);
 		while (true) {
 			int sig;
@@ -178,7 +190,8 @@ private:
 					// Reset handler to default by:
 					// * not blocking it
 					// * not waiting for it
-					// So, if ^C is pressed, but for some reason it didn't work, second ^C will kill the process for sure.
+					// So, if ^C is pressed, but for some reason it didn't work,
+					// second ^C will kill the process for sure.
 					sigdelset(&signals, sig);
 					pthread_sigmask(SIG_SETMASK, &signals, nullptr);
 					break;
@@ -193,7 +206,8 @@ private:
 };
 
 static bool isRoot() {
-	// User root? If one of these were root, we could switch the others to root, too
+	// User root? If one of these were root, we could switch the others to root,
+	// too
 	return (geteuid() == 0 || getuid() == 0);
 }
 
@@ -240,56 +254,60 @@ int main(int argc, char** argv) {
 #endif
 	CZNC::CreateInstance();
 
-	while ((iArg = getopt_long(argc, argv, "hvnrcspd:Df", g_LongOpts, &iOptIndex)) != -1) {
+	while ((iArg = getopt_long(argc, argv, "hvnrcspd:Df", g_LongOpts,
+	                           &iOptIndex)) != -1) {
 		switch (iArg) {
-		case 'h':
-			GenerateHelp(argv[0]);
-			return 0;
-		case 'v':
-			cout << CZNC::GetTag() << endl;
-			cout << CZNC::GetCompileOptionsString() << endl;
-			return 0;
-		case 'n':
-			CDebug::SetStdoutIsTTY(false);
-			break;
-		case 'r':
-			bAllowRoot = true;
-			break;
-		case 'c':
-			bMakeConf = true;
-			break;
-		case 's':
-			bMakePass = true;
-			break;
-		case 'p':
+			case 'h':
+				GenerateHelp(argv[0]);
+				return 0;
+			case 'v':
+				cout << CZNC::GetTag() << endl;
+				cout << CZNC::GetCompileOptionsString() << endl;
+				return 0;
+			case 'n':
+				CDebug::SetStdoutIsTTY(false);
+				break;
+			case 'r':
+				bAllowRoot = true;
+				break;
+			case 'c':
+				bMakeConf = true;
+				break;
+			case 's':
+				bMakePass = true;
+				break;
+			case 'p':
 #ifdef HAVE_LIBSSL
-			bMakePem = true;
-			break;
+				bMakePem = true;
+				break;
 #else
-			CUtils::PrintError("ZNC is compiled without SSL support.");
-			return 1;
+				CUtils::PrintError("ZNC is compiled without SSL support.");
+				return 1;
 #endif /* HAVE_LIBSSL */
-		case 'd':
-			sDataDir = CString(optarg);
-			break;
-		case 'f':
-			bForeground = true;
-			break;
-		case 'D':
-			bForeground = true;
-			CDebug::SetDebug(true);
-			break;
-		case '?':
-		default:
-			GenerateHelp(argv[0]);
-			return 1;
+			case 'd':
+				sDataDir = CString(optarg);
+				break;
+			case 'f':
+				bForeground = true;
+				break;
+			case 'D':
+				bForeground = true;
+				CDebug::SetDebug(true);
+				break;
+			case '?':
+			default:
+				GenerateHelp(argv[0]);
+				return 1;
 		}
 	}
 
 	if (optind < argc) {
 		CUtils::PrintError("Unrecognized command line arguments.");
-		CUtils::PrintError("Did you mean to run `/znc " + CString(argv[optind]) + "' in IRC client instead?");
-		CUtils::PrintError("Hint: `/znc " + CString(argv[optind]) + "' is an alias for `/msg *status " + CString(argv[optind]) + "'");
+		CUtils::PrintError("Did you mean to run `/znc " +
+		                   CString(argv[optind]) + "' in IRC client instead?");
+		CUtils::PrintError("Hint: `/znc " + CString(argv[optind]) +
+		                   "' is an alias for `/msg *status " +
+		                   CString(argv[optind]) + "'");
 		return 1;
 	}
 
@@ -310,14 +328,19 @@ int main(int argc, char** argv) {
 		CUtils::PrintMessage("Type your new password.");
 		CString sHash = CUtils::GetSaltedHashPass(sSalt);
 		CUtils::PrintMessage("Kill ZNC process, if it's running.");
-		CUtils::PrintMessage("Then replace password in the <User> section of your config with this:");
-		// Not PrintMessage(), to remove [**] from the beginning, to ease copypasting
+		CUtils::PrintMessage(
+		    "Then replace password in the <User> section of your config with "
+		    "this:");
+		// Not PrintMessage(), to remove [**] from the beginning, to ease
+		// copypasting
 		std::cout << "<Pass password>" << std::endl;
 		std::cout << "\tMethod = " << CUtils::sDefaultHash << std::endl;
 		std::cout << "\tHash = " << sHash << std::endl;
 		std::cout << "\tSalt = " << sSalt << std::endl;
 		std::cout << "</Pass>" << std::endl;
-		CUtils::PrintMessage("After that start ZNC again, and you should be able to login with the new password.");
+		CUtils::PrintMessage(
+		    "After that start ZNC again, and you should be able to login with "
+		    "the new password.");
 
 		CZNC::DestroyInstance();
 		return 0;
@@ -328,14 +351,21 @@ int main(int argc, char** argv) {
 		set<CModInfo> ssUserMods;
 		set<CModInfo> ssNetworkMods;
 		CUtils::PrintAction("Checking for list of available modules");
-		pZNC->GetModules().GetAvailableMods(ssGlobalMods, CModInfo::GlobalModule);
+		pZNC->GetModules().GetAvailableMods(ssGlobalMods,
+		                                    CModInfo::GlobalModule);
 		pZNC->GetModules().GetAvailableMods(ssUserMods, CModInfo::UserModule);
-		pZNC->GetModules().GetAvailableMods(ssNetworkMods, CModInfo::NetworkModule);
-		if (ssGlobalMods.empty() && ssUserMods.empty() && ssNetworkMods.empty()) {
+		pZNC->GetModules().GetAvailableMods(ssNetworkMods,
+		                                    CModInfo::NetworkModule);
+		if (ssGlobalMods.empty() && ssUserMods.empty() &&
+		    ssNetworkMods.empty()) {
 			CUtils::PrintStatus(false, "");
-			CUtils::PrintError("No modules found. Perhaps you didn't install ZNC properly?");
-			CUtils::PrintError("Read http://wiki.znc.in/Installation for instructions.");
-			if (!CUtils::GetBoolInput("Do you really want to run ZNC without any modules?", false)) {
+			CUtils::PrintError(
+			    "No modules found. Perhaps you didn't install ZNC properly?");
+			CUtils::PrintError(
+			    "Read http://wiki.znc.in/Installation for instructions.");
+			if (!CUtils::GetBoolInput(
+			        "Do you really want to run ZNC without any modules?",
+			        false)) {
 				CZNC::DestroyInstance();
 				return 1;
 			}
@@ -344,14 +374,18 @@ int main(int argc, char** argv) {
 	}
 
 	if (isRoot()) {
-		CUtils::PrintError("You are running ZNC as root! Don't do that! There are not many valid");
-		CUtils::PrintError("reasons for this and it can, in theory, cause great damage!");
+		CUtils::PrintError(
+		    "You are running ZNC as root! Don't do that! There are not many "
+		    "valid");
+		CUtils::PrintError(
+		    "reasons for this and it can, in theory, cause great damage!");
 		if (!bAllowRoot) {
 			CZNC::DestroyInstance();
 			return 1;
 		}
 		CUtils::PrintError("You have been warned.");
-		CUtils::PrintError("Hit CTRL+C now if you don't want to run ZNC as root.");
+		CUtils::PrintError(
+		    "Hit CTRL+C now if you don't want to run ZNC as root.");
 		CUtils::PrintError("ZNC will start in 30 seconds.");
 		sleep(30);
 	}
@@ -379,7 +413,8 @@ int main(int argc, char** argv) {
 
 	if (bForeground) {
 		int iPid = getpid();
-		CUtils::PrintMessage("Staying open for debugging [pid: " + CString(iPid) + "]");
+		CUtils::PrintMessage("Staying open for debugging [pid: " +
+		                     CString(iPid) + "]");
 
 		pZNC->WritePidFile(iPid);
 		CUtils::PrintMessage(CZNC::GetTag());
@@ -409,15 +444,19 @@ int main(int argc, char** argv) {
 		 *   call to avoid race condition with parent exiting.
 		 */
 		if (!pZNC->WaitForChildLock()) {
-			CUtils::PrintError("Child was unable to obtain lock on config file.");
+			CUtils::PrintError(
+			    "Child was unable to obtain lock on config file.");
 			CZNC::DestroyInstance();
 			return 1;
 		}
 
 		// Redirect std in/out/err to /dev/null
-		close(0); open("/dev/null", O_RDONLY);
-		close(1); open("/dev/null", O_WRONLY);
-		close(2); open("/dev/null", O_WRONLY);
+		close(0);
+		open("/dev/null", O_RDONLY);
+		close(1);
+		open("/dev/null", O_WRONLY);
+		close(2);
+		open("/dev/null", O_WRONLY);
 
 		CDebug::SetStdoutIsTTY(false);
 
@@ -442,31 +481,26 @@ int main(int argc, char** argv) {
 				break;
 			case CException::EX_Restart: {
 				// strdup() because GCC is stupid
-				char *args[] = {
-					strdup(argv[0]),
-					strdup("--datadir"),
-					strdup(pZNC->GetZNCPath().c_str()),
-					nullptr,
-					nullptr,
-					nullptr,
-					nullptr
-				};
+				char* args[] = {
+				    strdup(argv[0]),                    strdup("--datadir"),
+				    strdup(pZNC->GetZNCPath().c_str()), nullptr,
+				    nullptr,                            nullptr,
+				    nullptr};
 				int pos = 3;
 				if (CDebug::Debug())
 					args[pos++] = strdup("--debug");
 				else if (bForeground)
 					args[pos++] = strdup("--foreground");
-				if (!CDebug::StdoutIsTTY())
-					args[pos++] = strdup("--no-color");
-				if (bAllowRoot)
-					args[pos++] = strdup("--allow-root");
+				if (!CDebug::StdoutIsTTY()) args[pos++] = strdup("--no-color");
+				if (bAllowRoot) args[pos++] = strdup("--allow-root");
 				// The above code adds 3 entries to args tops
 				// which means the array should be big enough
 
 				SignalHandler.reset();
 				CZNC::DestroyInstance();
 				execvp(args[0], args);
-				CUtils::PrintError("Unable to restart ZNC [" + CString(strerror(errno)) + "]");
+				CUtils::PrintError("Unable to restart ZNC [" +
+				                   CString(strerror(errno)) + "]");
 			} /* Fall through */
 			default:
 				iRet = 1;

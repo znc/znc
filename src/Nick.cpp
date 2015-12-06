@@ -22,12 +22,14 @@
 using std::vector;
 using std::map;
 
-CNick::CNick() : m_sChanPerms(""), m_pNetwork(nullptr), m_sNick(""), m_sIdent(""), m_sHost("") {
-}
+CNick::CNick()
+    : m_sChanPerms(""),
+      m_pNetwork(nullptr),
+      m_sNick(""),
+      m_sIdent(""),
+      m_sHost("") {}
 
-CNick::CNick(const CString& sNick) : CNick() {
-	Parse(sNick);
-}
+CNick::CNick(const CString& sNick) : CNick() { Parse(sNick); }
 
 CNick::~CNick() {}
 
@@ -48,22 +50,24 @@ void CNick::Parse(const CString& sNickMask) {
 		return;
 	}
 
-	m_sNick = sNickMask.substr((sNickMask[0] == ':'), uPos - (sNickMask[0] == ':'));
-	m_sHost = sNickMask.substr(uPos +1);
+	m_sNick =
+	    sNickMask.substr((sNickMask[0] == ':'), uPos - (sNickMask[0] == ':'));
+	m_sHost = sNickMask.substr(uPos + 1);
 
 	if ((uPos = m_sHost.find('@')) != CString::npos) {
 		m_sIdent = m_sHost.substr(0, uPos);
-		m_sHost = m_sHost.substr(uPos +1);
+		m_sHost = m_sHost.substr(uPos + 1);
 	}
 }
 
-size_t CNick::GetCommonChans(vector<CChan*>& vRetChans, CIRCNetwork* pNetwork) const {
+size_t CNick::GetCommonChans(vector<CChan*>& vRetChans,
+                             CIRCNetwork* pNetwork) const {
 	vRetChans.clear();
 
 	const vector<CChan*>& vChans = pNetwork->GetChans();
 
 	for (CChan* pChan : vChans) {
-		const map<CString,CNick>& msNicks = pChan->GetNicks();
+		const map<CString, CNick>& msNicks = pChan->GetNicks();
 
 		for (const auto& it : msNicks) {
 			if (it.first.Equals(m_sNick)) {
@@ -77,8 +81,8 @@ size_t CNick::GetCommonChans(vector<CChan*>& vRetChans, CIRCNetwork* pNetwork) c
 }
 
 bool CNick::NickEquals(const CString& nickname) const {
-	//TODO add proper IRC case mapping here
-	//https://tools.ietf.org/html/draft-brocklesby-irc-isupport-03#section-3.1
+	// TODO add proper IRC case mapping here
+	// https://tools.ietf.org/html/draft-brocklesby-irc-isupport-03#section-3.1
 	return m_sNick.Equals(nickname);
 }
 
@@ -148,8 +152,7 @@ CString CNick::GetNickMask() const {
 	CString sRet = m_sNick;
 
 	if (!m_sHost.empty()) {
-		if (!m_sIdent.empty())
-			sRet += "!" + m_sIdent;
+		if (!m_sIdent.empty()) sRet += "!" + m_sIdent;
 		sRet += "@" + m_sHost;
 	}
 

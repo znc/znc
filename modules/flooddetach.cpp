@@ -21,20 +21,27 @@
 using std::map;
 
 class CFloodDetachMod : public CModule {
-public:
+  public:
 	MODCONSTRUCTOR(CFloodDetachMod) {
 		m_iThresholdSecs = 0;
 		m_iThresholdMsgs = 0;
 
 		AddHelpCommand();
-		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(&CFloodDetachMod::ShowCommand), "");
-		AddCommand("Secs", static_cast<CModCommand::ModCmdFunc>(&CFloodDetachMod::SecsCommand), "[<limit>]");
-		AddCommand("Lines", static_cast<CModCommand::ModCmdFunc>(&CFloodDetachMod::LinesCommand), "[<limit>]");
-		AddCommand("Silent", static_cast<CModCommand::ModCmdFunc>(&CFloodDetachMod::SilentCommand), "[yes|no]");
+		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(
+		                       &CFloodDetachMod::ShowCommand),
+		           "");
+		AddCommand("Secs", static_cast<CModCommand::ModCmdFunc>(
+		                       &CFloodDetachMod::SecsCommand),
+		           "[<limit>]");
+		AddCommand("Lines", static_cast<CModCommand::ModCmdFunc>(
+		                        &CFloodDetachMod::LinesCommand),
+		           "[<limit>]");
+		AddCommand("Silent", static_cast<CModCommand::ModCmdFunc>(
+		                         &CFloodDetachMod::SilentCommand),
+		           "[yes|no]");
 	}
 
-	~CFloodDetachMod() {
-	}
+	~CFloodDetachMod() {}
 
 	void Save() {
 		// We save the settings twice because the module arguments can
@@ -55,19 +62,15 @@ public:
 			m_iThresholdSecs = GetNV("secs").ToUInt();
 		}
 
-		if (m_iThresholdSecs == 0)
-			m_iThresholdSecs = 2;
-		if (m_iThresholdMsgs == 0)
-			m_iThresholdMsgs = 5;
+		if (m_iThresholdSecs == 0) m_iThresholdSecs = 2;
+		if (m_iThresholdMsgs == 0) m_iThresholdMsgs = 5;
 
 		Save();
 
 		return true;
 	}
 
-	void OnIRCDisconnected() override {
-		m_chans.clear();
-	}
+	void OnIRCDisconnected() override { m_chans.clear(); }
 
 	void Cleanup() {
 		Limits::iterator it;
@@ -75,12 +78,11 @@ public:
 
 		for (it = m_chans.begin(); it != m_chans.end(); ++it) {
 			// The timeout for this channel did not expire yet?
-			if (it->second.first + (time_t)m_iThresholdSecs >= now)
-				continue;
+			if (it->second.first + (time_t)m_iThresholdSecs >= now) continue;
 
-			CChan *pChan = GetNetwork()->FindChan(it->first);
-			if (it->second.second >= m_iThresholdMsgs
-					&& pChan && pChan->IsDetached()) {
+			CChan* pChan = GetNetwork()->FindChan(it->first);
+			if (it->second.second >= m_iThresholdMsgs && pChan &&
+			    pChan->IsDetached()) {
 				// The channel is detached and it is over the
 				// messages limit. Since we only track those
 				// limits for non-detached channels or for
@@ -88,8 +90,9 @@ public:
 				// we detached because of a flood.
 
 				if (!GetNV("silent").ToBool()) {
-					PutModule("Flood in [" + pChan->GetName() + "] is over, "
-							"re-attaching...");
+					PutModule("Flood in [" + pChan->GetName() +
+					          "] is over, "
+					          "re-attaching...");
 				}
 				// No buffer playback, makes sense, doesn't it?
 				pChan->ClearBuffer();
@@ -100,8 +103,7 @@ public:
 			m_chans.erase(it2);
 
 			// Without this Bad Things (tm) could happen
-			if (it == m_chans.end())
-				break;
+			if (it == m_chans.end()) break;
 		}
 	}
 
@@ -116,8 +118,7 @@ public:
 
 		if (it == m_chans.end()) {
 			// We don't track detached channels
-			if (Channel.IsDetached())
-				return;
+			if (Channel.IsDetached()) return;
 
 			// This is the first message for this channel, start a
 			// new timeout.
@@ -139,8 +140,7 @@ public:
 
 		it->second.second++;
 
-		if (it->second.second < m_iThresholdMsgs)
-			return;
+		if (it->second.second < m_iThresholdMsgs) return;
 
 		// The channel hit the limit, reset the timeout so that we keep
 		// it detached for longer.
@@ -148,8 +148,9 @@ public:
 
 		Channel.DetachUser();
 		if (!GetNV("silent").ToBool()) {
-			PutModule("Channel [" + Channel.GetName() + "] was "
-					"flooded, you've been detached");
+			PutModule("Channel [" + Channel.GetName() +
+			          "] was "
+			          "flooded, you've been detached");
 		}
 	}
 
@@ -159,12 +160,14 @@ public:
 	}
 
 	// This also catches OnChanAction()
-	EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage) override {
+	EModRet OnChanCTCP(CNick& Nick, CChan& Channel,
+	                   CString& sMessage) override {
 		Message(Channel);
 		return CONTINUE;
 	}
 
-	EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) override {
+	EModRet OnChanNotice(CNick& Nick, CChan& Channel,
+	                     CString& sMessage) override {
 		Message(Channel);
 		return CONTINUE;
 	}
@@ -174,15 +177,18 @@ public:
 		return CONTINUE;
 	}
 
-	void OnNick(const CNick& Nick, const CString& sNewNick, const std::vector<CChan*>& vChans) override {
+	void OnNick(const CNick& Nick, const CString& sNewNick,
+	            const std::vector<CChan*>& vChans) override {
 		for (CChan* pChan : vChans) {
 			Message(*pChan);
 		}
 	}
 
 	void ShowCommand(const CString& sLine) {
-		PutModule("Current limit is " + CString(m_iThresholdMsgs) + " lines "
-				"in " + CString(m_iThresholdSecs) + " secs.");
+		PutModule("Current limit is " + CString(m_iThresholdMsgs) +
+		          " lines "
+		          "in " +
+		          CString(m_iThresholdSecs) + " secs.");
 	}
 
 	void SecsCommand(const CString& sLine) {
@@ -192,10 +198,10 @@ public:
 			PutModule("Seconds limit is [" + CString(m_iThresholdSecs) + "]");
 		} else {
 			m_iThresholdSecs = sArg.ToUInt();
-			if (m_iThresholdSecs == 0)
-				m_iThresholdSecs = 1;
+			if (m_iThresholdSecs == 0) m_iThresholdSecs = 1;
 
-			PutModule("Set seconds limit to [" + CString(m_iThresholdSecs) + "]");
+			PutModule("Set seconds limit to [" + CString(m_iThresholdSecs) +
+			          "]");
 			Save();
 		}
 	}
@@ -207,8 +213,7 @@ public:
 			PutModule("Lines limit is [" + CString(m_iThresholdMsgs) + "]");
 		} else {
 			m_iThresholdMsgs = sArg.ToUInt();
-			if (m_iThresholdMsgs == 0)
-				m_iThresholdMsgs = 2;
+			if (m_iThresholdMsgs == 0) m_iThresholdMsgs = 2;
 
 			PutModule("Set lines limit to [" + CString(m_iThresholdMsgs) + "]");
 			Save();
@@ -229,17 +234,20 @@ public:
 		}
 	}
 
-private:
-	typedef map<CString, std::pair<time_t, unsigned int> > Limits;
+  private:
+	typedef map<CString, std::pair<time_t, unsigned int>> Limits;
 	Limits m_chans;
 	unsigned int m_iThresholdSecs;
 	unsigned int m_iThresholdMsgs;
 };
 
-template<> void TModInfo<CFloodDetachMod>(CModInfo& Info) {
+template <>
+void TModInfo<CFloodDetachMod>(CModInfo& Info) {
 	Info.SetWikiPage("flooddetach");
 	Info.SetHasArgs(true);
-	Info.SetArgsHelpText("This user module takes up to two arguments. Arguments are msgs and secs numbers.");
+	Info.SetArgsHelpText(
+	    "This user module takes up to two arguments. Arguments are msgs and "
+	    "secs numbers.");
 }
 
 USERMODULEDEFS(CFloodDetachMod, "Detach channels when flooded")

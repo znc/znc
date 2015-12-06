@@ -25,52 +25,53 @@ using std::set;
 using std::map;
 using std::vector;
 
-#define CALLMOD(MOD, CLIENT, USER, NETWORK, FUNC) {  \
-	CModule *pModule = nullptr;  \
-	if (NETWORK && (pModule = (NETWORK)->GetModules().FindModule(MOD))) {  \
-		try {  \
-			pModule->SetClient(CLIENT);  \
-			pModule->FUNC;  \
-			pModule->SetClient(nullptr);  \
-		} catch (const CModule::EModException& e) {  \
-			if (e == CModule::UNLOAD) {  \
-				(NETWORK)->GetModules().UnloadModule(MOD);  \
-			}  \
-		}  \
-	} else if ((pModule = (USER)->GetModules().FindModule(MOD))) {  \
-		try {  \
-			pModule->SetClient(CLIENT);  \
-			pModule->SetNetwork(NETWORK);  \
-			pModule->FUNC;  \
-			pModule->SetClient(nullptr);  \
-			pModule->SetNetwork(nullptr);  \
-		} catch (const CModule::EModException& e) {  \
-			if (e == CModule::UNLOAD) {  \
-				(USER)->GetModules().UnloadModule(MOD);  \
-			}  \
-		}  \
-	} else if ((pModule = CZNC::Get().GetModules().FindModule(MOD))) {  \
-		try {  \
-			pModule->SetClient(CLIENT);  \
-			pModule->SetNetwork(NETWORK);  \
-			pModule->SetUser(USER);  \
-			pModule->FUNC;  \
-			pModule->SetClient(nullptr);  \
-			pModule->SetNetwork(nullptr);  \
-			pModule->SetUser(nullptr);  \
-		} catch (const CModule::EModException& e) {  \
-			if (e == CModule::UNLOAD) {  \
-					CZNC::Get().GetModules().UnloadModule(MOD);  \
-			}  \
-		}  \
-	} else {  \
-		PutStatus("No such module [" + MOD + "]");  \
-	}  \
-}
+#define CALLMOD(MOD, CLIENT, USER, NETWORK, FUNC)                             \
+	{                                                                         \
+		CModule* pModule = nullptr;                                           \
+		if (NETWORK && (pModule = (NETWORK)->GetModules().FindModule(MOD))) { \
+			try {                                                             \
+				pModule->SetClient(CLIENT);                                   \
+				pModule->FUNC;                                                \
+				pModule->SetClient(nullptr);                                  \
+			} catch (const CModule::EModException& e) {                       \
+				if (e == CModule::UNLOAD) {                                   \
+					(NETWORK)->GetModules().UnloadModule(MOD);                \
+				}                                                             \
+			}                                                                 \
+		} else if ((pModule = (USER)->GetModules().FindModule(MOD))) {        \
+			try {                                                             \
+				pModule->SetClient(CLIENT);                                   \
+				pModule->SetNetwork(NETWORK);                                 \
+				pModule->FUNC;                                                \
+				pModule->SetClient(nullptr);                                  \
+				pModule->SetNetwork(nullptr);                                 \
+			} catch (const CModule::EModException& e) {                       \
+				if (e == CModule::UNLOAD) {                                   \
+					(USER)->GetModules().UnloadModule(MOD);                   \
+				}                                                             \
+			}                                                                 \
+		} else if ((pModule = CZNC::Get().GetModules().FindModule(MOD))) {    \
+			try {                                                             \
+				pModule->SetClient(CLIENT);                                   \
+				pModule->SetNetwork(NETWORK);                                 \
+				pModule->SetUser(USER);                                       \
+				pModule->FUNC;                                                \
+				pModule->SetClient(nullptr);                                  \
+				pModule->SetNetwork(nullptr);                                 \
+				pModule->SetUser(nullptr);                                    \
+			} catch (const CModule::EModException& e) {                       \
+				if (e == CModule::UNLOAD) {                                   \
+					CZNC::Get().GetModules().UnloadModule(MOD);               \
+				}                                                             \
+			}                                                                 \
+		} else {                                                              \
+			PutStatus("No such module [" + MOD + "]");                        \
+		}                                                                     \
+	}
 
 CClient::~CClient() {
 	if (m_spAuth) {
-		CClientAuth* pAuth = (CClientAuth*) &(*m_spAuth);
+		CClientAuth* pAuth = (CClientAuth*)&(*m_spAuth);
 		pAuth->Invalidate();
 	}
 	if (m_pUser != nullptr) {
@@ -81,12 +82,15 @@ CClient::~CClient() {
 
 void CClient::SendRequiredPasswordNotice() {
 	PutClient(":irc.znc.in 464 " + GetNick() + " :Password required");
-	PutClient(":irc.znc.in NOTICE AUTH :*** "
-			  "You need to send your password. "
-			  "Configure your client to send a server password.");
-	PutClient(":irc.znc.in NOTICE AUTH :*** "
-			  "To connect now, you can use /quote PASS <username>:<password>, "
-			  "or /quote PASS <username>/<network>:<password> to connect to a specific network.");
+	PutClient(
+	    ":irc.znc.in NOTICE AUTH :*** "
+	    "You need to send your password. "
+	    "Configure your client to send a server password.");
+	PutClient(
+	    ":irc.znc.in NOTICE AUTH :*** "
+	    "To connect now, you can use /quote PASS <username>:<password>, "
+	    "or /quote PASS <username>/<network>:<password> to connect to a "
+	    "specific network.");
 }
 
 void CClient::ReadLine(const CString& sData) {
@@ -104,7 +108,8 @@ void CClient::ReadLine(const CString& sData) {
 
 	bool bReturn = false;
 	if (IsAttached()) {
-		NETWORKMODULECALL(OnUserRaw(sLine), m_pUser, m_pNetwork, this, &bReturn);
+		NETWORKMODULECALL(OnUserRaw(sLine), m_pUser, m_pNetwork, this,
+		                  &bReturn);
 	} else {
 		GLOBALMODULECALL(OnUnknownUserRaw(this, sLine), &bReturn);
 	}
@@ -115,7 +120,8 @@ void CClient::ReadLine(const CString& sData) {
 	Message.SetTags(mssTags);
 
 	if (IsAttached()) {
-		NETWORKMODULECALL(OnUserRawMessage(Message), m_pUser, m_pNetwork, this, &bReturn);
+		NETWORKMODULECALL(OnUserRawMessage(Message), m_pUser, m_pNetwork, this,
+		                  &bReturn);
 	} else {
 		GLOBALMODULECALL(OnUnknownUserRawMessage(Message), &bReturn);
 	}
@@ -123,7 +129,8 @@ void CClient::ReadLine(const CString& sData) {
 
 	CString sCommand = Message.GetCommand();
 
-	if (!IsAttached()) { // The following commands happen before authentication with ZNC
+	if (!IsAttached()) {  // The following commands happen before authentication
+	                      // with ZNC
 		if (sCommand.Equals("PASS")) {
 			m_bGotPass = true;
 
@@ -139,7 +146,8 @@ void CClient::ReadLine(const CString& sData) {
 			m_bGotNick = true;
 
 			AuthUser();
-			return;  // Don't forward this msg.  ZNC will handle nick changes until auth is complete
+			return;  // Don't forward this msg.  ZNC will handle nick changes
+			         // until auth is complete
 		} else if (sCommand.Equals("USER")) {
 			CString sAuthLine = Message.GetParam(0);
 
@@ -215,11 +223,10 @@ void CClient::ReadLine(const CString& sData) {
 	PutIRC(Message.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
 }
 
-void CClient::SetNick(const CString& s) {
-	m_sNick = s;
-}
+void CClient::SetNick(const CString& s) { m_sNick = s; }
 
-void CClient::SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect, bool bReconnect) {
+void CClient::SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect,
+                         bool bReconnect) {
 	if (bDisconnect) {
 		if (m_pNetwork) {
 			m_pNetwork->ClientDisconnected(this);
@@ -228,7 +235,8 @@ void CClient::SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect, bool bReconnec
 			const vector<CChan*>& vChans = m_pNetwork->GetChans();
 			for (const CChan* pChan : vChans) {
 				if (!(pChan->IsDetached())) {
-					PutClient(":" + m_pNetwork->GetIRCNick().GetNickMask() + " PART " + pChan->GetName());
+					PutClient(":" + m_pNetwork->GetIRCNick().GetNickMask() +
+					          " PART " + pChan->GetName());
 				}
 			}
 		} else if (m_pUser) {
@@ -308,9 +316,9 @@ void CClient::AuthUser() {
 	CZNC::Get().AuthUser(m_spAuth);
 }
 
-CClientAuth::CClientAuth(CClient* pClient, const CString& sUsername, const CString& sPassword)
-		: CAuthBase(sUsername, sPassword, pClient), m_pClient(pClient) {
-}
+CClientAuth::CClientAuth(CClient* pClient, const CString& sUsername,
+                         const CString& sPassword)
+    : CAuthBase(sUsername, sPassword, pClient), m_pClient(pClient) {}
 
 void CClientAuth::RefusedLogin(const CString& sReason) {
 	if (m_pClient) {
@@ -319,14 +327,11 @@ void CClientAuth::RefusedLogin(const CString& sReason) {
 }
 
 CString CAuthBase::GetRemoteIP() const {
-	if (m_pSock)
-		return m_pSock->GetRemoteIP();
+	if (m_pSock) return m_pSock->GetRemoteIP();
 	return "";
 }
 
-void CAuthBase::Invalidate() {
-	m_pSock = nullptr;
-}
+void CAuthBase::Invalidate() { m_pSock = nullptr; }
 
 void CAuthBase::AcceptLogin(CUser& User) {
 	if (m_pSock) {
@@ -336,8 +341,7 @@ void CAuthBase::AcceptLogin(CUser& User) {
 }
 
 void CAuthBase::RefuseLogin(const CString& sReason) {
-	if (!m_pSock)
-		return;
+	if (!m_pSock) return;
 
 	CUser* pUser = CZNC::Get().FindUser(GetUsername());
 
@@ -345,8 +349,10 @@ void CAuthBase::RefuseLogin(const CString& sReason) {
 	// login. Use sReason because there are other reasons than "wrong
 	// password" for a login to be rejected (e.g. fail2ban).
 	if (pUser) {
-		pUser->PutStatus("A client from [" + GetRemoteIP() + "] attempted "
-				"to login as you, but was rejected [" + sReason + "].");
+		pUser->PutStatus("A client from [" + GetRemoteIP() +
+		                 "] attempted "
+		                 "to login as you, but was rejected [" +
+		                 sReason + "].");
 	}
 
 	GLOBALMODULECALL(OnFailedLogin(GetUsername(), GetRemoteIP()), NOTHING);
@@ -383,19 +389,32 @@ void CClient::AcceptLogin(CUser& User) {
 			PutStatus("Network (" + m_sNetwork + ") doesn't exist.");
 		}
 	} else if (!m_pUser->GetNetworks().empty()) {
-		// If a user didn't supply a network, and they have a network called "default" then automatically use this network.
+		// If a user didn't supply a network, and they have a network called
+		// "default" then automatically use this network.
 		m_pNetwork = m_pUser->FindNetwork("default");
-		// If no "default" network, try "user" network. It's for compatibility with early network stuff in ZNC, which converted old configs to "user" network.
+		// If no "default" network, try "user" network. It's for compatibility
+		// with early network stuff in ZNC, which converted old configs to
+		// "user" network.
 		if (!m_pNetwork) m_pNetwork = m_pUser->FindNetwork("user");
 		// Otherwise, just try any network of the user.
 		if (!m_pNetwork) m_pNetwork = *m_pUser->GetNetworks().begin();
 		if (m_pNetwork && m_pUser->GetNetworks().size() > 1) {
-			PutStatusNotice("You have several networks configured, but no network was specified for the connection.");
-			PutStatusNotice("Selecting network [" + m_pNetwork->GetName() + "]. To see list of all configured networks, use /znc ListNetworks");
-			PutStatusNotice("If you want to choose another network, use /znc JumpNetwork <network>, or connect to ZNC with username " + m_pUser->GetUserName() + "/<network> (instead of just " + m_pUser->GetUserName() + ")");
+			PutStatusNotice(
+			    "You have several networks configured, but no network was "
+			    "specified for the connection.");
+			PutStatusNotice("Selecting network [" + m_pNetwork->GetName() +
+			                "]. To see list of all configured networks, use "
+			                "/znc ListNetworks");
+			PutStatusNotice(
+			    "If you want to choose another network, use /znc JumpNetwork "
+			    "<network>, or connect to ZNC with username " +
+			    m_pUser->GetUserName() + "/<network> (instead of just " +
+			    m_pUser->GetUserName() + ")");
 		}
 	} else {
-		PutStatusNotice("You have no networks configured. Use /znc AddNetwork <network> to add one.");
+		PutStatusNotice(
+		    "You have no networks configured. Use /znc AddNetwork <network> to "
+		    "add one.");
 	}
 
 	SetNetwork(m_pNetwork, false);
@@ -405,13 +424,9 @@ void CClient::AcceptLogin(CUser& User) {
 	NETWORKMODULECALL(OnClientLogin(), m_pUser, m_pNetwork, this, NOTHING);
 }
 
-void CClient::Timeout() {
-	PutClient("ERROR :Closing link [Timeout]");
-}
+void CClient::Timeout() { PutClient("ERROR :Closing link [Timeout]"); }
 
-void CClient::Connected() {
-	DEBUG(GetSockName() << " == Connected();");
-}
+void CClient::Connected() { DEBUG(GetSockName() << " == Connected();"); }
 
 void CClient::ConnectionRefused() {
 	DEBUG(GetSockName() << " == ConnectionRefused()");
@@ -423,7 +438,8 @@ void CClient::Disconnected() {
 	SetNetwork(nullptr, true, false);
 
 	if (m_pUser) {
-		NETWORKMODULECALL(OnClientDisconnect(), m_pUser, pNetwork, this, NOTHING);
+		NETWORKMODULECALL(OnClientDisconnect(), m_pUser, pNetwork, this,
+		                  NOTHING);
 	}
 }
 
@@ -436,7 +452,9 @@ void CClient::ReachedMaxBuffer() {
 }
 
 void CClient::BouncedOff() {
-	PutStatusNotice("You are being disconnected because another user just authenticated as you.");
+	PutStatusNotice(
+	    "You are being disconnected because another user just authenticated as "
+	    "you.");
 	Close(Csock::CLT_AFTERWRITE);
 }
 
@@ -447,30 +465,28 @@ void CClient::PutIRC(const CString& sLine) {
 }
 
 CString CClient::GetFullName() const {
-	if (!m_pUser)
-		return GetRemoteIP();
+	if (!m_pUser) return GetRemoteIP();
 	CString sFullName = m_pUser->GetUserName();
-	if (!m_sIdentifier.empty())
-		sFullName += "@" + m_sIdentifier;
-	if (m_pNetwork)
-		sFullName += "/" + m_pNetwork->GetName();
+	if (!m_sIdentifier.empty()) sFullName += "@" + m_sIdentifier;
+	if (m_pNetwork) sFullName += "/" + m_pNetwork->GetName();
 	return sFullName;
 }
 
 void CClient::PutClient(const CString& sLine) {
 	bool bReturn = false;
 	CString sCopy = sLine;
-	NETWORKMODULECALL(OnSendToClient(sCopy, *this), m_pUser, m_pNetwork, this, &bReturn);
+	NETWORKMODULECALL(OnSendToClient(sCopy, *this), m_pUser, m_pNetwork, this,
+	                  &bReturn);
 	if (bReturn) return;
 	DEBUG("(" << GetFullName() << ") ZNC -> CLI [" << sCopy << "]");
 	Write(sCopy + "\r\n");
 }
 
-bool CClient::PutClient(const CMessage& Message)
-{
+bool CClient::PutClient(const CMessage& Message) {
 	if (!m_bAwayNotify && Message.GetType() == CMessage::Type::Away) {
 		return false;
-	} else if (!m_bAccountNotify && Message.GetType() == CMessage::Type::Account) {
+	} else if (!m_bAccountNotify &&
+	           Message.GetType() == CMessage::Type::Account) {
 		return false;
 	}
 
@@ -481,45 +497,53 @@ bool CClient::PutClient(const CMessage& Message)
 		if (Msg.GetType() == CMessage::Type::Numeric) {
 			unsigned int uCode = Msg.As<CNumericMessage>().GetCode();
 
-			if (uCode == 352) { // RPL_WHOREPLY
+			if (uCode == 352) {  // RPL_WHOREPLY
 				if (!m_bNamesx && pIRCSock->HasNamesx()) {
-					// The server has NAMESX, but the client doesn't, so we need to remove extra prefixes
+					// The server has NAMESX, but the client doesn't, so we need
+					// to remove extra prefixes
 					CString sNick = Msg.GetParam(6);
 					if (sNick.size() > 1 && pIRCSock->IsPermChar(sNick[1])) {
 						CString sNewNick = sNick;
-						size_t pos = sNick.find_first_not_of(pIRCSock->GetPerms());
+						size_t pos =
+						    sNick.find_first_not_of(pIRCSock->GetPerms());
 						if (pos >= 2 && pos != CString::npos) {
 							sNewNick = sNick[0] + sNick.substr(pos);
 						}
 						Msg.SetParam(6, sNewNick);
 					}
 				}
-			} else if (uCode == 353) { // RPL_NAMES
-				if ((!m_bNamesx && pIRCSock->HasNamesx()) || (!m_bUHNames && pIRCSock->HasUHNames())) {
-					// The server has either UHNAMES or NAMESX, but the client is missing either or both
+			} else if (uCode == 353) {  // RPL_NAMES
+				if ((!m_bNamesx && pIRCSock->HasNamesx()) ||
+				    (!m_bUHNames && pIRCSock->HasUHNames())) {
+					// The server has either UHNAMES or NAMESX, but the client
+					// is missing either or both
 					CString sNicks = Msg.GetParam(3);
 					VCString vsNicks;
 					sNicks.Split(" ", vsNicks, false);
 
 					for (CString& sNick : vsNicks) {
-						if (sNick.empty())
-							break;
+						if (sNick.empty()) break;
 
-						if (!m_bNamesx && pIRCSock->HasNamesx() && pIRCSock->IsPermChar(sNick[0])) {
-							// The server has NAMESX, but the client doesn't, so we just use the first perm char
-							size_t pos = sNick.find_first_not_of(pIRCSock->GetPerms());
+						if (!m_bNamesx && pIRCSock->HasNamesx() &&
+						    pIRCSock->IsPermChar(sNick[0])) {
+							// The server has NAMESX, but the client doesn't, so
+							// we just use the first perm char
+							size_t pos =
+							    sNick.find_first_not_of(pIRCSock->GetPerms());
 							if (pos >= 2 && pos != CString::npos) {
 								sNick = sNick[0] + sNick.substr(pos);
 							}
 						}
 
 						if (!m_bUHNames && pIRCSock->HasUHNames()) {
-							// The server has UHNAMES, but the client doesn't, so we strip away ident and host
+							// The server has UHNAMES, but the client doesn't,
+							// so we strip away ident and host
 							sNick = sNick.Token(0, false, "!");
 						}
 					}
 
-					Msg.SetParam(3, CString(" ").Join(vsNicks.begin(), vsNicks.end()));
+					Msg.SetParam(
+					    3, CString(" ").Join(vsNicks.begin(), vsNicks.end()));
 				}
 			}
 		} else if (Msg.GetType() == CMessage::Type::Join) {
@@ -531,7 +555,8 @@ bool CClient::PutClient(const CMessage& Message)
 
 	CString sLine = Msg.ToString(CMessage::ExcludeTags);
 
-	// TODO: introduce a module hook that gives control over the tags that are sent
+	// TODO: introduce a module hook that gives control over the tags that are
+	// sent
 	MCString mssTags;
 
 	if (HasServerTime()) {
@@ -565,22 +590,25 @@ void CClient::PutStatusNotice(const CString& sLine) {
 unsigned int CClient::PutStatus(const CTable& table) {
 	unsigned int idx = 0;
 	CString sLine;
-	while (table.GetLine(idx++, sLine))
-		PutStatus(sLine);
+	while (table.GetLine(idx++, sLine)) PutStatus(sLine);
 	return idx - 1;
 }
 
-void CClient::PutStatus(const CString& sLine) {
-	PutModule("status", sLine);
-}
+void CClient::PutStatus(const CString& sLine) { PutModule("status", sLine); }
 
 void CClient::PutModNotice(const CString& sModule, const CString& sLine) {
 	if (!m_pUser) {
 		return;
 	}
 
-	DEBUG("(" << GetFullName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in NOTICE " << GetNick() << " :" << sLine << "]");
-	Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in NOTICE " + GetNick() + " :" + sLine + "\r\n");
+	DEBUG("(" << GetFullName()
+	          << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() +
+	                 ((sModule.empty()) ? "status" : sModule) +
+	                 "!znc@znc.in NOTICE " << GetNick() << " :" << sLine
+	          << "]");
+	Write(":" + m_pUser->GetStatusPrefix() +
+	      ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in NOTICE " +
+	      GetNick() + " :" + sLine + "\r\n");
 }
 
 void CClient::PutModule(const CString& sModule, const CString& sLine) {
@@ -588,19 +616,25 @@ void CClient::PutModule(const CString& sModule, const CString& sLine) {
 		return;
 	}
 
-	DEBUG("(" << GetFullName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in PRIVMSG " << GetNick() << " :" << sLine << "]");
+	DEBUG("(" << GetFullName()
+	          << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() +
+	                 ((sModule.empty()) ? "status" : sModule) +
+	                 "!znc@znc.in PRIVMSG " << GetNick() << " :" << sLine
+	          << "]");
 
 	VCString vsLines;
 	sLine.Split("\n", vsLines);
 	for (const CString& s : vsLines) {
-		Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in PRIVMSG " + GetNick() + " :" + s + "\r\n");
+		Write(":" + m_pUser->GetStatusPrefix() +
+		      ((sModule.empty()) ? "status" : sModule) +
+		      "!znc@znc.in PRIVMSG " + GetNick() + " :" + s + "\r\n");
 	}
 }
 
 CString CClient::GetNick(bool bAllowIRCNick) const {
 	CString sRet;
 
-	const CIRCSock *pSock = GetIRCSock();
+	const CIRCSock* pSock = GetIRCSock();
 	if (bAllowIRCNick && pSock && pSock->IsAuthed()) {
 		sRet = pSock->GetNick();
 	}
@@ -613,12 +647,15 @@ CString CClient::GetNickMask() const {
 		return GetIRCSock()->GetNickMask();
 	}
 
-	CString sHost = m_pNetwork ? m_pNetwork->GetBindHost() : m_pUser->GetBindHost();
+	CString sHost =
+	    m_pNetwork ? m_pNetwork->GetBindHost() : m_pUser->GetBindHost();
 	if (sHost.empty()) {
 		sHost = "irc.znc.in";
 	}
 
-	return GetNick() + "!" + (m_pNetwork ? m_pNetwork->GetIdent() : m_pUser->GetIdent()) + "@" + sHost;
+	return GetNick() + "!" +
+	       (m_pNetwork ? m_pNetwork->GetIdent() : m_pUser->GetIdent()) + "@" +
+	       sHost;
 }
 
 bool CClient::IsValidIdentifier(const CString& sIdentifier) {
@@ -628,7 +665,7 @@ bool CClient::IsValidIdentifier(const CString& sIdentifier) {
 		return false;
 	}
 
-	const char *p = sIdentifier.c_str();
+	const char* p = sIdentifier.c_str();
 	while (*p) {
 		if (*p != '_' && *p != '-' && !isalnum(*p)) {
 			return false;
@@ -640,24 +677,24 @@ bool CClient::IsValidIdentifier(const CString& sIdentifier) {
 	return true;
 }
 
-void CClient::RespondCap(const CString& sResponse)
-{
+void CClient::RespondCap(const CString& sResponse) {
 	PutClient(":irc.znc.in CAP " + GetNick() + " " + sResponse);
 }
 
-void CClient::HandleCap(const CMessage& Message)
-{
+void CClient::HandleCap(const CMessage& Message) {
 	CString sSubCmd = Message.GetParam(0);
 
 	if (sSubCmd.Equals("LS")) {
 		SCString ssOfferCaps;
 		for (const auto& it : m_mCoreCaps) {
 			bool bServerDependent = std::get<0>(it.second);
-			if (!bServerDependent || m_ssServerDependentCaps.count(it.first) > 0)
+			if (!bServerDependent ||
+			    m_ssServerDependentCaps.count(it.first) > 0)
 				ssOfferCaps.insert(it.first);
 		}
 		GLOBALMODULECALL(OnClientCapLs(this, ssOfferCaps), NOTHING);
-		CString sRes = CString(" ").Join(ssOfferCaps.begin(), ssOfferCaps.end());
+		CString sRes =
+		    CString(" ").Join(ssOfferCaps.begin(), ssOfferCaps.end());
 		RespondCap("LS :" + sRes);
 		m_bInCap = true;
 		if (Message.GetParam(1).ToInt() >= 302) {
@@ -679,16 +716,17 @@ void CClient::HandleCap(const CMessage& Message)
 		for (const CString& sToken : vsTokens) {
 			bool bVal = true;
 			CString sCap = sToken;
-			if (sCap.TrimPrefix("-"))
-				bVal = false;
+			if (sCap.TrimPrefix("-")) bVal = false;
 
 			bool bAccepted = false;
 			const auto& it = m_mCoreCaps.find(sCap);
 			if (m_mCoreCaps.end() != it) {
 				bool bServerDependent = std::get<0>(it->second);
-				bAccepted = !bServerDependent || m_ssServerDependentCaps.count(sCap) > 0;
+				bAccepted = !bServerDependent ||
+				            m_ssServerDependentCaps.count(sCap) > 0;
 			}
-			GLOBALMODULECALL(IsClientCapSupported(this, sCap, bVal), &bAccepted);
+			GLOBALMODULECALL(IsClientCapSupported(this, sCap, bVal),
+			                 &bAccepted);
 
 			if (!bAccepted) {
 				// Some unsupported capability is requested
@@ -701,8 +739,7 @@ void CClient::HandleCap(const CMessage& Message)
 		for (const CString& sToken : vsTokens) {
 			bool bVal = true;
 			CString sCap = sToken;
-			if (sCap.TrimPrefix("-"))
-				bVal = false;
+			if (sCap.TrimPrefix("-")) bVal = false;
 
 			auto handler_it = m_mCoreCaps.find(sCap);
 			if (m_mCoreCaps.end() != handler_it) {
@@ -720,10 +757,12 @@ void CClient::HandleCap(const CMessage& Message)
 
 		RespondCap("ACK :" + Message.GetParam(1));
 	} else if (sSubCmd.Equals("LIST")) {
-		CString sList = CString(" ").Join(m_ssAcceptedCaps.begin(), m_ssAcceptedCaps.end());
+		CString sList =
+		    CString(" ").Join(m_ssAcceptedCaps.begin(), m_ssAcceptedCaps.end());
 		RespondCap("LIST :" + sList);
 	} else {
-		PutClient(":irc.znc.in 410 " + GetNick() + " " + sSubCmd + " :Invalid CAP subcommand");
+		PutClient(":irc.znc.in 410 " + GetNick() + " " + sSubCmd +
+		          " :Invalid CAP subcommand");
 	}
 }
 
@@ -771,8 +810,7 @@ void CClient::ParseIdentifier(const CString& sAuthLine) {
 	}
 }
 
-void CClient::NotifyServerDependentCaps(const SCString& ssCaps)
-{
+void CClient::NotifyServerDependentCaps(const SCString& ssCaps) {
 	for (const CString& sCap : ssCaps) {
 		const auto& it = m_mCoreCaps.find(sCap);
 		if (m_mCoreCaps.end() != it) {
@@ -784,15 +822,16 @@ void CClient::NotifyServerDependentCaps(const SCString& ssCaps)
 	}
 
 	if (HasCapNotify() && !m_ssServerDependentCaps.empty()) {
-		CString sCaps = CString(" ").Join(m_ssServerDependentCaps.begin(), m_ssServerDependentCaps.end());
+		CString sCaps = CString(" ").Join(m_ssServerDependentCaps.begin(),
+		                                  m_ssServerDependentCaps.end());
 		PutClient(":irc.znc.in CAP " + GetNick() + " NEW :" + sCaps);
 	}
 }
 
-void CClient::ClearServerDependentCaps()
-{
+void CClient::ClearServerDependentCaps() {
 	if (HasCapNotify() && !m_ssServerDependentCaps.empty()) {
-		CString sCaps = CString(" ").Join(m_ssServerDependentCaps.begin(), m_ssServerDependentCaps.end());
+		CString sCaps = CString(" ").Join(m_ssServerDependentCaps.begin(),
+		                                  m_ssServerDependentCaps.end());
 		PutClient(":irc.znc.in CAP " + GetNick() + " DEL :" + sCaps);
 
 		for (const CString& sCap : m_ssServerDependentCaps) {
@@ -808,8 +847,7 @@ void CClient::ClearServerDependentCaps()
 }
 
 template <typename T>
-void CClient::AddBuffer(const T& Message)
-{
+void CClient::AddBuffer(const T& Message) {
 	const CString sTarget = Message.GetTarget();
 
 	T Format;
@@ -833,19 +871,21 @@ void CClient::AddBuffer(const T& Message)
 	}
 }
 
-void CClient::EchoMessage(const CMessage& Message)
-{
+void CClient::EchoMessage(const CMessage& Message) {
 	for (CClient* pClient : GetClients()) {
-		if (pClient->HasEchoMessage() || (pClient != this && (m_pNetwork->IsChan(Message.GetParam(0)) || pClient->HasSelfMessage()))) {
-			pClient->PutClient(":" + GetNickMask() + " " + Message.ToString(CMessage::ExcludePrefix));
+		if (pClient->HasEchoMessage() ||
+		    (pClient != this && (m_pNetwork->IsChan(Message.GetParam(0)) ||
+		                         pClient->HasSelfMessage()))) {
+			pClient->PutClient(":" + GetNickMask() + " " +
+			                   Message.ToString(CMessage::ExcludePrefix));
 		}
 	}
 }
 
-set<CChan*> CClient::MatchChans(const CString& sPatterns) const
-{
+set<CChan*> CClient::MatchChans(const CString& sPatterns) const {
 	VCString vsPatterns;
-	sPatterns.Replace_n(",", " ").Split(" ", vsPatterns, false, "", "", true, true);
+	sPatterns.Replace_n(",", " ")
+	    .Split(" ", vsPatterns, false, "", "", true, true);
 
 	set<CChan*> sChans;
 	for (const CString& sPattern : vsPatterns) {
@@ -855,32 +895,27 @@ set<CChan*> CClient::MatchChans(const CString& sPatterns) const
 	return sChans;
 }
 
-unsigned int CClient::AttachChans(const std::set<CChan*>& sChans)
-{
+unsigned int CClient::AttachChans(const std::set<CChan*>& sChans) {
 	unsigned int uAttached = 0;
 	for (CChan* pChan : sChans) {
-		if (!pChan->IsDetached())
-			continue;
+		if (!pChan->IsDetached()) continue;
 		uAttached++;
 		pChan->AttachUser();
 	}
 	return uAttached;
 }
 
-unsigned int CClient::DetachChans(const std::set<CChan*>& sChans)
-{
+unsigned int CClient::DetachChans(const std::set<CChan*>& sChans) {
 	unsigned int uDetached = 0;
 	for (CChan* pChan : sChans) {
-		if (pChan->IsDetached())
-			continue;
+		if (pChan->IsDetached()) continue;
 		uDetached++;
 		pChan->DetachUser();
 	}
 	return uDetached;
 }
 
-bool CClient::OnActionMessage(CActionMessage& Message)
-{
+bool CClient::OnActionMessage(CActionMessage& Message) {
 	CString sTargets = Message.GetTarget();
 
 	VCString vTargets;
@@ -890,21 +925,22 @@ bool CClient::OnActionMessage(CActionMessage& Message)
 		Message.SetTarget(sTarget);
 
 		bool bContinue = false;
-		NETWORKMODULECALL(OnUserActionMessage(Message), m_pUser, m_pNetwork, this, &bContinue);
+		NETWORKMODULECALL(OnUserActionMessage(Message), m_pUser, m_pNetwork,
+		                  this, &bContinue);
 		if (bContinue) continue;
 
 		if (m_pNetwork) {
 			AddBuffer(Message);
 			EchoMessage(Message);
-			PutIRC(Message.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
+			PutIRC(Message.ToString(CMessage::ExcludePrefix |
+			                        CMessage::ExcludeTags));
 		}
 	}
 
 	return true;
 }
 
-bool CClient::OnCTCPMessage(CCTCPMessage& Message)
-{
+bool CClient::OnCTCPMessage(CCTCPMessage& Message) {
 	CString sTargets = Message.GetTarget();
 
 	VCString vTargets;
@@ -924,10 +960,12 @@ bool CClient::OnCTCPMessage(CCTCPMessage& Message)
 			//
 			// b) CTCP reply for VERSION is set.
 			// 1. ZNC receives CTCP VERSION from someone
-			// 2. ZNC replies with the configured reply (or just drops it if empty), without forwarding anything to client
+			// 2. ZNC replies with the configured reply (or just drops it if
+			// empty), without forwarding anything to client
 			// 3. Client does not see any CTCP request, and does not reply
 			//
-			// So, if user doesn't want "via ZNC" in CTCP VERSION reply, they can set custom reply.
+			// So, if user doesn't want "via ZNC" in CTCP VERSION reply, they
+			// can set custom reply.
 			//
 			// See more bikeshedding at github issues #820 and #1012
 			Message.SetText(sCTCP + " via " + CZNC::GetTag(false));
@@ -939,32 +977,35 @@ bool CClient::OnCTCPMessage(CCTCPMessage& Message)
 
 		bool bContinue = false;
 		if (Message.IsReply()) {
-			NETWORKMODULECALL(OnUserCTCPReplyMessage(Message), m_pUser, m_pNetwork, this, &bContinue);
+			NETWORKMODULECALL(OnUserCTCPReplyMessage(Message), m_pUser,
+			                  m_pNetwork, this, &bContinue);
 		} else {
-			NETWORKMODULECALL(OnUserCTCPMessage(Message), m_pUser, m_pNetwork, this, &bContinue);
+			NETWORKMODULECALL(OnUserCTCPMessage(Message), m_pUser, m_pNetwork,
+			                  this, &bContinue);
 		}
 		if (bContinue) continue;
 
 		if (!GetIRCSock()) {
 			// Some lagmeters do a NOTICE to their own nick, ignore those.
 			if (!sTarget.Equals(m_sNick))
-				PutStatus("Your CTCP to [" + Message.GetTarget() + "] got lost, "
-						"you are not connected to IRC!");
+				PutStatus("Your CTCP to [" + Message.GetTarget() +
+				          "] got lost, "
+				          "you are not connected to IRC!");
 			continue;
 		}
 
 		if (m_pNetwork) {
 			AddBuffer(Message);
 			EchoMessage(Message);
-			PutIRC(Message.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
+			PutIRC(Message.ToString(CMessage::ExcludePrefix |
+			                        CMessage::ExcludeTags));
 		}
 	}
 
 	return true;
 }
 
-bool CClient::OnJoinMessage(CJoinMessage& Message)
-{
+bool CClient::OnJoinMessage(CJoinMessage& Message) {
 	CString sChans = Message.GetTarget();
 	CString sKeys = Message.GetKey();
 
@@ -980,7 +1021,8 @@ bool CClient::OnJoinMessage(CJoinMessage& Message)
 		Message.SetTarget(vsChans[a]);
 		Message.SetKey((a < vsKeys.size()) ? vsKeys[a] : "");
 		bool bContinue = false;
-		NETWORKMODULECALL(OnUserJoinMessage(Message), m_pUser, m_pNetwork, this, &bContinue);
+		NETWORKMODULECALL(OnUserJoinMessage(Message), m_pUser, m_pNetwork, this,
+		                  &bContinue);
 		if (bContinue) continue;
 
 		CString sChannel = Message.GetTarget();
@@ -1010,8 +1052,7 @@ bool CClient::OnJoinMessage(CJoinMessage& Message)
 	return sChans.empty();
 }
 
-bool CClient::OnModeMessage(CModeMessage& Message)
-{
+bool CClient::OnModeMessage(CModeMessage& Message) {
 	CString sTarget = Message.GetTarget();
 	CString sModes = Message.GetModes();
 
@@ -1020,11 +1061,14 @@ bool CClient::OnModeMessage(CModeMessage& Message)
 		// /mode reply from the server, we can answer this
 		// request ourself.
 
-		CChan *pChan = m_pNetwork->FindChan(sTarget);
+		CChan* pChan = m_pNetwork->FindChan(sTarget);
 		if (pChan && pChan->IsOn() && !pChan->GetModeString().empty()) {
-			PutClient(":" + m_pNetwork->GetIRCServer() + " 324 " + GetNick() + " " + sTarget + " " + pChan->GetModeString());
+			PutClient(":" + m_pNetwork->GetIRCServer() + " 324 " + GetNick() +
+			          " " + sTarget + " " + pChan->GetModeString());
 			if (pChan->GetCreationDate() > 0) {
-				PutClient(":" + m_pNetwork->GetIRCServer() + " 329 " + GetNick() + " " + sTarget + " " + CString(pChan->GetCreationDate()));
+				PutClient(":" + m_pNetwork->GetIRCServer() + " 329 " +
+				          GetNick() + " " + sTarget + " " +
+				          CString(pChan->GetCreationDate()));
 			}
 			return true;
 		}
@@ -1033,8 +1077,7 @@ bool CClient::OnModeMessage(CModeMessage& Message)
 	return false;
 }
 
-bool CClient::OnNoticeMessage(CNoticeMessage& Message)
-{
+bool CClient::OnNoticeMessage(CNoticeMessage& Message) {
 	CString sTargets = Message.GetTarget();
 
 	VCString vTargets;
@@ -1045,35 +1088,38 @@ bool CClient::OnNoticeMessage(CNoticeMessage& Message)
 
 		if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
 			if (!sTarget.Equals("status")) {
-				CALLMOD(sTarget, this, m_pUser, m_pNetwork, OnModNotice(Message.GetText()));
+				CALLMOD(sTarget, this, m_pUser, m_pNetwork,
+				        OnModNotice(Message.GetText()));
 			}
 			continue;
 		}
 
 		bool bContinue = false;
-		NETWORKMODULECALL(OnUserNoticeMessage(Message), m_pUser, m_pNetwork, this, &bContinue);
+		NETWORKMODULECALL(OnUserNoticeMessage(Message), m_pUser, m_pNetwork,
+		                  this, &bContinue);
 		if (bContinue) continue;
 
 		if (!GetIRCSock()) {
 			// Some lagmeters do a NOTICE to their own nick, ignore those.
 			if (!sTarget.Equals(m_sNick))
-				PutStatus("Your notice to [" + Message.GetTarget() + "] got lost, "
-						"you are not connected to IRC!");
+				PutStatus("Your notice to [" + Message.GetTarget() +
+				          "] got lost, "
+				          "you are not connected to IRC!");
 			continue;
 		}
 
 		if (m_pNetwork) {
 			AddBuffer(Message);
 			EchoMessage(Message);
-			PutIRC(Message.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
+			PutIRC(Message.ToString(CMessage::ExcludePrefix |
+			                        CMessage::ExcludeTags));
 		}
 	}
 
 	return true;
 }
 
-bool CClient::OnPartMessage(CPartMessage& Message)
-{
+bool CClient::OnPartMessage(CPartMessage& Message) {
 	CString sChans = Message.GetTarget();
 
 	VCString vsChans;
@@ -1083,7 +1129,8 @@ bool CClient::OnPartMessage(CPartMessage& Message)
 	for (CString& sChan : vsChans) {
 		bool bContinue = false;
 		Message.SetTarget(sChan);
-		NETWORKMODULECALL(OnUserPartMessage(Message), m_pUser, m_pNetwork, this, &bContinue);
+		NETWORKMODULECALL(OnUserPartMessage(Message), m_pUser, m_pNetwork, this,
+		                  &bContinue);
 		if (bContinue) continue;
 
 		sChan = Message.GetTarget();
@@ -1094,7 +1141,7 @@ bool CClient::OnPartMessage(CPartMessage& Message)
 			PutStatusNotice("Removing channel [" + sChan + "]");
 			m_pNetwork->DelChan(sChan);
 		} else {
-			sChans += (sChans.empty()) ? sChan : CString("," + sChan); 
+			sChans += (sChans.empty()) ? sChan : CString("," + sChan);
 		}
 	}
 
@@ -1107,8 +1154,7 @@ bool CClient::OnPartMessage(CPartMessage& Message)
 	return false;
 }
 
-bool CClient::OnPingMessage(CMessage& Message)
-{
+bool CClient::OnPingMessage(CMessage& Message) {
 	// All PONGs are generated by ZNC. We will still forward this to
 	// the ircd, but all PONGs from irc will be blocked.
 	if (!Message.GetParams().empty())
@@ -1118,25 +1164,24 @@ bool CClient::OnPingMessage(CMessage& Message)
 	return false;
 }
 
-bool CClient::OnPongMessage(CMessage& Message)
-{
+bool CClient::OnPongMessage(CMessage& Message) {
 	// Block PONGs, we already responded to the pings
 	return true;
 }
 
-bool CClient::OnQuitMessage(CQuitMessage& Message)
-{
+bool CClient::OnQuitMessage(CQuitMessage& Message) {
 	bool bReturn = false;
-	NETWORKMODULECALL(OnUserQuitMessage(Message), m_pUser, m_pNetwork, this, &bReturn);
+	NETWORKMODULECALL(OnUserQuitMessage(Message), m_pUser, m_pNetwork, this,
+	                  &bReturn);
 	if (!bReturn) {
-		Close(Csock::CLT_AFTERWRITE); // Treat a client quit as a detach
+		Close(Csock::CLT_AFTERWRITE);  // Treat a client quit as a detach
 	}
-	// Don't forward this msg.  We don't want the client getting us disconnected.
+	// Don't forward this msg.  We don't want the client getting us
+	// disconnected.
 	return true;
 }
 
-bool CClient::OnTextMessage(CTextMessage& Message)
-{
+bool CClient::OnTextMessage(CTextMessage& Message) {
 	CString sTargets = Message.GetTarget();
 
 	VCString vTargets;
@@ -1151,51 +1196,55 @@ bool CClient::OnTextMessage(CTextMessage& Message)
 				CString sMsg = Message.GetText();
 				UserCommand(sMsg);
 			} else {
-				CALLMOD(sTarget, this, m_pUser, m_pNetwork, OnModCommand(Message.GetText()));
+				CALLMOD(sTarget, this, m_pUser, m_pNetwork,
+				        OnModCommand(Message.GetText()));
 			}
 			continue;
 		}
 
 		bool bContinue = false;
-		NETWORKMODULECALL(OnUserTextMessage(Message), m_pUser, m_pNetwork, this, &bContinue);
+		NETWORKMODULECALL(OnUserTextMessage(Message), m_pUser, m_pNetwork, this,
+		                  &bContinue);
 		if (bContinue) continue;
 
 		if (!GetIRCSock()) {
 			// Some lagmeters do a PRIVMSG to their own nick, ignore those.
 			if (!sTarget.Equals(m_sNick))
-				PutStatus("Your message to [" + Message.GetTarget() + "] got lost, "
-						"you are not connected to IRC!");
+				PutStatus("Your message to [" + Message.GetTarget() +
+				          "] got lost, "
+				          "you are not connected to IRC!");
 			continue;
 		}
 
 		if (m_pNetwork) {
 			AddBuffer(Message);
 			EchoMessage(Message);
-			PutIRC(Message.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
+			PutIRC(Message.ToString(CMessage::ExcludePrefix |
+			                        CMessage::ExcludeTags));
 		}
 	}
 
 	return true;
 }
 
-bool CClient::OnTopicMessage(CTopicMessage& Message)
-{
+bool CClient::OnTopicMessage(CTopicMessage& Message) {
 	bool bReturn = false;
 	CString sChan = Message.GetTarget();
 	CString sTopic = Message.GetTopic();
 
 	if (!sTopic.empty()) {
-		NETWORKMODULECALL(OnUserTopicMessage(Message), m_pUser, m_pNetwork, this, &bReturn);
+		NETWORKMODULECALL(OnUserTopicMessage(Message), m_pUser, m_pNetwork,
+		                  this, &bReturn);
 	} else {
-		NETWORKMODULECALL(OnUserTopicRequest(sChan), m_pUser, m_pNetwork, this, &bReturn);
+		NETWORKMODULECALL(OnUserTopicRequest(sChan), m_pUser, m_pNetwork, this,
+		                  &bReturn);
 		Message.SetTarget(sChan);
 	}
 
 	return bReturn;
 }
 
-bool CClient::OnOtherMessage(CMessage& Message)
-{
+bool CClient::OnOtherMessage(CMessage& Message) {
 	const CString& sCommand = Message.GetCommand();
 
 	if (sCommand.Equals("ZNC")) {
@@ -1205,7 +1254,7 @@ bool CClient::OnOtherMessage(CMessage& Message)
 		if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
 			sModCommand = Message.GetParams(1);
 		} else {
-			sTarget  = "status";
+			sTarget = "status";
 			sModCommand = Message.GetParams(0);
 		}
 
@@ -1216,9 +1265,11 @@ bool CClient::OnOtherMessage(CMessage& Message)
 				UserCommand(sModCommand);
 		} else {
 			if (sModCommand.empty())
-				CALLMOD(sTarget, this, m_pUser, m_pNetwork, PutModule("Hello. How may I help you?"))
+				CALLMOD(sTarget, this, m_pUser, m_pNetwork,
+				        PutModule("Hello. How may I help you?"))
 			else
-				CALLMOD(sTarget, this, m_pUser, m_pNetwork, OnModCommand(sModCommand))
+				CALLMOD(sTarget, this, m_pUser, m_pNetwork,
+				        OnModCommand(sModCommand))
 		}
 		return true;
 	} else if (sCommand.Equals("ATTACH")) {
@@ -1236,7 +1287,8 @@ bool CClient::OnOtherMessage(CMessage& Message)
 		set<CChan*> sChans = MatchChans(sPatterns);
 		unsigned int uAttachedChans = AttachChans(sChans);
 
-		PutStatusNotice("There were [" + CString(sChans.size()) + "] channels matching [" + sPatterns + "]");
+		PutStatusNotice("There were [" + CString(sChans.size()) +
+		                "] channels matching [" + sPatterns + "]");
 		PutStatusNotice("Attached [" + CString(uAttachedChans) + "] channels");
 
 		return true;
@@ -1255,7 +1307,8 @@ bool CClient::OnOtherMessage(CMessage& Message)
 		set<CChan*> sChans = MatchChans(sPatterns);
 		unsigned int uDetached = DetachChans(sChans);
 
-		PutStatusNotice("There were [" + CString(sChans.size()) + "] channels matching [" + sPatterns + "]");
+		PutStatusNotice("There were [" + CString(sChans.size()) +
+		                "] channels matching [" + sPatterns + "]");
 		PutStatusNotice("Detached [" + CString(uDetached) + "] channels");
 
 		return true;
@@ -1267,7 +1320,8 @@ bool CClient::OnOtherMessage(CMessage& Message)
 				m_bUHNames = true;
 			}
 		}
-		return true;  // If the server understands it, we already enabled namesx / uhnames
+		return true;  // If the server understands it, we already enabled namesx
+		              // / uhnames
 	}
 
 	return false;

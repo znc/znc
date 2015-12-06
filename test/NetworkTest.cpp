@@ -20,7 +20,7 @@
 #include <znc/znc.h>
 
 class NetworkTest : public ::testing::Test {
-protected:
+  protected:
 	void SetUp() { CZNC::CreateInstance(); }
 	void TearDown() { CZNC::DestroyInstance(); }
 };

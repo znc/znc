@@ -21,16 +21,16 @@ using std::stringstream;
 class CNotesMod : public CModule {
 	bool m_bShowNotesOnLogin{};
 
-	void ListCommand(const CString &sLine) {
-		ListNotes();
-	}
+	void ListCommand(const CString& sLine) { ListNotes(); }
 
-	void AddNoteCommand(const CString &sLine) {
+	void AddNoteCommand(const CString& sLine) {
 		CString sKey(sLine.Token(1));
 		CString sValue(sLine.Token(2, true));
 
 		if (!GetNV(sKey).empty()) {
-			PutModule("That note already exists.  Use MOD <key> <note> to overwrite.");
+			PutModule(
+			    "That note already exists.  Use MOD <key> <note> to "
+			    "overwrite.");
 		} else if (AddNote(sKey, sValue)) {
 			PutModule("Added note [" + sKey + "]");
 		} else {
@@ -38,7 +38,7 @@ class CNotesMod : public CModule {
 		}
 	}
 
-	void ModCommand(const CString &sLine) {
+	void ModCommand(const CString& sLine) {
 		CString sKey(sLine.Token(1));
 		CString sValue(sLine.Token(2, true));
 
@@ -49,7 +49,7 @@ class CNotesMod : public CModule {
 		}
 	}
 
-	void GetCommand(const CString &sLine) {
+	void GetCommand(const CString& sLine) {
 		CString sNote = GetNV(sLine.Token(1, true));
 
 		if (sNote.empty()) {
@@ -59,7 +59,7 @@ class CNotesMod : public CModule {
 		}
 	}
 
-	void DelCommand(const CString &sLine) {
+	void DelCommand(const CString& sLine) {
 		CString sKey(sLine.Token(1));
 
 		if (DelNote(sKey)) {
@@ -69,17 +69,22 @@ class CNotesMod : public CModule {
 		}
 	}
 
-public:
+  public:
 	MODCONSTRUCTOR(CNotesMod) {
 		using std::placeholders::_1;
 		AddHelpCommand();
-		AddCommand("List",   static_cast<CModCommand::ModCmdFunc>(&CNotesMod::ListCommand));
-		AddCommand("Add",    static_cast<CModCommand::ModCmdFunc>(&CNotesMod::AddNoteCommand),
-			"<key> <note>");
-		AddCommand("Del",    static_cast<CModCommand::ModCmdFunc>(&CNotesMod::DelCommand),
-			"<key>",         "Delete a note");
-		AddCommand("Mod", "<key> <note>", "Modify a note", std::bind(&CNotesMod::ModCommand, this, _1));
-		AddCommand("Get", "<key>", "", [this](const CString& sLine){ GetCommand(sLine); });
+		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(
+		                       &CNotesMod::ListCommand));
+		AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(
+		                      &CNotesMod::AddNoteCommand),
+		           "<key> <note>");
+		AddCommand("Del",
+		           static_cast<CModCommand::ModCmdFunc>(&CNotesMod::DelCommand),
+		           "<key>", "Delete a note");
+		AddCommand("Mod", "<key> <note>", "Modify a note",
+		           std::bind(&CNotesMod::ModCommand, this, _1));
+		AddCommand("Get", "<key>", "",
+		           [this](const CString& sLine) { GetCommand(sLine); });
 	}
 
 	virtual ~CNotesMod() {}
@@ -127,7 +132,9 @@ public:
 
 		if (!sKey.empty()) {
 			if (!bOverwrite && FindNV(sKey) != EndNV()) {
-				PutModNotice("That note already exists.  Use /#+<key> <note> to overwrite.");
+				PutModNotice(
+				    "That note already exists.  Use /#+<key> <note> to "
+				    "overwrite.");
 			} else if (AddNote(sKey, sValue)) {
 				if (!bOverwrite) {
 					PutModNotice("Added note [" + sKey + "]");
@@ -142,9 +149,7 @@ public:
 		return HALT;
 	}
 
-	bool DelNote(const CString& sKey) {
-		return DelNV(sKey);
-	}
+	bool DelNote(const CString& sKey) { return DelNV(sKey); }
 
 	bool AddNote(const CString& sKey, const CString& sNote) {
 		if (sKey.empty()) {
@@ -188,7 +193,8 @@ public:
 		}
 	}
 
-	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
+	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
+	                  CTemplate& Tmpl) override {
 		if (sPageName == "index") {
 			for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
 				CTemplate& Row = Tmpl.AddRow("NotesLoop");
@@ -212,10 +218,13 @@ public:
 	}
 };
 
-template<> void TModInfo<CNotesMod>(CModInfo& Info) {
+template <>
+void TModInfo<CNotesMod>(CModInfo& Info) {
 	Info.SetWikiPage("notes");
 	Info.SetHasArgs(true);
-	Info.SetArgsHelpText("This user module takes up to one arguments. It can be -disableNotesOnLogin not to show notes upon client login");
+	Info.SetArgsHelpText(
+	    "This user module takes up to one arguments. It can be "
+	    "-disableNotesOnLogin not to show notes upon client login");
 }
 
 USERMODULEDEFS(CNotesMod, "Keep and replay notes")

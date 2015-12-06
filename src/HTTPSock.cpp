@@ -19,7 +19,6 @@
 #include <znc/znc.h>
 #include <iomanip>
 
-
 #ifdef HAVE_ZLIB
 #include <zlib.h>
 #endif
@@ -27,38 +26,40 @@
 using std::map;
 using std::set;
 
-#define MAX_POST_SIZE	1024 * 1024
+#define MAX_POST_SIZE 1024 * 1024
 
-CHTTPSock::CHTTPSock(CModule *pMod, const CString& sURIPrefix) : CHTTPSock(pMod, sURIPrefix, "", 0) {
+CHTTPSock::CHTTPSock(CModule* pMod, const CString& sURIPrefix)
+    : CHTTPSock(pMod, sURIPrefix, "", 0) {
 	Init();
 }
 
-CHTTPSock::CHTTPSock(CModule *pMod, const CString& sURIPrefix, const CString& sHostname, unsigned short uPort, int iTimeout)
-		: CSocket(pMod, sHostname, uPort, iTimeout),
-		  m_bSentHeader(false),
-		  m_bGotHeader(false),
-		  m_bLoggedIn(false),
-		  m_bPost(false),
-		  m_bDone(false),
-		  m_bBasicAuth(false),
-		  m_uPostLen(0),
-		  m_sPostData(""),
-		  m_sURI(""),
-		  m_sUser(""),
-		  m_sPass(""),
-		  m_sContentType(""),
-		  m_sDocRoot(""),
-		  m_sForwardedIP(""),
-		  m_msvsPOSTParams(),
-		  m_msvsGETParams(),
-		  m_msHeaders(),
-		  m_bHTTP10Client(false),
-		  m_sIfNoneMatch(""),
-		  m_bAcceptGzip(false),
-		  m_msRequestCookies(),
-		  m_msResponseCookies(),
-		  m_sURIPrefix(sURIPrefix)
-{
+CHTTPSock::CHTTPSock(CModule* pMod, const CString& sURIPrefix,
+                     const CString& sHostname, unsigned short uPort,
+                     int iTimeout)
+    : CSocket(pMod, sHostname, uPort, iTimeout),
+      m_bSentHeader(false),
+      m_bGotHeader(false),
+      m_bLoggedIn(false),
+      m_bPost(false),
+      m_bDone(false),
+      m_bBasicAuth(false),
+      m_uPostLen(0),
+      m_sPostData(""),
+      m_sURI(""),
+      m_sUser(""),
+      m_sPass(""),
+      m_sContentType(""),
+      m_sDocRoot(""),
+      m_sForwardedIP(""),
+      m_msvsPOSTParams(),
+      m_msvsGETParams(),
+      m_msHeaders(),
+      m_bHTTP10Client(false),
+      m_sIfNoneMatch(""),
+      m_bAcceptGzip(false),
+      m_msRequestCookies(),
+      m_msResponseCookies(),
+      m_sURIPrefix(sURIPrefix) {
 	Init();
 }
 
@@ -79,9 +80,9 @@ void CHTTPSock::ReadData(const char* data, size_t len) {
 bool CHTTPSock::SendCookie(const CString& sKey, const CString& sValue) {
 	if (!sKey.empty() && !sValue.empty()) {
 		if (m_msRequestCookies.find(sKey) == m_msRequestCookies.end() ||
-			m_msRequestCookies[sKey].StrCmp(sValue) != 0)
-		{
-			// only queue a Set-Cookie to be sent if the client didn't send a Cookie header of the same name+value.
+		    m_msRequestCookies[sKey].StrCmp(sValue) != 0) {
+			// only queue a Set-Cookie to be sent if the client didn't send a
+			// Cookie header of the same name+value.
 			m_msResponseCookies[sKey] = sValue;
 		}
 		return true;
@@ -130,8 +131,9 @@ void CHTTPSock::ReadLine(const CString& sData) {
 		sLine.Token(1, true).Split(";", vsNV, false, "", "", true, true);
 
 		for (const CString& s : vsNV) {
-			m_msRequestCookies[s.Token(0, false, "=").Escape_n(CString::EURL, CString::EASCII)] =
-				s.Token(1, true, "=").Escape_n(CString::EURL, CString::EASCII);
+			m_msRequestCookies[s.Token(0, false, "=")
+			                       .Escape_n(CString::EURL, CString::EASCII)] =
+			    s.Token(1, true, "=").Escape_n(CString::EURL, CString::EASCII);
 		}
 	} else if (sName.Equals("Authorization:")) {
 		CString sUnhashed;
@@ -139,11 +141,14 @@ void CHTTPSock::ReadLine(const CString& sData) {
 		m_sUser = sUnhashed.Token(0, false, ":");
 		m_sPass = sUnhashed.Token(1, true, ":");
 		m_bBasicAuth = true;
-		// Postpone authorization attempt until end of headers, because cookies should be read before that, otherwise session id will be overwritten in GetSession()
+		// Postpone authorization attempt until end of headers, because cookies
+		// should be read before that, otherwise session id will be overwritten
+		// in GetSession()
 	} else if (sName.Equals("Content-Length:")) {
 		m_uPostLen = sLine.Token(1).ToULong();
 		if (m_uPostLen > MAX_POST_SIZE)
-			PrintErrorPage(413, "Request Entity Too Large", "The request you sent was too large.");
+			PrintErrorPage(413, "Request Entity Too Large",
+			               "The request you sent was too large.");
 	} else if (sName.Equals("X-Forwarded-For:")) {
 		// X-Forwarded-For: client, proxy1, proxy2
 		if (m_sForwardedIP.empty()) {
@@ -172,7 +177,8 @@ void CHTTPSock::ReadLine(const CString& sData) {
 				}
 			}
 
-			// either sIP is not trusted proxy, or it's in the beginning of the X-Forwarded-For list
+			// either sIP is not trusted proxy, or it's in the beginning of the
+			// X-Forwarded-For list
 			// in both cases use it as the endpoind
 			m_sForwardedIP = sIP;
 		}
@@ -182,13 +188,16 @@ void CHTTPSock::ReadLine(const CString& sData) {
 	} else if (sName.Equals("Accept-Encoding:") && !m_bHTTP10Client) {
 		SCString ssEncodings;
 		// trimming whitespace from the tokens is important:
-		sLine.Token(1, true).Split(",", ssEncodings, false, "", "", false, true);
+		sLine.Token(1, true)
+		    .Split(",", ssEncodings, false, "", "", false, true);
 		m_bAcceptGzip = (ssEncodings.find("gzip") != ssEncodings.end());
 	} else if (sLine.empty()) {
 		if (m_bBasicAuth && !m_bLoggedIn) {
 			m_bLoggedIn = OnLogin(m_sUser, m_sPass, true);
-			// After successful login ReadLine("") will be called again to trigger "else" block
-			// Failed login sends error and closes socket, so no infinite loop here
+			// After successful login ReadLine("") will be called again to
+			// trigger "else" block
+			// Failed login sends error and closes socket, so no infinite loop
+			// here
 		} else {
 			m_bGotHeader = true;
 
@@ -215,12 +224,11 @@ CString CHTTPSock::GetRemoteIP() const {
 CString CHTTPSock::GetDate(time_t stamp) {
 	struct tm tm;
 	std::stringstream stream;
-	const char *wkday[] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
-	const char *month[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-		"Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+	const char* wkday[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+	const char* month[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+	                       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
-	if (stamp == 0)
-		time(&stamp);
+	if (stamp == 0) time(&stamp);
 	gmtime_r(&stamp, &tm);
 
 	stream << wkday[tm.tm_wday] << ", ";
@@ -239,18 +247,18 @@ void CHTTPSock::GetPage() {
 
 	// Check that the requested path starts with the prefix. Strip it if so.
 	if (!m_sURI.TrimPrefix(m_sURIPrefix)) {
-		DEBUG("INVALID path => Does not start with prefix [" + m_sURIPrefix + "]");
+		DEBUG("INVALID path => Does not start with prefix [" + m_sURIPrefix +
+		      "]");
 		DEBUG("Expected prefix:   " << m_sURIPrefix);
 		DEBUG("Requested path:    " << m_sURI);
 		Redirect("/");
 	} else {
 		OnPageRequest(m_sURI);
 	}
-
 }
 
 #ifdef HAVE_ZLIB
-static bool InitZlibStream(z_stream *zStrm, const char* buf) {
+static bool InitZlibStream(z_stream* zStrm, const char* buf) {
 	memset(zStrm, 0, sizeof(z_stream));
 	zStrm->next_in = (Bytef*)buf;
 
@@ -259,8 +267,8 @@ static bool InitZlibStream(z_stream *zStrm, const char* buf) {
 	const int WINDOW_BITS = 15 + 16;
 	const int MEMLEVEL = 8;
 
-	return (deflateInit2(zStrm, Z_DEFAULT_COMPRESSION, Z_DEFLATED,
-		WINDOW_BITS, MEMLEVEL, Z_DEFAULT_STRATEGY) == Z_OK);
+	return (deflateInit2(zStrm, Z_DEFAULT_COMPRESSION, Z_DEFLATED, WINDOW_BITS,
+	                     MEMLEVEL, Z_DEFAULT_STRATEGY) == Z_OK);
 }
 #endif
 
@@ -274,7 +282,7 @@ void CHTTPSock::PrintPage(const CString& sPage) {
 		if (InitZlibStream(&zStrm, sPage.c_str())) {
 			DEBUG("- Sending gzip-compressed.");
 			AddHeader("Content-Encoding", "gzip");
-			PrintHeader(0); // we do not know the compressed data's length
+			PrintHeader(0);  // we do not know the compressed data's length
 
 			zStrm.avail_in = sPage.size();
 			do {
@@ -287,17 +295,18 @@ void CHTTPSock::PrintPage(const CString& sPage) {
 
 				zStatus = deflate(&zStrm, zFlush);
 
-				if((zStatus == Z_OK || zStatus == Z_STREAM_END) && zStrm.avail_out < sizeof(szBuf)) {
-					Write(szBuf, sizeof(szBuf) - zStrm.avail_out);	
+				if ((zStatus == Z_OK || zStatus == Z_STREAM_END) &&
+				    zStrm.avail_out < sizeof(szBuf)) {
+					Write(szBuf, sizeof(szBuf) - zStrm.avail_out);
 				}
-			} while(zStatus == Z_OK);
+			} while (zStatus == Z_OK);
 
 			Close(Csock::CLT_AFTERWRITE);
 			deflateEnd(&zStrm);
 			return;
 		}
 
-	} // else: fall through
+	}  // else: fall through
 #endif
 	if (!SentHeader()) {
 		PrintHeader(sPage.length());
@@ -318,7 +327,9 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 		sFilePath = CDir::CheckPathPrefix(m_sDocRoot, sFilePath, m_sDocRoot);
 
 		if (sFilePath.empty()) {
-			PrintErrorPage(403, "Forbidden", "You don't have permission to access that file on this server.");
+			PrintErrorPage(403, "Forbidden",
+			               "You don't have permission to access that file on "
+			               "this server.");
 			DEBUG("THIS FILE:     [" << sFilePath << "] does not live in ...");
 			DEBUG("DOCUMENT ROOT: [" << m_sDocRoot << "]");
 			return false;
@@ -359,7 +370,7 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 	CString sETag;
 
 	if (iMTime > 0 && !m_bHTTP10Client) {
-		sETag = "-" + CString(iMTime); // lighttpd style ETag
+		sETag = "-" + CString(iMTime);  // lighttpd style ETag
 
 		AddHeader("Last-Modified", GetDate(iMTime));
 		AddHeader("ETag", "\"" + sETag + "\"");
@@ -367,7 +378,8 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 
 		if (!m_sIfNoneMatch.empty()) {
 			m_sIfNoneMatch.Trim("\\\"'");
-			bNotModified = (m_sIfNoneMatch.Equals(sETag, CString::CaseSensitive));
+			bNotModified =
+			    (m_sIfNoneMatch.Equals(sETag, CString::CaseSensitive));
 		}
 	}
 
@@ -385,12 +397,15 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 		}
 
 #ifdef HAVE_ZLIB
-		bool bGzip = m_bAcceptGzip && (sContentType.StartsWith("text/") || sFileName.EndsWith(".js"));
+		bool bGzip = m_bAcceptGzip && (sContentType.StartsWith("text/") ||
+		                               sFileName.EndsWith(".js"));
 
 		if (bGzip) {
 			DEBUG("- Sending gzip-compressed.");
 			AddHeader("Content-Encoding", "gzip");
-			PrintHeader(0, sContentType); // we do not know the compressed data's length
+			PrintHeader(
+			    0,
+			    sContentType);  // we do not know the compressed data's length
 			WriteFileGzipped(File);
 		} else
 #endif
@@ -400,7 +415,8 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 		}
 	}
 
-	DEBUG("- ETag: [" << sETag << "] / If-None-Match [" << m_sIfNoneMatch << "]");
+	DEBUG("- ETag: [" << sETag << "] / If-None-Match [" << m_sIfNoneMatch
+	                  << "]");
 
 	Close(Csock::CLT_AFTERWRITE);
 
@@ -468,7 +484,8 @@ void CHTTPSock::WriteFileGzipped(CFile& File) {
 
 		zStatus = deflate(&zStrm, zFlush);
 
-		if ((zStatus == Z_OK || zStatus == Z_STREAM_END) && zStrm.avail_out < sizeof(szBufOut)) {
+		if ((zStatus == Z_OK || zStatus == Z_STREAM_END) &&
+		    zStrm.avail_out < sizeof(szBufOut)) {
 			// there's data in the buffer:
 			Write(szBufOut, sizeof(szBufOut) - zStrm.avail_out);
 		}
@@ -484,19 +501,20 @@ void CHTTPSock::ParseURI() {
 	m_sURI = m_sURI.Token(0, false, "?");
 }
 
-CString CHTTPSock::GetPath() const {
-	return m_sURI.Token(0, false, "?");
-}
+CString CHTTPSock::GetPath() const { return m_sURI.Token(0, false, "?"); }
 
-void CHTTPSock::ParseParams(const CString& sParams, map<CString, VCString> &msvsParams) {
+void CHTTPSock::ParseParams(const CString& sParams,
+                            map<CString, VCString>& msvsParams) {
 	msvsParams.clear();
 
 	VCString vsPairs;
 	sParams.Split("&", vsPairs, true);
 
 	for (const CString& sPair : vsPairs) {
-		CString sName = sPair.Token(0, false, "=").Escape_n(CString::EURL, CString::EASCII);
-		CString sValue = sPair.Token(1, true, "=").Escape_n(CString::EURL, CString::EASCII);
+		CString sName =
+		    sPair.Token(0, false, "=").Escape_n(CString::EURL, CString::EASCII);
+		CString sValue =
+		    sPair.Token(1, true, "=").Escape_n(CString::EURL, CString::EASCII);
 
 		msvsParams[sName].push_back(sValue);
 	}
@@ -507,43 +525,30 @@ void CHTTPSock::SetDocRoot(const CString& s) {
 	m_sDocRoot.Replace("//", "/");
 }
 
-const CString& CHTTPSock::GetDocRoot() const {
-	return m_sDocRoot;
-}
+const CString& CHTTPSock::GetDocRoot() const { return m_sDocRoot; }
 
-const CString& CHTTPSock::GetUser() const {
-	return m_sUser;
-}
+const CString& CHTTPSock::GetUser() const { return m_sUser; }
 
-const CString& CHTTPSock::GetPass() const {
-	return m_sPass;
-}
+const CString& CHTTPSock::GetPass() const { return m_sPass; }
 
-const CString& CHTTPSock::GetContentType() const {
-	return m_sContentType;
-}
+const CString& CHTTPSock::GetContentType() const { return m_sContentType; }
 
-const CString& CHTTPSock::GetParamString() const {
-	return m_sPostData;
-}
+const CString& CHTTPSock::GetParamString() const { return m_sPostData; }
 
-const CString& CHTTPSock::GetURIPrefix() const {
-	return m_sURIPrefix;
-}
+const CString& CHTTPSock::GetURIPrefix() const { return m_sURIPrefix; }
 
 bool CHTTPSock::HasParam(const CString& sName, bool bPost) const {
-	if (bPost)
-		return (m_msvsPOSTParams.find(sName) != m_msvsPOSTParams.end());
+	if (bPost) return (m_msvsPOSTParams.find(sName) != m_msvsPOSTParams.end());
 	return (m_msvsGETParams.find(sName) != m_msvsGETParams.end());
 }
 
 CString CHTTPSock::GetRawParam(const CString& sName, bool bPost) const {
-	if (bPost)
-		return GetRawParam(sName, m_msvsPOSTParams);
+	if (bPost) return GetRawParam(sName, m_msvsPOSTParams);
 	return GetRawParam(sName, m_msvsGETParams);
 }
 
-CString CHTTPSock::GetRawParam(const CString& sName, const map<CString, VCString>& msvsParams) {
+CString CHTTPSock::GetRawParam(const CString& sName,
+                               const map<CString, VCString>& msvsParams) {
 	CString sRet;
 
 	map<CString, VCString>::const_iterator it = msvsParams.find(sName);
@@ -555,13 +560,15 @@ CString CHTTPSock::GetRawParam(const CString& sName, const map<CString, VCString
 	return sRet;
 }
 
-CString CHTTPSock::GetParam(const CString& sName, bool bPost, const CString& sFilter) const {
-	if (bPost)
-		return GetParam(sName, m_msvsPOSTParams, sFilter);
+CString CHTTPSock::GetParam(const CString& sName, bool bPost,
+                            const CString& sFilter) const {
+	if (bPost) return GetParam(sName, m_msvsPOSTParams, sFilter);
 	return GetParam(sName, m_msvsGETParams, sFilter);
 }
 
-CString CHTTPSock::GetParam(const CString& sName, const map<CString, VCString>& msvsParams, const CString& sFilter) {
+CString CHTTPSock::GetParam(const CString& sName,
+                            const map<CString, VCString>& msvsParams,
+                            const CString& sFilter) {
 	CString sRet = GetRawParam(sName, msvsParams);
 	sRet.Trim();
 
@@ -572,13 +579,15 @@ CString CHTTPSock::GetParam(const CString& sName, const map<CString, VCString>& 
 	return sRet;
 }
 
-size_t CHTTPSock::GetParamValues(const CString& sName, set<CString>& ssRet, bool bPost, const CString& sFilter) const {
-	if (bPost)
-		return GetParamValues(sName, ssRet, m_msvsPOSTParams, sFilter);
+size_t CHTTPSock::GetParamValues(const CString& sName, set<CString>& ssRet,
+                                 bool bPost, const CString& sFilter) const {
+	if (bPost) return GetParamValues(sName, ssRet, m_msvsPOSTParams, sFilter);
 	return GetParamValues(sName, ssRet, m_msvsGETParams, sFilter);
 }
 
-size_t CHTTPSock::GetParamValues(const CString& sName, set<CString>& ssRet, const map<CString, VCString>& msvsParams, const CString& sFilter) {
+size_t CHTTPSock::GetParamValues(const CString& sName, set<CString>& ssRet,
+                                 const map<CString, VCString>& msvsParams,
+                                 const CString& sFilter) {
 	ssRet.clear();
 
 	map<CString, VCString>::const_iterator it = msvsParams.find(sName);
@@ -597,13 +606,15 @@ size_t CHTTPSock::GetParamValues(const CString& sName, set<CString>& ssRet, cons
 	return ssRet.size();
 }
 
-size_t CHTTPSock::GetParamValues(const CString& sName, VCString& vsRet, bool bPost, const CString& sFilter) const {
-	if (bPost)
-		return GetParamValues(sName, vsRet, m_msvsPOSTParams, sFilter);
+size_t CHTTPSock::GetParamValues(const CString& sName, VCString& vsRet,
+                                 bool bPost, const CString& sFilter) const {
+	if (bPost) return GetParamValues(sName, vsRet, m_msvsPOSTParams, sFilter);
 	return GetParamValues(sName, vsRet, m_msvsGETParams, sFilter);
 }
 
-size_t CHTTPSock::GetParamValues(const CString& sName, VCString& vsRet, const map<CString, VCString>& msvsParams, const CString& sFilter) {
+size_t CHTTPSock::GetParamValues(const CString& sName, VCString& vsRet,
+                                 const map<CString, VCString>& msvsParams,
+                                 const CString& sFilter) {
 	vsRet.clear();
 
 	map<CString, VCString>::const_iterator it = msvsParams.find(sName);
@@ -623,42 +634,52 @@ size_t CHTTPSock::GetParamValues(const CString& sName, VCString& vsRet, const ma
 }
 
 const map<CString, VCString>& CHTTPSock::GetParams(bool bPost) const {
-	if (bPost)
-		return m_msvsPOSTParams;
+	if (bPost) return m_msvsPOSTParams;
 	return m_msvsGETParams;
 }
 
-bool CHTTPSock::IsPost() const {
-	return m_bPost;
-}
+bool CHTTPSock::IsPost() const { return m_bPost; }
 
 bool CHTTPSock::PrintNotFound() {
-	return PrintErrorPage(404, "Not Found", "The requested URL was not found on this server.");
+	return PrintErrorPage(404, "Not Found",
+	                      "The requested URL was not found on this server.");
 }
 
-bool CHTTPSock::PrintErrorPage(unsigned int uStatusId, const CString& sStatusMsg, const CString& sMessage) {
+bool CHTTPSock::PrintErrorPage(unsigned int uStatusId,
+                               const CString& sStatusMsg,
+                               const CString& sMessage) {
 	if (SentHeader()) {
 		DEBUG("PrintErrorPage(): Header was already sent");
 		return false;
 	}
 
 	CString sPage =
-		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n"
-		"<!DOCTYPE html>\r\n"
-		"<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\">\r\n"
-			"<head>\r\n"
-				"<meta charset=\"UTF-8\"/>\r\n"
-				"<title>" + CString(uStatusId) + " " + sStatusMsg.Escape_n(CString::EHTML) + "</title>\r\n"
-			"</head>\r\n"
-			"<body>\r\n"
-				"<h1>" + sStatusMsg.Escape_n(CString::EHTML) + "</h1>\r\n"
-				"<p>" + sMessage.Escape_n(CString::EHTML) + "</p>\r\n"
-				"<hr/>\r\n"
-				"<p>" + CZNC::GetTag(false, /* bHTML = */ true) + "</p>\r\n"
-			"</body>\r\n"
-		"</html>\r\n";
+	    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n"
+	    "<!DOCTYPE html>\r\n"
+	    "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" "
+	    "xml:lang=\"en\">\r\n"
+	    "<head>\r\n"
+	    "<meta charset=\"UTF-8\"/>\r\n"
+	    "<title>" +
+	    CString(uStatusId) + " " + sStatusMsg.Escape_n(CString::EHTML) +
+	    "</title>\r\n"
+	    "</head>\r\n"
+	    "<body>\r\n"
+	    "<h1>" +
+	    sStatusMsg.Escape_n(CString::EHTML) +
+	    "</h1>\r\n"
+	    "<p>" +
+	    sMessage.Escape_n(CString::EHTML) +
+	    "</p>\r\n"
+	    "<hr/>\r\n"
+	    "<p>" +
+	    CZNC::GetTag(false, /* bHTML = */ true) +
+	    "</p>\r\n"
+	    "</body>\r\n"
+	    "</html>\r\n";
 
-	PrintHeader(sPage.length(), "text/html; charset=utf-8", uStatusId, sStatusMsg);
+	PrintHeader(sPage.length(), "text/html; charset=utf-8", uStatusId,
+	            sStatusMsg);
 	Write(sPage);
 	Close(Csock::CLT_AFTERWRITE);
 
@@ -675,21 +696,22 @@ bool CHTTPSock::ForceLogin() {
 		return false;
 	}
 
-	AddHeader("WWW-Authenticate", "Basic realm=\"" + CZNC::GetTag(false) + "\"");
+	AddHeader("WWW-Authenticate",
+	          "Basic realm=\"" + CZNC::GetTag(false) + "\"");
 	PrintErrorPage(401, "Unauthorized", "You need to login to view this page.");
 
 	return false;
 }
 
-bool CHTTPSock::OnLogin(const CString& sUser, const CString& sPass, bool bBasic) {
+bool CHTTPSock::OnLogin(const CString& sUser, const CString& sPass,
+                        bool bBasic) {
 	return false;
 }
 
-bool CHTTPSock::SentHeader() const {
-	return m_bSentHeader;
-}
+bool CHTTPSock::SentHeader() const { return m_bSentHeader; }
 
-bool CHTTPSock::PrintHeader(off_t uContentLength, const CString& sContentType, unsigned int uStatusId, const CString& sStatusMsg) {
+bool CHTTPSock::PrintHeader(off_t uContentLength, const CString& sContentType,
+                            unsigned int uStatusId, const CString& sStatusMsg) {
 	if (SentHeader()) {
 		DEBUG("PrintHeader(): Header was already sent!");
 		return false;
@@ -703,9 +725,11 @@ bool CHTTPSock::PrintHeader(off_t uContentLength, const CString& sContentType, u
 		m_sContentType = "text/html; charset=utf-8";
 	}
 
-	DEBUG("- " << uStatusId << " (" << sStatusMsg << ") [" << m_sContentType << "]");
+	DEBUG("- " << uStatusId << " (" << sStatusMsg << ") [" << m_sContentType
+	           << "]");
 
-	Write("HTTP/" + CString(m_bHTTP10Client ? "1.0 " : "1.1 ") + CString(uStatusId) + " " + sStatusMsg + "\r\n");
+	Write("HTTP/" + CString(m_bHTTP10Client ? "1.0 " : "1.1 ") +
+	      CString(uStatusId) + " " + sStatusMsg + "\r\n");
 	Write("Date: " + GetDate() + "\r\n");
 	Write("Server: " + CZNC::GetTag(false) + "\r\n");
 	if (uContentLength > 0) {
@@ -714,7 +738,9 @@ bool CHTTPSock::PrintHeader(off_t uContentLength, const CString& sContentType, u
 	Write("Content-Type: " + m_sContentType + "\r\n");
 
 	for (const auto& it : m_msResponseCookies) {
-		Write("Set-Cookie: " + it.first.Escape_n(CString::EURL) + "=" + it.second.Escape_n(CString::EURL) + "; HttpOnly; path=/;" + (GetSSL() ? "Secure;" : "") + "\r\n");
+		Write("Set-Cookie: " + it.first.Escape_n(CString::EURL) + "=" +
+		      it.second.Escape_n(CString::EURL) + "; HttpOnly; path=/;" +
+		      (GetSSL() ? "Secure;" : "") + "\r\n");
 	}
 
 	for (const auto& it : m_msHeaders) {
@@ -741,21 +767,22 @@ bool CHTTPSock::Redirect(const CString& sURL) {
 	if (SentHeader()) {
 		DEBUG("Redirect() - Header was already sent");
 		return false;
-	} else if(!sURL.StartsWith("/")) {
+	} else if (!sURL.StartsWith("/")) {
 		// HTTP/1.1 only admits absolute URIs for the Location header.
 		DEBUG("Redirect to relative URI [" + sURL + "] is not allowed.");
 		return false;
 	} else {
 		CString location = m_sURIPrefix + sURL;
 
-		DEBUG("- Redirect to [" << location << "] with prefix [" + m_sURIPrefix + "]");
+		DEBUG("- Redirect to [" << location
+		                        << "] with prefix [" + m_sURIPrefix + "]");
 		AddHeader("Location", location);
-		PrintErrorPage(302, "Found", "The document has moved <a href=\"" + location.Escape_n(CString::EHTML) + "\">here</a>.");
+		PrintErrorPage(302, "Found", "The document has moved <a href=\"" +
+		                                 location.Escape_n(CString::EHTML) +
+		                                 "\">here</a>.");
 
 		return true;
 	}
 }
 
-void CHTTPSock::Connected() {
-	SetTimeout(120);
-}
+void CHTTPSock::Connected() { SetTimeout(120); }

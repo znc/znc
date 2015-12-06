@@ -32,31 +32,32 @@ class CFile;
 // !Forward Declarations
 
 class CChan {
-public:
+  public:
 	typedef enum {
-		Voice   = '+',
-		HalfOp  = '%',
-		Op      = '@',
-		Admin   = '!',
-		Owner   = '*'
+		Voice = '+',
+		HalfOp = '%',
+		Op = '@',
+		Admin = '!',
+		Owner = '*'
 	} EUserPerms;
 
 	typedef enum {
-		M_Private    = 'p',
-		M_Secret     = 's',
-		M_Moderated  = 'm',
+		M_Private = 'p',
+		M_Secret = 's',
+		M_Moderated = 'm',
 		M_InviteOnly = 'i',
 		M_NoMessages = 'n',
-		M_OpTopic    = 't',
-		M_Limit      = 'l',
-		M_Key        = 'k',
-		M_Op         = 'o',
-		M_Voice      = 'v',
-		M_Ban        = 'b',
-		M_Except     = 'e'
+		M_OpTopic = 't',
+		M_Limit = 'l',
+		M_Key = 'k',
+		M_Op = 'o',
+		M_Voice = 'v',
+		M_Ban = 'b',
+		M_Except = 'e'
 	} EModes;
 
-	CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig, CConfig *pConfig = nullptr);
+	CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig,
+	      CConfig* pConfig = nullptr);
 	~CChan();
 
 	CChan(const CChan&) = delete;
@@ -70,7 +71,8 @@ public:
 	void AttachUser(CClient* pClient = nullptr);
 	void DetachUser();
 
-	void OnWho(const CString& sNick, const CString& sIdent, const CString& sHost);
+	void OnWho(const CString& sNick, const CString& sIdent,
+	           const CString& sHost);
 
 	// Modes
 	void SetModes(const CString& s);
@@ -95,12 +97,23 @@ public:
 	// Buffer
 	const CBuffer& GetBuffer() const { return m_Buffer; }
 	unsigned int GetBufferCount() const { return m_Buffer.GetLineCount(); }
-	bool SetBufferCount(unsigned int u, bool bForce = false) { m_bHasBufferCountSet = true; return m_Buffer.SetLineCount(u, bForce); }
-	void InheritBufferCount(unsigned int u, bool bForce = false) { if (!m_bHasBufferCountSet) m_Buffer.SetLineCount(u, bForce); }
+	bool SetBufferCount(unsigned int u, bool bForce = false) {
+		m_bHasBufferCountSet = true;
+		return m_Buffer.SetLineCount(u, bForce);
+	}
+	void InheritBufferCount(unsigned int u, bool bForce = false) {
+		if (!m_bHasBufferCountSet) m_Buffer.SetLineCount(u, bForce);
+	}
 	void ResetBufferCount();
-	size_t AddBuffer(const CMessage& Format, const CString& sText = "") { return m_Buffer.AddLine(Format, sText); }
+	size_t AddBuffer(const CMessage& Format, const CString& sText = "") {
+		return m_Buffer.AddLine(Format, sText);
+	}
 	/// @deprecated
-	size_t AddBuffer(const CString& sFormat, const CString& sText = "", const timeval* ts = nullptr, const MCString& mssTags = MCString::EmptyMap) { return m_Buffer.AddLine(sFormat, sText, ts, mssTags); }
+	size_t AddBuffer(const CString& sFormat, const CString& sText = "",
+	                 const timeval* ts = nullptr,
+	                 const MCString& mssTags = MCString::EmptyMap) {
+		return m_Buffer.AddLine(sFormat, sText, ts, mssTags);
+	}
 	void ClearBuffer() { m_Buffer.Clear(); }
 	void SendBuffer(CClient* pClient);
 	void SendBuffer(CClient* pClient, const CBuffer& Buffer);
@@ -115,7 +128,12 @@ public:
 
 	// Setters
 	void SetModeKnown(bool b) { m_bModeKnown = b; }
-	void SetIsOn(bool b) { m_bIsOn = b; if (!b) { Reset(); } }
+	void SetIsOn(bool b) {
+		m_bIsOn = b;
+		if (!b) {
+			Reset();
+		}
+	}
 	void SetKey(const CString& s);
 	void SetTopic(const CString& s) { m_sTopic = s; }
 	void SetTopicOwner(const CString& s) { m_sTopicOwner = s; }
@@ -142,13 +160,15 @@ public:
 	std::map<char, unsigned int> GetPermCounts() const;
 	bool IsOn() const { return m_bIsOn; }
 	const CString& GetName() const { return m_sName; }
-	const std::map<unsigned char, CString>& GetModes() const { return m_musModes; }
+	const std::map<unsigned char, CString>& GetModes() const {
+		return m_musModes;
+	}
 	const CString& GetKey() const { return m_sKey; }
 	const CString& GetTopic() const { return m_sTopic; }
 	const CString& GetTopicOwner() const { return m_sTopicOwner; }
 	unsigned long GetTopicDate() const { return m_ulTopicDate; }
 	const CString& GetDefaultModes() const { return m_sDefaultModes; }
-	const std::map<CString,CNick>& GetNicks() const { return m_msNicks; }
+	const std::map<CString, CNick>& GetNicks() const { return m_msNicks; }
 	size_t GetNickCount() const { return m_msNicks.size(); }
 	bool AutoClearChanBuffer() const { return m_bAutoClearChanBuffer; }
 	bool IsDetached() const { return m_bDetached; }
@@ -157,32 +177,34 @@ public:
 	bool IsDisabled() const { return m_bDisabled; }
 	unsigned int GetJoinTries() const { return m_uJoinTries; }
 	bool HasBufferCountSet() const { return m_bHasBufferCountSet; }
-	bool HasAutoClearChanBufferSet() const { return m_bHasAutoClearChanBufferSet; }
+	bool HasAutoClearChanBufferSet() const {
+		return m_bHasAutoClearChanBufferSet;
+	}
 	// !Getters
-private:
-protected:
-	bool                         m_bDetached;
-	bool                         m_bIsOn;
-	bool                         m_bAutoClearChanBuffer;
-	bool                         m_bInConfig;
-	bool                         m_bDisabled;
-	bool                         m_bHasBufferCountSet;
-	bool                         m_bHasAutoClearChanBufferSet;
-	CString                      m_sName;
-	CString                      m_sKey;
-	CString                      m_sTopic;
-	CString                      m_sTopicOwner;
-	unsigned long                m_ulTopicDate;
-	unsigned long                m_ulCreationDate;
-	CIRCNetwork*                 m_pNetwork;
-	CNick                        m_Nick;
-	unsigned int                 m_uJoinTries;
-	CString                      m_sDefaultModes;
-	std::map<CString,CNick>      m_msNicks;       // Todo: make this caseless (irc style)
-	CBuffer                      m_Buffer;
+  private:
+  protected:
+	bool m_bDetached;
+	bool m_bIsOn;
+	bool m_bAutoClearChanBuffer;
+	bool m_bInConfig;
+	bool m_bDisabled;
+	bool m_bHasBufferCountSet;
+	bool m_bHasAutoClearChanBufferSet;
+	CString m_sName;
+	CString m_sKey;
+	CString m_sTopic;
+	CString m_sTopicOwner;
+	unsigned long m_ulTopicDate;
+	unsigned long m_ulCreationDate;
+	CIRCNetwork* m_pNetwork;
+	CNick m_Nick;
+	unsigned int m_uJoinTries;
+	CString m_sDefaultModes;
+	std::map<CString, CNick> m_msNicks;  // Todo: make this caseless (irc style)
+	CBuffer m_Buffer;
 
-	bool                         m_bModeKnown;
+	bool m_bModeKnown;
 	std::map<unsigned char, CString> m_musModes;
 };
 
-#endif // !ZNC_CHAN_H
+#endif  // !ZNC_CHAN_H
