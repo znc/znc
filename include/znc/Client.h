@@ -192,61 +192,61 @@ class CClient : public CIRCSocket {
 
     void PutIRC(const CString& sLine);
     /** Sends a raw data line to the client.
-	 *  @param sLine The line to be sent.
-	 *
-	 *  The line is first passed \e unmodified to the \ref CModule::OnSendToClient()
-	 *  module hook. If no module halts the process, the line is then sent to the client.
-	 *
-	 *  These lines appear in the debug output in the following syntax:
-	 *  \code [time] (user/network) ZNC -> CLI [line] \endcode
-	 */
+     *  @param sLine The line to be sent.
+     *
+     *  The line is first passed \e unmodified to the \ref CModule::OnSendToClient()
+     *  module hook. If no module halts the process, the line is then sent to the client.
+     *
+     *  These lines appear in the debug output in the following syntax:
+     *  \code [time] (user/network) ZNC -> CLI [line] \endcode
+     */
     void PutClient(const CString& sLine);
     /** Sends a message to the client.
-	 *  @param  Message The message to be sent.
-	 *  @note   Only known and compatible messages and tags are sent.
-	 *  @return \c true if the message was sent, or \c false if it was ignored.
-	 *
-	 *  This method ensures that only messages and tags, that the client has
-	 *  explicitly requested, are sent. Not all IRC clients are capable of
-	 *  handling all messages and tags. For example, some older versions of
-	 *  popular clients were prepared to parse just one interesting tag,
-	 *  \c time, and would break if multiple tags were included. Furthermore,
-	 *  messages that are specific to a certain capability, should not be sent
-	 *  to a client that has not requested the respective capability. Thus, in
-	 *  order to stay compatible with a variety of IRC clients, ZNC has to
-	 *  filter out messages and tags that the client has not explicitly
-	 *  requested.
-	 *
-	 *  ### Message types
-	 *
-	 *  The following table documents which capabilities the client is required
-	 *  to have requested in order to receive certain types of messages.
-	 *
-	 *  Message type | Capability
-	 *  ------------ | ----------
-	 *  \c ACCOUNT   | \l CClient::HasAccountNotify() (<a href="http://ircv3.net/specs/extensions/account-notify-3.1.html">account-notify</a>)
-	 *  \c AWAY      | \l CClient::HasAwayNotify() (<a href="http://ircv3.net/specs/extensions/away-notify-3.1.html">away-notify</a>)
-	 *
-	 *  ### Message tags
-	 *
-	 *  The following table documents currently supported message tags, and
-	 *  which capabilities the client is required to have requested to receive
-	 *  the respective message tags.
-	 *
-	 *  Message tag | Capability
-	 *  ----------- | ----------
-	 *  \c time     | \l CClient::HasServerTime() (<a href="http://ircv3.net/specs/extensions/server-time-3.2.html">server-time</a>)
-	 *  \c batch    | \l CClient::HasBatch() (<a href="http://ircv3.net/specs/extensions/batch-3.2.html">batch</a>)
-	 *
-	 *  @warning Bypassing the filter may cause troubles to some older IRC clients.
-	 *
-	 *  It is possible to bypass the filter by converting a message to a string
-	 *  using \l CMessage::ToString(), and passing the resulting raw line to the
-	 *  \l CClient::PutClient(const CString& sLine) overload:
-	 *  \code
-	 *  pClient->PutClient(Message.ToString());
-	 *  \endcode
-	 */
+     *  @param  Message The message to be sent.
+     *  @note   Only known and compatible messages and tags are sent.
+     *  @return \c true if the message was sent, or \c false if it was ignored.
+     *
+     *  This method ensures that only messages and tags, that the client has
+     *  explicitly requested, are sent. Not all IRC clients are capable of
+     *  handling all messages and tags. For example, some older versions of
+     *  popular clients were prepared to parse just one interesting tag,
+     *  \c time, and would break if multiple tags were included. Furthermore,
+     *  messages that are specific to a certain capability, should not be sent
+     *  to a client that has not requested the respective capability. Thus, in
+     *  order to stay compatible with a variety of IRC clients, ZNC has to
+     *  filter out messages and tags that the client has not explicitly
+     *  requested.
+     *
+     *  ### Message types
+     *
+     *  The following table documents which capabilities the client is required
+     *  to have requested in order to receive certain types of messages.
+     *
+     *  Message type | Capability
+     *  ------------ | ----------
+     *  \c ACCOUNT   | \l CClient::HasAccountNotify() (<a href="http://ircv3.net/specs/extensions/account-notify-3.1.html">account-notify</a>)
+     *  \c AWAY      | \l CClient::HasAwayNotify() (<a href="http://ircv3.net/specs/extensions/away-notify-3.1.html">away-notify</a>)
+     *
+     *  ### Message tags
+     *
+     *  The following table documents currently supported message tags, and
+     *  which capabilities the client is required to have requested to receive
+     *  the respective message tags.
+     *
+     *  Message tag | Capability
+     *  ----------- | ----------
+     *  \c time     | \l CClient::HasServerTime() (<a href="http://ircv3.net/specs/extensions/server-time-3.2.html">server-time</a>)
+     *  \c batch    | \l CClient::HasBatch() (<a href="http://ircv3.net/specs/extensions/batch-3.2.html">batch</a>)
+     *
+     *  @warning Bypassing the filter may cause troubles to some older IRC clients.
+     *
+     *  It is possible to bypass the filter by converting a message to a string
+     *  using \l CMessage::ToString(), and passing the resulting raw line to the
+     *  \l CClient::PutClient(const CString& sLine) overload:
+     *  \code
+     *  pClient->PutClient(Message.ToString());
+     *  \endcode
+     */
     bool PutClient(const CMessage& Message);
     unsigned int PutStatus(const CTable& table);
     void PutStatus(const CString& sLine);

@@ -135,41 +135,41 @@ class CException {
 class CTable : protected std::vector<std::vector<CString>> {
   public:
     /** Constructor
-	 *
-	 *  @param uPreferredWidth If width of table is bigger than this, text in cells will be wrapped to several lines, if possible
-	 */
+     *
+     *  @param uPreferredWidth If width of table is bigger than this, text in cells will be wrapped to several lines, if possible
+     */
     CTable() : m_vsHeaders(), m_vsOutput() {}
     virtual ~CTable() {}
 
     /** Adds a new column to the table.
-	 *  Please note that you should add all columns before starting to fill
-	 *  the table!
-	 *  @param sName The name of the column.
-	 *  @return false if a column by that name already existed.
-	 */
+     *  Please note that you should add all columns before starting to fill
+     *  the table!
+     *  @param sName The name of the column.
+     *  @return false if a column by that name already existed.
+     */
     bool AddColumn(const CString& sName);
 
     /** Adds a new row to the table.
-	 *  After calling this you can fill the row with content.
-	 *  @return The index of this row
-	 */
+     *  After calling this you can fill the row with content.
+     *  @return The index of this row
+     */
     size_type AddRow();
 
     /** Sets a given cell in the table to a value.
-	 *  @param sColumn The name of the column you want to fill.
-	 *  @param sValue The value to write into that column.
-	 *  @param uRowIdx The index of the row to use as returned by AddRow().
-	 *                 If this is not given, the last row will be used.
-	 *  @return True if setting the cell was successful.
-	 */
+     *  @param sColumn The name of the column you want to fill.
+     *  @param sValue The value to write into that column.
+     *  @param uRowIdx The index of the row to use as returned by AddRow().
+     *                 If this is not given, the last row will be used.
+     *  @return True if setting the cell was successful.
+     */
     bool SetCell(const CString& sColumn, const CString& sValue,
                  size_type uRowIdx = ~0);
 
     /** Get a line of the table's output
-	 *  @param uIdx The index of the line you want.
-	 *  @param sLine This string will receive the output.
-	 *  @return True unless uIdx is past the end of the table.
-	 */
+     *  @param uIdx The index of the line you want.
+     *  @param sLine This string will receive the output.
+     *  @return True unless uIdx is past the end of the table.
+     */
     bool GetLine(unsigned int uIdx, CString& sLine) const;
 
     /// Completely clear the table.
@@ -199,10 +199,10 @@ class CTable : protected std::vector<std::vector<CString>> {
 class CBlowfish {
   public:
     /**
-	 * @param sPassword key to encrypt with
-	 * @param iEncrypt encrypt method (BF_DECRYPT or BF_ENCRYPT)
-	 * @param sIvec what to set the ivector to start with, default sets it all 0's
-	 */
+     * @param sPassword key to encrypt with
+     * @param iEncrypt encrypt method (BF_DECRYPT or BF_ENCRYPT)
+     * @param sIvec what to set the ivector to start with, default sets it all 0's
+     */
     CBlowfish(const CString& sPassword, int iEncrypt,
               const CString& sIvec = "");
     ~CBlowfish();
@@ -244,31 +244,31 @@ class TCacheMap {
     virtual ~TCacheMap() {}
 
     /**
-	 * @brief This function adds an item to the cache using the default time-to-live value
-	 * @param Item the item to add to the cache
-	 */
+     * @brief This function adds an item to the cache using the default time-to-live value
+     * @param Item the item to add to the cache
+     */
     void AddItem(const K& Item) { AddItem(Item, m_uTTL); }
 
     /**
-	 * @brief This function adds an item to the cache using a custom time-to-live value
-	 * @param Item the item to add to the cache
-	 * @param uTTL the time-to-live for this specific item
-	 */
+     * @brief This function adds an item to the cache using a custom time-to-live value
+     * @param Item the item to add to the cache
+     * @param uTTL the time-to-live for this specific item
+     */
     void AddItem(const K& Item, unsigned int uTTL) { AddItem(Item, V(), uTTL); }
 
     /**
-	 * @brief This function adds an item to the cache using the default time-to-live value
-	 * @param Item the item to add to the cache
-	 * @param Val The value associated with the key Item
-	 */
+     * @brief This function adds an item to the cache using the default time-to-live value
+     * @param Item the item to add to the cache
+     * @param Val The value associated with the key Item
+     */
     void AddItem(const K& Item, const V& Val) { AddItem(Item, Val, m_uTTL); }
 
     /**
-	 * @brief This function adds an item to the cache using a custom time-to-live value
-	 * @param Item the item to add to the cache
-	 * @param Val The value associated with the key Item
-	 * @param uTTL the time-to-live for this specific item
-	 */
+     * @brief This function adds an item to the cache using a custom time-to-live value
+     * @param Item the item to add to the cache
+     * @param Val The value associated with the key Item
+     * @param uTTL the time-to-live for this specific item
+     */
     void AddItem(const K& Item, const V& Val, unsigned int uTTL) {
         if (!uTTL) {
             // If time-to-live is zero we don't want to waste our time adding
@@ -281,20 +281,20 @@ class TCacheMap {
     }
 
     /**
-	 * @brief Performs a Cleanup() and then checks to see if your item exists
-	 * @param Item The item to check for
-	 * @return true if item exists
-	 */
+     * @brief Performs a Cleanup() and then checks to see if your item exists
+     * @param Item The item to check for
+     * @return true if item exists
+     */
     bool HasItem(const K& Item) {
         Cleanup();
         return (m_mItems.find(Item) != m_mItems.end());
     }
 
     /**
-	 * @brief Performs a Cleanup() and returns a pointer to the object, or nullptr
-	 * @param Item The item to check for
-	 * @return Pointer to the item or nullptr if there is no suitable one
-	 */
+     * @brief Performs a Cleanup() and returns a pointer to the object, or nullptr
+     * @param Item The item to check for
+     * @return Pointer to the item or nullptr if there is no suitable one
+     */
     V* GetItem(const K& Item) {
         Cleanup();
         iterator it = m_mItems.find(Item);
@@ -303,15 +303,15 @@ class TCacheMap {
     }
 
     /**
-	 * @brief Removes a specific item from the cache
-	 * @param Item The item to be removed
-	 * @return true if item existed and was removed, false if it never existed
-	 */
+     * @brief Removes a specific item from the cache
+     * @param Item The item to be removed
+     * @return true if item existed and was removed, false if it never existed
+     */
     bool RemItem(const K& Item) { return (m_mItems.erase(Item) != 0); }
 
     /**
-	 * @brief Cycles through the queue removing all of the stale entries
-	 */
+     * @brief Cycles through the queue removing all of the stale entries
+     */
     void Cleanup() {
         iterator it = m_mItems.begin();
 
@@ -325,13 +325,13 @@ class TCacheMap {
     }
 
     /**
-	 * @brief Clear all entries
-	 */
+     * @brief Clear all entries
+     */
     void Clear() { m_mItems.clear(); }
 
     /**
-	 * @brief Returns all entries
-	 */
+     * @brief Returns all entries
+     */
     std::map<K, V> GetItems() {
         Cleanup();
         std::map<K, V> mItems;

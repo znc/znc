@@ -55,8 +55,8 @@ class CIRCNetwork {
         /** Time between checks if PINGs need to be sent */
         PING_SLACK = 30,
         /** Timeout after which IRC connections are closed. Must
-		 *  obviously be greater than PING_FREQUENCY + PING_SLACK.
-		 */
+         *  obviously be greater than PING_FREQUENCY + PING_SLACK.
+         */
         NO_TRAFFIC_TIMEOUT = 180
     };
 
@@ -158,7 +158,7 @@ class CIRCNetwork {
 
     bool Connect();
     /** This method will return whether the user is connected and authenticated to an IRC server.
-	 */
+     */
     bool IsIRCConnected() const;
     void SetIRCSocket(CIRCSock* pIRCSock);
     void IRCConnected();

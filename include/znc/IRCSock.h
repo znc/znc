@@ -63,13 +63,13 @@ class CIRCSock : public CIRCSocket {
     void Quit(const CString& sQuitMsg = "");
 
     /** You can call this from CModule::OnServerCapResult to suspend
-	 *  sending other CAP requests and CAP END for a while. Each
-	 *  call to PauseCap should be balanced with a call to ResumeCap.
-	 */
+     *  sending other CAP requests and CAP END for a while. Each
+     *  call to PauseCap should be balanced with a call to ResumeCap.
+     */
     void PauseCap();
     /** If you used PauseCap, call this when CAP negotiation and logging in
-	 *  should be resumed again.
-	 */
+     *  should be resumed again.
+     */
     void ResumeCap();
 
     // Setters

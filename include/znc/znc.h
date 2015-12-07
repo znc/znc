@@ -180,12 +180,12 @@ class CZNC {
     CModule* FindModule(const CString& sModName, CUser* pUser);
 
     /** Reload a module everywhere
-	 *
-	 * This method will unload a module globally, for a user and for each
-	 * network. It will then reload them all again.
-	 *
-	 * @param sModule The name of the module to reload
-	 */
+     *
+     * This method will unload a module globally, for a user and for each
+     * network. It will then reload them all again.
+     *
+     * @param sModule The name of the module to reload
+     */
     bool UpdateModule(const CString& sModule);
 
     bool DeleteUser(const CString& sUsername);

@@ -845,10 +845,10 @@ CString CTemplate::GetValue(const CString& sArgs, bool bFromIf) {
     }
 
     /* We have no CConfig in ZNC land
-	 * Hmm... Actually, we do have it now.
-	if (msArgs.find("CONFIG") != msArgs.end()) {
-		sRet = CConfig::GetValue(sName);
-	} else*/ if (msArgs.find("ROWS") != msArgs.end()) {
+     * Hmm... Actually, we do have it now.
+    if (msArgs.find("CONFIG") != msArgs.end()) {
+        sRet = CConfig::GetValue(sName);
+    } else*/ if (msArgs.find("ROWS") != msArgs.end()) {
         vector<CTemplate*>* pLoop = GetLoop(sName);
         sRet = CString((pLoop) ? pLoop->size() : 0);
     } else if (msArgs.find("TOP") == msArgs.end() && pContext) {

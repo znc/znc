@@ -232,17 +232,17 @@ class CSockManager : public TSocketManager<CZNCSock> {
 class CSocket : public CZNCSock {
   public:
     /**
-	 * @brief ctor
-	 * @param pModule the module this sock instance is associated to
-	 */
+     * @brief ctor
+     * @param pModule the module this sock instance is associated to
+     */
     CSocket(CModule* pModule);
     /**
-	 * @brief ctor
-	 * @param pModule the module this sock instance is associated to
-	 * @param sHostname the hostname being connected to
-	 * @param uPort the port being connected to
-	 * @param iTimeout the timeout period for this specific sock
-	 */
+     * @brief ctor
+     * @param pModule the module this sock instance is associated to
+     * @param sHostname the hostname being connected to
+     * @param uPort the port being connected to
+     * @param iTimeout the timeout period for this specific sock
+     */
     CSocket(CModule* pModule, const CString& sHostname, unsigned short uPort,
             int iTimeout = 60);
     virtual ~CSocket();
@@ -283,15 +283,15 @@ class CIRCSocket : public CZNCSock {
   public:
 #ifdef HAVE_ICU
     /**
-	 * @brief Allow IRC control characters to appear even if protocol encoding explicitly disallows them.
-	 *
-	 * E.g. ISO-2022-JP disallows 0x0F, which in IRC means "reset format",
-	 * so by default it gets replaced with U+FFFD ("replacement character").
-	 * https://code.google.com/p/chromium/issues/detail?id=277062#c3
-	 *
-	 * In case if protocol encoding uses these code points for something else, the encoding takes preference,
-	 * and they are not IRC control characters anymore.
-	 */
+     * @brief Allow IRC control characters to appear even if protocol encoding explicitly disallows them.
+     *
+     * E.g. ISO-2022-JP disallows 0x0F, which in IRC means "reset format",
+     * so by default it gets replaced with U+FFFD ("replacement character").
+     * https://code.google.com/p/chromium/issues/detail?id=277062#c3
+     *
+     * In case if protocol encoding uses these code points for something else, the encoding takes preference,
+     * and they are not IRC control characters anymore.
+     */
     void IcuExtToUCallback(UConverterToUnicodeArgs* toArgs,
                            const char* codeUnits, int32_t length,
                            UConverterCallbackReason reason,

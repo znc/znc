@@ -303,35 +303,35 @@ class CModCommand {
     CModCommand();
 
     /** Construct a new CModCommand.
-	 * @param sCmd The name of the command.
-	 * @param func The command's callback function.
-	 * @param sArgs Help text describing the arguments to this command.
-	 * @param sDesc Help text describing what this command does.
-	 */
+     * @param sCmd The name of the command.
+     * @param func The command's callback function.
+     * @param sArgs Help text describing the arguments to this command.
+     * @param sDesc Help text describing what this command does.
+     */
     CModCommand(const CString& sCmd, CModule* pMod, ModCmdFunc func,
                 const CString& sArgs, const CString& sDesc);
     CModCommand(const CString& sCmd, CmdFunc func, const CString& sArgs,
                 const CString& sDesc);
 
     /** Copy constructor, needed so that this can be saved in a std::map.
-	 * @param other Object to copy from.
-	 */
+     * @param other Object to copy from.
+     */
     CModCommand(const CModCommand& other);
 
     /** Assignment operator, needed so that this can be saved in a std::map.
-	 * @param other Object to copy from.
-	 */
+     * @param other Object to copy from.
+     */
     CModCommand& operator=(const CModCommand& other);
 
     /** Initialize a CTable so that it can be used with AddHelp().
-	 * @param Table The instance of CTable to initialize.
-	 */
+     * @param Table The instance of CTable to initialize.
+     */
     static void InitHelp(CTable& Table);
 
     /** Add this command to the CTable instance.
-	 * @param Table Instance of CTable to which this should be added.
-	 * @warning The Table should be initialized via InitHelp().
-	 */
+     * @param Table Instance of CTable to which this should be added.
+     * @warning The Table should be initialized via InitHelp().
+     */
     void AddHelp(CTable& Table) const;
 
     const CString& GetCommand() const { return m_sCmd; }
@@ -374,33 +374,33 @@ class CModule {
     CModule& operator=(const CModule&) = delete;
 
     /** This enum is just used for return from module hooks. Based on this
-	 *  return, ZNC then decides what to do with the event which caused the
-	 *  module hook.
-	 */
+     *  return, ZNC then decides what to do with the event which caused the
+     *  module hook.
+     */
     typedef enum {
         /** ZNC will continue event processing normally. This is what
-		 *  you should return normally.
-		 */
+         *  you should return normally.
+         */
         CONTINUE = 1,
         /** This is the same as both CModule::HALTMODS and
-		 * CModule::HALTCORE together.
-		 */
+         * CModule::HALTCORE together.
+         */
         HALT = 2,
         /** Stop sending this even to other modules which were not
-		 *  called yet. Internally, the event is handled normally.
-		 */
+         *  called yet. Internally, the event is handled normally.
+         */
         HALTMODS = 3,
         /** Continue calling other modules. When done, ignore the event
-		 *  in the ZNC core. (For most module hooks this means that a
-		 *  given event won't be forwarded to the connected users)
-		 */
+         *  in the ZNC core. (For most module hooks this means that a
+         *  given event won't be forwarded to the connected users)
+         */
         HALTCORE = 4
     } EModRet;
 
     typedef enum {
         /** Your module can throw this enum at any given time. When this
-		 * is thrown, the module will be unloaded.
-		 */
+         * is thrown, the module will be unloaded.
+         */
         UNLOAD
     } EModException;
 
@@ -409,78 +409,78 @@ class CModule {
     void SetClient(CClient* pClient);
 
     /** This function throws CModule::UNLOAD which causes this module to be unloaded.
-	 */
+     */
     void Unload() { throw UNLOAD; }
 
     /** This module hook is called when a module is loaded
-	 *  @param sArgsi The arguments for the modules.
-	 *  @param sMessage A message that may be displayed to the user after
-	 *                  loading the module. Useful for returning error messages.
-	 *  @return true if the module loaded successfully, else false.
-	 */
+     *  @param sArgsi The arguments for the modules.
+     *  @param sMessage A message that may be displayed to the user after
+     *                  loading the module. Useful for returning error messages.
+     *  @return true if the module loaded successfully, else false.
+     */
     virtual bool OnLoad(const CString& sArgsi, CString& sMessage);
     /** This module hook is called during ZNC startup. Only modules loaded
-	 *  from znc.conf get this call.
-	 *  @return false to abort ZNC startup.
-	 */
+     *  from znc.conf get this call.
+     *  @return false to abort ZNC startup.
+     */
     virtual bool OnBoot();
 
     /** Modules which can only be used with an active user session have to return true here.
-	 *  @return false for modules that can do stuff for non-logged in web users as well.
-	 */
+     *  @return false for modules that can do stuff for non-logged in web users as well.
+     */
     virtual bool WebRequiresLogin() { return true; }
     /** Return true if this module should only be usable for admins on the web.
-	 *  @return false if normal users can use this module's web pages as well.
-	 */
+     *  @return false if normal users can use this module's web pages as well.
+     */
     virtual bool WebRequiresAdmin() { return false; }
     /** Return the title of the module's section in the web interface's side bar.
-	 *  @return The Title.
-	 */
+     *  @return The Title.
+     */
     virtual CString GetWebMenuTitle() { return ""; }
     virtual CString GetWebPath();
     virtual CString GetWebFilesPath();
     /** For WebMods: Called before the list of registered SubPages will be checked.
-	 *  Important: If you return true, you need to take care of calling WebSock.Close!
-	 *  This allows for stuff like returning non-templated data, long-polling and other fun.
-	 *  @param WebSock The active request.
-	 *  @param sPageName The name of the page that has been requested.
-	 *  @return true if you handled the page request or false if the name is to be checked
-	 *          against the list of registered SubPages and their permission settings.
-	 */
+     *  Important: If you return true, you need to take care of calling WebSock.Close!
+     *  This allows for stuff like returning non-templated data, long-polling and other fun.
+     *  @param WebSock The active request.
+     *  @param sPageName The name of the page that has been requested.
+     *  @return true if you handled the page request or false if the name is to be checked
+     *          against the list of registered SubPages and their permission settings.
+     */
     virtual bool OnWebPreRequest(CWebSock& WebSock, const CString& sPageName);
     /** If OnWebPreRequest returned false, and the RequiresAdmin/IsAdmin check has been passed,
-	 *  this method will be called with the page name. It will also be called for pages that
-	 *  have NOT been specifically registered with AddSubPage.
-	 *  @param WebSock The active request.
-	 *  @param sPageName The name of the page that has been requested.
-	 *  @param Tmpl The active template. You can add variables, loops and stuff to it.
-	 *  @return You MUST return true if you want the template to be evaluated and sent to the browser.
-	 *          Return false if you called Redirect() or PrintErrorPage(). If you didn't, a 404 page will be sent.
-	 */
+     *  this method will be called with the page name. It will also be called for pages that
+     *  have NOT been specifically registered with AddSubPage.
+     *  @param WebSock The active request.
+     *  @param sPageName The name of the page that has been requested.
+     *  @param Tmpl The active template. You can add variables, loops and stuff to it.
+     *  @return You MUST return true if you want the template to be evaluated and sent to the browser.
+     *          Return false if you called Redirect() or PrintErrorPage(). If you didn't, a 404 page will be sent.
+     */
     virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
                               CTemplate& Tmpl);
     /** Registers a sub page for the sidebar.
-	 *  @param spSubPage The SubPage instance.
-	 */
+     *  @param spSubPage The SubPage instance.
+     */
     virtual void AddSubPage(TWebSubPage spSubPage) {
         m_vSubPages.push_back(spSubPage);
     }
     /** Removes all registered (AddSubPage'd) SubPages.
-	 */
+     */
     virtual void ClearSubPages() { m_vSubPages.clear(); }
     /** Returns a list of all registered SubPages. Don't mess with it too much.
-	 *  @return The List.
-	 */
+     *  @return The List.
+     */
     virtual VWebSubPages& GetSubPages() { return m_vSubPages; }
     /** Using this hook, module can embed web stuff directly to different places.
-	 *  This method is called whenever embededded modules I/O happens.
-	 *  Name of used .tmpl file (if any) is up to caller.
-	 *  @param WebSock Socket for web connection, don't do bad things with it.
-	 *  @param sPageName Describes the place where web stuff is embedded to.
-	 *  @param Tmpl Template. Depending on context, you can do various stuff with it.
-	 *  @return If you don't need to embed web stuff to the specified place, just return false.
-	 *          Exact meaning of return value is up to caller, and depends on context.
-	 */
+     *  This method is called whenever embededded modules I/O happens.
+     *  Name of used .tmpl file (if any) is up to caller.
+     *  @param WebSock Socket for web connection, don't do bad things with it.
+     *  @param sPageName Describes the place where web stuff is embedded to.
+     *  @param Tmpl Template. Depending on context, you can do various stuff with it.
+     *  @return If you don't need to embed web stuff to the specified place, just return false.
+     *          Exact meaning of return value is up to caller, and depends on context.
+     */
     virtual bool OnEmbeddedWebRequest(CWebSock& WebSock,
                                       const CString& sPageName,
                                       CTemplate& Tmpl);
@@ -494,45 +494,45 @@ class CModule {
     /** This module hook is called after a successful login to IRC. */
     virtual void OnIRCConnected();
     /** This module hook is called just before ZNC tries to establish a
-	 *  connection to an IRC server.
-	 *  @param pIRCSock The socket that will be used for the connection.
-	 *  @return See CModule::EModRet.
-	 */
+     *  connection to an IRC server.
+     *  @param pIRCSock The socket that will be used for the connection.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnIRCConnecting(CIRCSock* pIRCSock);
     /** This module hook is called when a CIRCSock fails to connect or
-	 *  a module returned HALTCORE from OnIRCConnecting.
-	 *  @param pIRCSock The socket that failed to connect.
-	 */
+     *  a module returned HALTCORE from OnIRCConnecting.
+     *  @param pIRCSock The socket that failed to connect.
+     */
     virtual void OnIRCConnectionError(CIRCSock* pIRCSock);
     /** This module hook is called before loging in to the IRC server. The
-	 *  low-level connection is established at this point, but SSL
-	 *  handshakes didn't necessarily finish yet.
-	 *  @param sPass The server password that will be used.
-	 *  @param sNick The nick that will be used.
-	 *  @param sIdent The protocol identity that will be used. This is not
-	 *                the ident string that is transfered via e.g. oidentd!
-	 *  @param sRealName The real name that will be used.
-	 *  @return See CModule::EModRet.
-	 */
+     *  low-level connection is established at this point, but SSL
+     *  handshakes didn't necessarily finish yet.
+     *  @param sPass The server password that will be used.
+     *  @param sNick The nick that will be used.
+     *  @param sIdent The protocol identity that will be used. This is not
+     *                the ident string that is transfered via e.g. oidentd!
+     *  @param sRealName The real name that will be used.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnIRCRegistration(CString& sPass, CString& sNick,
                                       CString& sIdent, CString& sRealName);
     /** This module hook is called when a message is broadcasted to all users.
-	 *  @param sMessage The message that is broadcasted.
-	 *  @return see CModule::EModRet
-	 */
+     *  @param sMessage The message that is broadcasted.
+     *  @return see CModule::EModRet
+     */
     virtual EModRet OnBroadcast(CString& sMessage);
 
     /** This module hook is called when a user mode on a channel changes.
-	 *  @param pOpNick The nick who sent the mode change, or nullptr if set by server.
-	 *  @param Nick The nick whose channel mode changes.
-	 *  @param Channel The channel on which the user mode is changed.
-	 *  @param uMode The mode character that is changed, e.g. '@' for op.
-	 *  @param bAdded True if the mode is added, else false.
-	 *  @param bNoChange true if this mode change doesn't change anything
-	 *                   because the nick already had this permission.
-	 *  @see CIRCSock::GetModeType() for converting uMode into a mode (e.g.
-	 *       'o' for op).
-	 */
+     *  @param pOpNick The nick who sent the mode change, or nullptr if set by server.
+     *  @param Nick The nick whose channel mode changes.
+     *  @param Channel The channel on which the user mode is changed.
+     *  @param uMode The mode character that is changed, e.g. '@' for op.
+     *  @param bAdded True if the mode is added, else false.
+     *  @param bNoChange true if this mode change doesn't change anything
+     *                   because the nick already had this permission.
+     *  @see CIRCSock::GetModeType() for converting uMode into a mode (e.g.
+     *       'o' for op).
+     */
     virtual void OnChanPermission2(const CNick* pOpNick, const CNick& Nick,
                                    CChan& Channel, unsigned char uMode,
                                    bool bAdded, bool bNoChange);
@@ -560,80 +560,80 @@ class CModule {
     virtual void OnDevoice(const CNick& OpNick, const CNick& Nick,
                            CChan& Channel, bool bNoChange);
     /** Called on an individual channel mode change.
-	 *  @param pOpNick The nick who changes the channel mode, or nullptr if set by server.
-	 *  @param Channel The channel whose mode is changed.
-	 *  @param uMode The mode character that is changed.
-	 *  @param sArg The argument to the mode character, if any.
-	 *  @param bAdded True if this mode is added ("+"), else false.
-	 *  @param bNoChange True if this mode was already effective before.
-	 */
+     *  @param pOpNick The nick who changes the channel mode, or nullptr if set by server.
+     *  @param Channel The channel whose mode is changed.
+     *  @param uMode The mode character that is changed.
+     *  @param sArg The argument to the mode character, if any.
+     *  @param bAdded True if this mode is added ("+"), else false.
+     *  @param bNoChange True if this mode was already effective before.
+     */
     virtual void OnMode2(const CNick* pOpNick, CChan& Channel, char uMode,
                          const CString& sArg, bool bAdded, bool bNoChange);
     virtual void OnMode(const CNick& OpNick, CChan& Channel, char uMode,
                         const CString& sArg, bool bAdded, bool bNoChange);
     /** Called on any channel mode change. This is called before the more
-	 *  detailed mode hooks like e.g. OnOp() and OnMode().
-	 *  @param pOpNick The nick who changes the channel mode, or nullptr if set by server.
-	 *  @param Channel The channel whose mode is changed.
-	 *  @param sModes The raw mode change, e.g. "+s-io".
-	 *  @param sArgs All arguments to the mode change from sModes.
-	 */
+     *  detailed mode hooks like e.g. OnOp() and OnMode().
+     *  @param pOpNick The nick who changes the channel mode, or nullptr if set by server.
+     *  @param Channel The channel whose mode is changed.
+     *  @param sModes The raw mode change, e.g. "+s-io".
+     *  @param sArgs All arguments to the mode change from sModes.
+     */
     virtual void OnRawMode2(const CNick* pOpNick, CChan& Channel,
                             const CString& sModes, const CString& sArgs);
     virtual void OnRawMode(const CNick& OpNick, CChan& Channel,
                            const CString& sModes, const CString& sArgs);
 
     /** Called on any raw IRC line received from the <em>IRC server</em>.
-	 *  @param sLine The line read from the server.
-	 *  @note The line does not include message tags. Use OnRawMessage() to access them.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @param sLine The line read from the server.
+     *  @note The line does not include message tags. Use OnRawMessage() to access them.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnRaw(CString& sLine);
     /** Called on any raw message received from the <em>IRC server</em>.
-	 *  @since 1.7.0
-	 *  @param Message The received message.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @since 1.7.0
+     *  @param Message The received message.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnRawMessage(CMessage& Message);
 
     /** Called when a numeric message is received from the <em>IRC server</em>.
-	 *  @since 1.7.0
-	 *  @param Message The received message.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @since 1.7.0
+     *  @param Message The received message.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnNumericMessage(CNumericMessage& Message);
 
     /** Called when a command to *status is sent.
-	 *  @param sCommand The command sent.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @param sCommand The command sent.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnStatusCommand(CString& sCommand);
     /** Called when a command to your module is sent, e.g. query to *modname.
-	 *  @param sCommand The command that was sent.
-	 */
+     *  @param sCommand The command that was sent.
+     */
     virtual void OnModCommand(const CString& sCommand);
     /** This is similar to OnModCommand(), but it is only called if
-	 * HandleCommand didn't find any that wants to handle this. This is only
-	 * called if HandleCommand() is called, which practically means that
-	 * this is only called if you don't overload OnModCommand().
-	 *  @param sCommand The command that was sent.
-	 */
+     * HandleCommand didn't find any that wants to handle this. This is only
+     * called if HandleCommand() is called, which practically means that
+     * this is only called if you don't overload OnModCommand().
+     *  @param sCommand The command that was sent.
+     */
     virtual void OnUnknownModCommand(const CString& sCommand);
     /** Called when a your module nick was sent a notice.
-	 *  @param sMessage The message which was sent.
-	 */
+     *  @param sMessage The message which was sent.
+     */
     virtual void OnModNotice(const CString& sMessage);
     /** Called when your module nick was sent a CTCP message. OnModCommand()
-	 *  won't be called for this message.
-	 *  @param sMessage The message which was sent.
-	 */
+     *  won't be called for this message.
+     *  @param sMessage The message which was sent.
+     */
     virtual void OnModCTCP(const CString& sMessage);
 
     /** Called when a nick quit from IRC.
-	 *  @since 1.7.0
-	 *  @param Message The quit message.
-	 *  @param vChans List of channels which you and nick share.
-	 */
+     *  @since 1.7.0
+     *  @param Message The quit message.
+     *  @param vChans List of channels which you and nick share.
+     */
     virtual void OnQuitMessage(CQuitMessage& Message,
                                const std::vector<CChan*>& vChans);
     /// @deprecated Use OnQuitMessage() instead.
@@ -641,10 +641,10 @@ class CModule {
                         const std::vector<CChan*>& vChans);
 
     /** Called when a nickname change occurs.
-	 *  @since 1.7.0
-	 *  @param Message The nick message.
-	 *  @param vChans Channels which we and nick share.
-	 */
+     *  @since 1.7.0
+     *  @param Message The nick message.
+     *  @param vChans Channels which we and nick share.
+     */
     virtual void OnNickMessage(CNickMessage& Message,
                                const std::vector<CChan*>& vChans);
     /// @deprecated Use OnNickMessage() instead.
@@ -652,63 +652,63 @@ class CModule {
                         const std::vector<CChan*>& vChans);
 
     /** Called when a nick is kicked from a channel.
-	 *  @since 1.7.0
-	 *  @param Message The kick message.
-	 */
+     *  @since 1.7.0
+     *  @param Message The kick message.
+     */
     virtual void OnKickMessage(CKickMessage& Message);
     /// @deprecated Use OnKickMessage() instead.
     virtual void OnKick(const CNick& OpNick, const CString& sKickedNick,
                         CChan& Channel, const CString& sMessage);
 
     /** This module hook is called just before ZNC tries to join an IRC channel.
-	 *  @param Chan The channel which is about to get joined.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @param Chan The channel which is about to get joined.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnJoining(CChan& Channel);
 
     /** Called when a nick joins a channel.
-	 *  @since 1.7.0
-	 *  @param Message The join message.
-	 */
+     *  @since 1.7.0
+     *  @param Message The join message.
+     */
     virtual void OnJoinMessage(CJoinMessage& Message);
     /// @deprecated Use OnJoinMessage() instead.
     virtual void OnJoin(const CNick& Nick, CChan& Channel);
 
     /** Called when a nick parts a channel.
-	 *  @since 1.7.0
-	 *  @param Message The part message.
-	 */
+     *  @since 1.7.0
+     *  @param Message The part message.
+     */
     virtual void OnPartMessage(CPartMessage& Message);
     /// @deprecated Use OnPartMessage() instead.
     virtual void OnPart(const CNick& Nick, CChan& Channel,
                         const CString& sMessage);
 
     /** Called when user is invited into a channel
-	 *  @param Nick The nick who invited you.
-	 *  @param sChan The channel the user got invited into
-	 *  @return See CModule::EModRet.
-	 *  @todo Add OnInviteMessage() hook
-	 */
+     *  @param Nick The nick who invited you.
+     *  @param sChan The channel the user got invited into
+     *  @return See CModule::EModRet.
+     *  @todo Add OnInviteMessage() hook
+     */
     virtual EModRet OnInvite(const CNick& Nick, const CString& sChan);
 
     /** Called before a channel buffer is played back to a client.
-	 *  @param Chan The channel which will be played back.
-	 *  @param Client The client the buffer will be played back to.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @param Chan The channel which will be played back.
+     *  @param Client The client the buffer will be played back to.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnChanBufferStarting(CChan& Chan, CClient& Client);
     /** Called after a channel buffer was played back to a client.
-	 *  @param Chan The channel which was played back.
-	 *  @param Client The client the buffer was played back to.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @param Chan The channel which was played back.
+     *  @param Client The client the buffer was played back to.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnChanBufferEnding(CChan& Chan, CClient& Client);
 
     /** Called for each message during a channel's buffer play back.
-	 *  @since 1.7.0
-	 *  @param Message The playback message.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @since 1.7.0
+     *  @param Message The playback message.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnChanBufferPlayMessage(CMessage& Message);
     /// @deprecated Use OnChanBufferPlayMessage() instead.
     virtual EModRet OnChanBufferPlayLine2(CChan& Chan, CClient& Client,
@@ -718,10 +718,10 @@ class CModule {
                                          CString& sLine);
 
     /** Called for each message during a query's buffer play back.
-	 *  @since 1.7.0
-	 *  @param Message The playback message.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @since 1.7.0
+     *  @param Message The playback message.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnPrivBufferPlayMessage(CMessage& Message);
     /// @deprecated Use OnPrivBufferPlayMessage() instead.
     virtual EModRet OnPrivBufferPlayLine2(CClient& Client, CString& sLine,
@@ -735,304 +735,304 @@ class CModule {
     virtual void OnClientDisconnect();
 
     /** This module hook is called when a client sends a raw traffic line to ZNC.
-	 *  @param sLine The raw traffic line sent.
-	 *  @note The line does not include message tags. Use OnUserRawMessage() to access them.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @param sLine The raw traffic line sent.
+     *  @note The line does not include message tags. Use OnUserRawMessage() to access them.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnUserRaw(CString& sLine);
     /** This module hook is called when a client sends any message to ZNC.
-	 *  @since 1.7.0
-	 *  @param Message The message sent.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @since 1.7.0
+     *  @param Message The message sent.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnUserRawMessage(CMessage& Message);
 
     /** This module hook is called when a client sends a CTCP reply.
-	 *  @since 1.7.0
-	 *  @param Message The CTCP reply message.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @since 1.7.0
+     *  @param Message The CTCP reply message.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnUserCTCPReplyMessage(CCTCPMessage& Message);
     /// @deprecated Use OnUserCTCPReplyMessage() instead.
     virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage);
 
     /** This module hook is called when a client sends a CTCP request.
-	 *  @since 1.7.0
-	 *  @param Message The CTCP request message.
-	 *  @return See CModule::EModRet.
-	 *  @note This is not called for CTCP ACTION messages, use
-	 *        CModule::OnUserActionMessage() instead.
-	 */
+     *  @since 1.7.0
+     *  @param Message The CTCP request message.
+     *  @return See CModule::EModRet.
+     *  @note This is not called for CTCP ACTION messages, use
+     *        CModule::OnUserActionMessage() instead.
+     */
     virtual EModRet OnUserCTCPMessage(CCTCPMessage& Message);
     /// @deprecated Use OnUserCTCPMessage() instead.
     virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage);
 
     /** Called when a client sends a CTCP ACTION request ("/me").
-	 *  @since 1.7.0
-	 *  @param Message The action message.
-	 *  @return See CModule::EModRet.
-	 *  @note CModule::OnUserCTCPMessage() will not be called for this message.
-	 */
+     *  @since 1.7.0
+     *  @param Message The action message.
+     *  @return See CModule::EModRet.
+     *  @note CModule::OnUserCTCPMessage() will not be called for this message.
+     */
     virtual EModRet OnUserActionMessage(CActionMessage& Message);
     /// @deprecated Use OnUserActionMessage() instead.
     virtual EModRet OnUserAction(CString& sTarget, CString& sMessage);
 
     /** This module hook is called when a user sends a normal IRC message.
-	 *  @since 1.7.0
-	 *  @param Message The message which was sent.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @since 1.7.0
+     *  @param Message The message which was sent.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnUserTextMessage(CTextMessage& Message);
     /// @deprecated Use OnUserTextMessage() instead.
     virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage);
 
     /** This module hook is called when a user sends a notice message.
-	 *  @since 1.7.0
-	 *  @param Message The message which was sent.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @since 1.7.0
+     *  @param Message The message which was sent.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnUserNoticeMessage(CNoticeMessage& Message);
     /// @deprecated Use OnUserNoticeMessage() instead.
     virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage);
 
     /** This hooks is called when a user sends a JOIN message.
-	 *  @since 1.7.0
-	 *  @param Message The join message.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @since 1.7.0
+     *  @param Message The join message.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnUserJoinMessage(CJoinMessage& Message);
     /// @deprecated Use OnUserJoinMessage() instead.
     virtual EModRet OnUserJoin(CString& sChannel, CString& sKey);
 
     /** This hooks is called when a user sends a PART message.
-	 *  @since 1.7.0
-	 *  @param Message The part message.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @since 1.7.0
+     *  @param Message The part message.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnUserPartMessage(CPartMessage& Message);
     /// @deprecated Use OnUserPartMessage() instead.
     virtual EModRet OnUserPart(CString& sChannel, CString& sMessage);
 
     /** This module hook is called when a user wants to change a channel topic.
-	 *  @since 1.7.0
-	 *  @param Message The topic message.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @since 1.7.0
+     *  @param Message The topic message.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnUserTopicMessage(CTopicMessage& Message);
     /// @deprecated Use OnUserTopicMessage() instead.
     virtual EModRet OnUserTopic(CString& sChannel, CString& sTopic);
 
     /** This hook is called when a user requests a channel's topic.
-	 *  @param sChannel The channel for which the request is.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @param sChannel The channel for which the request is.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnUserTopicRequest(CString& sChannel);
 
     /** This module hook is called when a user requests to quit from network.
-	 *  @since 1.7.0
-	 *  @param Message The quit message the client sent.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @since 1.7.0
+     *  @param Message The quit message the client sent.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnUserQuitMessage(CQuitMessage& Message);
     /// @deprecated Use OnUserQuitMessage() instead.
     virtual EModRet OnUserQuit(CString& sMessage);
 
     /** Called when we receive a CTCP reply <em>from IRC</em>.
-	 *  @since 1.7.0
-	 *  @param Message The CTCP reply message.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @since 1.7.0
+     *  @param Message The CTCP reply message.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnCTCPReplyMessage(CCTCPMessage& Message);
     /// @deprecated Use OnCTCPReplyMessage() instead.
     virtual EModRet OnCTCPReply(CNick& Nick, CString& sMessage);
 
     /** Called when we receive a private CTCP request <em>from IRC</em>.
-	 *  @since 1.7.0
-	 *  @param Message The CTCP request message.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @since 1.7.0
+     *  @param Message The CTCP request message.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnPrivCTCPMessage(CCTCPMessage& Message);
     /// @deprecated Use OnPrivCTCPMessage() instead.
     virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage);
 
     /** Called when we receive a channel CTCP request <em>from IRC</em>.
-	 *  @since 1.7.0
-	 *  @param Message The CTCP request message.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @since 1.7.0
+     *  @param Message The CTCP request message.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnChanCTCPMessage(CCTCPMessage& Message);
     /// @deprecated Use OnChanCTCPMessage() instead.
     virtual EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage);
 
     /** Called when we receive a private CTCP ACTION ("/me" in query) <em>from IRC</em>.
-	 *  @since 1.7.0
-	 *  @param Message The action message
-	 *  @return See CModule::EModRet.
-	 */
+     *  @since 1.7.0
+     *  @param Message The action message
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnPrivActionMessage(CActionMessage& Message);
     /// @deprecated Use OnPrivActionMessage() instead.
     virtual EModRet OnPrivAction(CNick& Nick, CString& sMessage);
 
     /** Called when we receive a channel CTCP ACTION ("/me" in a channel) <em>from IRC</em>.
-	 *  @since 1.7.0
-	 *  @param Message The action message
-	 *  @return See CModule::EModRet.
-	 */
+     *  @since 1.7.0
+     *  @param Message The action message
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnChanActionMessage(CActionMessage& Message);
     /// @deprecated Use OnChanActionMessage() instead.
     virtual EModRet OnChanAction(CNick& Nick, CChan& Channel,
                                  CString& sMessage);
 
     /** Called when we receive a private message <em>from IRC</em>.
-	 *  @since 1.7.0
-	 *  @param Message The private message.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @since 1.7.0
+     *  @param Message The private message.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnPrivMessage(CTextMessage& Message);
     /// @deprecated Use OnPrivMessage() instead.
     virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage);
 
     /** Called when we receive a channel message <em>from IRC</em>.
-	 *  @since 1.7.0
-	 *  @param Message The channel message.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @since 1.7.0
+     *  @param Message The channel message.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnChanMessage(CTextMessage& Message);
     /// @deprecated Use OnChanMessage() instead.
     virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage);
 
     /** Called when we receive a private notice.
-	 *  @since 1.7.0
-	 *  @param Message The notice message.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @since 1.7.0
+     *  @param Message The notice message.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnPrivNoticeMessage(CNoticeMessage& Message);
     /// @deprecated Use OnPrivNoticeMessage() instead.
     virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage);
 
     /** Called when we receive a channel notice.
-	 *  @since 1.7.0
-	 *  @param Message The notice message.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @since 1.7.0
+     *  @param Message The notice message.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnChanNoticeMessage(CNoticeMessage& Message);
     /// @deprecated Use OnChanNoticeMessage() instead.
     virtual EModRet OnChanNotice(CNick& Nick, CChan& Channel,
                                  CString& sMessage);
 
     /** Called when we receive a channel topic change <em>from IRC</em>.
-	 *  @since 1.7.0
-	 *  @param Message The topic message.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @since 1.7.0
+     *  @param Message The topic message.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnTopicMessage(CTopicMessage& Message);
     /// @deprecated Use OnTopicMessage() instead.
     virtual EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic);
 
     /** Called for every CAP received via CAP LS from server.
-	 *  @param sCap capability supported by server.
-	 *  @return true if your module supports this CAP and
-	 *          needs to turn it on with CAP REQ.
-	 */
+     *  @param sCap capability supported by server.
+     *  @return true if your module supports this CAP and
+     *          needs to turn it on with CAP REQ.
+     */
     virtual bool OnServerCapAvailable(const CString& sCap);
     /** Called for every CAP accepted or rejected by server
-	 *  (with CAP ACK or CAP NAK after our CAP REQ).
-	 *  @param sCap capability accepted/rejected by server.
-	 *  @param bSuccess true if capability was accepted, false if rejected.
-	 */
+     *  (with CAP ACK or CAP NAK after our CAP REQ).
+     *  @param sCap capability accepted/rejected by server.
+     *  @param bSuccess true if capability was accepted, false if rejected.
+     */
     virtual void OnServerCapResult(const CString& sCap, bool bSuccess);
 
     /** This module hook is called just before ZNC tries to join a channel
-	 *  by itself because it's in the config but wasn't joined yet.
-	 *  @param Channel The channel which will be joined.
-	 *  @return See CModule::EModRet.
-	 */
+     *  by itself because it's in the config but wasn't joined yet.
+     *  @param Channel The channel which will be joined.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnTimerAutoJoin(CChan& Channel);
 
     /** This module hook is called when a network is being added.
-	 *  @param Network The new IRC network.
-	 *  @param sErrorRet A message that may be displayed to the user if
-	 *                  the module stops adding the network.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @param Network The new IRC network.
+     *  @param sErrorRet A message that may be displayed to the user if
+     *                  the module stops adding the network.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnAddNetwork(CIRCNetwork& Network, CString& sErrorRet);
     /** This module hook is called when a network is deleted.
-	 *  @param Network The IRC network which is going to be deleted.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @param Network The IRC network which is going to be deleted.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnDeleteNetwork(CIRCNetwork& Network);
 
     /** Called when ZNC sends a raw traffic line to a client.
-	 *  @param sLine The raw traffic line sent.
-	 *  @param Client The client this line is sent to.
-	 *  @warning Calling PutUser() from within this hook leads to infinite recursion.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @param sLine The raw traffic line sent.
+     *  @param Client The client this line is sent to.
+     *  @warning Calling PutUser() from within this hook leads to infinite recursion.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnSendToClient(CString& sLine, CClient& Client);
     /** Called when ZNC sends a raw traffic line to the IRC server.
-	 *  @param sLine The raw traffic line sent.
-	 *  @warning Calling PutIRC() from within this hook leads to infinite recursion.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @param sLine The raw traffic line sent.
+     *  @warning Calling PutIRC() from within this hook leads to infinite recursion.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnSendToIRC(CString& sLine);
 
     ModHandle GetDLL() { return m_pDLL; }
     static double GetCoreVersion() { return VERSION; }
 
     /** This function sends a given raw IRC line to the IRC server, if we
-	 *  are connected to one. Else this line is discarded.
-	 *  @param sLine The line which should be sent.
-	 *  @return true if the line was queued for sending.
-	 */
+     *  are connected to one. Else this line is discarded.
+     *  @param sLine The line which should be sent.
+     *  @return true if the line was queued for sending.
+     */
     virtual bool PutIRC(const CString& sLine);
     /** This function sends a given raw IRC line to a client.
-	 *  If we are in a module hook which is called for a specific client,
-	 *  only that client will get the line, else all connected clients will
-	 *  receive this line.
-	 *  @param sLine The line which should be sent.
-	 *  @return true if the line was sent to at least one client.
-	 */
+     *  If we are in a module hook which is called for a specific client,
+     *  only that client will get the line, else all connected clients will
+     *  receive this line.
+     *  @param sLine The line which should be sent.
+     *  @return true if the line was sent to at least one client.
+     */
     virtual bool PutUser(const CString& sLine);
     /** This function generates a query from *status. If we are in a module
-	 *  hook for a specific client, only that client gets this message, else
-	 *  all connected clients will receive it.
-	 *  @param sLine The message which should be sent from *status.
-	 *  @return true if the line was sent to at least one client.
-	 */
+     *  hook for a specific client, only that client gets this message, else
+     *  all connected clients will receive it.
+     *  @param sLine The message which should be sent from *status.
+     *  @return true if the line was sent to at least one client.
+     */
     virtual bool PutStatus(const CString& sLine);
     /** This function sends a query from your module nick. If we are in a
-	 *  module hook for a specific client, only that client gets this
-	 *  message, else all connected clients will receive it.
-	 *  @param sLine The message which should be sent.
-	 *  @return true if the line was sent to at least one client.
-	 */
+     *  module hook for a specific client, only that client gets this
+     *  message, else all connected clients will receive it.
+     *  @param sLine The message which should be sent.
+     *  @return true if the line was sent to at least one client.
+     */
     virtual bool PutModule(const CString& sLine);
     /** This function calls CModule::PutModule(const CString&, const
-	 *  CString&, const CString&) for each line in the table.
-	 *  @param table The table which should be send.
-	 *  @return The number of lines sent.
-	 */
+     *  CString&, const CString&) for each line in the table.
+     *  @param table The table which should be send.
+     *  @return The number of lines sent.
+     */
     virtual unsigned int PutModule(const CTable& table);
     /** Send a notice from your module nick. If we are in a module hook for
-	 *  a specific client, only that client gets this notice, else all
-	 *  clients will receive it.
-	 *  @param sLine The line which should be sent.
-	 *  @return true if the line was sent to at least one client.
-	 */
+     *  a specific client, only that client gets this notice, else all
+     *  clients will receive it.
+     *  @param sLine The line which should be sent.
+     *  @return true if the line was sent to at least one client.
+     */
     virtual bool PutModNotice(const CString& sLine);
 
     /** @returns The name of the module. */
     const CString& GetModName() const { return m_sModName; }
 
     /** @returns The nick of the module. This is just the module name
-	 *           prefixed by the status prefix.
-	 */
+     *           prefixed by the status prefix.
+     */
     CString GetModNick() const;
 
     /** Get the module's data dir.
-	 *  Modules can be accompanied by static data, e.g. skins for webadmin.
-	 *  These function will return the path to that data.
-	 */
+     *  Modules can be accompanied by static data, e.g. skins for webadmin.
+     *  These function will return the path to that data.
+     */
     const CString& GetModDataDir() const { return m_sDataDir; }
 
     // Timer stuff
@@ -1094,16 +1094,16 @@ class CModule {
     /// @return The CModCommand instance or nullptr if none was found.
     const CModCommand* FindCommand(const CString& sCmd) const;
     /** This function tries to dispatch the given command via the correct
-	 * instance of CModCommand. Before this can be called, commands have to
-	 * be added via AddCommand(). If no matching commands are found then
-	 * OnUnknownModCommand will be called.
-	 * @param sLine The command line to handle.
-	 * @return True if something was done, else false.
-	 */
+     * instance of CModCommand. Before this can be called, commands have to
+     * be added via AddCommand(). If no matching commands are found then
+     * OnUnknownModCommand will be called.
+     * @param sLine The command line to handle.
+     * @return True if something was done, else false.
+     */
     bool HandleCommand(const CString& sLine);
     /** Send a description of all registered commands via PutModule().
-	 * @param sLine The help command that is being asked for.
-	 */
+     * @param sLine The help command that is being asked for.
+     */
     void HandleHelpCommand(const CString& sLine = "");
     // !Command stuff
 
@@ -1143,122 +1143,122 @@ class CModule {
     const CString& GetModPath() const { return m_sModPath; }
 
     /** @returns For user modules this returns the user for which this
-	 *           module was loaded. For global modules this returns nullptr,
-	 *           except when we are in a user-specific module hook in which
-	 *           case this is the user pointer.
-	 */
+     *           module was loaded. For global modules this returns nullptr,
+     *           except when we are in a user-specific module hook in which
+     *           case this is the user pointer.
+     */
     CUser* GetUser() const { return m_pUser; }
     /** @returns nullptr except when we are in a network-specific module hook in
-	 *           which case this is the network for which the hook is called.
-	 */
+     *           which case this is the network for which the hook is called.
+     */
     CIRCNetwork* GetNetwork() const { return m_pNetwork; }
     /** @returns nullptr except when we are in a client-specific module hook in
-	 *           which case this is the client for which the hook is called.
-	 */
+     *           which case this is the client for which the hook is called.
+     */
     CClient* GetClient() const { return m_pClient; }
     CSockManager* GetManager() const { return m_pManager; }
     // !Getters
 
     // Global Modules
     /** This module hook is called when a user is being added.
-	 * @param User The user which will be added.
-	 * @param sErrorRet A message that may be displayed to the user if
-	 *                  the module stops adding the user.
-	 * @return See CModule::EModRet.
-	 */
+     * @param User The user which will be added.
+     * @param sErrorRet A message that may be displayed to the user if
+     *                  the module stops adding the user.
+     * @return See CModule::EModRet.
+     */
     virtual EModRet OnAddUser(CUser& User, CString& sErrorRet);
     /** This module hook is called when a user is deleted.
-	 *  @param User The user which will be deleted.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @param User The user which will be deleted.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnDeleteUser(CUser& User);
     /** This module hook is called when there is an incoming connection on
-	 *  any of ZNC's listening sockets.
-	 *  @param pSock The incoming client socket.
-	 *  @param sHost The IP the client is connecting from.
-	 *  @param uPort The port the client is connecting from.
-	 */
+     *  any of ZNC's listening sockets.
+     *  @param pSock The incoming client socket.
+     *  @param sHost The IP the client is connecting from.
+     *  @param uPort The port the client is connecting from.
+     */
     virtual void OnClientConnect(CZNCSock* pSock, const CString& sHost,
                                  unsigned short uPort);
     /** This module hook is called when a client tries to login. If your
-	 *  module wants to handle the login attempt, it must return
-	 *  CModule::EModRet::HALT;
-	 *  @param Auth The necessary authentication info for this login attempt.
-	 *  @return See CModule::EModRet.
-	 */
+     *  module wants to handle the login attempt, it must return
+     *  CModule::EModRet::HALT;
+     *  @param Auth The necessary authentication info for this login attempt.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth);
     /** Called after a client login was rejected.
-	 *  @param sUsername The username that tried to log in.
-	 *  @param sRemoteIP The IP address from which the client tried to login.
-	 */
+     *  @param sUsername The username that tried to log in.
+     *  @param sRemoteIP The IP address from which the client tried to login.
+     */
     virtual void OnFailedLogin(const CString& sUsername,
                                const CString& sRemoteIP);
     /** This function behaves like CModule::OnUserRaw(), but is also called
-	 *  before the client successfully logged in to ZNC. You should always
-	 *  prefer to use CModule::OnUserRaw() if possible.
-	 *  @param pClient The client which send this line.
-	 *  @param sLine The raw traffic line which the client sent.
-	 */
+     *  before the client successfully logged in to ZNC. You should always
+     *  prefer to use CModule::OnUserRaw() if possible.
+     *  @param pClient The client which send this line.
+     *  @param sLine The raw traffic line which the client sent.
+     */
     virtual EModRet OnUnknownUserRaw(CClient* pClient, CString& sLine);
     virtual EModRet OnUnknownUserRawMessage(CMessage& Message);
 
     /** Called when a client told us CAP LS. Use ssCaps.insert("cap-name")
-	 *  for announcing capabilities which your module supports.
-	 *  @param pClient The client which requested the list.
-	 *  @param ssCaps set of caps which will be sent to client.
-	 */
+     *  for announcing capabilities which your module supports.
+     *  @param pClient The client which requested the list.
+     *  @param ssCaps set of caps which will be sent to client.
+     */
     virtual void OnClientCapLs(CClient* pClient, SCString& ssCaps);
     /** Called only to check if your module supports turning on/off named capability.
-	 *  @param pClient The client which wants to enable/disable a capability.
-	 *  @param sCap name of capability.
-	 *  @param bState On or off, depending on which case is interesting for client.
-	 *  @return true if your module supports this capability in the specified state.
-	 */
+     *  @param pClient The client which wants to enable/disable a capability.
+     *  @param sCap name of capability.
+     *  @param bState On or off, depending on which case is interesting for client.
+     *  @return true if your module supports this capability in the specified state.
+     */
     virtual bool IsClientCapSupported(CClient* pClient, const CString& sCap,
                                       bool bState);
     /** Called when we actually need to turn a capability on or off for a client.
-	 *  @param pClient The client which requested the capability.
-	 *  @param sCap name of wanted capability.
-	 *  @param bState On or off, depending on which case client needs.
-	 */
+     *  @param pClient The client which requested the capability.
+     *  @param sCap name of wanted capability.
+     *  @param bState On or off, depending on which case client needs.
+     */
     virtual void OnClientCapRequest(CClient* pClient, const CString& sCap,
                                     bool bState);
 
     /** Called when a module is going to be loaded.
-	 *  @param sModName name of the module.
-	 *  @param eType wanted type of the module (user/global).
-	 *  @param sArgs arguments of the module.
-	 *  @param[out] bSuccess the module was loaded successfully
-	 *                       as result of this module hook?
-	 *  @param[out] sRetMsg text about loading of the module.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @param sModName name of the module.
+     *  @param eType wanted type of the module (user/global).
+     *  @param sArgs arguments of the module.
+     *  @param[out] bSuccess the module was loaded successfully
+     *                       as result of this module hook?
+     *  @param[out] sRetMsg text about loading of the module.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnModuleLoading(const CString& sModName,
                                     const CString& sArgs,
                                     CModInfo::EModuleType eType, bool& bSuccess,
                                     CString& sRetMsg);
     /** Called when a module is going to be unloaded.
-	 *  @param pModule the module.
-	 *  @param[out] bSuccess the module was unloaded successfully
-	 *                       as result of this module hook?
-	 *  @param[out] sRetMsg text about unloading of the module.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @param pModule the module.
+     *  @param[out] bSuccess the module was unloaded successfully
+     *                       as result of this module hook?
+     *  @param[out] sRetMsg text about unloading of the module.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnModuleUnloading(CModule* pModule, bool& bSuccess,
                                       CString& sRetMsg);
     /** Called when info about a module is needed.
-	 *  @param[out] ModInfo put result here, if your module knows it.
-	 *  @param sModule name of the module.
-	 *  @param bSuccess this module provided info about the module.
-	 *  @param sRetMsg text describing possible issues.
-	 *  @return See CModule::EModRet.
-	 */
+     *  @param[out] ModInfo put result here, if your module knows it.
+     *  @param sModule name of the module.
+     *  @param bSuccess this module provided info about the module.
+     *  @param sRetMsg text describing possible issues.
+     *  @return See CModule::EModRet.
+     */
     virtual EModRet OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
                                  bool& bSuccess, CString& sRetMsg);
     /** Called when list of available mods is requested.
-	 *  @param ssMods put new modules here.
-	 *  @param bGlobal true if global modules are needed.
-	 */
+     *  @param ssMods put new modules here.
+     *  @param bGlobal true if global modules are needed.
+     */
     virtual void OnGetAvailableMods(std::set<CModInfo>& ssMods,
                                     CModInfo::EModuleType eType);
     // !Global Modules
