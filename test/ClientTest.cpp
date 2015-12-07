@@ -42,6 +42,7 @@ protected:
 };
 
 TEST_F(ClientTest, Pass) {
+	// clang-format off
 	testPass("p@ss#w0rd",                                 "",            "",           "",         "p@ss#w0rd");
 	testPass("user:p@ss#w0rd",                            "user",        "",           "",         "p@ss#w0rd");
 	testPass("user/net-work:p@ss#w0rd",                   "user",        "",           "net-work", "p@ss#w0rd");
@@ -52,9 +53,11 @@ TEST_F(ClientTest, Pass) {
 	testPass("user@znc.in/net-work:p@ss#w0rd",            "user@znc.in", "",           "net-work", "p@ss#w0rd");
 	testPass("user@znc.in@identifier:p@ss#w0rd",          "user@znc.in", "identifier", "",         "p@ss#w0rd");
 	testPass("user@znc.in@identifier/net-work:p@ss#w0rd", "user@znc.in", "identifier", "net-work", "p@ss#w0rd");
+	// clang-format on
 }
 
 TEST_F(ClientTest, User) {
+	// clang-format off
 	testUser("user/net-work",                   "user",        "",           "net-work");
 	testUser("user@identifier",                 "user",        "identifier", "");
 	testUser("user@identifier/net-work",        "user",        "identifier", "net-work");
@@ -62,6 +65,7 @@ TEST_F(ClientTest, User) {
 	testUser("user@znc.in/net-work",            "user@znc.in", "",           "net-work");
 	testUser("user@znc.in@identifier",          "user@znc.in", "identifier", "");
 	testUser("user@znc.in@identifier/net-work", "user@znc.in", "identifier", "net-work");
+	// clang-format on
 }
 
 TEST_F(ClientTest, AccountNotify) {

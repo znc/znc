@@ -89,6 +89,7 @@ TEST_F(BufferTest, AddLine) {
 }
 
 TEST_F(BufferTest, UpdateLine) {
+	// clang-format off
 	CBuffer buffer(50);
 
 	VCString lines = {
@@ -129,4 +130,5 @@ TEST_F(BufferTest, UpdateLine) {
 
 	EXPECT_EQ(17u, buffer.UpdateExactLine(CMessage(":irc.server.com 005 nick FOO=bar :are supported by this server")));
 	EXPECT_EQ(":irc.server.com 005 nick FOO=bar :are supported by this server", buffer.GetBufLine(16).GetFormat());
+	// clang-format on
 }

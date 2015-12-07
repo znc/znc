@@ -153,6 +153,7 @@ private:
 };
 
 void WriteConfig(QString path) {
+	// clang-format off
 	Process p("./znc", QStringList() << "--debug" << "--datadir" << path << "--makeconf", true);
 	p.ReadUntil("Listen on port");Z;          p.Write("12345");
 	p.ReadUntil("Listen using SSL");Z;        p.Write();
@@ -174,6 +175,7 @@ void WriteConfig(QString path) {
 	p.ReadUntil("channels");Z;                p.Write();
 	p.ReadUntil("Launch ZNC now?");Z;         p.Write("no");
 	p.ShouldFinishItself();
+	// clang-format on
 }
 
 TEST(Config, AlreadyExists) {

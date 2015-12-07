@@ -49,12 +49,14 @@ protected:
 };
 
 TEST_F(EscapeTest, Test) {
+	// clang-format off
 	//          input     url          html             sql         msgtag
 	testString("abcdefg","abcdefg",   "abcdefg",       "abcdefg",   "abcdefg");
 	testString("\n\t\r", "%0A%09%0D", "\n\t\r",        "\\n\\t\\r", "\\n\t\\r");
 	testString("'\"",    "%27%22",    "'&quot;",       "\\'\\\"",   "'\"");
 	testString("&<>",    "%26%3C%3E", "&amp;&lt;&gt;", "&<>",       "&<>");
 	testString(" ;",     "+%3B",      " ;",            " ;",        "\\s\\:");
+	// clang-format on
 }
 
 TEST(StringTest, Bool) {
