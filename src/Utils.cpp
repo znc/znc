@@ -416,7 +416,7 @@ inline CString FixGMT(CString sTZ) {
     }
     return sTZ;
 }
-}
+}  // namespace
 
 CString CUtils::CTime(time_t t, const CString& sTimezone) {
     char s[30] = {};  // should have at least 26 bytes
@@ -537,7 +537,7 @@ void FillTimezones(const CString& sPath, SCString& result,
         }
     }
 }
-}
+}  // namespace
 
 SCString CUtils::GetTimezones() {
     static SCString result;

@@ -41,7 +41,7 @@ class CFloodDetachMod : public CModule {
                    "[yes|no]");
     }
 
-    ~CFloodDetachMod() {}
+    ~CFloodDetachMod() override {}
 
     void Save() {
         // We save the settings twice because the module arguments can

@@ -1557,7 +1557,7 @@ class CAdminMod : public CModule {
                    "[username]", "List all networks for a user");
     }
 
-    virtual ~CAdminMod() {}
+    ~CAdminMod() override {}
 };
 
 template <>

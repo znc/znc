@@ -97,7 +97,7 @@ class CWebAdminMod : public CModule {
                                                  CWebSubPage::F_ADMIN));
     }
 
-    virtual ~CWebAdminMod() {}
+    ~CWebAdminMod() override {}
 
     bool OnLoad(const CString& sArgStr, CString& sMessage) override {
         if (sArgStr.empty() || CModInfo::GlobalModule != GetType()) return true;

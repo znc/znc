@@ -163,7 +163,7 @@ class CAutoVoiceMod : public CModule {
         return true;
     }
 
-    virtual ~CAutoVoiceMod() {
+    ~CAutoVoiceMod() override {
         for (const auto& it : m_msUsers) {
             delete it.second;
         }

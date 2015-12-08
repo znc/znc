@@ -33,7 +33,7 @@ class CStickyChan : public CModule {
                                &CStickyChan::OnListCommand),
                    "", "Lists sticky channels");
     }
-    virtual ~CStickyChan() {}
+    ~CStickyChan() override {}
 
     bool OnLoad(const CString& sArgs, CString& sMessage) override;
 
@@ -56,9 +56,8 @@ class CStickyChan : public CModule {
         return CONTINUE;
     }
 
-    virtual void OnMode(const CNick& pOpNick, CChan& Channel, char uMode,
-                        const CString& sArg, bool bAdded,
-                        bool bNoChange) override {
+    void OnMode(const CNick& pOpNick, CChan& Channel, char uMode,
+                const CString& sArg, bool bAdded, bool bNoChange) override {
         if (uMode == CChan::M_Key) {
             if (bAdded) {
                 // We ignore channel key "*" because of some broken nets.

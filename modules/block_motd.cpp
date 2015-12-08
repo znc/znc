@@ -27,7 +27,7 @@ class CBlockMotd : public CModule {
                    "specify which server to query.");
     }
 
-    virtual ~CBlockMotd() {}
+    ~CBlockMotd() override {}
 
     void OverrideCommand(const CString& sLine) {
         m_bTemporaryAcceptMotd = true;

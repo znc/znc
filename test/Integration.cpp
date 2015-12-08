@@ -137,7 +137,7 @@ class Process : public IO<QProcess> {
         m_proc.setProcessEnvironment(env);
         m_proc.start(cmd, args);
     }
-    ~Process() {
+    ~Process() override {
         if (m_kill) m_proc.terminate();
         [this]() {
             ASSERT_TRUE(m_proc.waitForFinished());

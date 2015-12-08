@@ -30,7 +30,7 @@ class CDCCBounce : public CSocket {
                unsigned short uPort, const CString& sRemoteNick,
                const CString& sRemoteIP, const CString& sFileName,
                int iTimeout = 60, bool bIsChat = false);
-    virtual ~CDCCBounce();
+    ~CDCCBounce() override;
 
     static unsigned short DCCRequest(const CString& sNick,
                                      unsigned long uLongIP,
@@ -158,7 +158,7 @@ class CBounceDCCMod : public CModule {
                    "<true|false>");
     }
 
-    virtual ~CBounceDCCMod() {}
+    ~CBounceDCCMod() override {}
 
     CString GetLocalDCCIP() { return GetUser()->GetLocalDCCIP(); }
 

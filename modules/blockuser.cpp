@@ -36,7 +36,7 @@ class CBlockUser : public CModule {
                    "<user>", "Unblock a user");
     }
 
-    virtual ~CBlockUser() {}
+    ~CBlockUser() override {}
 
     bool OnLoad(const CString& sArgs, CString& sMessage) override {
         VCString vArgs;

@@ -77,7 +77,7 @@ class CLastSeenMod : public CModule {
                    "", "Shows list of users and when they last logged in");
     }
 
-    virtual ~CLastSeenMod() {}
+    ~CLastSeenMod() override {}
 
     // Event stuff:
 

@@ -21,7 +21,7 @@
 class CFOModule : public CModule {
   public:
     MODCONSTRUCTOR(CFOModule) {}
-    virtual ~CFOModule() {}
+    ~CFOModule() override {}
 
     bool IsOnlineModNick(const CString& sNick) {
         const CString& sPrefix = GetUser()->GetStatusPrefix();

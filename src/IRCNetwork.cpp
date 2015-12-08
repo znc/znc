@@ -39,7 +39,7 @@ class CIRCNetworkPingTimer : public CCron {
         Start(CIRCNetwork::PING_SLACK);
     }
 
-    virtual ~CIRCNetworkPingTimer() {}
+    ~CIRCNetworkPingTimer() override {}
 
     CIRCNetworkPingTimer(const CIRCNetworkPingTimer&) = delete;
     CIRCNetworkPingTimer& operator=(const CIRCNetworkPingTimer&) = delete;
@@ -77,7 +77,7 @@ class CIRCNetworkJoinTimer : public CCron {
         Start(CIRCNetwork::JOIN_FREQUENCY);
     }
 
-    virtual ~CIRCNetworkJoinTimer() {}
+    ~CIRCNetworkJoinTimer() override {}
 
     CIRCNetworkJoinTimer(const CIRCNetworkJoinTimer&) = delete;
     CIRCNetworkJoinTimer& operator=(const CIRCNetworkJoinTimer&) = delete;

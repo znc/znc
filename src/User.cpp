@@ -34,7 +34,7 @@ class CUserTimer : public CCron {
         SetName("CUserTimer::" + m_pUser->GetUserName());
         Start(CIRCNetwork::PING_SLACK);
     }
-    virtual ~CUserTimer() {}
+    ~CUserTimer() override {}
 
     CUserTimer(const CUserTimer&) = delete;
     CUserTimer& operator=(const CUserTimer&) = delete;

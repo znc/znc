@@ -30,7 +30,7 @@ class CSimpleAwayJob : public CTimer {
                    const CString& sDescription)
         : CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {}
 
-    virtual ~CSimpleAwayJob() {}
+    ~CSimpleAwayJob() override {}
 
   protected:
     void RunJob() override;
@@ -76,7 +76,7 @@ class CSimpleAway : public CModule {
             "", "Get or set the minimum number of clients before going away");
     }
 
-    virtual ~CSimpleAway() {}
+    ~CSimpleAway() override {}
 
     bool OnLoad(const CString& sArgs, CString& sMessage) override {
         CString sReasonArg;

@@ -186,7 +186,7 @@ class CRouteTimeout : public CTimer {
                   unsigned int uCycles, const CString& sLabel,
                   const CString& sDescription)
         : CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {}
-    virtual ~CRouteTimeout() {}
+    ~CRouteTimeout() override {}
 
   protected:
     void RunJob() override;
@@ -212,7 +212,7 @@ class CRouteRepliesMod : public CModule {
                    "Decides whether to show the timeout messages or not");
     }
 
-    virtual ~CRouteRepliesMod() {
+    ~CRouteRepliesMod() override {
         requestQueue::iterator it;
 
         while (!m_vsPending.empty()) {

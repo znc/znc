@@ -22,7 +22,7 @@ class CChanSaverMod : public CModule {
   public:
     MODCONSTRUCTOR(CChanSaverMod) {}
 
-    virtual ~CChanSaverMod() {}
+    ~CChanSaverMod() override {}
 
     bool OnLoad(const CString& sArgsi, CString& sMessage) override {
         switch (GetType()) {

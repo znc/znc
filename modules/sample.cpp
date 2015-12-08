@@ -26,7 +26,7 @@ class CSampleJob : public CModuleJob {
     CSampleJob(CModule* pModule)
         : CModuleJob(pModule, "sample", "Message the user after a delay") {}
 
-    ~CSampleJob() {
+    ~CSampleJob() override {
         if (wasCancelled()) {
             GetModule()->PutModule("Sample job cancelled");
         } else {
@@ -55,7 +55,7 @@ class CSampleTimer : public CTimer {
     CSampleTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles,
                  const CString& sLabel, const CString& sDescription)
         : CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {}
-    virtual ~CSampleTimer() {}
+    ~CSampleTimer() override {}
 
   private:
   protected:
@@ -78,7 +78,7 @@ class CSampleMod : public CModule {
         return true;
     }
 
-    virtual ~CSampleMod() { PutModule("I'm being unloaded!"); }
+    ~CSampleMod() override { PutModule("I'm being unloaded!"); }
 
     bool OnBoot() override {
         // This is called when the app starts up (only modules that are loaded

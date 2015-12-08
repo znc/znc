@@ -66,7 +66,7 @@ class CSendRaw_Mod : public CModule {
     }
 
   public:
-    virtual ~CSendRaw_Mod() {}
+    ~CSendRaw_Mod() override {}
 
     bool OnLoad(const CString& sArgs, CString& sErrorMsg) override {
         if (!GetUser()->IsAdmin()) {

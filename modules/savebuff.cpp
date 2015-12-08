@@ -50,7 +50,7 @@ class CSaveBuffJob : public CTimer {
                  const CString& sLabel, const CString& sDescription)
         : CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {}
 
-    virtual ~CSaveBuffJob() {}
+    ~CSaveBuffJob() override {}
 
   protected:
     void RunJob() override;
@@ -72,7 +72,7 @@ class CSaveBuff : public CModule {
                                &CSaveBuff::OnSaveCommand),
                    "", "Saves all buffers");
     }
-    virtual ~CSaveBuff() {
+    ~CSaveBuff() override {
         if (!m_bBootError) {
             SaveBuffersToDisk();
         }

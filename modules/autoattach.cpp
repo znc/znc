@@ -155,7 +155,7 @@ class CChanAttach : public CModule {
                    "", "List all entries");
     }
 
-    virtual ~CChanAttach() {}
+    ~CChanAttach() override {}
 
     bool OnLoad(const CString& sArgs, CString& sMessage) override {
         VCString vsChans;

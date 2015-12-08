@@ -21,8 +21,8 @@
 
 class NetworkTest : public ::testing::Test {
   protected:
-    void SetUp() { CZNC::CreateInstance(); }
-    void TearDown() { CZNC::DestroyInstance(); }
+    void SetUp() override { CZNC::CreateInstance(); }
+    void TearDown() override { CZNC::DestroyInstance(); }
 };
 
 TEST_F(NetworkTest, FindChan) {

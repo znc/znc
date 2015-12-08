@@ -67,7 +67,7 @@ class CCryptMod : public CModule {
                    "", "List all keys");
     }
 
-    virtual ~CCryptMod() {}
+    ~CCryptMod() override {}
 
     EModRet OnUserMsg(CString& sTarget, CString& sMessage) override {
         sTarget.TrimPrefix(NickPrefix());

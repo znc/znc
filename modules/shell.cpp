@@ -59,7 +59,7 @@ class CShellMod : public CModule {
   public:
     MODCONSTRUCTOR(CShellMod) { m_sPath = CZNC::Get().GetHomePath(); }
 
-    virtual ~CShellMod() {
+    ~CShellMod() override {
         vector<Csock*> vSocks = GetManager()->FindSocksByName("SHELL");
 
         for (unsigned int a = 0; a < vSocks.size(); a++) {

@@ -146,10 +146,9 @@ class CModPython : public CModule {
         return true;
     }
 
-    virtual EModRet OnModuleLoading(const CString& sModName,
-                                    const CString& sArgs,
-                                    CModInfo::EModuleType eType, bool& bSuccess,
-                                    CString& sRetMsg) override {
+    EModRet OnModuleLoading(const CString& sModName, const CString& sArgs,
+                            CModInfo::EModuleType eType, bool& bSuccess,
+                            CString& sRetMsg) override {
         PyObject* pyFunc = PyObject_GetAttrString(m_PyZNCModule, "load_module");
         if (!pyFunc) {
             sRetMsg = GetPyExceptionStr();
@@ -240,8 +239,8 @@ class CModPython : public CModule {
         return CONTINUE;
     }
 
-    virtual EModRet OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
-                                 bool& bSuccess, CString& sRetMsg) override {
+    EModRet OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
+                         bool& bSuccess, CString& sRetMsg) override {
         PyObject* pyFunc =
             PyObject_GetAttrString(m_PyZNCModule, "get_mod_info");
         if (!pyFunc) {
@@ -361,7 +360,7 @@ class CModPython : public CModule {
         }
     }
 
-    virtual ~CModPython() {
+    ~CModPython() override {
         if (!m_PyZNCModule) {
             DEBUG(
                 "~CModPython(): seems like CModPython::OnLoad() didn't "

@@ -1929,7 +1929,7 @@ class CConnectQueueTimer : public CCron {
         // Don't wait iSecs seconds for first timer run
         m_bRunOnNextCall = true;
     }
-    virtual ~CConnectQueueTimer() {
+    ~CConnectQueueTimer() override {
         // This is only needed when ZNC shuts down:
         // CZNC::~CZNC() sets its CConnectQueueTimer pointer to nullptr and
         // calls the manager's Cleanup() which destroys all sockets and

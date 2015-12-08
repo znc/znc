@@ -30,7 +30,7 @@ class CDCCSock : public CSocket {
     CDCCSock(CDCCMod* pMod, const CString& sRemoteNick,
              const CString& sRemoteIP, unsigned short uRemotePort,
              const CString& sLocalFile, unsigned long uFileSize);
-    virtual ~CDCCSock();
+    ~CDCCSock() override;
 
     void ReadData(const char* data, size_t len) override;
     void ConnectionRefused() override;
@@ -95,7 +95,7 @@ class CDCCMod : public CModule {
                                         &CDCCMod::ListTransfersCommand));
     }
 
-    virtual ~CDCCMod() {}
+    ~CDCCMod() override {}
 
 #ifndef MOD_DCC_ALLOW_EVERYONE
     bool OnLoad(const CString& sArgs, CString& sMessage) override {

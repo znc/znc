@@ -40,7 +40,7 @@ class CRemMarkerJob : public CTimer {
                   const CString& sDescription)
         : CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {}
 
-    virtual ~CRemMarkerJob() {}
+    ~CRemMarkerJob() override {}
     void SetNick(const CString& sNick) { m_sNick = sNick; }
 
   protected:
@@ -53,7 +53,7 @@ class CSChatSock : public CSocket {
     CSChatSock(CSChat* pMod, const CString& sChatNick);
     CSChatSock(CSChat* pMod, const CString& sChatNick, const CString& sHost,
                u_short iPort, int iTimeout = 60);
-    ~CSChatSock() {}
+    ~CSChatSock() override {}
 
     Csock* GetSockObj(const CS_STRING& sHostname, u_short iPort) override {
         CSChatSock* p =
@@ -104,7 +104,7 @@ class CSChatSock : public CSocket {
 class CSChat : public CModule {
   public:
     MODCONSTRUCTOR(CSChat) {}
-    virtual ~CSChat() {}
+    ~CSChat() override {}
 
     bool OnLoad(const CString& sArgs, CString& sMessage) override {
         m_sPemFile = sArgs;

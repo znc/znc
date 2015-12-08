@@ -53,7 +53,7 @@ class CWebAuth : public CAuthBase {
   public:
     CWebAuth(CWebSock* pWebSock, const CString& sUsername,
              const CString& sPassword, bool bBasic);
-    virtual ~CWebAuth() {}
+    ~CWebAuth() override {}
 
     CWebAuth(const CWebAuth&) = delete;
     CWebAuth& operator=(const CWebAuth&) = delete;

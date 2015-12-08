@@ -107,7 +107,7 @@ class CPerform : public CModule {
                    "<number> <number>", "Swap two perform commands");
     }
 
-    virtual ~CPerform() {}
+    ~CPerform() override {}
 
     CString ParsePerform(const CString& sArg) const {
         CString sPerf = sArg;

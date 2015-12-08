@@ -35,7 +35,7 @@ class CAdminLogMod : public CModule {
         openlog("znc", LOG_PID, LOG_DAEMON);
     }
 
-    virtual ~CAdminLogMod() {
+    ~CAdminLogMod() override {
         Log("Logging ended.");
         closelog();
     }

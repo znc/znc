@@ -49,7 +49,7 @@ class CAwayJob : public CTimer {
              const CString& sLabel, const CString& sDescription)
         : CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {}
 
-    virtual ~CAwayJob() {}
+    ~CAwayJob() override {}
 
   protected:
     void RunJob() override;
@@ -250,7 +250,7 @@ class CAway : public CModule {
                    static_cast<CModCommand::ModCmdFunc>(&CAway::TimerCommand));
     }
 
-    virtual ~CAway() {
+    ~CAway() override {
         if (!m_bBootError) SaveBufferToDisk();
     }
 

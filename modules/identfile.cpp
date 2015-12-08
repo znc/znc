@@ -44,7 +44,7 @@ class CIdentFileModule : public CModule {
         m_pIRCSock = nullptr;
     }
 
-    virtual ~CIdentFileModule() { ReleaseISpoof(); }
+    ~CIdentFileModule() override { ReleaseISpoof(); }
 
     void GetFile(const CString& sLine) {
         PutModule("File is set to: " + GetNV("File"));

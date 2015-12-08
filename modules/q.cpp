@@ -28,7 +28,7 @@ using std::set;
 class CQModule : public CModule {
   public:
     MODCONSTRUCTOR(CQModule) {}
-    virtual ~CQModule() {}
+    ~CQModule() override {}
 
     bool OnLoad(const CString& sArgs, CString& sMessage) override {
         if (!sArgs.empty()) {

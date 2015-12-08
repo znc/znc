@@ -24,7 +24,7 @@ class CKeepNickMod;
 class CKeepNickTimer : public CTimer {
   public:
     CKeepNickTimer(CKeepNickMod* pMod);
-    ~CKeepNickTimer() {}
+    ~CKeepNickTimer() override {}
 
     void RunJob() override;
 
@@ -47,7 +47,7 @@ class CKeepNickMod : public CModule {
                    "", "Show the current state");
     }
 
-    ~CKeepNickMod() {}
+    ~CKeepNickMod() override {}
 
     bool OnLoad(const CString& sArgs, CString& sMessage) override {
         m_pTimer = nullptr;

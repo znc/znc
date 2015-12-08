@@ -50,7 +50,7 @@ class CSASLAuthMod : public CModule {
                        &CSASLAuthMod::DisableCloneUserCommand));
     }
 
-    virtual ~CSASLAuthMod() { sasl_done(); }
+    ~CSASLAuthMod() override { sasl_done(); }
 
     void OnModCommand(const CString& sCommand) override {
         if (GetUser()->IsAdmin()) {

@@ -84,7 +84,7 @@ class CPartylineMod : public CModule {
                    "", "List all open channels");
     }
 
-    virtual ~CPartylineMod() {
+    ~CPartylineMod() override {
         // Kick all clients who are in partyline channels
         for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin();
              it != m_ssChannels.end(); ++it) {

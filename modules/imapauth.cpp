@@ -30,7 +30,7 @@ class CIMAPSock : public CSocket {
         EnableReadLine();
     }
 
-    virtual ~CIMAPSock() {
+    ~CIMAPSock() override {
         if (!m_bSentReply) {
             m_spAuth->RefuseLogin(
                 "IMAP server is down, please try again later");
@@ -56,7 +56,7 @@ class CIMAPAuthMod : public CModule {
         m_bSSL = false;
     }
 
-    virtual ~CIMAPAuthMod() {}
+    ~CIMAPAuthMod() override {}
 
     bool OnBoot() override { return true; }
 

@@ -27,7 +27,7 @@ class CWaitingJob : public CJob {
           m_bThreadReady(false),
           m_bThreadDone(false){};
 
-    ~CWaitingJob() {
+    ~CWaitingJob() override {
         EXPECT_TRUE(m_bThreadReady);
         EXPECT_TRUE(m_bThreadDone);
         EXPECT_FALSE(wasCancelled());
@@ -44,7 +44,7 @@ class CWaitingJob : public CJob {
         m_CV.notify_all();
     }
 
-    virtual void runThread() {
+    void runThread() override {
         CMutexLocker locker(m_Mutex);
         // We are running
         m_bThreadReady = true;
@@ -54,7 +54,7 @@ class CWaitingJob : public CJob {
         while (!m_bThreadDone) m_CV.wait(m_Mutex);
     }
 
-    virtual void runMain() {}
+    void runMain() override {}
 
   private:
     bool& m_bDestroyed;
@@ -82,7 +82,7 @@ class CCancelJob : public CJob {
           m_CVThreadReady(),
           m_bThreadReady(false) {}
 
-    ~CCancelJob() {
+    ~CCancelJob() override {
         EXPECT_TRUE(wasCancelled());
         m_bDestroyed = true;
     }
@@ -93,7 +93,7 @@ class CCancelJob : public CJob {
         while (!m_bThreadReady) m_CVThreadReady.wait(m_Mutex);
     }
 
-    virtual void runThread() {
+    void runThread() override {
         m_Mutex.lock();
         // We are running, tell the main thread
         m_bThreadReady = true;
@@ -113,7 +113,7 @@ class CCancelJob : public CJob {
         }
     }
 
-    virtual void runMain() {}
+    void runMain() override {}
 
   private:
     bool& m_bDestroyed;
@@ -152,13 +152,13 @@ class CEmptyJob : public CJob {
   public:
     CEmptyJob(bool& destroyed) : m_bDestroyed(destroyed) {}
 
-    ~CEmptyJob() {
+    ~CEmptyJob() override {
         EXPECT_TRUE(wasCancelled());
         m_bDestroyed = true;
     }
 
-    virtual void runThread() {}
-    virtual void runMain() {}
+    void runThread() override {}
+    void runMain() override {}
 
   private:
     bool& m_bDestroyed;

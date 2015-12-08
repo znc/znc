@@ -31,7 +31,7 @@ class CAutoReplyMod : public CModule {
         m_Messaged.SetTTL(1000 * 120);
     }
 
-    virtual ~CAutoReplyMod() {}
+    ~CAutoReplyMod() override {}
 
     bool OnLoad(const CString& sArgs, CString& sMessage) override {
         if (!sArgs.empty()) {

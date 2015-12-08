@@ -118,10 +118,9 @@ class CModPerl : public CModule {
         return true;
     }
 
-    virtual EModRet OnModuleLoading(const CString& sModName,
-                                    const CString& sArgs,
-                                    CModInfo::EModuleType eType, bool& bSuccess,
-                                    CString& sRetMsg) override {
+    EModRet OnModuleLoading(const CString& sModName, const CString& sArgs,
+                            CModInfo::EModuleType eType, bool& bSuccess,
+                            CString& sRetMsg) override {
         EModRet result = HALT;
         PSTART;
         PUSH_STR(sModName);
@@ -192,8 +191,8 @@ class CModPerl : public CModule {
         return CONTINUE;
     }
 
-    virtual EModRet OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
-                                 bool& bSuccess, CString& sRetMsg) override {
+    EModRet OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
+                         bool& bSuccess, CString& sRetMsg) override {
         PSTART;
         PUSH_STR(sModule);
         PUSH_PTR(CModInfo*, &ModInfo);
@@ -268,7 +267,7 @@ class CModPerl : public CModule {
         }
     }
 
-    virtual ~CModPerl() {
+    ~CModPerl() override {
         if (m_pPerl) {
             PSTART;
             PCALL("ZNC::Core::UnloadAll");

@@ -23,7 +23,7 @@ class CBuffExtras : public CModule {
   public:
     MODCONSTRUCTOR(CBuffExtras) {}
 
-    virtual ~CBuffExtras() {}
+    ~CBuffExtras() override {}
 
     void AddBuffer(CChan& Channel, const CString& sMessage,
                    const timeval* tv = nullptr,

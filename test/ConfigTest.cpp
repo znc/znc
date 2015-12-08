@@ -20,7 +20,7 @@
 
 class CConfigTest : public ::testing::Test {
   public:
-    virtual ~CConfigTest() { m_File.Delete(); }
+    ~CConfigTest() override { m_File.Delete(); }
 
   protected:
     CFile& WriteFile(const CString& sConfig) {

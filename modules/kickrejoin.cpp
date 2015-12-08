@@ -31,7 +31,7 @@ class CRejoinJob : public CTimer {
                const CString& sLabel, const CString& sDescription)
         : CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {}
 
-    virtual ~CRejoinJob() {}
+    ~CRejoinJob() override {}
 
   protected:
     void RunJob() override {
@@ -60,7 +60,7 @@ class CRejoinMod : public CModule {
                                     &CRejoinMod::OnShowDelayCommand),
                    "", "Show the rejoin delay");
     }
-    virtual ~CRejoinMod() {}
+    ~CRejoinMod() override {}
 
     bool OnLoad(const CString& sArgs, CString& sErrorMsg) override {
         if (sArgs.empty()) {

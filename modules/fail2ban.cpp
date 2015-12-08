@@ -38,7 +38,7 @@ class CFailToBanMod : public CModule {
                                &CFailToBanMod::OnListCommand),
                    "", "List banned hosts.");
     }
-    virtual ~CFailToBanMod() {}
+    ~CFailToBanMod() override {}
 
     bool OnLoad(const CString& sArgs, CString& sMessage) override {
         CString sTimeout = sArgs.Token(0);

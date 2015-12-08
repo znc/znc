@@ -19,7 +19,7 @@
 class CRawMod : public CModule {
   public:
     MODCONSTRUCTOR(CRawMod) {}
-    virtual ~CRawMod() {}
+    ~CRawMod() override {}
 
     EModRet OnRaw(CString& sLine) override {
         PutModule("IRC -> [" + sLine + "]");

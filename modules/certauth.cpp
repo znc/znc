@@ -43,7 +43,7 @@ class CSSLClientCertMod : public CModule {
                    "", "Print your current key");
     }
 
-    virtual ~CSSLClientCertMod() {}
+    ~CSSLClientCertMod() override {}
 
     bool OnBoot() override {
         const vector<CListener*>& vListeners = CZNC::Get().GetListeners();

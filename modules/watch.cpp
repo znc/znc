@@ -177,7 +177,7 @@ class CWatcherMod : public CModule {
         Load();
     }
 
-    virtual ~CWatcherMod() {}
+    ~CWatcherMod() override {}
 
     void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes,
                    const CString& sArgs) override {

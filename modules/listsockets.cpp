@@ -245,7 +245,7 @@ class CListSockets : public CModule {
         return;
     }
 
-    virtual ~CListSockets() {}
+    ~CListSockets() override {}
 };
 
 template <>

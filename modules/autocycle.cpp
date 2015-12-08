@@ -36,7 +36,7 @@ class CAutoCycleMod : public CModule {
         m_recentlyCycled.SetTTL(15 * 1000);
     }
 
-    virtual ~CAutoCycleMod() {}
+    ~CAutoCycleMod() override {}
 
     bool OnLoad(const CString& sArgs, CString& sMessage) override {
         VCString vsChans;

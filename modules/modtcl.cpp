@@ -44,7 +44,7 @@ class CModTclTimer : public CTimer {
                  const CString& sLabel, const CString& sDescription)
         : CTimer(pModule, uInterval, uCycles, sLabel, sDescription),
           m_pParent(nullptr) {}
-    virtual ~CModTclTimer() {}
+    ~CModTclTimer() override {}
 
   protected:
     void RunJob() override;
@@ -58,7 +58,7 @@ class CModTclStartTimer : public CTimer {
                       const CString& sDescription)
         : CTimer(pModule, uInterval, uCycles, sLabel, sDescription),
           m_pParent(nullptr) {}
-    virtual ~CModTclStartTimer() {}
+    ~CModTclStartTimer() override {}
 
   protected:
     void RunJob() override;
@@ -69,7 +69,7 @@ class CModTcl : public CModule {
   public:
     MODCONSTRUCTOR(CModTcl) { interp = nullptr; }
 
-    virtual ~CModTcl() {
+    ~CModTcl() override {
         if (interp) {
             Tcl_DeleteInterp(interp);
         }

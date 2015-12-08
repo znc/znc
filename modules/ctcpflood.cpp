@@ -33,7 +33,7 @@ class CCtcpFloodMod : public CModule {
                    "", "Show the current limits");
     }
 
-    ~CCtcpFloodMod() {}
+    ~CCtcpFloodMod() override {}
 
     void Save() {
         // We save the settings twice because the module arguments can

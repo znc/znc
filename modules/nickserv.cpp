@@ -81,7 +81,7 @@ class CNickServ : public CModule {
                    "cmd new-pattern", "Set pattern for commands");
     }
 
-    virtual ~CNickServ() {}
+    ~CNickServ() override {}
 
     bool OnLoad(const CString& sArgs, CString& sMessage) override {
         if (!sArgs.empty() && sArgs != "<hidden>") {

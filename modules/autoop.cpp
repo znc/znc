@@ -33,7 +33,7 @@ class CAutoOpTimer : public CTimer {
         m_pParent = pModule;
     }
 
-    virtual ~CAutoOpTimer() {}
+    ~CAutoOpTimer() override {}
 
   private:
   protected:
@@ -195,7 +195,7 @@ class CAutoOpMod : public CModule {
         return true;
     }
 
-    virtual ~CAutoOpMod() {
+    ~CAutoOpMod() override {
         for (const auto& it : m_msUsers) {
             delete it.second;
         }

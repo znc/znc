@@ -57,7 +57,7 @@ class CCertMod : public CModule {
                    "Show the current certificate");
     }
 
-    virtual ~CCertMod() {}
+    ~CCertMod() override {}
 
     CString PemFile() const { return GetSavePath() + "/user.pem"; }
 

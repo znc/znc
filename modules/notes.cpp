@@ -87,7 +87,7 @@ class CNotesMod : public CModule {
                    [this](const CString& sLine) { GetCommand(sLine); });
     }
 
-    virtual ~CNotesMod() {}
+    ~CNotesMod() override {}
 
     bool OnLoad(const CString& sArgs, CString& sMessage) override {
         m_bShowNotesOnLogin = !sArgs.Equals("-disableNotesOnLogin");
