@@ -17,12 +17,12 @@
 #include <znc/znc.h>
 #include <signal.h>
 #include <time.h>
+#include <thread>
 
 #if defined(HAVE_LIBSSL) && defined(HAVE_PTHREAD)
 #include <znc/Threads.h>
 #include <openssl/crypto.h>
 #include <memory>
-#include <thread>
 
 static std::vector<std::unique_ptr<CMutex>> lock_cs;
 
