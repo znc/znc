@@ -864,7 +864,7 @@ bool CUser::IsHostAllowed(const CString& sHostMask) const {
 
             // If iRoutingPrefix is 0, it could be due to ToInt() failing, so
             // sRoutingPrefix needs to be all zeroes
-            if (iRoutingPrefix == 0 && !sRoutingPrefix.Equals("0")) continue;
+            if (iRoutingPrefix == 0 && sRoutingPrefix != "0") continue;
 
             // Convert each IP from a numeric string to an addrinfo
             addrinfo aiHints;
