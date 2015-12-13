@@ -854,20 +854,6 @@ bool CUser::IsHostAllowed(const CString& sHostMask) const {
             return true;
         } else {
             // CIDR notation checker, e.g. "192.0.2.0/24" or "2001:db8::/32"
-            addrinfo *aiHost, *aiRange;
-            addrinfo aiHints;
-            in6_addr in6aBitmask;
-
-            memset(&in6aBitmask, 0, sizeof(in6aBitmask));
-            memset(&aiHints, 0, sizeof(addrinfo));
-
-            aiHints.ai_family = AF_UNSPEC;  // Allow any address family
-            aiHints.ai_socktype = 0;        // Any socket
-            aiHints.ai_flags = AI_NUMERICHOST;
-            aiHints.ai_protocol = 0;  // Any protocol
-            aiHints.ai_canonname = NULL;
-            aiHints.ai_addr = NULL;
-            aiHints.ai_next = NULL;
 
             // Try to split the string into an IP and routing prefix
             VCString vsSplitCIDR;
@@ -876,16 +862,22 @@ bool CUser::IsHostAllowed(const CString& sHostMask) const {
 
             if (iSplitCIDRCount != 2 || iRoutingPrefix < 0) continue;
 
-            int iIsHostValid, iIsRangeValid;
-            iIsHostValid =
+            // Convert each IP from a numeric string to an addrinfo
+            addrinfo aiHints;
+            memset(&aiHints, 0, sizeof(addrinfo));
+            aiHints.ai_flags = AI_NUMERICHOST;
+
+            addrinfo* aiHost;
+            int iIsHostValid =
                 getaddrinfo(sHostMask.c_str(), NULL, &aiHints, &aiHost);
             if (iIsHostValid != 0) continue;
 
             aiHints.ai_family = aiHost->ai_family;  // Host and range must be in
                                                     // the same address family
 
-            iIsRangeValid = getaddrinfo(vsSplitCIDR.front().c_str(), NULL,
-                                        &aiHints, &aiRange);
+            addrinfo* aiRange;
+            int iIsRangeValid = getaddrinfo(vsSplitCIDR.front().c_str(), NULL,
+                                            &aiHints, &aiRange);
             if (iIsRangeValid != 0) {
                 freeaddrinfo(aiHost);
                 continue;
@@ -915,6 +907,9 @@ bool CUser::IsHostAllowed(const CString& sHostMask) const {
                                   (inBitmask & saRange->sin_addr.s_addr));
             } else if (aiHost->ai_family == AF_INET6) {
                 // Make IPv6 bitmask
+                in6_addr in6aBitmask;
+                memset(&in6aBitmask, 0, sizeof(in6aBitmask));
+
                 for (int i = 0, iBitsLeft = iRoutingPrefix; iBitsLeft > 0;
                      ++i, iBitsLeft -= 8) {
                     if (iBitsLeft >= 8) {
@@ -932,10 +927,10 @@ bool CUser::IsHostAllowed(const CString& sHostMask) const {
                     (sockaddr_in6*)(aiRange->ai_addr);
 
                 for (int i = 0; i < 16; ++i) {
-                    if (!((in6aBitmask.s6_addr[i] &
-                           sa6Host->sin6_addr.s6_addr[i]) ==
-                          (in6aBitmask.s6_addr[i] &
-                           sa6Range->sin6_addr.s6_addr[i]))) {
+                    if ((in6aBitmask.s6_addr[i] &
+                         sa6Host->sin6_addr.s6_addr[i]) !=
+                        (in6aBitmask.s6_addr[i] &
+                         sa6Range->sin6_addr.s6_addr[i])) {
                         bIsHostInRange = false;
                     }
                 }

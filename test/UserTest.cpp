@@ -25,8 +25,6 @@ class UserTest : public ::testing::Test {
 };
 
 TEST_F(UserTest, IsHostAllowed) {
-    CUser* m_pTestUser;
-
     struct hostTest {
         CString sTestHost;
         CString sIP;
@@ -93,17 +91,11 @@ TEST_F(UserTest, IsHostAllowed) {
         {"2001:db8::/32", "2001:db8:8000::", true},
         {"2001:db8::/33", "2001:db8:8000::", false},
     };
-    for (int i = 0; i < (int)(sizeof(aHostTests) / sizeof(aHostTests[0]));
-         ++i) {
-        m_pTestUser = new CUser("user");
-        hostTest* h = aHostTests + i;
-        m_pTestUser->AddAllowedHost(h->sTestHost);
-        CString should = h->bExpectedResult ? "" : " not";
-        CString error = "Allow-host string \"" + h->sTestHost + "\" should" +
-                        should + " allow host \"" + h->sIP + "\"";
-        EXPECT_EQ(m_pTestUser->IsHostAllowed(aHostTests[i].sIP),
-                  aHostTests[i].bExpectedResult)
-            << error;
-        delete m_pTestUser;
+
+    for (const hostTest& h : aHostTests) {
+        CUser pTestUser("user");
+        pTestUser.AddAllowedHost(h.sTestHost);
+        EXPECT_EQ(h.bExpectedResult, pTestUser.IsHostAllowed(h.sIP))
+	  << "Allow-host is " << h.sTestHost;
     }
 }
