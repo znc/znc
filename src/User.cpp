@@ -887,12 +887,16 @@ bool CUser::IsHostAllowed(const CString& sHostMask) const {
             iIsRangeValid = getaddrinfo(vsSplitCIDR.front().c_str(), NULL,
                                         &aiHints, &aiRange);
             if (iIsRangeValid != 0) {
-	      freeaddrinfo(aiHost);
-	      continue;
-	    }
+                freeaddrinfo(aiHost);
+                continue;
+            }
 
             // "/0" allows all IPv[4|6] addresses
-            if (iRoutingPrefix == 0) return true;
+            if (iRoutingPrefix == 0) {
+                freeaddrinfo(aiHost);
+                freeaddrinfo(aiRange);
+                return true;
+            }
 
             // If both IPs are valid and of the same type, make a bit field mask
             // from the routing prefix, AND it to the host and range, and see if
