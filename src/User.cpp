@@ -863,7 +863,7 @@ bool CUser::IsHostAllowed(const CString& sHostMask) const {
 
             aiHints.ai_family = AF_UNSPEC;  // Allow any address family
             aiHints.ai_socktype = 0;        // Any socket
-            aiHints.ai_flags = AI_NUMERICHOST | AI_ADDRCONFIG;
+            aiHints.ai_flags = AI_NUMERICHOST;
             aiHints.ai_protocol = 0;  // Any protocol
             aiHints.ai_canonname = NULL;
             aiHints.ai_addr = NULL;
