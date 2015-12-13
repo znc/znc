@@ -886,7 +886,10 @@ bool CUser::IsHostAllowed(const CString& sHostMask) const {
 
             iIsRangeValid = getaddrinfo(vsSplitCIDR.front().c_str(), NULL,
                                         &aiHints, &aiRange);
-            if (iIsRangeValid != 0) continue;
+            if (iIsRangeValid != 0) {
+	      freeaddrinfo(aiHost);
+	      continue;
+	    }
 
             // "/0" allows all IPv[4|6] addresses
             if (iRoutingPrefix == 0) return true;
