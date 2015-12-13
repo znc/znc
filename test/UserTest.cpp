@@ -20,6 +20,7 @@
 
 class UserTest : public ::testing::Test {
   protected:
+    // A CZNC instance is required to instantiate CUsers
     UserTest() { CZNC::CreateInstance(); }
     ~UserTest() { CZNC::DestroyInstance(); }
 };
@@ -90,12 +91,29 @@ TEST_F(UserTest, IsHostAllowed) {
         {"2001:db8::/33", "2001:db9:0::", false},
         {"2001:db8::/32", "2001:db8:8000::", true},
         {"2001:db8::/33", "2001:db8:8000::", false},
+
+        {"0.0.0.0/0", "::1", false},
+        {"0.0.0.0/0", "127.0.0.1", true},
+        {"::0/0", "127.0.0.1", false},
+        {"::0/0", "::1", true},
+        {"0.0.0.0", "127.0.0.1", false},
+        {"0.0.0.0", "::1", false},
+        {"::0", "::1", false},
+        {"::0", "127.0.0.1", false},
+
+        {"127.0.0.2/abc", "127.0.0.1", false},
+        {"::2/abc", "::1", false},
+        {"127.0.0.1/33", "127.0.0.1", false},
+        {"::1/129", "::1", false},
+
+        {"::2/00000000000", "::1", true},
+        {"::2/0a", "::1", false},
     };
 
     for (const hostTest& h : aHostTests) {
-        CUser pTestUser("user");
-        pTestUser.AddAllowedHost(h.sTestHost);
-        EXPECT_EQ(h.bExpectedResult, pTestUser.IsHostAllowed(h.sIP))
-	  << "Allow-host is " << h.sTestHost;
+        CUser user("user");
+        user.AddAllowedHost(h.sTestHost);
+        EXPECT_EQ(h.bExpectedResult, user.IsHostAllowed(h.sIP))
+            << "Allow-host is " << h.sTestHost;
     }
 }

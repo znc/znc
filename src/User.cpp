@@ -857,10 +857,23 @@ bool CUser::IsHostAllowed(const CString& sHostMask) const {
 
             // Try to split the string into an IP and routing prefix
             VCString vsSplitCIDR;
-            const int iSplitCIDRCount = sHost.Split("/", vsSplitCIDR, false);
-            const int iRoutingPrefix = vsSplitCIDR.back().ToInt();
+            if (sHost.Split("/", vsSplitCIDR, false) != 2) continue;
+            const CString sRoutingPrefix = vsSplitCIDR.back();
+            const int iRoutingPrefix = sRoutingPrefix.ToInt();
+            if (iRoutingPrefix < 0 || iRoutingPrefix > 128) continue;
 
-            if (iSplitCIDRCount != 2 || iRoutingPrefix < 0) continue;
+            // If iRoutingPrefix is 0, it could be due to ToInt() failing, so
+            // sRoutingPrefix needs to be all zeroes
+            if (iRoutingPrefix == 0) {
+                bool bBadPrefix = false;
+                for (const char c : sRoutingPrefix) {
+                    if (!CString(c).Equals("0")) {
+                        bBadPrefix = true;
+                        break;
+                    }
+                }
+                if (bBadPrefix) continue;
+            }
 
             // Convert each IP from a numeric string to an addrinfo
             addrinfo aiHints;
@@ -869,15 +882,15 @@ bool CUser::IsHostAllowed(const CString& sHostMask) const {
 
             addrinfo* aiHost;
             int iIsHostValid =
-                getaddrinfo(sHostMask.c_str(), NULL, &aiHints, &aiHost);
+                getaddrinfo(sHostMask.c_str(), nullptr, &aiHints, &aiHost);
             if (iIsHostValid != 0) continue;
 
             aiHints.ai_family = aiHost->ai_family;  // Host and range must be in
                                                     // the same address family
 
             addrinfo* aiRange;
-            int iIsRangeValid = getaddrinfo(vsSplitCIDR.front().c_str(), NULL,
-                                            &aiHints, &aiRange);
+            int iIsRangeValid = getaddrinfo(vsSplitCIDR.front().c_str(),
+                                            nullptr, &aiHints, &aiRange);
             if (iIsRangeValid != 0) {
                 freeaddrinfo(aiHost);
                 continue;
@@ -895,6 +908,12 @@ bool CUser::IsHostAllowed(const CString& sHostMask) const {
             // they match
             bool bIsHostInRange = false;
             if (aiHost->ai_family == AF_INET) {
+                if (iRoutingPrefix > 32) {
+                    freeaddrinfo(aiHost);
+                    freeaddrinfo(aiRange);
+                    continue;
+                }
+
                 const sockaddr_in* saHost = (sockaddr_in*)(aiHost->ai_addr);
                 const sockaddr_in* saRange = (sockaddr_in*)(aiRange->ai_addr);
 
