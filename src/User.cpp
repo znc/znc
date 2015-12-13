@@ -852,6 +852,92 @@ bool CUser::IsHostAllowed(const CString& sHostMask) const {
     for (const CString& sHost : m_ssAllowedHosts) {
         if (sHostMask.WildCmp(sHost)) {
             return true;
+        } else {
+            // CIDR notation checker, e.g. "192.0.2.0/24" or "2001:db8::/32"
+            addrinfo *aiHost, *aiRange;
+            addrinfo aiHints;
+            in6_addr in6aBitmask;
+
+            memset(&in6aBitmask, 0, sizeof(in6aBitmask));
+            memset(&aiHints, 0, sizeof(addrinfo));
+
+            aiHints.ai_family = AF_UNSPEC;  // Allow any address family
+            aiHints.ai_socktype = 0;        // Any socket
+            aiHints.ai_flags = AI_NUMERICHOST | AI_ADDRCONFIG;
+            aiHints.ai_protocol = 0;  // Any protocol
+            aiHints.ai_canonname = NULL;
+            aiHints.ai_addr = NULL;
+            aiHints.ai_next = NULL;
+
+            // Try to split the string into an IP and routing prefix
+            VCString vsSplitCIDR;
+            const int iSplitCIDRCount = sHost.Split("/", vsSplitCIDR, false);
+            const int iRoutingPrefix = vsSplitCIDR.back().ToInt();
+
+            if (iSplitCIDRCount != 2 || iRoutingPrefix < 0) continue;
+
+            int iIsHostValid, iIsRangeValid;
+            iIsHostValid =
+                getaddrinfo(sHostMask.c_str(), NULL, &aiHints, &aiHost);
+            if (iIsHostValid != 0) continue;
+
+            aiHints.ai_family = aiHost->ai_family;  // Host and range must be in
+                                                    // the same address family
+
+            iIsRangeValid = getaddrinfo(vsSplitCIDR.front().c_str(), NULL,
+                                        &aiHints, &aiRange);
+            if (iIsRangeValid != 0) continue;
+
+            // "/0" allows all IPv[4|6] addresses
+            if (iRoutingPrefix == 0) return true;
+
+            // If both IPs are valid and of the same type, make a bit field mask
+            // from the routing prefix, AND it to the host and range, and see if
+            // they match
+            bool bIsHostInRange = false;
+            if (aiHost->ai_family == AF_INET) {
+                const sockaddr_in* saHost = (sockaddr_in*)(aiHost->ai_addr);
+                const sockaddr_in* saRange = (sockaddr_in*)(aiRange->ai_addr);
+
+                // Make IPv4 bitmask
+                const in_addr_t inBitmask =
+                    htonl((~0u) << (32 - iRoutingPrefix));
+
+                // Compare masked IPv4s
+                bIsHostInRange = ((inBitmask & saHost->sin_addr.s_addr) ==
+                                  (inBitmask & saRange->sin_addr.s_addr));
+            } else if (aiHost->ai_family == AF_INET6) {
+                // Make IPv6 bitmask
+                for (int i = 0, iBitsLeft = iRoutingPrefix; iBitsLeft > 0;
+                     ++i, iBitsLeft -= 8) {
+                    if (iBitsLeft >= 8) {
+                        in6aBitmask.s6_addr[i] = (uint8_t)(~0u);
+                    } else {
+                        in6aBitmask.s6_addr[i] = (uint8_t)(~0u)
+                                                 << (8 - iBitsLeft);
+                    }
+                }
+
+                // Compare masked IPv6s
+                bIsHostInRange = true;
+                const sockaddr_in6* sa6Host = (sockaddr_in6*)(aiHost->ai_addr);
+                const sockaddr_in6* sa6Range =
+                    (sockaddr_in6*)(aiRange->ai_addr);
+
+                for (int i = 0; i < 16; ++i) {
+                    if (!((in6aBitmask.s6_addr[i] &
+                           sa6Host->sin6_addr.s6_addr[i]) ==
+                          (in6aBitmask.s6_addr[i] &
+                           sa6Range->sin6_addr.s6_addr[i]))) {
+                        bIsHostInRange = false;
+                    }
+                }
+            }
+
+            freeaddrinfo(aiHost);
+            freeaddrinfo(aiRange);
+
+            if (bIsHostInRange) return true;
         }
     }
 
