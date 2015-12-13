@@ -867,7 +867,7 @@ bool CUser::IsHostAllowed(const CString& sHostMask) const {
             if (iRoutingPrefix == 0) {
                 bool bBadPrefix = false;
                 for (const char c : sRoutingPrefix) {
-                    if (!CString(c).Equals("0")) {
+                    if (c != '0') {
                         bBadPrefix = true;
                         break;
                     }
