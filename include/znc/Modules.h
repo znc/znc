@@ -50,24 +50,28 @@ class CModInfo;
 #endif
 #endif
 
-#if HAVE_VISIBILITY
-#define MODULE_EXPORT __attribute__((__visibility__("default")))
+#ifdef BUILD_WITH_CMAKE
+#include <znc/znc_export_lib_export.h>
+#elif HAVE_VISIBILITY
+#define ZNC_EXPORT_LIB_EXPORT __attribute__((__visibility__("default")))
 #else
-#define MODULE_EXPORT
+#define ZNC_EXPORT_LIB_EXPORT
 #endif
 
-#define MODCOMMONDEFS(CLASS, DESCRIPTION, TYPE)                         \
-    extern "C" {                                                        \
-    MODULE_EXPORT bool ZNCModInfo(double dCoreVersion, CModInfo& Info); \
-    bool ZNCModInfo(double dCoreVersion, CModInfo& Info) {              \
-        if (dCoreVersion != VERSION) return false;                      \
-        Info.SetDescription(DESCRIPTION);                               \
-        Info.SetDefaultType(TYPE);                                      \
-        Info.AddType(TYPE);                                             \
-        Info.SetLoader(TModLoad<CLASS>);                                \
-        TModInfo<CLASS>(Info);                                          \
-        return true;                                                    \
-    }                                                                   \
+#define MODCOMMONDEFS(CLASS, DESCRIPTION, TYPE)                \
+    extern "C" {                                               \
+    ZNC_EXPORT_LIB_EXPORT bool ZNCModInfo(double dCoreVersion, \
+                                          CModInfo& Info);     \
+    ZNC_EXPORT_LIB_EXPORT bool ZNCModInfo(double dCoreVersion, \
+                                          CModInfo& Info) {    \
+        if (dCoreVersion != VERSION) return false;             \
+        Info.SetDescription(DESCRIPTION);                      \
+        Info.SetDefaultType(TYPE);                             \
+        Info.AddType(TYPE);                                    \
+        Info.SetLoader(TModLoad<CLASS>);                       \
+        TModInfo<CLASS>(Info);                                 \
+        return true;                                           \
+    }                                                          \
     }
 
 /** Instead of writing a constructor, you should call this macro. It accepts all

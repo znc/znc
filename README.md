@@ -26,7 +26,9 @@ Core:
 * GNU make
 * pkg-config
 * GCC 4.7 or clang 3.2
-* autoconf and automake (if building from git)
+* Either of:
+    * autoconf and automake (but only if building from git, not from tarball)
+    * CMake
 
 ## Optional Requirements
 
@@ -52,6 +54,32 @@ Character Encodings:
 * To get proper character encoding and charsets install ICU (`libicu4-dev`)
 
 ## Installing ZNC
+
+Currently there are 2 build systems in place: CMake and `./configure`.
+`./configure` will eventually be removed.
+There is also `configure.py` which should make migration to CMake easier:
+it accepts the same parameters as `./configure`,
+but calls CMake with CMake-style parameters.
+
+### Installing with CMake
+
+Installation from source code is performed using the CMake toolchain.
+
+```shell
+cmake .
+make
+make install
+```
+
+You can use `cmake-gui` or `ccmake` for more interactiveness.
+
+Note for FreeBSD users:
+By default base OpenSSL is selected.
+If you want the one from ports, use `-DOPENSSL_ROOT_DIR=/usr/local`.
+
+For troubleshooting, `cmake --system-information` will show you details.
+
+### Installing with `./configure`
 
 Installation from source code is performed using the `automake` toolchain.
 If you are building from git, you will need to run `./autogen.sh` first to

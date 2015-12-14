@@ -160,6 +160,12 @@ CString CZNC::GetCompileOptionsString() {
 #else
            "no"
 #endif
+		   ", build: "
+#ifdef BUILD_WITH_CMAKE
+		   "cmake"
+#else
+		   "autoconf"
+#endif
         ;
 }
 

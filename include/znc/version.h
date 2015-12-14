@@ -1,13 +1,16 @@
 #ifndef ZNC_VERSION_H
 #define ZNC_VERSION_H
 
+#ifndef BUILD_WITH_CMAKE
 // The following defines are for #if comparison (preprocessor only likes ints)
 #define VERSION_MAJOR 1
 #define VERSION_MINOR 7
 #define VERSION_PATCH -1
 // This one is for display purpose
 #define VERSION_STR "1.7.x"
-// This one is for ZNCModInfo
+#endif
+
+//  This one is for ZNCModInfo
 #define VERSION (VERSION_MAJOR + VERSION_MINOR / 10.0)
 
 // You can add -DVERSION_EXTRA="stuff" to your CXXFLAGS!

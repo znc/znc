@@ -27,10 +27,7 @@ class String {
 
 class CModPython;
 
-#if HAVE_VISIBILITY
-#pragma GCC visibility push(default)
-#endif
-class CPyModule : public CModule {
+class ZNC_EXPORT_LIB_EXPORT CPyModule : public CModule {
     PyObject* m_pyObj;
     CModPython* m_pModPython;
     VWebSubPages* _GetSubPages();
@@ -216,7 +213,7 @@ inline CPyModule* CreatePyModule(CUser* pUser, CIRCNetwork* pNetwork,
                          pModPython);
 }
 
-class CPyTimer : public CTimer {
+class ZNC_EXPORT_LIB_EXPORT CPyTimer : public CTimer {
     PyObject* m_pyObj;
     CModPython* m_pModPython;
 
@@ -246,7 +243,7 @@ inline CPyTimer* CreatePyTimer(CPyModule* pModule, unsigned int uInterval,
                         pyObj);
 }
 
-class CPySocket : public CSocket {
+class ZNC_EXPORT_LIB_EXPORT CPySocket : public CSocket {
     PyObject* m_pyObj;
     CModPython* m_pModPython;
 
@@ -332,7 +329,3 @@ class CModulesIter {
     CModules* m_pModules;
     CModules::const_iterator m_it;
 };
-
-#if HAVE_VISIBILITY
-#pragma GCC visibility pop
-#endif

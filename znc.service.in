@@ -3,7 +3,7 @@ Description=ZNC, an advanced IRC bouncer
 After=network.target
 
 [Service]
-ExecStart=@bindir@/znc -f
+ExecStart=@CMAKE_INSTALL_FULL_BINDIR@/znc -f
 User=znc
 
 [Install]

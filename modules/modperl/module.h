@@ -22,10 +22,7 @@
 
 #include <znc/Modules.h>
 
-#if HAVE_VISIBILITY
-#pragma GCC visibility push(default)
-#endif
-class CPerlModule : public CModule {
+class ZNC_EXPORT_LIB_EXPORT CPerlModule : public CModule {
     SV* m_perlObj;
     VWebSubPages* _GetSubPages();
 
@@ -167,7 +164,7 @@ enum ELoadPerlMod {
     Perl_LoadError,
 };
 
-class CPerlTimer : public CTimer {
+class ZNC_EXPORT_LIB_EXPORT CPerlTimer : public CTimer {
     SV* m_perlObj;
 
   public:
@@ -190,7 +187,7 @@ inline CPerlTimer* CreatePerlTimer(CPerlModule* pModule, unsigned int uInterval,
                           perlObj);
 }
 
-class CPerlSocket : public CSocket {
+class ZNC_EXPORT_LIB_EXPORT CPerlSocket : public CSocket {
     SV* m_perlObj;
 
   public:
@@ -241,6 +238,3 @@ inline int GetVersionMinor() { return VERSION_MINOR; }
 inline double GetVersion() { return VERSION; }
 
 inline CString GetVersionExtra() { return ZNC_VERSION_EXTRA; }
-#if HAVE_VISIBILITY
-#pragma GCC visibility pop
-#endif

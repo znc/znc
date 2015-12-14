@@ -154,7 +154,7 @@ test/gmock-main.o: $(GMOCK_DIR)/src/gmock_main.cc Makefile
 	$(Q)$(CXX) $(CXXFLAGS) $(GTEST_FLAGS) -c -o $@ $< -MD -MF .depend/gmock-main.dep -MT $@
 
 # Qt fails under TSAN, so CXXFLAGS/LDFLAGS can't be used.
-test/Integration.o: test/Integration.cpp Makefile
+test/Integration.o: test/integration/main.cpp Makefile
 	@mkdir -p .depend test
 	$(E) Building test object Integration...
 	$(Q)g++ $(qt_CFLAGS) $(GTEST_FLAGS) -c -o $@ $< -MD -MF .depend/Integration.test.dep -MT $@ '-DZNC_BIN_DIR="$(bindir)"' '-DZNC_SRC_DIR="$(realpath $(srcdir))"'
@@ -179,7 +179,10 @@ src/version.cpp: Makefile version.sh $(shell if [ x`cat .version_extra 2> /dev/n
 	$(E) Building source file version.cpp...
 	$(Q)WRITE_OUTPUT=yes $(srcdir)/version.sh "$(GIT)" > .version_extra 2> /dev/null
 
-CLEAN += src/version.cpp src/Csocket.cpp include/znc/Csocket.h
+CLEAN += src/version.cpp
+endif
+
+CLEAN += src/Csocket.cpp include/znc/Csocket.h
 
 src/Csocket.cpp: third_party/Csocket/Csocket.cc
 	@rm -f $@
@@ -192,10 +195,9 @@ include/znc/Csocket.h: third_party/Csocket/Csocket.h
 third_party/Csocket/Csocket.h third_party/Csocket/Csocket.cc:
 	@echo It looks like git submodules are not initialized. Run: git submodule update --init --recursive
 	@exit 1
-endif
 
 znc.service: znc.service.in
-	@sed -e "s:\@bindir\@:$(bindir):" $^ > $@
+	@sed -e "s:\@CMAKE_INSTALL_FULL_BINDIR\@:$(bindir):" $^ > $@
 
 CLEAN += znc.service
 

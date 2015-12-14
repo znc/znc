@@ -23,7 +23,7 @@ CLEAN    += modpython/_znc_core.$(PYCEXT_EXT)
 CLEAN    += modpython/_znc_core.o modpython/compiler.o
 ifneq "$(SWIG)" ""
 # Only delete these files if we can regenerate them
-CLEAN    += modpython/_znc_core.cpp modpython/znc_core.py
+CLEAN    += modpython/modpython_biglib.cpp modpython/znc_core.py
 CLEAN    += modpython/swigpyrun.h modpython/pyfunctions.cpp
 endif
 ifneq "$(srcdir)" "."
@@ -44,7 +44,7 @@ all: modpython_all
 endif
 modpython_all: modpython/_znc_core.$(PYCEXT_EXT)
 
-modpython/_znc_core.o: modpython/_znc_core.cpp Makefile
+modpython/_znc_core.o: modpython/modpython_biglib.cpp Makefile
 	@mkdir -p modpython
 	@mkdir -p .depend
 	$(E) Building ZNC python bindings library...
@@ -56,6 +56,12 @@ modpython/_znc_core.$(PYCEXT_EXT): modpython/_znc_core.o Makefile modpython.so
 
 ifneq "$(SWIG)" ""
 include $(srcdir)/modpython/Makefile.gen
+else
+modpython/swigpyrun.h modpython/znc_core.py modpython/pyfunctions.cpp: modpython/modpython_biglib.cpp
+modpython/modpython_biglib.cpp: modpython/generated.tar.gz
+	@mkdir -p modpython
+	$(E) Unpacking ZNC python bindings...
+	$(Q)tar -xf $^ -C modpython
 endif
 
 modpython.o: modpython/pyfunctions.cpp modpython/swigpyrun.h

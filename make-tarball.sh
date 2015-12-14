@@ -2,7 +2,8 @@
 set -e
 
 TMPDIR=`mktemp -d`
-trap 'rm -rf $TMPDIR' EXIT
+TMPDIR2=`mktemp -d`
+trap 'rm -rf $TMPDIR $TMPDIR2' EXIT
 
 if [ ! -f include/znc/main.h ] ; then
 	echo "Can't find source!"
@@ -39,23 +40,25 @@ TARGZ=`readlink -f -- $TARGZ`
 
 echo "Exporting . to $TMPDIR/$ZNCDIR..."
 git checkout-index --all --prefix=$TMPDIR/$ZNCDIR/
-sed -e 's:#include "Csocket.h":#include <znc/Csocket.h>:' third_party/Csocket/Csocket.cc > $TMPDIR/$ZNCDIR/src/Csocket.cpp
-sed -e 's:#include "defines.h":#include <znc/defines.h>:' third_party/Csocket/Csocket.h > $TMPDIR/$ZNCDIR/include/znc/Csocket.h
+mkdir -p --mode=0755 $TMPDIR/$ZNCDIR/third_party/Csocket
+cp -p third_party/Csocket/Csocket.cc third_party/Csocket/Csocket.h $TMPDIR/$ZNCDIR/third_party/Csocket/
 (
-	which swig3.0 && SWIG=`which swig3.0` || SWIG=`which swig`
+	cd $TMPDIR2
+	cmake $TMPDIR/$ZNCDIR -DWANT_PERL=yes -DWANT_PYTHON=yes
+	make modperl_dist modpython_dist
+)
+(
 	cd $TMPDIR/$ZNCDIR
-	echo "Generating configure"
 	AUTOMAKE_FLAGS="--add-missing --copy" ./autogen.sh
 	rm -r autom4te.cache/
-	mkdir -p modules/.depend
-	make -C modules -f modperl/Makefile.gen srcdir=. SWIG=$SWIG PERL=`which perl`
-	make -C modules -f modpython/Makefile.gen srcdir=. SWIG=$SWIG PERL=`which perl`
-	rm -rf modules/.depend
 	rm .travis* .appveyor*
 	rm make-tarball.sh
 	sed -e "s/THIS_IS_NOT_TARBALL//" -i Makefile.in
 	echo '#include <znc/version.h>' > src/version.cpp
 	echo "const char* ZNC_VERSION_EXTRA = VERSION_EXTRA \"$DESC\";" >> src/version.cpp
+	if [ "x$DESC" != "x" ]; then
+		echo $DESC > .nightly
+	fi
 )
 (
 	cd $TMPDIR

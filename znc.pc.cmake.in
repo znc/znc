@@ -1,0 +1,20 @@
+# You can access these with e.g. pkg-config --variable=moddir znc
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+datarootdir=${prefix}/@CMAKE_INSTALL_DATAROOTDIR@
+bindir=${exec_prefix}/@CMAKE_INSTALL_BINDIR@
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
+datadir=${prefix}/@CMAKE_INSTALL_DATADIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+cxx=@CMAKE_CXX_COMPILER@
+version=@ZNC_VERSION@
+moddir=${libdir}/znc
+moddatadir=${datadir}/znc
+
+Name: ZNC
+Description: An advanced IRC proxy
+Version: ${version}
+URL: http://znc.in
+Cflags: @CMAKE_CXX_FLAGS@ -I@CMAKE_INSTALL_FULL_INCLUDEDIR@ -include znc/zncconfig.h -Dznc_export_lib_EXPORTS
+Libs: @znclib_pc@
