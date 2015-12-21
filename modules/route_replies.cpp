@@ -258,8 +258,8 @@ class CRouteRepliesMod : public CModule {
         SendRequest();
     }
 
-    EModRet OnRaw(CString& sLine) override {
-        CString sCmd = sLine.Token(1).AsUpper();
+    EModRet OnRawMessage(CMessage& msg) override {
+        CString sCmd = msg.GetCommand().AsUpper();
         size_t i = 0;
 
         if (!m_pReplies) return CONTINUE;
@@ -267,18 +267,18 @@ class CRouteRepliesMod : public CModule {
         // Is this a "not enough arguments" error?
         if (sCmd == "461") {
             // :server 461 nick WHO :Not enough parameters
-            CString sOrigCmd = sLine.Token(3);
+            CString sOrigCmd = msg.GetParam(1);
 
             if (m_sLastRequest.Token(0).Equals(sOrigCmd)) {
                 // This is the reply to the last request
-                if (RouteReply(sLine, true)) return HALTCORE;
+                if (RouteReply(msg, true)) return HALTCORE;
                 return CONTINUE;
             }
         }
 
         while (m_pReplies[i].szReply != nullptr) {
             if (m_pReplies[i].szReply == sCmd) {
-                if (RouteReply(sLine, m_pReplies[i].bLastResponse))
+                if (RouteReply(msg, m_pReplies[i].bLastResponse))
                     return HALTCORE;
                 return CONTINUE;
             }
@@ -370,11 +370,11 @@ class CRouteRepliesMod : public CModule {
     }
 
   private:
-    bool RouteReply(const CString& sLine, bool bFinished = false) {
+    bool RouteReply(const CMessage& msg, bool bFinished = false) {
         if (!m_pDoing) return false;
 
         // TODO: RouteReply(const CMessage& Message, bool bFinished = false)
-        m_pDoing->PutClient(CMessage(sLine));
+        m_pDoing->PutClient(msg);
 
         if (bFinished) {
             // Stop the timeout
