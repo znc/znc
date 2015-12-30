@@ -250,6 +250,9 @@ void CHTTPSock::GetPage() {
         DEBUG("Expected prefix:   " << m_sURIPrefix);
         DEBUG("Requested path:    " << m_sURI);
         Redirect("/");
+    } else if (m_sURI.empty()) {
+        // This can happen if prefix was /foo, and the requested page is /foo
+        Redirect("/");
     } else {
         OnPageRequest(m_sURI);
     }
