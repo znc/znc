@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2015 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
  * This was originally written by cycomate.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
