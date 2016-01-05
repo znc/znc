@@ -708,7 +708,7 @@ class CWatcherMod : public CModule {
     }
 
     void Load() {
-        // Just to make sure we dont mess up badly
+        // Just to make sure we don't mess up badly
         m_lsWatchers.clear();
 
         bool bWarn = false;

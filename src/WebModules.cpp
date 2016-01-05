@@ -195,7 +195,7 @@ void CWebAuth::RefusedLogin(const CString& sReason) {
             m_pWebSock->AddHeader("WWW-Authenticate", "Basic realm=\"ZNC\"");
             m_pWebSock->CHTTPSock::PrintErrorPage(
                 401, "Unauthorized",
-                "HTTP Basic authentication attemped with invalid credentials");
+                "HTTP Basic authentication attempted with invalid credentials");
             // Why CWebSock makes this function protected?..
         } else {
             m_pWebSock->Redirect("/?cookie_check=true");
@@ -509,7 +509,7 @@ CWebSock::EPageReqResult CWebSock::PrintStaticFile(const CString& sPath,
     SetPaths(pModule);
     CString sFile = m_Template.ExpandFile(sPath.TrimLeft_n("/"));
     DEBUG("About to print [" + sFile + "]");
-    // Either PrintFile() fails and sends an error page or it suceeds and
+    // Either PrintFile() fails and sends an error page or it succeeds and
     // sends a result. In both cases we don't have anything more to do.
     PrintFile(sFile);
     return PAGE_DONE;

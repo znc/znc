@@ -326,7 +326,7 @@ class CString : public std::string {
     /** Split up this string into tokens.
      * Via sLeft and sRight you can define "markers" like with Replace().
      * Anything in such a marked section is treated as a single token. All
-     * occurences of sDelim in such a block are ignored.
+     * occurrences of sDelim in such a block are ignored.
      * @param sDelim Delimiter between tokens.
      * @param vsRet Vector for returning the result.
      * @param bAllowEmpty Do empty tokens count as a valid token?
@@ -453,37 +453,37 @@ class CString : public std::string {
     /** @return The numerical value of this string similar to atoi(). */
     double ToDouble() const;
 
-    /** Trim this string. All leading/trailing occurences of characters from
+    /** Trim this string. All leading/trailing occurrences of characters from
      *  s are removed.
      * @param s A list of characters that should be trimmed.
      * @return true if this string was modified.
      */
     bool Trim(const CString& s = " \t\r\n");
-    /** Trim this string. All leading occurences of characters from s are
+    /** Trim this string. All leading occurrences of characters from s are
      *  removed.
      * @param s A list of characters that should be trimmed.
      * @return true if this string was modified.
      */
     bool TrimLeft(const CString& s = " \t\r\n");
-    /** Trim this string. All trailing occurences of characters from s are
+    /** Trim this string. All trailing occurrences of characters from s are
      *  removed.
      * @param s A list of characters that should be trimmed.
      * @return true if this string was modified.
      */
     bool TrimRight(const CString& s = " \t\r\n");
-    /** Trim this string. All leading/trailing occurences of characters from
+    /** Trim this string. All leading/trailing occurrences of characters from
      *  s are removed. This CString instance is not modified.
      * @param s A list of characters that should be trimmed.
      * @return The trimmed string.
      */
     CString Trim_n(const CString& s = " \t\r\n") const;
-    /** Trim this string. All leading occurences of characters from s are
+    /** Trim this string. All leading occurrences of characters from s are
      *  removed. This CString instance is not modified.
      * @param s A list of characters that should be trimmed.
      * @return The trimmed string.
      */
     CString TrimLeft_n(const CString& s = " \t\r\n") const;
-    /** Trim this string. All trailing occurences of characters from s are
+    /** Trim this string. All trailing occurrences of characters from s are
      *  removed. This CString instance is not modified.
      * @param s A list of characters that should be trimmed.
      * @return The trimmed string.

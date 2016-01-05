@@ -510,7 +510,7 @@ class CModule {
      *  @param sPass The server password that will be used.
      *  @param sNick The nick that will be used.
      *  @param sIdent The protocol identity that will be used. This is not
-     *                the ident string that is transfered via e.g. oidentd!
+     *                the ident string that is transferred via e.g. oidentd!
      *  @param sRealName The real name that will be used.
      *  @return See CModule::EModRet.
      */

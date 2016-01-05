@@ -938,7 +938,7 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
         }
         case 451:
             // :irc.server.com 451 CAP :You have not registered
-            // Servers that dont support CAP will give us this error, dont send
+            // Servers that don't support CAP will give us this error, don't send
             // it to the client
             if (sNick.Equals("CAP")) return true;
         case 470: {
