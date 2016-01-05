@@ -33,7 +33,7 @@ Core:
 SSL/TLS support:
 * openssl 0.9.7d or later
     * try installing openssl-dev, openssl-devel or libssl-dev
-    * Mac OS X: OpenSSL from Homebrew is prefered over system
+    * Mac OS X: OpenSSL from Homebrew is preferred over system
 
 modperl:
 * perl and its bundled libperl

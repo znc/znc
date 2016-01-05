@@ -141,7 +141,7 @@ class CKeepNickMod : public CModule {
     }
 
     EModRet OnUserRaw(CString& sLine) override {
-        // We dont care if we are not connected to IRC
+        // We don't care if we are not connected to IRC
         if (!GetNetwork()->IsIRCConnected()) return CONTINUE;
 
         // We are trying to get the config nick and this is a /nick?

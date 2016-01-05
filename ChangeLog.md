@@ -408,7 +408,7 @@ In detail, these are:
 
 ### awaystore
 
-* Fix loading old configs which refered to "away" module
+* Fix loading old configs which referred to "away" module
 * Fix displaying IPv6 addresses
 
 ### crypt
@@ -899,7 +899,7 @@ To fix this, remove any user:pass@host portions from your bookmarks, remove all 
 * Moved some modules into/out of extra. (r1919) (r1922) (r1923)
 * Added ./configure --enable-run-from-script, without it ZNC will no longer look for modules in ./modules/. (r1927) (r1928) (r2001)
 * Made a dedicated page to confirm user deletion in webadmin. (r1937) (r1939) (r1941) (r1943)
-* Use spaces for seperating ip addresses from ports. (r1955)
+* Use spaces for separating ip addresses from ports. (r1955)
 * ZNC's built-in MOTD now goes through ExpandString. (r1956)
 * Check for root before generating a new config file. (r1988)
 * Added a flag for adding irc-only / http-only ports via /znc addport. (r1990) (r1992)
@@ -1400,7 +1400,7 @@ Thanks to cnu for finding and reporting this bug.
 * Add ShowMOTD and reorder the HELP output of *status. (r1175)
 * Add /msg *status restart . Thanks to kroimon. (r1174)
 * Make --makeconf more userfriendly. Thanks to kroimon. (r1173)
-* Dont start a new znc process after --makeconf. Thanks to kroimon. (r1171)
+* Don't start a new znc process after --makeconf. Thanks to kroimon. (r1171)
 * Add CModule::PutModule(const CTable&). (r1168) (r1169)
 * Unify some preprocessor macros in Modules.cpp. (r1166)
 * Catch a throw UNLOAD from CModule::OnLoad(). (r1164)

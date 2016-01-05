@@ -128,4 +128,4 @@ proc matchattr {handle flags {channel ""}} {return 0}
 source [file dirname $::MasterFile]/binds.tcl
 
 
-PutModule "Succesfully loaded modtcl with master file: [info script]"
+PutModule "Successfully loaded modtcl with master file: [info script]"

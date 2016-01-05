@@ -151,7 +151,7 @@ namespace eval Binds {
 			}
 		}
 		if {!$match} {
-			PutModule "Error, dcc trigger '[string range [lindex $text 0] 1 end]' doesnt exist"
+			PutModule "Error, dcc trigger '[string range [lindex $text 0] 1 end]' doesn't exist"
 		}
 	}
 }

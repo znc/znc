@@ -1042,7 +1042,7 @@ bool CZNC::ReadConfig(CConfig& config, CString& sError) {
     CUtils::PrintStatus(true);
 
     // check if config is from old ZNC version and
-    // create a backup file if neccessary
+    // create a backup file if necessary
     CString sSavedVersion;
     config.FindStringEntry("version", sSavedVersion);
     if (sSavedVersion.empty()) {
@@ -1782,7 +1782,7 @@ bool CZNC::AddListener(CConfig* pConfig, CString& sError) {
 
 bool CZNC::AddListener(CListener* pListener) {
     if (!pListener->GetRealListener()) {
-        // Listener doesnt actually listen
+        // Listener doesn't actually listen
         delete pListener;
         return false;
     }
