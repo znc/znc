@@ -53,6 +53,7 @@ do
 
 	if test ! -f "${FILE}"; then
 		echo "${ERROR} Building \"${MOD}\" for ZNC $VERSION... File not found"
+		exit 1
 	else
 		printf "Building \"${MOD}.so\" for ZNC $VERSION... "
 		if ${CXX} ${CXXFLAGS} ${INCLUDES} ${LDFLAGS} ${MODLINK} -o "${MOD}.so" "${FILE}" ${LIBS} ; then
