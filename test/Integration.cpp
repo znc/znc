@@ -41,6 +41,8 @@
         }                                                                    \
     } while (0)
 
+using testing::AnyOf;
+using testing::Eq;
 using testing::HasSubstr;
 
 namespace {
@@ -132,7 +134,8 @@ class Process : public IO<QProcess> {
         // TSAN - 66
         //
         // ZNC uses 1 too to report startup failure.
-        // But we don't want to confuse expected starup failure with ASAN error.
+        // But we don't want to confuse expected startup failure with ASAN
+        // error.
         env.insert("ASAN_OPTIONS", "exitcode=57");
         m_proc.setProcessEnvironment(env);
         m_proc.start(cmd, args);
@@ -143,7 +146,11 @@ class Process : public IO<QProcess> {
             ASSERT_TRUE(m_proc.waitForFinished());
             if (!m_allowDie) {
                 ASSERT_EQ(QProcess::NormalExit, m_proc.exitStatus());
-                ASSERT_EQ(m_exit, m_proc.exitCode());
+                if (m_allowLeak) {
+                    ASSERT_THAT(m_proc.exitStatus(), AnyOf(Eq(23), Eq(m_exit)));
+                } else {
+                    ASSERT_EQ(m_exit, m_proc.exitCode());
+                }
             }
         }();
     }
@@ -153,10 +160,14 @@ class Process : public IO<QProcess> {
     }
     void CanDie() { m_allowDie = true; }
 
+    // I can't do much about SWIG...
+    void CanLeak() { m_allowLeak = true; }
+
   private:
     bool m_kill = true;
     int m_exit = 0;
     bool m_allowDie = false;
+    bool m_allowLeak = false;
     QProcess m_proc;
 };
 
@@ -1705,11 +1716,48 @@ TEST_F(ZNCTest, WatchModule) {
     client.Write("znc loadmod watch");
     client.Write("PRIVMSG *watch :add *");
     client.ReadUntil("Adding entry:");
+    Z;
     ircd.Write(":server 001 nick :Hello");
     ircd.Write(":nick JOIN :#znc");
     ircd.Write(":n!i@h PRIVMSG #znc :\001ACTION foo\001");
     client.ReadUntil(
         ":$*!watch@znc.in PRIVMSG nick :* CTCP: n [ACTION foo] to [#znc]");
+}
+
+TEST_F(ZNCTest, Modperl) {
+    auto znc = Run();
+    Z;
+    znc->CanLeak();
+    auto ircd = ConnectIRCd();
+    Z;
+    auto client = LoginClient();
+    Z;
+    client.Write("znc loadmod modperl");
+    client.Write("znc loadmod perleval");
+    client.Write("PRIVMSG *perleval :2+2");
+    client.ReadUntil(":*perleval!znc@znc.in PRIVMSG nick :Result: 4");
+    Z;
+    client.Write("PRIVMSG *perleval :$self->GetUser->GetUserName");
+    client.ReadUntil("Result: user");
+    Z;
+}
+
+TEST_F(ZNCTest, Modpython) {
+    auto znc = Run();
+    Z;
+    znc->CanLeak();
+    auto ircd = ConnectIRCd();
+    Z;
+    auto client = LoginClient();
+    Z;
+    client.Write("znc loadmod modpython");
+    client.Write("znc loadmod pyeval");
+    client.Write("PRIVMSG *pyeval :2+2");
+    client.ReadUntil(":*pyeval!znc@znc.in PRIVMSG nick :4");
+    Z;
+    client.Write("PRIVMSG *pyeval :module.GetUser().GetUserName()");
+    client.ReadUntil("nick :'user'");
+    Z;
 }
 
 }  // namespace
