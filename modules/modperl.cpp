@@ -279,7 +279,7 @@ class CModPerl : public CModule {
     }
 };
 
-#include "modperl/functions.cpp"
+#include "modperl/perlfunctions.cpp"
 
 VWebSubPages& CPerlModule::GetSubPages() {
     VWebSubPages* result = _GetSubPages();

@@ -24,7 +24,7 @@ CLEAN    += modpython/_znc_core.o modpython/compiler.o
 ifneq "$(SWIG)" ""
 # Only delete these files if we can regenerate them
 CLEAN    += modpython/_znc_core.cpp modpython/znc_core.py
-CLEAN    += modpython/swigpyrun.h modpython/functions.cpp
+CLEAN    += modpython/swigpyrun.h modpython/pyfunctions.cpp
 endif
 ifneq "$(srcdir)" "."
 # Copied from source for out-of-tree builds
@@ -58,7 +58,7 @@ ifneq "$(SWIG)" ""
 include $(srcdir)/modpython/Makefile.gen
 endif
 
-modpython.o: modpython/functions.cpp modpython/swigpyrun.h
+modpython.o: modpython/pyfunctions.cpp modpython/swigpyrun.h
 
 modpython/compiler.o: modpython/compiler.cpp Makefile
 	@mkdir -p modpython

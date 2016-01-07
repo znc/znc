@@ -395,7 +395,7 @@ CString CPyModule::GetPyExceptionStr() {
     return m_pModPython->GetPyExceptionStr();
 }
 
-#include "modpython/functions.cpp"
+#include "modpython/pyfunctions.cpp"
 
 VWebSubPages& CPyModule::GetSubPages() {
     VWebSubPages* result = _GetSubPages();
