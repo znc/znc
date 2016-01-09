@@ -8,6 +8,9 @@ matrix:
     include:
         - os: linux
           compiler: gcc
+          env: BUILD_TYPE=tarball
+        - os: linux
+          compiler: gcc
           env: BUILD_TYPE=normal
         - os: linux
           compiler: gcc
@@ -23,7 +26,7 @@ matrix:
           env: BUILD_TYPE=normal
 before_install:
     - "echo os: [$TRAVIS_OS_NAME] build: [$BUILD_TYPE]"
-    - if [[ "$BUILD_TYPE" == "normal" ]]; then export CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=; fi
+    - if [[ "$BUILD_TYPE" == "normal" || "$BUILD_TYPE" == "tarball" ]]; then export CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=; fi
     - if [[ "$BUILD_TYPE" == "asan" ]]; then export CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fPIE" MYLDFLAGS="-fsanitize=address -pie"; fi
     - if [[ "$BUILD_TYPE" == "tsan" ]]; then export CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=thread -O1 -fPIE" MYLDFLAGS="-fsanitize=thread -pie"; fi
     - if [[ "$BUILD_TYPE" == "coverage" ]]; then export CFGFLAGS="--enable-debug --disable-perl --disable-python" MYCXXFLAGS=--coverage MYLDFLAGS=--coverage DISABLED_ZNC_PERL_PYTHON_TEST=1; fi
@@ -56,7 +59,10 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PKG_CONFIG_PATH="$(brew --prefix qt5)/lib/pkgconfig:$PKG_CONFIG_PATH"; fi
     - "echo pkg-config path: [$PKG_CONFIG_PATH]"
 script:
-    - ./bootstrap.sh
+    - if [[ "$BUILD_TYPE" == "tarball" ]]; then ./make-tarball.sh --nightly znc-git-2015-01-16 /tmp/znc-tarball.tar.gz; fi
+    - if [[ "$BUILD_TYPE" == "tarball" ]]; then cd /tmp; tar xvf znc-tarball.tar.gz; fi
+    - if [[ "$BUILD_TYPE" == "tarball" ]]; then cd /tmp/znc-git-2015-01-16; fi
+    - if [[ "$BUILD_TYPE" != "tarball" ]]; then ./bootstrap.sh; fi
     - mkdir build
     - cd build
     - ../configure --enable-perl --enable-python --enable-tcl --enable-cyrus --enable-charset $CFGFLAGS CXXFLAGS="$CXXFLAGS $MYCXXFLAGS" LDFLAGS="$LDFLAGS $MYLDFLAGS"
