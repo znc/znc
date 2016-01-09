@@ -8,9 +8,6 @@ matrix:
     include:
         - os: linux
           compiler: gcc
-          env: BUILD_TYPE=tarball
-        - os: linux
-          compiler: gcc
           env: BUILD_TYPE=normal
         - os: linux
           compiler: gcc
@@ -24,6 +21,9 @@ matrix:
         - os: osx
           compiler: clang
           env: BUILD_TYPE=normal
+        - os: linux
+          compiler: gcc
+          env: BUILD_TYPE=tarball
 before_install:
     - "echo os: [$TRAVIS_OS_NAME] build: [$BUILD_TYPE]"
     - if [[ "$BUILD_TYPE" == "normal" || "$BUILD_TYPE" == "tarball" ]]; then export CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=; fi

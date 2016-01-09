@@ -35,7 +35,7 @@ else
 	# DESC="-rc1"
 fi
 
-TARGZ=`realpath $TARGZ`
+TARGZ=`readlink -f -- $TARGZ`
 
 echo "Exporting . to $TMPDIR/$ZNCDIR..."
 git checkout-index --all --prefix=$TMPDIR/$ZNCDIR/
