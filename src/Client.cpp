@@ -384,7 +384,7 @@ void CClient::AcceptLogin(CUser& User) {
     SetTimeout(CIRCNetwork::NO_TRAFFIC_TIMEOUT, TMO_READ);
 
     SetSockName("USR::" + m_pUser->GetUserName());
-    SetEncoding(CZNC::Get().FixupEncoding(m_pUser->GetClientEncoding()));
+    SetEncoding(m_pUser->GetClientEncoding());
 
     if (!m_sNetwork.empty()) {
         m_pNetwork = m_pUser->FindNetwork(m_sNetwork);

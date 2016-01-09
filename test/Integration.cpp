@@ -76,7 +76,7 @@ class IO {
             m_readed += chunk;
         }
     }
-    void Write(QString s = "", bool new_line = true) {
+    void Write(QByteArray s = "", bool new_line = true) {
         if (!m_device) return;
         if (m_verbose) {
             std::cout << s.toStdString() << std::flush;
@@ -85,9 +85,10 @@ class IO {
             }
         }
         s += "\n";
-        {
-            QTextStream str(m_device);
-            str << s;
+        while (!s.isEmpty()) {
+            auto res = m_device->write(s);
+            ASSERT_NE(res, -1);
+            s.remove(0, res);
         }
         FlushIfCan(m_device);
     }
@@ -103,8 +104,7 @@ class IO {
     }
 
   private:
-    // QTextStream doesn't flush QTcpSocket, and QIODevice doesn't have flush()
-    // at all...
+    // Need to flush QTcpSocket, and QIODevice doesn't have flush at all...
     static void FlushIfCan(QIODevice*) {}
     static void FlushIfCan(QTcpSocket* sock) { sock->flush(); }
 
@@ -469,7 +469,7 @@ TEST_F(ZNCTest, ControlpanelModule) {
     auto client = LoginClient();
     Z;
 
-    const QString request = "PRIVMSG *controlpanel :";
+    const QByteArray request = "PRIVMSG *controlpanel :";
     const QByteArray response = ":*controlpanel!znc@znc.in PRIVMSG nick :";
 
     // TODO: Figure out how to check for "HAVE_ICU" to test encoding.
@@ -1765,6 +1765,11 @@ TEST_F(ZNCTest, Modpython) {
     Z;
     client.Write("PRIVMSG *pyeval :module.GetUser().GetUserName()");
     client.ReadUntil("nick :'user'");
+    Z;
+    ircd.Write(":server 001 nick :Hello");
+    ircd.Write(":n!u@h PRIVMSG nick :Hi\xF0, github issue #1229");
+    // "replacement character"
+    client.ReadUntil("Hi\xEF\xBF\xBD, github issue");
     Z;
 }
 

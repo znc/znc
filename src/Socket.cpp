@@ -176,6 +176,12 @@ CString CZNCSock::GetSSLPeerFingerprint() const {
 #endif
 }
 
+void CZNCSock::SetEncoding(const CString& sEncoding) {
+#ifdef HAVE_ICU
+    Csock::SetEncoding(CZNC::Get().FixupEncoding(sEncoding));
+#endif
+}
+
 #ifdef HAVE_PTHREAD
 class CSockManager::CThreadMonitorFD : public CSMonitorFD {
   public:

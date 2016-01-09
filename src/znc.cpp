@@ -2072,7 +2072,14 @@ void CZNC::ResumeConnectQueue() {
     }
 }
 
-void CZNC::ForceEncoding() { m_uiForceEncoding++; }
+void CZNC::ForceEncoding() {
+    m_uiForceEncoding++;
+    for (Csock* pSock : GetManager()) {
+        if (pSock->GetEncoding().empty()) {
+            pSock->SetEncoding("UTF-8");
+        }
+    }
+}
 void CZNC::UnforceEncoding() { m_uiForceEncoding--; }
 bool CZNC::IsForcingEncoding() const { return m_uiForceEncoding; }
 CString CZNC::FixupEncoding(const CString& sEncoding) const {

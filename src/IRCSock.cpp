@@ -91,7 +91,7 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork)
     EnableReadLine();
     m_Nick.SetIdent(m_pNetwork->GetIdent());
     m_Nick.SetHost(m_pNetwork->GetBindHost());
-    SetEncoding(CZNC::Get().FixupEncoding((m_pNetwork->GetEncoding())));
+    SetEncoding(m_pNetwork->GetEncoding());
 
     m_mueChanModes['b'] = ListArg;
     m_mueChanModes['e'] = ListArg;

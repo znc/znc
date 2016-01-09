@@ -45,10 +45,8 @@ class CZNCSock : public Csock {
         m_ssTrustedFingerprints = ssFPs;
     }
 
-#ifndef HAVE_ICU
-    // Don't fail to compile when ICU is not enabled
-    void SetEncoding(const CString&) {}
-#endif
+    void SetEncoding(const CString&);
+
     virtual CString GetRemoteIP() const { return Csock::GetRemoteIP(); }
 
   protected:
