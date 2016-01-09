@@ -45,6 +45,10 @@
 #define ZNC_BIN_DIR ""
 #endif
 
+#ifndef ZNC_SRC_DIR
+#define ZNC_SRC_DIR ""
+#endif
+
 using testing::AnyOf;
 using testing::Eq;
 using testing::HasSubstr;
@@ -126,11 +130,9 @@ using Socket = IO<QTcpSocket>;
 
 class Process : public IO<QProcess> {
   public:
-    Process(QString cmd, QStringList args, bool interactive)
+    Process(QString cmd, QStringList args,
+            std::function<void(QProcess*)> setup = [](QProcess*) {})
         : IO(&m_proc, true) {
-        if (!interactive) {
-            m_proc.setProcessChannelMode(QProcess::ForwardedChannels);
-        }
         auto env = QProcessEnvironment::systemEnvironment();
         // Default exit codes of sanitizers upon error:
         // ASAN - 1
@@ -142,6 +144,7 @@ class Process : public IO<QProcess> {
         // error.
         env.insert("ASAN_OPTIONS", "exitcode=57");
         m_proc.setProcessEnvironment(env);
+        setup(&m_proc);
         m_proc.start(cmd, args);
     }
     ~Process() override {
@@ -179,8 +182,7 @@ void WriteConfig(QString path) {
     // clang-format off
     Process p(ZNC_BIN_DIR "/znc", QStringList() << "--debug"
                                                 << "--datadir" << path
-                                                << "--makeconf",
-              true);
+                                                << "--makeconf");
     p.ReadUntil("Listen on port");Z;          p.Write("12345");
     p.ReadUntil("Listen using SSL");Z;        p.Write();
     p.ReadUntil("IPv6");Z;                    p.Write();
@@ -210,8 +212,7 @@ TEST(Config, AlreadyExists) {
     Z;
     Process p(ZNC_BIN_DIR "/znc", QStringList() << "--debug"
                                                 << "--datadir" << dir.path()
-                                                << "--makeconf",
-              true);
+                                                << "--makeconf");
     p.ReadUntil("already exists");
     Z;
     p.CanDie();
@@ -261,7 +262,9 @@ class ZNCTest : public testing::Test {
         return std::unique_ptr<Process>(
             new Process("./znc", QStringList() << "--debug"
                                                << "--datadir" << m_dir.path(),
-                        false));
+                        [](QProcess* proc) {
+                proc->setProcessChannelMode(QProcess::ForwardedChannels);
+            }));
     }
 
     Socket LoginClient() {
@@ -1807,6 +1810,40 @@ TEST_F(ZNCTest, Encoding) {
     Z;
     ircd.Write(":n!u@h PRIVMSG nick :Hello\xD0\xB6world");
     client.ReadUntil("Hello\xD0\xB6world");
+    Z;
+}
+
+TEST_F(ZNCTest, BuildMod) {
+    auto znc = Run();
+    Z;
+    auto ircd = ConnectIRCd();
+    Z;
+    auto client = LoginClient();
+    Z;
+    QDir dir(m_dir.path());
+    EXPECT_TRUE(dir.mkdir("modules"));
+    EXPECT_TRUE(dir.cd("modules"));
+    {
+        Process p(ZNC_BIN_DIR "/znc-buildmod",
+                  QStringList() << ZNC_SRC_DIR "/test/file-not-found.cpp",
+                  [&](QProcess* proc) {
+            proc->setWorkingDirectory(dir.absolutePath());
+            proc->setProcessChannelMode(QProcess::ForwardedChannels);
+        });
+        p.ShouldFinishItself(1);
+    }
+    {
+        Process p(ZNC_BIN_DIR "/znc-buildmod",
+                  QStringList() << ZNC_SRC_DIR "/test/testmod.cpp",
+                  [&](QProcess* proc) {
+            proc->setWorkingDirectory(dir.absolutePath());
+            proc->setProcessChannelMode(QProcess::ForwardedChannels);
+        });
+        p.ShouldFinishItself();
+    }
+    client.Write("znc loadmod testmod");
+    client.Write("PRIVMSG *testmod :hi");
+    client.ReadUntil("Lorem ipsum");
     Z;
 }
 
