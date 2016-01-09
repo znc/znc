@@ -26,7 +26,8 @@ matrix:
           env: BUILD_TYPE=tarball
 before_install:
     - "echo os: [$TRAVIS_OS_NAME] build: [$BUILD_TYPE]"
-    - if [[ "$BUILD_TYPE" == "normal" || "$BUILD_TYPE" == "tarball" ]]; then export CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=; fi
+    - if [[ "$BUILD_TYPE" == "normal" ]]; then export CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=; fi
+    - if [[ "$BUILD_TYPE" == "tarball" ]]; then export CFGFLAGS="--with-gtest=/usr/src/gmock/gtest --with-gmock=/usr/src/gmock --disable-swig" MYCXXFLAGS= MYLDFLAGS=; fi
     - if [[ "$BUILD_TYPE" == "asan" ]]; then export CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fPIE" MYLDFLAGS="-fsanitize=address -pie"; fi
     - if [[ "$BUILD_TYPE" == "tsan" ]]; then export CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=thread -O1 -fPIE" MYLDFLAGS="-fsanitize=thread -pie"; fi
     - if [[ "$BUILD_TYPE" == "coverage" ]]; then export CFGFLAGS="--enable-debug --disable-perl --disable-python" MYCXXFLAGS=--coverage MYLDFLAGS=--coverage DISABLED_ZNC_PERL_PYTHON_TEST=1; fi
@@ -39,8 +40,10 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then lsb_release -a; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:teward/swig3.0; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:beineri/opt-qt551-trusty; fi  # default qt5.2 from trusty doesn't support QByteArray::toStdString()
+    - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_TYPE" == "tarball" ]]; then sudo add-apt-repository -y ppa:ostogvin/tjo-develop; fi # gtest+gmock
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y libperl-dev python3-dev tcl-dev libsasl2-dev libicu-dev swig3.0 doxygen graphviz qt55base python3-yaml; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_TYPE" == "tarball" ]]; then sudo apt-get-install -y google-mock; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then source /opt/qt55/bin/qt55-env.sh; fi
     - |
           if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_TYPE" == "coverage" ]]; then
