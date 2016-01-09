@@ -41,6 +41,10 @@
         }                                                                    \
     } while (0)
 
+#ifndef ZNC_BIN_DIR
+#define ZNC_BIN_DIR ""
+#endif
+
 using testing::AnyOf;
 using testing::Eq;
 using testing::HasSubstr;
@@ -173,7 +177,10 @@ class Process : public IO<QProcess> {
 
 void WriteConfig(QString path) {
     // clang-format off
-    Process p("./znc", QStringList() << "--debug" << "--datadir" << path << "--makeconf", true);
+    Process p(ZNC_BIN_DIR "/znc", QStringList() << "--debug"
+                                                << "--datadir" << path
+                                                << "--makeconf",
+              true);
     p.ReadUntil("Listen on port");Z;          p.Write("12345");
     p.ReadUntil("Listen using SSL");Z;        p.Write();
     p.ReadUntil("IPv6");Z;                    p.Write();
@@ -201,9 +208,9 @@ TEST(Config, AlreadyExists) {
     QTemporaryDir dir;
     WriteConfig(dir.path());
     Z;
-    Process p("./znc", QStringList() << "--debug"
-                                     << "--datadir" << dir.path()
-                                     << "--makeconf",
+    Process p(ZNC_BIN_DIR "/znc", QStringList() << "--debug"
+                                                << "--datadir" << dir.path()
+                                                << "--makeconf",
               true);
     p.ReadUntil("already exists");
     Z;

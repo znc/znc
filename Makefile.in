@@ -157,7 +157,7 @@ test/gmock-main.o: $(GMOCK_DIR)/src/gmock_main.cc Makefile
 test/Integration.o: test/Integration.cpp Makefile
 	@mkdir -p .depend test
 	$(E) Building test object Integration...
-	$(Q)g++ $(qt_CFLAGS) $(GTEST_FLAGS) -c -o $@ $< -MD -MF .depend/Integration.test.dep -MT $@
+	$(Q)g++ $(qt_CFLAGS) $(GTEST_FLAGS) -c -o $@ $< -MD -MF .depend/Integration.test.dep -MT $@ '-DZNC_BIN_DIR="$(bindir)"'
 test/Int-gtest-all.o: $(GTEST_DIR)/src/gtest-all.cc Makefile
 	@mkdir -p .depend test
 	$(E) Building test object Int-gtest-all...
