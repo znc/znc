@@ -1330,7 +1330,12 @@ void CUser::SetDenyLoadMod(bool b) { m_bDenyLoadMod = b; }
 void CUser::SetAdmin(bool b) { m_bAdmin = b; }
 void CUser::SetDenySetBindHost(bool b) { m_bDenySetBindHost = b; }
 void CUser::SetDefaultChanModes(const CString& s) { m_sDefaultChanModes = s; }
-void CUser::SetClientEncoding(const CString& s) { m_sClientEncoding = s; }
+void CUser::SetClientEncoding(const CString& s) {
+    m_sClientEncoding = s;
+    for (CClient* pClient : GetAllClients()) {
+        pClient->SetEncoding(s);
+    }
+}
 void CUser::SetQuitMsg(const CString& s) { m_sQuitMsg = s; }
 void CUser::SetAutoClearChanBuffer(bool b) {
     for (CIRCNetwork* pNetwork : m_vIRCNetworks) {

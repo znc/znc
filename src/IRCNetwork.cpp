@@ -1454,7 +1454,12 @@ void CIRCNetwork::SetBindHost(const CString& s) {
     }
 }
 
-void CIRCNetwork::SetEncoding(const CString& s) { m_sEncoding = s; }
+void CIRCNetwork::SetEncoding(const CString& s) {
+    m_sEncoding = s;
+    if (GetIRCSock()) {
+        GetIRCSock()->SetEncoding(s);
+    }
+}
 
 void CIRCNetwork::SetQuitMsg(const CString& s) {
     if (m_pUser->GetQuitMsg().Equals(s)) {
