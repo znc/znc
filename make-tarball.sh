@@ -42,13 +42,14 @@ git checkout-index --all --prefix=$TMPDIR/$ZNCDIR/
 sed -e 's:#include "Csocket.h":#include <znc/Csocket.h>:' third_party/Csocket/Csocket.cc > $TMPDIR/$ZNCDIR/src/Csocket.cpp
 sed -e 's:#include "defines.h":#include <znc/defines.h>:' third_party/Csocket/Csocket.h > $TMPDIR/$ZNCDIR/include/znc/Csocket.h
 (
+	which swig3.0 && SWIG=`which swig3.0` || SWIG=`which swig`
 	cd $TMPDIR/$ZNCDIR
 	echo "Generating configure"
 	AUTOMAKE_FLAGS="--add-missing --copy" ./autogen.sh
 	rm -r autom4te.cache/
 	mkdir -p modules/.depend
-	make -C modules -f modperl/Makefile.gen srcdir=. SWIG=`which swig` PERL=`which perl`
-	make -C modules -f modpython/Makefile.gen srcdir=. SWIG=`which swig` PERL=`which perl`
+	make -C modules -f modperl/Makefile.gen srcdir=. SWIG=$SWIG PERL=`which perl`
+	make -C modules -f modpython/Makefile.gen srcdir=. SWIG=$SWIG PERL=`which perl`
 	rm -rf modules/.depend
 	rm .travis* .appveyor*
 	rm make-tarball.sh
