@@ -82,6 +82,7 @@ class CModPython : public CModule {
     }
 
     MODCONSTRUCTOR(CModPython) {
+        CZNC::Get().ForceEncoding();
         Py_Initialize();
         m_PyFormatException = nullptr;
         m_PyZNCModule = nullptr;
@@ -386,6 +387,7 @@ class CModPython : public CModule {
         Py_CLEAR(m_PyFormatException);
         Py_CLEAR(m_PyZNCModule);
         Py_Finalize();
+        CZNC::Get().UnforceEncoding();
     }
 };
 

@@ -1013,7 +1013,10 @@ class CWebAdminMod : public CModule {
                 Tmpl["EncodingUtf"] = "simple";
                 Tmpl["Encoding"] = sEncoding;
             }
+            Tmpl["LegacyEncodingDisabled"] =
+                CString(CZNC::Get().IsForcingEncoding());
 #else
+            Tmpl["LegacyEncodingDisabled"] = "true";
             Tmpl["EncodingDisabled"] = "true";
             Tmpl["EncodingUtf"] = "legacy";
 #endif
@@ -1353,7 +1356,10 @@ class CWebAdminMod : public CModule {
                 Tmpl["EncodingUtf"] = "simple";
                 Tmpl["Encoding"] = sEncoding;
             }
+            Tmpl["LegacyEncodingDisabled"] =
+                CString(CZNC::Get().IsForcingEncoding());
 #else
+            Tmpl["LegacyEncodingDisabled"] = "true";
             Tmpl["EncodingDisabled"] = "true";
             Tmpl["EncodingUtf"] = "legacy";
 #endif

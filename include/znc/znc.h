@@ -233,6 +233,11 @@ class CZNC {
     void PauseConnectQueue();
     void ResumeConnectQueue();
 
+    void ForceEncoding();
+    void UnforceEncoding();
+    bool IsForcingEncoding() const;
+    CString FixupEncoding(const CString& sEncoding) const;
+
     // Never call this unless you are CConnectQueueTimer::~CConnectQueueTimer()
     void LeakConnectQueueTimer(CConnectQueueTimer* pTimer);
 
@@ -289,6 +294,7 @@ class CZNC {
     std::list<CIRCNetwork*> m_lpConnectQueue;
     CConnectQueueTimer* m_pConnectQueueTimer;
     unsigned int m_uiConnectPaused;
+    unsigned int m_uiForceEncoding;
     TCacheMap<CString> m_sConnectThrottle;
     bool m_bProtectWebSessions;
     bool m_bHideVersion;

@@ -584,6 +584,9 @@ if test "x$PYTHON" != "xno"; then
 		LIBS="$my_saved_LIBS"
 		CXXFLAGS="$my_saved_CXXFLAGS"
 	fi
+	if test "x$HAVE_ICU" != "xyes"; then
+		AC_MSG_ERROR([Modpython requires ZNC to be compiled with charset support, but ICU library not found. Try --disable-python or install libicu.])
+	fi
 	if test "x$PYTHON" = "xno"; then
 		ZNC_AUTO_FAIL([PYTHON],
 			[python not found. Try --disable-python.],

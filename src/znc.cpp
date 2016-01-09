@@ -72,6 +72,7 @@ CZNC::CZNC()
       m_lpConnectQueue(),
       m_pConnectQueueTimer(nullptr),
       m_uiConnectPaused(0),
+      m_uiForceEncoding(0),
       m_sConnectThrottle(),
       m_bProtectWebSessions(true),
       m_bHideVersion(false) {
@@ -2069,6 +2070,16 @@ void CZNC::ResumeConnectQueue() {
     if (m_pConnectQueueTimer) {
         m_pConnectQueueTimer->UnPause();
     }
+}
+
+void CZNC::ForceEncoding() { m_uiForceEncoding++; }
+void CZNC::UnforceEncoding() { m_uiForceEncoding--; }
+bool CZNC::IsForcingEncoding() const { return m_uiForceEncoding; }
+CString CZNC::FixupEncoding(const CString& sEncoding) const {
+    if (sEncoding.empty() && m_uiForceEncoding) {
+        return "UTF-8";
+    }
+    return sEncoding;
 }
 
 void CZNC::AddNetworkToQueue(CIRCNetwork* pNetwork) {
