@@ -1725,6 +1725,10 @@ TEST_F(ZNCTest, WatchModule) {
 }
 
 TEST_F(ZNCTest, Modperl) {
+    if (QProcessEnvironment::systemEnvironment().value(
+            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
+        return;
+    }
     auto znc = Run();
     Z;
     znc->CanLeak();
@@ -1743,6 +1747,10 @@ TEST_F(ZNCTest, Modperl) {
 }
 
 TEST_F(ZNCTest, Modpython) {
+    if (QProcessEnvironment::systemEnvironment().value(
+            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
+        return;
+    }
     auto znc = Run();
     Z;
     znc->CanLeak();
