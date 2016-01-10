@@ -259,10 +259,10 @@ class ZNCTest : public testing::Test {
     }
 
     std::unique_ptr<Process> Run() {
-        return std::unique_ptr<Process>(
-            new Process("./znc", QStringList() << "--debug"
-                                               << "--datadir" << m_dir.path(),
-                        [](QProcess* proc) {
+        return std::unique_ptr<Process>(new Process(
+            ZNC_BIN_DIR "/znc", QStringList() << "--debug"
+                                              << "--datadir" << m_dir.path(),
+            [](QProcess* proc) {
                 proc->setProcessChannelMode(QProcess::ForwardedChannels);
             }));
     }
