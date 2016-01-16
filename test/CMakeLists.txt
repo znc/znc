@@ -67,43 +67,23 @@ target_include_directories(unittest_bin PRIVATE
 	"${GMOCK_ROOT}" "${GMOCK_ROOT}/include")
 add_custom_target(unittest COMMAND unittest_bin)
 
-try_compile(qt5_findable
-	"${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/qt5check"
-	"${PROJECT_SOURCE_DIR}/cmake/qt5check" qt5check
-	CMAKE_FLAGS "-DQt5_HINTS=${brew_qt5}"
-	OUTPUT_VARIABLE _Qt5Check_tryout)
-if(qt5_findable)
-	file(APPEND
-		"${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log"
-		"Output of Qt5 check:\n${_Qt5Check_tryout}\n")
-	string(REGEX REPLACE ".*QT5_VERSION_BEGIN:" "" qt5_version
-		"${_Qt5Check_tryout}")
-	string(REGEX REPLACE ":QT5_VERSION_END.*" "" qt5_version "${qt5_version}")
-	find_package_message(qt "Found Qt ${qt5_version}" "1;${qt5_version}")
-	# Use different compiler flags, because Qt fails with sanitizers,
-	# and we don't need sanitizers to test the test itself anyway.
-	externalproject_add(inttest_bin
-		EXCLUDE_FROM_ALL true
-		BUILD_ALWAYS true
-		SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/integration"
-		BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/integration"
-		INSTALL_COMMAND ""
-		CMAKE_CACHE_ARGS
-		# Note the space in the end: protect from CXXFLAGS env var, but
-		# still support custom flags
-		"-DCMAKE_CXX_FLAGS:string=${INTEGRATION_TEST_CXX_FLAGS} "
-		"-DGTEST_ROOT:path=${GTEST_ROOT}"
-		"-DGMOCK_ROOT:path=${GMOCK_ROOT}"
-		"-DZNC_BIN_DIR:path=${CMAKE_INSTALL_FULL_BINDIR}"
-		"-DZNC_SRC_DIR:path=${PROJECT_SOURCE_DIR}"
-		"-DQt5_HINTS:path=${brew_qt5}")
-	add_custom_target(inttest COMMAND
-		"${CMAKE_CURRENT_BINARY_DIR}/integration/inttest")
-	add_dependencies(inttest inttest_bin)
-else()
-	file(APPEND
-		"${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log"
-		"Error in Qt5 check:\n${_Qt5Check_tryout}\n")
-	find_package_message(qt
-		"Qt >= 5.4 not found, integration testing will be disabled" "0")
-endif()
+# Use different compiler flags, because Qt fails with sanitizers,
+# and we don't need sanitizers to test the test itself anyway.
+externalproject_add(inttest_bin
+	EXCLUDE_FROM_ALL true
+	BUILD_ALWAYS true
+	SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/integration"
+	BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/integration"
+	INSTALL_COMMAND ""
+	CMAKE_CACHE_ARGS
+	# Note the space in the end: protect from CXXFLAGS env var, but
+	# still support custom flags
+	"-DCMAKE_CXX_FLAGS:string=${INTEGRATION_TEST_CXX_FLAGS} "
+	"-DGTEST_ROOT:path=${GTEST_ROOT}"
+	"-DGMOCK_ROOT:path=${GMOCK_ROOT}"
+	"-DZNC_BIN_DIR:path=${CMAKE_INSTALL_FULL_BINDIR}"
+	"-DZNC_SRC_DIR:path=${PROJECT_SOURCE_DIR}"
+	"-DQt5_HINTS:path=${brew_qt5}")
+add_custom_target(inttest COMMAND
+	"${CMAKE_CURRENT_BINARY_DIR}/integration/inttest")
+add_dependencies(inttest inttest_bin)
