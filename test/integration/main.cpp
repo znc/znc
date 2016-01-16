@@ -102,11 +102,9 @@ class IO {
     }
     void Close() {
 #ifdef __CYGWIN__
-#ifdef __x86_64__
-        // Qt on cygwin64 silently doesn't send the rest of buffer from socket
+        // Qt on cygwin silently doesn't send the rest of buffer from socket
         // without this line
         sleep(1);
-#endif
 #endif
         m_device->disconnectFromHost();
     }
