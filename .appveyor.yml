@@ -28,7 +28,7 @@ install:
     - ps: Push-AppveyorArtifact cygcheck.log
     - ps: |
         if ($env:build_with -eq "cmake") {
-          $env:cfg_suffix = ".py"
+          $env:cfg_suffix = ".sh"
           $env:unittest = "unittest"
           $env:inttest = "inttest"
         } else {

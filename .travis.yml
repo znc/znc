@@ -40,7 +40,7 @@ before_install:
     - if [[ "$BUILD_TYPE" == "asan" ]]; then export CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fPIE" MYLDFLAGS="-fsanitize=address -pie"; fi
     - if [[ "$BUILD_TYPE" == "tsan" ]]; then export CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=thread -O1 -fPIE" MYLDFLAGS="-fsanitize=thread -pie"; fi
     - if [[ "$BUILD_TYPE" == "coverage" ]]; then export CFGFLAGS="--enable-debug --disable-perl --disable-python" MYCXXFLAGS=--coverage MYLDFLAGS=--coverage DISABLED_ZNC_PERL_PYTHON_TEST=1; fi
-    - if [[ "$BUILD_WITH" == "cmake" ]]; then export CFGSUFFIX=.py UNITTEST=unittest INTTEST=inttest; else export CFGSUFFIX= UNITTEST=test INTTEST=test2; fi
+    - if [[ "$BUILD_WITH" == "cmake" ]]; then export CFGSUFFIX=.sh UNITTEST=unittest INTTEST=inttest; else export CFGSUFFIX= UNITTEST=test INTTEST=test2; fi
       # UBSan randomly crashes clang, and very often :(
       # CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=undefined -O1 -fPIE -fno-sanitize-recover" MYLDFLAGS="-fsanitize=undefined -pie -fno-sanitize-recover"
     - if [[ "$TRAVIS_REPO_SLUG" == "znc/znc" && "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_BRANCH" == "master" ]]; then openssl aes-256-cbc -d -in .travis-github.enc -out ~/znc-github-key -k ${SECRET_KEY}; fi

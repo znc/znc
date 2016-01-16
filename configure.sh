@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/bin/sh
 #
 # Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
 #
@@ -15,6 +15,15 @@
 # limitations under the License.
 #
 
+# http://stackoverflow.com/questions/18993438/shebang-env-preferred-python-version
+# http://stackoverflow.com/questions/12070516/conditional-shebang-line-for-different-versions-of-python
+""":"
+which python3 >/dev/null 2>&1 && exec python3 "$0" "$@"
+which python  >/dev/null 2>&1 && exec python  "$0" "$@"
+which python2 >/dev/null 2>&1 && exec python2 "$0" "$@"
+echo "Error: configure wrapper requires python"
+exec echo "Either install python, or use cmake directly"
+":"""
 
 import argparse
 import os

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/bin/sh
 #
 # Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
 #
@@ -15,13 +15,34 @@
 # limitations under the License.
 #
 
+# http://stackoverflow.com/questions/18993438/shebang-env-preferred-python-version
+# http://stackoverflow.com/questions/12070516/conditional-shebang-line-for-different-versions-of-python
+""":"
+which python3 >/dev/null 2>&1 && exec python3 "$0" "$@"
+which python  >/dev/null 2>&1 && exec python  "$0" "$@"
+which python2 >/dev/null 2>&1 && exec python2 "$0" "$@"
+echo "Error: znc-buildmod requires python"
+exec echo "Either install python, or use cmake directly"
+":"""
+
+from __future__ import print_function
 
 import argparse
 import glob
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
+
+if sys.version_info < (3, 0):
+    class TemporaryDirectory(object):
+        def __enter__(self):
+            self.name = tempfile.mkdtemp()
+            return self.name
+        def __exit__(self, *a, **k):
+            shutil.rmtree(self.name)
+    tempfile.TemporaryDirectory = TemporaryDirectory
 
 parser = argparse.ArgumentParser(
         description='Build external ZNC modules and place the results to '

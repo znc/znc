@@ -57,7 +57,7 @@ Character Encodings:
 
 Currently there are 2 build systems in place: CMake and `./configure`.
 `./configure` will eventually be removed.
-There is also `configure.py` which should make migration to CMake easier:
+There is also `configure.sh` which should make migration to CMake easier:
 it accepts the same parameters as `./configure`,
 but calls CMake with CMake-style parameters.
 
