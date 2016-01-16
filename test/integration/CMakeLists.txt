@@ -24,7 +24,7 @@ set(CMAKE_THREAD_PREFER_PTHREAD true)
 set(THREADS_PREFER_PTHREAD_FLAG true)
 find_package(Threads REQUIRED)
 
-find_package(Qt5Network 5.4 HINTS ${Qt5_HINTS})
+find_package(Qt5Network 5.4 REQUIRED HINTS ${Qt5_HINTS})
 
 # Force the simple internal regex engine to get consistent behavior on all
 # platforms. See
