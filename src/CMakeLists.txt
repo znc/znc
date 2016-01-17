@@ -14,6 +14,11 @@
 # limitations under the License.
 #
 
+if(CMAKE_VERSION VERSION_LESS 3.2)
+	# Since 3.2 it does this automatically from BYPRODUCTS
+	set_source_files_properties("versionc.cpp" PROPERTIES GENERATED true)
+endif()
+
 znc_add_library(znclib ${lib_type} "ZNCString.cpp" "znc.cpp" "IRCNetwork.cpp"
 	"IRCSock.cpp" "Client.cpp" "Chan.cpp" "Nick.cpp" "Server.cpp"
 	"Modules.cpp" "MD5.cpp" "Buffer.cpp" "Utils.cpp" "FileUtils.cpp"

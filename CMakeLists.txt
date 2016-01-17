@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.1)
 project(ZNC VERSION 1.7.0)
 set(ZNC_VERSION 1.7.x)
 set(append_git_version true)
@@ -332,6 +332,4 @@ message("")
 # TODO
 # ====
 #
-# readme: advice about cmake --system-information
 # remove old configure.ac and Makefile.in
-# consider mininum cmake version
