@@ -75,6 +75,11 @@ public:
 			"[mechanism[ ...]]", "Set the mechanisms to be attempted (in order)");
 		AddCommand("RequireAuth", static_cast<CModCommand::ModCmdFunc>(&CSASLMod::RequireAuthCommand),
 			"[yes|no]", "Don't connect unless SASL authentication succeeds");
+		AddCommand("Verbose", "yes|no", "Set verbosity level, useful to debug",
+			[&](const CString& sLine) {
+				m_bVerbose = sLine.ToBool();
+				PutModule("Verbose: " + CString(m_bVerbose));
+			});
 
 		m_bAuthenticated = false;
 	}
@@ -166,15 +171,12 @@ public:
 		return GetNV(NV_MECHANISMS);
 	}
 
-	bool CheckRequireAuth() {
+	void CheckRequireAuth() {
 		if (!m_bAuthenticated && GetNV(NV_REQUIRE_AUTH).ToBool()) {
 			GetNetwork()->SetIRCConnectEnabled(false);
 			PutModule("Disabling network, we require authentication.");
 			PutModule("Use 'RequireAuth no' to disable.");
-			return true;
 		}
-
-		return false;
 	}
 
 	void Authenticate(const CString& sLine) {
@@ -217,12 +219,17 @@ public:
 			Authenticate(sLine.Token(1, true));
 		} else if (sLine.Token(1).Equals("903")) {
 			/* SASL success! */
+			if (m_bVerbose) {
+				PutModule(m_Mechanisms.GetCurrent() + " mechanism succeeded.");
+			}
 			GetNetwork()->GetIRCSock()->ResumeCap();
 			m_bAuthenticated = true;
 			DEBUG("sasl: Authenticated with mechanism [" << m_Mechanisms.GetCurrent() << "]");
 		} else if (sLine.Token(1).Equals("904") || sLine.Token(1).Equals("905")) {
 			DEBUG("sasl: Mechanism [" << m_Mechanisms.GetCurrent() << "] failed.");
-			PutModule(m_Mechanisms.GetCurrent() + " mechanism failed.");
+			if (m_bVerbose) {
+				PutModule(m_Mechanisms.GetCurrent() + " mechanism failed.");
+			}
 
 			if (m_Mechanisms.HasNext()) {
 				m_Mechanisms.IncrementIndex();
@@ -259,6 +266,7 @@ public:
 private:
 	Mechanisms m_Mechanisms;
 	bool m_bAuthenticated;
+	bool m_bVerbose = false;
 };
 
 template<> void TModInfo<CSASLMod>(CModInfo& Info) {
