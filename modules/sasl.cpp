@@ -74,6 +74,11 @@ class CSASLMod : public CModule {
             "RequireAuth",
             static_cast<CModCommand::ModCmdFunc>(&CSASLMod::RequireAuthCommand),
             "[yes|no]", "Don't connect unless SASL authentication succeeds");
+        AddCommand("Verbose", "yes|no", "Set verbosity level, useful to debug",
+                   [&](const CString& sLine) {
+            m_bVerbose = sLine.ToBool();
+            PutModule("Verbose: " + CString(m_bVerbose));
+        });
 
         m_bAuthenticated = false;
     }
@@ -165,15 +170,12 @@ class CSASLMod : public CModule {
         return GetNV(NV_MECHANISMS);
     }
 
-    bool CheckRequireAuth() {
+    void CheckRequireAuth() {
         if (!m_bAuthenticated && GetNV(NV_REQUIRE_AUTH).ToBool()) {
             GetNetwork()->SetIRCConnectEnabled(false);
             PutModule("Disabling network, we require authentication.");
             PutModule("Use 'RequireAuth no' to disable.");
-            return true;
         }
-
-        return false;
     }
 
     void Authenticate(const CString& sLine) {
@@ -223,6 +225,9 @@ class CSASLMod : public CModule {
     EModRet OnNumericMessage(CNumericMessage& msg) override {
         if (msg.GetCode() == 903) {
             /* SASL success! */
+            if (m_bVerbose) {
+                PutModule(m_Mechanisms.GetCurrent() + " mechanism succeeded.");
+            }
             GetNetwork()->GetIRCSock()->ResumeCap();
             m_bAuthenticated = true;
             DEBUG("sasl: Authenticated with mechanism ["
@@ -231,7 +236,9 @@ class CSASLMod : public CModule {
                    msg.GetCode() == 905) {
             DEBUG("sasl: Mechanism [" << m_Mechanisms.GetCurrent()
                                       << "] failed.");
-            PutModule(m_Mechanisms.GetCurrent() + " mechanism failed.");
+            if (m_bVerbose) {
+                PutModule(m_Mechanisms.GetCurrent() + " mechanism failed.");
+            }
 
             if (m_Mechanisms.HasNext()) {
                 m_Mechanisms.IncrementIndex();
@@ -300,6 +307,7 @@ class CSASLMod : public CModule {
   private:
     Mechanisms m_Mechanisms;
     bool m_bAuthenticated;
+    bool m_bVerbose = false;
 };
 
 template <>
