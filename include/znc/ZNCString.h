@@ -663,4 +663,38 @@ class MCString : public std::map<CString, CString> {
     virtual CString& Decode(CString& sValue) const;
 };
 
+namespace std {
+template <>
+struct hash<CString> : hash<std::string> {};
+}
+
+// Make translateable messages easy to write:
+// _f("Foo is {1}")(foo)
+class CInlineFormatMessage {
+  public:
+    explicit CInlineFormatMessage(const CString& sFormat)
+        : m_sFormat(sFormat) {}
+    explicit CInlineFormatMessage(CString&& sFormat)
+        : m_sFormat(std::move(sFormat)) {}
+
+    template <typename... Args>
+    CString operator()(const Args&... args) const {
+        MCString values;
+        apply(values, 1, args...);
+        return CString::NamedFormat(m_sFormat, values);
+    }
+
+  private:
+    template <typename Arg, typename... Rest>
+    void apply(MCString& values, int index, const Arg& arg,
+               const Rest&... rest) const {
+        values[CString(index)] = CString(arg);
+        apply(values, index + 1, rest...);
+    }
+
+    void apply(MCString& values, int index) const {}
+
+    CString m_sFormat;
+};
+
 #endif  // !ZNCSTRING_H

@@ -143,6 +143,7 @@ class CUser {
     bool SetQueryBufferSize(unsigned int u, bool bForce = false);
     void SetAutoClearChanBuffer(bool b);
     void SetAutoClearQueryBuffer(bool b);
+    bool SetLanguage(const CString& s);
 
     void SetBeingDeleted(bool b) { m_bBeingDeleted = b; }
     void SetTimestampFormat(const CString& s) { m_sTimestampFormat = s; }
@@ -200,6 +201,7 @@ class CUser {
     unsigned int JoinTries() const { return m_uMaxJoinTries; }
     unsigned int MaxJoins() const { return m_uMaxJoins; }
     CString GetSkinName() const;
+    CString GetLanguage() const;
     unsigned int MaxNetworks() const { return m_uMaxNetworks; }
     unsigned int MaxQueryBuffers() const { return m_uMaxQueryBuffers; }
     // !Getters
@@ -253,6 +255,7 @@ class CUser {
     unsigned int m_uMaxQueryBuffers;
     unsigned int m_uMaxJoins;
     CString m_sSkinName;
+    CString m_sLanguage;
 
     CModules* m_pModules;
 

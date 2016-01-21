@@ -19,13 +19,13 @@ if(CMAKE_VERSION VERSION_LESS 3.2)
 	set_source_files_properties("versionc.cpp" PROPERTIES GENERATED true)
 endif()
 
-znc_add_library(znclib ${lib_type} "ZNCString.cpp" "znc.cpp" "IRCNetwork.cpp"
+set(znc_cpp "ZNCString.cpp" "znc.cpp" "IRCNetwork.cpp" "Translation.cpp"
 	"IRCSock.cpp" "Client.cpp" "Chan.cpp" "Nick.cpp" "Server.cpp"
 	"Modules.cpp" "MD5.cpp" "Buffer.cpp" "Utils.cpp" "FileUtils.cpp"
 	"HTTPSock.cpp" "Template.cpp" "ClientCommand.cpp" "Socket.cpp"
 	"SHA256.cpp" "WebModules.cpp" "Listener.cpp" "Config.cpp" "ZNCDebug.cpp"
-	"Threads.cpp" "Query.cpp" "SSLVerifyHost.cpp" "Message.cpp" "Csocket.cpp"
-	"versionc.cpp" "User.cpp")
+	"Threads.cpp" "Query.cpp" "SSLVerifyHost.cpp" "Message.cpp" "User.cpp")
+znc_add_library(znclib ${lib_type} ${znc_cpp} "Csocket.cpp" "versionc.cpp")
 znc_add_executable(znc "main.cpp")
 target_link_libraries(znc PRIVATE znclib)
 
@@ -76,6 +76,10 @@ if(ICU_FOUND)
 	target_link_libraries(znclib ${ICU_LDFLAGS})
 	list(APPEND znc_include_dirs ${ICU_INCLUDE_DIRS})
 endif()
+if(Boost_FOUND)
+	target_link_libraries(znclib ${Boost_LIBRARIES})
+	list(APPEND znc_include_dirs ${Boost_INCLUDE_DIRS})
+endif()
 target_include_directories(znc PUBLIC ${znc_include_dirs})
 target_include_directories(znclib PUBLIC ${znc_include_dirs})
 
@@ -91,7 +95,9 @@ set_target_properties(znclib PROPERTIES
 	OUTPUT_NAME "znc"
 	SOVERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
 
-
+if(HAVE_I18N)
+	add_subdirectory(po)
+endif()
 
 
 install(TARGETS znc ${install_lib}

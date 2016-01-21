@@ -29,8 +29,6 @@ static const size_t MAX_IDLE_THREADS = 3;
 static const size_t MAX_TOTAL_THREADS = 20;
 
 CThreadPool& CThreadPool::Get() {
-    // Beware! The following is not thread-safe! This function must
-    // be called once any thread is started.
     static CThreadPool pool;
     return pool;
 }

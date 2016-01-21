@@ -138,6 +138,7 @@ CModule::CModule(ModHandle pDLL, CUser* pUser, CIRCNetwork* pNetwork,
       m_sSavePath(""),
       m_sArgs(""),
       m_sModPath(""),
+      m_Translation("znc-" + sModName),
       m_mssRegistry(),
       m_vSubPages(),
       m_mCommands() {
@@ -513,6 +514,13 @@ bool CModule::AddCommand(const CString& sCmd, const CString& sArgs,
                          const CString& sDesc,
                          std::function<void(const CString& sLine)> func) {
     CModCommand cmd(sCmd, std::move(func), sArgs, sDesc);
+    return AddCommand(std::move(cmd));
+}
+
+bool CModule::AddCommand(const CString& sCmd, const CString& sArgs,
+                         const CDelayedTranslation& dDesc,
+                         std::function<void(const CString& sLine)> func) {
+    CModCommand cmd(sCmd, std::move(func), sArgs, dDesc);
     return AddCommand(std::move(cmd));
 }
 
@@ -1595,6 +1603,8 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs,
         sRetMsg = "Unable to find module [" + sModule + "]";
         return false;
     }
+    Info.SetName(sModule);
+    Info.SetPath(sModPath);
 
     ModHandle p =
         OpenModule(sModule, sModPath, bVersionMismatch, Info, sRetMsg);
@@ -1754,13 +1764,12 @@ bool CModules::GetModPathInfo(CModInfo& ModInfo, const CString& sModule,
                               const CString& sModPath, CString& sRetMsg) {
     bool bVersionMismatch;
 
-    ModHandle p =
-        OpenModule(sModule, sModPath, bVersionMismatch, ModInfo, sRetMsg);
-
-    if (!p) return false;
-
     ModInfo.SetName(sModule);
     ModInfo.SetPath(sModPath);
+
+    ModHandle p =
+        OpenModule(sModule, sModPath, bVersionMismatch, ModInfo, sRetMsg);
+    if (!p) return false;
 
     if (bVersionMismatch) {
         ModInfo.SetDescription(
@@ -1910,6 +1919,7 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath,
         return nullptr;
     }
 
+    CTranslationDomainRefHolder translation("znc-" + sModule);
     typedef bool (*InfoFP)(double, CModInfo&);
     InfoFP ZNCModInfo = (InfoFP)dlsym(p, "ZNCModInfo");
 
@@ -1930,32 +1940,32 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath,
     return p;
 }
 
-CModCommand::CModCommand() : m_sCmd(), m_pFunc(nullptr), m_sArgs(), m_sDesc() {}
+CModCommand::CModCommand()
+    : m_sCmd(), m_pFunc(nullptr), m_sArgs(), m_sDesc(), m_bTranslating(false) {}
 
 CModCommand::CModCommand(const CString& sCmd, CModule* pMod, ModCmdFunc func,
                          const CString& sArgs, const CString& sDesc)
     : m_sCmd(sCmd),
       m_pFunc([pMod, func](const CString& sLine) { (pMod->*func)(sLine); }),
       m_sArgs(sArgs),
-      m_sDesc(sDesc) {}
+      m_sDesc(sDesc),
+      m_bTranslating(false) {}
 
 CModCommand::CModCommand(const CString& sCmd, CmdFunc func,
                          const CString& sArgs, const CString& sDesc)
-    : m_sCmd(sCmd), m_pFunc(std::move(func)), m_sArgs(sArgs), m_sDesc(sDesc) {}
+    : m_sCmd(sCmd),
+      m_pFunc(std::move(func)),
+      m_sArgs(sArgs),
+      m_sDesc(sDesc),
+      m_bTranslating(false) {}
 
-CModCommand::CModCommand(const CModCommand& other)
-    : m_sCmd(other.m_sCmd),
-      m_pFunc(other.m_pFunc),
-      m_sArgs(other.m_sArgs),
-      m_sDesc(other.m_sDesc) {}
-
-CModCommand& CModCommand::operator=(const CModCommand& other) {
-    m_sCmd = other.m_sCmd;
-    m_pFunc = other.m_pFunc;
-    m_sArgs = other.m_sArgs;
-    m_sDesc = other.m_sDesc;
-    return *this;
-}
+CModCommand::CModCommand(const CString& sCmd, CmdFunc func,
+                         const CString& sArgs, const CDelayedTranslation& dDesc)
+    : m_sCmd(sCmd),
+      m_pFunc(std::move(func)),
+      m_sArgs(sArgs),
+      m_dDesc(dDesc),
+      m_bTranslating(true) {}
 
 void CModCommand::InitHelp(CTable& Table) {
     Table.AddColumn("Command");
@@ -1966,4 +1976,34 @@ void CModCommand::AddHelp(CTable& Table) const {
     Table.AddRow();
     Table.SetCell("Command", GetCommand() + " " + GetArgs());
     Table.SetCell("Description", GetDescription());
+}
+
+CString CModCommand::GetDescription() const {
+    return m_bTranslating ? m_dDesc.Resolve() : m_sDesc;
+}
+
+CString CModule::t(const CString& sEnglish, const CString& sContext) const {
+    return CTranslation::Get().Singular("znc-" + GetModName(), sContext,
+                                        sEnglish);
+}
+
+CInlineFormatMessage CModule::f(const CString& sEnglish,
+                                const CString& sContext) const {
+    return CInlineFormatMessage(t(sEnglish, sContext));
+}
+
+CInlineFormatMessage CModule::p(const CString& sEnglish,
+                                const CString& sEnglishes, int iNum,
+                                const CString& sContext) const {
+    return CInlineFormatMessage(CTranslation::Get().Plural(
+        "znc-" + GetModName(), sContext, sEnglish, sEnglishes, iNum));
+}
+
+CDelayedTranslation CModule::d(const CString& sEnglish,
+                               const CString& sContext) const {
+    return CDelayedTranslation("znc-" + GetModName(), sContext, sEnglish);
+}
+
+CString CModInfo::t(const CString& sEnglish, const CString& sContext) const {
+    return CTranslation::Get().Singular("znc-" + GetName(), sContext, sEnglish);
 }

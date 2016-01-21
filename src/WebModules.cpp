@@ -672,6 +672,8 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI,
         m_sUser = GetSession()->GetUser()->GetUserName();
         m_bLoggedIn = true;
     }
+    CLanguageScope user_language(
+        m_bLoggedIn ? GetSession()->GetUser()->GetLanguage() : "");
 
     // Handle the static pages that don't require a login
     if (sURI == "/") {

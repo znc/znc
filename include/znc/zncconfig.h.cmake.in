@@ -32,6 +32,7 @@
 #cmakedefine HAVE_LIBSSL 1
 #cmakedefine HAVE_IPV6 1
 #cmakedefine HAVE_ZLIB 1
+#cmakedefine HAVE_I18N 1
 #cmakedefine CSOCK_USE_POLL 1
 
 #cmakedefine HAVE_GETOPT_LONG 1
@@ -49,5 +50,6 @@
 
 #define _MODDIR_ "@CMAKE_INSTALL_FULL_LIBDIR@/znc"
 #define _DATADIR_ "@CMAKE_INSTALL_FULL_DATADIR@/znc"
+#define LOCALE_DIR "@CMAKE_INSTALL_FULL_LOCALEDIR@"
 
 #endif /* ZNCCONFIG_H */

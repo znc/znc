@@ -23,6 +23,7 @@
 #include <znc/Threads.h>
 #include <znc/Message.h>
 #include <znc/main.h>
+#include <znc/Translation.h>
 #include <functional>
 #include <set>
 #include <queue>
@@ -58,20 +59,24 @@ class CModInfo;
 #define ZNC_EXPORT_LIB_EXPORT
 #endif
 
-#define MODCOMMONDEFS(CLASS, DESCRIPTION, TYPE)                \
-    extern "C" {                                               \
-    ZNC_EXPORT_LIB_EXPORT bool ZNCModInfo(double dCoreVersion, \
-                                          CModInfo& Info);     \
-    ZNC_EXPORT_LIB_EXPORT bool ZNCModInfo(double dCoreVersion, \
-                                          CModInfo& Info) {    \
-        if (dCoreVersion != VERSION) return false;             \
-        Info.SetDescription(DESCRIPTION);                      \
-        Info.SetDefaultType(TYPE);                             \
-        Info.AddType(TYPE);                                    \
-        Info.SetLoader(TModLoad<CLASS>);                       \
-        TModInfo<CLASS>(Info);                                 \
-        return true;                                           \
-    }                                                          \
+#define MODCOMMONDEFS(CLASS, DESCRIPTION, TYPE)                               \
+    extern "C" {                                                              \
+    ZNC_EXPORT_LIB_EXPORT bool ZNCModInfo(double dCoreVersion,                \
+                                          CModInfo& Info);                    \
+    ZNC_EXPORT_LIB_EXPORT bool ZNCModInfo(double dCoreVersion,                \
+                                          CModInfo& Info) {                   \
+        if (dCoreVersion != VERSION) return false;                            \
+        auto t = [&](const CString& sEnglish, const CString& sContext = "") { \
+            return sEnglish.empty() ? "" : Info.t(sEnglish, sContext);        \
+        };                                                                    \
+        t(CString()); /* Don't warn about unused t */                         \
+        Info.SetDescription(DESCRIPTION);                                     \
+        Info.SetDefaultType(TYPE);                                            \
+        Info.AddType(TYPE);                                                   \
+        Info.SetLoader(TModLoad<CLASS>);                                      \
+        TModInfo<CLASS>(Info);                                                \
+        return true;                                                          \
+    }                                                                         \
     }
 
 /** Instead of writing a constructor, you should call this macro. It accepts all
@@ -273,6 +278,9 @@ class CModInfo {
     void SetLoader(ModLoader fLoader) { m_fLoader = fLoader; }
     void SetDefaultType(EModuleType eType) { m_eDefaultType = eType; }
     // !Setters
+
+    CString t(const CString& sEnglish, const CString& sContext = "") const;
+
   private:
   protected:
     std::set<EModuleType> m_seType;
@@ -316,16 +324,18 @@ class CModCommand {
                 const CString& sArgs, const CString& sDesc);
     CModCommand(const CString& sCmd, CmdFunc func, const CString& sArgs,
                 const CString& sDesc);
+    CModCommand(const CString& sCmd, CmdFunc func, const CString& sArgs,
+                const CDelayedTranslation& dDesc);
 
     /** Copy constructor, needed so that this can be saved in a std::map.
      * @param other Object to copy from.
      */
-    CModCommand(const CModCommand& other);
+    CModCommand(const CModCommand& other) = default;
 
     /** Assignment operator, needed so that this can be saved in a std::map.
      * @param other Object to copy from.
      */
-    CModCommand& operator=(const CModCommand& other);
+    CModCommand& operator=(const CModCommand& other) = default;
 
     /** Initialize a CTable so that it can be used with AddHelp().
      * @param Table The instance of CTable to initialize.
@@ -341,7 +351,7 @@ class CModCommand {
     const CString& GetCommand() const { return m_sCmd; }
     CmdFunc GetFunction() const { return m_pFunc; }
     const CString& GetArgs() const { return m_sArgs; }
-    const CString& GetDescription() const { return m_sDesc; }
+    CString GetDescription() const;
 
     void Call(const CString& sLine) const { m_pFunc(sLine); }
 
@@ -350,6 +360,8 @@ class CModCommand {
     CmdFunc m_pFunc;
     CString m_sArgs;
     CString m_sDesc;
+    CDelayedTranslation m_dDesc;
+    bool m_bTranslating;
 };
 
 /** The base class for your own ZNC modules.
@@ -1093,6 +1105,10 @@ class CModule {
     bool AddCommand(const CString& sCmd, const CString& sArgs,
                     const CString& sDesc,
                     std::function<void(const CString& sLine)> func);
+    /// @return True if the command was successfully added.
+    bool AddCommand(const CString& sCmd, const CString& sArgs,
+                    const CDelayedTranslation& dDesc,
+                    std::function<void(const CString& sLine)> func);
     /// @return True if the command was successfully removed.
     bool RemCommand(const CString& sCmd);
     /// @return The CModCommand instance or nullptr if none was found.
@@ -1267,6 +1283,17 @@ class CModule {
                                     CModInfo::EModuleType eType);
     // !Global Modules
 
+#ifndef SWIG
+    // Translation
+    CString t(const CString& sEnglish, const CString& sContext = "") const;
+    CInlineFormatMessage f(const CString& sEnglish,
+                           const CString& sContext = "") const;
+    CInlineFormatMessage p(const CString& sEnglish, const CString& sEnglishes,
+                           int iNum, const CString& sContext = "") const;
+    CDelayedTranslation d(const CString& sEnglish,
+                          const CString& sContext = "") const;
+#endif
+
   protected:
     CModInfo::EModuleType m_eType;
     CString m_sDescription;
@@ -1285,6 +1312,7 @@ class CModule {
     CString m_sSavePath;
     CString m_sArgs;
     CString m_sModPath;
+    CTranslationDomainRefHolder m_Translation;
 
   private:
     MCString

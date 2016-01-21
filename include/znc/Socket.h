@@ -20,10 +20,11 @@
 #include <znc/zncconfig.h>
 #include <znc/Csocket.h>
 #include <znc/Threads.h>
+#include <znc/Translation.h>
 
 class CModule;
 
-class CZNCSock : public Csock {
+class CZNCSock : public Csock, public CCoreTranslationMixin {
   public:
     CZNCSock(int timeout = 60);
     CZNCSock(const CString& sHost, u_short port, int timeout = 60);
@@ -267,6 +268,18 @@ class CSocket : public CZNCSock {
     // Getters
     CModule* GetModule() const;
     // !Getters
+
+#ifndef SWIG
+    // Translation. As opposed to CCoreTranslationMixin, this one uses module.mo
+    CString t(const CString& sEnglish, const CString& sContext = "") const;
+    CInlineFormatMessage f(const CString& sEnglish,
+                           const CString& sContext = "") const;
+    CInlineFormatMessage p(const CString& sEnglish, const CString& sEnglishes,
+                           int iNum, const CString& sContext) const;
+    CDelayedTranslation d(const CString& sEnglish,
+                          const CString& sContext = "") const;
+#endif
+
   private:
   protected:
     CModule*

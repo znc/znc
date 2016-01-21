@@ -53,7 +53,7 @@ LIB_SRCS  := ZNCString.cpp Csocket.cpp znc.cpp IRCNetwork.cpp User.cpp IRCSock.c
 	Client.cpp Chan.cpp Nick.cpp Server.cpp Modules.cpp MD5.cpp Buffer.cpp Utils.cpp \
 	FileUtils.cpp HTTPSock.cpp Template.cpp ClientCommand.cpp Socket.cpp SHA256.cpp \
 	WebModules.cpp Listener.cpp Config.cpp ZNCDebug.cpp Threads.cpp version.cpp Query.cpp \
-	SSLVerifyHost.cpp Message.cpp
+	SSLVerifyHost.cpp Message.cpp Translation.cpp
 LIB_SRCS  := $(addprefix src/,$(LIB_SRCS))
 BIN_SRCS  := src/main.cpp
 LIB_OBJS  := $(patsubst %cpp,%o,$(LIB_SRCS))

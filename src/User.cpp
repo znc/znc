@@ -272,6 +272,9 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
             }
         }
     }
+    if (pConfig->FindStringEntry("language", sValue)) {
+        SetLanguage(sValue);
+    }
     pConfig->FindStringEntry("pass", sValue);
     // There are different formats for this available:
     // Pass = <plain text>
@@ -749,6 +752,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
     SetMaxQueryBuffers(User.MaxQueryBuffers());
     SetMaxJoins(User.MaxJoins());
     SetClientEncoding(User.GetClientEncoding());
+    SetLanguage(User.GetLanguage());
 
     // Allowed Hosts
     m_ssAllowedHosts.clear();
@@ -1057,6 +1061,7 @@ CConfig CUser::ToConfig() const {
     config.AddKeyValuePair("MaxQueryBuffers", CString(m_uMaxQueryBuffers));
     config.AddKeyValuePair("MaxJoins", CString(m_uMaxJoins));
     config.AddKeyValuePair("ClientEncoding", GetClientEncoding());
+	config.AddKeyValuePair("Language", GetLanguage());
 
     // Allow Hosts
     if (!m_ssAllowedHosts.empty()) {
@@ -1398,6 +1403,18 @@ bool CUser::SetStatusPrefix(const CString& s) {
 
     return false;
 }
+
+bool CUser::SetLanguage(const CString& s) {
+    // They look like ru_RU
+    for (char c : s) {
+        if (isalpha(c) || c == '_') {
+        } else {
+            return false;
+        }
+    }
+    m_sLanguage = s;
+    return true;
+}
 // !Setters
 
 // Getters
@@ -1462,6 +1479,7 @@ bool CUser::AutoClearQueryBuffer() const { return m_bAutoClearQueryBuffer; }
 // CString CUser::GetSkinName() const { return (!m_sSkinName.empty()) ?
 // m_sSkinName : CZNC::Get().GetSkinName(); }
 CString CUser::GetSkinName() const { return m_sSkinName; }
+CString CUser::GetLanguage() const { return m_sLanguage; }
 const CString& CUser::GetUserPath() const {
     if (!CFile::Exists(m_sUserPath)) {
         CDir::MakeDir(m_sUserPath);

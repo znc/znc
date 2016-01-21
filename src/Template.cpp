@@ -17,6 +17,7 @@
 #include <znc/Template.h>
 #include <znc/FileUtils.h>
 #include <znc/ZNCDebug.h>
+#include <znc/Translation.h>
 #include <algorithm>
 
 using std::stringstream;
@@ -313,6 +314,10 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
     bool bLoopBreak = false;
     bool bExit = false;
 
+    // Single template works across multiple translation domains, e.g. .tmpl of
+    // a module can INC'lude Footer.tmpl from core
+    CString sI18N;
+
     while (File.ReadLine(sLine)) {
         CString sOutput;
         bool bFoundATag = false;
@@ -420,6 +425,12 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
                     } else if (sAction.Equals("SETBLOCK")) {
                         sSetBlockVar = sArgs;
                         bInSetBlock = true;
+                    } else if (sAction.Equals("ENDSETBLOCK")) {
+                        CString sName = sSetBlockVar.Token(0);
+                        (*this)[sName] += sOutput;
+                        sOutput = "";
+                        bInSetBlock = false;
+                        sSetBlockVar = "";
                     } else if (sAction.Equals("EXPAND")) {
                         sOutput += ExpandFile(sArgs, true);
                     } else if (sAction.Equals("VAR")) {
@@ -536,6 +547,50 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
                         }
                     } else if (sAction.Equals("REM")) {
                         uSkip++;
+                    } else if (sAction.Equals("I18N")) {
+                        sI18N = sArgs;
+                    } else if (sAction.Equals("FORMAT") ||
+                               sAction.Equals("PLURAL")) {
+                        bool bHaveContext = false;
+                        if (sArgs.TrimPrefix("CTX=")) {
+                            bHaveContext = true;
+                        }
+                        VCString vsArgs;
+                        sArgs.QuoteSplit(vsArgs);
+                        CString sEnglish, sEnglishes, sContext;
+                        int idx = 0;
+                        if (bHaveContext && vsArgs.size() > idx) {
+                            sContext = vsArgs[idx];
+                            idx++;
+                        }
+                        if (vsArgs.size() > idx) {
+                            sEnglish = vsArgs[idx];
+                            idx++;
+                        }
+                        CString sFormat;
+                        if (sAction.Equals("PLURAL")) {
+                            CString sEnglishes;
+                            int iNum = 0;
+                            if (vsArgs.size() > idx) {
+                                sEnglishes = vsArgs[idx];
+                                idx++;
+                            }
+                            if (vsArgs.size() > idx) {
+                                iNum = GetValue(vsArgs[idx], true).ToInt();
+                                idx++;
+                            }
+                            sFormat = CTranslation::Get().Plural(
+                                sI18N, sContext, sEnglish, sEnglishes, iNum);
+                        } else {
+                            sFormat = CTranslation::Get().Singular(
+                                sI18N, sContext, sEnglish);
+                        }
+                        MCString msParams;
+                        for (int i = 0; i + idx < vsArgs.size(); ++i) {
+                            msParams[CString(i + 1)] =
+                                GetValue(vsArgs[i + idx], false);
+                        }
+                        sOutput += CString::NamedFormat(sFormat, msParams);
                     } else {
                         bNotFound = true;
                     }
@@ -557,9 +612,6 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
                     if (uSkip) {
                         uSkip--;
                     }
-                } else if (sAction.Equals("ENDSETBLOCK")) {
-                    bInSetBlock = false;
-                    sSetBlockVar = "";
                 } else if (sAction.Equals("ENDLOOP")) {
                     if (bLoopCont && uSkip == 1) {
                         uSkip--;

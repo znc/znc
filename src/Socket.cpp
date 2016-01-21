@@ -607,3 +607,24 @@ void CIRCSocket::IcuExtFromUCallback(UConverterFromUnicodeArgs* fromArgs,
                                err);
 }
 #endif
+
+
+CString CSocket::t(const CString& sEnglish, const CString& sContext) const {
+    return GetModule()->t(sEnglish, sContext);
+}
+
+CInlineFormatMessage CSocket::f(const CString& sEnglish,
+                                const CString& sContext) const {
+    return GetModule()->f(sEnglish, sContext);
+}
+
+CInlineFormatMessage CSocket::p(const CString& sEnglish,
+                                const CString& sEnglishes, int iNum,
+                                const CString& sContext) const {
+    return GetModule()->p(sEnglish, sEnglishes, iNum, sContext);
+}
+
+CDelayedTranslation CSocket::d(const CString& sEnglish,
+                               const CString& sContext) const {
+    return GetModule()->d(sEnglish, sContext);
+}

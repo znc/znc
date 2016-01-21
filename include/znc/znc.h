@@ -22,6 +22,7 @@
 #include <znc/Modules.h>
 #include <znc/Socket.h>
 #include <znc/Listener.h>
+#include <znc/Translation.h>
 #include <mutex>
 #include <map>
 #include <list>
@@ -298,6 +299,7 @@ class CZNC {
     TCacheMap<CString> m_sConnectThrottle;
     bool m_bProtectWebSessions;
     bool m_bHideVersion;
+    CTranslationDomainRefHolder m_Translation;
 };
 
 #endif  // !ZNC_H

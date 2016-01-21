@@ -94,6 +94,7 @@ void CClient::SendRequiredPasswordNotice() {
 }
 
 void CClient::ReadLine(const CString& sData) {
+    CLanguageScope user_lang(GetUser() ? GetUser()->GetLanguage() : "");
     CString sLine = sData;
 
     sLine.TrimRight("\n\r");

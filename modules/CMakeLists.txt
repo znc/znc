@@ -75,10 +75,19 @@ else()
 	set(moddisable_modtcl true)
 endif()
 
+set(actual_modules)
+
 foreach(modpath ${all_modules})
-	string(REGEX MATCH "/([-a-zA-Z0-9_]+)\\.([a-z]+)$" unused "${modpath}")
+	if(NOT "${modpath}" MATCHES "/([-a-zA-Z0-9_]+)\\.([a-z]+)$")
+		continue()
+	endif()
 	set(mod "${CMAKE_MATCH_1}")
 	set(modtype "${CMAKE_MATCH_2}")
+	if(mod STREQUAL "CMakeLists" OR mod STREQUAL "Makefile")
+		continue()
+	endif()
+
+	list(APPEND actual_modules "${modpath}")
 
 	set(modenabled true)
 
@@ -106,6 +115,10 @@ foreach(modpath ${all_modules})
 		endif()
 	endif()
 endforeach()
+
+if(HAVE_I18N)
+	add_subdirectory(po)
+endif()
 
 install(DIRECTORY data/
 	DESTINATION "${CMAKE_INSTALL_DATADIR}/znc/modules")

@@ -75,7 +75,8 @@ CZNC::CZNC()
       m_uiForceEncoding(0),
       m_sConnectThrottle(),
       m_bProtectWebSessions(true),
-      m_bHideVersion(false) {
+      m_bHideVersion(false),
+      m_Translation("znc") {
     if (!InitCsocket()) {
         CUtils::PrintError("Could not initialize Csocket!");
         exit(-1);
@@ -160,11 +161,17 @@ CString CZNC::GetCompileOptionsString() {
 #else
            "no"
 #endif
-		   ", build: "
+           ", build: "
 #ifdef BUILD_WITH_CMAKE
-		   "cmake"
+           "cmake"
 #else
-		   "autoconf"
+           "autoconf"
+#endif
+           ", i18n: "
+#ifdef HAVE_I18N
+           "yes"
+#else
+           "no"
 #endif
         ;
 }
@@ -1419,6 +1426,7 @@ void CZNC::Broadcast(const CString& sMessage, bool bAdminOnly, CUser* pSkipUser,
         if (bAdminOnly && !it.second->IsAdmin()) continue;
 
         if (it.second != pSkipUser) {
+            // TODO: translate message to user's language
             CString sMsg = sMessage;
 
             bool bContinue = false;
