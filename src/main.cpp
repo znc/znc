@@ -146,6 +146,12 @@ static void GenerateHelp(const char* appname) {
 class CSignalHandler {
   public:
     CSignalHandler(CZNC* pZNC) {
+        if (pipe(m_iPipe)) {
+            DEBUG("Ouch, can't open pipe for signal handler: "
+                  << strerror(errno));
+            exit(1);
+        }
+        pZNC->GetManager().MonitorFD(new CSignalHandlerMonitorFD(m_iPipe[0]));
         sigset_t signals;
         sigfillset(&signals);
         pthread_sigmask(SIG_SETMASK, &signals, nullptr);
@@ -157,6 +163,21 @@ class CSignalHandler {
     }
 
   private:
+    class CSignalHandlerMonitorFD : public CSMonitorFD {
+        // This class just prevents the pipe buffer from filling by clearing it
+      public:
+        CSignalHandlerMonitorFD(int fd) { Add(fd, CSockManager::ECT_Read); }
+
+        bool FDsThatTriggered(
+            const std::map<int, short>& miiReadyFds) override {
+            for (const auto& it : miiReadyFds) {
+                int sig;
+                read(it.first, &sig, sizeof(sig));
+            }
+            return true;
+        }
+    };
+
     void HandleSignals(CZNC* pZNC) {
         sigset_t signals;
         sigemptyset(&signals);
@@ -176,6 +197,7 @@ class CSignalHandler {
             // Such cancel will be the only way to finish this thread.
             if (sigwait(&signals, &sig) == -1) continue;
             pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, nullptr);
+            // TODO probably move switch() to CSignalHandlerMonitorFD?
             switch (sig) {
                 case SIGHUP:
                     pZNC->SetConfigState(CZNC::ECONFIG_NEED_REHASH);
@@ -199,10 +221,23 @@ class CSignalHandler {
                 default:
                     break;
             }
+            // This write() must succeed because POSIX guarantees that writes of
+            // less than PIPE_BUF are atomic (and PIPE_BUF is at least 512).
+            size_t w = write(m_iPipe[1], &sig, sizeof(sig));
+            if (w != sizeof(sig)) {
+                DEBUG(
+                    "Something bad happened during write() to a pipe for "
+                    "signal handler, wrote "
+                    << w << " bytes: " << strerror(errno));
+                exit(1);
+            }
         }
     }
 
     std::thread m_thread;
+
+    // pipe for waking up the main thread
+    int m_iPipe[2];
 };
 
 static bool isRoot() {
