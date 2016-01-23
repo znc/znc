@@ -41,9 +41,7 @@ build_script:
     - git submodule update --init
     - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER; ./autogen.sh < /dev/null"
     - mkdir build
-    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; ../configure$cfg_suffix --enable-charset --enable-zlib --enable-openssl --enable-perl --enable-python --enable-cyrus < /dev/null"
-    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; if [[ $build_with == cmake ]]; then cmake --system-information > config.log; fi"
-    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; appveyor PushArtifact config.log"
+    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; ../configure$cfg_suffix --enable-charset --enable-zlib --enable-openssl --enable-perl --enable-python --enable-cyrus < /dev/null; result=$?; if [[ $build_with == cmake ]]; then cmake --system-information > config.log; fi; appveyor PushArtifact config.log; exit $result"
     - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make VERBOSE=1 -j2 < /dev/null"
     - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make install < /dev/null"
     - c:\cygwin-root\bin\sh -lc "znc --version"
