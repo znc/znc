@@ -42,7 +42,7 @@ else
     LIBZNCFLAGS="-L$LIBZNCDIR -lznc"
 fi
 
-LDFLAGS="$LIBZNCFLAGS $LDFLAGS"
+LIBS="$LIBZNCFLAGS $LIBS"
 
 while test ! -z "$1"
 do
