@@ -25,36 +25,35 @@ class CCertMod : public CModule {
   public:
     void Delete(const CString& line) {
         if (CFile::Delete(PemFile())) {
-            PutModule("Pem file deleted");
+            PutModule(t("Pem file deleted"));
         } else {
-            PutModule(
+            PutModule(t(
                 "The pem file doesn't exist or there was a error deleting the "
-                "pem file.");
+                "pem file."));
         }
     }
 
     void Info(const CString& line) {
         if (HasPemFile()) {
-            PutModule("You have a certificate in: " + PemFile());
+            PutModule(f("You have a certificate in {1}")(PemFile()));
         } else {
-            PutModule(
+            PutModule(t(
                 "You do not have a certificate. Please use the web interface "
-                "to add a certificate");
+                "to add a certificate"));
             if (GetUser()->IsAdmin()) {
-                PutModule("Alternatively you can either place one at " +
-                          PemFile());
+                PutModule(f(
+                             "Alternatively you can either place one at {1}")(
+                    PemFile()));
             }
         }
     }
 
     MODCONSTRUCTOR(CCertMod) {
         AddHelpCommand();
-        AddCommand("delete",
-                   static_cast<CModCommand::ModCmdFunc>(&CCertMod::Delete), "",
-                   "Delete the current certificate");
-        AddCommand("info",
-                   static_cast<CModCommand::ModCmdFunc>(&CCertMod::Info), "",
-                   "Show the current certificate");
+        AddCommand("delete", "", d("Delete the current certificate"),
+                   [=](const CString& sLine) { Delete(sLine); });
+        AddCommand("info", "", d("Show the current certificate"),
+                   [=](const CString& sLine) { Info(sLine); });
     }
 
     ~CCertMod() override {}
@@ -71,7 +70,7 @@ class CCertMod : public CModule {
         return CONTINUE;
     }
 
-    CString GetWebMenuTitle() override { return "Certificate"; }
+    CString GetWebMenuTitle() override { return t("Certificate"); }
 
     bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
                       CTemplate& Tmpl) override {
@@ -104,4 +103,4 @@ void TModInfo<CCertMod>(CModInfo& Info) {
     Info.SetWikiPage("cert");
 }
 
-NETWORKMODULEDEFS(CCertMod, "Use a ssl certificate to connect to a server")
+NETWORKMODULEDEFS(CCertMod, t("Use a ssl certificate to connect to a server"))

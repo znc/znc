@@ -1,23 +1,25 @@
+<? I18N znc-cert ?>
 <? INC Header.tmpl ?>
 
 <? IF Cert ?>
-<p>You already have a certificate set, use the form below to overwrite the current certificate. Alternatively click <a href="<? VAR URIPrefix TOP ?><? VAR ModPath ?>delete">here</a> to <a href="<? VAR URIPrefix TOP ?><? VAR ModPath ?>delete">delete</a> your certificate.</p>
+<? SETBLOCK DELLINK ?><a href="<? VAR URIPrefix TOP ?><? VAR ModPath ?>delete"><? FORMAT "here" ?></a><? ENDSETBLOCK ?>
+<p><? FORMAT "You already have a certificate set, use the form below to overwrite the current certificate. Alternatively click {1} to delete your certificate." "DELLINK ESC=" ?></p>
 <? ELSE ?>
-<p>You do not have a cert.</p>
+<p><? FORMAT "You do not have a certificate yet." ?></p>
 <? ENDIF ?>
 
 <form method="post" action="<? VAR URIPrefix TOP ?><? VAR ModPath ?>update">
 	<? INC _csrf_check.tmpl ?>
 	<div class="section">
-		<h3>Certificate</h3>
+		<h3><? FORMAT "Certificate" ?></h3>
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection full">
-					<div class="inputlabel">PEM File:</div>
+					<div class="inputlabel"><? FORMAT "PEM File:" ?></div>
 					<textarea name="cert" style="height: 300px;"></textarea>
 				</div>
 				<div class="subsection submitline">
-					<input type="submit" name="add" value="Update" />
+					<input type="submit" name="add" value="<? FORMAT "Update" ?>" />
 				</div>
 			</div>
 		</div>
