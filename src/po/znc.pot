@@ -1,0 +1,23 @@
+#: ClientCommand.cpp:51
+msgid "You must be connected with a network to use this command"
+msgstr ""
+
+#: ClientCommand.cpp:58
+msgid "Usage: ListNicks <#chan>"
+msgstr ""
+
+#: ClientCommand.cpp:65
+msgid "You are not on [{1}]"
+msgstr ""
+
+#: ClientCommand.cpp:70
+msgid "You are not on [{1}] (trying)"
+msgstr ""
+
+#: ClientCommand.cpp:79
+msgid "No nicks on [{1}]"
+msgstr ""
+
+#: webskins/_default_/tmpl/LoginBar.tmpl:3
+msgid "Logout"
+msgstr ""

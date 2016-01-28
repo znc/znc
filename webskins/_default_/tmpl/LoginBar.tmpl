@@ -1,5 +1,6 @@
+<? I18N znc ?>
 				<? IF LoggedIn ?>
-				<span class="logoutbox"><a href="<? VAR URIPrefix TOP ?>/logout">Logout</a></span>
+				<span class="logoutbox"><a href="<? VAR URIPrefix TOP ?>/logout"><? FORMAT "Logout" ?></a></span>
 				<? ELSE IF !ModName && PageName == "login" ?>
 				<span class="logoutbox">&nbsp;</span>
 				<? ELSE ?>

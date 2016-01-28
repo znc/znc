@@ -48,26 +48,26 @@ void CClient::UserCommand(CString& sLine) {
     } else if (sCommand.Equals("LISTNICKS")) {
         if (!m_pNetwork) {
             PutStatus(
-                "You must be connected with a network to use this command");
+                t("You must be connected with a network to use this command"));
             return;
         }
 
         CString sChan = sLine.Token(1);
 
         if (sChan.empty()) {
-            PutStatus("Usage: ListNicks <#chan>");
+            PutStatus(t("Usage: ListNicks <#chan>"));
             return;
         }
 
         CChan* pChan = m_pNetwork->FindChan(sChan);
 
         if (!pChan) {
-            PutStatus("You are not on [" + sChan + "]");
+            PutStatus(f("You are not on [{1}]")(sChan));
             return;
         }
 
         if (!pChan->IsOn()) {
-            PutStatus("You are not on [" + sChan + "] [trying]");
+            PutStatus(f("You are not on [{1}] (trying)")(sChan));
             return;
         }
 
@@ -76,7 +76,7 @@ void CClient::UserCommand(CString& sLine) {
         const CString& sPerms = (pIRCSock) ? pIRCSock->GetPerms() : "";
 
         if (msNicks.empty()) {
-            PutStatus("No nicks on [" + sChan + "]");
+            PutStatus(f("No nicks on [{1}]")(sChan));
             return;
         }
 
