@@ -61,3 +61,12 @@ if(brew_qt5_f EQUAL 0)
 	find_package_message(brew_qt5 "Qt5 via Homebrew: ${brew_qt5}"
 		"${brew_qt5}")
 endif()
+
+execute_process(COMMAND "${brew}" --prefix gettext
+	RESULT_VARIABLE brew_gettext_f
+	OUTPUT_VARIABLE brew_gettext OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
+if(brew_gettext_f EQUAL 0)
+	find_package_message(brew_gettext "Gettext via homebrew: ${brew_gettext}"
+		"${brew_gettext}")
+	set(ENV{PATH} "$ENV{PATH}:${brew_gettext}/bin")
+endif()
