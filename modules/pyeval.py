@@ -24,7 +24,6 @@ import znc
 
 class pyeval(znc.Module, InteractiveInterpreter):
     module_types = [znc.CModInfo.UserModule, znc.CModInfo.NetworkModule]
-    description = 'Evaluates python code'
 
     def write(self, data):
         for line in data.split('\n'):
@@ -45,7 +44,8 @@ class pyeval(znc.Module, InteractiveInterpreter):
 
     def OnLoad(self, args, message):
         if not self.GetUser().IsAdmin():
-            message.s = 'You must have admin privileges to load this module.'
+            message.s = self.t(
+                    'You must have admin privileges to load this module.')
             return False
 
         self.filename = "<console>"
@@ -78,3 +78,4 @@ class pyeval(znc.Module, InteractiveInterpreter):
         del self.locals['client']
         del self.locals['network']
 
+pyeval.description = pyeval.t('Evaluates python code')
