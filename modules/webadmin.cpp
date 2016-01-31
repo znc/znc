@@ -306,6 +306,9 @@ class CWebAdminMod : public CModule {
         pNewUser->SetMaxQueryBuffers(
             WebSock.GetParam("maxquerybuffers").ToUInt());
 
+#ifdef HAVE_I18N
+        pNewUser->SetLanguage(WebSock.GetParam("language"));
+#endif
 #ifdef HAVE_ICU
         CString sEncodingUtf = WebSock.GetParam("encoding_utf");
         if (sEncodingUtf == "legacy") {
@@ -1298,6 +1301,7 @@ class CWebAdminMod : public CModule {
                 Tmpl["MaxNetworks"] = CString(pUser->MaxNetworks());
                 Tmpl["MaxJoins"] = CString(pUser->MaxJoins());
                 Tmpl["MaxQueryBuffers"] = CString(pUser->MaxQueryBuffers());
+                Tmpl["Language"] = pUser->GetLanguage();
 
                 const set<CString>& ssAllowedHosts = pUser->GetAllowedHosts();
                 for (const CString& sHost : ssAllowedHosts) {
@@ -1337,6 +1341,18 @@ class CWebAdminMod : public CModule {
                 l["TZ"] = sTZ;
             }
 
+#ifdef HAVE_I18N
+            Tmpl["HaveI18N"] = "true";
+            // TODO don't have them hardcoded here
+            CTemplate& l_en = Tmpl.AddRow("LanguageLoop");
+            l_en["Code"] = "";
+            l_en["Name"] = "English";
+            CTemplate& l_ru = Tmpl.AddRow("LanguageLoop");
+            l_ru["Code"] = "ru_RU";
+            l_ru["Name"] = "Russian";
+#else
+            Tmpl["HaveI18N"] = "false";
+#endif
 #ifdef HAVE_ICU
             for (const CString& sEncoding : CUtils::GetEncodings()) {
                 CTemplate& l = Tmpl.AddRow("EncodingLoop");

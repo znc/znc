@@ -105,6 +105,9 @@ class CAdminMod : public CModule {
                 {"TimestampFormat", str},
                 {"DCCBindHost", str},
                 {"StatusPrefix", str},
+#ifdef HAVE_I18N
+                {"Language", str},
+#endif
 #ifdef HAVE_ICU
                 {"ClientEncoding", str},
 #endif
@@ -266,6 +269,10 @@ class CAdminMod : public CModule {
             PutModule("Admin = " + CString(pUser->IsAdmin()));
         else if (sVar == "statusprefix")
             PutModule("StatusPrefix = " + pUser->GetStatusPrefix());
+#ifdef HAVE_I18N
+        else if (sVar == "language")
+            PutModule("Language = " + pUser->GetLanguage());
+#endif
 #ifdef HAVE_ICU
         else if (sVar == "clientencoding")
             PutModule("ClientEncoding = " + pUser->GetClientEncoding());
@@ -430,6 +437,12 @@ class CAdminMod : public CModule {
                 PutModule("That would be a bad idea!");
             }
         }
+#ifdef HAVE_I18N
+        else if (sVar == "language") {
+            pUser->SetLanguage(sValue);
+            PutModule("Language = " + pUser->GetLanguage());
+        }
+#endif
 #ifdef HAVE_ICU
         else if (sVar == "clientencoding") {
             pUser->SetClientEncoding(sValue);

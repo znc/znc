@@ -364,6 +364,21 @@
 						<? ENDIF ?>
 
 				</div>
+
+				<div class="subsection">
+					<div class="inputlabel">Language:</div>
+
+					<? IF HaveI18N ?>
+					<select name="language">
+						<? LOOP LanguageLoop ?>
+						<option value="<? VAR Code ?>" <? IF Language TOP == *Code ?>selected="selected"<? ENDIF ?>><? VAR Name ?></option>
+						<? ENDLOOP ?>
+					</select>
+					<? ELSE ?>
+					ZNC is compiled without i18n support
+					<? ENDIF ?>
+				</div>
+
 				<div style="clear: both;"></div>
 			</div>
 		</div>
