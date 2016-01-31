@@ -178,6 +178,7 @@ sub ModInfoByPath {
 	my ($modpath, $modname, $modinfo) = @_;
 	die "Incorrect perl module." unless IsModule $modpath, $modname;
 	require $modpath;
+	my $translation = ZNC::CTranslationDomainRefHolder->new("znc-$modname");
 	my $pmod = bless {}, $modname;
 	my @types = $pmod->module_types;
 	$modinfo->SetDefaultType($types[0]);
@@ -643,6 +644,33 @@ sub CreateSocket {
 	$psock->Init(@_);
 	$psock;
 }
+
+sub t {
+    my $self = shift;
+    my $module = ref $self;
+    my $english = shift;
+    my $context = shift//'';
+    ZNC::CTranslation::Get->Singular("znc-$module", $context, $english);
+}
+
+sub f {
+    my $self = shift;
+    my $fmt = $self->t(@_);
+    return sub { sprintf $fmt, @_ }
+}
+
+sub p {
+    my $self = shift;
+    my $module = ref $self;
+    my $english = shift;
+    my $englishes = shift;
+    my $num = shift;
+    my $context = shift//'';
+    my $fmt = ZNC::CTranslation::Get->Plural("znc-$module", $context, $english, $englishes, $num);
+    return sub { sprintf $fmt, @_ }
+}
+
+# TODO is _d needed for perl? Maybe after AddCommand is implemented
 
 package ZNC::Timer;
 
