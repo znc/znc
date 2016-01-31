@@ -5,7 +5,7 @@ package perleval;
 use base 'ZNC::Module';
 
 sub description {
-	'Evaluates perl code'
+	shift->t('Evaluates perl code')
 }
 
 sub wiki_page {
@@ -15,7 +15,7 @@ sub wiki_page {
 sub OnLoad {
 	my $self = shift;
 	if (!$self->GetUser->IsAdmin) {
-		$_[1] = 'Only admin can load this module';
+		$_[1] = $self->t('Only admin can load this module');
 		return 0
 	}
 	return 1
@@ -26,9 +26,9 @@ sub OnModCommand {
 	my $cmd = shift;
 	my $x = eval $cmd;
 	if ($@) {
-		$self->PutModule("Error: $@")
+		$self->PutModule($self->f('Error: %s')->($@));
 	} else {
-		$self->PutModule("Result: $x")
+		$self->PutModule($self->f('Result: %s')->($x));
 	}
 }
 

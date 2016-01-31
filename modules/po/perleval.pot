@@ -1,0 +1,17 @@
+#: perleval.pm:8
+msgid "Evaluates perl code"
+msgstr ""
+
+#: perleval.pm:18
+msgid "Only admin can load this module"
+msgstr ""
+
+#: perleval.pm:29
+#, perl-format
+msgid "Error: %s"
+msgstr ""
+
+#: perleval.pm:31
+#, perl-format
+msgid "Result: %s"
+msgstr ""
