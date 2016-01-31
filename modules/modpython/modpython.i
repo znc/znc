@@ -149,6 +149,7 @@ class MCString : public std::map<CString, CString> {};
 #include "znc/zncconfig.h"
 #include "znc/ZNCString.h"
 %include "znc/defines.h"
+%include "znc/Translation.h"
 %include "znc/Utils.h"
 %include "znc/Threads.h"
 %include "znc/Config.h"

@@ -169,6 +169,26 @@ class Module:
     def __str__(self):
         return self.GetModName()
 
+    @classmethod
+    def t(cls, english, context=''):
+        domain = 'znc-' + cls.__name__
+        return CTranslation.Get().Singular(domain, context, english)
+
+    @classmethod
+    def f(cls, english, context=''):
+        fmt = cls.t(english, context)
+        # Returning bound method
+        return fmt.format
+
+    @classmethod
+    def p(cls, english, englishes, num, context=''):
+        domain = 'znc-' + cls.__name__
+        fmt = CTranslation.Get().Plural(domain, context, english, englishes,
+                                        num)
+        return fmt.format
+
+    # TODO is "d" needed for python? Maybe after AddCommand is implemented
+
     def OnLoad(self, sArgs, sMessage):
         return True
 
@@ -804,6 +824,7 @@ def unload_all():
 
 
 def gather_mod_info(cl, modinfo):
+    translation = CTranslationDomainRefHolder("znc-" + modinfo.GetName())
     modinfo.SetDescription(cl.description)
     modinfo.SetWikiPage(cl.wiki_page)
     modinfo.SetDefaultType(cl.module_types[0])
