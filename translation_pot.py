@@ -32,20 +32,6 @@ args = parser.parse_args()
 
 pot_list = []
 
-# .cpp
-main_pot = args.tmp_prefix + '_main.pot'
-subprocess.check_call(['xgettext',
-    '--omit-header',
-    '-D', args.include_dir,
-    '-o', main_pot,
-    '--keyword=t:1,1t',   '--keyword=t:1,2c,2t',
-    '--keyword=f:1,1t',   '--keyword=f:1,2c,2t',
-    '--keyword=p:1,2,3t', '--keyword=p:1,2,4c,4t',
-    '--keyword=d:1,1t',   '--keyword=d:1,2c,2t',
-] + args.explicit_sources)
-if os.path.isfile(main_pot):
-    pot_list.append(main_pot)
-
 # .tmpl
 tmpl_pot = args.tmp_prefix + '_tmpl.pot'
 tmpl_uniq_pot = args.tmp_prefix + '_tmpl_uniq.pot'
@@ -71,10 +57,29 @@ for tmpl_dir in args.tmpl_dirs:
                     tmpl.append('')
 if tmpl:
     with open(tmpl_pot, 'w') as f:
+        print('msgid ""', file=f)
+        print('msgstr ""', file=f)
+        print(r'"Content-Type: text/plain; charset=UTF-8\n"', file=f)
+        print(r'"Content-Transfer-Encoding: 8bit\n"', file=f)
+        print(file=f)
         for line in tmpl:
             print(line, file=f)
     subprocess.check_call(['msguniq', '-o', tmpl_uniq_pot, tmpl_pot])
     pot_list.append(tmpl_uniq_pot)
+
+# .cpp
+main_pot = args.tmp_prefix + '_main.pot'
+subprocess.check_call(['xgettext',
+    '--omit-header',
+    '-D', args.include_dir,
+    '-o', main_pot,
+    '--keyword=t:1,1t',   '--keyword=t:1,2c,2t',
+    '--keyword=f:1,1t',   '--keyword=f:1,2c,2t',
+    '--keyword=p:1,2,3t', '--keyword=p:1,2,4c,4t',
+    '--keyword=d:1,1t',   '--keyword=d:1,2c,2t',
+] + args.explicit_sources)
+if os.path.isfile(main_pot):
+    pot_list.append(main_pot)
 
 # combine
 if pot_list:
