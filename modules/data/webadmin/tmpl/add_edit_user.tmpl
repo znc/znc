@@ -7,6 +7,10 @@
 	<div class="section">
 		<input type="hidden" name="submitted" value="1" />
 
+		<!-- Trick Firefox into NOT autofilling password to "change password" field. It will autofill username and password to these useless fields instead. See issue #1163 -->
+		<input name="userdummy" type="text" style="display: none"/>
+		<input name="passworddummy" type="password" style="display: none"/>
+
 		<h3>Authentication</h3>
 		<div class="sectionbg">
 			<div class="sectionbody">

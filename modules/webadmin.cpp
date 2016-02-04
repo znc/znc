@@ -1547,7 +1547,7 @@ class CWebAdminMod : public CModule {
 
         CUser* pNewUser = GetNewUser(WebSock, pUser);
         if (!pNewUser) {
-            WebSock.PrintErrorPage("Invalid user settings");
+            // GetNewUser already called WebSock.PrintErrorPage()
             return true;
         }
 
