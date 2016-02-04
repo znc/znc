@@ -1,3 +1,34 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: modules/po/../data/cert/tmpl/index.tmpl:5
+msgid "here"
+msgstr ""
+
+#: modules/po/../data/cert/tmpl/index.tmpl:6
+msgid ""
+"You already have a certificate set, use the form below to overwrite the "
+"current certificate. Alternatively click {1} to delete your certificate."
+msgstr ""
+
+#: modules/po/../data/cert/tmpl/index.tmpl:8
+msgid "You do not have a certificate yet."
+msgstr ""
+
+#: modules/po/../data/cert/tmpl/index.tmpl:14 cert.cpp:73
+msgid "Certificate"
+msgstr ""
+
+#: modules/po/../data/cert/tmpl/index.tmpl:18
+msgid "PEM File:"
+msgstr ""
+
+#: modules/po/../data/cert/tmpl/index.tmpl:22
+msgid "Update"
+msgstr ""
+
 #: cert.cpp:28
 msgid "Pem file deleted"
 msgstr ""
@@ -28,32 +59,6 @@ msgstr ""
 msgid "Show the current certificate"
 msgstr ""
 
-#: cert.cpp:73 modules/po/../data/cert/tmpl/index.tmpl:14
-msgid "Certificate"
-msgstr ""
-
 #: cert.cpp:106
 msgid "Use a ssl certificate to connect to a server"
-msgstr ""
-
-#: modules/po/../data/cert/tmpl/index.tmpl:5
-msgid "here"
-msgstr ""
-
-#: modules/po/../data/cert/tmpl/index.tmpl:6
-msgid ""
-"You already have a certificate set, use the form below to overwrite the "
-"current certificate. Alternatively click {1} to delete your certificate."
-msgstr ""
-
-#: modules/po/../data/cert/tmpl/index.tmpl:8
-msgid "You do not have a certificate yet."
-msgstr ""
-
-#: modules/po/../data/cert/tmpl/index.tmpl:18
-msgid "PEM File:"
-msgstr ""
-
-#: modules/po/../data/cert/tmpl/index.tmpl:22
-msgid "Update"
 msgstr ""

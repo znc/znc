@@ -1,36 +1,39 @@
+<? I18N znc-webadmin ?>
 <div class="encoding-settings">
 	<? IF EncodingDisabled ?>
 	<div>
-		ZNC is compiled without encodings support. <a href="http://icu-project.org/">ICU</a> is required for it.
+		<? SETBLOCK Encoding_ICULink ?><a href="http://icu-project.org/">ICU</a><? ENDSETBLOCK ?>
+		<? FORMAT "ZNC is compiled without encodings support. {1} is required for it." "Encoding_ICULink ESC=" ?>
 	</div>
 	<? ELSE ?><?IF LegacyEncodingDisabled ?>
 	<div>
 		<!-- TODO don't hardcode modpython here -->
-		Legacy mode is disabled by modpython.
+		<? FORMAT "Legacy mode is disabled by modpython." ?>
 	</div>
 	<? ENDIF ?><? ENDIF ?>
 	<div>
+		<? SETBLOCK Encoding_Placeholder ?><span class="encoding-placeholder-big">&nbsp;&nbsp;<span class="encoding-placeholder"></span>&nbsp;&nbsp;</span><? ENDSETBLOCK ?>
 		<div class="checkboxandlabel checkbox">
 			<input type="radio" name="encoding_utf" id="encoding_utf_legacy" value="legacy" <? IF EncodingUtf == "legacy" ?>checked="checked"<? ENDIF ?> <? IF LegacyEncodingDisabled ?>disabled="disabled"<? ENDIF ?> />
-			<label for="encoding_utf_legacy">Don't ensure any encoding at all (legacy mode, not recommended)</label>
+			<label for="encoding_utf_legacy"><? FORMAT "Don't ensure any encoding at all (legacy mode, not recommended)" ?></label>
 		</div>
 		<div class="checkboxandlabel checkbox">
 			<input type="radio" name="encoding_utf" id="encoding_utf_send" value="send" <? IF EncodingUtf == "send" ?>checked="checked"<? ENDIF ?> <? IF EncodingDisabled ?>disabled="disabled"<? ENDIF ?> />
-			<label for="encoding_utf_send">Try to parse as UTF-8 and as <span class="encoding-placeholder-big">&nbsp;&nbsp;<span class="encoding-placeholder"></span>&nbsp;&nbsp;</span>, send as UTF-8 (recommended)</label>
+			<label for="encoding_utf_send"><? FORMAT "Try to parse as UTF-8 and as {1}, send as UTF-8 (recommended)" "Encoding_Placeholder ESC=" ?></label>
 		</div>
 		<div class="checkboxandlabel checkbox">
 			<input type="radio" name="encoding_utf" id="encoding_utf_receive" value="receive" <? IF EncodingUtf == "receive" ?>checked="checked"<? ENDIF ?> <? IF EncodingDisabled ?>disabled="disabled"<? ENDIF ?> />
-			<label for="encoding_utf_receive">Try to parse as UTF-8 and as <span class="encoding-placeholder-big">&nbsp;&nbsp;<span class="encoding-placeholder"></span>&nbsp;&nbsp;</span>, send as <span class="encoding-placeholder-big">&nbsp;&nbsp;<span class="encoding-placeholder"></span	>&nbsp;&nbsp;</span></label>
+			<label for="encoding_utf_receive"><? FORMAT "Try to parse as UTF-8 and as {1}, send as {1}" "Encoding_Placeholder ESC=" ?></label>
 		</div>
 		<div class="checkboxandlabel checkbox">
 			<input type="radio" name="encoding_utf" id="encoding_utf_simple" value="simple" <? IF EncodingUtf == "simple" ?>checked="checked"<? ENDIF ?> <? IF EncodingDisabled ?>disabled="disabled"<? ENDIF ?> />
-			<label for="encoding_utf_simple">Parse and send as <span class="encoding-placeholder-big">&nbsp;&nbsp;<span class="encoding-placeholder"></span>&nbsp;&nbsp;</span> only</label>
+			<label for="encoding_utf_simple"><? FORMAT "Parse and send as {1} only" "Encoding_Placeholder ESC=" ?></label>
 		</div>
 	</div>
 	<div class="half">
 		<input type="text" name="encoding" value="<? VAR Encoding ?>" list="encoding_list"
 			   <? IF EncodingDisabled ?>disabled="disabled"<? ENDIF ?> />
-		<br /><div class="third"><span class="info">E.g. <code>UTF-8</code>, or <code>ISO-8859-15</code></span></div>
+		<br /><div class="third"><span class="info"><? FORMAT "E.g. <code>UTF-8</code>, or <code>ISO-8859-15</code>" ?></span></div>
 		<script type="text/javascript">
 			function updateEncodingText() {
 				var value = jQuery("input[name=encoding]").val();

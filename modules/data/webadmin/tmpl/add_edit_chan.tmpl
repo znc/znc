@@ -1,3 +1,4 @@
+<? I18N znc-webadmin ?>
 <? INC Header.tmpl ?>
 
 <form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?><? IF Edit ?>editchan<? ELSE ?>addchan<? ENDIF ?>" method="post">
@@ -8,33 +9,33 @@
 		<input type="hidden" name="network" value="<? VAR Network ?>" />
 		<? IF Edit ?><input type="hidden" name="name" value="<? VAR ChanName ?>" /><? ENDIF ?>
 
-		<h3>Channel Info</h3>
+		<h3><? FORMAT "Channel Info" ?></h3>
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<? IF !Edit ?>
 				<div class="subsection half">
-					<div class="inputlabel">Channel Name:</div>
+					<div class="inputlabel"><? FORMAT "Channel Name:" ?></div>
 					<input type="text" name="name" value=""
-						   title="The channel name." />
+						   title="<? FORMAT "The channel name." ?>"/>
 				</div>
 				<? ENDIF ?>
 
 				<div class="subsection">
-					<div class="inputlabel">Key:</div>
+					<div class="inputlabel"><? FORMAT "Key:" ?></div>
 					<input type="text" name="key" value="<? VAR Key ?>" size="10"
-						   title="The password of the channel, if there is one." />
+						   title="<? FORMAT "The password of the channel, if there is one." ?>"/>
 				</div>
 
 				<div class="subsection">
-					<div class="inputlabel">Buffer Size:</div>
+					<div class="inputlabel"><? FORMAT "Buffer Size:" ?></div>
 					<input type="number" name="buffersize" value="<? VAR BufferSize ?>" size="10" min="0"
-						   title="The buffer count." />
+						   title="<? FORMAT "The buffer count." ?>"/>
 				</div>
 
 				<div class="subsection">
-					<div class="inputlabel">Default Modes:</div>
+					<div class="inputlabel"><? FORMAT "Default Modes:" ?></div>
 					<input type="text" name="defmodes" value="<? VAR DefModes ?>" size="10"
-						   title="The default modes of the channel." />
+						   title="<? FORMAT "The default modes of the channel." ?>"/>
 				</div>
 
 			</div>
@@ -42,17 +43,17 @@
 	</div>
 
 	<div class="section">
-		<h3>Flags</h3>
+		<h3><? FORMAT "Flags" ?></h3>
 		<div class="sectionbg">
 			<div class="sectionbody lotsofcheckboxes">
 				<span class="checkboxandlabel">
 					<input type="checkbox" name="save" id="save" value="true"<? IF InConfig ?> checked="checked"<? ENDIF ?> />
-					<label for="save">Save to config</label>
+					<label for="save"><? FORMAT "Save to config" ?></label>
 				</span>
 				<? LOOP OptionLoop ?>
 				<span class="checkboxandlabel" title="<? VAR Tooltip ?>">
 					<input type="checkbox" name="<? VAR Name ?>" id="opt_<? VAR Name ?>" value="true"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> />
-					<label for="opt_<? VAR Name ?>"><? VAR DisplayName ?></label>
+					<label for="opt_<? VAR Name ?>"><? VAR DisplayName ESC= ?></label>
 				</span>
 				<? ENDLOOP ?>
 				<div style="clear:both;"></div>
@@ -63,15 +64,20 @@
 	<? LOOP EmbeddedModuleLoop ?>
 		<? IF Embed ?>
 		<div class="section">
-			<h3>Module <? VAR ModName ?></h3>
+			<h3><? FORMAT "Module {1}" ModName ?></h3>
 			<? INC *Embed ?>
 		</div>
 		<? ENDIF ?>
 	<? ENDLOOP ?>
 
 	<div class="submitline">
-		<input type="submit" name="submit_return" value="<? IF Edit ?>Save<? ELSE ?>Add Channel<? ENDIF ?> and return" />
-		<input type="submit" name="submit_continue" value="<? IF Edit ?>Save<? ELSE ?>Add Channel<? ENDIF ?> and continue" />
+		<? IF Edit ?>
+		<input type="submit" name="submit_return" value="<? FORMAT "Save and return" ?>"/>
+		<input type="submit" name="submit_continue" value="<? FORMAT "Save and continue" ?>"/>
+		<? ELSE ?>
+		<input type="submit" name="submit_return" value="<? FORMAT "Add Channel and return" ?>"/>
+		<input type="submit" name="submit_continue" value="<? FORMAT "Add Channel and continue" ?>"/>
+		<? ENDIF ?>
 	</div>
 </form>
 

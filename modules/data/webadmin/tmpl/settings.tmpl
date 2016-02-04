@@ -1,23 +1,24 @@
+<? I18N znc-webadmin ?>
 <? INC Header.tmpl ?>
 
 <div class="section">
 
-	<h3>Listen Port(s)</h3>
+	<h3><? FORMAT "Listen Port(s)" ?></h3>
 	<div class="sectionbg">
 		<div class="sectionbody">
 			<div class="subsection">
 				<table>
 					<thead>
 						<tr>
-						    <td>Port</td>
-						    <td>BindHost</td>
-						    <td>SSL</td>
-						    <td>IPv4</td>
-						    <td>IPv6</td>
-						    <td>IRC</td>
-						    <td>Web</td>
-						    <td>URIPrefix</td>
-						    <td>Delete</td>
+						    <td><? FORMAT "Port" ?></td>
+						    <td><? FORMAT "BindHost" ?></td>
+						    <td><? FORMAT "SSL" ?></td>
+						    <td><? FORMAT "IPv4" ?></td>
+						    <td><? FORMAT "IPv6" ?></td>
+						    <td><? FORMAT "IRC" ?></td>
+						    <td><? FORMAT "HTTP" ?></td>
+						    <td><? FORMAT "URIPrefix" ?></td>
+						    <td><? FORMAT "Delete" ?></td>
 						</tr>
 					</thead>
 
@@ -38,7 +39,7 @@
 							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsIRC ?>checked="checked"<? ENDIF ?>/></div>
 						</td>
 						<td>
-							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsWeb ?>checked="checked"<? ENDIF ?>/></div>
+							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsHTTP ?>checked="checked"<? ENDIF ?>/></div>
 						</td>
 						<td><? VAR URIPrefix ?></td>
 						<td>
@@ -49,10 +50,10 @@
 								<input name="port" type="hidden" value="<? VAR Port ?>"/>
 								<input name="ipv4" type="hidden" value="<? VAR IsIPV4 ?>"/>
 								<input name="ipv6" type="hidden" value="<? VAR IsIPV6 ?>"/>
-								<input type="submit" value="Del"/>
+								<input type="submit" value="<? FORMAT "Del" ?>"/>
 							</form>
 							<? ELSE ?>
-							<input type="button" disabled="disabled" title="To delete port which you use to access webadmin itself, either connect to webadmin via another port, or do it in IRC (/znc DelPort)" value="Current"/>
+							<input type="button" disabled="disabled" title="<? FORMAT "To delete port which you use to access webadmin itself, either connect to webadmin via another port, or do it in IRC (/znc DelPort)" ?>" value="<? FORMAT "Current" ?>"/>
 							<? ENDIF ?>
 						</td>
 					</tr>
@@ -68,7 +69,7 @@
 							<td><div class="checkbox"><input name="irc" type="checkbox" checked="checked"/></div></td>
 							<td><div class="checkbox"><input name="web" type="checkbox" checked="checked"/></div></td>
 							<td><input name="uriprefix" type="text" value="/" class="sixth"/></td>
-							<td><input type="submit" value="Add"/></td>
+							<td><input type="submit" value="<? FORMAT "Add" ?>"/></td>
 						</form>
 					</tr>
 				</table>
@@ -82,15 +83,15 @@
 	<input type="hidden" name="submitted" value="1" />
 
 	<div class="section">
-		<h3>Settings</h3>
+		<h3><? FORMAT "Settings" ?></h3>
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection">
-					<div class="inputlabel">Skin:</div>
+					<div class="inputlabel"><? FORMAT "Skin:" ?></div>
 
 						<select name="skin">
 							<? LOOP SkinLoop ?>
-							<option value="<? VAR Name ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? IF Name == "_default_" ?>Default<? ELSE ?><? VAR Name ?><? ENDIF ?></option>
+							<option value="<? VAR Name ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? IF Name == "_default_" ?><? FORMAT "Default" ?><? ELSE ?><? VAR Name ?><? ENDIF ?></option>
 							<? ENDLOOP ?>
 						</select>
 
@@ -98,61 +99,61 @@
 
 
 				<div class="subsection third">
-					<div class="inputlabel">Status Prefix:</div>
+					<div class="inputlabel"><? FORMAT "Status Prefix:" ?></div>
 					<input type="text" name="statusprefix" value="<? VAR StatusPrefix ?>"
-						   title="The prefix for the status and module queries."/>
-					<br /><span class="info">Default for new users only.</span>
+						   title="<? FORMAT "The prefix for the status and module queries." ?>"/>
+					<br /><span class="info"><? FORMAT "Default for new users only." ?></span>
 				</div>
 
 
 				<div class="subsection half">
-					<div class="inputlabel">Maximum Buffer Size:</div>
-					<input type="text" name="maxbufsize" value="<? VAR MaxBufferSize ?>"
-						   title="Sets the global Max Buffer Size a user can have."/>
+					<div class="inputlabel"><? FORMAT "Maximum Buffer Size:" ?></div>
+					<input type="number" name="maxbufsize" value="<? VAR MaxBufferSize ?>"
+						   title="<? FORMAT "Sets the global Max Buffer Size a user can have." ?>"/>
 				</div>
 
 
 				<div class="subsection half">
-					<div class="inputlabel">Connect Delay:</div>
-					<input type="text" name="connectdelay" value="<? VAR ConnectDelay ?>"
-						   title="The time every connection will be delayed, in seconds. Some servers refuse your connection if you reconnect too fast. This affects the connection between ZNC and the IRC server; not the connection between your IRC client and ZNC. "/>
+					<div class="inputlabel"><? FORMAT "Connect Delay:" ?></div>
+					<input type="number" name="connectdelay" value="<? VAR ConnectDelay ?>"
+						   title="<? FORMAT "The time between connection attempts to IRC servers, in seconds. This affects the connection between ZNC and the IRC server; not the connection between your IRC client and ZNC." ?>"/>
 				</div>
 
 
 				<div class="subsection half">
-					<div class="inputlabel">Server Throttle:</div>
-					<input type="text" name="serverthrottle" value="<? VAR ServerThrottle ?>"
-						   title="The time between two connect attempts to the same hostname." />
+					<div class="inputlabel"><? FORMAT "Server Throttle:" ?></div>
+					<input type="number" name="serverthrottle" value="<? VAR ServerThrottle ?>"
+						   title="<? FORMAT "The minimal time between two connect attempts to the same hostname, in seconds. Some servers refuse your connection if you reconnect too fast." ?>"/>
 				</div>
 
 
 				<div class="subsection half">
-					<div class="inputlabel">Anonymous IP Limit:</div>
-					<input type="text" name="anoniplimit" value="<? VAR AnonIPLimit ?>"
-						   title="Limits the number of unidentified connections per IP." />
+					<div class="inputlabel"><? FORMAT "Anonymous Connection Limit per IP:" ?></div>
+					<input type="number" name="anoniplimit" value="<? VAR AnonIPLimit ?>"
+						   title="<? FORMAT "Limits the number of unidentified connections per IP." ?>"/>
 				</div>
 
 
 				<div class="subsection">
-					<div class="inputlabel">Protect Web Sessions:</div>
+					<div class="inputlabel"><? FORMAT "Protect Web Sessions:" ?></div>
 					<div class="checkbox"><input type="checkbox" name="protectwebsessions" id="protectwebsessions_checkbox"<? IF ProtectWebSessions ?> checked="checked"<? ENDIF ?> />
-						<label for="protectwebsessions_checkbox">Disallow IP changing during each web session</label></div>
+						<label for="protectwebsessions_checkbox"><? FORMAT "Disallow IP changing during each web session" ?></label></div>
 				</div>
 
 
 				<div class="subsection">
-					<div class="inputlabel">Hide ZNC Version:</div>
+					<div class="inputlabel"><? FORMAT "Hide ZNC Version:" ?></div>
 					<div class="checkbox"><input type="checkbox" name="hideversion" id="hideversion_checkbox"<? IF HideVersion ?> checked="checked"<? ENDIF ?> />
-						<label for="hideversion_checkbox">Hide version number from non-ZNC users</label></div>
+						<label for="hideversion_checkbox"><? FORMAT "Hide version number from non-ZNC users" ?></label></div>
 				</div>
 
 
 				<div class="subsection twothird">
-					<div class="inputlabel">MOTD:</div>
+					<div class="inputlabel"><? FORMAT "MOTD:" ?></div>
 					<textarea name="motd" cols="70" rows="5" class="monospace"><? LOOP MOTDLoop ?><? VAR Line ?>
 <? ENDLOOP ?>
 </textarea>
-					<br /><span class="info">"Message of the Day", sent to all ZNC users on connect.</span>
+					<br /><span class="info"><? FORMAT "“Message of the Day”, sent to all ZNC users on connect." ?></span>
 				</div>
 
 			</div>
@@ -160,17 +161,17 @@
 	</div>
 
 	<div class="section">
-		<h3>Global Modules</h3>
+		<h3><? FORMAT "Global Modules" ?></h3>
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<table>
 					<thead>
 					<tr>
-						<td>Name</td>
-						<td>Arguments</td>
-						<td>Description</td>
-						<td>Loaded by networks</td>
-						<td>Loaded by users</td>
+						<td><? FORMAT "Name" ?></td>
+						<td><? FORMAT "Arguments" ?></td>
+						<td><? FORMAT "Description" ?></td>
+						<td><? FORMAT "Loaded by networks" ?></td>
+						<td><? FORMAT "Loaded by users" ?></td>
 					</tr>
 					</thead>
 					<tbody>
@@ -227,7 +228,7 @@
 	</div>
 
 	<div class="submitline">
-		<input type="submit" value="Save" />
+		<input type="submit" value="<? FORMAT "Save" ?>"/>
 	</div>
 </form>
 

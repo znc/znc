@@ -1,19 +1,20 @@
+<? I18N znc-webadmin ?>
 <? INC Header.tmpl ?>
 
 <div class="section">
-	<h3>Confirm User Deletion</h3>
+	<h3><? FORMAT "Confirm User Deletion" ?></h3>
 	<div class="sectionbg">
 		<div class="sectionbody">
 			<div class="subsection">
-				Are you sure you want to delete "<? VAR Username ?>"?
+				<? FORMAT "Are you sure you want to delete user “{1}”?" Username ?>
 				<form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>deluser" method="post">
 					<? INC _csrf_check.tmpl ?>
 					<input type="hidden" name="submitted" value="1" />
 					<input type="hidden" name="user" value="<? VAR Username ?>" />
-					<div class="yesnobutton"><input type="submit" value="Yes" /></div>
+					<div class="yesnobutton"><input type="submit" value="<? FORMAT "Yes" ?>"/></div>
 				</form>
 				<form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>listusers" method="get">
-					<div class="yesnobutton"><input type="submit" value="No" /></div>
+					<div class="yesnobutton"><input type="submit" value="<? FORMAT "No" ?>"/></div>
 				</form>
 			</div>
 		</div>

@@ -1,3 +1,4 @@
+<? I18N znc-webadmin ?>
 <? AddRow JSLoop HREF=/modfiles/global/webadmin/webadmin.js ?>
 <? AddRow CSSLoop HREF=/modfiles/global/webadmin/webadmin.css ?>
 <? INC Header.tmpl ?>
@@ -11,10 +12,10 @@
 				<table class="sortable">
 					<thead>
 					<tr>
-						<td class="ignore-sort">[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>adduser">Add</a>]</td>
-						<td>Username</td>
-                        <td>Networks</td>
-						<td>Clients</td>
+						<td class="ignore-sort">[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>adduser"><? FORMAT "Add" ?></a>]</td>
+						<td><? FORMAT "Username" ?></td>
+                        <td><? FORMAT "Networks" ?></td>
+						<td><? FORMAT "Clients" ?></td>
 					</tr>
 					</thead>
 
@@ -23,9 +24,9 @@
 					<tr class="<?IF __EVEN__?>evenrow<?ELSE?>oddrow<?ENDIF?>">
 						<td>
 							<span class="nowrap">
-								[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>edituser?user=<?VAR Username ESC=URL?>">Edit</a>]
-								[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>adduser?clone=<? VAR Username ESC=URL ?>" alt="Clone <? VAR Username ESC=URL ?>">Clone</a>]
-								<? IF !IsSelf ?>[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>deluser?user=<?VAR Username ESC=URL?>">Delete</a>]<? ENDIF ?>
+								[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>edituser?user=<?VAR Username ESC=URL?>"><? FORMAT "Edit" ?></a>]
+								[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>adduser?clone=<? VAR Username ESC=URL ?>" alt="Clone <? VAR Username ESC=URL ?>"><? FORMAT "Clone" ?></a>]
+								<? IF !IsSelf ?>[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>deluser?user=<?VAR Username ESC=URL?>"><? FORMAT "Delete" ?></a>]<? ENDIF ?>
 							</span>
 						</td>
 						<td><? VAR Username ?></td>

@@ -1,3 +1,47 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: webskins/_default_/tmpl/index.tmpl:6
+msgid "Welcome to ZNC's web interface!"
+msgstr ""
+
+#: webskins/_default_/tmpl/index.tmpl:11
+msgid ""
+"No Web-enabled modules have been loaded. Load modules from IRC (“<code>/msg "
+"*status help</code>” and “<code>/msg *status loadmod &lt;module&gt;</"
+"code>”). Once you have loaded some Web-enabled modules, the menu will expand."
+msgstr ""
+
+#: webskins/_default_/tmpl/InfoBar.tmpl:2
+msgid "-Guest-"
+msgstr ""
+
+#: webskins/_default_/tmpl/InfoBar.tmpl:5
+msgid "Logged in as: {1} (from {2})"
+msgstr ""
+
+#: webskins/_default_/tmpl/Menu.tmpl:4
+msgid "Home"
+msgstr ""
+
+#: webskins/_default_/tmpl/Menu.tmpl:7
+msgid "Global Modules"
+msgstr ""
+
+#: webskins/_default_/tmpl/Menu.tmpl:20
+msgid "User Modules"
+msgstr ""
+
+#: webskins/_default_/tmpl/Menu.tmpl:35
+msgid "Network Modules ({1})"
+msgstr ""
+
+#: webskins/_default_/tmpl/LoginBar.tmpl:3
+msgid "Logout"
+msgstr ""
+
 #: ClientCommand.cpp:51
 msgid "You must be connected with a network to use this command"
 msgstr ""
@@ -16,8 +60,4 @@ msgstr ""
 
 #: ClientCommand.cpp:79
 msgid "No nicks on [{1}]"
-msgstr ""
-
-#: webskins/_default_/tmpl/LoginBar.tmpl:3
-msgid "Logout"
 msgstr ""
