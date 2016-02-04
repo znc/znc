@@ -1,4 +1,7 @@
-			<div id="infobar">
-				<span id="infobar_ident">Logged in as: <span class="user_name"><? VAR SessionUser DEFAULT="-Guest-" ?></span> (from <? VAR SessionIP ?>)</span>
-				<? INC LoginBar.tmpl ?>
-			</div>
+<? I18N znc ?>
+<? SETBLOCK InfoBar_GuestNameStr ?><? FORMAT "-Guest-" ?><? ENDSETBLOCK ?>
+<? SETBLOCK InfoBar_UserNameSpan ?><span class="user_name"><? VAR SessionUser DEFAULT=*InfoBar_GuestNameStr ?></span><? ENDSETBLOCK ?>
+<div id="infobar">
+	<span id="infobar_ident"><? FORMAT "Logged in as: {1} (from {2})" "InfoBar_UserNameSpan ESC=" SessionIP ?></span>
+	<? INC LoginBar.tmpl ?>
+</div>

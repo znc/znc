@@ -1,9 +1,10 @@
+<? I18N znc ?>
 <div id="menu">
 	<ul class="nav">
-		<li class="topitem<? IF !ModName && PageName == "index" ?> active<? ENDIF ?>"><a href="<? VAR URIPrefix TOP ?>/">Home</a></li>
+		<li class="topitem<? IF !ModName && PageName == "index" ?> active<? ENDIF ?>"><a href="<? VAR URIPrefix TOP ?>/"><? FORMAT "Home" ?></a></li>
 
 		<? IF GlobalModLoop ?>
-			<li class="topitem parent"><span class="title">Global Modules</span>
+			<li class="topitem parent"><span class="title"><? FORMAT "Global Modules" ?></span>
 				<ul>
 				<? LOOP GlobalModLoop SORTASC=ModName ?>
 					<li class="modtitle<? IF Active ?> active<? ENDIF ?>"><a href="<? VAR URIPrefix TOP ?><? VAR ModPath ?>"><? VAR Title ?></a></li>
@@ -16,7 +17,7 @@
 		<? ENDIF ?>
 
 		<? IF UserModLoop ?>
-			<li class="topitem parent"><span class="title">User Modules</span>
+			<li class="topitem parent"><span class="title"><? FORMAT "User Modules" ?></span>
 				<ul>
 				<? LOOP UserModLoop SORTASC=ModName ?>
 					<li class="modtitle<? IF Active ?> active<? ENDIF ?>"><a href="<? VAR URIPrefix TOP ?><? VAR ModPath ?>"><? VAR Title ?></a></li>
@@ -31,7 +32,7 @@
 		<? IF NetworkModLoop ?>
 			<? LOOP NetworkModLoop SORTASC=NetworkName ?>
 				<? IF ModLoop ?>
-					<li class="topitem parent"><span class="title">Network Modules (<? VAR NetworkName ?>)</span>
+					<li class="topitem parent"><span class="title"><? FORMAT "Network Modules ({1})" NetworkName ?></span>
 						<ul>
 						<? LOOP ModLoop SORTASC=ModName ?>
 							<li class="modtitle<? IF Active ?> active<? ENDIF ?>"><a href="<? VAR URIPrefix TOP ?><? VAR ModPath ?>"><? VAR Title ?></a></li>
