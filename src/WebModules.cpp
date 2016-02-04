@@ -1001,3 +1001,7 @@ CString CWebSock::GetSkinName() {
 
     return CZNC::Get().GetSkinName();
 }
+
+CString CWebSubPage::GetTitle() const {
+    return m_bTranslating ? m_dTitle.Resolve() : m_sTitle;
+}
