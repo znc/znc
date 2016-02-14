@@ -102,7 +102,12 @@ if(WANT_CYRUS)
 		# osx (as of El Capitan) doesn't have it either...
 		set(_old_cmake_required_libraries "${CMAKE_REQUIRED_LIBRARIES}")
 		set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} -lsasl2)
-		check_cxx_symbol_exists(sasl_server_init "sasl/sasl.h" CYRUS_HARDCODED)
+		# sys/types.h here is workaround for sasl 2.1.26:
+		# https://github.com/znc/znc/issues/1243
+		# https://lists.andrew.cmu.edu/pipermail/cyrus-sasl/2012-December/002572.html
+		# https://cgit.cyrus.foundation/cyrus-sasl/commit/include/sasl.h?id=2f740223fa1820dd71e6ab0e50d4964760789209
+		check_cxx_symbol_exists(sasl_server_init "sys/types.h;sasl/sasl.h"
+			CYRUS_HARDCODED)
 		set(CMAKE_REQUIRED_LIBRARIES "${_old_cmake_required_libraries}")
 		if(CYRUS_HARDCODED)
 			set(CYRUS_LDFLAGS -lsasl2)
