@@ -537,8 +537,9 @@ CString& CUser::ExpandString(const CString& sStr, CString& sRet) const {
 	sRet.Replace("%version%", CZNC::GetVersion());
 	sRet.Replace("%time%", sTime);
 	sRet.Replace("%uptime%", CZNC::Get().GetUptime());
+	sRet.Replace("%znc%", CZNC::GetTag(false));
 	// The following lines do not exist. You must be on DrUgS!
-	sRet.Replace("%znc%", "All your IRC are belong to ZNC");
+	sRet.Replace("%irc%", "All your IRC are belong to ZNC");
 	// Chosen by fair zocchihedron dice roll by SilverLeo
 	sRet.Replace("%rand%", "42");
 
@@ -1240,7 +1241,7 @@ const CString& CUser::GetDefaultChanModes() const { return m_sDefaultChanModes; 
 const CString& CUser::GetClientEncoding() const { return m_sClientEncoding; }
 bool CUser::HasSpaceForNewNetwork() const { return GetNetworks().size() < MaxNetworks(); }
 
-CString CUser::GetQuitMsg() const { return (!m_sQuitMsg.Trim_n().empty()) ? m_sQuitMsg : CZNC::GetTag(false); }
+CString CUser::GetQuitMsg() const { return (!m_sQuitMsg.Trim_n().empty()) ? m_sQuitMsg : "%znc%"; }
 const MCString& CUser::GetCTCPReplies() const { return m_mssCTCPReplies; }
 unsigned int CUser::GetBufferCount() const { return m_uBufferCount; }
 bool CUser::AutoClearChanBuffer() const { return m_bAutoClearChanBuffer; }
