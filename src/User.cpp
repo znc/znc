@@ -1033,9 +1033,7 @@ CConfig CUser::ToConfig() const {
     config.AddKeyValuePair("Nick", GetNick());
     config.AddKeyValuePair("AltNick", GetAltNick());
     config.AddKeyValuePair("Ident", GetIdent());
-    if (!m_sRealName.empty()) {
-        config.AddKeyValuePair("RealName", GetRealName());
-    }
+    config.AddKeyValuePair("RealName", GetRealName());
     config.AddKeyValuePair("BindHost", GetBindHost());
     config.AddKeyValuePair("DCCBindHost", GetDCCBindHost());
     config.AddKeyValuePair("QuitMsg", GetQuitMsg());
@@ -1448,7 +1446,10 @@ const CString& CUser::GetIdent(bool bAllowDefault) const {
     return (bAllowDefault && m_sIdent.empty()) ? GetCleanUserName() : m_sIdent;
 }
 CString CUser::GetRealName() const {
-    return (!m_sRealName.Trim_n().empty()) ? m_sRealName : CZNC::GetTag(false);
+    // Not include version number via GetTag() because of
+    // https://github.com/znc/znc/issues/818#issuecomment-70402820
+    return (!m_sRealName.Trim_n().empty()) ? m_sRealName
+                                           : "ZNC - http://znc.in";
 }
 const CString& CUser::GetBindHost() const { return m_sBindHost; }
 const CString& CUser::GetDCCBindHost() const { return m_sDCCBindHost; }
@@ -1468,7 +1469,9 @@ bool CUser::HasSpaceForNewNetwork() const {
     return GetNetworks().size() < MaxNetworks();
 }
 
-CString CUser::GetQuitMsg() const { return (!m_sQuitMsg.Trim_n().empty()) ? m_sQuitMsg : "%znc%"; }
+CString CUser::GetQuitMsg() const {
+    return (!m_sQuitMsg.Trim_n().empty()) ? m_sQuitMsg : "%znc%";
+}
 const MCString& CUser::GetCTCPReplies() const { return m_mssCTCPReplies; }
 unsigned int CUser::GetBufferCount() const { return GetChanBufferSize(); }
 unsigned int CUser::GetChanBufferSize() const { return m_uChanBufferSize; }
