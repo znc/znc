@@ -591,12 +591,13 @@ CString& CUser::ExpandString(const CString& sStr, CString& sRet) const {
     sRet.Replace("%user%", GetUserName());
     sRet.Replace("%version%", CZNC::GetVersion());
     sRet.Replace("%vhost%", GetBindHost());
+    sRet.Replace("%znc%", CZNC::GetTag(false));
 
     // Allows for escaping ExpandString if necessary, or to prevent
     // defaults from kicking in if you don't want them.
     sRet.Replace("%empty%", "");
     // The following lines do not exist. You must be on DrUgS!
-    sRet.Replace("%znc%", "All your IRC are belong to ZNC");
+    sRet.Replace("%irc%", "All your IRC are belong to ZNC");
     // Chosen by fair zocchihedron dice roll by SilverLeo
     sRet.Replace("%rand%", "42");
 
@@ -1467,9 +1468,7 @@ bool CUser::HasSpaceForNewNetwork() const {
     return GetNetworks().size() < MaxNetworks();
 }
 
-CString CUser::GetQuitMsg() const {
-    return (!m_sQuitMsg.Trim_n().empty()) ? m_sQuitMsg : CZNC::GetTag(false);
-}
+CString CUser::GetQuitMsg() const { return (!m_sQuitMsg.Trim_n().empty()) ? m_sQuitMsg : "%znc%"; }
 const MCString& CUser::GetCTCPReplies() const { return m_mssCTCPReplies; }
 unsigned int CUser::GetBufferCount() const { return GetChanBufferSize(); }
 unsigned int CUser::GetChanBufferSize() const { return m_uChanBufferSize; }

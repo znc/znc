@@ -14,6 +14,34 @@
 
 
 
+# ZNC 1.6.3 (2016-02-16)
+
+## Core
+* New character encoding is now applied immediately, without reconnect.
+* Fixed build with LibreSSL.
+* Fixed error 404 when accessing the web UI with the configured URI prefix,
+  but without the `/` in the end.
+* `znc-buildmod` now exits with non-zero exit code when the .cpp file is not found.
+* Fixed `znc-buildmod` on Cygwin.
+* ExpandString got expanded. It now expands `%znc%` to
+  `ZNC <version> - http://znc.in`, honoring the global "Hide version" setting.
+* Default quit message is switched from `ZNC <version> - http://znc.in` to `%znc%`,
+  which is the same, but "automatically" changes the shown version when ZNC gets upgraded.
+  Before, the old version was recorded in the user's quit message, and stayed the same
+  regardless of the current version of ZNC.
+
+## Modules
+* modperl:
+    * Fixed a memory leak.
+* sasl:
+    * Added an option to show which mechanisms failed or succeeded.
+* webadmin:
+    * Fixed an error message on invalid user settings to say what exactly was invalid.
+    * No more autocomplete password in user settings. It led to an error when ZNC
+      thought the user is going to change a password, but the passwords didn't match.
+
+
+
 # ZNC 1.6.2 (2015-11-15)
 
 ## Fixes
