@@ -14,7 +14,7 @@
 
 
 
-# ZNC 1.6.3 (2016-02-16)
+# ZNC 1.6.3 (2016-02-23)
 
 ## Core
 * New character encoding is now applied immediately, without reconnect.
