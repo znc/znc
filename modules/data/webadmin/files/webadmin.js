@@ -191,7 +191,7 @@ function ctcpreplies_init($) {
 				.attr({"type":"text","list":"ctcpreplies_list"})),
 			$("<td/>").append($("<input/>").val(response)
 				.addClass("ctcpreplies_row_response")
-				.attr({"type":"text","placeholder":"Empty value means this CTCP request will be ignored"})),
+				.attr({"type":"text","placeholder":$("#ctcpreplies_js").data("placeholder")})),
 			$("<td/>").append($("<input/>").val("X")
 				.attr({"type":"button"}).click(delete_row))
 		);

@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: znc 1.7.x\n"
-"PO-Revision-Date: 2016-02-24 21:33+0000\n"
+"PO-Revision-Date: 2016-02-24 22:25+0000\n"
 "Last-Translator: Alexey Sokolov\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
@@ -585,7 +585,8 @@ msgstr "Ограничение количества сетей IRC:"
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:318
 msgid "Maximum number of IRC networks allowed for this user."
 msgstr ""
-"Наибольшее разрешённое число сетей IRC, которые может иметь этот пользователь."
+"Наибольшее разрешённое число сетей IRC, которые может иметь этот "
+"пользователь."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:321
 msgid "Substitutions"
@@ -604,6 +605,10 @@ msgstr "По одному ответу в каждой строке. Приме�
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:344
 msgid "{1} are available"
 msgstr "Доступны {1}"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:330
+msgid "Empty value means this CTCP request will be ignored"
+msgstr "Если пусто, этот запрос CTCP игнорируется"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:336
 msgid "Request"
@@ -1211,5 +1216,4 @@ msgstr "Указанный порт не найден."
 #: webadmin.cpp:2050
 msgid "Settings were changed, but config file was not written"
 msgstr "Настройки изменены, но записать конфигурацию в файл не удалось"
-
 

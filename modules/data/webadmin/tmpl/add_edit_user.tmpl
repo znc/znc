@@ -327,7 +327,7 @@
 					<br /><span class="info"><? FORMAT "One reply per line. Example: <code>TIME Buy a watch!</code>" ?></span>
 					<br /><span class="info"><? FORMAT "{1} are available" "Substitutions_Link ESC=" ?></span>
 				</div>
-				<div class="subsection" id="ctcpreplies_js" style="display:none">
+				<div class="subsection" id="ctcpreplies_js" style="display:none" data-placeholder="<? FORMAT "Empty value means this CTCP request will be ignored" ?>">
 					<div class="inputlabel"><? FORMAT "CTCP Replies:" ?></div>
 					<div>
 						<table style="width:100%">
@@ -340,7 +340,7 @@
 							</thead>
 							<tbody id="ctcpreplies_tbody"/>
 						</table>
-						<input type="button" value="Add" id="ctcpreplies_add"/>
+						<input type="button" value="<? FORMAT "Add" ?>" id="ctcpreplies_add"/>
 						<span class="info"><? FORMAT "{1} are available" "Substitutions_Link ESC=" ?></span>
 						<datalist id="ctcpreplies_list">
 							<option value="PING"/>

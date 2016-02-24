@@ -561,6 +561,10 @@ msgstr ""
 msgid "{1} are available"
 msgstr ""
 
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:330
+msgid "Empty value means this CTCP request will be ignored"
+msgstr ""
+
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:336
 msgid "Request"
 msgstr ""
