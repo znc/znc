@@ -62,7 +62,7 @@ class IO {
         : m_device(device), m_verbose(verbose) {}
     virtual ~IO() {}
     void ReadUntil(QByteArray pattern) {
-        auto deadline = QDateTime::currentDateTime().addSecs(30);
+        auto deadline = QDateTime::currentDateTime().addSecs(60);
         while (true) {
             int search = m_readed.indexOf(pattern);
             if (search != -1) {
@@ -403,20 +403,21 @@ TEST_F(ZNCTest, FixCVE20149403) {
                          "Basic " + QByteArray("user:hunter2").toBase64());
     request.setUrl(QUrl("http://127.0.0.1:12345/mods/global/webadmin/addchan"));
     HttpPost(request, {
-                          {"user", "user"},
-                          {"network", "test"},
-                          {"submitted", "1"},
-                          {"name", "znc"},
+                       {"user", "user"},
+                       {"network", "test"},
+                       {"submitted", "1"},
+                       {"name", "znc"},
+                       {"enabled", "1"},
                       });
     ircd.ReadUntil("JOIN #znc");
     Z;
-    EXPECT_THAT(HttpPost(request,
-                         {
-                             {"user", "user"},
-                             {"network", "test"},
-                             {"submitted", "1"},
-                             {"name", "znc"},
-                         })
+    EXPECT_THAT(HttpPost(request, {
+                                   {"user", "user"},
+                                   {"network", "test"},
+                                   {"submitted", "1"},
+                                   {"name", "znc"},
+                                   {"enabled", "1"},
+                                  })
                     ->readAll()
                     .toStdString(),
                 HasSubstr("Channel [#znc] already exists"));
@@ -441,10 +442,11 @@ TEST_F(ZNCTest, FixFixOfCVE20149403) {
                          "Basic " + QByteArray("user:hunter2").toBase64());
     request.setUrl(QUrl("http://127.0.0.1:12345/mods/global/webadmin/addchan"));
     auto reply = HttpPost(request, {
-                                       {"user", "user"},
-                                       {"network", "test"},
-                                       {"submitted", "1"},
-                                       {"name", "@#znc"},
+                                    {"user", "user"},
+                                    {"network", "test"},
+                                    {"submitted", "1"},
+                                    {"name", "@#znc"},
+                                    {"enabled", "1"},
                                    });
     EXPECT_THAT(reply->readAll().toStdString(),
                 HasSubstr("Could not add channel [@#znc]"));
