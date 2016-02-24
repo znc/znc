@@ -362,7 +362,7 @@ td.mod_name,
 .lotsofcheckboxes .checkboxandlabel {
 	display: block;
 	float: left;
-	width: 200px;
+	width: 100%;
 	margin-top: 0.5em;
 }
 
