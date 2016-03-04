@@ -267,7 +267,7 @@ class CAdminMod : public CModule {
 		}
 		else if (sVar == "bindhost") {
 			if(!pUser->DenySetBindHost() || GetUser()->IsAdmin()) {
-				if (sValue.Equals(GetUser()->GetBindHost())) {
+				if (sValue.Equals(pUser->GetBindHost())) {
 					PutModule("This bind host is already set!");
 					return;
 				}
