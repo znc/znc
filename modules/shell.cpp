@@ -49,6 +49,9 @@ class CShellSock : public CExecSock {
     void ReadLine(const CString& sData) override;
     void Disconnected() override;
 
+    bool IsOfClient(CClient* pClient) const { return pClient == m_pClient; }
+    bool IsOfModule(CShellMod* pParent) const { return pParent == m_pParent; }
+
     CShellMod* m_pParent;
 
   private:
@@ -115,6 +118,21 @@ class CShellMod : public CModule {
             new CShellSock(this, GetClient(),
                            "cd " + m_sPath + " && " + sCommand),
             "SHELL");
+    }
+
+    void OnClientDisconnect() override {
+        std::vector<Csock*> vDeadCommands;
+        for (Csock* pSock : *GetManager()) {
+            if (CShellSock* pSSock = dynamic_cast<CShellSock*>(pSock)) {
+                if (pSSock->IsOfModule(this) &&
+                    pSSock->IsOfClient(GetClient())) {
+                    vDeadCommands.push_back(pSock);
+                }
+            }
+        }
+        for (Csock* pSock : vDeadCommands) {
+            GetManager()->DelSockByAddr(pSock);
+        }
     }
 
   private:

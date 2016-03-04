@@ -1664,19 +1664,6 @@ TEST_F(ZNCTest, ControlpanelModule) {
     Z;
 }
 
-TEST_F(ZNCTest, ShellModule) {
-    auto znc = Run();
-    Z;
-    auto ircd = ConnectIRCd();
-    Z;
-    auto client = LoginClient();
-    Z;
-    client.Write("znc loadmod shell");
-    client.Write("PRIVMSG *shell :echo blahblah");
-    client.ReadUntil("PRIVMSG nick :blahblah");
-    client.ReadUntil("PRIVMSG nick :znc$");
-}
-
 TEST_F(ZNCTest, NotifyConnectModule) {
     auto znc = Run();
     Z;
@@ -1712,6 +1699,35 @@ TEST_F(ZNCTest, NotifyConnectModule) {
     client.ReadUntil(
         "NOTICE nick :*** user@identifier detached (from 127.0.0.1)");
     Z;
+}
+
+TEST_F(ZNCTest, ShellModule) {
+    auto znc = Run();
+    Z;
+    auto ircd = ConnectIRCd();
+    Z;
+    auto client = LoginClient();
+    Z;
+    client.Write("znc loadmod shell");
+    client.Write("PRIVMSG *shell :echo blahblah");
+    client.ReadUntil("PRIVMSG nick :blahblah");
+    Z;
+    client.ReadUntil("PRIVMSG nick :znc$");
+    Z;
+
+    // https://github.com/znc/znc/issues/1248
+    auto client2 = LoginClient();
+    client2.Write("znc loadmod notify_connect");
+    client.Write("PRIVMSG *shell :yes");
+    client.ReadUntil(":y");
+    Z;
+    client.Close();
+    client2.ReadUntil("detached");
+    // This can be racy, if no "y" appears between this two lines. I can take
+    // this risk though. To be extra safe, sleep 1 additional second.
+    // TODO: replace "yes" with socat (or netcat) connecting to a socket opened
+    // by this test.
+    sleep(1);
 }
 
 TEST_F(ZNCTest, WatchModule) {
