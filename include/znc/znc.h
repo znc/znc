@@ -31,6 +31,7 @@ class CListener;
 class CUser;
 class CIRCNetwork;
 class CConnectQueueTimer;
+class CConfigWriteTimer;
 class CConfig;
 class CFile;
 
@@ -47,6 +48,7 @@ class CZNC {
         ECONFIG_NEED_REHASH,
         ECONFIG_NEED_WRITE,
         ECONFIG_NEED_VERBOSE_WRITE,
+        ECONFIG_DELAYED_WRITE,
         ECONFIG_NEED_QUIT,  // Not really config...
     };
 
@@ -125,6 +127,7 @@ class CZNC {
     void SetSSLCiphers(const CString& sCiphers) { m_sSSLCiphers = sCiphers; }
     bool SetSSLProtocols(const CString& sProtocols);
     void SetSSLCertFile(const CString& sFile) { m_sSSLCertFile = sFile; }
+    void SetConfigWriteDelay(unsigned int i) { m_uiConfigWriteDelay = i; }
     // !Setters
 
     // Getters
@@ -170,6 +173,7 @@ class CZNC {
     }
     CString GetSSLCertFile() const { return m_sSSLCertFile; }
     static VCString GetAvailableSSLProtocols();
+    unsigned int GetConfigWriteDelay() const { return m_uiConfigWriteDelay; }
     // !Getters
 
     // Static allocator
@@ -242,6 +246,8 @@ class CZNC {
     // Never call this unless you are CConnectQueueTimer::~CConnectQueueTimer()
     void LeakConnectQueueTimer(CConnectQueueTimer* pTimer);
 
+    void DisableConfigTimer();
+
     static void DumpConfig(const CConfig* Config);
 
   private:
@@ -300,6 +306,8 @@ class CZNC {
     bool m_bProtectWebSessions;
     bool m_bHideVersion;
     CTranslationDomainRefHolder m_Translation;
+    unsigned int m_uiConfigWriteDelay;
+    CConfigWriteTimer* m_pConfigTimer;
 };
 
 #endif  // !ZNC_H
