@@ -1714,20 +1714,6 @@ TEST_F(ZNCTest, ShellModule) {
     Z;
     client.ReadUntil("PRIVMSG nick :znc$");
     Z;
-
-    // https://github.com/znc/znc/issues/1248
-    auto client2 = LoginClient();
-    client2.Write("znc loadmod notify_connect");
-    client.Write("PRIVMSG *shell :yes");
-    client.ReadUntil(":y");
-    Z;
-    client.Close();
-    client2.ReadUntil("detached");
-    // This can be racy, if no "y" appears between this two lines. I can take
-    // this risk though. To be extra safe, sleep 1 additional second.
-    // TODO: replace "yes" with socat (or netcat) connecting to a socket opened
-    // by this test.
-    sleep(1);
 }
 
 TEST_F(ZNCTest, WatchModule) {
