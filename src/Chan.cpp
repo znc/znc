@@ -700,7 +700,7 @@ void CChan::SetKey(const CString& s) {
     if (m_sKey != s) {
         m_sKey = s;
         if (m_bInConfig) {
-            CZNC::Get().SetConfigState(CZNC::ECONFIG_NEED_WRITE);
+            CZNC::Get().SetConfigState(CZNC::ECONFIG_DELAYED_WRITE);
         }
     }
 }
@@ -708,7 +708,7 @@ void CChan::SetKey(const CString& s) {
 void CChan::SetInConfig(bool b) {
     if (m_bInConfig != b) {
         m_bInConfig = b;
-        CZNC::Get().SetConfigState(CZNC::ECONFIG_NEED_WRITE);
+        CZNC::Get().SetConfigState(CZNC::ECONFIG_DELAYED_WRITE);
     }
 }
 

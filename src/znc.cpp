@@ -76,7 +76,9 @@ CZNC::CZNC()
       m_sConnectThrottle(),
       m_bProtectWebSessions(true),
       m_bHideVersion(false),
-      m_Translation("znc") {
+      m_Translation("znc"),
+      m_uiConfigWriteDelay(0),
+      m_pConfigTimer(nullptr) {
     if (!InitCsocket()) {
         CUtils::PrintError("Could not initialize Csocket!");
         exit(-1);
@@ -210,6 +212,21 @@ bool CZNC::HandleUserDeletion() {
     return true;
 }
 
+class CConfigWriteTimer : public CCron {
+  public:
+    CConfigWriteTimer(int iSecs) : CCron() {
+        SetName("Config write timer");
+        Start(iSecs);
+    }
+
+  protected:
+    void RunJob() override {
+        CZNC::Get().SetConfigState(CZNC::ECONFIG_NEED_WRITE);
+
+        CZNC::Get().DisableConfigTimer();
+    }
+};
+
 void CZNC::Loop() {
     while (true) {
         CString sError;
@@ -227,9 +244,23 @@ void CZNC::Loop() {
                               true);
                 }
                 break;
+            case ECONFIG_DELAYED_WRITE:
+                SetConfigState(ECONFIG_NOTHING);
+
+                if (GetConfigWriteDelay() > 0) {
+                    if (m_pConfigTimer == nullptr) {
+                        m_pConfigTimer = new CConfigWriteTimer(GetConfigWriteDelay());
+                        GetManager().AddCron(m_pConfigTimer);
+                    }
+                    break;
+                }
+                /* Fall through */
             case ECONFIG_NEED_WRITE:
             case ECONFIG_NEED_VERBOSE_WRITE:
                 SetConfigState(ECONFIG_NOTHING);
+
+                // stop pending configuration timer
+                DisableConfigTimer();
 
                 if (!WriteConfig()) {
                     Broadcast("Writing the config file failed", true);
@@ -490,6 +521,7 @@ bool CZNC::WriteConfig() {
                            CString(m_bProtectWebSessions));
     config.AddKeyValuePair("HideVersion", CString(m_bHideVersion));
     config.AddKeyValuePair("Version", CString(VERSION_STR));
+    config.AddKeyValuePair("ConfigWriteDelay", CString(m_uiConfigWriteDelay));
 
     unsigned int l = 0;
     for (CListener* pListener : m_vpListeners) {
@@ -1224,6 +1256,8 @@ bool CZNC::LoadGlobal(CConfig& config, CString& sError) {
             return false;
         }
     }
+    if (config.FindStringEntry("configwritedelay", sVal))
+        m_uiConfigWriteDelay = sVal.ToUInt();
 
     UnloadRemovedModules(msModules);
 
@@ -2121,3 +2155,10 @@ void CZNC::LeakConnectQueueTimer(CConnectQueueTimer* pTimer) {
 }
 
 bool CZNC::WaitForChildLock() { return m_pLockFile && m_pLockFile->ExLock(); }
+
+void CZNC::DisableConfigTimer() {
+    if (m_pConfigTimer) {
+        m_pConfigTimer->Stop();
+        m_pConfigTimer = nullptr;
+    }
+}
