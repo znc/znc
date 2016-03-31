@@ -558,7 +558,7 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
                         VCString vsArgs;
                         sArgs.QuoteSplit(vsArgs);
                         CString sEnglish, sContext;
-                        int idx = 0;
+                        size_type idx = 0;
                         if (bHaveContext && vsArgs.size() > idx) {
                             sContext = vsArgs[idx];
                             idx++;
@@ -586,7 +586,7 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
                                 sI18N, sContext, sEnglish);
                         }
                         MCString msParams;
-                        for (int i = 0; i + idx < vsArgs.size(); ++i) {
+                        for (size_type i = 0; i + idx < vsArgs.size(); ++i) {
                             msParams[CString(i + 1)] =
                                 GetValue(vsArgs[i + idx], false);
                         }
