@@ -557,7 +557,7 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
                         }
                         VCString vsArgs;
                         sArgs.QuoteSplit(vsArgs);
-                        CString sEnglish, sEnglishes, sContext;
+                        CString sEnglish, sContext;
                         int idx = 0;
                         if (bHaveContext && vsArgs.size() > idx) {
                             sContext = vsArgs[idx];
