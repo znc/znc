@@ -20,12 +20,16 @@ Makefile
 
 # modperl and modpython generated code
 /modules/modperl/functions.cpp
+/modules/modperl/modperl_biglib.cpp
+/modules/modperl/perlfunctions.cpp
 /modules/modperl/ZNC.cpp
 /modules/modperl/ZNC.pm
 /modules/modperl/swigperlrun.h
 /modules/modpython/_znc_core.cpp
 /modules/modpython/compiler
 /modules/modpython/functions.cpp
+/modules/modpython/modpython_biglib.cpp
+/modules/modpython/pyfunctions.cpp
 /modules/modpython/swigpyrun.h
 /modules/modpython/znc_core.py
 *.pyc
