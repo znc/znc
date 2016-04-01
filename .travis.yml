@@ -122,9 +122,7 @@ notifications:
     irc:
         channels:
             # irc.freenode.net #znc-dev (via ZNC-Linker)
-            # encryption prevents forks from spamming #znc-dev by just enabling Travis
-            # Format is poorly documented at https://github.com/travis-ci/travis-ci/issues/2813
-            - secure: "L7UcaWs3Y0y0QlOzUFnCJQ3clFXcik1ygswDdzE3q4lyUa7/4WeAoocJWLxp9PPL6hXZygsiXj4gIBWq4wqDEbsZzO+xZvleq2i3KGf7YdDgPTYJJN9ppIHR3Q+pmnODtYu1dHpLTunS2g7vVzJHNjIKQvORl9CTx9lDNHKjG5A="
+            - secure: "h06+4KSb2hM1BJWQqsrurqIU3F6fK55ATCRO7/t3FK6tbSHduywfbfcJmkPUD08lATCWaKm07afbVQPoU3dc6B+0rLvlvGmOoQlB6OxiROq+fc+gXXBwpnBJ1HKwmBrEActqkyZ8GWTVLeIhhR5xYVVZZv7AZ6jzCgpfyiXPink="
         on_success: always
         on_failure: always
         skip_join: true
