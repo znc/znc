@@ -76,10 +76,15 @@ after_success:
 notifications:
     irc:
         channels:
-            # travis encrypt "irc.freenode.net#znc-dev" -r znc/znc
-            # prevents forks from spamming #znc-dev by just enabling Travis
-            - secure: "ACdKvJT+gvuzDTfQkhnHI8aQNtXHI1tJOgFPss9XpF8025KYxrvhuff15VRhYuDCuNSuqhZYG9Oz+ZCQzu85ravkXVa3X+ze8SRoIIwAN2tpkr7KTfbJc4gD2S/RZUi432ICiQznHWnhV209XSLXY4qBhnR0OkCg5/pY8zievYw="
+            # irc.freenode.net #znc-dev (via ZNC-Linker)
+            # Format is poorly documented at https://github.com/travis-ci/travis-ci/issues/2813
+            - secure: "h06+4KSb2hM1BJWQqsrurqIU3F6fK55ATCRO7/t3FK6tbSHduywfbfcJmkPUD08lATCWaKm07afbVQPoU3dc6B+0rLvlvGmOoQlB6OxiROq+fc+gXXBwpnBJ1HKwmBrEActqkyZ8GWTVLeIhhR5xYVVZZv7AZ6jzCgpfyiXPink="
         on_success: always
         on_failure: always
+        skip_join: true
+        nick:
+            secure: "UGh4tbpviOD438ZOi+I3W6eh+R68tbpNIJc0uf5FK6xhHLLo3FRIozkL7CRVA3TxYHuahwerZpBR4TbAyc+gVUn5YRHjdsMIPHPCW/kh8ZkEJKNYXkHerbH0Np6PRLI58l6lmjMQbiWn+lqlgsHdVsyknqxDwoj7JDieE+5X53c="
+        password:
+            secure: "B2F1coXddY1H0/v3OkiPnUlbnSN/wapRay1PUbN8tvm7IDYOjpivhsRk+31/4pauKOoF4AZhzP6F9mhGxkGYBQ23Td5Y6+uZeaDnTYnXjs8fbV0QY1Mx+2EkHDSkLQoYlYr06pK9q55X3uLK1zTz5Ye0Po3KzbeydxOyyG+xBGg="
 sudo: required
 dist: trusty
