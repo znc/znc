@@ -273,4 +273,19 @@ TEST(StringTest, StripControls) {
 
     // Strips foreground and background colour
     EXPECT_EQ(CString("\x03\x30,03test").StripControls(), "test");
+
+    // Strips reset
+    EXPECT_EQ(CString("\x0Ftest").StripControls(), "test");
+
+    // Strips reverse
+    EXPECT_EQ(CString("\x12test").StripControls(), "test");
+
+    // Strips bold
+    EXPECT_EQ(CString("\x02test").StripControls(), "test");
+
+    // Strips italics
+    EXPECT_EQ(CString("\x16test").StripControls(), "test");
+
+    // Strips underline
+    EXPECT_EQ(CString("\x1Ftest").StripControls(), "test");
 }
