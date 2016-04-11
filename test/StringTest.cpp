@@ -263,3 +263,14 @@ TEST(StringTest, Contains) {
     EXPECT_FALSE(
         CString("Hello, I'm Bob").Contains("i'm bob", CString::CaseSensitive));
 }
+
+TEST(StringTest, StripControls) {
+    // Strips reset colours
+    EXPECT_EQ(CString("\x03test").StripControls(), "test");
+
+    // Strips reset foreground and set new background colour
+    EXPECT_EQ(CString("\x03,03test").StripControls(), "test");
+
+    // Strips foreground and background colour
+    EXPECT_EQ(CString("\x03\x30,03test").StripControls(), "test");
+}
