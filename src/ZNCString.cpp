@@ -1413,7 +1413,7 @@ CString CString::StripControls_n() const {
                 digits++;
                 continue;
             }
-            if (ch == ',' && !comma && digits > 0) {
+            if (ch == ',' && !comma) {
                 comma = true;
                 digits = 0;
                 continue;
