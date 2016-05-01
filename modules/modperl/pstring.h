@@ -61,7 +61,8 @@ class PString : public CString {
                 break;
             case STRING:
             default:
-                pSV = newSVpv(data(), length());
+                pSV = newSVpvn(data(), length());
+                SvUTF8_on(pSV);
                 break;
         }
 
