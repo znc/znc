@@ -177,20 +177,27 @@ sub GetModInfo {
 sub ModInfoByPath {
 	my ($modpath, $modname, $modinfo) = @_;
 	die "Incorrect perl module." unless IsModule $modpath, $modname;
-	require $modpath;
-	my $translation = ZNC::CTranslationDomainRefHolder->new("znc-$modname");
-	my $pmod = bless {}, $modname;
-	my @types = $pmod->module_types;
-	$modinfo->SetDefaultType($types[0]);
-	$modinfo->SetDescription($pmod->description);
-	$modinfo->SetWikiPage($pmod->wiki_page);
-	$modinfo->SetArgsHelpText($pmod->args_help_text);
-	$modinfo->SetHasArgs($pmod->has_args);
-	$modinfo->SetName($modname);
-	$modinfo->SetPath($modpath);
-	$modinfo->AddType($_) for @types;
+	eval {
+		require $modpath;
+		my $translation = ZNC::CTranslationDomainRefHolder->new("znc-$modname");
+		my $pmod = bless {}, $modname;
+		my @types = $pmod->module_types();
+		$modinfo->SetDefaultType($types[0]);
+		$modinfo->SetDescription($pmod->description);
+		$modinfo->SetWikiPage($pmod->wiki_page);
+		$modinfo->SetArgsHelpText($pmod->args_help_text);
+		$modinfo->SetHasArgs($pmod->has_args);
+		$modinfo->SetName($modname);
+		$modinfo->SetPath($modpath);
+		$modinfo->AddType($_) for @types;
+	};
+	if ($@) {
+		# modrefcount was 0 before this, otherwise it couldn't die in the previous time.
+		# so can safely remove module from %INC
+		delete $INC{$modpath};
+		die $@;
+	}
 	unless ($modrefcount{$modname}) {
-		say "Unloading $modpath from perl, because it's not loaded as a module";
 		ZNC::_CleanupStash($modname);
 		delete $INC{$modpath};
 	}
