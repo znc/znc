@@ -26,7 +26,7 @@ modperl/swigperlrun.h:
 modperl/modperl_biglib.cpp: modperl/modperl.i modperl/module.h modperl/CString.i
 	$(E) Generating ZNC API for Perl...
 	@mkdir -p modperl .depend
-	$(Q)$(SWIG) -perl5 -c++ -shadow -outdir modperl -I$(srcdir) -I$(srcdir)/../include -I../include -MD -MF .depend/modperl.swig.dep -w362,315,401,402 -o $@ $<
+	$(Q)$(SWIG) -perl5 -c++ -shadow -outdir modperl -I$(srcdir) -I$(srcdir)/../include -I../include -I$(srcdir)/modperl/include -MD -MF .depend/modperl.swig.dep -w362,315,401,402 -o $@ $<
 
 modperl/ZNC.pm: modperl/modperl_biglib.cpp
 
