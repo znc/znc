@@ -15,6 +15,7 @@
  */
 
 #include <znc/znc.h>
+#include <znc/User.h>
 
 class CFailToBanMod : public CModule {
   public:
@@ -76,6 +77,11 @@ class CFailToBanMod : public CModule {
     bool Remove(const CString& sHost) { return m_Cache.RemItem(sHost); }
 
     void OnTimeoutCommand(const CString& sCommand) {
+        if (!GetUser()->IsAdmin()) {
+            PutModule("Access denied");
+            return;
+        }
+
         CString sArg = sCommand.Token(1);
 
         if (!sArg.empty()) {
@@ -95,6 +101,11 @@ class CFailToBanMod : public CModule {
     }
 
     void OnAttemptsCommand(const CString& sCommand) {
+        if (!GetUser()->IsAdmin()) {
+            PutModule("Access denied");
+            return;
+        }
+
         CString sArg = sCommand.Token(1);
 
         if (!sArg.empty()) {
@@ -113,6 +124,11 @@ class CFailToBanMod : public CModule {
     }
 
     void OnBanCommand(const CString& sCommand) {
+        if (!GetUser()->IsAdmin()) {
+            PutModule("Access denied");
+            return;
+        }
+
         CString sHosts = sCommand.Token(1, true);
 
         if (sHosts.empty()) {
@@ -131,6 +147,11 @@ class CFailToBanMod : public CModule {
     }
 
     void OnUnbanCommand(const CString& sCommand) {
+        if (!GetUser()->IsAdmin()) {
+            PutModule("Access denied");
+            return;
+        }
+
         CString sHosts = sCommand.Token(1, true);
 
         if (sHosts.empty()) {
@@ -152,6 +173,11 @@ class CFailToBanMod : public CModule {
     }
 
     void OnListCommand(const CString& sCommand) {
+        if (!GetUser()->IsAdmin()) {
+            PutModule("Access denied");
+            return;
+        }
+
         CTable Table;
         Table.AddColumn("Host");
         Table.AddColumn("Attempts");
