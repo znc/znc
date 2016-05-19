@@ -140,6 +140,8 @@ CIRCNetwork::CIRCNetwork(CUser* pUser, const CString& sName)
       m_vQueries(),
       m_sChanPrefixes(""),
       m_bIRCConnectEnabled(true),
+      m_bTrustAllCerts(false),
+      m_bTrustPKI(true),
       m_sIRCServer(""),
       m_vServers(),
       m_uServerIdx(0),
@@ -377,6 +379,8 @@ bool CIRCNetwork::ParseConfig(CConfig* pConfig, CString& sError,
         };
         TOption<bool> BoolOptions[] = {
             {"ircconnectenabled", &CIRCNetwork::SetIRCConnectEnabled},
+            {"trustallcerts", &CIRCNetwork::SetTrustAllCerts},
+            {"trustpki", &CIRCNetwork::SetTrustPKI},
         };
         TOption<double> DoubleOptions[] = {
             {"floodrate", &CIRCNetwork::SetFloodRate},
@@ -545,6 +549,8 @@ CConfig CIRCNetwork::ToConfig() const {
 
     config.AddKeyValuePair("IRCConnectEnabled",
                            CString(GetIRCConnectEnabled()));
+    config.AddKeyValuePair("TrustAllCerts", CString(GetTrustAllCerts()));
+    config.AddKeyValuePair("TrustPKI", CString(GetTrustPKI()));
     config.AddKeyValuePair("FloodRate", CString(GetFloodRate()));
     config.AddKeyValuePair("FloodBurst", CString(GetFloodBurst()));
     config.AddKeyValuePair("JoinDelay", CString(GetJoinDelay()));
@@ -1272,6 +1278,8 @@ bool CIRCNetwork::Connect() {
     CIRCSock* pIRCSock = new CIRCSock(this);
     pIRCSock->SetPass(pServer->GetPass());
     pIRCSock->SetSSLTrustedPeerFingerprints(m_ssTrustedFingerprints);
+    pIRCSock->SetTrustAllCerts(GetTrustAllCerts());
+    pIRCSock->SetTrustPKI(GetTrustPKI());
 
     DEBUG("Connecting user/network [" << m_pUser->GetUserName() << "/"
                                       << m_sName << "]");
