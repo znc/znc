@@ -4,6 +4,7 @@ After=network.target
 
 [Service]
 ExecStart=@CMAKE_INSTALL_FULL_BINDIR@/znc -f
+ExecReload=/bin/kill -HUP $MAINPID
 User=znc
 
 [Install]
