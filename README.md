@@ -185,6 +185,12 @@ Perl modules are loaded through the global module
 Python modules are loaded through the global module
 [ModPython](http://wiki.znc.in/Modpython).
 
+## Docker
+
+Instructions on how to build and run a docker image with the latest version of ZNC
+are available on the [wiki](http://wiki.znc.in/Docker).
+
+
 ## Further infos
 
 Please visit http://znc.in/ or
