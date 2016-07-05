@@ -880,8 +880,9 @@ void CClient::EchoMessage(const CMessage& Message) {
         if (pClient->HasEchoMessage() ||
             (pClient != this && (m_pNetwork->IsChan(Message.GetParam(0)) ||
                                  pClient->HasSelfMessage()))) {
-            pClient->PutClient(":" + GetNickMask() + " " +
-                               Message.ToString(CMessage::ExcludePrefix));
+            CMessage EchoMessage(Message);
+            EchoMessage.SetNick(GetNickMask());
+            pClient->PutClient(EchoMessage);
         }
     }
 }
