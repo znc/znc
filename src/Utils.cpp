@@ -418,6 +418,31 @@ inline CString FixGMT(CString sTZ) {
 }
 }  // namespace
 
+timeval CUtils::GetTime() {
+#ifdef HAVE_CLOCK_GETTIME
+    timespec ts;
+    if (clock_gettime(CLOCK_REALTIME, &ts) == 0) {
+        return { ts.tv_sec, ts.tv_nsec / 1000 };
+    }
+#endif
+
+    struct timeval tv;
+    if (gettimeofday(&tv, nullptr) == 0) {
+        return tv;
+    }
+
+    // Last resort, no microseconds
+    return { time(nullptr), 0 };
+}
+
+unsigned long long CUtils::GetMillTime() {
+    struct timeval tv = GetTime();
+    unsigned long long iTime = 0;
+    iTime = (unsigned long long)tv.tv_sec * 1000;
+    iTime += ((unsigned long long)tv.tv_usec / 1000);
+    return iTime;
+}
+
 CString CUtils::CTime(time_t t, const CString& sTimezone) {
     char s[30] = {};  // should have at least 26 bytes
     if (sTimezone.empty()) {
