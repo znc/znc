@@ -96,10 +96,13 @@ TEST(UtilsTest, ServerTime) {
     EXPECT_EQ("2011-10-19T16:40:51.620Z", str1);
 
     timeval now;
-    if (!gettimeofday(&now, nullptr)) {
+    if (gettimeofday(&now, nullptr)) {
         now.tv_sec = time(nullptr);
         now.tv_usec = 0;
     }
+
+    // Strip microseconds, server time is ms only
+    now.tv_usec = (now.tv_usec / 1000) * 1000;
 
     CString str2 = CUtils::FormatServerTime(now);
     timeval tv2 = CUtils::ParseServerTime(str2);

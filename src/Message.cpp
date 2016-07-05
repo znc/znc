@@ -225,7 +225,7 @@ void CMessage::InitTime() {
     }
 #endif
 
-    if (!gettimeofday(&m_time, nullptr)) {
+    if (gettimeofday(&m_time, nullptr)) {
         m_time.tv_sec = time(nullptr);
         m_time.tv_usec = 0;
     }
