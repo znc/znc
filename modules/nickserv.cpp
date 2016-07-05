@@ -113,7 +113,7 @@ class CNickServ : public CModule {
         }
 
         CString sTmp;
-		m_bJoinAfterIdentified = (sTmp = GetNV("JoinAfterIdentified")).empty() ? true : sTmp.ToBool();
+        m_bJoinAfterIdentified = (sTmp = GetNV("JoinAfterIdentified")).empty() ? true : sTmp.ToBool();
 
         return true;
     }
@@ -148,10 +148,10 @@ class CNickServ : public CModule {
     }
 
     EModRet OnJoining(CChan& Channel) override {
-		if (!m_bIdentified && m_bJoinAfterIdentified)
-			return HALT;
-		return CONTINUE;
-	}
+        if (!m_bIdentified && m_bJoinAfterIdentified)
+            return HALT;
+        return CONTINUE;
+    }
 
     EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override {
         HandleMessage(Nick, sMessage);
@@ -165,7 +165,7 @@ class CNickServ : public CModule {
 
     void OnIRCDisconnected() override {
         m_bIdentified = false;
-	}
+    }
   private:
     bool m_bIdentified{};
     bool m_bJoinAfterIdentified{};
