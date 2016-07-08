@@ -37,12 +37,7 @@ CBufLine::CBufLine(const CString& sFormat, const CString& sText,
 CBufLine::~CBufLine() {}
 
 void CBufLine::UpdateTime() {
-    timeval tv;
-    if (0 != gettimeofday(&tv, nullptr)) {
-        tv.tv_sec = time(nullptr);
-        tv.tv_usec = 0;
-    }
-    m_Message.SetTime(tv);
+    m_Message.SetTime(CUtils::GetTime());
 }
 
 CMessage CBufLine::ToMessage(const CClient& Client,

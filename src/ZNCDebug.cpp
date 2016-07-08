@@ -15,6 +15,7 @@
  */
 
 #include <znc/ZNCDebug.h>
+#include <znc/Utils.h>
 #include <iostream>
 #include <sys/time.h>
 #include <stdio.h>
@@ -29,8 +30,7 @@ bool CDebug::debug =
 #endif
 
 CDebugStream::~CDebugStream() {
-    timeval tTime;
-    gettimeofday(&tTime, nullptr);
+    timeval tTime = CUtils::GetTime();
     time_t tSec = (time_t)tTime.tv_sec;  // some systems (e.g. openbsd) define
                                          // tv_sec as long int instead of time_t
     tm tM;

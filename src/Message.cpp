@@ -216,19 +216,7 @@ void CMessage::InitTime() {
         return;
     }
 
-#ifdef HAVE_CLOCK_GETTIME
-    timespec ts;
-    if (clock_gettime(CLOCK_REALTIME, &ts) == 0) {
-        m_time.tv_sec = ts.tv_sec;
-        m_time.tv_usec = ts.tv_nsec / 1000;
-        return;
-    }
-#endif
-
-    if (!gettimeofday(&m_time, nullptr)) {
-        m_time.tv_sec = time(nullptr);
-        m_time.tv_usec = 0;
-    }
+    m_time = CUtils::GetTime();
 }
 
 void CMessage::InitType() {

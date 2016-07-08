@@ -70,14 +70,8 @@ class CUtils {
                             unsigned int uMin = 0, unsigned int uMax = ~0,
                             unsigned int uDefault = ~0);
 
-    static unsigned long long GetMillTime() {
-        struct timeval tv;
-        unsigned long long iTime = 0;
-        gettimeofday(&tv, nullptr);
-        iTime = (unsigned long long)tv.tv_sec * 1000;
-        iTime += ((unsigned long long)tv.tv_usec / 1000);
-        return iTime;
-    }
+    static timeval GetTime();
+    static unsigned long long GetMillTime();
 #ifdef HAVE_LIBSSL
     static void GenerateCert(FILE* pOut, const CString& sHost = "");
 #endif /* HAVE_LIBSSL */
