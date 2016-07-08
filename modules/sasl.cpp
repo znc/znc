@@ -76,7 +76,7 @@ class CSASLMod : public CModule {
             "[yes|no]", "Don't connect unless SASL authentication succeeds");
         AddCommand("Verbose", "yes|no", "Set verbosity level, useful to debug",
                    [&](const CString& sLine) {
-            m_bVerbose = sLine.ToBool();
+            m_bVerbose = sLine.Token(1, true).ToBool();
             PutModule("Verbose: " + CString(m_bVerbose));
         });
 
