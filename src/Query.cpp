@@ -44,6 +44,10 @@ void CQuery::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
                 bool bWasPlaybackActive = pUseClient->IsPlaybackActive();
                 pUseClient->SetPlaybackActive(true);
 
+                NETWORKMODULECALL(OnPrivBufferStarting(*this, *pUseClient),
+                                  m_pNetwork->GetUser(), m_pNetwork, nullptr,
+                                  NOTHING);
+
                 bool bBatch = pUseClient->HasBatch();
                 CString sBatchName = m_sName.MD5();
 
@@ -81,6 +85,10 @@ void CQuery::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
                     m_pNetwork->PutUser(":znc.in BATCH -" + sBatchName,
                                         pUseClient);
                 }
+
+                NETWORKMODULECALL(OnPrivBufferEnding(*this, *pUseClient),
+                                  m_pNetwork->GetUser(), m_pNetwork, nullptr,
+                                  NOTHING);
 
                 pUseClient->SetPlaybackActive(bWasPlaybackActive);
 

@@ -32,6 +32,7 @@
 // Forward Declarations
 class CAuthBase;
 class CChan;
+class CQuery;
 class CIRCNetwork;
 class CClient;
 class CWebSock;
@@ -733,6 +734,21 @@ class CModule {
     virtual EModRet OnChanBufferPlayLine(CChan& Chan, CClient& Client,
                                          CString& sLine);
 
+    /** Called before a query buffer is played back to a client.
+     *  @since 1.7.0
+     *  @param Query The query which will be played back.
+     *  @param Client The client the buffer will be played back to.
+     *  @return See CModule::EModRet.
+     */
+    virtual EModRet OnPrivBufferStarting(CQuery& Query, CClient& Client);
+    /** Called after a query buffer was played back to a client.
+     *  @since 1.7.0
+     *  @param Query The query which was played back.
+     *  @param Client The client the buffer was played back to.
+     *  @return See CModule::EModRet.
+     */
+    virtual EModRet OnPrivBufferEnding(CQuery& Query, CClient& Client);
+
     /** Called for each message during a query's buffer play back.
      *  @since 1.7.0
      *  @param Message The playback message.
@@ -1412,6 +1428,8 @@ class CModules : public std::vector<CModule*> {
     bool OnChanBufferPlayLine2(CChan& Chan, CClient& Client, CString& sLine,
                                const timeval& tv);
     bool OnChanBufferPlayLine(CChan& Chan, CClient& Client, CString& sLine);
+    bool OnPrivBufferStarting(CQuery& Query, CClient& Client);
+    bool OnPrivBufferEnding(CQuery& Query, CClient& Client);
     bool OnPrivBufferPlayLine2(CClient& Client, CString& sLine,
                                const timeval& tv);
     bool OnPrivBufferPlayLine(CClient& Client, CString& sLine);
