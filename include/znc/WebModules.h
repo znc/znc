@@ -178,6 +178,9 @@ class CWebSock : public CHTTPSock {
 
     static void FinishUserSessions(const CUser& User);
 
+    CString GetCSRFCheck();
+    bool ValidateCSRFCheck(const CString& sURI);
+
   protected:
     using CHTTPSock::PrintErrorPage;
 
@@ -186,7 +189,6 @@ class CWebSock : public CHTTPSock {
     VCString GetDirs(CModule* pModule, bool bIsTemplate);
     void SetPaths(CModule* pModule, bool bIsTemplate = false);
     void SetVars();
-    CString GetCSRFCheck();
 
   private:
     EPageReqResult OnPageRequestInternal(const CString& sURI,
