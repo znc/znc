@@ -477,6 +477,12 @@ class CModule {
      */
     virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
                               CTemplate& Tmpl);
+    /** If ValidateWebRequestCSRFCheck returned false, a CSRF error will be printed.
+     *  @param WebSock The active request.
+     *  @param sPageName The name of the page that has been requested.
+     *  @return You MUST return true if the CSRF token is valid.
+     */
+    virtual bool ValidateWebRequestCSRFCheck(CWebSock& WebSock, const CString& sPageName);
     /** Registers a sub page for the sidebar.
      *  @param spSubPage The SubPage instance.
      */

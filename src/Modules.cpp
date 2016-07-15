@@ -594,6 +594,10 @@ bool CModule::OnWebRequest(CWebSock& WebSock, const CString& sPageName,
                            CTemplate& Tmpl) {
     return false;
 }
+bool CModule::ValidateWebRequestCSRFCheck(CWebSock& WebSock,
+    const CString& sPageName) {
+    return WebSock.ValidateCSRFCheck(WebSock.GetURI());
+}
 bool CModule::OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName,
                                    CTemplate& Tmpl) {
     return false;
