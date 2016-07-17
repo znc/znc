@@ -18,6 +18,7 @@
 #include <znc/FileUtils.h>
 #include <znc/Template.h>
 #include <znc/User.h>
+#include <znc/Query.h>
 #include <znc/IRCNetwork.h>
 #include <znc/WebModules.h>
 #include <znc/znc.h>
@@ -725,6 +726,12 @@ CModule::EModRet CModule::OnChanBufferPlayLine(CChan& Chan, CClient& Client,
                                                CString& sLine) {
     return CONTINUE;
 }
+CModule::EModRet CModule::OnPrivBufferStarting(CQuery& Query, CClient& Client) {
+    return CONTINUE;
+}
+CModule::EModRet CModule::OnPrivBufferEnding(CQuery& Query, CClient& Client) {
+    return CONTINUE;
+}
 CModule::EModRet CModule::OnPrivBufferPlayLine(CClient& Client,
                                                CString& sLine) {
     return CONTINUE;
@@ -1342,6 +1349,12 @@ bool CModules::OnChanBufferPlayLine2(CChan& Chan, CClient& Client,
 bool CModules::OnChanBufferPlayLine(CChan& Chan, CClient& Client,
                                     CString& sLine) {
     MODHALTCHK(OnChanBufferPlayLine(Chan, Client, sLine));
+}
+bool CModules::OnPrivBufferStarting(CQuery& Query, CClient& Client) {
+    MODHALTCHK(OnPrivBufferStarting(Query, Client));
+}
+bool CModules::OnPrivBufferEnding(CQuery& Query, CClient& Client) {
+    MODHALTCHK(OnPrivBufferEnding(Query, Client));
 }
 bool CModules::OnPrivBufferPlayLine2(CClient& Client, CString& sLine,
                                      const timeval& tv) {
