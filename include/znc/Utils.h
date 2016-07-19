@@ -205,16 +205,17 @@ class CBlowfish {
     CBlowfish& operator=(const CBlowfish&) = default;
 
     //! output must be freed
-    static unsigned char* MD5(const unsigned char* input, u_int ilen);
+    static unsigned char* MD5(const unsigned char* input, unsigned int ilen);
 
     //! returns an md5 of the CString (not hex encoded)
     static CString MD5(const CString& sInput, bool bHexEncode = false);
 
     //! output must be the same size as input
-    void Crypt(unsigned char* input, unsigned char* output, u_int ibytes);
+    void Crypt(unsigned char* input, unsigned char* output,
+               unsigned int ibytes);
 
     //! must free result
-    unsigned char* Crypt(unsigned char* input, u_int ibytes);
+    unsigned char* Crypt(unsigned char* input, unsigned int ibytes);
     CString Crypt(const CString& sData);
 
   private:
