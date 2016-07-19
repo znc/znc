@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+#ifndef _XOPEN_SOURCE
+// strptime() wants this
+#define _XOPEN_SOURCE 600
+#endif
+
 #include <znc/Utils.h>
 #include <znc/ZNCDebug.h>
 #include <znc/FileUtils.h>
@@ -21,6 +26,7 @@
 #include <openssl/ssl.h>
 #endif /* HAVE_LIBSSL */
 #include <unistd.h>
+#include <time.h>
 
 #ifdef HAVE_ICU
 #include <unicode/ucnv.h>
@@ -792,7 +798,7 @@ CBlowfish::~CBlowfish() {
 }
 
 //! output must be freed
-unsigned char *CBlowfish::MD5(const unsigned char *input, u_int ilen) {
+unsigned char *CBlowfish::MD5(const unsigned char *input, unsigned int ilen) {
 	unsigned char *output = (unsigned char *)malloc(MD5_DIGEST_LENGTH);
 	::MD5(input, ilen, output);
 	return output;
@@ -817,12 +823,12 @@ CString CBlowfish::MD5(const CString & sInput, bool bHexEncode) {
 }
 
 //! output must be the same size as input
-void CBlowfish::Crypt(unsigned char *input, unsigned char *output, u_int uBytes) {
+void CBlowfish::Crypt(unsigned char *input, unsigned char *output, unsigned int uBytes) {
 	BF_cfb64_encrypt(input, output, uBytes, &m_bkey, m_ivec, &m_num, m_iEncrypt);
 }
 
 //! must free result
-unsigned char * CBlowfish::Crypt(unsigned char *input, u_int uBytes) {
+unsigned char * CBlowfish::Crypt(unsigned char *input, unsigned int uBytes) {
 	unsigned char *buff = (unsigned char *)malloc(uBytes);
 	Crypt(input, buff, uBytes);
 	return buff;
