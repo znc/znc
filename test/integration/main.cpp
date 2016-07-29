@@ -1921,7 +1921,6 @@ TEST_F(ZNCTest, AutoAttachModule) {
     ircd.Write(":server 366 nick #znc :End of /NAMES list");
     ircd.Write(":foo PRIVMSG #znc :hi");
     client.ReadUntil(":foo PRIVMSG");
-    client.Write("znc listchans");
     Z;
     client.Write("detach #znc");
     client.ReadUntil("Detached");
