@@ -1911,7 +1911,6 @@ TEST_F(ZNCTest, AutoAttachModule) {
     Z;
     client.Write("znc loadmod testmod");
     client.Write("PRIVMSG *controlpanel :Set AutoClearChanBuffer $me no");
-    client.Write("PRIVMSG *simple_away :DisableTimer");
     client.Write("znc loadmod autoattach");
     client.Write("PRIVMSG *autoattach :Add * * *");
     client.ReadUntil("Added to list");
