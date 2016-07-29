@@ -656,7 +656,7 @@ void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
                         BufLine.ToMessage(*pUseClient, MCString::EmptyMap);
                     Message.SetChan(this);
                     Message.SetNetwork(m_pNetwork);
-                    Message.SetClient(pClient);
+                    Message.SetClient(pUseClient);
                     if (bBatch) {
                         Message.SetTag("batch", sBatchName);
                     }

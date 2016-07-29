@@ -303,6 +303,32 @@ class ZNCTest : public testing::Test {
         return std::unique_ptr<QNetworkReply>(reply);
     }
 
+    void InstallModule(QString name, QString content) {
+        QDir dir(m_dir.path());
+        ASSERT_TRUE(dir.mkpath("modules"));
+        ASSERT_TRUE(dir.cd("modules"));
+        if (name.endsWith(".cpp")) {
+            QTemporaryDir srcdir;
+            QFile file(QDir(srcdir.path()).filePath(name));
+            ASSERT_TRUE(file.open(QIODevice::WriteOnly | QIODevice::Text));
+            QTextStream out(&file);
+            out << content;
+            file.close();
+            Process p(
+                ZNC_BIN_DIR "/znc-buildmod", QStringList() << file.fileName(),
+                [&](QProcess* proc) {
+                    proc->setWorkingDirectory(dir.absolutePath());
+                    proc->setProcessChannelMode(QProcess::ForwardedChannels);
+                });
+            p.ShouldFinishItself();
+        } else {
+            QFile file(dir.filePath(name));
+            ASSERT_TRUE(file.open(QIODevice::WriteOnly | QIODevice::Text));
+            QTextStream out(&file);
+            out << content;
+        }
+    }
+
     App m_app;
     QNetworkAccessManager m_network;
     QTemporaryDir m_dir;
@@ -1846,6 +1872,52 @@ TEST_F(ZNCTest, BuildMod) {
     client.Write("znc loadmod testmod");
     client.Write("PRIVMSG *testmod :hi");
     client.ReadUntil("Lorem ipsum");
+    Z;
+}
+
+TEST_F(ZNCTest, AutoAttachModule) {
+    auto znc = Run();
+    Z;
+    auto ircd = ConnectIRCd();
+    Z;
+    auto client = LoginClient();
+    Z;
+    InstallModule("testmod.cpp", R"(
+        #include <znc/Modules.h>
+        #include <znc/Client.h>
+        class TestModule : public CModule {
+          public:
+            MODCONSTRUCTOR(TestModule) {}
+            EModRet OnChanBufferPlayMessage(CMessage& Message) override {
+                PutIRC("TEST " + Message.GetClient()->GetNickMask());
+                return CONTINUE;
+            }
+        };
+        MODULEDEFS(TestModule, "Test")
+    )");
+    Z;
+    client.Write("znc loadmod testmod");
+    client.Write("PRIVMSG *controlpanel :Set AutoClearChanBuffer $me no");
+    client.Write("PRIVMSG *simple_away :DisableTimer");
+    client.Write("znc loadmod autoattach");
+    client.Write("PRIVMSG *autoattach :Add * * *");
+    client.ReadUntil("Added to list");
+    Z;
+    ircd.Write(":server 001 nick :Hello");
+    ircd.Write(":nick JOIN :#znc");
+    ircd.Write(":server 353 nick #znc :nick");
+    ircd.Write(":server 366 nick #znc :End of /NAMES list");
+    ircd.Write(":foo PRIVMSG #znc :hi");
+    client.ReadUntil(":foo PRIVMSG");
+    client.Write("znc listchans");
+    Z;
+    client.Write("detach #znc");
+    client.ReadUntil("Detached");
+    Z;
+    ircd.Write(":foo PRIVMSG #znc :hello");
+    ircd.ReadUntil("TEST");
+    Z;
+    client.ReadUntil("hello");
     Z;
 }
 
