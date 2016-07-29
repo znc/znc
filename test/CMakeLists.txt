@@ -82,7 +82,6 @@ externalproject_add(inttest_bin
 	"-DGTEST_ROOT:path=${GTEST_ROOT}"
 	"-DGMOCK_ROOT:path=${GMOCK_ROOT}"
 	"-DZNC_BIN_DIR:path=${CMAKE_INSTALL_FULL_BINDIR}"
-	"-DZNC_SRC_DIR:path=${PROJECT_SOURCE_DIR}"
 	"-DQt5_HINTS:path=${brew_qt5}")
 add_custom_target(inttest COMMAND
 	"${CMAKE_CURRENT_BINARY_DIR}/integration/inttest")

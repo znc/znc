@@ -42,5 +42,4 @@ target_include_directories(inttest PUBLIC
 	"${GTEST_ROOT}" "${GTEST_ROOT}/include"
 	"${GMOCK_ROOT}" "${GMOCK_ROOT}/include")
 target_compile_definitions(inttest PRIVATE
-	"ZNC_BIN_DIR=\"${ZNC_BIN_DIR}\""
-	"ZNC_SRC_DIR=\"${ZNC_SRC_DIR}\"")
+	"ZNC_BIN_DIR=\"${ZNC_BIN_DIR}\"")
