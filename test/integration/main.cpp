@@ -282,8 +282,10 @@ class ZNCTest : public testing::Test {
     }
     std::unique_ptr<QNetworkReply> HandleHttp(QNetworkReply* reply) {
         QEventLoop loop;
-        QObject::connect(reply, &QNetworkReply::finished,
-                         [&]() { loop.quit(); });
+        QObject::connect(reply, &QNetworkReply::finished, [&]() {
+            std::cout << "Got HTTP reply" << std::endl;
+            loop.quit();
+        });
         QObject::connect(
             reply,
             static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(
@@ -295,7 +297,9 @@ class ZNCTest : public testing::Test {
             ADD_FAILURE() << "connection timeout";
             loop.quit();
         });
+        std::cout << "Start HTTP loop.exec()" << std::endl;
         loop.exec();
+        std::cout << "Finished HTTP loop.exec()" << std::endl;
         return std::unique_ptr<QNetworkReply>(reply);
     }
 
@@ -425,21 +429,22 @@ TEST_F(ZNCTest, FixCVE20149403) {
                          "Basic " + QByteArray("user:hunter2").toBase64());
     request.setUrl(QUrl("http://127.0.0.1:12345/mods/global/webadmin/addchan"));
     HttpPost(request, {
-                       {"user", "user"},
-                       {"network", "test"},
-                       {"submitted", "1"},
-                       {"name", "znc"},
-                       {"enabled", "1"},
+                          {"user", "user"},
+                          {"network", "test"},
+                          {"submitted", "1"},
+                          {"name", "znc"},
+                          {"enabled", "1"},
                       });
     ircd.ReadUntil("JOIN #znc");
     Z;
-    EXPECT_THAT(HttpPost(request, {
-                                   {"user", "user"},
-                                   {"network", "test"},
-                                   {"submitted", "1"},
-                                   {"name", "znc"},
-                                   {"enabled", "1"},
-                                  })
+    EXPECT_THAT(HttpPost(request,
+                         {
+                             {"user", "user"},
+                             {"network", "test"},
+                             {"submitted", "1"},
+                             {"name", "znc"},
+                             {"enabled", "1"},
+                         })
                     ->readAll()
                     .toStdString(),
                 HasSubstr("Channel [#znc] already exists"));
@@ -464,11 +469,11 @@ TEST_F(ZNCTest, FixFixOfCVE20149403) {
                          "Basic " + QByteArray("user:hunter2").toBase64());
     request.setUrl(QUrl("http://127.0.0.1:12345/mods/global/webadmin/addchan"));
     auto reply = HttpPost(request, {
-                                    {"user", "user"},
-                                    {"network", "test"},
-                                    {"submitted", "1"},
-                                    {"name", "@#znc"},
-                                    {"enabled", "1"},
+                                       {"user", "user"},
+                                       {"network", "test"},
+                                       {"submitted", "1"},
+                                       {"name", "@#znc"},
+                                       {"enabled", "1"},
                                    });
     EXPECT_THAT(reply->readAll().toStdString(),
                 HasSubstr("Could not add channel [@#znc]"));
