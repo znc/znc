@@ -87,6 +87,7 @@ public:
 	virtual EModRet OnJoining(CChan& Channel) override;
 	virtual void OnJoin(const CNick& Nick, CChan& Channel) override;
 	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) override;
+	virtual EModRet OnInvite(const CNick& Nick, const CString& sChan) override;
 	virtual EModRet OnChanBufferStarting(CChan& Chan, CClient& Client) override;
 	virtual EModRet OnChanBufferEnding(CChan& Chan, CClient& Client) override;
 	virtual EModRet OnChanBufferPlayLine(CChan& Chan, CClient& Client, CString& sLine) override;

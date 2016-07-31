@@ -31,6 +31,7 @@ void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, con
 EModRet OnJoining(CChan& Channel)
 void OnJoin(const CNick& Nick, CChan& Channel)
 void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage)
+EModRet OnInvite(const CNick& Nick, const CString& sChan)
 EModRet OnChanBufferStarting(CChan& Chan, CClient& Client)
 EModRet OnChanBufferEnding(CChan& Chan, CClient& Client)
 EModRet OnChanBufferPlayLine(CChan& Chan, CClient& Client, CString& sLine)
