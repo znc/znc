@@ -102,7 +102,7 @@ class ZNC_EXPORT_LIB_EXPORT CPyModule : public CModule {
     void OnJoin(const CNick& Nick, CChan& Channel) override;
     void OnPart(const CNick& Nick, CChan& Channel,
                 const CString& sMessage) override;
-    void EModRet OnInvite(const CNick& Nick, const CString& sChan) override;
+    EModRet OnInvite(const CNick& Nick, const CString& sChan) override;
     EModRet OnChanBufferStarting(CChan& Chan, CClient& Client) override;
     EModRet OnChanBufferEnding(CChan& Chan, CClient& Client) override;
     EModRet OnChanBufferPlayLine(CChan& Chan, CClient& Client,
