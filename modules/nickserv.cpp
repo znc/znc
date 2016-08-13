@@ -58,16 +58,14 @@ class CNickServ : public CModule {
     }
 
     void SetJoinAfterIdentifiedCommand(const CString& sLine) {
-        if(sLine.Token(1, true).find("true") != CString::npos) {
+        if(sLine.Token(1, true).ToBool()) {
             SetNV("JoinAfterIdentified", "true");
             m_bJoinAfterIdentified = true;
             PutModule("Channels will be joined after identification.");
-        } else if(sLine.Token(1, true).find("false") != CString::npos) {
+        } else {
             SetNV("JoinAfterIdentified", "false");
             m_bJoinAfterIdentified = false;
             PutModule("Channels will be joined immediately.");
-        } else {
-            PutModule("Please enter either true or false!");
         }
     }
 
@@ -113,7 +111,7 @@ class CNickServ : public CModule {
         }
 
         CString sTmp;
-        m_bJoinAfterIdentified = (sTmp = GetNV("JoinAfterIdentified")).empty() ? true : sTmp.ToBool();
+        m_bJoinAfterIdentified = (sTmp = GetNV("JoinAfterIdentified")).empty() ? false : sTmp.ToBool();
 
         return true;
     }
