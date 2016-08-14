@@ -332,7 +332,7 @@ bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage) {
             if (!m_sLogPath.empty()) {
                 m_sLogPath += "/";
             }
-            m_sLogPath += "$NETWORK/$WINDOW/%Y-%m-%d.log";
+            m_sLogPath += "$NETWORK/$WINDOW/%Y-%m-%d.log.gz";
         }
     } else if (GetType() == CModInfo::NetworkModule) {
         if (m_sLogPath.Right(1) == "/" ||
@@ -340,7 +340,7 @@ bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage) {
             if (!m_sLogPath.empty()) {
                 m_sLogPath += "/";
             }
-            m_sLogPath += "$WINDOW/%Y-%m-%d.log";
+            m_sLogPath += "$WINDOW/%Y-%m-%d.log.gz";
         }
     } else {
         if (m_sLogPath.Right(1) == "/" ||
@@ -350,7 +350,7 @@ bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage) {
             if (!m_sLogPath.empty()) {
                 m_sLogPath += "/";
             }
-            m_sLogPath += "$USER/$NETWORK/$WINDOW/%Y-%m-%d.log";
+            m_sLogPath += "$USER/$NETWORK/$WINDOW/%Y-%m-%d.log.gz";
         }
     }
 
