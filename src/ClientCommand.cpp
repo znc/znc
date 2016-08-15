@@ -119,7 +119,7 @@ void CClient::UserCommand(CString& sLine) {
         CString sPatterns = sLine.Token(1, true);
 
         if (sPatterns.empty()) {
-            PutStatus("Usage: Attach <#chans|queries>");
+            PutStatus("Usage: Attach <#chans>");
             return;
         }
 

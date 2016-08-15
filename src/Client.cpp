@@ -1285,7 +1285,7 @@ bool CClient::OnOtherMessage(CMessage& Message) {
         CString sPatterns = Message.GetParams(0);
 
         if (sPatterns.empty()) {
-            PutStatusNotice("Usage: /attach <#chans|queries>");
+            PutStatusNotice("Usage: /attach <#chans>");
             return true;
         }
 
