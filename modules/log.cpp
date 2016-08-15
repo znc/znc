@@ -264,7 +264,7 @@ void CLogMod::PutLog(const CString& sLine,
     if (LogFile.Open(O_WRONLY | O_APPEND | O_CREAT))
     {
         /* dirty hack */
-        gzFile gzf = gzopen(((std::string)sPath).c_str(), "a");
+        gzFile gzf = gzopen(((std::string)sPath).c_str(), "a9");
         gzprintf(gzf, "%s %s\n", ((std::string)(CUtils::FormatTime(curtime, m_sTimestamp,
                                                                    GetUser()->GetTimezone()))).c_str() ,
                  (m_bSanitize ? ((std::string)(sLine.StripControls_n())).c_str() : ((std::string)(sLine)).c_str()));
