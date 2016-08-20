@@ -122,13 +122,17 @@ void CZNCSock::SSLHandShakeFinished() {
         Close();
         return;
     }
+    if (GetTrustAllCerts()) {
+        DEBUG(GetSockName() + ": Verification disabled, trusting all.");
+        return;
+    }
     CString sHostVerifyError;
     if (!ZNC_SSLVerifyHost(m_sHostToVerifySSL, pCert, sHostVerifyError)) {
         m_ssCertVerificationErrors.insert(sHostVerifyError);
     }
     X509_free(pCert);
-    if (m_ssCertVerificationErrors.empty()) {
-        DEBUG(GetSockName() + ": Good cert");
+    if (GetTrustPKI() && m_ssCertVerificationErrors.empty()) {
+        DEBUG(GetSockName() + ": Good cert (PKI valid)");
         return;
     }
     CString sFP = GetSSLPeerFingerprint();

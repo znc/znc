@@ -937,6 +937,8 @@ class CWebAdminMod : public CModule {
 
                 Tmpl["IRCConnectEnabled"] =
                     CString(pNetwork->GetIRCConnectEnabled());
+                Tmpl["TrustAllCerts"] = CString(pNetwork->GetTrustAllCerts());
+                Tmpl["TrustPKI"] = CString(pNetwork->GetTrustPKI());
 
                 breadNet["Text"] = f("Edit Network [{1}]")(pNetwork->GetName());
 
@@ -985,6 +987,8 @@ class CWebAdminMod : public CModule {
                 Tmpl["Title"] =
                     f("Add Network for User [{1}]")(pUser->GetUserName());
                 Tmpl["IRCConnectEnabled"] = "true";
+                Tmpl["TrustAllCerts"] = "false";
+                Tmpl["TrustPKI"] = "true";
                 Tmpl["FloodProtection"] = "true";
                 Tmpl["FloodRate"] = "1.0";
                 Tmpl["FloodBurst"] = "4";
@@ -1075,6 +1079,9 @@ class CWebAdminMod : public CModule {
         pNetwork->SetQuitMsg(WebSock.GetParam("quitmsg"));
 
         pNetwork->SetIRCConnectEnabled(WebSock.GetParam("doconnect").ToBool());
+
+        pNetwork->SetTrustAllCerts(WebSock.GetParam("trustallcerts").ToBool());
+        pNetwork->SetTrustPKI(WebSock.GetParam("trustpki").ToBool());
 
         sArg = WebSock.GetParam("bindhost");
         // To change BindHosts be admin or don't have DenySetBindHost

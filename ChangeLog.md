@@ -11,6 +11,12 @@
     * it is not called during ZNC startup any more
 * Fix build on Solaris 10
 * Fix build with LibreSSL
+* Added two network-specific config options to control TLS certificate
+  validation
+    * `TrustAllCerts`: Disables certificate validation. Will take precedence
+      over TrustPKI
+    * `TrustPKI`: Whether or not to trust PKI-valid Certificates. Setting this
+      to false will make znc trust only trusted certificates added by the user.
 
 
 

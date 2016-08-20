@@ -266,6 +266,12 @@ class CIRCNetwork {
         m_uJoinDelay = uJoinDelay;
     }
 
+    void SetTrustAllCerts(const bool bTrustAll = false) { m_bTrustAllCerts = bTrustAll; }
+    bool GetTrustAllCerts() const { return m_bTrustAllCerts; }
+
+    void SetTrustPKI(const bool bTrustPKI = true) { m_bTrustPKI = bTrustPKI; }
+    bool GetTrustPKI() const { return m_bTrustPKI; }
+
     unsigned long long BytesRead() const { return m_uBytesRead; }
     unsigned long long BytesWritten() const { return m_uBytesWritten; }
 
@@ -305,6 +311,8 @@ class CIRCNetwork {
     CString m_sChanPrefixes;
 
     bool m_bIRCConnectEnabled;
+    bool m_bTrustAllCerts;
+    bool m_bTrustPKI;
     CString m_sIRCServer;
     std::vector<CServer*> m_vServers;
     size_t m_uServerIdx;  ///< Index in m_vServers of our current server + 1

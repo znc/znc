@@ -132,6 +132,8 @@ class CAdminMod : public CModule {
                 {"Encoding", str},
 #endif
                 {"QuitMsg", str},
+                {"TrustAllCerts", boolean},
+                {"TrustPKI", boolean},
             };
             PrintVarsHelp(sVarFilter, nvars, ARRAY_SIZE(nvars),
                           "The following variables are available when using "
@@ -520,6 +522,10 @@ class CAdminMod : public CModule {
 #endif
         } else if (sVar.Equals("quitmsg")) {
             PutModule("QuitMsg = " + pNetwork->GetQuitMsg());
+        } else if (sVar.Equals("trustallcerts")) {
+            PutModule("TrustAllCerts = " + CString(pNetwork->GetTrustAllCerts()));
+        } else if (sVar.Equals("trustpki")) {
+            PutModule("TrustPKI = " + CString(pNetwork->GetTrustPKI()));
         } else {
             PutModule("Error: Unknown variable");
         }
@@ -596,6 +602,14 @@ class CAdminMod : public CModule {
         } else if (sVar.Equals("quitmsg")) {
             pNetwork->SetQuitMsg(sValue);
             PutModule("QuitMsg = " + pNetwork->GetQuitMsg());
+        } else if (sVar.Equals("trustallcerts")) {
+            bool b = sValue.ToBool();
+            pNetwork->SetTrustAllCerts(b);
+            PutModule("TrustAllCerts = " + CString(b));
+        } else if (sVar.Equals("trustpki")) {
+            bool b = sValue.ToBool();
+            pNetwork->SetTrustPKI(b);
+            PutModule("TrustPKI = " + CString(b));
         } else {
             PutModule("Error: Unknown variable");
         }
