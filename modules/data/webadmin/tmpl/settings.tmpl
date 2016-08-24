@@ -10,15 +10,15 @@
 				<table>
 					<thead>
 						<tr>
-						    <td><? FORMAT "Port" ?></td>
-						    <td><? FORMAT "BindHost" ?></td>
-						    <td><? FORMAT "SSL" ?></td>
-						    <td><? FORMAT "IPv4" ?></td>
-						    <td><? FORMAT "IPv6" ?></td>
-						    <td><? FORMAT "IRC" ?></td>
-						    <td><? FORMAT "HTTP" ?></td>
-						    <td><? FORMAT "URIPrefix" ?></td>
-						    <td><? FORMAT "Delete" ?></td>
+						    <th><? FORMAT "Port" ?></th>
+						    <th><? FORMAT "BindHost" ?></th>
+						    <th><? FORMAT "SSL" ?></th>
+						    <th><? FORMAT "IPv4" ?></th>
+						    <th><? FORMAT "IPv6" ?></th>
+						    <th><? FORMAT "IRC" ?></th>
+						    <th><? FORMAT "HTTP" ?></th>
+						    <th><? FORMAT "URIPrefix" ?></th>
+						    <th><? FORMAT "Delete" ?></th>
 						</tr>
 					</thead>
 
@@ -87,9 +87,9 @@
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Skin:" ?></div>
+					<div class="inputlabel"><label for="skin"><? FORMAT "Skin:" ?></label></div>
 
-						<select name="skin">
+						<select id="skin" name="skin">
 							<? LOOP SkinLoop ?>
 							<option value="<? VAR Name ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? IF Name == "_default_" ?><? FORMAT "Default" ?><? ELSE ?><? VAR Name ?><? ENDIF ?></option>
 							<? ENDLOOP ?>
@@ -99,37 +99,37 @@
 
 
 				<div class="subsection third">
-					<div class="inputlabel"><? FORMAT "Status Prefix:" ?></div>
-					<input type="text" name="statusprefix" value="<? VAR StatusPrefix ?>"
+					<div class="inputlabel"><label for="statusprefix"><? FORMAT "Status Prefix:" ?></label></div>
+					<input id="statusprefix" type="text" name="statusprefix" value="<? VAR StatusPrefix ?>"
 						   title="<? FORMAT "The prefix for the status and module queries." ?>"/>
 					<br /><span class="info"><? FORMAT "Default for new users only." ?></span>
 				</div>
 
 
 				<div class="subsection half">
-					<div class="inputlabel"><? FORMAT "Maximum Buffer Size:" ?></div>
-					<input type="number" name="maxbufsize" value="<? VAR MaxBufferSize ?>"
+					<div class="inputlabel"><label for="maxbufsize"><? FORMAT "Maximum Buffer Size:" ?></label></div>
+					<input id="maxbufsize" type="number" name="maxbufsize" value="<? VAR MaxBufferSize ?>"
 						   title="<? FORMAT "Sets the global Max Buffer Size a user can have." ?>"/>
 				</div>
 
 
 				<div class="subsection half">
-					<div class="inputlabel"><? FORMAT "Connect Delay:" ?></div>
-					<input type="number" name="connectdelay" value="<? VAR ConnectDelay ?>"
+					<div class="inputlabel"><label for="connectdelay"><? FORMAT "Connect Delay:" ?></label></div>
+					<input id="connectdelay" type="number" name="connectdelay" value="<? VAR ConnectDelay ?>"
 						   title="<? FORMAT "The time between connection attempts to IRC servers, in seconds. This affects the connection between ZNC and the IRC server; not the connection between your IRC client and ZNC." ?>"/>
 				</div>
 
 
 				<div class="subsection half">
-					<div class="inputlabel"><? FORMAT "Server Throttle:" ?></div>
-					<input type="number" name="serverthrottle" value="<? VAR ServerThrottle ?>"
+					<div class="inputlabel"><label for="serverthrottle"><? FORMAT "Server Throttle:" ?></label></div>
+					<input id="serverthrottle" type="number" name="serverthrottle" value="<? VAR ServerThrottle ?>"
 						   title="<? FORMAT "The minimal time between two connect attempts to the same hostname, in seconds. Some servers refuse your connection if you reconnect too fast." ?>"/>
 				</div>
 
 
 				<div class="subsection half">
-					<div class="inputlabel"><? FORMAT "Anonymous Connection Limit per IP:" ?></div>
-					<input type="number" name="anoniplimit" value="<? VAR AnonIPLimit ?>"
+					<div class="inputlabel"><label for="anoniplimit"><? FORMAT "Anonymous Connection Limit per IP:" ?></label></div>
+					<input id="anoniplimit" type="number" name="anoniplimit" value="<? VAR AnonIPLimit ?>"
 						   title="<? FORMAT "Limits the number of unidentified connections per IP." ?>"/>
 				</div>
 
@@ -149,8 +149,8 @@
 
 
 				<div class="subsection twothird">
-					<div class="inputlabel"><? FORMAT "MOTD:" ?></div>
-					<textarea name="motd" cols="70" rows="5" class="monospace"><? LOOP MOTDLoop ?><? VAR Line ?>
+					<div class="inputlabel"><label for="motd"><? FORMAT "MOTD:" ?></label></div>
+					<textarea id="motd" name="motd" cols="70" rows="5" class="monospace"><? LOOP MOTDLoop ?><? VAR Line ?>
 <? ENDLOOP ?>
 </textarea>
 					<br /><span class="info"><? FORMAT "“Message of the Day”, sent to all ZNC users on connect." ?></span>
@@ -167,11 +167,11 @@
 				<table>
 					<thead>
 					<tr>
-						<td><? FORMAT "Name" ?></td>
-						<td><? FORMAT "Arguments" ?></td>
-						<td><? FORMAT "Description" ?></td>
-						<td><? FORMAT "Loaded by networks" ?></td>
-						<td><? FORMAT "Loaded by users" ?></td>
+						<th><? FORMAT "Name" ?></th>
+						<th><? FORMAT "Arguments" ?></th>
+						<th><? FORMAT "Description" ?></th>
+						<th><? FORMAT "Loaded by networks" ?></th>
+						<th><? FORMAT "Loaded by users" ?></th>
 					</tr>
 					</thead>
 					<tbody>
