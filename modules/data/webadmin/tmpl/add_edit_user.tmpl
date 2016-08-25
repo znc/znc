@@ -16,33 +16,33 @@
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Username:" ?></div>
+					<div class="inputlabel"><label for="user"><? FORMAT "Username:" ?></label></div>
 
 						<? IF Clone ?>
 						<input type="hidden" name="clone" value="<? VAR CloneUsername ?>" />
 						<? ENDIF ?>
 						<? IF Edit ?>
 						<input type="hidden" name="user" value="<? VAR Username ?>" />
-						<input type="text" name="newuser" value="<? VAR Username ?>" class="half" maxlength="128" disabled="disabled" />
+						<input id="user" type="text" name="newuser" value="<? VAR Username ?>" class="half" maxlength="128" disabled="disabled" />
 						<? ELSE ?>
-						<input type="text" name="user" value="<? VAR Username ?>" class="half" maxlength="128"
+						<input id="user" type="text" name="user" value="<? VAR Username ?>" class="half" maxlength="128"
 							   title="<? FORMAT "Please enter a username." ?>"/>
 						<? ENDIF ?>
 
 				</div>
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Password:" ?></div>
-					<input type="password" name="password" class="half"
+					<div class="inputlabel"><label for="password"><? FORMAT "Password:" ?></label></div>
+					<input id="password" type="password" name="password" class="half"
 						   title="<? FORMAT "Please enter a password." ?>" autocomplete="off" />
 				</div>
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Confirm password:" ?></div>
-					<input type="password" name="password2" class="half"
+					<div class="inputlabel"><label for="password2"><? FORMAT "Confirm password:" ?></label></div>
+					<input id="password2" type="password" name="password2" class="half"
 						   title="<? FORMAT "Please re-type the above password." ?>"/>
 				</div>
 				<div class="subsection half">
-					<div class="inputlabel"><? FORMAT "Allowed IPs:" ?></div>
-					<textarea name="allowedips" cols="70" rows="5"><? LOOP AllowedHostLoop ?><? VAR Host ?>
+					<div class="inputlabel"><label for="allowedips"><? FORMAT "Allowed IPs:" ?></label></div>
+					<textarea id="allowedips" name="allowedips" cols="70" rows="5"><? LOOP AllowedHostLoop ?><? VAR Host ?>
 <? ENDLOOP ?>
 </textarea>
 					<br /><span class="info"><? FORMAT "Leave empty to allow connections from all IPs.<br/>Otherwise, one entry per line, wildcards * and ? are available." ?></span>
@@ -60,50 +60,50 @@
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Nickname:" ?></div>
-					<input type="text" name="nick" value="<? VAR Nick ?>" class="half" maxlength="128"
+					<div class="inputlabel"><label for="nick"><? FORMAT "Nickname:" ?></label></div>
+					<input id="nick" type="text" name="nick" value="<? VAR Nick ?>" class="half" maxlength="128"
 						   title="<? FORMAT "Your nickname on IRC." ?>"/>
 				</div>
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Alt. Nickname:" ?></div>
-					<input type="text" name="altnick" value="<? VAR AltNick ?>" class="half" maxlength="128"
+					<div class="inputlabel"><label for="altnick"><? FORMAT "Alt. Nickname:" ?></label></div>
+					<input id="altnick" type="text" name="altnick" value="<? VAR AltNick ?>" class="half" maxlength="128"
 						   title="<? FORMAT "Your secondary nickname, if the first is not available on IRC." ?>"/>
 				</div>
 				<div style="clear: both;"></div>
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Ident:" ?></div>
-					<input type="text" name="ident" value="<? VAR Ident ?>" class="half" maxlength="128"
+					<div class="inputlabel"><label for="ident"><? FORMAT "Ident:" ?></label></div>
+					<input id="ident" type="text" name="ident" value="<? VAR Ident ?>" class="half" maxlength="128"
 						   title="<? FORMAT "The Ident is sent to server as username." ?>"/>
 				</div>
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Status Prefix:" ?></div>
-					<input type="text" name="statusprefix" value="<? VAR StatusPrefix ?>" class="half" maxlength="5"
+					<div class="inputlabel"><label for="statusprefix"><? FORMAT "Status Prefix:" ?></label></div>
+					<input id="statusprefix" type="text" name="statusprefix" value="<? VAR StatusPrefix ?>" class="half" maxlength="5"
 						   title="<? FORMAT "The prefix for the status and module queries." ?>"/>
 				</div>
 				<div style="clear: both;"></div>
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Realname:" ?></div>
-					<input type="text" name="realname" value="<? VAR RealName ?>" class="full" maxlength="256"
+					<div class="inputlabel"><label for="realname"><? FORMAT "Realname:" ?></label></div>
+					<input id="realname" type="text" name="realname" value="<? VAR RealName ?>" class="full" maxlength="256"
 						   title="<? FORMAT "Your real name." ?>"/>
 				</div>
 				<div style="clear: both;"></div>
 
 				<? IF BindHostEdit ?>
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "BindHost:" ?></div>
-					<input type="text" name="bindhost" value="<? VAR BindHost ?>"/>
+					<div class="inputlabel"><label for="bindhost"><? FORMAT "BindHost:" ?></label></div>
+					<input id="bindhost" type="text" name="bindhost" value="<? VAR BindHost ?>"/>
 				</div>
 				<div style="clear: both;"></div>
 
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "DCCBindHost:" ?></div>
-					<input type="text" name="dccbindhost" value="<? VAR DCCBindHost ?>"/>
+					<div class="inputlabel"><label for="dccbindhost"><? FORMAT "DCCBindHost:" ?></label></div>
+					<input id="dccbindhost" type="text" name="dccbindhost" value="<? VAR DCCBindHost ?>"/>
 				</div>
 				<div style="clear: both;"></div>
 				<? ENDIF ?>
 
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Quit Message:" ?></div>
+					<div class="inputlabel"><label for="quitmsg"><? FORMAT "Quit Message:" ?></label></div>
 					<input type="text" name="quitmsg" value="<? VAR QuitMsg ?>" class="full" maxlength="256"
 						   title="<? FORMAT "You may define a Message shown, when you quit IRC." ?>"/>
 				</div>
@@ -122,10 +122,10 @@
 					<tr>
 						<td class="ignore-sort">[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>addnetwork?user=<? VAR Username ESC=URL ?>"><? FORMAT "Add" ?></a>]</td>
 				<? IF NetworkLoop ?>
-						<td><? FORMAT "Name" ?></td>
-						<td><? FORMAT "Clients" ?></td>
-						<td><? FORMAT "Current Server" ?></td>
-						<td><? FORMAT "Nick" ?></td>
+						<th><? FORMAT "Name" ?></th>
+						<th><? FORMAT "Clients" ?></th>
+						<th><? FORMAT "Current Server" ?></th>
+						<th><? FORMAT "Nick" ?></th>
 					<? ELSE ?>
 						<td><? FORMAT "← Add a network (opens in same page)" ?></td>
 				<? ENDIF ?>
@@ -165,11 +165,11 @@
 				<table>
 					<thead>
 					<tr>
-						<td><? FORMAT "Name" ?></td>
-						<td><? FORMAT "Arguments" ?></td>
-						<td><? FORMAT "Description" ?></td>
-						<td><? FORMAT "Loaded globally" ?></td>
-						<td><? FORMAT "Loaded by networks" ?></td>
+						<th><? FORMAT "Name" ?></th>
+						<th><? FORMAT "Arguments" ?></th>
+						<th><? FORMAT "Description" ?></th>
+						<th><? FORMAT "Loaded globally" ?></th>
+						<th><? FORMAT "Loaded by networks" ?></th>
 					</tr>
 					</thead>
 					<tbody>
@@ -226,14 +226,14 @@
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection third">
-					<div class="inputlabel"><? FORMAT "Default Modes:" ?></div>
-					<input type="text" name="chanmodes" value="<? VAR DefaultChanModes ?>" maxlength="32"
+					<div class="inputlabel"><label for="chanmodes"><? FORMAT "Default Modes:" ?></label></div>
+					<input id="chanmodes" type="text" name="chanmodes" value="<? VAR DefaultChanModes ?>" maxlength="32"
 						   title="<? FORMAT "These are the default modes ZNC will set when you join an empty channel." ?>"/>
 					<br /><span class="info"><? FORMAT "Empty = use standard value" ?></span>
 				</div>
 				<div class="subsection third">
-					<div class="inputlabel"><? FORMAT "Buffer Size:" ?></div>
-					<input type="number" name="chanbufsize" value="<? VAR ChanBufferSize ?>" min="0"
+					<div class="inputlabel"><label for="chanbufsize"><? FORMAT "Buffer Size:" ?></label></div>
+					<input id="chanbufsize" type="number" name="chanbufsize" value="<? VAR ChanBufferSize ?>" min="0"
 						   title="<? FORMAT "This is the amount of lines that the playback buffer will store for channels before dropping off the oldest line. The buffers are stored in the memory by default." ?>"/>
 					<br /><span class="info"><? FORMAT "Empty = use standard value" ?></span>
 				</div>
@@ -246,13 +246,13 @@
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection third">
-					<div class="inputlabel"><? FORMAT "Max Buffers:" ?></div>
-					<input type="number" name="maxquerybuffers" value="<? VAR MaxQueryBuffers ?>" class="third" min="0"
+					<div class="inputlabel"><label for="maxquerybuffers"><? FORMAT "Max Buffers:" ?></label></div>
+					<input id="maxquerybuffers" type="number" name="maxquerybuffers" value="<? VAR MaxQueryBuffers ?>" class="third" min="0"
 						   title="<? FORMAT "Maximum number of query buffers. 0 is unlimited." ?>"/>
 				</div>
 				<div class="subsection third">
-					<div class="inputlabel"><? FORMAT "Buffer Size:" ?></div>
-					<input type="number" name="querybufsize" value="<? VAR QueryBufferSize ?>" min="0"
+					<div class="inputlabel"><label for="querybufsize"><? FORMAT "Buffer Size:" ?></label></div>
+					<input id="querybufsize" type="number" name="querybufsize" value="<? VAR QueryBufferSize ?>" min="0"
 						   title="<? FORMAT "This is the amount of lines that the playback buffer will store for queries before dropping off the oldest line. The buffers are stored in the memory by default." ?>"/>
 					<br /><span class="info"><? FORMAT "Empty = use standard value" ?></span>
 				</div>
@@ -281,13 +281,13 @@
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Timestamp Format:" ?></div>
-					<input type="text" name="timestampformat" value="<? VAR TimestampFormat ?>" class="full"
+					<div class="inputlabel"><label for="timestampformat"><? FORMAT "Timestamp Format:" ?></label></div>
+					<input id="timestampformat" type="text" name="timestampformat" value="<? VAR TimestampFormat ?>" class="full"
 						   title="<? FORMAT "The format for the timestamps used in buffers, for example [%H:%M:%S]. This setting is ignored in new IRC clients, which use server-time. If your client supports server-time, change timestamp format in client settings instead." ?>"/>
 				</div>
 				<div class="subsection half">
-					<div class="inputlabel"><? FORMAT "Timezone:" ?></div>
-					<input type="text" name="timezone" value="<? VAR Timezone ?>" list="timezone_list"
+					<div class="inputlabel"><label for="timezone"><? FORMAT "Timezone:" ?></label></div>
+					<input id="timezone" type="text" name="timezone" value="<? VAR Timezone ?>" list="timezone_list"
 						   title="Select your timezone." />
 					<br /><span class="info"><? FORMAT "E.g. <code>Europe/Berlin</code>, or <code>GMT-6</code>" ?></span>
 					<datalist id="timezone_list">
@@ -303,25 +303,25 @@
 				</div>
 				<div style="clear:both;"></div>
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Join Tries:" ?></div>
-					<input type="number" name="jointries" value="<? VAR JoinTries ?>" class="third" min="0"
+					<div class="inputlabel"><label for="jointries"><? FORMAT "Join Tries:" ?></label></div>
+					<input id="jointries" type="number" name="jointries" value="<? VAR JoinTries ?>" class="third" min="0"
 						   title="<? FORMAT "This defines how many times ZNC tries to join a channel, if the first join failed, e.g. due to channel mode +i/+k or if you are banned." ?>"/>
 				</div>
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Join speed:" ?></div>
-					<input type="number" name="maxjoins" value="<? VAR MaxJoins ?>" class="third" min="0"
+					<div class="inputlabel"><label for="maxjoins"><? FORMAT "Join speed:" ?></label></div>
+					<input id="maxjoins" type="number" name="maxjoins" value="<? VAR MaxJoins ?>" class="third" min="0"
 					       title="<? FORMAT "How many channels are joined in one JOIN command. 0 is unlimited (default). Set to small positive value if you get disconnected with “Max SendQ Exceeded”" ?>"/>
 				</div>
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Max IRC Networks Number:" ?></div>
+					<div class="inputlabel"><label for="maxnetworks"><? FORMAT "Max IRC Networks Number:" ?></label></div>
 					<input type="number" name="maxnetworks" value="<? VAR MaxNetworks ?>" class="third" min="0"
 					       title="<? FORMAT "Maximum number of IRC networks allowed for this user." ?>" <? IF !ImAdmin ?>disabled="disabled"<? ENDIF ?> />
 				</div>
 
 				<? SETBLOCK Substitutions_Link ?><a href="http://wiki.znc.in/ExpandString" target="_blank" class="external"><? FORMAT "Substitutions" ?></a><? ENDSETBLOCK ?>
 				<div class="subsection half" id="ctcpreplies_plain">
-					<div class="inputlabel"><? FORMAT "CTCP Replies:" ?></div>
-					<div><textarea name="ctcpreplies" cols="70" rows="3" id="ctcpreplies_text"><? LOOP CTCPLoop ?><? VAR CTCP ?>
+					<div class="inputlabel"><label for="ctcpreplies"><? FORMAT "CTCP Replies:" ?></label></div>
+					<div><textarea id="ctcpreplies" name="ctcpreplies" cols="70" rows="3" id="ctcpreplies_text"><? LOOP CTCPLoop ?><? VAR CTCP ?>
 <? ENDLOOP ?>
 </textarea></div>
 					<br /><span class="info"><? FORMAT "One reply per line. Example: <code>TIME Buy a watch!</code>" ?></span>
@@ -359,10 +359,10 @@
 				<script type="text/javascript">ctcpreplies_init(jQuery);</script>
 
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Skin:" ?></div>
+					<div class="inputlabel"><label for="skin"><? FORMAT "Skin:" ?></label></div>
 
 						<? IF SkinLoop ROWS > 1 ?>
-						<select name="skin">
+						<select id="skin" name="skin">
 							<option value=""><? FORMAT "- Global -" ?></option>
 							<? LOOP SkinLoop ?>
 							<option value="<? VAR Name ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? IF Name == "_default_" ?><? FORMAT "Default" ?><? ELSE ?><? VAR Name ?><? ENDIF ?></option>
@@ -375,10 +375,10 @@
 				</div>
 
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Language:" ?></div>
+					<div class="inputlabel"><label for="language"><? FORMAT "Language:" ?></label></div>
 
 					<? IF HaveI18N ?>
-					<select name="language">
+					<select id="language" name="language">
 						<? LOOP LanguageLoop ?>
 						<option value="<? VAR Code ?>" <? IF Language TOP == *Code ?>selected="selected"<? ENDIF ?>><? VAR Name ?></option>
 						<? ENDLOOP ?>

@@ -26,44 +26,44 @@
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Network Name:" ?></div>
-					<input type="text" name="name" value="<? VAR Name ?>" class="half" maxlength="128"
+					<div class="inputlabel"><label for="name"><? FORMAT "Network Name:" ?></label></div>
+					<input id="name" type="text" name="name" value="<? VAR Name ?>" class="half" maxlength="128"
 						   title="<? FORMAT "The name of the IRC network." ?>"/>
 				</div>
 
             	<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Nickname:" ?></div>
-					<input type="text" name="nick" value="<? VAR Nick ?>" class="half" maxlength="128"
+					<div class="inputlabel"><label for="nick"><? FORMAT "Nickname:" ?></label></div>
+					<input id="nick" type="text" name="nick" value="<? VAR Nick ?>" class="half" maxlength="128"
 						   title="<? FORMAT "Your nickname on IRC." ?>"/>
 				</div>
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Alt. Nickname:" ?></div>
-					<input type="text" name="altnick" value="<? VAR AltNick ?>" class="half" maxlength="128"
+					<div class="inputlabel"><label for="altnick"><? FORMAT "Alt. Nickname:" ?></label></div>
+					<input id="altnick" type="text" name="altnick" value="<? VAR AltNick ?>" class="half" maxlength="128"
 						   title="<? FORMAT "Your secondary nickname, if the first is not available on IRC." ?>"/>
 				</div>
 				<div style="clear: both;"></div>
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Ident:" ?></div>
-					<input type="text" name="ident" value="<? VAR Ident ?>" class="half" maxlength="128"
+					<div class="inputlabel"><label for="ident"><? FORMAT "Ident:" ?></label></div>
+					<input id="ident" type="text" name="ident" value="<? VAR Ident ?>" class="half" maxlength="128"
 						   title="<? FORMAT "Your ident." ?>"/>
 				</div>
                 <div class="subsection">
-					<div class="inputlabel"><? FORMAT "Realname:" ?></div>
-					<input type="text" name="realname" value="<? VAR RealName ?>" class="full" maxlength="256"
+					<div class="inputlabel"><label for="realname"><? FORMAT "Realname:" ?></label></div>
+					<input id="realname" type="text" name="realname" value="<? VAR RealName ?>" class="full" maxlength="256"
 						   title="<? FORMAT "Your real name." ?>"/>
 				</div>
 
 				<? IF BindHostEdit ?>
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "BindHost:" ?></div>
-					<input type="text" name="bindhost" value="<? VAR BindHost ?>"/>
+					<div class="inputlabel"><label for="bindhost"><? FORMAT "BindHost:" ?></label></div>
+					<input id="bindhost" type="text" name="bindhost" value="<? VAR BindHost ?>"/>
 				</div>
 				<div style="clear: both;"></div>
 				<? ENDIF ?>
 
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Quit Message:" ?></div>
-					<input type="text" name="quitmsg" value="<? VAR QuitMsg ?>" class="full" maxlength="256"
+					<div class="inputlabel"><label for="quitmsg"><? FORMAT "Quit Message:" ?></label></div>
+					<input id="quitmsg" type="text" name="quitmsg" value="<? VAR QuitMsg ?>" class="full" maxlength="256"
 						   title="<? FORMAT "You may define a Message shown, when you quit IRC." ?>"/>
 				</div>
 
@@ -86,7 +86,7 @@
 				</div>
 
 				<div class="subsection half" id="servers_plain">
-					<div class="inputlabel"><? FORMAT "Servers of this IRC network:" ?></div>
+					<div class="inputlabel"><label for="servers_text"><? FORMAT "Servers of this IRC network:" ?></servers></div>
 					<div><textarea name="servers" cols="70" rows="5" id="servers_text"><? LOOP ServerLoop ?><? VAR Server ?>
 <? ENDLOOP ?>
 </textarea></div>
@@ -113,8 +113,8 @@
 				<script type="text/javascript">serverlist_init(jQuery);</script>
 
 				<div class="subsection full">
-					<div class="inputlabel"><? FORMAT "SHA-256 fingerprints of trusted SSL certificates of this IRC network:" ?></div>
-					<div><textarea name="fingerprints" cols="50" rows="5"><? LOOP TrustedFingerprints ?><? VAR FP ?>
+					<div class="inputlabel"><label for="fingerprints"><? FORMAT "SHA-256 fingerprints of trusted SSL certificates of this IRC network:" ?></label></div>
+					<div><textarea id="fingerprints" name="fingerprints" cols="50" rows="5"><? LOOP TrustedFingerprints ?><? VAR FP ?>
 <? ENDLOOP ?>
 </textarea></div>
 					<br /><span class="info"><? FORMAT "When these certificates are encountered, checks for hostname, expiration date, CA are skipped" ?></span>
@@ -131,7 +131,7 @@
 					</div>
 				</div>
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Flood protection rate:" ?></div>
+					<div class="inputlabel"><label for="floodrate"><? FORMAT "Flood protection rate:" ?></label></div>
 					<? SETBLOCK FloodInputField_Rate ?>
 						<input type="number" name="floodrate" min="0.3" step="0.05" id="floodrate"
 						   title="<? FORMAT "The number of seconds per line. After changing this, reconnect ZNC to server." ?>"
@@ -141,7 +141,7 @@
 				</div>
 
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Flood protection burst:" ?></div>
+					<div class="inputlabel"><label for="floodburst"><? FORMAT "Flood protection burst:" ?></label></div>
 					<? SETBLOCK FloodInputField_Burst ?>
 						<input type="number" name="floodburst" min="1" id="floodburst"
 						   title="<? FORMAT "Defines the number of lines, which can be sent immediately. After changing this, reconnect ZNC to server." ?>"
@@ -151,7 +151,7 @@
 				</div>
 
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Channel join delay:" ?></div>
+					<div class="inputlabel"><label for="joindelay"><? FORMAT "Channel join delay:" ?></label></div>
 					<? SETBLOCK ChannelJoinDelayInputField ?>
 						<input type="number" name="joindelay" min="0" id="joindelay"
 						   title="<? FORMAT "Defines the delay in seconds, until channels are joined after getting connected." ?>"
@@ -184,12 +184,12 @@
 					<tr>
 						<td>[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>addchan?user=<? VAR Username ESC=URL ?>&amp;network=<? VAR Name ESC=URL ?>"><? FORMAT "Add" ?></a>]</td>
 				<? IF ChannelLoop ?>
-						<td><? FORMAT "Save" ?></td>
-						<td><? FORMAT "Name" ?></td>
-						<td><? FORMAT "CurModes" ?></td>
-						<td><? FORMAT "DefModes" ?></td>
-						<td><? FORMAT "BufferSize" ?></td>
-						<td><? FORMAT "Options" ?></td>
+						<th><? FORMAT "Save" ?></th>
+						<th><? FORMAT "Name" ?></th>
+						<th><? FORMAT "CurModes" ?></th>
+						<th><? FORMAT "DefModes" ?></th>
+						<th><? FORMAT "BufferSize" ?></th>
+						<th><? FORMAT "Options" ?></th>
 				<? ELSE ?>
 						<td><? FORMAT "← Add a channel (opens in same page)" ?></td>
 				<? ENDIF ?>
@@ -225,11 +225,11 @@
 				<table>
 					<thead>
 					<tr>
-						<td><? FORMAT "Name" ?></td>
-						<td><? FORMAT "Arguments" ?></td>
-						<td><? FORMAT "Description" ?></td>
-						<td><? FORMAT "Loaded globally" ?></td>
-						<td><? FORMAT "Loaded by user" ?></td>
+						<th><? FORMAT "Name" ?></th>
+						<th><? FORMAT "Arguments" ?></th>
+						<th><? FORMAT "Description" ?></th>
+						<th><? FORMAT "Loaded globally" ?></th>
+						<th><? FORMAT "Loaded by user" ?></th>
 					</tr>
 					</thead>
 					<tbody>

@@ -14,27 +14,27 @@
 			<div class="sectionbody">
 				<? IF !Edit ?>
 				<div class="subsection half">
-					<div class="inputlabel"><? FORMAT "Channel Name:" ?></div>
-					<input type="text" name="name" value=""
+					<div class="inputlabel"><label for="name"><? FORMAT "Channel Name:" ?></label></div>
+					<input id="name" type="text" name="name" value=""
 						   title="<? FORMAT "The channel name." ?>"/>
 				</div>
 				<? ENDIF ?>
 
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Key:" ?></div>
-					<input type="text" name="key" value="<? VAR Key ?>" size="10"
+					<div class="inputlabel"><label for="key"><? FORMAT "Key:" ?></label></div>
+					<input id="key" type="text" name="key" value="<? VAR Key ?>" size="10"
 						   title="<? FORMAT "The password of the channel, if there is one." ?>"/>
 				</div>
 
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Buffer Size:" ?></div>
-					<input type="number" name="buffersize" value="<? VAR BufferSize ?>" size="10" min="0"
+					<div class="inputlabel"><label for="buffersize"><? FORMAT "Buffer Size:" ?></label></div>
+					<input id="buffersize" type="number" name="buffersize" value="<? VAR BufferSize ?>" size="10" min="0"
 						   title="<? FORMAT "The buffer count." ?>"/>
 				</div>
 
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Default Modes:" ?></div>
-					<input type="text" name="defmodes" value="<? VAR DefModes ?>" size="10"
+					<div class="inputlabel"><label for="defmodes"><? FORMAT "Default Modes:" ?></label></div>
+					<input id="defmodes" type="text" name="defmodes" value="<? VAR DefModes ?>" size="10"
 						   title="<? FORMAT "The default modes of the channel." ?>"/>
 				</div>
 
