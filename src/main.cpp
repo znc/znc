@@ -17,7 +17,15 @@
 #include <znc/znc.h>
 #include <signal.h>
 
-#if defined(HAVE_LIBSSL) && defined(HAVE_PTHREAD)
+#if defined(HAVE_LIBSSL) && defined(HAVE_PTHREAD) && ( !defined(OPENSSL_VERSION_NUMBER) || OPENSSL_VERSION_NUMBER < 0x10100004 )
+/* Starting with version 1.1.0-pre4, OpenSSL has a new threading implementation that doesn't need locking callbacks.
+    "OpenSSL now uses a new threading API. It is no longer necessary to
+     set locking callbacks to use OpenSSL in a multi-threaded environment. There
+     are two supported threading models: pthreads and windows threads. It is
+     also possible to configure OpenSSL at compile time for "no-threads". The
+     old threading API should no longer be used. The functions have been
+     replaced with "no-op" compatibility macros."
+See openssl/openssl@2e52e7df518d80188c865ea3f7bb3526d14b0c08. */
 #include <znc/Threads.h>
 #include <openssl/crypto.h>
 #include <memory>
