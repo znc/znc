@@ -35,7 +35,7 @@ GTEST_DOWNLOAD :=
 GTEST_DIR := @GTEST_DIR@
 ifeq "$(GTEST_DIR)" ""
 GTEST_VER := 1.7.0
-GTEST_DIR := test/gtest-$(GTEST_VER)
+GTEST_DIR := test/googletest-release-$(GTEST_VER)
 GTEST_DOWNLOAD := 1
 endif
 
@@ -136,7 +136,7 @@ ifneq "$(GTEST_DOWNLOAD)" ""
 test/gtest.zip:
 	@mkdir -p .depend test
 	$(E) Downloading GoogleTest $(GTEST_VER)
-	$(Q)wget http://googletest.googlecode.com/files/gtest-$(GTEST_VER).zip -O $@
+	$(Q)wget https://github.com/google/googletest/archive/release-$(GTEST_VER).zip -O $@
 
 $(GTEST_DIR)/src/gtest-all.cc $(GTEST_DIR)/src/gtest_main.cc $(GTEST_DIR)/include/gtest/gtest.h: test/gtest.zip
 	$(E) Unpacking GoogleTest $(GTEST_VER)
