@@ -38,7 +38,7 @@ before_install:
     - if [[ "$BUILD_TYPE" == "normal" ]]; then export CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=; fi
     - if [[ "$BUILD_TYPE" == "tarball" ]]; then export CFGFLAGS="--with-gtest=/usr/src/gtest --with-gmock=/usr/src/gmock --disable-swig" MYCXXFLAGS= MYLDFLAGS=; fi
     - if [[ "$BUILD_TYPE" == "asan" ]]; then export CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fPIE" MYLDFLAGS="-fsanitize=address -pie"; fi
-    - if [[ "$BUILD_TYPE" == "tsan" ]]; then export CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=thread -O1 -fPIE" MYLDFLAGS="-fsanitize=thread -pie"; fi
+    - if [[ "$BUILD_TYPE" == "tsan" ]]; then export CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=thread -O1 -fPIE" MYLDFLAGS="-fsanitize=thread"; fi
     - if [[ "$BUILD_TYPE" == "coverage" ]]; then export CFGFLAGS="--enable-debug --disable-perl --disable-python" MYCXXFLAGS=--coverage MYLDFLAGS=--coverage DISABLED_ZNC_PERL_PYTHON_TEST=1; fi
     - if [[ "$BUILD_WITH" == "cmake" ]]; then export CFGSUFFIX=.sh UNITTEST=unittest INTTEST=inttest; else export CFGSUFFIX= UNITTEST=test INTTEST=test2; fi
       # UBSan randomly crashes clang, and very often :(
@@ -55,6 +55,8 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y libperl-dev python3-dev tcl-dev libsasl2-dev libicu-dev swig3.0 doxygen graphviz qt55base python3-yaml libboost-locale-dev; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_TYPE" == "tarball" ]]; then sudo apt-get install -y google-mock libgtest-dev; fi
+      # Clang 3.5 TSan is broken on Travis Ubuntu 14.04. Clang 3.8 seems to work, but only without -pie (https://github.com/google/sanitizers/issues/503)
+    - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_TYPE" == "tsan" ]]; then sudo apt-get install -y clang-3.8; export CC=clang-3.8 CXX=clang++-3.8; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then source /opt/qt55/bin/qt55-env.sh; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_WITH" == "cmake" ]]; then sudo apt-get install -y cmake; fi
     - |
