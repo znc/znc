@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
+#ifdef __CYGWIN__
 #ifndef _XOPEN_SOURCE
 // strptime() wants this
 #define _XOPEN_SOURCE 600
+#endif
 #endif
 
 #include <znc/Utils.h>
