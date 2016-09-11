@@ -44,7 +44,7 @@ class pyeval(znc.Module, InteractiveInterpreter):
 
     def OnLoad(self, args, message):
         if not self.GetUser().IsAdmin():
-            message.s = self.t(
+            message.s = self.t_s(
                     'You must have admin privileges to load this module.')
             return False
 
@@ -78,4 +78,4 @@ class pyeval(znc.Module, InteractiveInterpreter):
         del self.locals['client']
         del self.locals['network']
 
-pyeval.description = pyeval.t('Evaluates python code')
+pyeval.description = pyeval.t_s('Evaluates python code')
