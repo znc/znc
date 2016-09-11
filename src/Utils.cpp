@@ -383,10 +383,9 @@ void CUtils::PrintStatus(bool bSuccess, const CString& sMessage) {
                         BOLD BLU "[" GRN " >> " BLU "]" DFL NORM " %s\n",
                         sMessage.c_str());
         } else {
-            fprintf(stdout, sMessage.empty() ? " failed\n" : BOLD BLU
-                                "[" RED " !! " BLU "]" DFL NORM BOLD RED
-                                " %s" DFL NORM "\n",
-                    sMessage.c_str());
+            fprintf(stdout, BOLD BLU "[" RED " !! " BLU "]" DFL NORM BOLD RED
+                                     " %s" DFL NORM "\n",
+                    sMessage.empty() ? "failed" : sMessage.c_str());
         }
     } else {
         if (bSuccess) {
