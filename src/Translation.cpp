@@ -87,26 +87,26 @@ void CTranslation::DelReference(const CString& sDomain) {
     }
 }
 
-CString CCoreTranslationMixin::t(const CString& sEnglish,
-                                 const CString& sContext) {
+CString CCoreTranslationMixin::t_s(const CString& sEnglish,
+                                   const CString& sContext) {
     return CTranslation::Get().Singular("znc", sContext, sEnglish);
 }
 
-CInlineFormatMessage CCoreTranslationMixin::f(const CString& sEnglish,
-                                              const CString& sContext) {
-    return CInlineFormatMessage(t(sEnglish, sContext));
+CInlineFormatMessage CCoreTranslationMixin::t_f(const CString& sEnglish,
+                                                const CString& sContext) {
+    return CInlineFormatMessage(t_s(sEnglish, sContext));
 }
 
-CInlineFormatMessage CCoreTranslationMixin::p(const CString& sEnglish,
-                                              const CString& sEnglishes,
-                                              int iNum,
-                                              const CString& sContext) {
+CInlineFormatMessage CCoreTranslationMixin::t_p(const CString& sEnglish,
+                                                const CString& sEnglishes,
+                                                int iNum,
+                                                const CString& sContext) {
     return CInlineFormatMessage(CTranslation::Get().Plural(
         "znc", sContext, sEnglish, sEnglishes, iNum));
 }
 
-CDelayedTranslation CCoreTranslationMixin::d(const CString& sEnglish,
-                                             const CString& sContext) {
+CDelayedTranslation CCoreTranslationMixin::t_d(const CString& sEnglish,
+                                               const CString& sContext) {
     return CDelayedTranslation("znc", sContext, sEnglish);
 }
 

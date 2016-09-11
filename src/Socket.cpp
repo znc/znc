@@ -612,22 +612,22 @@ void CIRCSocket::IcuExtFromUCallback(UConverterFromUnicodeArgs* fromArgs,
 #endif
 
 
-CString CSocket::t(const CString& sEnglish, const CString& sContext) const {
-    return GetModule()->t(sEnglish, sContext);
+CString CSocket::t_s(const CString& sEnglish, const CString& sContext) const {
+    return GetModule()->t_s(sEnglish, sContext);
 }
 
-CInlineFormatMessage CSocket::f(const CString& sEnglish,
-                                const CString& sContext) const {
-    return GetModule()->f(sEnglish, sContext);
+CInlineFormatMessage CSocket::t_f(const CString& sEnglish,
+                                  const CString& sContext) const {
+    return GetModule()->t_f(sEnglish, sContext);
 }
 
-CInlineFormatMessage CSocket::p(const CString& sEnglish,
-                                const CString& sEnglishes, int iNum,
-                                const CString& sContext) const {
-    return GetModule()->p(sEnglish, sEnglishes, iNum, sContext);
+CInlineFormatMessage CSocket::t_p(const CString& sEnglish,
+                                  const CString& sEnglishes, int iNum,
+                                  const CString& sContext) const {
+    return GetModule()->t_p(sEnglish, sEnglishes, iNum, sContext);
 }
 
-CDelayedTranslation CSocket::d(const CString& sEnglish,
-                               const CString& sContext) const {
-    return GetModule()->d(sEnglish, sContext);
+CDelayedTranslation CSocket::t_d(const CString& sEnglish,
+                                 const CString& sContext) const {
+    return GetModule()->t_d(sEnglish, sContext);
 }

@@ -1995,28 +1995,28 @@ CString CModCommand::GetDescription() const {
     return m_bTranslating ? m_dDesc.Resolve() : m_sDesc;
 }
 
-CString CModule::t(const CString& sEnglish, const CString& sContext) const {
+CString CModule::t_s(const CString& sEnglish, const CString& sContext) const {
     return CTranslation::Get().Singular("znc-" + GetModName(), sContext,
                                         sEnglish);
 }
 
-CInlineFormatMessage CModule::f(const CString& sEnglish,
-                                const CString& sContext) const {
-    return CInlineFormatMessage(t(sEnglish, sContext));
+CInlineFormatMessage CModule::t_f(const CString& sEnglish,
+                                  const CString& sContext) const {
+    return CInlineFormatMessage(t_s(sEnglish, sContext));
 }
 
-CInlineFormatMessage CModule::p(const CString& sEnglish,
-                                const CString& sEnglishes, int iNum,
-                                const CString& sContext) const {
+CInlineFormatMessage CModule::t_p(const CString& sEnglish,
+                                  const CString& sEnglishes, int iNum,
+                                  const CString& sContext) const {
     return CInlineFormatMessage(CTranslation::Get().Plural(
         "znc-" + GetModName(), sContext, sEnglish, sEnglishes, iNum));
 }
 
-CDelayedTranslation CModule::d(const CString& sEnglish,
-                               const CString& sContext) const {
+CDelayedTranslation CModule::t_d(const CString& sEnglish,
+                                 const CString& sContext) const {
     return CDelayedTranslation("znc-" + GetModName(), sContext, sEnglish);
 }
 
-CString CModInfo::t(const CString& sEnglish, const CString& sContext) const {
+CString CModInfo::t_s(const CString& sEnglish, const CString& sContext) const {
     return CTranslation::Get().Singular("znc-" + GetName(), sContext, sEnglish);
 }

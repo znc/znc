@@ -78,14 +78,14 @@ class CDelayedTranslation {
 // CModule defines its own version of these functions.
 class CCoreTranslationMixin {
   protected:
-    static CString t(const CString& sEnglish, const CString& sContext = "");
-    static CInlineFormatMessage f(const CString& sEnglish,
-                                  const CString& sContext = "");
-    static CInlineFormatMessage p(const CString& sEnglish,
-                                  const CString& sEnglishes, int iNum,
-                                  const CString& sContext = "");
-    static CDelayedTranslation d(const CString& sEnglish,
-                                 const CString& sContext = "");
+    static CString t_s(const CString& sEnglish, const CString& sContext = "");
+    static CInlineFormatMessage t_f(const CString& sEnglish,
+                                    const CString& sContext = "");
+    static CInlineFormatMessage t_p(const CString& sEnglish,
+                                    const CString& sEnglishes, int iNum,
+                                    const CString& sContext = "");
+    static CDelayedTranslation t_d(const CString& sEnglish,
+                                   const CString& sContext = "");
 };
 
 #endif

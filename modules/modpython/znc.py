@@ -170,18 +170,18 @@ class Module:
         return self.GetModName()
 
     @classmethod
-    def t(cls, english, context=''):
+    def t_s(cls, english, context=''):
         domain = 'znc-' + cls.__name__
         return CTranslation.Get().Singular(domain, context, english)
 
     @classmethod
-    def f(cls, english, context=''):
-        fmt = cls.t(english, context)
+    def t_f(cls, english, context=''):
+        fmt = cls.t_s(english, context)
         # Returning bound method
         return fmt.format
 
     @classmethod
-    def p(cls, english, englishes, num, context=''):
+    def t_p(cls, english, englishes, num, context=''):
         domain = 'znc-' + cls.__name__
         fmt = CTranslation.Get().Plural(domain, context, english, englishes,
                                         num)

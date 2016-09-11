@@ -279,13 +279,13 @@ class CSocket : public CZNCSock {
 
 #ifndef SWIG
     // Translation. As opposed to CCoreTranslationMixin, this one uses module.mo
-    CString t(const CString& sEnglish, const CString& sContext = "") const;
-    CInlineFormatMessage f(const CString& sEnglish,
-                           const CString& sContext = "") const;
-    CInlineFormatMessage p(const CString& sEnglish, const CString& sEnglishes,
-                           int iNum, const CString& sContext) const;
-    CDelayedTranslation d(const CString& sEnglish,
-                          const CString& sContext = "") const;
+    CString t_s(const CString& sEnglish, const CString& sContext = "") const;
+    CInlineFormatMessage t_f(const CString& sEnglish,
+                             const CString& sContext = "") const;
+    CInlineFormatMessage t_p(const CString& sEnglish, const CString& sEnglishes,
+                             int iNum, const CString& sContext) const;
+    CDelayedTranslation t_d(const CString& sEnglish,
+                            const CString& sContext = "") const;
 #endif
 
   private:

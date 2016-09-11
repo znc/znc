@@ -88,13 +88,13 @@ class CWebAdminMod : public CModule {
         VPair vParams;
         vParams.push_back(make_pair("user", ""));
         AddSubPage(std::make_shared<CWebSubPage>(
-            "settings", d("Global Settings"), vParams, CWebSubPage::F_ADMIN));
-        AddSubPage(std::make_shared<CWebSubPage>("edituser", d("Your Settings"),
-                                                 vParams));
-        AddSubPage(std::make_shared<CWebSubPage>("traffic", d("Traffic Info"),
+            "settings", t_d("Global Settings"), vParams, CWebSubPage::F_ADMIN));
+        AddSubPage(std::make_shared<CWebSubPage>(
+            "edituser", t_d("Your Settings"), vParams));
+        AddSubPage(std::make_shared<CWebSubPage>("traffic", t_d("Traffic Info"),
                                                  vParams));
         AddSubPage(std::make_shared<CWebSubPage>(
-            "listusers", d("Manage Users"), vParams, CWebSubPage::F_ADMIN));
+            "listusers", t_d("Manage Users"), vParams, CWebSubPage::F_ADMIN));
     }
 
     ~CWebAdminMod() override {}
@@ -185,7 +185,7 @@ class CWebAdminMod : public CModule {
 
         if (sUsername.empty()) {
             WebSock.PrintErrorPage(
-                t("Invalid Submission [Username is required]"));
+                t_s("Invalid Submission [Username is required]"));
             return nullptr;
         }
 
@@ -198,7 +198,7 @@ class CWebAdminMod : public CModule {
 
         if (sArg != WebSock.GetParam("password2")) {
             WebSock.PrintErrorPage(
-                t("Invalid Submission [Passwords do not match]"));
+                t_s("Invalid Submission [Passwords do not match]"));
             return nullptr;
         }
 
@@ -380,11 +380,11 @@ class CWebAdminMod : public CModule {
                                 sModName, sArgs, CModInfo::UserModule, pNewUser,
                                 nullptr, sModRet)) {
                             sModLoadError =
-                                f("Unable to load module [{1}]: {2}")(sModName,
-                                                                      sModRet);
+                                t_f("Unable to load module [{1}]: {2}")(
+                                    sModName, sModRet);
                         }
                     } catch (...) {
-                        sModLoadError = f(
+                        sModLoadError = t_f(
                             "Unable to load module [{1}] with arguments [{2}]")(
                             sModName, sArgs);
                     }
@@ -408,12 +408,12 @@ class CWebAdminMod : public CModule {
                     if (!pNewUser->GetModules().LoadModule(
                             sModName, sArgs, CModInfo::UserModule, pNewUser,
                             nullptr, sModRet)) {
-                        sModLoadError = f("Unable to load module [{1}]: {2}")(
+                        sModLoadError = t_f("Unable to load module [{1}]: {2}")(
                             sModName, sModRet);
                     }
                 } catch (...) {
                     sModLoadError =
-                        f("Unable to load module [{1}] with arguments [{2}]")(
+                        t_f("Unable to load module [{1}] with arguments [{2}]")(
                             sModName, sArgs);
                 }
 
@@ -494,7 +494,7 @@ class CWebAdminMod : public CModule {
                 return NetworkPage(WebSock, Tmpl, pUser);
             }
 
-            WebSock.PrintErrorPage(t("No such user"));
+            WebSock.PrintErrorPage(t_s("No such user"));
             return true;
         } else if (sPageName == "editnetwork") {
             CIRCNetwork* pNetwork = SafeGetNetworkFromParam(WebSock);
@@ -507,7 +507,7 @@ class CWebAdminMod : public CModule {
             }
 
             if (!pNetwork) {
-                WebSock.PrintErrorPage(t("No such user or network"));
+                WebSock.PrintErrorPage(t_s("No such user or network"));
                 return true;
             }
 
@@ -539,7 +539,7 @@ class CWebAdminMod : public CModule {
             }
 
             if (!pNetwork) {
-                WebSock.PrintErrorPage(t("No such user or network"));
+                WebSock.PrintErrorPage(t_s("No such user or network"));
                 return true;
             }
 
@@ -549,7 +549,7 @@ class CWebAdminMod : public CModule {
             }
             CChan* pChan = pNetwork->FindChan(sChan);
             if (!pChan) {
-                WebSock.PrintErrorPage(t("No such channel"));
+                WebSock.PrintErrorPage(t_s("No such channel"));
                 return true;
             }
 
@@ -568,7 +568,7 @@ class CWebAdminMod : public CModule {
                 return ChanPage(WebSock, Tmpl, pNetwork);
             }
 
-            WebSock.PrintErrorPage(t("No such user or network"));
+            WebSock.PrintErrorPage(t_s("No such user or network"));
             return true;
         } else if (sPageName == "delchan") {
             CIRCNetwork* pNetwork = SafeGetNetworkFromParam(WebSock);
@@ -584,7 +584,7 @@ class CWebAdminMod : public CModule {
                 return DelChan(WebSock, pNetwork);
             }
 
-            WebSock.PrintErrorPage(t("No such user or network"));
+            WebSock.PrintErrorPage(t_s("No such user or network"));
             return true;
         } else if (sPageName == "deluser") {
             if (!spSession->IsAdmin()) {
@@ -598,7 +598,7 @@ class CWebAdminMod : public CModule {
                 CUser* pUser = CZNC::Get().FindUser(sUser);
 
                 if (!pUser) {
-                    WebSock.PrintErrorPage(t("No such user"));
+                    WebSock.PrintErrorPage(t_s("No such user"));
                     return true;
                 }
 
@@ -615,15 +615,15 @@ class CWebAdminMod : public CModule {
 
             if (pUser && pUser == spSession->GetUser()) {
                 WebSock.PrintErrorPage(
-                    t("Please don't delete yourself, suicide is not the "
-                      "answer!"));
+                    t_s("Please don't delete yourself, suicide is not the "
+                        "answer!"));
                 return true;
             } else if (CZNC::Get().DeleteUser(sUser)) {
                 WebSock.Redirect(GetWebPath() + "listusers");
                 return true;
             }
 
-            WebSock.PrintErrorPage(t("No such user"));
+            WebSock.PrintErrorPage(t_s("No such user"));
             return true;
         } else if (sPageName == "edituser") {
             CString sUserName = SafeGetUserNameParam(WebSock);
@@ -645,7 +645,7 @@ class CWebAdminMod : public CModule {
                 return UserPage(WebSock, Tmpl, pUser);
             }
 
-            WebSock.PrintErrorPage(t("No such user"));
+            WebSock.PrintErrorPage(t_s("No such user"));
             return true;
         } else if (sPageName == "listusers" && spSession->IsAdmin()) {
             return ListUsersPage(WebSock, Tmpl);
@@ -679,7 +679,7 @@ class CWebAdminMod : public CModule {
         CUser* pUser = pNetwork->GetUser();
 
         if (!pUser) {
-            WebSock.PrintErrorPage(t("No such user"));
+            WebSock.PrintErrorPage(t_s("No such user"));
             return true;
         }
 
@@ -688,11 +688,11 @@ class CWebAdminMod : public CModule {
             Tmpl["Network"] = pNetwork->GetName();
 
             CTemplate& breadUser = Tmpl.AddRow("BreadCrumbs");
-            breadUser["Text"] = f("Edit User [{1}]")(pUser->GetUserName());
+            breadUser["Text"] = t_f("Edit User [{1}]")(pUser->GetUserName());
             breadUser["URL"] =
                 GetWebPath() + "edituser?user=" + pUser->GetUserName();
             CTemplate& breadNet = Tmpl.AddRow("BreadCrumbs");
-            breadNet["Text"] = f("Edit Network [{1}]")(pNetwork->GetName());
+            breadNet["Text"] = t_f("Edit Network [{1}]")(pNetwork->GetName());
             breadNet["URL"] = GetWebPath() + "editnetwork?user=" +
                               pUser->GetUserName() + "&network=" +
                               pNetwork->GetName();
@@ -702,35 +702,36 @@ class CWebAdminMod : public CModule {
                 Tmpl["Action"] = "editchan";
                 Tmpl["Edit"] = "true";
                 Tmpl["Title"] =
-                    f("Edit Channel [{1}] of Network [{2}] of User [{3}]")(
+                    t_f("Edit Channel [{1}] of Network [{2}] of User [{3}]")(
                         pChan->GetName(), pNetwork->GetName(),
                         pUser->GetUserName());
                 Tmpl["ChanName"] = pChan->GetName();
                 Tmpl["BufferSize"] = CString(pChan->GetBufferCount());
                 Tmpl["DefModes"] = pChan->GetDefaultModes();
                 Tmpl["Key"] = pChan->GetKey();
-                breadChan["Text"] = f("Edit Channel [{1}]")(pChan->GetName());
+                breadChan["Text"] = t_f("Edit Channel [{1}]")(pChan->GetName());
 
                 if (pChan->InConfig()) {
                     Tmpl["InConfig"] = "true";
                 }
             } else {
                 Tmpl["Action"] = "addchan";
-                Tmpl["Title"] = f("Add Channel to Network [{1}] of User [{2}]")(
-                    pNetwork->GetName(), pUser->GetUserName());
+                Tmpl["Title"] =
+                    t_f("Add Channel to Network [{1}] of User [{2}]")(
+                        pNetwork->GetName(), pUser->GetUserName());
                 Tmpl["BufferSize"] = CString(pUser->GetBufferCount());
                 Tmpl["DefModes"] = CString(pUser->GetDefaultChanModes());
                 Tmpl["InConfig"] = "true";
-                breadChan["Text"] = t("Add Channel");
+                breadChan["Text"] = t_s("Add Channel");
             }
 
             // o1 used to be AutoCycle which was removed
 
             CTemplate& o2 = Tmpl.AddRow("OptionLoop");
             o2["Name"] = "autoclearchanbuffer";
-            o2["DisplayName"] = t("Auto Clear Chan Buffer");
+            o2["DisplayName"] = t_s("Auto Clear Chan Buffer");
             o2["Tooltip"] =
-                t("Automatically Clear Channel Buffer After Playback");
+                t_s("Automatically Clear Channel Buffer After Playback");
             if ((pChan && pChan->AutoClearChanBuffer()) ||
                 (!pChan && pUser->AutoClearChanBuffer())) {
                 o2["Checked"] = "true";
@@ -738,14 +739,14 @@ class CWebAdminMod : public CModule {
 
             CTemplate& o3 = Tmpl.AddRow("OptionLoop");
             o3["Name"] = "detached";
-            o3["DisplayName"] = t("Detached");
+            o3["DisplayName"] = t_s("Detached");
             if (pChan && pChan->IsDetached()) {
                 o3["Checked"] = "true";
             }
 
             CTemplate& o4 = Tmpl.AddRow("OptionLoop");
             o4["Name"] = "enabled";
-            o4["DisplayName"] = t("Enabled");
+            o4["DisplayName"] = t_s("Enabled");
             if (pChan && !pChan->IsDisabled()) {
                 o4["Checked"] = "true";
             }
@@ -769,7 +770,7 @@ class CWebAdminMod : public CModule {
         if (!pChan) {
             if (sChanName.empty()) {
                 WebSock.PrintErrorPage(
-                    t("Channel name is a required argument"));
+                    t_s("Channel name is a required argument"));
                 return true;
             }
 
@@ -778,14 +779,14 @@ class CWebAdminMod : public CModule {
 
             if (pNetwork->FindChan(pChan->GetName())) {
                 WebSock.PrintErrorPage(
-                    f("Channel [{1}] already exists")(pChan->GetName()));
+                    t_f("Channel [{1}] already exists")(pChan->GetName()));
                 delete pChan;
                 return true;
             }
 
             if (!pNetwork->AddChan(pChan)) {
                 WebSock.PrintErrorPage(
-                    f("Could not add channel [{1}]")(sChanName));
+                    t_f("Could not add channel [{1}]")(sChanName));
                 return true;
             }
         }
@@ -832,7 +833,7 @@ class CWebAdminMod : public CModule {
         }
 
         if (!CZNC::Get().WriteConfig()) {
-            WebSock.PrintErrorPage(t(
+            WebSock.PrintErrorPage(t_s(
                 "Channel was added/modified, but config file was not written"));
             return true;
         }
@@ -909,7 +910,7 @@ class CWebAdminMod : public CModule {
             }
 
             CTemplate& breadUser = Tmpl.AddRow("BreadCrumbs");
-            breadUser["Text"] = f("Edit User [{1}]")(pUser->GetUserName());
+            breadUser["Text"] = t_f("Edit User [{1}]")(pUser->GetUserName());
             breadUser["URL"] =
                 GetWebPath() + "edituser?user=" + pUser->GetUserName();
             CTemplate& breadNet = Tmpl.AddRow("BreadCrumbs");
@@ -917,7 +918,7 @@ class CWebAdminMod : public CModule {
             if (pNetwork) {
                 Tmpl["Action"] = "editnetwork";
                 Tmpl["Edit"] = "true";
-                Tmpl["Title"] = f("Edit Network [{1}] of User [{2}]")(
+                Tmpl["Title"] = t_f("Edit Network [{1}] of User [{2}]")(
                     pNetwork->GetName(), pUser->GetUserName());
                 Tmpl["Name"] = pNetwork->GetName();
 
@@ -940,7 +941,8 @@ class CWebAdminMod : public CModule {
                 Tmpl["TrustAllCerts"] = CString(pNetwork->GetTrustAllCerts());
                 Tmpl["TrustPKI"] = CString(pNetwork->GetTrustPKI());
 
-                breadNet["Text"] = f("Edit Network [{1}]")(pNetwork->GetName());
+                breadNet["Text"] =
+                    t_f("Edit Network [{1}]")(pNetwork->GetName());
 
                 const vector<CServer*>& vServers = pNetwork->GetServers();
                 for (const CServer* pServer : vServers) {
@@ -977,15 +979,15 @@ class CWebAdminMod : public CModule {
             } else {
                 if (!spSession->IsAdmin() && !pUser->HasSpaceForNewNetwork()) {
                     WebSock.PrintErrorPage(
-                        t("Network number limit reached. Ask an admin to "
-                          "increase the limit for you, or delete unneeded "
-                          "networks from Your Settings."));
+                        t_s("Network number limit reached. Ask an admin to "
+                            "increase the limit for you, or delete unneeded "
+                            "networks from Your Settings."));
                     return true;
                 }
 
                 Tmpl["Action"] = "addnetwork";
                 Tmpl["Title"] =
-                    f("Add Network for User [{1}]")(pUser->GetUserName());
+                    t_f("Add Network for User [{1}]")(pUser->GetUserName());
                 Tmpl["IRCConnectEnabled"] = "true";
                 Tmpl["TrustAllCerts"] = "false";
                 Tmpl["TrustPKI"] = "true";
@@ -993,7 +995,7 @@ class CWebAdminMod : public CModule {
                 Tmpl["FloodRate"] = "1.0";
                 Tmpl["FloodBurst"] = "4";
                 Tmpl["JoinDelay"] = "0";
-                breadNet["Text"] = t("Add Network");
+                breadNet["Text"] = t_s("Add Network");
             }
 
             FOR_EACH_MODULE(i, make_pair(pUser, pNetwork)) {
@@ -1039,15 +1041,15 @@ class CWebAdminMod : public CModule {
 
         CString sName = WebSock.GetParam("name").Trim_n();
         if (sName.empty()) {
-            WebSock.PrintErrorPage(t("Network name is a required argument"));
+            WebSock.PrintErrorPage(t_s("Network name is a required argument"));
             return true;
         }
         if (!pNetwork && !spSession->IsAdmin() &&
             !pUser->HasSpaceForNewNetwork()) {
-            WebSock.PrintErrorPage(
-                t("Network number limit reached. Ask an admin to increase the "
-                  "limit for you, or delete unneeded networks from Your "
-                  "Settings."));
+            WebSock.PrintErrorPage(t_s(
+                "Network number limit reached. Ask an admin to increase the "
+                "limit for you, or delete unneeded networks from Your "
+                "Settings."));
             return true;
         }
         if (!pNetwork || pNetwork->GetName() != sName) {
@@ -1156,14 +1158,14 @@ class CWebAdminMod : public CModule {
                                 sModName, sArgs, CModInfo::NetworkModule, pUser,
                                 pNetwork, sModRet)) {
                             sModLoadError =
-                                f("Unable to load module [{1}]: {2}")(sModName,
-                                                                      sModRet);
+                                t_f("Unable to load module [{1}]: {2}")(
+                                    sModName, sModRet);
                         }
                     } else if (pMod->GetArgs() != sArgs) {
                         if (!pNetwork->GetModules().ReloadModule(
                                 sModName, sArgs, pUser, pNetwork, sModRet)) {
                             sModLoadError =
-                                f("Unable to reload module [{1}]: {2}")(
+                                t_f("Unable to reload module [{1}]: {2}")(
                                     sModName, sModRet);
                         }
                     }
@@ -1199,7 +1201,7 @@ class CWebAdminMod : public CModule {
         }
 
         if (!CZNC::Get().WriteConfig()) {
-            WebSock.PrintErrorPage(t(
+            WebSock.PrintErrorPage(t_s(
                 "Network was added/modified, but config file was not written"));
             return true;
         }
@@ -1223,13 +1225,13 @@ class CWebAdminMod : public CModule {
         }
 
         if (!pUser) {
-            WebSock.PrintErrorPage(t("No such user"));
+            WebSock.PrintErrorPage(t_s("No such user"));
             return true;
         }
 
         if (sNetwork.empty()) {
             WebSock.PrintErrorPage(
-                t("That network doesn't exist for this user"));
+                t_s("That network doesn't exist for this user"));
             return true;
         }
 
@@ -1246,7 +1248,7 @@ class CWebAdminMod : public CModule {
 
         if (!CZNC::Get().WriteConfig()) {
             WebSock.PrintErrorPage(
-                t("Network was deleted, but config file was not written"));
+                t_s("Network was deleted, but config file was not written"));
             return true;
         }
 
@@ -1260,7 +1262,7 @@ class CWebAdminMod : public CModule {
 
         if (sChan.empty()) {
             WebSock.PrintErrorPage(
-                t("That channel doesn't exist for this network"));
+                t_s("That channel doesn't exist for this network"));
             return true;
         }
 
@@ -1269,7 +1271,7 @@ class CWebAdminMod : public CModule {
 
         if (!CZNC::Get().WriteConfig()) {
             WebSock.PrintErrorPage(
-                t("Channel was deleted, but config file was not written"));
+                t_s("Channel was deleted, but config file was not written"));
             return true;
         }
 
@@ -1287,14 +1289,15 @@ class CWebAdminMod : public CModule {
         if (!WebSock.GetParam("submitted").ToUInt()) {
             if (pUser) {
                 Tmpl["Action"] = "edituser";
-                Tmpl["Title"] = f("Edit User [{1}]")(pUser->GetUserName());
+                Tmpl["Title"] = t_f("Edit User [{1}]")(pUser->GetUserName());
                 Tmpl["Edit"] = "true";
             } else {
                 CString sUsername = WebSock.GetParam("clone", false);
                 pUser = CZNC::Get().FindUser(sUsername);
 
                 if (pUser) {
-                    Tmpl["Title"] = f("Clone User [{1}]")(pUser->GetUserName());
+                    Tmpl["Title"] =
+                        t_f("Clone User [{1}]")(pUser->GetUserName());
                     Tmpl["Clone"] = "true";
                     Tmpl["CloneUsername"] = pUser->GetUserName();
                 }
@@ -1475,10 +1478,10 @@ class CWebAdminMod : public CModule {
 
             CTemplate& o1 = Tmpl.AddRow("OptionLoop");
             o1["Name"] = "autoclearchanbuffer";
-            o1["DisplayName"] = t("Auto Clear Chan Buffer");
+            o1["DisplayName"] = t_s("Auto Clear Chan Buffer");
             o1["Tooltip"] =
-                t("Automatically Clear Channel Buffer After Playback (the "
-                  "default value for new channels)");
+                t_s("Automatically Clear Channel Buffer After Playback (the "
+                    "default value for new channels)");
             if (!pUser || pUser->AutoClearChanBuffer()) {
                 o1["Checked"] = "true";
             }
@@ -1487,21 +1490,21 @@ class CWebAdminMod : public CModule {
 
             CTemplate& o4 = Tmpl.AddRow("OptionLoop");
             o4["Name"] = "multiclients";
-            o4["DisplayName"] = t("Multi Clients");
+            o4["DisplayName"] = t_s("Multi Clients");
             if (!pUser || pUser->MultiClients()) {
                 o4["Checked"] = "true";
             }
 
             CTemplate& o7 = Tmpl.AddRow("OptionLoop");
             o7["Name"] = "appendtimestamp";
-            o7["DisplayName"] = t("Append Timestamps");
+            o7["DisplayName"] = t_s("Append Timestamps");
             if (pUser && pUser->GetTimestampAppend()) {
                 o7["Checked"] = "true";
             }
 
             CTemplate& o8 = Tmpl.AddRow("OptionLoop");
             o8["Name"] = "prependtimestamp";
-            o8["DisplayName"] = t("Prepend Timestamps");
+            o8["DisplayName"] = t_s("Prepend Timestamps");
             if (pUser && pUser->GetTimestampPrepend()) {
                 o8["Checked"] = "true";
             }
@@ -1509,14 +1512,14 @@ class CWebAdminMod : public CModule {
             if (spSession->IsAdmin()) {
                 CTemplate& o9 = Tmpl.AddRow("OptionLoop");
                 o9["Name"] = "denyloadmod";
-                o9["DisplayName"] = t("Deny LoadMod");
+                o9["DisplayName"] = t_s("Deny LoadMod");
                 if (pUser && pUser->DenyLoadMod()) {
                     o9["Checked"] = "true";
                 }
 
                 CTemplate& o10 = Tmpl.AddRow("OptionLoop");
                 o10["Name"] = "isadmin";
-                o10["DisplayName"] = t("Admin");
+                o10["DisplayName"] = t_s("Admin");
                 if (pUser && pUser->IsAdmin()) {
                     o10["Checked"] = "true";
                 }
@@ -1526,7 +1529,7 @@ class CWebAdminMod : public CModule {
 
                 CTemplate& o11 = Tmpl.AddRow("OptionLoop");
                 o11["Name"] = "denysetbindhost";
-                o11["DisplayName"] = t("Deny SetBindHost");
+                o11["DisplayName"] = t_s("Deny SetBindHost");
                 if (pUser && pUser->DenySetBindHost()) {
                     o11["Checked"] = "true";
                 }
@@ -1534,9 +1537,9 @@ class CWebAdminMod : public CModule {
 
             CTemplate& o12 = Tmpl.AddRow("OptionLoop");
             o12["Name"] = "autoclearquerybuffer";
-            o12["DisplayName"] = t("Auto Clear Query Buffer");
+            o12["DisplayName"] = t_s("Auto Clear Query Buffer");
             o12["Tooltip"] =
-                t("Automatically Clear Query Buffer After Playback");
+                t_s("Automatically Clear Query Buffer After Playback");
             if (!pUser || pUser->AutoClearQueryBuffer()) {
                 o12["Checked"] = "true";
             }
@@ -1560,7 +1563,7 @@ class CWebAdminMod : public CModule {
         CString sUsername = WebSock.GetParam("user");
         if (!pUser && CZNC::Get().FindUser(sUsername)) {
             WebSock.PrintErrorPage(
-                f("Invalid Submission: User {1} already exists")(sUsername));
+                t_f("Invalid Submission: User {1} already exists")(sUsername));
             return true;
         }
 
@@ -1582,24 +1585,24 @@ class CWebAdminMod : public CModule {
             // Add User Submission
             if (!CZNC::Get().AddUser(pNewUser, sErr)) {
                 delete pNewUser;
-                WebSock.PrintErrorPage(f("Invalid submission: {1}")(sErr));
+                WebSock.PrintErrorPage(t_f("Invalid submission: {1}")(sErr));
                 return true;
             }
 
             pUser = pNewUser;
             sConfigErrorMsg =
-                t("User was added, but config file was not written");
+                t_s("User was added, but config file was not written");
         } else {
             // Edit User Submission
             if (!pUser->Clone(*pNewUser, sErr, false)) {
                 delete pNewUser;
-                WebSock.PrintErrorPage(f("Invalid submission: {1}")(sErr));
+                WebSock.PrintErrorPage(t_f("Invalid submission: {1}")(sErr));
                 return true;
             }
 
             delete pNewUser;
             sConfigErrorMsg =
-                t("User was edited, but config file was not written");
+                t_s("User was edited, but config file was not written");
         }
 
         CTemplate TmplMod;
@@ -1628,7 +1631,7 @@ class CWebAdminMod : public CModule {
     bool ListUsersPage(CWebSock& WebSock, CTemplate& Tmpl) {
         std::shared_ptr<CWebSession> spSession = WebSock.GetSession();
         const map<CString, CUser*>& msUsers = CZNC::Get().GetUserMap();
-        Tmpl["Title"] = t("Manage Users");
+        Tmpl["Title"] = t_s("Manage Users");
         Tmpl["Action"] = "listusers";
 
         for (const auto& it : msUsers) {
@@ -1649,7 +1652,7 @@ class CWebAdminMod : public CModule {
 
     bool TrafficPage(CWebSock& WebSock, CTemplate& Tmpl) {
         std::shared_ptr<CWebSession> spSession = WebSock.GetSession();
-        Tmpl["Title"] = t("Traffic Info");
+        Tmpl["Title"] = t_s("Traffic Info");
         Tmpl["Uptime"] = CZNC::Get().GetUptime();
 
         const map<CString, CUser*>& msUsers = CZNC::Get().GetUserMap();
@@ -1757,7 +1760,7 @@ class CWebAdminMod : public CModule {
                 eAddr = ADDR_IPV6ONLY;
             } else {
                 WebSock.GetSession()->AddError(
-                    t("Choose either IPv4 or IPv6 or both."));
+                    t_s("Choose either IPv4 or IPv6 or both."));
                 return SettingsPage(WebSock, Tmpl);
             }
         }
@@ -1774,7 +1777,7 @@ class CWebAdminMod : public CModule {
                 eAccept = CListener::ACCEPT_HTTP;
             } else {
                 WebSock.GetSession()->AddError(
-                    t("Choose either IRC or HTTP or both."));
+                    t_s("Choose either IRC or HTTP or both."));
                 return SettingsPage(WebSock, Tmpl);
             }
         }
@@ -1787,7 +1790,7 @@ class CWebAdminMod : public CModule {
             }
             if (!CZNC::Get().WriteConfig()) {
                 WebSock.GetSession()->AddError(
-                    t("Port was changed, but config file was not written"));
+                    t_s("Port was changed, but config file was not written"));
             }
         } else {
             WebSock.GetSession()->AddError(sMessage);
@@ -1813,7 +1816,7 @@ class CWebAdminMod : public CModule {
             if (bIPv6) {
                 eAddr = ADDR_IPV6ONLY;
             } else {
-                WebSock.GetSession()->AddError(t("Invalid request."));
+                WebSock.GetSession()->AddError(t_s("Invalid request."));
                 return SettingsPage(WebSock, Tmpl);
             }
         }
@@ -1823,11 +1826,11 @@ class CWebAdminMod : public CModule {
             CZNC::Get().DelListener(pListener);
             if (!CZNC::Get().WriteConfig()) {
                 WebSock.GetSession()->AddError(
-                    t("Port was changed, but config file was not written"));
+                    t_s("Port was changed, but config file was not written"));
             }
         } else {
             WebSock.GetSession()->AddError(
-                t("The specified listener was not found."));
+                t_s("The specified listener was not found."));
         }
 
         return SettingsPage(WebSock, Tmpl);
@@ -1837,7 +1840,7 @@ class CWebAdminMod : public CModule {
         Tmpl.SetFile("settings.tmpl");
         if (!WebSock.GetParam("submitted").ToUInt()) {
             Tmpl["Action"] = "settings";
-            Tmpl["Title"] = t("Global Settings");
+            Tmpl["Title"] = t_s("Global Settings");
             Tmpl["StatusPrefix"] = CZNC::Get().GetStatusPrefix();
             Tmpl["MaxBufferSize"] = CString(CZNC::Get().GetMaxBufferSize());
             Tmpl["ConnectDelay"] = CString(CZNC::Get().GetConnectDelay());
@@ -2019,14 +2022,15 @@ class CWebAdminMod : public CModule {
                     if (!CZNC::Get().GetModules().LoadModule(
                             sModName, sArgs, CModInfo::GlobalModule, nullptr,
                             nullptr, sModRet)) {
-                        sModLoadError = f("Unable to load module [{1}]: {2}")(
+                        sModLoadError = t_f("Unable to load module [{1}]: {2}")(
                             sModName, sModRet);
                     }
                 } else if (pMod->GetArgs() != sArgs) {
                     if (!CZNC::Get().GetModules().ReloadModule(
                             sModName, sArgs, nullptr, nullptr, sModRet)) {
-                        sModLoadError = f("Unable to reload module [{1}]: {2}")(
-                            sModName, sModRet);
+                        sModLoadError =
+                            t_f("Unable to reload module [{1}]: {2}")(sModName,
+                                                                      sModRet);
                     }
                 }
 
@@ -2054,7 +2058,7 @@ class CWebAdminMod : public CModule {
 
         if (!CZNC::Get().WriteConfig()) {
             WebSock.GetSession()->AddError(
-                t("Settings were changed, but config file was not written"));
+                t_s("Settings were changed, but config file was not written"));
         }
 
         WebSock.Redirect(GetWebPath() + "settings");

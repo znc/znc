@@ -73,10 +73,10 @@ subprocess.check_call(['xgettext',
     '--omit-header',
     '-D', args.include_dir,
     '-o', main_pot,
-    '--keyword=t:1,1t',   '--keyword=t:1,2c,2t',
-    '--keyword=f:1,1t',   '--keyword=f:1,2c,2t',
-    '--keyword=p:1,2,3t', '--keyword=p:1,2,4c,4t',
-    '--keyword=d:1,1t',   '--keyword=d:1,2c,2t',
+    '--keyword=t_s:1,1t',   '--keyword=t_s:1,2c,2t',
+    '--keyword=t_f:1,1t',   '--keyword=t_f:1,2c,2t',
+    '--keyword=t_p:1,2,3t', '--keyword=t_p:1,2,4c,4t',
+    '--keyword=t_d:1,1t',   '--keyword=t_d:1,2c,2t',
 ] + args.explicit_sources)
 if os.path.isfile(main_pot):
     pot_list.append(main_pot)

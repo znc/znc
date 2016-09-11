@@ -25,9 +25,9 @@ class CCertMod : public CModule {
   public:
     void Delete(const CString& line) {
         if (CFile::Delete(PemFile())) {
-            PutModule(t("Pem file deleted"));
+            PutModule(t_s("Pem file deleted"));
         } else {
-            PutModule(t(
+            PutModule(t_s(
                 "The pem file doesn't exist or there was a error deleting the "
                 "pem file."));
         }
@@ -35,14 +35,13 @@ class CCertMod : public CModule {
 
     void Info(const CString& line) {
         if (HasPemFile()) {
-            PutModule(f("You have a certificate in {1}")(PemFile()));
+            PutModule(t_f("You have a certificate in {1}")(PemFile()));
         } else {
-            PutModule(t(
+            PutModule(t_s(
                 "You do not have a certificate. Please use the web interface "
                 "to add a certificate"));
             if (GetUser()->IsAdmin()) {
-                PutModule(f(
-                             "Alternatively you can either place one at {1}")(
+                PutModule(t_f("Alternatively you can either place one at {1}")(
                     PemFile()));
             }
         }
@@ -50,9 +49,9 @@ class CCertMod : public CModule {
 
     MODCONSTRUCTOR(CCertMod) {
         AddHelpCommand();
-        AddCommand("delete", "", d("Delete the current certificate"),
+        AddCommand("delete", "", t_d("Delete the current certificate"),
                    [=](const CString& sLine) { Delete(sLine); });
-        AddCommand("info", "", d("Show the current certificate"),
+        AddCommand("info", "", t_d("Show the current certificate"),
                    [=](const CString& sLine) { Info(sLine); });
     }
 
@@ -70,7 +69,7 @@ class CCertMod : public CModule {
         return CONTINUE;
     }
 
-    CString GetWebMenuTitle() override { return t("Certificate"); }
+    CString GetWebMenuTitle() override { return t_s("Certificate"); }
 
     bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
                       CTemplate& Tmpl) override {
@@ -103,4 +102,4 @@ void TModInfo<CCertMod>(CModInfo& Info) {
     Info.SetWikiPage("cert");
 }
 
-NETWORKMODULEDEFS(CCertMod, t("Use a ssl certificate to connect to a server"))
+NETWORKMODULEDEFS(CCertMod, t_s("Use a ssl certificate to connect to a server"))

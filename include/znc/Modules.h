@@ -60,24 +60,25 @@ class CModInfo;
 #define ZNC_EXPORT_LIB_EXPORT
 #endif
 
-#define MODCOMMONDEFS(CLASS, DESCRIPTION, TYPE)                               \
-    extern "C" {                                                              \
-    ZNC_EXPORT_LIB_EXPORT bool ZNCModInfo(double dCoreVersion,                \
-                                          CModInfo& Info);                    \
-    ZNC_EXPORT_LIB_EXPORT bool ZNCModInfo(double dCoreVersion,                \
-                                          CModInfo& Info) {                   \
-        if (dCoreVersion != VERSION) return false;                            \
-        auto t = [&](const CString& sEnglish, const CString& sContext = "") { \
-            return sEnglish.empty() ? "" : Info.t(sEnglish, sContext);        \
-        };                                                                    \
-        t(CString()); /* Don't warn about unused t */                         \
-        Info.SetDescription(DESCRIPTION);                                     \
-        Info.SetDefaultType(TYPE);                                            \
-        Info.AddType(TYPE);                                                   \
-        Info.SetLoader(TModLoad<CLASS>);                                      \
-        TModInfo<CLASS>(Info);                                                \
-        return true;                                                          \
-    }                                                                         \
+#define MODCOMMONDEFS(CLASS, DESCRIPTION, TYPE)                          \
+    extern "C" {                                                         \
+    ZNC_EXPORT_LIB_EXPORT bool ZNCModInfo(double dCoreVersion,           \
+                                          CModInfo& Info);               \
+    ZNC_EXPORT_LIB_EXPORT bool ZNCModInfo(double dCoreVersion,           \
+                                          CModInfo& Info) {              \
+        if (dCoreVersion != VERSION) return false;                       \
+        auto t_s = [&](const CString& sEnglish,                          \
+                       const CString& sContext = "") {                   \
+            return sEnglish.empty() ? "" : Info.t_s(sEnglish, sContext); \
+        };                                                               \
+        t_s(CString()); /* Don't warn about unused t_s */                \
+        Info.SetDescription(DESCRIPTION);                                \
+        Info.SetDefaultType(TYPE);                                       \
+        Info.AddType(TYPE);                                              \
+        Info.SetLoader(TModLoad<CLASS>);                                 \
+        TModInfo<CLASS>(Info);                                           \
+        return true;                                                     \
+    }                                                                    \
     }
 
 /** Instead of writing a constructor, you should call this macro. It accepts all
@@ -280,7 +281,7 @@ class CModInfo {
     void SetDefaultType(EModuleType eType) { m_eDefaultType = eType; }
     // !Setters
 
-    CString t(const CString& sEnglish, const CString& sContext = "") const;
+    CString t_s(const CString& sEnglish, const CString& sContext = "") const;
 
   private:
   protected:
@@ -1301,13 +1302,13 @@ class CModule {
 
 #ifndef SWIG
     // Translation
-    CString t(const CString& sEnglish, const CString& sContext = "") const;
-    CInlineFormatMessage f(const CString& sEnglish,
-                           const CString& sContext = "") const;
-    CInlineFormatMessage p(const CString& sEnglish, const CString& sEnglishes,
-                           int iNum, const CString& sContext = "") const;
-    CDelayedTranslation d(const CString& sEnglish,
-                          const CString& sContext = "") const;
+    CString t_s(const CString& sEnglish, const CString& sContext = "") const;
+    CInlineFormatMessage t_f(const CString& sEnglish,
+                             const CString& sContext = "") const;
+    CInlineFormatMessage t_p(const CString& sEnglish, const CString& sEnglishes,
+                             int iNum, const CString& sContext = "") const;
+    CDelayedTranslation t_d(const CString& sEnglish,
+                            const CString& sContext = "") const;
 #endif
 
   protected:

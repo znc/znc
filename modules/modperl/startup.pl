@@ -652,7 +652,7 @@ sub CreateSocket {
 	$psock;
 }
 
-sub t {
+sub t_s {
     my $self = shift;
     my $module = ref $self;
     my $english = shift;
@@ -660,13 +660,13 @@ sub t {
     ZNC::CTranslation::Get->Singular("znc-$module", $context, $english);
 }
 
-sub f {
+sub t_f {
     my $self = shift;
-    my $fmt = $self->t(@_);
+    my $fmt = $self->t_s(@_);
     return sub { sprintf $fmt, @_ }
 }
 
-sub p {
+sub t_p {
     my $self = shift;
     my $module = ref $self;
     my $english = shift;
