@@ -25,6 +25,14 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 
+#if !defined(OPENSSL_VERSION_NUMBER) || defined(LIBRESSL_VERSION_NUMBER) || \
+    OPENSSL_VERSION_NUMBER < 0x10100007
+/* SSL_SESSION was made opaque in OpenSSL 1.1.0, cipher accessor was added 2
+weeks before the public release.
+See openssl/openssl@e92813234318635639dba0168c7ef5568757449b. */
+# define SSL_SESSION_get0_cipher(pSession) ((pSession)->cipher)
+#endif
+
 using std::pair;
 using std::stringstream;
 using std::map;
@@ -212,8 +220,11 @@ class CSChat : public CModule {
                     Table.SetCell("Host", pSock->GetRemoteIP());
                     Table.SetCell("Port", CString(pSock->GetRemotePort()));
                     SSL_SESSION* pSession = pSock->GetSSLSession();
-                    if (pSession && pSession->cipher && pSession->cipher->name)
-                        Table.SetCell("Cipher", pSession->cipher->name);
+                    Table.SetCell(
+                        "Cipher",
+                        SSL_CIPHER_get_name(
+                            pSession ? SSL_SESSION_get0_cipher(pSession)
+                                     : nullptr));
 
                 } else {
                     Table.SetCell("Status", "Waiting");
@@ -273,10 +284,11 @@ class CSChat : public CModule {
                                   pSock->GetRemoteIP() + ":" +
                                       CString(pSock->GetRemotePort()));
                     SSL_SESSION* pSession = pSock->GetSSLSession();
-                    if (pSession && pSession->cipher && pSession->cipher->name)
-                        Table.SetCell("Cipher", pSession->cipher->name);
-                    else
-                        Table.SetCell("Cipher", "None");
+                    Table.SetCell(
+                        "Cipher",
+                        SSL_CIPHER_get_name(
+                            pSession ? SSL_SESSION_get0_cipher(pSession)
+                                     : nullptr));
 
                 } else {
                     Table.SetCell("Type", "Listener");

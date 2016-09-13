@@ -27,6 +27,7 @@
 #include <znc/Message.h>
 #ifdef HAVE_LIBSSL
 #include <openssl/ssl.h>
+#include <memory>
 #endif /* HAVE_LIBSSL */
 #include <unistd.h>
 #include <time.h>
@@ -64,85 +65,67 @@ constexpr const char* szDefaultDH2048 =
     "-----END DH PARAMETERS-----\n";
 
 void CUtils::GenerateCert(FILE* pOut, const CString& sHost) {
-    EVP_PKEY* pKey = nullptr;
-    X509* pCert = nullptr;
-    X509_NAME* pName = nullptr;
     const int days = 365;
     const int years = 10;
 
     unsigned int uSeed = (unsigned int)time(nullptr);
     int serial = (rand_r(&uSeed) % 9999);
 
-    RSA* pRSA = RSA_generate_key(2048, 0x10001, nullptr, nullptr);
-    if ((pKey = EVP_PKEY_new())) {
-        if (!EVP_PKEY_assign_RSA(pKey, pRSA)) {
-            EVP_PKEY_free(pKey);
-            return;
-        }
+    std::unique_ptr<BIGNUM, void (*)(BIGNUM*)> pExponent(BN_new(), ::BN_free);
+    if (!pExponent || !BN_set_word(pExponent.get(), 0x10001)) return;
 
-        PEM_write_RSAPrivateKey(pOut, pRSA, nullptr, nullptr, 0, nullptr,
-                                nullptr);
+    std::unique_ptr<RSA, void (*)(RSA*)> pRSA(RSA_new(), ::RSA_free);
+    if (!pRSA ||
+        !RSA_generate_key_ex(pRSA.get(), 2048, pExponent.get(), nullptr))
+        return;
 
-        if (!(pCert = X509_new())) {
-            EVP_PKEY_free(pKey);
-            return;
-        }
+    std::unique_ptr<EVP_PKEY, void (*)(EVP_PKEY*)> pKey(EVP_PKEY_new(),
+                                                        ::EVP_PKEY_free);
+    if (!pKey || !EVP_PKEY_set1_RSA(pKey.get(), pRSA.get())) return;
 
-        X509_set_version(pCert, 2);
-        ASN1_INTEGER_set(X509_get_serialNumber(pCert), serial);
-        X509_gmtime_adj(X509_get_notBefore(pCert), 0);
-        X509_gmtime_adj(X509_get_notAfter(pCert),
-                        (long)60 * 60 * 24 * days * years);
-        X509_set_pubkey(pCert, pKey);
+    std::unique_ptr<X509, void (*)(X509*)> pCert(X509_new(), ::X509_free);
+    if (!pCert) return;
 
-        pName = X509_get_subject_name(pCert);
+    X509_set_version(pCert.get(), 2);
+    ASN1_INTEGER_set(X509_get_serialNumber(pCert.get()), serial);
+    X509_gmtime_adj(X509_get_notBefore(pCert.get()), 0);
+    X509_gmtime_adj(X509_get_notAfter(pCert.get()),
+                    (long)60 * 60 * 24 * days * years);
+    X509_set_pubkey(pCert.get(), pKey.get());
 
-        const char* pLogName = getenv("LOGNAME");
-        const char* pHostName = nullptr;
+    const char* pLogName = getenv("LOGNAME");
+    const char* pHostName = nullptr;
 
-        if (!sHost.empty()) {
-            pHostName = sHost.c_str();
-        }
+    if (!pLogName) pLogName = "Unknown";
 
-        if (!pHostName) {
-            pHostName = getenv("HOSTNAME");
-        }
+    if (!sHost.empty()) pHostName = sHost.c_str();
 
-        if (!pLogName) {
-            pLogName = "Unknown";
-        }
+    if (!pHostName) pHostName = getenv("HOSTNAME");
 
-        if (!pHostName) {
-            pHostName = "host.unknown";
-        }
+    if (!pHostName) pHostName = "host.unknown";
 
-        CString sEmailAddr = pLogName;
-        sEmailAddr += "@";
-        sEmailAddr += pHostName;
+    CString sEmailAddr = pLogName;
+    sEmailAddr += "@";
+    sEmailAddr += pHostName;
 
-        X509_NAME_add_entry_by_txt(pName, "OU", MBSTRING_ASC,
-                                   (unsigned char*)pLogName, -1, -1, 0);
-        X509_NAME_add_entry_by_txt(pName, "CN", MBSTRING_ASC,
-                                   (unsigned char*)pHostName, -1, -1, 0);
-        X509_NAME_add_entry_by_txt(pName, "emailAddress", MBSTRING_ASC,
-                                   (unsigned char*)sEmailAddr.c_str(), -1, -1,
-                                   0);
+    X509_NAME* pName = X509_get_subject_name(pCert.get());
+    X509_NAME_add_entry_by_txt(pName, "OU", MBSTRING_ASC,
+                               (unsigned char*)pLogName, -1, -1, 0);
+    X509_NAME_add_entry_by_txt(pName, "CN", MBSTRING_ASC,
+                               (unsigned char*)pHostName, -1, -1, 0);
+    X509_NAME_add_entry_by_txt(pName, "emailAddress", MBSTRING_ASC,
+                               (unsigned char*)sEmailAddr.c_str(), -1, -1, 0);
 
-        X509_set_subject_name(pCert, pName);
-        X509_set_issuer_name(pCert, pName);
+    X509_set_subject_name(pCert.get(), pName);
+    X509_set_issuer_name(pCert.get(), pName);
 
-        if (!X509_sign(pCert, pKey, EVP_sha256())) {
-            X509_free(pCert);
-            EVP_PKEY_free(pKey);
-            return;
-        }
+    if (!X509_sign(pCert.get(), pKey.get(), EVP_sha256())) return;
 
-        PEM_write_X509(pOut, pCert);
-        X509_free(pCert);
-        EVP_PKEY_free(pKey);
+    PEM_write_RSAPrivateKey(pOut, pRSA.get(), nullptr, nullptr, 0, nullptr,
+                            nullptr);
+    PEM_write_X509(pOut, pCert.get());
 
-        fprintf(pOut, "%s", szDefaultDH2048);
-    }
+    fprintf(pOut, "%s", szDefaultDH2048);
 }
 #endif /* HAVE_LIBSSL */
 
