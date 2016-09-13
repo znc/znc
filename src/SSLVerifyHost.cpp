@@ -17,6 +17,12 @@
 #include <znc/SSLVerifyHost.h>
 
 #ifdef HAVE_LIBSSL
+#if defined(OPENSSL_VERSION_NUMBER) && !defined(LIBRESSL_VERSION_NUMBER) && OPENSSL_VERSION_NUMBER >= 0x10100007
+# define CONST_ASN1_STRING_DATA const /* 1.1.0-pre7: openssl/openssl@17ebf85abda18c3875b1ba6670fe7b393bc1f297 */
+#else
+# define ASN1_STRING_get0_data( x ) ASN1_STRING_data( x )
+# define CONST_ASN1_STRING_DATA
+#endif
 
 #include <openssl/x509v3.h>
 
@@ -305,7 +311,7 @@ static HostnameValidationResult matches_common_name(const char *hostname, const 
 	int common_name_loc = -1;
 	X509_NAME_ENTRY *common_name_entry = NULL;
 	ASN1_STRING *common_name_asn1 = NULL;
-	char *common_name_str = NULL;
+	CONST_ASN1_STRING_DATA char *common_name_str = NULL;
 
 	// Find the position of the CN field in the Subject field of the certificate
 	common_name_loc = X509_NAME_get_index_by_NID(X509_get_subject_name((X509 *) server_cert), NID_commonName, -1);
@@ -324,7 +330,7 @@ static HostnameValidationResult matches_common_name(const char *hostname, const 
 	if (common_name_asn1 == NULL) {
 		return Error;
 	}			
-	common_name_str = (char *) ASN1_STRING_data(common_name_asn1);
+	common_name_str = (CONST_ASN1_STRING_DATA char*) ASN1_STRING_get0_data(common_name_asn1);
 
 	// Make sure there isn't an embedded NUL character in the CN
 	if (ASN1_STRING_length(common_name_asn1) != static_cast<int>(strlen(common_name_str))) {
@@ -369,7 +375,7 @@ static HostnameValidationResult matches_subject_alternative_name(const char *hos
 
 		if (current_name->type == GEN_DNS) {
 			// Current name is a DNS name, let's check it
-			char *dns_name = (char *) ASN1_STRING_data(current_name->d.dNSName);
+			CONST_ASN1_STRING_DATA char *dns_name = (CONST_ASN1_STRING_DATA char*) ASN1_STRING_get0_data(current_name->d.dNSName);
 
 			// Make sure there isn't an embedded NUL character in the DNS name
 			if (ASN1_STRING_length(current_name->d.dNSName) != static_cast<int>(strlen(dns_name))) {
