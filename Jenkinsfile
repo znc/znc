@@ -3,7 +3,6 @@
 node('freebsd') {
   // freebsd 10.3 + pkg install git openjdk cmake icu pkgconf swig30 python3
   timestamps {
-    update_github_status()
     try {
       timeout(time: 30, unit: 'MINUTES') {
         def srcdir = pwd()
@@ -36,12 +35,5 @@ node('freebsd') {
       echo "Error: ${err}"
       currentBuild.result = 'FAILURE'
     }
-    update_github_status()
   }
-}
-
-def update_github_status() {
-  step([$class: 'GitHubCommitStatusSetter',
-        contextSource: [$class: 'ManuallyEnteredCommitContextSource',
-                        context: 'continuous-integration/jenkins']])
 }
