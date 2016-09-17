@@ -8,8 +8,7 @@ node('freebsd') {
         def srcdir = pwd()
         def tmpdir = pwd([tmp: true])
         stage('Checkout') {
-          // https://issues.jenkins-ci.org/browse/JENKINS-32540
-          sh 'git clean -ffdx'
+          step([$class: 'WsCleanup'])
           checkout scm
           sh 'git submodule update --init --recursive'
         }
