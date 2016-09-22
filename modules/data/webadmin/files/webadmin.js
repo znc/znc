@@ -13,7 +13,7 @@ function floodprotection_change() {
 
 function make_sortable_table(table) {
 	if (table.rows.length >= 1) { // Ensure that the table at least contains a row for the headings
-		var headings = table.rows[0].getElementsByTagName("td");
+		var headings = table.rows[0].getElementsByTagName("th");
 		for (var i = 0; i < headings.length; i++) {
 			// This function acts to scope the i variable, so we can pass it off
 			// as the column_index, otherwise column_index would just be the max

@@ -39,20 +39,17 @@ table {
 	border-top: 1px solid black;
 }
 
-table thead td {
+table thead th {
 	background-color: #EC8E00;
 	color: #000;
 	font-weight: bold;
 	padding: 6px;
+	text-align: left;
 }
 
 table td, table th {
 	padding: 4px;
 	border: 1px solid #000;
-}
-
-table th {
-	text-align: left;
 }
 
 td.mod_name {
@@ -205,12 +202,12 @@ a:hover {
 	text-decoration: underline;
 }
 
-table thead td a {
+table thead th a {
 	color: #000;
 	text-decoration: underline;
 }
 
-table thead td a:hover {
+table thead th a:hover {
 	color: #000;
 	text-decoration: none;
 }
