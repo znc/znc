@@ -89,24 +89,16 @@ table thead {
 	font-weight: bold;
 }
 
-thead td {
+thead th {
 	font-size: 13px;
 	border-bottom: 1px solid #000;
 	min-width: 35px;
-}
-
-th {
 	text-align: left;
 	padding: 4px;
-	border-top: 1px solid #000;
 }
 
 tr td:first-child {
 	border-left: none;
-}
-
-tr:first-child th {
-	border-top: none;
 }
 
 table tr:first-child td {
