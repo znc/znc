@@ -841,7 +841,7 @@ void CClient::UserCommand(CString& sLine) {
                                           (pServer == pCurServ ? "*" : ""));
                 Table.SetCell("Port", CString(pServer->GetPort()));
                 Table.SetCell("SSL", (pServer->IsSSL()) ? "SSL" : "");
-                Table.SetCell("Pass", pServer->GetPass());
+                Table.SetCell("Pass", (!pServer->GetPass().empty()) ? "set" : "");
             }
 
             PutStatus(Table);
