@@ -97,6 +97,7 @@ after_success:
     - export DUMMY_VAR=dummy-value $(cat .to_export_back)
     - |
           if [[ "$BUILD_TYPE" == "coverage" ]]; then
+              bash <(curl -s https://codecov.io/bash)
               cd build/
               ls -l /usr/bin|grep gcov
               lcov --directory . --capture --output-file coverage.info --gcov-tool /usr/bin/gcov-4.8 || exit 1
