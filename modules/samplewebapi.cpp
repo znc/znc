@@ -41,6 +41,10 @@ class CSampleWebAPIMod : public CModule {
         return true;
     }
 
+    bool WebRequiresLogin() {
+        return false;
+    }
+
     bool ValidateWebRequestCSRFCheck(CWebSock& WebSock,
         const CString& sPageName) override {
         return true;
