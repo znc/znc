@@ -53,7 +53,7 @@ class CSampleWebAPIMod : public CModule {
 
 template <>
 void TModInfo<CSampleWebAPIMod>(CModInfo& Info) {
-    Info.AddType(CModInfo::UserModule);
+    Info.AddType(CModInfo::GlobalModule);
     Info.SetWikiPage("samplewebapi");
 }
 
