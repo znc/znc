@@ -1973,6 +1973,7 @@ TEST_F(ZNCTest, ModuleCSRFOverride) {
     auto client = LoginClient();
     Z;
     client.Write("znc loadmod samplewebapi");
+    client.ReadUntil("Loaded module");
     Z;
     auto request = QNetworkRequest(QUrl("http://127.0.0.1:12345/mods/global/samplewebapi/"));
     auto reply = HttpPost(request, {
