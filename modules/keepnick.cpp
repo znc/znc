@@ -174,7 +174,7 @@ class CKeepNickMod : public CModule {
                 return HALT;
             }
 
-            PutModule("Unable to obtain nick: " + numeric.GetParam(2) + ": " + numeric.GetParams(3));
+            PutModule("Unable to obtain nick: " + numeric.GetParam(2) + ": " + numeric.GetParam(3));
             Disable();
         }
 
