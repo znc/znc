@@ -39,6 +39,30 @@ class CChan;
 class CClient;
 class CIRCNetwork;
 
+/**
+ * Here is a small explanation of how messages on IRC work, and how you can use
+ * this class to get useful information from the parsed message. The output varies
+ * greatly and this advice may not apply to every message type, but this will hopefully
+ * help you understand how it works more accurately.
+ *
+ * @time=some-timestamp :server.network.net 366 something #channel :End of /NAMES list.
+ * tags                  nick               0   1         2        3
+ *
+ * `tags` is the IRCv3 tags associated with the message, obtained with GetTag(s).
+ *   the @time tag can also be obtained with GetTime(), some messages have other tags 
+ *   with them. Tags may not always be present. Refer to IRCv3 for documentation on tags.
+ * `nick` is the sender, which can be obtained with GetNick()
+ * `0` is the command, which is obtained via GetCommand, or with GetParam(0)
+ * `1` is the first parameter index, which usually includes a sender or a recipient.
+ * `2` is the target or element the message is about.
+ * `3` is likely to contain the message, but this may very per message type.
+ *
+ * When using GetParam (which corresponds to the numbers given above), ZNC will remove the leading colon (:), 
+ * this is not true for GetParams.
+ *
+ * For certain events, like a PRIVMSG, convienience commands like GetChan() and GetNick() are available,
+ * this is not true for all CMessage extensions.
+ */
 class CMessage {
   public:
     explicit CMessage(const CString& sMessage = "");
