@@ -1937,20 +1937,4 @@ TEST_F(ZNCTest, AutoAttachModule) {
     Z;
 }
 
-TEST_F(ZNCTest, KeepNickModule) {
-    auto znc = Run();
-    Z;
-    auto ircd = ConnectIRCd();
-    Z;
-    auto client = LoginClient();
-    Z;
-    client.Write("znc loadmod keepnick");
-    client.Write("PRIVMSG *keepnick :enable");
-    Z;
-    client.ReadUntil("Trying to get your primary nick");
-    ircd.Write(":server 435 zarthus #error :This is a great test.");
-    client.ReadUntil("#error: This is a great test.");
-    Z;
-}
-
 }  // namespace
