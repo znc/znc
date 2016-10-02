@@ -1946,6 +1946,7 @@ TEST_F(ZNCTest, KeepNickModule) {
     Z;
     client.Write("znc loadmod keepnick");
     client.Write("PRIVMSG *keepnick :enable");
+    Z;
     ircd.Write(":server 435 zarthus #error :This is a great test.");
     client.ReadUntil("#error: This is a great test.");
     Z;
