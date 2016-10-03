@@ -163,12 +163,20 @@ class CKeepNickMod : public CModule {
         return CONTINUE;
     }
 
-    EModRet OnRaw(CString& sLine) override {
-        // Are we trying to get our primary nick and we caused this error?
-        // :irc.server.net 433 mynick badnick :Nickname is already in use.
-        if (m_pTimer && sLine.Token(1) == "433" &&
-            sLine.Token(3).Equals(GetNick()))
-            return HALT;
+    EModRet OnNumericMessage(CNumericMessage& numeric) override {
+        if (m_pTimer &&
+                (numeric.GetCode() == 433 || /* bad nick */
+                 numeric.GetCode() == 435 || /* user is banned on channel (charybdis) */
+                 numeric.GetCode() == 447)) { /* channel is +N (unrealircd) */
+            // Are we trying to get our primary nick and we caused this error?
+            // :irc.server.net 433 mynick badnick :Nickname is already in use.
+            if (numeric.GetCode() == 433 && numeric.GetParam(1).Equals(GetNick())) {
+                return HALT;
+            }
+
+            PutModule("Unable to obtain nick: " + numeric.GetParam(2) + ": " + numeric.GetParam(3));
+            Disable();
+        }
 
         return CONTINUE;
     }
