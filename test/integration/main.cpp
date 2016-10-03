@@ -1699,6 +1699,8 @@ TEST_F(ZNCTest, NotifyConnectModule) {
     auto client = LoginClient();
     Z;
     client.Write("znc loadmod notify_connect");
+    client.ReadUntil("Loaded module");
+    Z;
 
     auto client2 = ConnectClient();
     client2.Write("PASS :hunter2");
