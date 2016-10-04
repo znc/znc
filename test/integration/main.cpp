@@ -1940,4 +1940,29 @@ TEST_F(ZNCTest, AutoAttachModule) {
     Z;
 }
 
+TEST_F(ZNCTest, KeepNickModule) {
+    auto znc = Run();
+    Z;
+    auto ircd = ConnectIRCd();
+    Z;
+    auto client = LoginClient();
+    Z;
+    client.Write("znc loadmod keepnick");
+    client.ReadUntil("Loaded module");
+    Z;
+    ircd.ReadUntil("NICK user");
+    ircd.Write(":server 433 * nick :Nickname is already in use.");
+    ircd.ReadUntil("NICK user_");
+    Z;
+    ircd.Write(":server 001 user_ :Hello");
+    client.ReadUntil("Connected!");
+    Z;
+    ircd.ReadUntil("NICK user");
+    Z;
+    ircd.Write(":server 435 user_ user #error :Nope :-P");
+    client.ReadUntil(
+        ":*keepnick!znc@znc.in PRIVMSG user_ "
+        ":Unable to obtain nick user: Nope :-P, #error");
+}
+
 }  // namespace

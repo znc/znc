@@ -163,19 +163,28 @@ class CKeepNickMod : public CModule {
         return CONTINUE;
     }
 
-    EModRet OnNumericMessage(CNumericMessage& numeric) override {
-        if (m_pTimer &&
-                (numeric.GetCode() == 433 || /* bad nick */
-                 numeric.GetCode() == 435 || /* user is banned on channel (charybdis) */
-                 numeric.GetCode() == 447)) { /* channel is +N (unrealircd) */
+    EModRet OnNumericMessage(CNumericMessage& msg) override {
+        if (m_pTimer) {
             // Are we trying to get our primary nick and we caused this error?
             // :irc.server.net 433 mynick badnick :Nickname is already in use.
-            if (numeric.GetCode() == 433 && numeric.GetParam(1).Equals(GetNick())) {
+            if (msg.GetCode() == 433 && msg.GetParam(1).Equals(GetNick())) {
                 return HALT;
             }
-
-            PutModule("Unable to obtain nick: " + numeric.GetParam(2) + ": " + numeric.GetParam(3));
-            Disable();
+            // clang-format off
+            // :leguin.freenode.net 435 mynick badnick #chan :Cannot change nickname while banned on channel
+            // clang-format on
+            if (msg.GetCode() == 435) {
+                PutModule("Unable to obtain nick " + msg.GetParam(1) + ": " +
+                          msg.GetParam(3) + ", " + msg.GetParam(2));
+                Disable();
+            }
+            // clang-format off
+            // :irc1.unrealircd.org 447 mynick :Can not change nickname while on #chan (+N)
+            // clang-format on
+            if (msg.GetCode() == 447) {
+                PutModule("Unable to obtain nick: " + msg.GetParam(1));
+                Disable();
+            }
         }
 
         return CONTINUE;
