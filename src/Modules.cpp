@@ -104,6 +104,12 @@ CTimer::CTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles,
     : CCron(), m_pModule(pModule), m_sDescription(sDescription) {
     SetName(sLabel);
 
+    // Make integration test faster
+    char* szDebugTimer = getenv("ZNC_DEBUG_TIMER");
+    if (szDebugTimer && *szDebugTimer == '1') {
+        uInterval = std::max(1u, uInterval / 4u);
+    }
+
     if (uCycles) {
         StartMaxCycles(uInterval, uCycles);
     } else {

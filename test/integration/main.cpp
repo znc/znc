@@ -128,6 +128,7 @@ class Process : public IO<QProcess> {
             std::function<void(QProcess*)> setup = [](QProcess*) {})
         : IO(&m_proc, true) {
         auto env = QProcessEnvironment::systemEnvironment();
+        env.insert("ZNC_DEBUG_TIMER", "1");
         // Default exit codes of sanitizers upon error:
         // ASAN - 1
         // LSAN - 23 (part of ASAN, but uses a different value)
