@@ -1,0 +1,21 @@
+<? INC Header.tmpl ?>
+
+<form method="post" action="<? VAR URIPrefix TOP ?><? VAR ModPath ?>">
+	<div class="section">
+		<h3>Sample Web API</h3>
+		<div class="sectionbg">
+			<div class="sectionbody">
+				<div class="subsection full">
+					<div class="inputlabel">Text:</div>
+					<textarea name="text" cols="70" rows="5" class="monospace"></textarea>
+					<br /><span class="info">Sample text that will be returned plain on submit/API request.</span>
+				</div>
+				<div class="subsection submitline">
+					<input type="submit" name="submit" value="Submit" />
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+
+<? INC Footer.tmpl ?>
