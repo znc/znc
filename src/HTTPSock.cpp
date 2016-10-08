@@ -536,6 +536,8 @@ const CString& CHTTPSock::GetContentType() const { return m_sContentType; }
 
 const CString& CHTTPSock::GetParamString() const { return m_sPostData; }
 
+const CString& CHTTPSock::GetURI() const { return m_sURI; }
+
 const CString& CHTTPSock::GetURIPrefix() const { return m_sURIPrefix; }
 
 bool CHTTPSock::HasParam(const CString& sName, bool bPost) const {

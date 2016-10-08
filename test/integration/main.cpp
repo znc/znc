@@ -1965,4 +1965,22 @@ TEST_F(ZNCTest, KeepNickModule) {
         ":Unable to obtain nick user: Nope :-P, #error");
 }
 
+TEST_F(ZNCTest, ModuleCSRFOverride) {
+    auto znc = Run();
+    Z;
+    auto ircd = ConnectIRCd();
+    Z;
+    auto client = LoginClient();
+    Z;
+    client.Write("znc loadmod samplewebapi");
+    client.ReadUntil("Loaded module");
+    Z;
+    auto request = QNetworkRequest(QUrl("http://127.0.0.1:12345/mods/global/samplewebapi/"));
+    auto reply = HttpPost(request, {
+        {"text", "ipsum"}
+    })->readAll().toStdString();
+    Z;
+    EXPECT_THAT(reply, HasSubstr("ipsum"));
+}
+
 }  // namespace

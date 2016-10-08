@@ -83,6 +83,7 @@ class CHTTPSock : public CSocket {
     const CString& GetPass() const;
     const CString& GetParamString() const;
     const CString& GetContentType() const;
+    const CString& GetURI() const;
     const CString& GetURIPrefix() const;
     bool IsPost() const;
     // !Getters

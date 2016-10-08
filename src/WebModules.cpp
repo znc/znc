@@ -647,16 +647,17 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI,
         return PAGE_DONE;
     }
 
-    // Check that they really POSTed from one our forms by checking if they
+    // For pages *not provided* by modules, a CSRF check is performed which involves:
+    // Ensure that they really POSTed from one our forms by checking if they
     // know the "secret" CSRF check value. Don't do this for login since
     // CSRF against the login form makes no sense and the login form does a
     // cookies-enabled check which would break otherwise.
     // Don't do this, if user authenticated using http-basic auth, because:
     // 1. they obviously know the password,
     // 2. it's easier to automate some tasks e.g. user creation, without need to
-    // care about cookies and csrf
-    if (IsPost() && !m_bBasicAuth &&
-        GetParam("_CSRF_Check") != GetCSRFCheck() && sURI != "/login") {
+    //    care about cookies and CSRF
+    if (IsPost() && !m_bBasicAuth && !sURI.StartsWith("/mods/") &&
+        !ValidateCSRFCheck(sURI)) {
         DEBUG("Expected _CSRF_Check: " << GetCSRFCheck());
         DEBUG("Actual _CSRF_Check:   " << GetParam("_CSRF_Check"));
         PrintErrorPage(
@@ -802,6 +803,19 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI,
         }
 
         if (!pModule) return PAGE_NOTFOUND;
+
+        // Pass CSRF check to module.
+        // Note that the normal CSRF checks are not applied to /mods/ URLs.
+        if (IsPost() && !m_bBasicAuth &&
+            !pModule->ValidateWebRequestCSRFCheck(*this, m_sPage)) {
+            DEBUG("Expected _CSRF_Check: " << GetCSRFCheck());
+            DEBUG("Actual _CSRF_Check:   " << GetParam("_CSRF_Check"));
+            PrintErrorPage(
+                403, "Access denied",
+                "POST requests need to send "
+                "a secret token to prevent cross-site request forgery attacks.");
+            return PAGE_DONE;
+        }
 
         m_Template["ModPath"] = pModule->GetWebPath();
         m_Template["ModFilesPath"] = pModule->GetWebFilesPath();
@@ -967,6 +981,10 @@ std::shared_ptr<CWebSession> CWebSock::GetSession() {
 CString CWebSock::GetCSRFCheck() {
     std::shared_ptr<CWebSession> pSession = GetSession();
     return pSession->GetId().MD5();
+}
+
+bool CWebSock::ValidateCSRFCheck(const CString& sURI) {
+    return sURI == "/login" || GetParam("_CSRF_Check") == GetCSRFCheck();
 }
 
 bool CWebSock::OnLogin(const CString& sUser, const CString& sPass,
