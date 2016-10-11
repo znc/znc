@@ -12,8 +12,8 @@ matrix:
         - os: linux
           compiler: gcc
           env: BUILD_TYPE=normal BUILD_WITH=autoconf
-        - os: linux
-          compiler: gcc
+        - os: osx
+          compiler: clang
           env: BUILD_TYPE=coverage BUILD_WITH=autoconf
         - os: linux
           compiler: clang
@@ -59,12 +59,6 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_TYPE" == "tsan" ]]; then sudo apt-get install -y clang-3.8; export CC=clang-3.8 CXX=clang++-3.8; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then source /opt/qt55/bin/qt55-env.sh; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_WITH" == "cmake" ]]; then sudo apt-get install -y cmake; fi
-    - |
-          if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_TYPE" == "coverage" ]]; then
-              sudo apt-get install -y lcov
-              gem install coveralls-lcov
-              lcov --directory . --zerocounters
-          fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sw_vers; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sysctl -a | grep cpu; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sysctl -a | grep mem; fi
@@ -98,13 +92,6 @@ after_success:
     - |
           if [[ "$BUILD_TYPE" == "coverage" ]]; then
               bash <(curl -s https://codecov.io/bash)
-              cd build/
-              ls -l /usr/bin|grep gcov
-              lcov --directory . --capture --output-file coverage.info --gcov-tool /usr/bin/gcov-4.8 || exit 1
-              lcov --remove coverage.info '/usr/*' 'test/*' --output-file coverage.info || exit 1
-              lcov --list coverage.info || exit 1
-              coveralls-lcov coverage.info || exit 1
-              cd ..
           else
               echo "No coverage for this build"
           fi
