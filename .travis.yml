@@ -39,7 +39,7 @@ before_install:
     - if [[ "$BUILD_TYPE" == "tarball" ]]; then export CFGFLAGS="--with-gtest=/usr/src/gtest --with-gmock=/usr/src/gmock --disable-swig" MYCXXFLAGS= MYLDFLAGS=; fi
     - if [[ "$BUILD_TYPE" == "asan" ]]; then export CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fPIE" MYLDFLAGS="-fsanitize=address -pie"; fi
     - if [[ "$BUILD_TYPE" == "tsan" ]]; then export CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=thread -O1 -fPIE" MYLDFLAGS="-fsanitize=thread"; fi
-    - if [[ "$BUILD_TYPE" == "coverage" ]]; then export CFGFLAGS="--enable-debug --disable-perl --disable-python" MYCXXFLAGS=--coverage MYLDFLAGS=--coverage DISABLED_ZNC_PERL_PYTHON_TEST=1; fi
+    - if [[ "$BUILD_TYPE" == "coverage" ]]; then export CFGFLAGS="--enable-debug --disable-perl --disable-python" MYCXXFLAGS="--coverage -O0 -fno-elide-constructors" MYLDFLAGS=--coverage DISABLED_ZNC_PERL_PYTHON_TEST=1; fi
     - if [[ "$BUILD_WITH" == "cmake" ]]; then export CFGSUFFIX=.sh UNITTEST=unittest INTTEST=inttest; else export CFGSUFFIX= UNITTEST=test INTTEST=test2; fi
       # UBSan randomly crashes clang, and very often :(
       # CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=undefined -O1 -fPIE -fno-sanitize-recover" MYLDFLAGS="-fsanitize=undefined -pie -fno-sanitize-recover"
