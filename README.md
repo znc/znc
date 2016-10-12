@@ -10,7 +10,7 @@
 ## Table of contents
 
 - Minimal Requirements
-- Optional Requirements
+- Optional Packages
 - Installing ZNC
 - Setting up znc.conf
 - Special config options
@@ -31,7 +31,9 @@ Core:
     * autoconf and automake (but only if building from git, not from tarball)
     * CMake
 
-## Optional Requirements
+## Optional Packages
+
+For certain non-core functionalities, various packages are necessary.
 
 SSL/TLS support:
 * openssl 0.9.7d or later
