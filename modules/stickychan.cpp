@@ -17,6 +17,8 @@
 #include <znc/Chan.h>
 #include <znc/IRCNetwork.h>
 
+#define STICKYCHAN_TIMER_INTERVAL 180
+
 using std::vector;
 
 class CStickyChan : public CModule {
@@ -236,7 +238,7 @@ bool CStickyChan::OnLoad(const CString& sArgs, CString& sMessage) {
     // Since we now have these channels added, clear the argument list
     SetArgs("");
 
-    AddTimer(RunTimer, "StickyChanTimer", 15);
+    AddTimer(RunTimer, "StickyChanTimer", STICKYCHAN_TIMER_INTERVAL);
     return (true);
 }
 
