@@ -912,7 +912,7 @@ HTML_EXTRA_FILES       =
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output.
 # Doxygen will adjust the colors in the style sheet and background images
-# according to this color. Hue is specified as an angle on a colorwheel,
+# according to this color. Hue is specified as an angle on a color wheel,
 # see http://en.wikipedia.org/wiki/Hue for more information.
 # For instance the value 0 represents red, 60 is yellow, 120 is green,
 # 180 is cyan, 240 is blue, 300 purple, and 360 is red again.
