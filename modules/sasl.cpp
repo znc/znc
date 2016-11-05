@@ -101,6 +101,15 @@ class CSASLMod : public CModule {
     }
 
     void Set(const CString& sLine) {
+        if (sLine.Token(1).empty()) {
+            CString sUsername = GetNV("username");
+            CString sPassword = GetNV("password");
+
+            PutModule("Username is currently " + (sUsername.empty() ? "not set" : "set to '" + sUsername + "'") +
+                      ", a password was " + (sPassword.empty() ? "not " : "") + "supplied.");
+            return;
+        }
+
         SetNV("username", sLine.Token(1));
         SetNV("password", sLine.Token(2));
 
