@@ -19,7 +19,7 @@ environment:
 install:
     - ps: Invoke-WebRequest $env:cygwin_url -OutFile c:\cygwin-setup.exe
       # libcrypt-devel is needed only on x86_64 and only for modperl... probably some dependency problem.
-    - c:\cygwin-setup.exe --quiet-mode --no-shortcuts --no-startmenu --no-desktop --upgrade-also --only-site --site http://cygwin.mirror.constant.com/ --root c:\cygwin-root --local-package-dir c:\cygwin-setup-cache --packages automake,gcc-g++,make,pkg-config,wget,openssl-devel,libicu-devel,zlib-devel,libcrypt-devel,perl,python3,swig,libsasl2-devel,libQt5Core-devel,cmake,libboost-devel,gettext-devel
+    - c:\cygwin-setup.exe --quiet-mode --no-shortcuts --no-startmenu --no-desktop --upgrade-also --only-site --site http://cygwin.mirror.constant.com/ --root c:\cygwin-root --local-package-dir c:\cygwin-setup-cache --packages automake,gcc-g++,make,pkg-config,wget,openssl-devel,libicu-devel,zlib-devel,libcrypt-devel,perl,python3-devel,swig,libsasl2-devel,libQt5Core-devel,cmake,libboost-devel,gettext-devel
     - c:\cygwin-root\bin\sh -lc "echo Hi"
     - c:\cygwin-root\bin\sh -lc "uname -a"
     - c:\cygwin-root\bin\sh -lc "cat /proc/cpuinfo"
