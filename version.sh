@@ -16,7 +16,7 @@ else
 
 	# Figure out the information we need
 	LATEST_TAG=`${GIT} describe --abbrev=0 HEAD`
-	COMMITS_SINCE=`${GIT} log --format=oneline ${LATEST_TAG}..HEAD | wc -l`
+	COMMITS_SINCE=`${GIT} log --pretty=oneline ${LATEST_TAG}..HEAD | wc -l`
 	# Explicitly make it a number: on openbsd wc -l returns "    42" instead of "42"
 	let COMMITS_SINCE=COMMITS_SINCE
 	SHORT_ID=`${GIT} rev-parse --short HEAD`
