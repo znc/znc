@@ -145,7 +145,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 		// we don't want any PING forwarded
 		PutIRCQuick("PONG " + sLine.substr(5));
 		return;
-	} else if (sLine.Token(1).Equals("PONG")) {
+	} else if ((sLine.Token(1).Equals("PONG") && sLine.Token(0).StartsWith(":")) || sLine.Token(0).Equals("PONG")) {
 		// Block PONGs, we already responded to the pings
 		return;
 	} else if (sLine.Equals("ERROR ", false, 6)) {
