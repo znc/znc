@@ -157,6 +157,12 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork &Network) {
 	m_MotdBuffer.SetLineCount(200, true);  // This should be more than enough motd lines
 	m_NoticeBuffer.SetLineCount(250, true);
 
+	m_pPingTimer = new CIRCNetworkPingTimer(this);
+	CZNC::Get().GetManager().AddCron(m_pPingTimer);
+
+	m_pJoinTimer = new CIRCNetworkJoinTimer(this);
+	CZNC::Get().GetManager().AddCron(m_pJoinTimer);
+
 	Clone(Network);
 }
 
