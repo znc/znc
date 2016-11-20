@@ -24,6 +24,7 @@ import znc
 
 class pyeval(znc.Module, InteractiveInterpreter):
     module_types = [znc.CModInfo.UserModule, znc.CModInfo.NetworkModule]
+    wiki_page = 'pyeval'
 
     def write(self, data):
         for line in data.split('\n'):
