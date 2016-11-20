@@ -155,11 +155,14 @@ class CSockManager : public TSocketManager<CZNCSock> {
                  const CString& sBindHost = "", CZNCSock* pcSock = nullptr);
 
     unsigned int GetAnonConnectionCount(const CString& sIP) const;
+    void DelSockByAddr(Csock* pcSock) override;
 
   private:
     void FinishConnect(const CString& sHostname, u_short iPort,
                        const CString& sSockName, int iTimeout, bool bSSL,
                        const CString& sBindHost, CZNCSock* pcSock);
+
+    std::map<Csock*, bool /* deleted */> m_InFlightDnsSockets;
 
 #ifdef HAVE_PTHREAD
     class CThreadMonitorFD;

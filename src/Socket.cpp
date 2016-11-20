@@ -392,6 +392,7 @@ CSockManager::~CSockManager() {}
 void CSockManager::Connect(const CString& sHostname, u_short iPort,
                            const CString& sSockName, int iTimeout, bool bSSL,
                            const CString& sBindHost, CZNCSock* pcSock) {
+    m_InFlightDnsSockets[pcSock] = false;
     if (pcSock) {
         pcSock->SetHostToVerifySSL(sHostname);
     }
@@ -423,6 +424,20 @@ void CSockManager::FinishConnect(const CString& sHostname, u_short iPort,
                                  const CString& sSockName, int iTimeout,
                                  bool bSSL, const CString& sBindHost,
                                  CZNCSock* pcSock) {
+    auto it = m_InFlightDnsSockets.find(pcSock);
+    if (it != m_InFlightDnsSockets.end()) {
+        bool bSocketDeletedAlready = it->second;
+        m_InFlightDnsSockets.erase(it);
+        if (bSocketDeletedAlready) {
+            DEBUG("TDNS: Socket ["
+                  << sSockName
+                  << "] is deleted already, not proceeding with connection");
+            return;
+        }
+    } else {
+        // impossible
+    }
+
     CSConnection C(sHostname, iPort, iTimeout);
 
     C.SetSockName(sSockName);
@@ -437,6 +452,16 @@ void CSockManager::FinishConnect(const CString& sHostname, u_short iPort,
 #endif
 
     TSocketManager<CZNCSock>::Connect(C, pcSock);
+}
+
+void CSockManager::DelSockByAddr(Csock* pcSock) {
+    auto it = m_InFlightDnsSockets.find(pcSock);
+    if (it != m_InFlightDnsSockets.end()) {
+        // The socket is resolving its DNS. When that finishes, let it silently
+        // die without crash.
+        it->second = true;
+    }
+    TSocketManager<CZNCSock>::DelSockByAddr(pcSock);
 }
 
 /////////////////// CSocket ///////////////////
