@@ -131,6 +131,7 @@ public:
 	void Connect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout = 60, bool bSSL = false, const CString& sBindHost = "", CZNCSock *pcSock = NULL);
 
 	unsigned int GetAnonConnectionCount(const CString &sIP) const;
+	void DelSockByAddr(Csock* pcSock) override;
 private:
 	void FinishConnect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout, bool bSSL, const CString& sBindHost, CZNCSock *pcSock);
 

@@ -349,12 +349,16 @@ CSockManager::CSockManager() {
 CSockManager::~CSockManager() {
 }
 
+// It's here to not break ABI of 1.6; in 1.7 this should be a data member of CSockManager.
+static std::map<Csock*, bool /* deleted */> g_InFlightDnsSockets;
+
 void CSockManager::Connect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout, bool bSSL, const CString& sBindHost, CZNCSock *pcSock) {
+	g_InFlightDnsSockets[pcSock] = false;
 	if (pcSock) {
 		pcSock->SetHostToVerifySSL(sHostname);
 	}
 #ifdef HAVE_THREADED_DNS
-	DEBUG("TDNS: initiating resolving of [" << sHostname << "] and bindhost [" << sBindHost << "]");
+	DEBUG("TDNS: initiating resolving of [" << sHostname << "] and bindhost [" << sBindHost << "] for [" << sSockName << "]");
 	TDNSTask* task = new TDNSTask;
 	task->sHostname   = sHostname;
 	task->iPort       = iPort;
@@ -380,6 +384,18 @@ void CSockManager::Connect(const CString& sHostname, u_short iPort, const CStrin
 }
 
 void CSockManager::FinishConnect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout, bool bSSL, const CString& sBindHost, CZNCSock *pcSock) {
+	auto it = g_InFlightDnsSockets.find(pcSock);
+	if (it != g_InFlightDnsSockets.end()) {
+		bool bSocketDeletedAlready = it->second;
+		g_InFlightDnsSockets.erase(it);
+		if (bSocketDeletedAlready) {
+			DEBUG("TDNS: Socket [" << sSockName << "] is deleted already, not proceeding with connection");
+			return;
+		}
+	} else {
+		// impossible
+	}
+
 	CSConnection C(sHostname, iPort, iTimeout);
 
 	C.SetSockName(sSockName);
@@ -394,6 +410,15 @@ void CSockManager::FinishConnect(const CString& sHostname, u_short iPort, const 
 #endif
 
 	TSocketManager<CZNCSock>::Connect(C, pcSock);
+}
+
+void CSockManager::DelSockByAddr(Csock* pcSock) {
+	auto it = g_InFlightDnsSockets.find(pcSock);
+	if (it != g_InFlightDnsSockets.end()) {
+		// Then socket is resolving its DNS. When that finishes, let it silently die without crash.
+		it->second = true;
+	}
+	TSocketManager<CZNCSock>::DelSockByAddr(pcSock);
 }
 
 
