@@ -310,9 +310,9 @@ public:
 	virtual EModRet OnUserRaw(CString& sLine) override
 	{
 		CString sCmd = sLine.Token(0).AsUpper();
-
-		if (!GetNetwork()->GetIRCSock())
-			return CONTINUE;
+        if (!GetNetwork()->GetIRCSock() ||
+            !GetNetwork()->GetIRCSock()->IsConnected())
+            return CONTINUE;
 
 		if (sCmd.Equals("MODE")) {
 			// Check if this is a mode request that needs to be handled
