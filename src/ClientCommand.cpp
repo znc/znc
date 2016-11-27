@@ -786,7 +786,7 @@ void CClient::UserCommand(CString& sLine) {
             return;
         }
 
-        if (m_pNetwork->AddServer(sLine.Token(1, true))) {
+        if (m_pNetwork->AddServer(sLine.Token(1, true).StripControls())) {
             PutStatus("Server added");
         } else {
             PutStatus("Unable to add that server");
@@ -854,7 +854,7 @@ void CClient::UserCommand(CString& sLine) {
                 "You must be connected with a network to use this command");
             return;
         }
-        CString sFP = sLine.Token(1);
+        CString sFP = sLine.Token(1).StripControls();
         if (sFP.empty()) {
             PutStatus("Usage: AddTrustedServerFingerprint <fi:ng:er>");
             return;
@@ -1319,7 +1319,7 @@ void CClient::UserCommand(CString& sLine) {
                 "SetUserBindHost instead");
             return;
         }
-        CString sArg = sLine.Token(1);
+        CString sArg = sLine.Token(1).StripControls();
 
         if (sArg.empty()) {
             PutStatus("Usage: SetBindHost <host>");
@@ -1336,7 +1336,7 @@ void CClient::UserCommand(CString& sLine) {
                   "] to [" + m_pNetwork->GetBindHost() + "]");
     } else if (sCommand.Equals("SETUSERBINDHOST") &&
                (m_pUser->IsAdmin() || !m_pUser->DenySetBindHost())) {
-        CString sArg = sLine.Token(1);
+        CString sArg = sLine.Token(1).StripControls();
 
         if (sArg.empty()) {
             PutStatus("Usage: SetUserBindHost <host>");
@@ -1494,7 +1494,7 @@ void CClient::UserCommand(CString& sLine) {
             return;
         }
 
-        CString sBuffer = sLine.Token(1);
+        CString sBuffer = sLine.Token(1).StripControls();
 
         if (sBuffer.empty()) {
             PutStatus("Usage: SetBuffer <#chan|query> [linecount]");

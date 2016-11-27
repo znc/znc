@@ -286,7 +286,7 @@ class CAdminMod : public CModule {
     void Set(const CString& sLine) {
         const CString sVar = sLine.Token(1).AsLower();
         CString sUserName = sLine.Token(2);
-        CString sValue = sLine.Token(3, true);
+        CString sValue = sLine.Token(3, true).StripControls();
 
         if (sValue.empty()) {
             PutModule("Usage: Set <variable> <username> <value>");
@@ -535,7 +535,7 @@ class CAdminMod : public CModule {
         const CString sVar = sLine.Token(1).AsLower();
         const CString sUsername = sLine.Token(2);
         const CString sNetwork = sLine.Token(3);
-        const CString sValue = sLine.Token(4, true);
+        const CString sValue = sLine.Token(4, true).StripControls();
 
         CUser* pUser = nullptr;
         CIRCNetwork* pNetwork = nullptr;
@@ -618,7 +618,7 @@ class CAdminMod : public CModule {
     void AddChan(const CString& sLine) {
         const CString sUsername = sLine.Token(1);
         const CString sNetwork = sLine.Token(2);
-        const CString sChan = sLine.Token(3);
+        const CString sChan = sLine.Token(3).StripControls();
 
         if (sChan.empty()) {
             PutModule("Usage: AddChan <username> <network> <channel>");
@@ -752,7 +752,7 @@ class CAdminMod : public CModule {
         CString sUsername = sLine.Token(2);
         CString sNetwork = sLine.Token(3);
         CString sChan = sLine.Token(4);
-        CString sValue = sLine.Token(5, true);
+        CString sValue = sLine.Token(5, true).StripControls();
 
         if (sValue.empty()) {
             PutModule(
@@ -867,7 +867,7 @@ class CAdminMod : public CModule {
             return;
         }
 
-        const CString sUsername = sLine.Token(1), sPassword = sLine.Token(2);
+        const CString sUsername = sLine.Token(1), sPassword = sLine.Token(2).StripControls();
         if (sPassword.empty()) {
             PutModule("Usage: AddUser <username> <password>");
             return;
@@ -1094,7 +1094,7 @@ class CAdminMod : public CModule {
     void AddServer(const CString& sLine) {
         CString sUsername = sLine.Token(1);
         CString sNetwork = sLine.Token(2);
-        CString sServer = sLine.Token(3, true);
+        CString sServer = sLine.Token(3, true).StripControls();
 
         if (sServer.empty()) {
             PutModule("Usage: AddServer <username> <network> <server>");
