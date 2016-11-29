@@ -202,6 +202,12 @@ if(HAVE_I18N AND GETTEXT_MSGMERGE_EXECUTABLE)
 	endif()
 endif()
 
+tristate_option(OTP "Two-factor authentication with OTP")
+if(WANT_OTP)
+	pkg_check_modules(OATH ${TRISTATE_OTP_REQUIRED} liboath)
+endif()
+set(HAVE_OTP "${OATH_FOUND}")
+
 # poll() is broken on Mac OS, it fails with POLLNVAL for pipe()s.
 if(APPLE)
 	set(CSOCK_USE_POLL false)
@@ -349,6 +355,7 @@ summary_line("Cyrus    " "${CYRUS_FOUND}")
 summary_line("Charset  " "${ICU_FOUND}")
 summary_line("Zlib     " "${ZLIB_FOUND}")
 summary_line("i18n     " "${HAVE_I18N}")
+summary_line("OTP      " "${HAVE_OTP}")
 
 include(render_framed_multiline)
 render_framed_multiline("${summary_lines}")

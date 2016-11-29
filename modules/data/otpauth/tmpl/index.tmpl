@@ -1,0 +1,23 @@
+<? I18N znc-otpauth ?>
+
+<? INC Header.tmpl ?>
+
+<? IF exists ?>
+	<? FORMAT "You have two-factor authentication already configured!" ?>
+	<form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>regen" method="post">
+		<? INC _csrf_check.tmpl ?>
+		<input type="submit" value="<? FORMAT "Regenerate" ?>"/>
+	</form>
+	<form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>clear" method="post">
+		<? INC _csrf_check.tmpl ?>
+		<input type="submit" value="<? FORMAT "Clear" ?>"/>
+	</form>
+<? ELSE ?>
+	<? FORMAT "You don't have two-factor authentication configured." ?>
+	<form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>regen" method="post">
+		<? INC _csrf_check.tmpl ?>
+		<input type="submit" value="<? FORMAT "Generate" ?>"/>
+	</form>
+<? ENDIF ?>
+
+<? INC Footer.tmpl ?>

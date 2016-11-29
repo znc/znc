@@ -16,6 +16,8 @@ ZNC includes code from jQuery UI (http://jqueryui.com/), licensed under the MIT 
 ZNC includes code from Selectize (http://brianreavis.github.io/selectize.js/), licensed under the Apache License 2.0.
 ZNC includes modified code from CMakeFindFrameworks.cmake by Kitware, Inc., licensed under BSD License.
 ZNC includes modified code from TestLargeFiles.cmake, licensed under Boost Software License, Version 1.0.
+ZNC includes code from QR-Code-generator (https://github.com/nayuki/QR-Code-generator), licensed under the MIT License.
+ZNC includes code from cppcodec (https://github.com/tplgy/cppcodec), licensed under the MIT License.
 
 ZNC is developed by these people:
 
