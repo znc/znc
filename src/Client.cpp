@@ -28,9 +28,10 @@ using std::vector;
 	CModule *pModule = NULL;  \
 	if (NETWORK && (pModule = (NETWORK)->GetModules().FindModule(MOD))) {  \
 		try {  \
+			CClient* pOldClient = pModule->GetClient(); \
 			pModule->SetClient(CLIENT);  \
 			pModule->FUNC;  \
-			pModule->SetClient(NULL);  \
+			pModule->SetClient(pOldClient);  \
 		} catch (const CModule::EModException& e) {  \
 			if (e == CModule::UNLOAD) {  \
 				(NETWORK)->GetModules().UnloadModule(MOD);  \
@@ -38,11 +39,13 @@ using std::vector;
 		}  \
 	} else if ((pModule = (USER)->GetModules().FindModule(MOD))) {  \
 		try {  \
+			CClient* pOldClient = pModule->GetClient(); \
+			CIRCNetwork* pOldNetwork = pModule->GetNetwork(); \
 			pModule->SetClient(CLIENT);  \
 			pModule->SetNetwork(NETWORK);  \
 			pModule->FUNC;  \
-			pModule->SetClient(NULL);  \
-			pModule->SetNetwork(NULL);  \
+			pModule->SetClient(pOldClient);  \
+			pModule->SetNetwork(pOldNetwork);  \
 		} catch (const CModule::EModException& e) {  \
 			if (e == CModule::UNLOAD) {  \
 				(USER)->GetModules().UnloadModule(MOD);  \
@@ -50,13 +53,16 @@ using std::vector;
 		}  \
 	} else if ((pModule = CZNC::Get().GetModules().FindModule(MOD))) {  \
 		try {  \
+			CClient* pOldClient = pModule->GetClient(); \
+			CIRCNetwork* pOldNetwork = pModule->GetNetwork(); \
+			CUser* pOldUser = pModule->GetUser(); \
 			pModule->SetClient(CLIENT);  \
 			pModule->SetNetwork(NETWORK);  \
 			pModule->SetUser(USER);  \
 			pModule->FUNC;  \
-			pModule->SetClient(NULL);  \
-			pModule->SetNetwork(NULL);  \
-			pModule->SetUser(NULL);  \
+			pModule->SetClient(pOldClient);  \
+			pModule->SetNetwork(pOldNetwork);  \
+			pModule->SetUser(pOldUser);  \
 		} catch (const CModule::EModException& e) {  \
 			if (e == CModule::UNLOAD) {  \
 					CZNC::Get().GetModules().UnloadModule(MOD);  \
