@@ -17,7 +17,7 @@
 #include <znc/Chan.h>
 #include <znc/IRCNetwork.h>
 
-#define STICKYCHAN_TIMER_INTERVAL 180
+#define STICKYCHAN_TIMER_INTERVAL 60
 
 using std::vector;
 
