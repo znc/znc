@@ -28,7 +28,7 @@ AC_DEFUN([ZNC_AUTO_FAIL], [
 ])
 
 # AC_PROG_CXX sets CXXFLAGS to "-O2 -g" if it is unset which we don't want
-CXXFLAGS="$CXXFLAGS -DOPENSSL_NO_COMP=1"
+CXXFLAGS="$CXXFLAGS "
 AC_PROG_CXX
 # "Optional" because we want custom error message
 AX_CXX_COMPILE_STDCXX_11([noext], [optional])
