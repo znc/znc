@@ -20,6 +20,26 @@
 
 
 
+# ZNC 1.6.4 (2016-12-10)
+
+## Fixes
+
+* Fixed build with OpenSSL 1.1.
+* Fixed build on Cygwin.
+* Fixed a segfault after cloning a user. The bug was introduced in ZNC 1.6.0.
+* Fixed a segfault when deleting a user or network which is waiting for DNS
+  during connection. The bug was introduced in ZNC 1.0.
+* Fixed a segfault which could be triggered using alias module.
+* Fixed an error in controlpanel module when setting the bindhost of another user.
+* Fixed route_replies to not cause client to disconnect by timeout.
+* Fixed compatibility with the Gitter IRC bridge.
+
+## Internal
+* Fixed `OnInvite` for modpython and modperl.
+* Fixed external location of GoogleTest for `make test`.
+
+
+
 # ZNC 1.6.3 (2016-02-23)
 
 ## Core
