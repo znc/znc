@@ -60,25 +60,53 @@ class CModInfo;
 #define ZNC_EXPORT_LIB_EXPORT
 #endif
 
-#define MODCOMMONDEFS(CLASS, DESCRIPTION, TYPE)                          \
-    extern "C" {                                                         \
-    ZNC_EXPORT_LIB_EXPORT bool ZNCModInfo(double dCoreVersion,           \
-                                          CModInfo& Info);               \
-    ZNC_EXPORT_LIB_EXPORT bool ZNCModInfo(double dCoreVersion,           \
-                                          CModInfo& Info) {              \
-        if (dCoreVersion != VERSION) return false;                       \
-        auto t_s = [&](const CString& sEnglish,                          \
-                       const CString& sContext = "") {                   \
-            return sEnglish.empty() ? "" : Info.t_s(sEnglish, sContext); \
-        };                                                               \
-        t_s(CString()); /* Don't warn about unused t_s */                \
-        Info.SetDescription(DESCRIPTION);                                \
-        Info.SetDefaultType(TYPE);                                       \
-        Info.AddType(TYPE);                                              \
-        Info.SetLoader(TModLoad<CLASS>);                                 \
-        TModInfo<CLASS>(Info);                                           \
-        return true;                                                     \
-    }                                                                    \
+/** C-style entry point to the module.
+ *
+ *  First, core compares C strings with version and compilation options of core
+ *  and module. If they match, assume that C++ classes have the same layout and
+ *  proceed to filling CModInfo.
+ *
+ *  Most parts of version-extra is explicitly not compared, otherwise all
+ *  modules need to be rebuilt for every commit, which is more cumbersome for
+ *  ZNC developers. However, the part set by user (e.g. +deb1), is compared.
+ *
+ *  If this struct ever changes, the first field (pcVersion) must stay the same.
+ *  Otherwise, name of ZNCModuleEntry function must also change. Other fields
+ *  can change at will.
+ *
+ *  Modules shouldn't care about this struct, it's all managed by ...MODULEDEFS
+ *  macro.
+ */
+struct CModuleEntry {
+    const char* pcVersion;
+    const char* pcVersionExtra;
+    const char* pcCompileOptions;
+    void (*fpFillModInfo)(CModInfo&);
+};
+
+#define MODCOMMONDEFS(CLASS, DESCRIPTION, TYPE)                             \
+    static void FillModInfo(CModInfo& Info) {                               \
+        auto t_s = [&](const CString& sEnglish,                             \
+                       const CString& sContext = "") {                      \
+            return sEnglish.empty() ? "" : Info.t_s(sEnglish, sContext);    \
+        };                                                                  \
+        t_s(CString()); /* Don't warn about unused t_s */                   \
+        Info.SetDescription(DESCRIPTION);                                   \
+        Info.SetDefaultType(TYPE);                                          \
+        Info.AddType(TYPE);                                                 \
+        Info.SetLoader(TModLoad<CLASS>);                                    \
+        TModInfo<CLASS>(Info);                                              \
+    }                                                                       \
+    extern "C" {                                                            \
+    /* A global variable leads to ODR violation when several modules are    \
+     * loaded. But a static variable inside a function works. */            \
+    ZNC_EXPORT_LIB_EXPORT const CModuleEntry* ZNCModuleEntry();             \
+    ZNC_EXPORT_LIB_EXPORT const CModuleEntry* ZNCModuleEntry() {            \
+        static const CModuleEntry ThisModule = {VERSION_STR, VERSION_EXTRA, \
+                                                ZNC_COMPILE_OPTIONS_STRING, \
+                                                FillModInfo};               \
+        return &ThisModule;                                                 \
+    }                                                                       \
     }
 
 /** Instead of writing a constructor, you should call this macro. It accepts all
@@ -1016,7 +1044,6 @@ class CModule {
     virtual EModRet OnSendToIRC(CString& sLine);
 
     ModHandle GetDLL() { return m_pDLL; }
-    static double GetCoreVersion() { return VERSION; }
 
     /** This function sends a given raw IRC line to the IRC server, if we
      *  are connected to one. Else this line is discarded.
@@ -1552,8 +1579,7 @@ class CModules : public std::vector<CModule*> {
 
   private:
     static ModHandle OpenModule(const CString& sModule, const CString& sModPath,
-                                bool& bVersionMismatch, CModInfo& Info,
-                                CString& sRetMsg);
+                                CModInfo& Info, CString& sRetMsg);
 
   protected:
     CUser* m_pUser;

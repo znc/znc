@@ -53,9 +53,11 @@ cp -p third_party/Csocket/Csocket.cc third_party/Csocket/Csocket.h $TMPDIR/$ZNCD
 	rm -r autom4te.cache/
 	rm .travis* .appveyor*
 	rm make-tarball.sh
+	# For autoconf
 	sed -e "s/THIS_IS_NOT_TARBALL//" -i Makefile.in
 	echo '#include <znc/version.h>' > src/version.cpp
 	echo "const char* ZNC_VERSION_EXTRA = VERSION_EXTRA \"$DESC\";" >> src/version.cpp
+	# For cmake
 	if [ "x$DESC" != "x" ]; then
 		echo $DESC > .nightly
 	fi

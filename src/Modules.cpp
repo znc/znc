@@ -1619,7 +1619,6 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs,
     if (bHandled) return bSuccess;
 
     CString sModPath, sDataPath;
-    bool bVersionMismatch;
     CModInfo Info;
 
     if (!FindModPath(sModule, sModPath, sDataPath)) {
@@ -1629,16 +1628,9 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs,
     Info.SetName(sModule);
     Info.SetPath(sModPath);
 
-    ModHandle p =
-        OpenModule(sModule, sModPath, bVersionMismatch, Info, sRetMsg);
+    ModHandle p = OpenModule(sModule, sModPath, Info, sRetMsg);
 
     if (!p) return false;
-
-    if (bVersionMismatch) {
-        dlclose(p);
-        sRetMsg = "Version mismatch, recompile this module.";
-        return false;
-    }
 
     if (!Info.SupportsType(eType)) {
         dlclose(p);
@@ -1785,19 +1777,11 @@ bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule,
 
 bool CModules::GetModPathInfo(CModInfo& ModInfo, const CString& sModule,
                               const CString& sModPath, CString& sRetMsg) {
-    bool bVersionMismatch;
-
     ModInfo.SetName(sModule);
     ModInfo.SetPath(sModPath);
 
-    ModHandle p =
-        OpenModule(sModule, sModPath, bVersionMismatch, ModInfo, sRetMsg);
+    ModHandle p = OpenModule(sModule, sModPath, ModInfo, sRetMsg);
     if (!p) return false;
-
-    if (bVersionMismatch) {
-        ModInfo.SetDescription(
-            "--- Version mismatch, recompile this module. ---");
-    }
 
     dlclose(p);
 
@@ -1901,10 +1885,8 @@ CModules::ModDirList CModules::GetModDirs() {
 }
 
 ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath,
-                               bool& bVersionMismatch, CModInfo& Info,
-                               CString& sRetMsg) {
+                               CModInfo& Info, CString& sRetMsg) {
     // Some sane defaults in case anything errors out below
-    bVersionMismatch = false;
     sRetMsg.clear();
 
     for (unsigned int a = 0; a < sModule.length(); a++) {
@@ -1942,24 +1924,43 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath,
         return nullptr;
     }
 
-    CTranslationDomainRefHolder translation("znc-" + sModule);
-    typedef bool (*InfoFP)(double, CModInfo&);
-    InfoFP ZNCModInfo = (InfoFP)dlsym(p, "ZNCModInfo");
-
-    if (!ZNCModInfo) {
+    CModuleEntry* (*fpZNCModuleEntry)() = nullptr;
+    // man dlsym(3) explains this
+    *reinterpret_cast<void**>(&fpZNCModuleEntry) = dlsym(p, "ZNCModuleEntry");
+    if (!fpZNCModuleEntry) {
         dlclose(p);
-        sRetMsg = "Could not find ZNCModInfo() in module [" + sModule + "]";
+        sRetMsg = "Could not find ZNCModuleEntry in module [" + sModule + "]";
+        return nullptr;
+    }
+    const CModuleEntry* pModuleEntry = fpZNCModuleEntry();
+
+    if (std::strcmp(pModuleEntry->pcVersion, VERSION_STR) ||
+        std::strcmp(pModuleEntry->pcVersionExtra, VERSION_EXTRA)) {
+        sRetMsg = "Version mismatch for module [" + sModule +
+                  "] (core is " VERSION_STR VERSION_EXTRA
+                  ", module is built for " +
+                  CString(pModuleEntry->pcVersion) +
+                  pModuleEntry->pcVersionExtra + "), recompile this module.";
+        dlclose(p);
         return nullptr;
     }
 
-    if (ZNCModInfo(CModule::GetCoreVersion(), Info)) {
-        sRetMsg = "";
-        bVersionMismatch = false;
-    } else {
-        bVersionMismatch = true;
-        sRetMsg = "Version mismatch, recompile this module.";
+    if (std::strcmp(pModuleEntry->pcCompileOptions,
+                    ZNC_COMPILE_OPTIONS_STRING)) {
+        sRetMsg =
+            "Module [" + sModule +
+            "] is built incompatibly (core is '" ZNC_COMPILE_OPTIONS_STRING
+            "', module is '" +
+            CString(pModuleEntry->pcCompileOptions) +
+            "'), recompile this module.";
+        dlclose(p);
+        return nullptr;
     }
 
+    CTranslationDomainRefHolder translation("znc-" + sModule);
+    pModuleEntry->fpFillModInfo(Info);
+
+    sRetMsg = "";
     return p;
 }
 

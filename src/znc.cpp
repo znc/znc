@@ -139,43 +139,15 @@ CString CZNC::GetTag(bool bIncludeVersion, bool bHTML) {
 }
 
 CString CZNC::GetCompileOptionsString() {
-    return "IPv6: "
-#ifdef HAVE_IPV6
-           "yes"
-#else
-           "no"
-#endif
-           ", SSL: "
-#ifdef HAVE_LIBSSL
-           "yes"
-#else
-           "no"
-#endif
-           ", DNS: "
-#ifdef HAVE_THREADED_DNS
-           "threads"
-#else
-           "blocking"
-#endif
-           ", charset: "
-#ifdef HAVE_ICU
-           "yes"
-#else
-           "no"
-#endif
-           ", build: "
+    // Build system doesn't affect ABI
+    return ZNC_COMPILE_OPTIONS_STRING + CString(
+                                            ", build: "
 #ifdef BUILD_WITH_CMAKE
-           "cmake"
+                                            "cmake"
 #else
-           "autoconf"
+                                            "autoconf"
 #endif
-           ", i18n: "
-#ifdef HAVE_I18N
-           "yes"
-#else
-           "no"
-#endif
-        ;
+                                            );
 }
 
 CString CZNC::GetUptime() const {
