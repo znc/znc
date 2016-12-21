@@ -50,6 +50,7 @@ if(SWIG_FOUND)
 		-o "${CMAKE_CURRENT_BINARY_DIR}/modpython_biglib.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/modpython.i"
 		DEPENDS "modpython.i"
+		IMPLICIT_DEPENDS CXX "${CMAKE_CURRENT_SOURCE_DIR}/modpython.i"
 		VERBATIM)
 else()
 	add_custom_command(
@@ -60,8 +61,10 @@ else()
 endif()
 add_custom_target(modpython_functions DEPENDS "pyfunctions.cpp")
 add_custom_target(modpython_swigruntime DEPENDS "swigpyrun.h")
+add_custom_target(modpython_swig DEPENDS "modpython_biglib.cpp" "znc_core.py")
 
 znc_add_library(modpython_lib MODULE modpython_biglib.cpp)
+add_dependencies(modpython_lib modpython_swig)
 target_include_directories(modpython_lib PRIVATE
 	"${PROJECT_BINARY_DIR}/include"
 	"${PROJECT_SOURCE_DIR}/include"

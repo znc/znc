@@ -54,6 +54,7 @@ if(SWIG_FOUND)
 		-o "${CMAKE_CURRENT_BINARY_DIR}/modperl_biglib.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/modperl.i"
 		DEPENDS "modperl.i"
+		IMPLICIT_DEPENDS CXX "${CMAKE_CURRENT_SOURCE_DIR}/modperl.i"
 		VERBATIM)
 else()
 	add_custom_command(
@@ -64,12 +65,14 @@ else()
 endif()
 add_custom_target(modperl_functions DEPENDS "perlfunctions.cpp")
 add_custom_target(modperl_swigruntime DEPENDS "swigperlrun.h")
+add_custom_target(modperl_swig DEPENDS "modperl_biglib.cpp" "ZNC.pm")
 
 execute_process(COMMAND "${PERL_EXECUTABLE}"
 	-MConfig "-eprint $Config::Config{dlext}"
 	OUTPUT_VARIABLE perl_ext)
 
 znc_add_library(modperl_lib MODULE modperl_biglib.cpp)
+add_dependencies(modperl_lib modperl_swig)
 target_include_directories(modperl_lib PRIVATE
 	"${PROJECT_BINARY_DIR}/include"
 	"${PROJECT_SOURCE_DIR}/include"
