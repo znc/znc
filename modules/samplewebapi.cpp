@@ -41,7 +41,7 @@ class CSampleWebAPIMod : public CModule {
         return true;
     }
 
-    bool WebRequiresLogin() {
+    bool WebRequiresLogin() override {
         return false;
     }
 
