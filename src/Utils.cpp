@@ -593,6 +593,7 @@ bool CUtils::CheckCIDR(const CString& sIP, const CString& sRange) {
     if (sIP.WildCmp(sRange)) {
         return true;
     }
+    auto deleter = [](addrinfo* ai) { freeaddrinfo(ai); };
     // Try to split the string into an IP and routing prefix
     VCString vsSplitCIDR;
     if (sRange.Split("/", vsSplitCIDR, false) != 2) return false;
@@ -609,48 +610,46 @@ bool CUtils::CheckCIDR(const CString& sIP, const CString& sRange) {
     memset(&aiHints, 0, sizeof(addrinfo));
     aiHints.ai_flags = AI_NUMERICHOST;
 
-    addrinfo* aiHost;
-    int iIsHostValid = getaddrinfo(sIP.c_str(), nullptr, &aiHints, &aiHost);
+    addrinfo* aiHostC;
+    int iIsHostValid = getaddrinfo(sIP.c_str(), nullptr, &aiHints, &aiHostC);
     if (iIsHostValid != 0) return false;
+    std::unique_ptr<addrinfo, decltype(deleter)> aiHost(aiHostC, deleter);
 
     aiHints.ai_family = aiHost->ai_family;  // Host and range must be in
                                             // the same address family
 
-    addrinfo* aiRange;
+    addrinfo* aiRangeC;
     int iIsRangeValid =
-        getaddrinfo(vsSplitCIDR.front().c_str(), nullptr, &aiHints, &aiRange);
+        getaddrinfo(vsSplitCIDR.front().c_str(), nullptr, &aiHints, &aiRangeC);
     if (iIsRangeValid != 0) {
-        freeaddrinfo(aiHost);
         return false;
     }
+    std::unique_ptr<addrinfo, decltype(deleter)> aiRange(aiRangeC, deleter);
 
     // "/0" allows all IPv[4|6] addresses
     if (iRoutingPrefix == 0) {
-        freeaddrinfo(aiHost);
-        freeaddrinfo(aiRange);
         return true;
     }
 
     // If both IPs are valid and of the same type, make a bit field mask
     // from the routing prefix, AND it to the host and range, and see if
     // they match
-    bool bIsHostInRange = false;
     if (aiHost->ai_family == AF_INET) {
         if (iRoutingPrefix > 32) {
-            freeaddrinfo(aiHost);
-            freeaddrinfo(aiRange);
             return false;
         }
 
-        const sockaddr_in* saHost = (sockaddr_in*)(aiHost->ai_addr);
-        const sockaddr_in* saRange = (sockaddr_in*)(aiRange->ai_addr);
+        const sockaddr_in* saHost =
+            reinterpret_cast<const sockaddr_in*>(aiHost->ai_addr);
+        const sockaddr_in* saRange =
+            reinterpret_cast<const sockaddr_in*>(aiRange->ai_addr);
 
         // Make IPv4 bitmask
         const in_addr_t inBitmask = htonl((~0u) << (32 - iRoutingPrefix));
 
         // Compare masked IPv4s
-        bIsHostInRange = ((inBitmask & saHost->sin_addr.s_addr) ==
-                          (inBitmask & saRange->sin_addr.s_addr));
+        return ((inBitmask & saHost->sin_addr.s_addr) ==
+                (inBitmask & saRange->sin_addr.s_addr));
     } else if (aiHost->ai_family == AF_INET6) {
         // Make IPv6 bitmask
         in6_addr in6aBitmask;
@@ -666,22 +665,21 @@ bool CUtils::CheckCIDR(const CString& sIP, const CString& sRange) {
         }
 
         // Compare masked IPv6s
-        bIsHostInRange = true;
-        const sockaddr_in6* sa6Host = (sockaddr_in6*)(aiHost->ai_addr);
-        const sockaddr_in6* sa6Range = (sockaddr_in6*)(aiRange->ai_addr);
+        const sockaddr_in6* sa6Host =
+            reinterpret_cast<const sockaddr_in6*>(aiHost->ai_addr);
+        const sockaddr_in6* sa6Range =
+            reinterpret_cast<const sockaddr_in6*>(aiRange->ai_addr);
 
         for (int i = 0; i < 16; ++i) {
             if ((in6aBitmask.s6_addr[i] & sa6Host->sin6_addr.s6_addr[i]) !=
                 (in6aBitmask.s6_addr[i] & sa6Range->sin6_addr.s6_addr[i])) {
-                bIsHostInRange = false;
+                return false;
             }
         }
+        return true;
+    } else {
+        return false;
     }
-
-    freeaddrinfo(aiHost);
-    freeaddrinfo(aiRange);
-
-    return bIsHostInRange;
 }
 
 MCString CUtils::GetMessageTags(const CString& sLine) {
