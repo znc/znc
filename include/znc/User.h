@@ -65,7 +65,7 @@ class CUser {
     bool AddAllowedHost(const CString& sHostMask);
     bool RemAllowedHost(const CString& sHostMask);
     void ClearAllowedHosts();
-    bool IsHostAllowed(const CString& sHostMask) const;
+    bool IsHostAllowed(const CString& sHost) const;
     bool IsValid(CString& sErrMsg, bool bSkipPass = false) const;
     static bool IsValidUserName(const CString& sUserName);
     static CString MakeCleanUserName(const CString& sUserName);

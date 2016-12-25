@@ -27,7 +27,7 @@ class UserTest : public ::testing::Test {
 
 TEST_F(UserTest, IsHostAllowed) {
     struct hostTest {
-        CString sTestHost;
+        CString sMask;
         CString sIP;
         bool bExpectedResult;
     };
@@ -108,12 +108,14 @@ TEST_F(UserTest, IsHostAllowed) {
 
         {"::2/00000000000", "::1", false},
         {"::2/0a", "::1", false},
+
+        {"192.168.*", "192.168.0.1", true},
     };
 
     for (const hostTest& h : aHostTests) {
         CUser user("user");
-        user.AddAllowedHost(h.sTestHost);
+        user.AddAllowedHost(h.sMask);
         EXPECT_EQ(h.bExpectedResult, user.IsHostAllowed(h.sIP))
-            << "Allow-host is " << h.sTestHost;
+            << "Allow-host is " << h.sMask;
     }
 }

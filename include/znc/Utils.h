@@ -83,6 +83,11 @@ class CUtils {
     static timeval ParseServerTime(const CString& sTime);
     static SCString GetTimezones();
     static SCString GetEncodings();
+    /** CIDR notation checker, e.g. "192.0.2.0/24" or "2001:db8::/32"
+     *
+     *  For historical reasons also allows wildcards, e.g. "192.168.*"
+     */
+    static bool CheckCIDR(const CString& sIP, const CString& sRange);
 
     /// @deprecated Use CMessage instead
     static MCString GetMessageTags(const CString& sLine);

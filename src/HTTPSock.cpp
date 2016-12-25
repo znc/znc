@@ -163,7 +163,7 @@ void CHTTPSock::ReadLine(const CString& sData) {
                 // check if sIP is trusted proxy
                 bool bTrusted = false;
                 for (const CString& sTrustedProxy : vsTrustedProxies) {
-                    if (sIP.WildCmp(sTrustedProxy)) {
+                    if (CUtils::CheckCIDR(sIP, sTrustedProxy)) {
                         bTrusted = true;
                         break;
                     }

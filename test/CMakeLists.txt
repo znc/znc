@@ -60,7 +60,8 @@ add_executable(unittest_bin EXCLUDE_FROM_ALL
 	"${GMOCK_ROOT}/src/gmock-all.cc"
 	"ThreadTest.cpp" "NickTest.cpp" "ClientTest.cpp" "NetworkTest.cpp"
 	"MessageTest.cpp" "ModulesTest.cpp" "IRCSockTest.cpp" "QueryTest.cpp"
-	"StringTest.cpp" "ConfigTest.cpp" "BufferTest.cpp" "UtilsTest.cpp")
+	"StringTest.cpp" "ConfigTest.cpp" "BufferTest.cpp" "UtilsTest.cpp"
+	"UserTest.cpp")
 target_link_libraries(unittest_bin PRIVATE znclib)
 target_include_directories(unittest_bin PRIVATE
 	"${GTEST_ROOT}" "${GTEST_ROOT}/include"
