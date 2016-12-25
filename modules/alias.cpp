@@ -92,8 +92,8 @@ class CAlias {
     // appends it to 'output', and updates 'caret'.
     // 'skip' is updated based on the logic that we should skip the % at the
     // caret if we fail to parse the token.
-    static void ParseToken(const CString& alias_data, const CString& line,
-                           CString& output, size_t& caret, size_t& skip) {
+    void ParseToken(const CString& alias_data, const CString& line,
+                    CString& output, size_t& caret, size_t& skip) const {
         bool optional = false;
         bool subsequent = false;
         size_t index = caret + 1;
@@ -101,31 +101,33 @@ class CAlias {
 
         skip = 1;
 
+        // try to read optional flag
         if (alias_data.length() > index && alias_data[index] == '?') {
             optional = true;
             ++index;
-        }  // try to read optional flag
+        }
+        // try to read integer
         if (alias_data.length() > index &&
-            CString(alias_data.substr(index))
-                .Convert(&token))  // try to read integer
-        {
+            CString(alias_data.substr(index)).Convert(&token)) {
+            // skip any numeric digits in string (supposed to fail if
+            // whitespace precedes integer)
             while (alias_data.length() > index && alias_data[index] >= '0' &&
                    alias_data[index] <= '9')
                 ++index;
-            // skip any numeric digits in string (supposed to fail if
-            // whitespace precedes integer)
         } else {
             // token was malformed. leave caret unchanged, and flag first
             // character for skipping
             return;
         }
+        // try to read subsequent flag
         if (alias_data.length() > index && alias_data[index] == '+') {
             subsequent = true;
             ++index;
-        }  // try to read subsequent flag
+        }
+        // try to read end-of-substitution marker
         if (alias_data.length() > index && alias_data[index] == '%') {
             ++index;
-        }  // try to read end-of-substitution marker
+        }
         else
             return;
 
@@ -134,14 +136,17 @@ class CAlias {
         CString stok = line.Token(token, subsequent, " ");
 
         if (stok.empty() && !optional)
+            // blow up if token is required and also empty
             throw std::invalid_argument(
-                CString("missing required parameter: ") +
-                CString(token));  // blow up if token is required and also empty
-        output.append(stok);      // write token value to output
+                parent->t_f("missing required parameter: {1}")(CString(token)));
+        // write token value to output
+        output.append(stok);
 
-        skip = 0;  // since we're moving the cursor after the end of the token,
-                   // skip no characters
-        caret = index;  // advance the cursor forward by the size of the token
+        // since we're moving the cursor after the end of the token, skip no
+        // characters
+        skip = 0;
+        // advance the cursor forward by the size of the token
+        caret = index;
     }
 
   public:
@@ -167,7 +172,8 @@ class CAlias {
             // if (found >= (int) alias_data.length()) break;
             // ^ shouldn't be possible.
             size_t found = alias_data.find("%", lastfound + skip);
-            if (found == CString::npos) break;  // if we found nothing, break
+            // if we found nothing, break
+            if (found == CString::npos) break;
             // capture everything between the last stopping point and here
             output.append(alias_data.substr(lastfound, found - lastfound));
             // attempt to read a token, updates indices based on
@@ -176,7 +182,8 @@ class CAlias {
             lastfound = found;
         }
 
-        output += alias_data.substr(lastfound);  // append from the final
+        // append from the final
+        output += alias_data.substr(lastfound);
         return output;
     }
 };
@@ -191,19 +198,19 @@ class CAliasMod : public CModule {
         if (!CAlias::AliasExists(this, name)) {
             CAlias na(this, name);
             na.Commit();
-            PutModule("Created alias: " + na.GetName());
+            PutModule(t_f("Created alias: {1}")(na.GetName()));
         } else
-            PutModule("Alias already exists.");
+            PutModule(t_s("Alias already exists."));
     }
 
     void DeleteCommand(const CString& sLine) {
         CString name = sLine.Token(1, false, " ");
         CAlias delete_alias;
         if (CAlias::AliasGet(delete_alias, this, name)) {
-            PutModule("Deleted alias: " + delete_alias.GetName());
+            PutModule(t_f("Deleted alias: {1}")(delete_alias.GetName()));
             delete_alias.Delete();
         } else
-            PutModule("Alias does not exist.");
+            PutModule(t_s("Alias does not exist."));
     }
 
     void AddCmd(const CString& sLine) {
@@ -212,9 +219,9 @@ class CAliasMod : public CModule {
         if (CAlias::AliasGet(add_alias, this, name)) {
             add_alias.AliasCmds().push_back(sLine.Token(2, true, " "));
             add_alias.Commit();
-            PutModule("Modified alias.");
+            PutModule(t_s("Modified alias."));
         } else
-            PutModule("Alias does not exist.");
+            PutModule(t_s("Alias does not exist."));
     }
 
     void InsertCommand(const CString& sLine) {
@@ -226,7 +233,7 @@ class CAliasMod : public CModule {
             // input
             if (!sLine.Token(2, false, " ").Convert(&index) || index < 0 ||
                 index > (int)insert_alias.AliasCmds().size()) {
-                PutModule("Invalid index.");
+                PutModule(t_s("Invalid index."));
                 return;
             }
 
@@ -234,9 +241,9 @@ class CAliasMod : public CModule {
                 insert_alias.AliasCmds().begin() + index,
                 sLine.Token(3, true, " "));
             insert_alias.Commit();
-            PutModule("Modified alias.");
+            PutModule(t_s("Modified alias."));
         } else
-            PutModule("Alias does not exist.");
+            PutModule(t_s("Alias does not exist."));
     }
 
     void RemoveCommand(const CString& sLine) {
@@ -246,16 +253,16 @@ class CAliasMod : public CModule {
         if (CAlias::AliasGet(remove_alias, this, name)) {
             if (!sLine.Token(2, false, " ").Convert(&index) || index < 0 ||
                 index > (int)remove_alias.AliasCmds().size() - 1) {
-                PutModule("Invalid index.");
+                PutModule(t_s("Invalid index."));
                 return;
             }
 
             remove_alias.AliasCmds().erase(remove_alias.AliasCmds().begin() +
                                            index);
             remove_alias.Commit();
-            PutModule("Modified alias.");
+            PutModule(t_s("Modified alias."));
         } else
-            PutModule("Alias does not exist.");
+            PutModule(t_s("Alias does not exist."));
     }
 
     void ClearCommand(const CString& sLine) {
@@ -264,27 +271,31 @@ class CAliasMod : public CModule {
         if (CAlias::AliasGet(clear_alias, this, name)) {
             clear_alias.AliasCmds().clear();
             clear_alias.Commit();
-            PutModule("Modified alias.");
+            PutModule(t_s("Modified alias."));
         } else
-            PutModule("Alias does not exist.");
+            PutModule(t_s("Alias does not exist."));
     }
 
     void ListCommand(const CString& sLine) {
-        CString output = "The following aliases exist:";
         MCString::iterator i = BeginNV();
-        if (i == EndNV()) output += " [none]";
-        for (; i != EndNV(); ++i) {
-            output.append(" ");
-            output.append(i->first);
+        if (i == EndNV()) {
+            PutModule(t_s("There are no aliases."));
+            return;
         }
-        PutModule(output);
+        VCString vsAliases;
+        for (; i != EndNV(); ++i) {
+            vsAliases.push_back(i->first);
+        }
+        PutModule(t_f("The following aliases exist: {1}")(
+            CString(t_s(", ", "list|separator"))
+                .Join(vsAliases.begin(), vsAliases.end())));
     }
 
     void DumpCommand(const CString& sLine) {
         MCString::iterator i = BeginNV();
 
         if (i == EndNV()) {
-            PutModule("There are no aliases.");
+            PutModule(t_s("There are no aliases."));
             return;
         }
 
@@ -310,48 +321,46 @@ class CAliasMod : public CModule {
         CString name = sLine.Token(1, false, " ");
         CAlias info_alias;
         if (CAlias::AliasGet(info_alias, this, name)) {
-            PutModule("Actions for alias " + info_alias.GetName() + ":");
+            PutModule(t_f("Actions for alias {1}:")(info_alias.GetName()));
             for (size_t i = 0; i < info_alias.AliasCmds().size(); ++i) {
                 CString num(i);
                 CString padding(4 - (num.length() > 3 ? 3 : num.length()), ' ');
                 PutModule(num + padding + info_alias.AliasCmds()[i]);
             }
-            PutModule("End of actions for alias " + info_alias.GetName() + ".");
+            PutModule(
+                t_f("End of actions for alias {1}.")(info_alias.GetName()));
         } else
-            PutModule("Alias does not exist.");
+            PutModule(t_s("Alias does not exist."));
     }
 
     MODCONSTRUCTOR(CAliasMod), sending_lines(false) {
         AddHelpCommand();
-        AddCommand("Create", static_cast<CModCommand::ModCmdFunc>(
-                                 &CAliasMod::CreateCommand),
-                   "<name>", "Creates a new, blank alias called name.");
-        AddCommand("Delete", static_cast<CModCommand::ModCmdFunc>(
-                                 &CAliasMod::DeleteCommand),
-                   "<name>", "Deletes an existing alias.");
-        AddCommand("Add",
-                   static_cast<CModCommand::ModCmdFunc>(&CAliasMod::AddCmd),
-                   "<name> <action ...>", "Adds a line to an existing alias.");
-        AddCommand("Insert", static_cast<CModCommand::ModCmdFunc>(
-                                 &CAliasMod::InsertCommand),
-                   "<name> <pos> <action ...>",
-                   "Inserts a line into an existing alias.");
-        AddCommand("Remove", static_cast<CModCommand::ModCmdFunc>(
-                                 &CAliasMod::RemoveCommand),
-                   "<name> <pos>", "Removes a line from an existing alias.");
-        AddCommand("Clear", static_cast<CModCommand::ModCmdFunc>(
-                                &CAliasMod::ClearCommand),
-                   "<name>", "Removes all line from an existing alias.");
-        AddCommand("List", static_cast<CModCommand::ModCmdFunc>(
-                               &CAliasMod::ListCommand),
-                   "", "Lists all aliases by name.");
-        AddCommand("Info", static_cast<CModCommand::ModCmdFunc>(
-                               &CAliasMod::InfoCommand),
-                   "<name>", "Reports the actions performed by an alias.");
+        AddCommand("Create", "<name>",
+                   t_d("Creates a new, blank alias called name."),
+                   [=](const CString& sLine) { CreateCommand(sLine); });
+        AddCommand("Delete", "<name>", t_d("Deletes an existing alias."),
+                   [=](const CString& sLine) { DeleteCommand(sLine); });
+        AddCommand("Add", "<name> <action ...>",
+                   t_d("Adds a line to an existing alias."),
+                   [=](const CString& sLine) { AddCmd(sLine); });
+        AddCommand("Insert", "<name> <pos> <action ...>",
+                   t_d("Inserts a line into an existing alias."),
+                   [=](const CString& sLine) { InsertCommand(sLine); });
+        AddCommand("Remove", "<name> <pos>",
+                   t_d("Removes a line from an existing alias."),
+                   [=](const CString& sLine) { RemoveCommand(sLine); });
+        AddCommand("Clear", "<name>",
+                   t_d("Removes all lines from an existing alias."),
+                   [=](const CString& sLine) { ClearCommand(sLine); });
+        AddCommand("List", "", t_d("Lists all aliases by name."),
+                   [=](const CString& sLine) { ListCommand(sLine); });
+        AddCommand("Info", "<name>",
+                   t_d("Reports the actions performed by an alias."),
+                   [=](const CString& sLine) { InfoCommand(sLine); });
         AddCommand(
-            "Dump",
-            static_cast<CModCommand::ModCmdFunc>(&CAliasMod::DumpCommand), "",
-            "Generate a list of commands to copy your alias config.");
+            "Dump", "",
+            t_d("Generate a list of commands to copy your alias config."),
+            [=](const CString& sLine) { DumpCommand(sLine); });
     }
 
     EModRet OnUserRaw(CString& sLine) override {
@@ -362,7 +371,7 @@ class CAliasMod : public CModule {
         try {
             if (sLine.Equals("ZNC-CLEAR-ALL-ALIASES!")) {
                 ListCommand("");
-                PutModule("Clearing all of them!");
+                PutModule(t_s("Clearing all of them!"));
                 ClearNV();
                 return HALT;
             } else if (CAlias::AliasGet(current_alias, this, sLine)) {
@@ -397,4 +406,4 @@ void TModInfo<CAliasMod>(CModInfo& Info) {
     Info.AddType(CModInfo::NetworkModule);
 }
 
-USERMODULEDEFS(CAliasMod, "Provides bouncer-side command alias support.")
+USERMODULEDEFS(CAliasMod, t_s("Provides bouncer-side command alias support."))

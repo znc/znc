@@ -26,12 +26,11 @@ class CAdminLogMod : public CModule {
   public:
     MODCONSTRUCTOR(CAdminLogMod) {
         AddHelpCommand();
-        AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(
-                               &CAdminLogMod::OnShowCommand),
-                   "", "Show the logging target");
-        AddCommand("Target", static_cast<CModCommand::ModCmdFunc>(
-                                 &CAdminLogMod::OnTargetCommand),
-                   "<file|syslog|both> [path]", "Set the logging target");
+        AddCommand("Show", "", t_d("Show the logging target"),
+                   [=](const CString& sLine) { OnShowCommand(sLine); });
+        AddCommand("Target", "<file|syslog|both> [path]",
+                   t_d("Set the logging target"),
+                   [=](const CString& sLine) { OnTargetCommand(sLine); });
         openlog("znc", LOG_PID, LOG_DAEMON);
     }
 
@@ -142,7 +141,7 @@ class CAdminLogMod : public CModule {
 
     void OnModCommand(const CString& sCommand) override {
         if (!GetUser()->IsAdmin()) {
-            PutModule("Access denied");
+            PutModule(t_s("Access denied"));
         } else {
             HandleCommand(sCommand);
         }
@@ -156,21 +155,21 @@ class CAdminLogMod : public CModule {
 
         if (sArg.Equals("file")) {
             sTarget = "file";
-            sMessage = "Now logging to file";
+            sMessage = t_s("Now logging to file");
             mode = LOG_TO_FILE;
         } else if (sArg.Equals("syslog")) {
             sTarget = "syslog";
-            sMessage = "Now only logging to syslog";
+            sMessage = t_s("Now only logging to syslog");
             mode = LOG_TO_SYSLOG;
         } else if (sArg.Equals("both")) {
             sTarget = "both";
-            sMessage = "Now logging to syslog and file";
+            sMessage = t_s("Now logging to syslog and file");
             mode = LOG_TO_BOTH;
         } else {
             if (sArg.empty()) {
-                PutModule("Usage: Target <file|syslog|both> [path]");
+                PutModule(t_s("Usage: Target <file|syslog|both> [path]"));
             } else {
-                PutModule("Unknown target");
+                PutModule(t_s("Unknown target"));
             }
             return;
         }
@@ -192,19 +191,19 @@ class CAdminLogMod : public CModule {
 
         switch (m_eLogMode) {
             case LOG_TO_FILE:
-                sTarget = "file";
+                sTarget = t_s("Logging is enabled for file");
                 break;
             case LOG_TO_SYSLOG:
-                sTarget = "syslog";
+                sTarget = t_s("Logging is enabled for syslog");
                 break;
             case LOG_TO_BOTH:
-                sTarget = "both, file and syslog";
+                sTarget = t_s("Logging is enabled for both, file and syslog");
                 break;
         }
 
-        PutModule("Logging is enabled for " + sTarget);
+        PutModule(sTarget);
         if (m_eLogMode != LOG_TO_SYSLOG)
-            PutModule("Log file will be written to [" + m_sLogFile + "]");
+            PutModule(t_f("Log file will be written to {1}")(m_sLogFile));
     }
 
   private:
@@ -222,4 +221,4 @@ void TModInfo<CAdminLogMod>(CModInfo& Info) {
     Info.SetWikiPage("adminlog");
 }
 
-GLOBALMODULEDEFS(CAdminLogMod, "Log ZNC events to file and/or syslog.")
+GLOBALMODULEDEFS(CAdminLogMod, t_s("Log ZNC events to file and/or syslog."))

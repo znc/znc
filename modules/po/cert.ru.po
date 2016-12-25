@@ -35,7 +35,7 @@ msgstr ""
 msgid "You do not have a certificate yet."
 msgstr "У вас пока нет сертификата."
 
-#: modules/po/../data/cert/tmpl/index.tmpl:14 cert.cpp:73
+#: modules/po/../data/cert/tmpl/index.tmpl:14 cert.cpp:72
 msgid "Certificate"
 msgstr "Сертификат"
 
@@ -65,18 +65,18 @@ msgid ""
 "certificate"
 msgstr "У вас нет сертификата. Пожалуйста, добавьте его через веб-интерфейс."
 
-#: cert.cpp:45
+#: cert.cpp:44
 msgid "Alternatively you can either place one at {1}"
 msgstr "Либо вы можете положить его в {1}"
 
-#: cert.cpp:53
+#: cert.cpp:52
 msgid "Delete the current certificate"
 msgstr "Удалить текущий сертификат"
 
-#: cert.cpp:55
+#: cert.cpp:54
 msgid "Show the current certificate"
 msgstr "Показать текущий сертификат"
 
-#: cert.cpp:106
+#: cert.cpp:105
 msgid "Use a ssl certificate to connect to a server"
 msgstr "Соединение с сервером с помошью сертификата SSL"

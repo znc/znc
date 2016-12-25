@@ -17,7 +17,7 @@ msgstr ""
 msgid "You do not have a certificate yet."
 msgstr ""
 
-#: modules/po/../data/cert/tmpl/index.tmpl:14 cert.cpp:73
+#: modules/po/../data/cert/tmpl/index.tmpl:14 cert.cpp:72
 msgid "Certificate"
 msgstr ""
 
@@ -47,18 +47,18 @@ msgid ""
 "certificate"
 msgstr ""
 
-#: cert.cpp:45
+#: cert.cpp:44
 msgid "Alternatively you can either place one at {1}"
 msgstr ""
 
-#: cert.cpp:53
+#: cert.cpp:52
 msgid "Delete the current certificate"
 msgstr ""
 
-#: cert.cpp:55
+#: cert.cpp:54
 msgid "Show the current certificate"
 msgstr ""
 
-#: cert.cpp:106
+#: cert.cpp:105
 msgid "Use a ssl certificate to connect to a server"
 msgstr ""

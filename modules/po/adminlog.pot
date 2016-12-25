@@ -1,0 +1,51 @@
+#: adminlog.cpp:29
+msgid "Show the logging target"
+msgstr ""
+
+#: adminlog.cpp:32
+msgid "Set the logging target"
+msgstr ""
+
+#: adminlog.cpp:144
+msgid "Access denied"
+msgstr ""
+
+#: adminlog.cpp:158
+msgid "Now logging to file"
+msgstr ""
+
+#: adminlog.cpp:162
+msgid "Now only logging to syslog"
+msgstr ""
+
+#: adminlog.cpp:166
+msgid "Now logging to syslog and file"
+msgstr ""
+
+#: adminlog.cpp:170
+msgid "Usage: Target <file|syslog|both> [path]"
+msgstr ""
+
+#: adminlog.cpp:172
+msgid "Unknown target"
+msgstr ""
+
+#: adminlog.cpp:194
+msgid "Logging is enabled for file"
+msgstr ""
+
+#: adminlog.cpp:197
+msgid "Logging is enabled for syslog"
+msgstr ""
+
+#: adminlog.cpp:200
+msgid "Logging is enabled for both, file and syslog"
+msgstr ""
+
+#: adminlog.cpp:206
+msgid "Log file will be written to {1}"
+msgstr ""
+
+#: adminlog.cpp:224
+msgid "Log ZNC events to file and/or syslog."
+msgstr ""
