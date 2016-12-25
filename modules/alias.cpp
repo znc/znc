@@ -335,26 +335,26 @@ class CAliasMod : public CModule {
 
     MODCONSTRUCTOR(CAliasMod), sending_lines(false) {
         AddHelpCommand();
-        AddCommand("Create", "<name>",
+        AddCommand("Create", t_d("<name>"),
                    t_d("Creates a new, blank alias called name."),
                    [=](const CString& sLine) { CreateCommand(sLine); });
-        AddCommand("Delete", "<name>", t_d("Deletes an existing alias."),
+        AddCommand("Delete", t_d("<name>"), t_d("Deletes an existing alias."),
                    [=](const CString& sLine) { DeleteCommand(sLine); });
-        AddCommand("Add", "<name> <action ...>",
+        AddCommand("Add", t_d("<name> <action ...>"),
                    t_d("Adds a line to an existing alias."),
                    [=](const CString& sLine) { AddCmd(sLine); });
-        AddCommand("Insert", "<name> <pos> <action ...>",
+        AddCommand("Insert", t_d("<name> <pos> <action ...>"),
                    t_d("Inserts a line into an existing alias."),
                    [=](const CString& sLine) { InsertCommand(sLine); });
-        AddCommand("Remove", "<name> <pos>",
+        AddCommand("Remove", t_d("<name> <pos>"),
                    t_d("Removes a line from an existing alias."),
                    [=](const CString& sLine) { RemoveCommand(sLine); });
-        AddCommand("Clear", "<name>",
+        AddCommand("Clear", t_d("<name>"),
                    t_d("Removes all lines from an existing alias."),
                    [=](const CString& sLine) { ClearCommand(sLine); });
         AddCommand("List", "", t_d("Lists all aliases by name."),
                    [=](const CString& sLine) { ListCommand(sLine); });
-        AddCommand("Info", "<name>",
+        AddCommand("Info", t_d("<name>"),
                    t_d("Reports the actions performed by an alias."),
                    [=](const CString& sLine) { InfoCommand(sLine); });
         AddCommand(

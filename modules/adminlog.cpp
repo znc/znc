@@ -28,7 +28,7 @@ class CAdminLogMod : public CModule {
         AddHelpCommand();
         AddCommand("Show", "", t_d("Show the logging target"),
                    [=](const CString& sLine) { OnShowCommand(sLine); });
-        AddCommand("Target", "<file|syslog|both> [path]",
+        AddCommand("Target", t_d("<file|syslog|both> [path]"),
                    t_d("Set the logging target"),
                    [=](const CString& sLine) { OnTargetCommand(sLine); });
         openlog("znc", LOG_PID, LOG_DAEMON);

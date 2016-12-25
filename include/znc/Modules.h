@@ -352,7 +352,8 @@ class CModCommand {
      */
     CModCommand(const CString& sCmd, CModule* pMod, ModCmdFunc func,
                 const CString& sArgs, const CString& sDesc);
-    CModCommand(const CString& sCmd, CmdFunc func, const CString& sArgs,
+    CModCommand(const CString& sCmd, CmdFunc func,
+                const COptionalTranslation& Args,
                 const COptionalTranslation& Desc);
 
     /** Copy constructor, needed so that this can be saved in a std::map.
@@ -378,7 +379,7 @@ class CModCommand {
 
     const CString& GetCommand() const { return m_sCmd; }
     CmdFunc GetFunction() const { return m_pFunc; }
-    const CString& GetArgs() const { return m_sArgs; }
+    CString GetArgs() const { return m_Args.Resolve(); }
     CString GetDescription() const { return m_Desc.Resolve(); }
 
     void Call(const CString& sLine) const { m_pFunc(sLine); }
@@ -386,7 +387,7 @@ class CModCommand {
   private:
     CString m_sCmd;
     CmdFunc m_pFunc;
-    CString m_sArgs;
+    COptionalTranslation m_Args;
     COptionalTranslation m_Desc;
 };
 
@@ -1150,8 +1151,8 @@ class CModule {
                     const CString& sArgs = "", const CString& sDesc = "");
     /// @param dDesc Either a string "", or the result of t_d()
     /// @return True if the command was successfully added.
-    bool AddCommand(const CString& sCmd, const CString& sArgs,
-                    const COptionalTranslation& dDesc,
+    bool AddCommand(const CString& sCmd, const COptionalTranslation& Args,
+                    const COptionalTranslation& Desc,
                     std::function<void(const CString& sLine)> func);
     /// @return True if the command was successfully removed.
     bool RemCommand(const CString& sCmd);

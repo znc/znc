@@ -15,7 +15,7 @@ msgid "Deleted alias: {1}"
 msgstr ""
 
 #: alias.cpp:213 alias.cpp:224 alias.cpp:246 alias.cpp:265 alias.cpp:276
-#: alias.cpp:332
+#: alias.cpp:333
 msgid "Alias does not exist."
 msgstr ""
 
@@ -44,50 +44,66 @@ msgstr ""
 msgid "Actions for alias {1}:"
 msgstr ""
 
-#: alias.cpp:330
+#: alias.cpp:331
 msgid "End of actions for alias {1}."
 msgstr ""
 
-#: alias.cpp:338
+#: alias.cpp:338 alias.cpp:341 alias.cpp:352 alias.cpp:357
+msgid "<name>"
+msgstr ""
+
+#: alias.cpp:339
 msgid "Creates a new, blank alias called name."
 msgstr ""
 
-#: alias.cpp:340
+#: alias.cpp:341
 msgid "Deletes an existing alias."
 msgstr ""
 
 #: alias.cpp:343
+msgid "<name> <action ...>"
+msgstr ""
+
+#: alias.cpp:344
 msgid "Adds a line to an existing alias."
 msgstr ""
 
 #: alias.cpp:346
+msgid "<name> <pos> <action ...>"
+msgstr ""
+
+#: alias.cpp:347
 msgid "Inserts a line into an existing alias."
 msgstr ""
 
 #: alias.cpp:349
+msgid "<name> <pos>"
+msgstr ""
+
+#: alias.cpp:350
 msgid "Removes a line from an existing alias."
 msgstr ""
 
-#: alias.cpp:352
+#: alias.cpp:353
 msgid "Removes all lines from an existing alias."
 msgstr ""
 
-#: alias.cpp:354
+#: alias.cpp:355
 msgid "Lists all aliases by name."
 msgstr ""
 
-#: alias.cpp:357
+#: alias.cpp:358
 msgid "Reports the actions performed by an alias."
 msgstr ""
 
-#: alias.cpp:361
+#: alias.cpp:362
 msgid "Generate a list of commands to copy your alias config."
 msgstr ""
 
-#: alias.cpp:373
+#: alias.cpp:374
 msgid "Clearing all of them!"
 msgstr ""
 
-#: alias.cpp:408
+#: alias.cpp:409
 msgid "Provides bouncer-side command alias support."
 msgstr ""
