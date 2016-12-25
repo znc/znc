@@ -83,21 +83,13 @@ class CWebSubPage {
   public:
     CWebSubPage(const CString& sName, const CString& sTitle = "",
                 unsigned int uFlags = 0)
-        : m_uFlags(uFlags), m_sName(sName), m_sTitle(sTitle), m_vParams() {}
+        : m_uFlags(uFlags), m_sName(sName), m_Title(sTitle), m_vParams() {}
 
-    CWebSubPage(const CString& sName, const CString& sTitle,
+    CWebSubPage(const CString& sName, const COptionalTranslation& Title,
                 const VPair& vParams, unsigned int uFlags = 0)
         : m_uFlags(uFlags),
           m_sName(sName),
-          m_sTitle(sTitle),
-          m_vParams(vParams) {}
-
-    CWebSubPage(const CString& sName, const CDelayedTranslation& dTitle,
-                const VPair& vParams, unsigned int uFlags = 0)
-        : m_uFlags(uFlags),
-          m_sName(sName),
-          m_dTitle(dTitle),
-          m_bTranslating(true),
+          m_Title(Title),
           m_vParams(vParams) {}
 
     virtual ~CWebSubPage() {}
@@ -105,13 +97,8 @@ class CWebSubPage {
     enum { F_ADMIN = 1 };
 
     void SetName(const CString& s) { m_sName = s; }
-    void SetTitle(const CString& s) {
-        m_sTitle = s;
-        m_bTranslating = false;
-    }
-    void SetTitle(const CDelayedTranslation& d) {
-        m_dTitle = d;
-        m_bTranslating = true;
+    void SetTitle(const COptionalTranslation& s) {
+        m_Title = s;
     }
     void AddParam(const CString& sName, const CString& sValue) {
         m_vParams.push_back(make_pair(sName, sValue));
@@ -120,15 +107,13 @@ class CWebSubPage {
     bool RequiresAdmin() const { return m_uFlags & F_ADMIN; }
 
     const CString& GetName() const { return m_sName; }
-    CString GetTitle() const;
+    CString GetTitle() const { return m_Title.Resolve(); }
     const VPair& GetParams() const { return m_vParams; }
 
   private:
     unsigned int m_uFlags;
     CString m_sName;
-    CString m_sTitle;
-    CDelayedTranslation m_dTitle;
-    bool m_bTranslating = false;
+    COptionalTranslation m_Title;
     VPair m_vParams;
 };
 

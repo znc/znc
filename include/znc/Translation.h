@@ -56,7 +56,7 @@ struct CTranslationDomainRefHolder {
     ~CTranslationDomainRefHolder();
 
   private:
-    CString m_sDomain;
+    const CString m_sDomain;
 };
 
 // This is inspired by boost::locale::message, but without boost
@@ -72,6 +72,24 @@ class CDelayedTranslation {
     CString m_sDomain;
     CString m_sContext;
     CString m_sEnglish;
+};
+
+class COptionalTranslation {
+  public:
+    COptionalTranslation(const CString& sText)
+        : m_bTranslating(false), m_sText(sText) {}
+    COptionalTranslation(const char* s) : COptionalTranslation(CString(s)) {}
+    COptionalTranslation(const CDelayedTranslation& dTranslation)
+        : m_bTranslating(true), m_dTranslation(dTranslation) {}
+    CString Resolve() const {
+        return m_bTranslating ? m_dTranslation.Resolve() : m_sText;
+    }
+
+  private:
+    bool m_bTranslating;
+    // TODO switch to std::variant<CString, CDelayedTranslation> after C++17
+    CString m_sText;
+    CDelayedTranslation m_dTranslation;
 };
 
 // Used by everything except modules.

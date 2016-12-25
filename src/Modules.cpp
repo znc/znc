@@ -518,16 +518,9 @@ bool CModule::AddCommand(const CString& sCmd, CModCommand::ModCmdFunc func,
 }
 
 bool CModule::AddCommand(const CString& sCmd, const CString& sArgs,
-                         const CString& sDesc,
+                         const COptionalTranslation& Desc,
                          std::function<void(const CString& sLine)> func) {
-    CModCommand cmd(sCmd, std::move(func), sArgs, sDesc);
-    return AddCommand(std::move(cmd));
-}
-
-bool CModule::AddCommand(const CString& sCmd, const CString& sArgs,
-                         const CDelayedTranslation& dDesc,
-                         std::function<void(const CString& sLine)> func) {
-    CModCommand cmd(sCmd, std::move(func), sArgs, dDesc);
+    CModCommand cmd(sCmd, std::move(func), sArgs, Desc);
     return AddCommand(std::move(cmd));
 }
 
@@ -1965,31 +1958,18 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath,
 }
 
 CModCommand::CModCommand()
-    : m_sCmd(), m_pFunc(nullptr), m_sArgs(), m_sDesc(), m_bTranslating(false) {}
+    : m_sCmd(), m_pFunc(nullptr), m_sArgs(), m_Desc("") {}
 
 CModCommand::CModCommand(const CString& sCmd, CModule* pMod, ModCmdFunc func,
                          const CString& sArgs, const CString& sDesc)
     : m_sCmd(sCmd),
       m_pFunc([pMod, func](const CString& sLine) { (pMod->*func)(sLine); }),
       m_sArgs(sArgs),
-      m_sDesc(sDesc),
-      m_bTranslating(false) {}
+      m_Desc(sDesc) {}
 
 CModCommand::CModCommand(const CString& sCmd, CmdFunc func,
-                         const CString& sArgs, const CString& sDesc)
-    : m_sCmd(sCmd),
-      m_pFunc(std::move(func)),
-      m_sArgs(sArgs),
-      m_sDesc(sDesc),
-      m_bTranslating(false) {}
-
-CModCommand::CModCommand(const CString& sCmd, CmdFunc func,
-                         const CString& sArgs, const CDelayedTranslation& dDesc)
-    : m_sCmd(sCmd),
-      m_pFunc(std::move(func)),
-      m_sArgs(sArgs),
-      m_dDesc(dDesc),
-      m_bTranslating(true) {}
+                         const CString& sArgs, const COptionalTranslation& Desc)
+    : m_sCmd(sCmd), m_pFunc(std::move(func)), m_sArgs(sArgs), m_Desc(Desc) {}
 
 void CModCommand::InitHelp(CTable& Table) {
     Table.AddColumn("Command");
@@ -2000,10 +1980,6 @@ void CModCommand::AddHelp(CTable& Table) const {
     Table.AddRow();
     Table.SetCell("Command", GetCommand() + " " + GetArgs());
     Table.SetCell("Description", GetDescription());
-}
-
-CString CModCommand::GetDescription() const {
-    return m_bTranslating ? m_dDesc.Resolve() : m_sDesc;
 }
 
 CString CModule::t_s(const CString& sEnglish, const CString& sContext) const {
