@@ -844,7 +844,7 @@ class CModule {
     /// @deprecated Use OnUserActionMessage() instead.
     virtual EModRet OnUserAction(CString& sTarget, CString& sMessage);
 
-    /** This module hook is called when a user sends a normal IRC message.
+    /** This module hook is called when a user sends a PRIVMSG message.
      *  @since 1.7.0
      *  @param Message The message which was sent.
      *  @return See CModule::EModRet.
@@ -853,7 +853,7 @@ class CModule {
     /// @deprecated Use OnUserTextMessage() instead.
     virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage);
 
-    /** This module hook is called when a user sends a notice message.
+    /** This module hook is called when a user sends a NOTICE message.
      *  @since 1.7.0
      *  @param Message The message which was sent.
      *  @return See CModule::EModRet.
@@ -950,25 +950,25 @@ class CModule {
     virtual EModRet OnChanAction(CNick& Nick, CChan& Channel,
                                  CString& sMessage);
 
-    /** Called when we receive a private message <em>from IRC</em>.
+    /** Called when we receive a private PRIVMSG message <em>from IRC</em>.
      *  @since 1.7.0
      *  @param Message The private message.
      *  @return See CModule::EModRet.
      */
-    virtual EModRet OnPrivMessage(CTextMessage& Message);
-    /// @deprecated Use OnPrivMessage() instead.
+    virtual EModRet OnPrivTextMessage(CTextMessage& Message);
+    /// @deprecated Use OnPrivTextMessage() instead.
     virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage);
 
-    /** Called when we receive a channel message <em>from IRC</em>.
+    /** Called when we receive a channel PRIVMSG message <em>from IRC</em>.
      *  @since 1.7.0
      *  @param Message The channel message.
      *  @return See CModule::EModRet.
      */
-    virtual EModRet OnChanMessage(CTextMessage& Message);
-    /// @deprecated Use OnChanMessage() instead.
+    virtual EModRet OnChanTextMessage(CTextMessage& Message);
+    /// @deprecated Use OnChanTextMessage() instead.
     virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage);
 
-    /** Called when we receive a private notice.
+    /** Called when we receive a private NOTICE message <em>from IRC</em>.
      *  @since 1.7.0
      *  @param Message The notice message.
      *  @return See CModule::EModRet.
@@ -977,7 +977,7 @@ class CModule {
     /// @deprecated Use OnPrivNoticeMessage() instead.
     virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage);
 
-    /** Called when we receive a channel notice.
+    /** Called when we receive a channel NOTICE message <em>from IRC</em>.
      *  @since 1.7.0
      *  @param Message The notice message.
      *  @return See CModule::EModRet.
@@ -1505,9 +1505,9 @@ class CModules : public std::vector<CModule*> {
     bool OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage);
     bool OnChanActionMessage(CActionMessage& Message);
     bool OnPrivMsg(CNick& Nick, CString& sMessage);
-    bool OnPrivMessage(CTextMessage& Message);
+    bool OnPrivTextMessage(CTextMessage& Message);
     bool OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage);
-    bool OnChanMessage(CTextMessage& Message);
+    bool OnChanTextMessage(CTextMessage& Message);
     bool OnPrivNotice(CNick& Nick, CString& sMessage);
     bool OnPrivNoticeMessage(CNoticeMessage& Message);
     bool OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage);

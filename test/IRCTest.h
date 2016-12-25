@@ -82,12 +82,12 @@ class TestModule : public CModule {
         vsHooks.push_back("OnChanActionMessage");
         return OnMessage(msg);
     }
-    EModRet OnPrivMessage(CTextMessage& msg) override {
-        vsHooks.push_back("OnPrivMessage");
+    EModRet OnPrivTextMessage(CTextMessage& msg) override {
+        vsHooks.push_back("OnPrivTextMessage");
         return OnMessage(msg);
     }
-    EModRet OnChanMessage(CTextMessage& msg) override {
-        vsHooks.push_back("OnChanMessage");
+    EModRet OnChanTextMessage(CTextMessage& msg) override {
+        vsHooks.push_back("OnChanTextMessage");
         return OnMessage(msg);
     }
     EModRet OnPrivNoticeMessage(CNoticeMessage& msg) override {

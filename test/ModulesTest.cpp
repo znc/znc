@@ -208,14 +208,14 @@ class CMessageModule : public CModule {
         Message.SetText("CMessageModule::OnChanActionMessage");
         return eAction;
     }
-    EModRet OnPrivMessage(CTextMessage& Message) override {
+    EModRet OnPrivTextMessage(CTextMessage& Message) override {
         Message.GetNick().SetNick("nick");
-        Message.SetText("CMessageModule::OnPrivMessage");
+        Message.SetText("CMessageModule::OnPrivTextMessage");
         return eAction;
     }
-    EModRet OnChanMessage(CTextMessage& Message) override {
+    EModRet OnChanTextMessage(CTextMessage& Message) override {
         Message.GetNick().SetNick("nick");
-        Message.SetText("CMessageModule::OnChanMessage");
+        Message.SetText("CMessageModule::OnChanTextMessage");
         return eAction;
     }
     EModRet OnPrivNoticeMessage(CNoticeMessage& Message) override {
@@ -392,23 +392,23 @@ TEST_F(ModulesTest, Hooks) {
 
     CTextMessage PrivMsg;
     LegacyMod.eAction = CModule::HALT;
-    Modules.OnPrivMessage(PrivMsg);
+    Modules.OnPrivTextMessage(PrivMsg);
     EXPECT_EQ("legacy", PrivMsg.GetNick().GetNick());
     EXPECT_EQ("CLegacyModule::OnPrivMsg", PrivMsg.GetText());
     LegacyMod.eAction = CModule::CONTINUE;
-    Modules.OnPrivMessage(PrivMsg);
+    Modules.OnPrivTextMessage(PrivMsg);
     EXPECT_EQ("nick", PrivMsg.GetNick().GetNick());
-    EXPECT_EQ("CMessageModule::OnPrivMessage", PrivMsg.GetText());
+    EXPECT_EQ("CMessageModule::OnPrivTextMessage", PrivMsg.GetText());
 
     CTextMessage ChanMsg;
     LegacyMod.eAction = CModule::HALT;
-    Modules.OnChanMessage(ChanMsg);
+    Modules.OnChanTextMessage(ChanMsg);
     EXPECT_EQ("legacy", ChanMsg.GetNick().GetNick());
     EXPECT_EQ("CLegacyModule::OnChanMsg", ChanMsg.GetText());
     LegacyMod.eAction = CModule::CONTINUE;
-    Modules.OnChanMessage(ChanMsg);
+    Modules.OnChanTextMessage(ChanMsg);
     EXPECT_EQ("nick", ChanMsg.GetNick().GetNick());
-    EXPECT_EQ("CMessageModule::OnChanMessage", ChanMsg.GetText());
+    EXPECT_EQ("CMessageModule::OnChanTextMessage", ChanMsg.GetText());
 
     CNoticeMessage PrivNotice;
     LegacyMod.eAction = CModule::HALT;

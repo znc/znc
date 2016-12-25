@@ -148,8 +148,8 @@ class ZNC_EXPORT_LIB_EXPORT CPerlModule : public CModule {
     EModRet OnChanCTCPMessage(CCTCPMessage& Message) override;
     EModRet OnPrivActionMessage(CActionMessage& Message) override;
     EModRet OnChanActionMessage(CActionMessage& Message) override;
-    EModRet OnPrivMessage(CTextMessage& Message) override;
-    EModRet OnChanMessage(CTextMessage& Message) override;
+    EModRet OnPrivTextMessage(CTextMessage& Message) override;
+    EModRet OnChanTextMessage(CTextMessage& Message) override;
     EModRet OnPrivNoticeMessage(CNoticeMessage& Message) override;
     EModRet OnChanNoticeMessage(CNoticeMessage& Message) override;
     EModRet OnTopicMessage(CTopicMessage& Message) override;

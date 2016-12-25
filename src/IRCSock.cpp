@@ -1050,7 +1050,7 @@ bool CIRCSock::OnTextMessage(CTextMessage& Message) {
     CString sTarget = Message.GetTarget();
 
     if (sTarget.Equals(GetNick())) {
-        IRCSOCKMODULECALL(OnPrivMessage(Message), &bResult);
+        IRCSOCKMODULECALL(OnPrivTextMessage(Message), &bResult);
         if (bResult) return true;
 
         if (!m_pNetwork->IsUserOnline() ||
@@ -1071,7 +1071,7 @@ bool CIRCSock::OnTextMessage(CTextMessage& Message) {
         if (pChan) {
             Message.SetChan(pChan);
             FixupChanNick(Message.GetNick(), pChan);
-            IRCSOCKMODULECALL(OnChanMessage(Message), &bResult);
+            IRCSOCKMODULECALL(OnChanTextMessage(Message), &bResult);
             if (bResult) return true;
 
             if (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline() ||

@@ -366,7 +366,7 @@ TEST_F(IRCSockTest, OnTextMessage) {
     m_pTestModule->eAction = CModule::HALT;
     m_pTestSock->ReadLine(msg.ToString());
 
-    EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnChanMessage"));
+    EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnChanTextMessage"));
     EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
     EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(m_pTestNetwork));
     EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(m_pTestChan));
@@ -384,7 +384,7 @@ TEST_F(IRCSockTest, OnTextMessage) {
     m_pTestModule->eAction = CModule::HALT;
     m_pTestSock->ReadLine(msg.ToString());
 
-    EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnPrivMessage"));
+    EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnPrivTextMessage"));
     EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
     EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(m_pTestNetwork));
     EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
