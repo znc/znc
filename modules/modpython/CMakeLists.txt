@@ -31,7 +31,9 @@ if(SWIG_FOUND)
 		COMMAND "${PERL_EXECUTABLE}"
 		"${CMAKE_CURRENT_SOURCE_DIR}/codegen.pl"
 		"${CMAKE_CURRENT_SOURCE_DIR}/functions.in"
-		"pyfunctions.cpp")
+		"pyfunctions.cpp"
+		VERBATIM
+		DEPENDS codegen.pl functions.in)
 
 	add_custom_command(
 		OUTPUT "swigpyrun.h"

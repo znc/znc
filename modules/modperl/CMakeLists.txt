@@ -34,7 +34,8 @@ if(SWIG_FOUND)
 		"${CMAKE_CURRENT_SOURCE_DIR}/codegen.pl"
 		"${CMAKE_CURRENT_SOURCE_DIR}/functions.in"
 		"perlfunctions.cpp"
-		VERBATIM)
+		VERBATIM
+		DEPENDS codegen.pl functions.in)
 
 	add_custom_command(
 		OUTPUT swigperlrun.h
