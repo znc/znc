@@ -1917,7 +1917,7 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath,
         return nullptr;
     }
 
-    CModuleEntry* (*fpZNCModuleEntry)() = nullptr;
+    const CModuleEntry* (*fpZNCModuleEntry)() = nullptr;
     // man dlsym(3) explains this
     *reinterpret_cast<void**>(&fpZNCModuleEntry) = dlsym(p, "ZNCModuleEntry");
     if (!fpZNCModuleEntry) {
