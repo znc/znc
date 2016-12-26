@@ -155,6 +155,7 @@ class CUser {
     void SetSkinName(const CString& s) { m_sSkinName = s; }
     void SetMaxNetworks(unsigned int i) { m_uMaxNetworks = i; }
     void SetMaxQueryBuffers(unsigned int i) { m_uMaxQueryBuffers = i; }
+    void SetNoTrafficTimeout(unsigned int i) { m_uNoTrafficTimeout = i; }
     // !Setters
 
     // Getters
@@ -185,6 +186,14 @@ class CUser {
     bool MultiClients() const;
     const CString& GetStatusPrefix() const;
     const CString& GetDefaultChanModes() const;
+    /** How long must an IRC connection be idle before ZNC sends a ping */
+    unsigned int GetPingFrequency() const { return m_uNoTrafficTimeout / 2; }
+    /** Time between checks if PINGs need to be sent */
+    unsigned int GetPingSlack() const { return m_uNoTrafficTimeout / 6; }
+    /** Timeout after which IRC connections are closed. Must
+     *  obviously be greater than GetPingFrequency() + GetPingSlack().
+     */
+    unsigned int GetNoTrafficTimeout() const { return m_uNoTrafficTimeout; }
 
     CString GetQuitMsg() const;
     const MCString& GetCTCPReplies() const;
@@ -254,6 +263,7 @@ class CUser {
     unsigned int m_uMaxNetworks;
     unsigned int m_uMaxQueryBuffers;
     unsigned int m_uMaxJoins;
+    unsigned int m_uNoTrafficTimeout;
     CString m_sSkinName;
     CString m_sLanguage;
 

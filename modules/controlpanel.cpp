@@ -249,6 +249,9 @@ class CAdminMod : public CModule {
                       CString(pUser->AutoClearQueryBuffer()));
         else if (sVar == "maxjoins")
             PutModule("MaxJoins = " + CString(pUser->MaxJoins()));
+        else if (sVar == "notraffictimeout")
+            PutModule("NoTrafficTimeout = " +
+                      CString(pUser->GetNoTrafficTimeout()));
         else if (sVar == "maxnetworks")
             PutModule("MaxNetworks = " + CString(pUser->MaxNetworks()));
         else if (sVar == "maxquerybuffers")
@@ -386,6 +389,15 @@ class CAdminMod : public CModule {
             unsigned int i = sValue.ToUInt();
             pUser->SetMaxJoins(i);
             PutModule("MaxJoins = " + CString(pUser->MaxJoins()));
+        } else if (sVar == "notraffictimeout") {
+            unsigned int i = sValue.ToUInt();
+            if (i < 30) {
+                PutModule("Timeout can't be less than 30 seconds!");
+            } else {
+                pUser->SetNoTrafficTimeout(i);
+                PutModule("NoTrafficTimeout = " +
+                          CString(pUser->GetNoTrafficTimeout()));
+            }
         } else if (sVar == "maxnetworks") {
             if (GetUser()->IsAdmin()) {
                 unsigned int i = sValue.ToUInt();

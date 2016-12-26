@@ -48,18 +48,6 @@ class CIRCNetwork {
     CIRCNetwork(const CIRCNetwork&) = delete;
     CIRCNetwork& operator=(const CIRCNetwork&) = delete;
 
-    enum {
-        JOIN_FREQUENCY = 30,
-        /** How long must an IRC connection be idle before ZNC sends a ping */
-        PING_FREQUENCY = 120,
-        /** Time between checks if PINGs need to be sent */
-        PING_SLACK = 30,
-        /** Timeout after which IRC connections are closed. Must
-         *  obviously be greater than PING_FREQUENCY + PING_SLACK.
-         */
-        NO_TRAFFIC_TIMEOUT = 180
-    };
-
     void Clone(const CIRCNetwork& Network, bool bCloneName = true);
 
     CString GetNetworkPath() const;
@@ -157,7 +145,8 @@ class CIRCNetwork {
     void SetIRCAway(bool b) { m_bIRCAway = b; }
 
     bool Connect();
-    /** This method will return whether the user is connected and authenticated to an IRC server.
+    /** This method will return whether the user is connected and authenticated
+     * to an IRC server.
      */
     bool IsIRCConnected() const;
     void SetIRCSocket(CIRCSock* pIRCSock);
@@ -266,7 +255,9 @@ class CIRCNetwork {
         m_uJoinDelay = uJoinDelay;
     }
 
-    void SetTrustAllCerts(const bool bTrustAll = false) { m_bTrustAllCerts = bTrustAll; }
+    void SetTrustAllCerts(const bool bTrustAll = false) {
+        m_bTrustAllCerts = bTrustAll;
+    }
     bool GetTrustAllCerts() const { return m_bTrustAllCerts; }
 
     void SetTrustPKI(const bool bTrustPKI = true) { m_bTrustPKI = bTrustPKI; }

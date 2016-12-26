@@ -32,7 +32,7 @@ class CUserTimer : public CCron {
   public:
     CUserTimer(CUser* pUser) : CCron(), m_pUser(pUser) {
         SetName("CUserTimer::" + m_pUser->GetUserName());
-        Start(CIRCNetwork::PING_SLACK);
+        Start(m_pUser->GetPingSlack());
     }
     ~CUserTimer() override {}
 
@@ -46,10 +46,14 @@ class CUserTimer : public CCron {
 
         for (CClient* pUserClient : vUserClients) {
             if (pUserClient->GetTimeSinceLastDataTransaction() >=
-                CIRCNetwork::PING_FREQUENCY) {
+                m_pUser->GetPingFrequency()) {
                 pUserClient->PutClient("PING :ZNC");
             }
         }
+
+        // Restart timer for the case if the period had changed. Usually this is
+        // noop
+        Start(m_pUser->GetPingSlack());
     }
 
     CUser* m_pUser;
@@ -96,6 +100,7 @@ CUser::CUser(const CString& sUserName)
       m_uMaxNetworks(1),
       m_uMaxQueryBuffers(50),
       m_uMaxJoins(0),
+      m_uNoTrafficTimeout(180),
       m_sSkinName(""),
       m_pModules(new CModules) {
     m_pUserTimer = new CUserTimer(this);
@@ -151,6 +156,7 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
         {"maxnetworks", &CUser::SetMaxNetworks},
         {"maxquerybuffers", &CUser::SetMaxQueryBuffers},
         {"maxjoins", &CUser::SetMaxJoins},
+        {"notraffictimeout", &CUser::SetNoTrafficTimeout},
     };
     TOption<bool> BoolOptions[] = {
         {"keepbuffer",
@@ -752,6 +758,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
     SetMaxNetworks(User.MaxNetworks());
     SetMaxQueryBuffers(User.MaxQueryBuffers());
     SetMaxJoins(User.MaxJoins());
+    SetNoTrafficTimeout(User.GetNoTrafficTimeout());
     SetClientEncoding(User.GetClientEncoding());
     SetLanguage(User.GetLanguage());
 
@@ -962,7 +969,8 @@ CConfig CUser::ToConfig() const {
     config.AddKeyValuePair("MaxQueryBuffers", CString(m_uMaxQueryBuffers));
     config.AddKeyValuePair("MaxJoins", CString(m_uMaxJoins));
     config.AddKeyValuePair("ClientEncoding", GetClientEncoding());
-	config.AddKeyValuePair("Language", GetLanguage());
+    config.AddKeyValuePair("Language", GetLanguage());
+    config.AddKeyValuePair("NoTrafficTimeout", CString(GetNoTrafficTimeout()));
 
     // Allow Hosts
     if (!m_ssAllowedHosts.empty()) {

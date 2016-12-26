@@ -36,7 +36,7 @@ class CIRCNetworkPingTimer : public CCron {
         SetName("CIRCNetworkPingTimer::" +
                 m_pNetwork->GetUser()->GetUserName() + "::" +
                 m_pNetwork->GetName());
-        Start(CIRCNetwork::PING_SLACK);
+        Start(m_pNetwork->GetUser()->GetPingSlack());
     }
 
     ~CIRCNetworkPingTimer() override {}
@@ -47,20 +47,23 @@ class CIRCNetworkPingTimer : public CCron {
   protected:
     void RunJob() override {
         CIRCSock* pIRCSock = m_pNetwork->GetIRCSock();
+        auto uFrequency = m_pNetwork->GetUser()->GetPingFrequency();
 
         if (pIRCSock &&
-            pIRCSock->GetTimeSinceLastDataTransaction() >=
-                CIRCNetwork::PING_FREQUENCY) {
+            pIRCSock->GetTimeSinceLastDataTransaction() >= uFrequency) {
             pIRCSock->PutIRC("PING :ZNC");
         }
 
         const vector<CClient*>& vClients = m_pNetwork->GetClients();
         for (CClient* pClient : vClients) {
-            if (pClient->GetTimeSinceLastDataTransaction() >=
-                CIRCNetwork::PING_FREQUENCY) {
+            if (pClient->GetTimeSinceLastDataTransaction() >= uFrequency) {
                 pClient->PutClient("PING :ZNC");
             }
         }
+
+        // Restart timer for the case if the period had changed. Usually this is
+        // noop
+        Start(m_pNetwork->GetUser()->GetPingSlack());
     }
 
   private:
@@ -68,13 +71,15 @@ class CIRCNetworkPingTimer : public CCron {
 };
 
 class CIRCNetworkJoinTimer : public CCron {
+    constexpr static int JOIN_FREQUENCY = 30 /* seconds */;
+
   public:
     CIRCNetworkJoinTimer(CIRCNetwork* pNetwork)
         : CCron(), m_bDelayed(false), m_pNetwork(pNetwork) {
         SetName("CIRCNetworkJoinTimer::" +
                 m_pNetwork->GetUser()->GetUserName() + "::" +
                 m_pNetwork->GetName());
-        Start(CIRCNetwork::JOIN_FREQUENCY);
+        Start(JOIN_FREQUENCY);
     }
 
     ~CIRCNetworkJoinTimer() override {}
@@ -91,7 +96,7 @@ class CIRCNetworkJoinTimer : public CCron {
     void RunJob() override {
         if (m_bDelayed) {
             m_bDelayed = false;
-            Start(CIRCNetwork::JOIN_FREQUENCY);
+            Start(JOIN_FREQUENCY);
         }
         if (m_pNetwork->IsIRCConnected()) {
             m_pNetwork->JoinChans();

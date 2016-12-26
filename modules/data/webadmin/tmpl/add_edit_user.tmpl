@@ -313,6 +313,11 @@
 					       title="<? FORMAT "How many channels are joined in one JOIN command. 0 is unlimited (default). Set to small positive value if you get disconnected with “Max SendQ Exceeded”" ?>"/>
 				</div>
 				<div class="subsection">
+					<div class="inputlabel"><label for="notraffictimeout"><? FORMAT "Timeout before reconnect:" ?></label></div>
+					<input id="notraffictimeout" type="number" name="notraffictimeout" value="<? VAR NoTrafficTimeout ?>" class="third" min="30"
+					       title="<? FORMAT "How much time ZNC waits (in seconds) until it receives something from network or declares the connection timeout. This happens after attempts to ping the peer." ?>"/>
+				</div>
+				<div class="subsection">
 					<div class="inputlabel"><label for="maxnetworks"><? FORMAT "Max IRC Networks Number:" ?></label></div>
 					<input type="number" name="maxnetworks" value="<? VAR MaxNetworks ?>" class="third" min="0"
 					       title="<? FORMAT "Maximum number of IRC networks allowed for this user." ?>" <? IF !ImAdmin ?>disabled="disabled"<? ENDIF ?> />

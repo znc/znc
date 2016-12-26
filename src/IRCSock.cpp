@@ -686,7 +686,7 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 
             m_pNetwork->SetIRCServer(sServer);
             // Now that we are connected, let nature take its course
-            SetTimeout(CIRCNetwork::NO_TRAFFIC_TIMEOUT, TMO_READ);
+            SetTimeout(m_pNetwork->GetUser()->GetNoTrafficTimeout(), TMO_READ);
             PutIRC("WHO " + sNick);
 
             m_bAuthed = true;

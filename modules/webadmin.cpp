@@ -306,6 +306,14 @@ class CWebAdminMod : public CModule {
             WebSock.GetParam("autoclearquerybuffer").ToBool());
         pNewUser->SetMaxQueryBuffers(
             WebSock.GetParam("maxquerybuffers").ToUInt());
+        unsigned int uNoTrafficTimeout =
+            WebSock.GetParam("notraffictimeout").ToUInt();
+        if (uNoTrafficTimeout < 30) {
+            uNoTrafficTimeout = 30;
+            WebSock.GetSession()->AddError(
+                t_s("Timeout can't be less than 30 seconds!"));
+        }
+        pNewUser->SetNoTrafficTimeout(uNoTrafficTimeout);
 
 #ifdef HAVE_I18N
         pNewUser->SetLanguage(WebSock.GetParam("language"));
@@ -1319,6 +1327,8 @@ class CWebAdminMod : public CModule {
                 Tmpl["TimestampFormat"] = pUser->GetTimestampFormat();
                 Tmpl["Timezone"] = pUser->GetTimezone();
                 Tmpl["JoinTries"] = CString(pUser->JoinTries());
+                Tmpl["NoTrafficTimeout"] =
+                    CString(pUser->GetNoTrafficTimeout());
                 Tmpl["MaxNetworks"] = CString(pUser->MaxNetworks());
                 Tmpl["MaxJoins"] = CString(pUser->MaxJoins());
                 Tmpl["MaxQueryBuffers"] = CString(pUser->MaxQueryBuffers());
