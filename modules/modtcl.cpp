@@ -136,7 +136,7 @@ class CModTcl : public CModule {
         Tcl_CreateCommand(interp, "exit", tcl_exit, this, nullptr);
 
         if (!sMyArgs.empty()) {
-            i = Tcl_EvalFile(interp, sMyArgs.c_str());
+            int i = Tcl_EvalFile(interp, sMyArgs.c_str());
             if (i != TCL_OK) {
                 PutModule(Tcl_GetStringResult(interp));
             }
@@ -171,7 +171,7 @@ class CModTcl : public CModule {
     void TclUpdate() {
         while (Tcl_DoOneEvent(TCL_DONT_WAIT)) {
         }
-        i = Tcl_Eval(interp, "Binds::ProcessTime");
+        int i = Tcl_Eval(interp, "Binds::ProcessTime");
         if (i != TCL_OK) {
             PutModule(Tcl_GetStringResult(interp));
         }
@@ -212,7 +212,7 @@ class CModTcl : public CModule {
 
         CString sCommand = "Binds::ProcessPubm {" + sNick + "} {" + sHost +
                            "} - {" + sChannel + "} {" + sMes + "}";
-        i = Tcl_Eval(interp, sCommand.c_str());
+        int i = Tcl_Eval(interp, sCommand.c_str());
         if (i != TCL_OK) {
             PutModule(Tcl_GetStringResult(interp));
         }
@@ -227,7 +227,7 @@ class CModTcl : public CModule {
 
         CString sCommand = "Binds::ProcessMsgm {" + sNick + "} {" + sHost +
                            "} - {" + sMes + "}";
-        i = Tcl_Eval(interp, sCommand.c_str());
+        int i = Tcl_Eval(interp, sCommand.c_str());
         if (i != TCL_OK) {
             PutModule(Tcl_GetStringResult(interp));
         }
@@ -249,7 +249,7 @@ class CModTcl : public CModule {
             sCommand = "Binds::ProcessNick {" + sOldNick + "} {" + sHost +
                        "} - {" + vChans[n]->GetName() + "} {" + sNewNickTmp +
                        "}";
-            i = Tcl_Eval(interp, sCommand.c_str());
+            int i = Tcl_Eval(interp, sCommand.c_str());
             if (i != TCL_OK) {
                 PutModule(Tcl_GetStringResult(interp));
             }
@@ -266,7 +266,7 @@ class CModTcl : public CModule {
         CString sCommand = "Binds::ProcessKick {" + sOpNick + "} {" + sOpHost +
                            "} - {" + Channel.GetName() + "} {" + sNick + "} {" +
                            sMessage + "}";
-        i = Tcl_Eval(interp, sCommand.c_str());
+        int i = Tcl_Eval(interp, sCommand.c_str());
         if (i != TCL_OK) {
             PutModule(Tcl_GetStringResult(interp));
         }
@@ -274,7 +274,6 @@ class CModTcl : public CModule {
 
   private:
     Tcl_Interp* interp;
-    int i;
 
     static CString argvit(const char* argv[], unsigned int end,
                           unsigned int begin, CString delim) {

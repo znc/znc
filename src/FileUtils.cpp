@@ -472,8 +472,7 @@ void CFile::Close() {
 void CFile::ClearBuffer() { m_sBuffer.clear(); }
 
 bool CFile::TryExLock(const CString& sLockFile, int iFlags) {
-    Open(sLockFile, iFlags);
-    return TryExLock();
+    return Open(sLockFile, iFlags) && TryExLock();
 }
 
 bool CFile::TryExLock() { return Lock(F_WRLCK, false); }

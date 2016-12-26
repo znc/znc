@@ -225,8 +225,8 @@ class ZNC_EXPORT_LIB_EXPORT CPyTimer : public CTimer {
         : CTimer(pModule, uInterval, uCycles, sLabel, sDescription),
           m_pyObj(pyObj) {
         Py_INCREF(pyObj);
-        pModule->AddTimer(this);
         m_pModPython = pModule->GetModPython();
+        pModule->AddTimer(this);
     }
     void RunJob() override;
     PyObject* GetPyObj() { return m_pyObj; }

@@ -46,10 +46,10 @@ class CZNCSock : public Csock, public CCoreTranslationMixin {
         m_ssTrustedFingerprints = ssFPs;
     }
 
-    void SetTrustAllCerts(const bool bTrustAll = false) { m_bTrustAllCerts = bTrustAll; }
+    void SetTrustAllCerts(bool bTrustAll) { m_bTrustAllCerts = bTrustAll; }
     bool GetTrustAllCerts() const { return m_bTrustAllCerts; }
 
-    void SetTrustPKI(const bool bTrustPKI = true) { m_bTrustPKI = bTrustPKI; }
+    void SetTrustPKI(bool bTrustPKI) { m_bTrustPKI = bTrustPKI; }
     bool GetTrustPKI() const { return m_bTrustPKI; }
 
     void SetEncoding(const CString&);
@@ -66,8 +66,8 @@ class CZNCSock : public Csock, public CCoreTranslationMixin {
     CString m_sHostToVerifySSL;
     SCString m_ssTrustedFingerprints;
     SCString m_ssCertVerificationErrors;
-    bool m_bTrustAllCerts;
-    bool m_bTrustPKI;
+    bool m_bTrustAllCerts = false;
+    bool m_bTrustPKI = true;
 };
 
 enum EAddrType { ADDR_IPV4ONLY, ADDR_IPV6ONLY, ADDR_ALL };

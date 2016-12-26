@@ -549,28 +549,20 @@ class CAdminMod : public CModule {
         const CString sNetwork = sLine.Token(3);
         const CString sValue = sLine.Token(4, true);
 
-        CUser* pUser = nullptr;
-        CIRCNetwork* pNetwork = nullptr;
-
         if (sValue.empty()) {
             PutModule(
                 "Usage: SetNetwork <variable> <username> <network> <value>");
             return;
         }
 
-        if (sUsername.empty()) {
-            pUser = GetUser();
-            pNetwork = CModule::GetNetwork();
-        } else {
-            pUser = FindUser(sUsername);
-            if (!pUser) {
-                return;
-            }
+        CUser* pUser = FindUser(sUsername);
+        if (!pUser) {
+            return;
+        }
 
-            pNetwork = FindNetwork(pUser, sNetwork);
-            if (!pNetwork && !sNetwork.empty()) {
-                return;
-            }
+        CIRCNetwork* pNetwork = FindNetwork(pUser, sNetwork);
+        if (!pNetwork) {
+            return;
         }
 
         if (sVar.Equals("nick")) {

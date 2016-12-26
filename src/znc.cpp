@@ -1252,7 +1252,7 @@ bool CZNC::LoadUsers(CConfig& config, CString& sError) {
 
         CUtils::PrintMessage("Loading user [" + sUserName + "]");
 
-        CUser* pUser = new CUser(sUserName);
+        std::unique_ptr<CUser> pUser(new CUser(sUserName));
 
         if (!m_sStatusPrefix.empty()) {
             if (!pUser->SetStatusPrefix(m_sStatusPrefix)) {
@@ -1265,35 +1265,26 @@ bool CZNC::LoadUsers(CConfig& config, CString& sError) {
 
         if (!pUser->ParseConfig(pSubConf, sError)) {
             CUtils::PrintError(sError);
-            delete pUser;
-            pUser = nullptr;
             return false;
         }
 
         if (!pSubConf->empty()) {
             sError = "Unhandled lines in config for User [" + sUserName + "]!";
             CUtils::PrintError(sError);
-
             DumpConfig(pSubConf);
             return false;
         }
 
         CString sErr;
-        if (!AddUser(pUser, sErr, true)) {
-            sError = "Invalid user [" + pUser->GetUserName() + "] " + sErr;
+        if (!AddUser(pUser.release(), sErr, true)) {
+            sError = "Invalid user [" + sUserName + "] " + sErr;
         }
 
         if (!sError.empty()) {
             CUtils::PrintError(sError);
-            if (pUser) {
-                pUser->SetBeingDeleted(true);
-                delete pUser;
-                pUser = nullptr;
-            }
+            pUser->SetBeingDeleted(true);
             return false;
         }
-
-        pUser = nullptr;
     }
 
     if (m_msUsers.empty()) {
