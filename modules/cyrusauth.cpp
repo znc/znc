@@ -39,12 +39,12 @@ class CSASLAuthMod : public CModule {
         m_cbs[1].context = nullptr;
 
         AddHelpCommand();
-        AddCommand("CreateUser", static_cast<CModCommand::ModCmdFunc>(
-                                     &CSASLAuthMod::CreateUserCommand),
-                   "[yes|no]");
-        AddCommand("CloneUser", static_cast<CModCommand::ModCmdFunc>(
-                                    &CSASLAuthMod::CloneUserCommand),
-                   "[username]");
+        AddCommand("CreateUser", t_d("[yes|no]"),
+                   t_d("Create ZNC user upon first successful login"),
+                   [=](const CString& sLine) { CreateUserCommand(sLine); });
+        AddCommand("CloneUser", t_d("[username]"),
+                   t_d("User to be used as the template for new users"),
+                   [=](const CString& sLine) { CloneUserCommand(sLine); });
         AddCommand("DisableCloneUser",
                    static_cast<CModCommand::ModCmdFunc>(
                        &CSASLAuthMod::DisableCloneUserCommand));
@@ -56,7 +56,7 @@ class CSASLAuthMod : public CModule {
         if (GetUser()->IsAdmin()) {
             HandleCommand(sCommand);
         } else {
-            PutModule("Access denied");
+            PutModule(t_s("Access denied"));
         }
     }
 
@@ -69,21 +69,22 @@ class CSASLAuthMod : public CModule {
             if (it->Equals("saslauthd") || it->Equals("auxprop")) {
                 m_sMethod += *it + " ";
             } else {
-                CUtils::PrintError("Ignoring invalid SASL pwcheck method: " +
-                                   *it);
-                sMessage = "Ignored invalid SASL pwcheck method";
+                CUtils::PrintError(
+                    t_f("Ignoring invalid SASL pwcheck method: {1}")(*it));
+                sMessage = t_s("Ignored invalid SASL pwcheck method");
             }
         }
 
         m_sMethod.TrimRight();
 
         if (m_sMethod.empty()) {
-            sMessage = "Need a pwcheck method as argument (saslauthd, auxprop)";
+            sMessage =
+                t_s("Need a pwcheck method as argument (saslauthd, auxprop)");
             return false;
         }
 
         if (sasl_server_init(nullptr, nullptr) != SASL_OK) {
-            sMessage = "SASL Could Not Be Initialized - Halting Startup";
+            sMessage = t_s("SASL Could Not Be Initialized - Halting Startup");
             return false;
         }
 
@@ -176,9 +177,9 @@ class CSASLAuthMod : public CModule {
         }
 
         if (CreateUser()) {
-            PutModule("We will create users on their first login");
+            PutModule(t_s("We will create users on their first login"));
         } else {
-            PutModule("We will not create users on their first login");
+            PutModule(t_s("We will not create users on their first login"));
         }
     }
 
@@ -190,15 +191,15 @@ class CSASLAuthMod : public CModule {
         }
 
         if (ShouldCloneUser()) {
-            PutModule("We will clone [" + CloneUser() + "]");
+            PutModule(t_f("We will clone {1}")(CloneUser()));
         } else {
-            PutModule("We will not clone a user");
+            PutModule(t_s("We will not clone a user"));
         }
     }
 
     void DisableCloneUserCommand(const CString& sLine) {
         DelNV("CloneUser");
-        PutModule("Clone user disabled");
+        PutModule(t_s("Clone user disabled"));
     }
 
     bool CreateUser() const { return GetNV("CreateUser").ToBool(); }
@@ -228,11 +229,11 @@ template <>
 void TModInfo<CSASLAuthMod>(CModInfo& Info) {
     Info.SetWikiPage("cyrusauth");
     Info.SetHasArgs(true);
-    Info.SetArgsHelpText(
+    Info.SetArgsHelpText(Info.t_s(
         "This global module takes up to two arguments - the methods of "
-        "authentication - auxprop and saslauthd");
+        "authentication - auxprop and saslauthd"));
 }
 
 GLOBALMODULEDEFS(
     CSASLAuthMod,
-    "Allow users to authenticate via SASL password verification method")
+    t_s("Allow users to authenticate via SASL password verification method"))
