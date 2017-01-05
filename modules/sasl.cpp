@@ -63,9 +63,10 @@ class CSASLMod : public CModule {
                    static_cast<CModCommand::ModCmdFunc>(&CSASLMod::PrintHelp),
                    "search", "Generate this output");
         AddCommand("Set", static_cast<CModCommand::ModCmdFunc>(&CSASLMod::Set),
-                   "<username> [<password>]",
+                   "[<username> [<password>]]",
                    "Set username and password for the mechanisms that need "
-                   "them. Password is optional");
+                   "them. Password is optional. Without parameters, returns "
+                   "information about current settings.");
         AddCommand("Mechanism", static_cast<CModCommand::ModCmdFunc>(
                                     &CSASLMod::SetMechanismCommand),
                    "[mechanism[ ...]]",
