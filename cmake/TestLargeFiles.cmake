@@ -28,7 +28,7 @@ MACRO(TEST_LARGE_FILES VARIABLE)
 
     # First check without any special flags
     TRY_COMPILE(FILE64_OK "${PROJECT_BINARY_DIR}"
-      "${_test_large_files_dir}/TestFileOffsetBits.c")
+      "${_test_large_files_dir}/TestFileOffsetBits.cpp")
     if(FILE64_OK)
       MESSAGE(STATUS "Checking for 64-bit off_t - present")
     endif(FILE64_OK)
@@ -36,7 +36,7 @@ MACRO(TEST_LARGE_FILES VARIABLE)
     if(NOT FILE64_OK)
       # Test with _FILE_OFFSET_BITS=64
       TRY_COMPILE(FILE64_OK "${PROJECT_BINARY_DIR}"
-        "${_test_large_files_dir}/TestFileOffsetBits.c"
+        "${_test_large_files_dir}/TestFileOffsetBits.cpp"
         COMPILE_DEFINITIONS "-D_FILE_OFFSET_BITS=64" )
       if(FILE64_OK)
         MESSAGE(STATUS "Checking for 64-bit off_t - present with _FILE_OFFSET_BITS=64")
@@ -47,7 +47,7 @@ MACRO(TEST_LARGE_FILES VARIABLE)
     if(NOT FILE64_OK)
       # Test with _LARGE_FILES
       TRY_COMPILE(FILE64_OK "${PROJECT_BINARY_DIR}"
-        "${_test_large_files_dir}/TestFileOffsetBits.c"
+        "${_test_large_files_dir}/TestFileOffsetBits.cpp"
         COMPILE_DEFINITIONS "-D_LARGE_FILES" )
       if(FILE64_OK)
         MESSAGE(STATUS "Checking for 64-bit off_t - present with _LARGE_FILES")
@@ -58,7 +58,7 @@ MACRO(TEST_LARGE_FILES VARIABLE)
     if(NOT FILE64_OK)
       # Test with _LARGEFILE_SOURCE
       TRY_COMPILE(FILE64_OK "${PROJECT_BINARY_DIR}"
-        "${_test_large_files_dir}/TestFileOffsetBits.c"
+        "${_test_large_files_dir}/TestFileOffsetBits.cpp"
         COMPILE_DEFINITIONS "-D_LARGEFILE_SOURCE" )
       if(FILE64_OK)
         MESSAGE(STATUS "Checking for 64-bit off_t - present with _LARGEFILE_SOURCE")
@@ -69,7 +69,7 @@ MACRO(TEST_LARGE_FILES VARIABLE)
     if(NOT FILE64_OK)
       # now check for Windows stuff
       TRY_COMPILE(FILE64_OK "${PROJECT_BINARY_DIR}"
-        "${_test_large_files_dir}/TestWindowsFSeek.c")
+        "${_test_large_files_dir}/TestWindowsFSeek.cpp")
       if(FILE64_OK)
         MESSAGE(STATUS "Checking for 64-bit off_t - present with _fseeki64")
         set(HAVE__FSEEKI64 1)
@@ -81,13 +81,13 @@ MACRO(TEST_LARGE_FILES VARIABLE)
     else(NOT FILE64_OK)
 
       # Set the flags we might have determined to be required above
-      configure_file("${_test_large_files_dir}/TestLargeFiles.c.cmakein"
-                     "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/TestLargeFiles.c")
+      configure_file("${_test_large_files_dir}/TestLargeFiles.cpp.cmakein"
+                     "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/TestLargeFiles.cpp")
 
       MESSAGE(STATUS "Checking for fseeko/ftello")
       # Test if ftello/fseeko are	available
       TRY_COMPILE(FSEEKO_COMPILE_OK "${PROJECT_BINARY_DIR}"
-        "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/TestLargeFiles.c")
+        "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/TestLargeFiles.cpp")
       if(FSEEKO_COMPILE_OK)
         MESSAGE(STATUS "Checking for fseeko/ftello - present")
       endif(FSEEKO_COMPILE_OK)
@@ -95,7 +95,7 @@ MACRO(TEST_LARGE_FILES VARIABLE)
       if(NOT FSEEKO_COMPILE_OK)
         # glibc 2.2 neds _LARGEFILE_SOURCE for fseeko (but not 64-bit off_t...)
         TRY_COMPILE(FSEEKO_COMPILE_OK "${PROJECT_BINARY_DIR}"
-          "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/TestLargeFiles.c"
+          "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/TestLargeFiles.cpp"
           COMPILE_DEFINITIONS "-D_LARGEFILE_SOURCE" )
         if(FSEEKO_COMPILE_OK)
           MESSAGE(STATUS "Checking for fseeko/ftello - present with _LARGEFILE_SOURCE")
