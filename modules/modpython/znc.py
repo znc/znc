@@ -619,13 +619,13 @@ class Module:
         msg.SetText(text.s)
         return ret
 
-    def OnPrivMessage(self, msg):
+    def OnPrivTextMessage(self, msg):
         text = String(msg.GetText())
         ret = self.OnPrivMsg(msg.GetNick(), text)
         msg.SetText(text.s)
         return ret
 
-    def OnChanMessage(self, msg):
+    def OnChanTextMessage(self, msg):
         text = String(msg.GetText())
         ret = self.OnChanMsg(msg.GetNick(), msg.GetChan(), text)
         msg.SetText(text.s)

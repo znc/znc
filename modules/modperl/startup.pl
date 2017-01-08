@@ -541,14 +541,14 @@ sub OnChanActionMessage {
 	$msg->SetText($text);
 	return $ret;
 }
-sub OnPrivMessage {
+sub OnPrivTextMessage {
 	my ($self, $msg) = @_;
 	my $text = $msg->GetText;
 	my ($ret) = $self->OnPrivMsg($msg->GetNick, $text);
 	$msg->SetText($text);
 	return $ret;
 }
-sub OnChanMessage {
+sub OnChanTextMessage {
 	my ($self, $msg) = @_;
 	my $text = $msg->GetText;
 	my ($ret) = $self->OnChanMsg($msg->GetNick, $msg->GetChan, $text);
