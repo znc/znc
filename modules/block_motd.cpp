@@ -42,9 +42,9 @@ class CBlockMotd : public CModule {
         const CString sServer = sLine.Token(1);
 
         if (sServer.empty()) {
-            PutIRC("motd");
+            PutIRC("MOTD");
         } else {
-            PutIRC("motd " + sServer);
+            PutIRC("MOTD " + sServer);
         }
     }
 
