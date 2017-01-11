@@ -62,6 +62,12 @@ class CBlockMotd : public CModule {
             }
             StopTemporarilyAcceptingMotd();
         }
+
+        if (sCmd == "422") {
+            // Server has no MOTD
+            StopTemporarilyAcceptingMotd();
+        }
+
         return CONTINUE;
     }
 
