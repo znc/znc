@@ -92,6 +92,28 @@ class CTCPListener : public CListener {
     CString m_sBindHost;
 };
 
+class CUnixListener : public CListener {
+  public:
+    CUnixListener(const CString& sPath, const CString& sURIPrefix, bool bSSL,
+                 EAcceptType eAccept)
+        : CListener(sURIPrefix, bSSL, eAccept),
+          m_sPath(sPath) {}
+    ~CUnixListener();
+
+    CUnixListener(const CUnixListener&) = delete;
+    CUnixListener& operator=(const CUnixListener&) = delete;
+
+    // Getters
+    const CString& GetPath() const { return m_sPath; }
+    // !Getters
+
+    bool Listen() override;
+    CConfig ToConfig() const override;
+
+  protected:
+    CString m_sPath;
+};
+
 class CRealListener : public CZNCSock {
   public:
     CRealListener(CListener& listener) : CZNCSock(), m_Listener(listener) {}

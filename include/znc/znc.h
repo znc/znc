@@ -204,6 +204,8 @@ class CZNC {
     bool AddListener(unsigned short uPort, const CString& sBindHost,
                      const CString& sURIPrefix, bool bSSL, EAddrType eAddr,
                      CListener::EAcceptType eAccept, CString& sError);
+    bool AddListener(const CString& sPath, const CString& sURIPrefix, bool bSSL,
+                     CListener::EAcceptType eAccept, CString& sError);
     bool DelListener(CListener*);
 
     // Message of the Day

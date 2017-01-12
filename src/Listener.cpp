@@ -83,6 +83,35 @@ CConfig CTCPListener::ToConfig() const {
     return listenerConfig;
 }
 
+CUnixListener::~CUnixListener() {
+}
+
+bool CUnixListener::Listen() {
+    CString sName = "unix:" + m_sPath;
+
+    m_pListener = new CRealListener(*this);
+
+#ifdef HAVE_LIBSSL
+    if (IsSSL()) {
+        m_pListener->SetSSL(true);
+        m_pListener->SetPemLocation(CZNC::Get().GetPemLocation());
+        m_pListener->SetKeyLocation(CZNC::Get().GetKeyLocation());
+        m_pListener->SetDHParamLocation(CZNC::Get().GetDHParamLocation());
+    }
+#endif
+
+    CZNC::Get().GetManager().AddSock(m_pListener, sName);
+    return m_pListener->ListenUnix(m_sPath);
+}
+
+CConfig CUnixListener::ToConfig() const {
+    CConfig listenerConfig = CListener::ToConfig();
+
+    listenerConfig.AddKeyValuePair("Path", GetPath());
+
+    return listenerConfig;
+}
+
 void CListener::ResetRealListener() { m_pListener = nullptr; }
 
 CRealListener::~CRealListener() { m_Listener.ResetRealListener(); }

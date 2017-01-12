@@ -1717,9 +1717,70 @@ bool CZNC::AddListener(unsigned short uPort, const CString& sBindHost,
     return true;
 }
 
+bool CZNC::AddListener(const CString& sPath, const CString& sURIPrefixRaw,
+                       bool bSSL, CListener::EAcceptType eAccept,
+                       CString& sError) {
+    CUtils::PrintAction("Binding to path [" + sPath + "]");
+
+#ifndef HAVE_LIBSSL
+    if (bSSL) {
+        sError = "SSL is not enabled";
+        CUtils::PrintStatus(false, sError);
+        return false;
+    }
+#else
+    CString sPemFile = GetPemLocation();
+
+    if (bSSL && !CFile::Exists(sPemFile)) {
+        sError = "Unable to locate pem file: [" + sPemFile + "]";
+        CUtils::PrintStatus(false, sError);
+
+        // If stdin is e.g. /dev/null and we call GetBoolInput(),
+        // we are stuck in an endless loop!
+        if (isatty(0) &&
+            CUtils::GetBoolInput("Would you like to create a new pem file?",
+                                 true)) {
+            sError.clear();
+            WritePemFile();
+        } else {
+            return false;
+        }
+
+        CUtils::PrintAction("Binding to path [" + sPath + "]");
+    }
+#endif
+
+    // URIPrefix must start with a slash and end without one.
+    CString sURIPrefix = CString(sURIPrefixRaw);
+    if (!sURIPrefix.empty()) {
+        if (!sURIPrefix.StartsWith("/")) {
+            sURIPrefix = "/" + sURIPrefix;
+        }
+        if (sURIPrefix.EndsWith("/")) {
+            sURIPrefix.TrimRight("/");
+        }
+    }
+
+    CListener* pListener =
+        new CUnixListener(sPath, sURIPrefix, bSSL, eAccept);
+
+    if (!pListener->Listen()) {
+        sError = FormatBindError();
+        CUtils::PrintStatus(false, sError);
+        delete pListener;
+        return false;
+    }
+
+    m_vpListeners.push_back(pListener);
+    CUtils::PrintStatus(true);
+
+    return true;
+}
+
 bool CZNC::AddListener(CConfig* pConfig, CString& sError) {
     CString sBindHost;
     CString sURIPrefix;
+    CString sPath;
     bool bSSL;
     bool b4;
 #ifdef HAVE_IPV6
@@ -1730,31 +1791,21 @@ bool CZNC::AddListener(CConfig* pConfig, CString& sError) {
     bool bIRC;
     bool bWeb;
     unsigned short uPort;
+    bool bTcpListener = true;
+
     if (!pConfig->FindUShortEntry("port", uPort)) {
-        sError = "No port given";
-        CUtils::PrintError(sError);
-        return false;
+        bTcpListener = false;
+        if (!pConfig->FindStringEntry("path", sPath)) {
+            sError = "No port and no path given";
+            CUtils::PrintError(sError);
+            return false;
+        }
     }
-    pConfig->FindStringEntry("host", sBindHost);
+
     pConfig->FindBoolEntry("ssl", bSSL, false);
-    pConfig->FindBoolEntry("ipv4", b4, true);
-    pConfig->FindBoolEntry("ipv6", b6, b6);
     pConfig->FindBoolEntry("allowirc", bIRC, true);
     pConfig->FindBoolEntry("allowweb", bWeb, true);
     pConfig->FindStringEntry("uriprefix", sURIPrefix);
-
-    EAddrType eAddr;
-    if (b4 && b6) {
-        eAddr = ADDR_ALL;
-    } else if (b4 && !b6) {
-        eAddr = ADDR_IPV4ONLY;
-    } else if (!b4 && b6) {
-        eAddr = ADDR_IPV6ONLY;
-    } else {
-        sError = "No address family given";
-        CUtils::PrintError(sError);
-        return false;
-    }
 
     CListener::EAcceptType eAccept;
     if (bIRC && bWeb) {
@@ -1769,8 +1820,28 @@ bool CZNC::AddListener(CConfig* pConfig, CString& sError) {
         return false;
     }
 
-    return AddListener(uPort, sBindHost, sURIPrefix, bSSL, eAddr, eAccept,
-                       sError);
+    if (bTcpListener) {
+        pConfig->FindStringEntry("host", sBindHost);
+        pConfig->FindBoolEntry("ipv4", b4, true);
+        pConfig->FindBoolEntry("ipv6", b6, b6);
+
+        EAddrType eAddr;
+        if (b4 && b6) {
+            eAddr = ADDR_ALL;
+        } else if (b4 && !b6) {
+            eAddr = ADDR_IPV4ONLY;
+        } else if (!b4 && b6) {
+            eAddr = ADDR_IPV6ONLY;
+        } else {
+            sError = "No address family given";
+            CUtils::PrintError(sError);
+            return false;
+        }
+
+        return AddListener(uPort, sBindHost, sURIPrefix, bSSL, eAddr, eAccept,
+                           sError);
+    }
+    return AddListener(sPath, sURIPrefix, bSSL, eAccept, sError);
 }
 
 bool CZNC::AddListener(CListener* pListener) {
