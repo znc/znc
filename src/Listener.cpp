@@ -22,6 +22,23 @@ CListener::~CListener() {
     if (m_pListener) CZNC::Get().GetManager().DelSockByAddr(m_pListener);
 }
 
+CConfig CListener::ToConfig() const {
+    CConfig listenerConfig;
+
+    listenerConfig.AddKeyValuePair("URIPrefix", GetURIPrefix() + "/");
+
+    listenerConfig.AddKeyValuePair("SSL", CString(IsSSL()));
+
+    listenerConfig.AddKeyValuePair(
+        "AllowIRC",
+        CString(GetAcceptType() != CListener::ACCEPT_HTTP));
+    listenerConfig.AddKeyValuePair(
+        "AllowWeb",
+        CString(GetAcceptType() != CListener::ACCEPT_IRC));
+
+    return listenerConfig;
+}
+
 CTCPListener::~CTCPListener() {
 }
 
@@ -53,25 +70,15 @@ bool CTCPListener::Listen() {
 }
 
 CConfig CTCPListener::ToConfig() const {
-    CConfig listenerConfig;
+    CConfig listenerConfig = CListener::ToConfig();
 
     listenerConfig.AddKeyValuePair("Host", GetBindHost());
-    listenerConfig.AddKeyValuePair("URIPrefix", GetURIPrefix() + "/");
     listenerConfig.AddKeyValuePair("Port", CString(GetPort()));
 
     listenerConfig.AddKeyValuePair(
         "IPv4", CString(GetAddrType() != ADDR_IPV6ONLY));
     listenerConfig.AddKeyValuePair(
         "IPv6", CString(GetAddrType() != ADDR_IPV4ONLY));
-
-    listenerConfig.AddKeyValuePair("SSL", CString(IsSSL()));
-
-    listenerConfig.AddKeyValuePair(
-        "AllowIRC",
-        CString(GetAcceptType() != CListener::ACCEPT_HTTP));
-    listenerConfig.AddKeyValuePair(
-        "AllowWeb",
-        CString(GetAcceptType() != CListener::ACCEPT_IRC));
 
     return listenerConfig;
 }

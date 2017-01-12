@@ -53,7 +53,7 @@ class CListener {
 
     virtual bool Listen() = 0;
     void ResetRealListener();
-    virtual CConfig ToConfig() const = 0;
+    virtual CConfig ToConfig() const;
 
   private:
   protected:
