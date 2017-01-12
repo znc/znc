@@ -14,6 +14,9 @@
 # limitations under the License.
 #
 
+# TODO: consider switching to swig_add_library() after bumping CMake
+# requirements to 3.8, when that command started using IMPLICIT_DEPENDS
+
 set(modinclude_modperl PUBLIC ${PERL_INCLUDE_DIRS}
 	"${CMAKE_CURRENT_BINARY_DIR}/.." PARENT_SCOPE)
 set(modcompile_modperl PUBLIC "${PERL_CFLAGS}" PARENT_SCOPE)
