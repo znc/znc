@@ -15,6 +15,7 @@
  */
 
 #include <znc/Listener.h>
+#include <znc/Config.h>
 #include <znc/znc.h>
 
 CListener::~CListener() {
@@ -46,6 +47,30 @@ bool CListener::Listen() {
     return CZNC::Get().GetManager().ListenHost(m_uPort, "_LISTENER",
                                                m_sBindHost, bSSL, SOMAXCONN,
                                                m_pListener, 0, m_eAddr);
+}
+
+CConfig CListener::ToConfig() const {
+    CConfig listenerConfig;
+
+    listenerConfig.AddKeyValuePair("Host", GetBindHost());
+    listenerConfig.AddKeyValuePair("URIPrefix", GetURIPrefix() + "/");
+    listenerConfig.AddKeyValuePair("Port", CString(GetPort()));
+
+    listenerConfig.AddKeyValuePair(
+        "IPv4", CString(GetAddrType() != ADDR_IPV6ONLY));
+    listenerConfig.AddKeyValuePair(
+        "IPv6", CString(GetAddrType() != ADDR_IPV4ONLY));
+
+    listenerConfig.AddKeyValuePair("SSL", CString(IsSSL()));
+
+    listenerConfig.AddKeyValuePair(
+        "AllowIRC",
+        CString(GetAcceptType() != CListener::ACCEPT_HTTP));
+    listenerConfig.AddKeyValuePair(
+        "AllowWeb",
+        CString(GetAcceptType() != CListener::ACCEPT_IRC));
+
+    return listenerConfig;
 }
 
 void CListener::ResetRealListener() { m_pListener = nullptr; }

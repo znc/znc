@@ -497,29 +497,8 @@ bool CZNC::WriteConfig() {
 
     unsigned int l = 0;
     for (CListener* pListener : m_vpListeners) {
-        CConfig listenerConfig;
-
-        listenerConfig.AddKeyValuePair("Host", pListener->GetBindHost());
-        listenerConfig.AddKeyValuePair("URIPrefix",
-                                       pListener->GetURIPrefix() + "/");
-        listenerConfig.AddKeyValuePair("Port", CString(pListener->GetPort()));
-
-        listenerConfig.AddKeyValuePair(
-            "IPv4", CString(pListener->GetAddrType() != ADDR_IPV6ONLY));
-        listenerConfig.AddKeyValuePair(
-            "IPv6", CString(pListener->GetAddrType() != ADDR_IPV4ONLY));
-
-        listenerConfig.AddKeyValuePair("SSL", CString(pListener->IsSSL()));
-
-        listenerConfig.AddKeyValuePair(
-            "AllowIRC",
-            CString(pListener->GetAcceptType() != CListener::ACCEPT_HTTP));
-        listenerConfig.AddKeyValuePair(
-            "AllowWeb",
-            CString(pListener->GetAcceptType() != CListener::ACCEPT_IRC));
-
         config.AddSubConfig("Listener", "listener" + CString(l++),
-                            listenerConfig);
+                pListener->ToConfig());
     }
 
     config.AddKeyValuePair("ConnectDelay", CString(m_uiConnectDelay));

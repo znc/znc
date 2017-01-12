@@ -22,6 +22,7 @@
 
 // Forward Declarations
 class CRealListener;
+class CConfig;
 // !Forward Declarations
 
 class CListener {
@@ -60,6 +61,7 @@ class CListener {
 
     bool Listen();
     void ResetRealListener();
+    CConfig ToConfig() const;
 
   private:
   protected:
