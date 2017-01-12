@@ -1558,6 +1558,7 @@ void CClient::UserPortCommand(CString& sLine) {
                                    ? "All"
                                    : (eAddr == ADDR_IPV4ONLY ? "IPv4" : "IPv6")));
             } else {
+                // TODO: Handle CUnixListener
                 Table.SetCell("Port", "unknown");
             }
 

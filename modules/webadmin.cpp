@@ -1895,6 +1895,7 @@ class CWebAdminMod : public CModule {
                     l["SuggestDeletion"] =
                         CString(pTCPListener->GetPort() != WebSock.GetLocalPort());
                 }
+                // TODO: Handle CUnixListener
 
                 l["IsHTTP"] = CString(pListener->GetAcceptType() !=
                                      CListener::ACCEPT_IRC);
