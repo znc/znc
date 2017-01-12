@@ -669,7 +669,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
         // Don't ask for listen host, it may be configured later if needed.
 
         CUtils::PrintAction("Verifying the listener");
-        CListener* pListener = new CListener(
+        CListener* pListener = new CTCPListener(
             (unsigned short int)uListenPort, sListenHost, sURIPrefix,
             bListenSSL, b6 ? ADDR_ALL : ADDR_IPV4ONLY, CListener::ACCEPT_ALL);
         if (!pListener->Listen()) {
@@ -1568,9 +1568,11 @@ bool CZNC::AddUser(CUser* pUser, CString& sErrorRet, bool bStartup) {
 CListener* CZNC::FindListener(u_short uPort, const CString& sBindHost,
                               EAddrType eAddr) {
     for (CListener* pListener : m_vpListeners) {
-        if (pListener->GetPort() != uPort) continue;
-        if (pListener->GetBindHost() != sBindHost) continue;
-        if (pListener->GetAddrType() != eAddr) continue;
+        CTCPListener* pTCPListener = dynamic_cast<CTCPListener*>(pListener);
+        if (!pTCPListener) continue;
+        if (pTCPListener->GetPort() != uPort) continue;
+        if (pTCPListener->GetBindHost() != sBindHost) continue;
+        if (pTCPListener->GetAddrType() != eAddr) continue;
         return pListener;
     }
     return nullptr;
@@ -1700,7 +1702,7 @@ bool CZNC::AddListener(unsigned short uPort, const CString& sBindHost,
     }
 
     CListener* pListener =
-        new CListener(uPort, sBindHost, sURIPrefix, bSSL, eAddr, eAccept);
+        new CTCPListener(uPort, sBindHost, sURIPrefix, bSSL, eAddr, eAccept);
 
     if (!pListener->Listen()) {
         sError = FormatBindError();

@@ -22,7 +22,10 @@ CListener::~CListener() {
     if (m_pListener) CZNC::Get().GetManager().DelSockByAddr(m_pListener);
 }
 
-bool CListener::Listen() {
+CTCPListener::~CTCPListener() {
+}
+
+bool CTCPListener::Listen() {
     if (!m_uPort || m_pListener) {
         errno = EINVAL;
         return false;
@@ -49,7 +52,7 @@ bool CListener::Listen() {
                                                m_pListener, 0, m_eAddr);
 }
 
-CConfig CListener::ToConfig() const {
+CConfig CTCPListener::ToConfig() const {
     CConfig listenerConfig;
 
     listenerConfig.AddKeyValuePair("Host", GetBindHost());

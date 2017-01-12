@@ -1543,17 +1543,25 @@ void CClient::UserPortCommand(CString& sLine) {
 
         for (const CListener* pListener : vpListeners) {
             Table.AddRow();
-            Table.SetCell("Port", CString(pListener->GetPort()));
-            Table.SetCell("BindHost", (pListener->GetBindHost().empty()
-                                           ? CString("*")
-                                           : pListener->GetBindHost()));
-            Table.SetCell("SSL", CString(pListener->IsSSL()));
 
-            EAddrType eAddr = pListener->GetAddrType();
-            Table.SetCell("Proto",
-                          (eAddr == ADDR_ALL
-                               ? "All"
-                               : (eAddr == ADDR_IPV4ONLY ? "IPv4" : "IPv6")));
+            const CTCPListener* pTCPListener = dynamic_cast<const CTCPListener*>(pListener);
+
+            if (pTCPListener != nullptr) {
+                Table.SetCell("Port", CString(pTCPListener->GetPort()));
+                Table.SetCell("BindHost", (pTCPListener->GetBindHost().empty()
+                                               ? CString("*")
+                                               : pTCPListener->GetBindHost()));
+
+                EAddrType eAddr = pTCPListener->GetAddrType();
+                Table.SetCell("Proto",
+                              (eAddr == ADDR_ALL
+                                   ? "All"
+                                   : (eAddr == ADDR_IPV4ONLY ? "IPv4" : "IPv6")));
+            } else {
+                Table.SetCell("Port", "unknown");
+            }
+
+            Table.SetCell("SSL", CString(pListener->IsSSL()));
 
             CListener::EAcceptType eAccept = pListener->GetAcceptType();
             Table.SetCell(
@@ -1608,7 +1616,7 @@ void CClient::UserPortCommand(CString& sLine) {
             const CString sBindHost = sLine.Token(4);
             const CString sURIPrefix = sLine.Token(5);
 
-            CListener* pListener = new CListener(uPort, sBindHost, sURIPrefix,
+            CListener* pListener = new CTCPListener(uPort, sBindHost, sURIPrefix,
                                                  bSSL, eAddr, eAccept);
 
             if (!pListener->Listen()) {

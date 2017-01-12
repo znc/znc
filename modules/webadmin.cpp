@@ -161,7 +161,7 @@ class CWebAdminMod : public CModule {
         }
 
         // Now turn that into a listener instance
-        CListener* pListener = new CListener(
+        CListener* pListener = new CTCPListener(
             uPort, sListenHost, sURIPrefix, bSSL,
             (!bIPv6 ? ADDR_IPV4ONLY : ADDR_ALL), CListener::ACCEPT_HTTP);
 
@@ -1883,8 +1883,18 @@ class CWebAdminMod : public CModule {
             for (const CListener* pListener : vpListeners) {
                 CTemplate& l = Tmpl.AddRow("ListenLoop");
 
-                l["Port"] = CString(pListener->GetPort());
-                l["BindHost"] = pListener->GetBindHost();
+                const CTCPListener* pTCPListener = dynamic_cast<const CTCPListener*>(pListener);
+                if (pTCPListener != nullptr) {
+                    l["Port"] = CString(pTCPListener->GetPort());
+                    l["BindHost"] = pTCPListener->GetBindHost();
+
+                    // simple protection for user from shooting his own foot
+                    // TODO check also for hosts/families
+                    // such check is only here, user still can forge HTTP request to
+                    // delete web port
+                    l["SuggestDeletion"] =
+                        CString(pTCPListener->GetPort() != WebSock.GetLocalPort());
+                }
 
                 l["IsHTTP"] = CString(pListener->GetAcceptType() !=
                                      CListener::ACCEPT_IRC);
@@ -1893,13 +1903,6 @@ class CWebAdminMod : public CModule {
 
                 l["URIPrefix"] = pListener->GetURIPrefix() + "/";
 
-                // simple protection for user from shooting his own foot
-                // TODO check also for hosts/families
-                // such check is only here, user still can forge HTTP request to
-                // delete web port
-                l["SuggestDeletion"] =
-                    CString(pListener->GetPort() != WebSock.GetLocalPort());
-
 #ifdef HAVE_LIBSSL
                 if (pListener->IsSSL()) {
                     l["IsSSL"] = "true";
@@ -1907,20 +1910,24 @@ class CWebAdminMod : public CModule {
 #endif
 
 #ifdef HAVE_IPV6
-                switch (pListener->GetAddrType()) {
-                    case ADDR_IPV4ONLY:
-                        l["IsIPV4"] = "true";
-                        break;
-                    case ADDR_IPV6ONLY:
-                        l["IsIPV6"] = "true";
-                        break;
-                    case ADDR_ALL:
-                        l["IsIPV4"] = "true";
-                        l["IsIPV6"] = "true";
-                        break;
+                if (pTCPListener != nullptr) {
+                    switch (pTCPListener->GetAddrType()) {
+                        case ADDR_IPV4ONLY:
+                            l["IsIPV4"] = "true";
+                            break;
+                        case ADDR_IPV6ONLY:
+                            l["IsIPV6"] = "true";
+                            break;
+                        case ADDR_ALL:
+                            l["IsIPV4"] = "true";
+                            l["IsIPV6"] = "true";
+                            break;
+                    }
                 }
 #else
-                l["IsIPV4"] = "true";
+                if (pTCPListener != nullptr) {
+                    l["IsIPV4"] = "true";
+                }
 #endif
             }
 
