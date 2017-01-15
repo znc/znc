@@ -3,6 +3,11 @@ env:
     global:
           # SECRET_KEY, used to push docs to github and to init coverity scans
         - secure: "i2f2UVDnyHT/9z0U3XvgTj8eDERvnc1Wk7HpseEjb75JwGzqn/2R+RKHmoSrwK3hFgij2IMxZL19XtHFwMz9t5A/huAAKD74KMMI/QpeZEJ/sjT3CTLcE9HEVDdJOjc7dfLRxb2hZtgvx8clZIMrpeUdPhci8openff30KvXVbg="
+
+# These linux-specific parameters could be moved into matrix.include items, but that's lots of repetition
+sudo: required
+dist: trusty
+
 matrix:
     fast_finish: true
     include:
@@ -22,9 +27,27 @@ matrix:
           compiler: clang
           env: BUILD_TYPE=tsan BUILD_WITH=cmake
         - os: osx
+          osx_image: xcode6.4 # OS X 10.10
           compiler: clang
           env: BUILD_TYPE=normal BUILD_WITH=cmake
         - os: osx
+          osx_image: xcode6.4 # OS X 10.10
+          compiler: clang
+          env: BUILD_TYPE=normal BUILD_WITH=autoconf
+        - os: osx
+          osx_image: xcode7.3 # OS X 10.11
+          compiler: clang
+          env: BUILD_TYPE=normal BUILD_WITH=cmake
+        - os: osx
+          osx_image: xcode7.3 # OS X 10.11
+          compiler: clang
+          env: BUILD_TYPE=normal BUILD_WITH=autoconf
+        - os: osx
+          osx_image: xcode8.2 # macOS 10.12
+          compiler: clang
+          env: BUILD_TYPE=normal BUILD_WITH=cmake
+        - os: osx
+          osx_image: xcode8.2 # macOS 10.12
           compiler: clang
           env: BUILD_TYPE=normal BUILD_WITH=autoconf
         - os: linux
@@ -72,7 +95,7 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew list --versions; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install swig python3 icu4c jq openssl qt5 gettext; fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" && "$BUILD_WITH" == "cmake" ]]; then brew upgrade cmake; fi  # preinstalled cmake on travis is too old
+    - if [[ "$TRAVIS_OS_NAME" == "osx" && "$BUILD_WITH" == "cmake" ]]; then brew outdated cmake || brew upgrade cmake; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew info --json=v1 --installed | jq .; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PKG_CONFIG_PATH="$(brew --prefix qt5)/lib/pkgconfig:$PKG_CONFIG_PATH"; fi
     - "echo pkg-config path: [$PKG_CONFIG_PATH]"
@@ -133,5 +156,3 @@ notifications:
             secure: "UGh4tbpviOD438ZOi+I3W6eh+R68tbpNIJc0uf5FK6xhHLLo3FRIozkL7CRVA3TxYHuahwerZpBR4TbAyc+gVUn5YRHjdsMIPHPCW/kh8ZkEJKNYXkHerbH0Np6PRLI58l6lmjMQbiWn+lqlgsHdVsyknqxDwoj7JDieE+5X53c="
         password:
             secure: "B2F1coXddY1H0/v3OkiPnUlbnSN/wapRay1PUbN8tvm7IDYOjpivhsRk+31/4pauKOoF4AZhzP6F9mhGxkGYBQ23Td5Y6+uZeaDnTYnXjs8fbV0QY1Mx+2EkHDSkLQoYlYr06pK9q55X3uLK1zTz5Ye0Po3KzbeydxOyyG+xBGg="
-sudo: required
-dist: trusty

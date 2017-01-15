@@ -1,6 +1,6 @@
 # [![ZNC](http://wiki.znc.in/resources/assets/wiki.png)](http://znc.in) - An advanced IRC bouncer
 
-[![Travis Build Status](https://img.shields.io/travis/znc/znc/master.svg?label=linux%2Fosx)](https://travis-ci.org/znc/znc)
+[![Travis Build Status](https://img.shields.io/travis/znc/znc/master.svg?label=linux%2Fmacos)](https://travis-ci.org/znc/znc)
 [![Jenkins Build Status](https://img.shields.io/jenkins/s/http/jenkins.znc.in/job/znc/master.svg?label=freebsd)](http://jenkins.znc.in/job/znc/job/master/)
 [![AppVeyor Build status](https://img.shields.io/appveyor/ci/DarthGandalf/znc/master.svg?label=windows)](https://ci.appveyor.com/project/DarthGandalf/znc/branch/master)
 [![Bountysource](https://www.bountysource.com/badge/tracker?tracker_id=1759)](https://www.bountysource.com/trackers/1759-znc?utm_source=1759&utm_medium=shield&utm_campaign=TRACKER_BADGE)
@@ -36,7 +36,7 @@ Core:
 SSL/TLS support:
 * openssl 0.9.7d or later
     * try installing openssl-dev, openssl-devel or libssl-dev
-    * Mac OS X: OpenSSL from Homebrew is preferred over system
+    * macOS: OpenSSL from Homebrew is preferred over system
 
 modperl:
 * perl and its bundled libperl
@@ -45,7 +45,7 @@ modperl:
 modpython:
 * python and its bundled libpython
 * perl is required
-* Mac OS X: Python from Homebrew is preferred over system version
+* macOS: Python from Homebrew is preferred over system version
 * SWIG if building from git
 
 cyrusauth:

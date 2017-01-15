@@ -417,7 +417,7 @@ timeval CUtils::GetTime() {
 #ifdef HAVE_CLOCK_GETTIME
     timespec ts;
     if (clock_gettime(CLOCK_REALTIME, &ts) == 0) {
-        return { ts.tv_sec, ts.tv_nsec / 1000 };
+        return { ts.tv_sec, static_cast<suseconds_t>(ts.tv_nsec / 1000) };
     }
 #endif
 
