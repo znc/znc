@@ -1,30 +1,15 @@
-# https://github.com/dmakhno/travis_after_all/tree/b7172bca92d6dcfcec2a0eacdf14eb5f3a1ad627
-
-# The MIT License (MIT)
-#
-# Copyright (c) 2014 Dmytro Makhno
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy of
-# this software and associated documentation files (the "Software"), to deal in
-# the Software without restriction, including without limitation the rights to
-# use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-# the Software, and to permit persons to whom the Software is furnished to do so,
-# subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-# FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-# COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-# IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+# https://github.com/dmakhno/travis_after_all with MIT license
 
 import os
+import sys
 import json
 import time
 import logging
+
+try:
+    from functools import reduce
+except ImportError:
+    pass
 
 try:
     import urllib.request as urllib2
@@ -38,28 +23,38 @@ log.setLevel(logging.INFO)
 TRAVIS_JOB_NUMBER = 'TRAVIS_JOB_NUMBER'
 TRAVIS_BUILD_ID = 'TRAVIS_BUILD_ID'
 POLLING_INTERVAL = 'LEADER_POLLING_INTERVAL'
+GITHUB_TOKEN = 'GITHUB_TOKEN'
+
+
+# Travis API entry point, there are at least https://api.travis-ci.com and https://api.travis-ci.org
+travis_entry = sys.argv[1] if len(sys.argv) > 1 else 'https://api.travis-ci.org'
 
 build_id = os.getenv(TRAVIS_BUILD_ID)
 polling_interval = int(os.getenv(POLLING_INTERVAL, '5'))
+gh_token = os.getenv(GITHUB_TOKEN)
 
-#assume, first job is the leader
-is_leader = lambda job_number: job_number.endswith('.1')
 
-if not os.getenv(TRAVIS_JOB_NUMBER):
+my_job_number = os.getenv(TRAVIS_JOB_NUMBER)
+if not my_job_number:
     # seems even for builds with only one job, this won't get here
     log.fatal("Don't use defining leader for build without matrix")
     exit(1)
-elif is_leader(os.getenv(TRAVIS_JOB_NUMBER)):
-    log.info("This is a leader")
-else:
-    #since python is subprocess, env variables are exported back via file
-    with open(".to_export_back", "w") as export_var:
-        export_var.write("BUILD_MINION=YES")
-    log.info("This is a minion")
-    exit(0)
+
+leader_name = ''
+
+
+def is_leader(job):
+    return job == leader_name
+
+
+def detect_leader(token):
+    global leader_name
+    matrix = matrix_snapshot(token)
+    leader_name = matrix[-1].number
 
 
 class MatrixElement(object):
+
     def __init__(self, json_raw):
         self.is_finished = json_raw['finished_at'] is not None
         self.is_succeeded = json_raw['result'] == 0
@@ -67,39 +62,69 @@ class MatrixElement(object):
         self.is_leader = is_leader(self.number)
 
 
-def matrix_snapshot():
+def matrix_snapshot(travis_token):
     """
     :return: Matrix List
     """
-    response = urllib2.build_opener().open("https://api.travis-ci.org/builds/{0}".format(build_id)).read()
-    raw_json = json.loads(response)
-    matrix_without_leader = [MatrixElement(element) for element in raw_json["matrix"]]
+    headers = {'content-type': 'application/json'}
+    if travis_token is not None:
+        headers['Authorization'] = 'token {}'.format(travis_token)
+    req = urllib2.Request("{0}/builds/{1}".format(travis_entry, build_id), headers=headers)
+    response = urllib2.urlopen(req).read()
+    raw_json = json.loads(response.decode('utf-8'))
+    matrix_without_leader = [MatrixElement(job) for job in raw_json["matrix"] if not is_leader(job['number'])]
     return matrix_without_leader
 
 
-def wait_others_to_finish():
+def wait_others_to_finish(travis_token):
     def others_finished():
         """
         Dumps others to finish
         Leader cannot finish, it is working now
         :return: tuple(True or False, List of not finished jobs)
         """
-        snapshot = matrix_snapshot()
-        finished = [el.is_finished for el in snapshot if not el.is_leader]
-        return reduce(lambda a, b: a and b, finished), [el.number for el in snapshot if
-                                                        not el.is_leader and not el.is_finished]
+        snapshot = matrix_snapshot(travis_token)
+        finished = [job.is_finished for job in snapshot if not job.is_leader]
+        return reduce(lambda a, b: a and b, finished), [job.number for job in snapshot if
+                                                        not job.is_leader and not job.is_finished]
 
     while True:
         finished, waiting_list = others_finished()
-        if finished: break
+        if finished:
+            break
         log.info("Leader waits for minions {0}...".format(waiting_list))  # just in case do not get "silence timeout"
         time.sleep(polling_interval)
 
 
-try:
-    wait_others_to_finish()
+def get_token():
+    if gh_token is None or gh_token == '':
+        return None
+    data = {"github_token": gh_token}
+    headers = {'content-type': 'application/json', 'User-Agent': 'Travis/1.0'}
 
-    final_snapshot = matrix_snapshot()
+    req = urllib2.Request("{0}/auth/github".format(travis_entry), json.dumps(data).encode('utf-8'), headers)
+    response = urllib2.urlopen(req).read()
+    travis_token = json.loads(response.decode('utf-8')).get('access_token')
+
+    return travis_token
+
+
+try:
+    token = get_token()
+
+    detect_leader(token)
+    if is_leader(my_job_number):
+        log.info("This is a leader")
+    else:
+        # since python is subprocess, env variables are exported back via file
+        with open(".to_export_back", "w") as export_var:
+            export_var.write("BUILD_MINION=YES")
+        log.info("This is a minion")
+        exit(0)
+
+    wait_others_to_finish(token)
+
+    final_snapshot = matrix_snapshot(token)
     log.info("Final Results: {0}".format([(e.number, e.is_succeeded) for e in final_snapshot]))
 
     BUILD_AGGREGATE_STATUS = 'BUILD_AGGREGATE_STATUS'
@@ -112,7 +137,7 @@ try:
     else:
         log.warn("Others Unknown")
         os.environ[BUILD_AGGREGATE_STATUS] = "unknown"
-    #since python is subprocess, env variables are exported back via file
+    # since python is subprocess, env variables are exported back via file
     with open(".to_export_back", "w") as export_var:
         export_var.write("BUILD_LEADER=YES {0}={1}".format(BUILD_AGGREGATE_STATUS, os.environ[BUILD_AGGREGATE_STATUS]))
 

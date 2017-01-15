@@ -92,7 +92,7 @@ script:
     - cd ..
     - /usr/local/bin/znc --version
 after_success:
-    - test -r .travis_after_all.py && python .travis_after_all.py || echo No .travis_after_all.py found
+    - test -r "$TRAVIS_BUILD_DIR/.travis_after_all.py" && python "$TRAVIS_BUILD_DIR/.travis_after_all.py" || echo No .travis_after_all.py found
     - test -r .to_export_back && echo $(cat .to_export_back) || echo No .to_export_back found
     - export DUMMY_VAR=dummy-value $(cat .to_export_back)
     - |
