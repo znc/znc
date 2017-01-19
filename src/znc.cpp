@@ -653,7 +653,14 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 #endif
     CString sListenHost;
     CString sURIPrefix;
+
+// Default to true when we have SSL bundled (secure by default).
+#ifdef HAVE_LIBSSL
+    bool bListenSSL = true;
+#else
     bool bListenSSL = false;
+#endif
+
     unsigned int uListenPort = 0;
     bool bSuccess;
 
