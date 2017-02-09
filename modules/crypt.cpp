@@ -50,7 +50,19 @@
 class CCryptMod : public CModule {
     CString NickPrefix() {
         MCString::iterator it = FindNV(NICK_PREFIX_KEY);
-        return it != EndNV() ? it->second : "*";
+        /*
+         * Check for different Prefixes to not confuse modules with nicknames
+         * Also check for overlap for rare cases like:
+         * SP = "*"; NP = "*s"; "tatus" sends an encrypted message appearing at "*status"
+         */
+        CString sStatusPrefix = GetUser()->GetStatusPrefix();
+        if (it != EndNV()) {
+            size_t sp = sStatusPrefix.size();
+            size_t np = it->second.size();
+            if (sStatusPrefix.CaseCmp(it->second, (np > sp) ? sp : np ))
+                return it->second;
+        }
+        return sStatusPrefix.StrCmp("*", 1) ? "*" : ".";
     }
 
   public:
