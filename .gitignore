@@ -71,3 +71,5 @@ __pycache__
 *.cmake
 CMakeFiles/
 /CMakeCache.txt
+/install_manifest.txt
+/install_manifest_*.txt
