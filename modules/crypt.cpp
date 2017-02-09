@@ -26,10 +26,9 @@
 // TODO:
 //
 // 1) Encrypt key storage file
-// 2) Secure key exchange using pub/priv keys and the DH algorithm
-// 3) Some way of notifying the user that the current channel is in "encryption
+// 2) Some way of notifying the user that the current channel is in "encryption
 // mode" verses plain text
-// 4) Temporarily disable a target (nick/chan)
+// 3) Temporarily disable a target (nick/chan)
 //
 // NOTE: This module is currently NOT intended to secure you from your shell
 // admin.
@@ -43,6 +42,9 @@
 #include <znc/Chan.h>
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
+#include <openssl/dh.h>
+#include <openssl/bn.h>
+#include <znc/SHA256.h>
 
 #define REQUIRESSL 1
 // To be removed in future versions
@@ -50,6 +52,137 @@
 #define NICK_PREFIX_KEY "@nick-prefix@"
 
 class CCryptMod : public CModule {
+  private:
+    const char *prime1080="FBE1022E23D213E8ACFA9AE8B9DFADA3EA6B7AC7A7B7E95AB5EB2DF858921FEADE95E6AC7BE7DE6ADBAB8A783E7AF7A7FA6A2B7BEB1E72EAE2B72F9FA2BFB2A2EFBEFAC868BADB3E828FA8BADFADA3E4CC1BE7E8AFE85E9698A783EB68FA07A77AB6AD7BEB618ACF9CA2897EB28A6189EFA07AB99A8A7FA9AE299EFA7BA66DEAFEFBEFBF0B7D8B";
+    /* Generate our keys once and reuse, just like ssh keys */
+    DH *dh = NULL;
+    CString sPrivKey;
+    CString sPubKey;
+
+#if OPENSSL_VERSION_NUMBER < 0X10100000L
+    int DH_set0_pqg(DH *dh, BIGNUM *p, BIGNUM *q, BIGNUM *g) {
+        /* If the fields p and g in dh are NULL, the corresponding input
+         * parameters MUST be non-NULL.  q may remain NULL.
+         */
+        if (dh == NULL || (dh->p == NULL && p == NULL) || (dh->g == NULL && g == NULL))
+            return 0;
+
+        if (p != NULL) {
+            BN_free(dh->p);
+            dh->p = p;
+        }
+        if (g != NULL) {
+            BN_free(dh->g);
+            dh->g = g;
+        }
+        if (q != NULL) {
+            BN_free(dh->q);
+            dh->q = q;
+            dh->length = BN_num_bits(q);
+        }
+
+        return 1;
+    }
+
+    void DH_get0_key(const DH *dh, const BIGNUM **pub_key, const BIGNUM **priv_key) {
+        if (dh != NULL) {
+            if (pub_key != NULL)
+                *pub_key = dh->pub_key;
+            if (priv_key != NULL)
+                *priv_key = dh->priv_key;
+        }
+    }
+
+#endif
+
+    bool DH1080_gen() {
+        /* Generate our keys on first call */
+        if (!dh) {
+            int len;
+            unsigned char *buf;
+            const BIGNUM *bPrivKey = NULL;
+            const BIGNUM *bPubKey = NULL;
+            BIGNUM *bPrime = NULL;
+            BIGNUM *bGen = NULL;
+            dh = DH_new();
+
+            if (!BN_hex2bn(&bPrime, prime1080) || !BN_dec2bn(&bGen, "2") || !DH_set0_pqg(dh, bPrime, NULL, bGen) || !DH_generate_key(dh)) {
+                /* one of them failed */
+                if (bPrime)
+                    BN_clear_free(bPrime);
+                if (bGen)
+                    BN_clear_free(bGen);
+                if (dh) {
+                    DH_free(dh);
+                    dh = NULL;
+                }
+                return false;
+            }
+
+            /* Get our keys */
+            DH_get0_key(dh, &bPubKey, &bPrivKey);
+
+            /* Get our private key */
+            len = BN_num_bytes(bPrivKey);
+            buf = (unsigned char *)calloc(len, 1);
+            BN_bn2bin(bPrivKey, buf);
+            /*
+             * Use basic_string constructor with given start and end,
+             *  as we might have \0 and don't want to cast
+             */
+            sPrivKey = CString::basic_string(buf, &buf[len]);
+            sPrivKey.Base64Encode();
+
+            /* Get our public key */
+            len = BN_num_bytes(bPubKey);
+            buf = (unsigned char *)realloc(buf, len);
+            BN_bn2bin(bPubKey, buf);
+            sPubKey = CString::basic_string(buf, &buf[len]);
+            sPubKey.Base64Encode();
+
+            if (buf)
+                free(buf);
+        }
+
+        return true;
+    }
+
+
+    bool DH1080_comp(CString& sOtherPubKey, CString& sSecretKey) {
+        unsigned long len;
+        unsigned char *key;
+        unsigned char digest[SHA256_DIGEST_SIZE];
+        BIGNUM *bOtherPubKey = NULL;
+
+        /* Prepare other public key */
+        len = sOtherPubKey.Base64Decode();
+        bOtherPubKey = BN_bin2bn((unsigned char *)sOtherPubKey.data(), len, NULL);
+
+        /* Generate secret key */
+        key = (unsigned char *)calloc(DH_size(dh), 1);
+        if ((len = DH_compute_key(key, bOtherPubKey, dh)) == -1) {
+            sSecretKey = "";
+            if (bOtherPubKey)
+                BN_clear_free(bOtherPubKey);
+            if (key)
+                free(key);
+            return false;
+        }
+
+        /* Get our secret key */
+        sha256(key, len, digest);
+        sSecretKey = CString::basic_string(digest, &(digest[sizeof digest]));
+        sSecretKey.Base64Encode();
+        sSecretKey.TrimRight("=");
+
+        if (bOtherPubKey)
+            BN_clear_free(bOtherPubKey);
+        if (key)
+            free(key);
+
+        return true;
+    }
+
     CString NickPrefix() {
         MCString::iterator it = FindNV(NICK_PREFIX_KEY);
         /*
@@ -67,6 +200,7 @@ class CCryptMod : public CModule {
         return sStatusPrefix.StartsWith("*") ? "." : "*";
     }
 
+
   public:
     MODCONSTRUCTOR(CCryptMod) {
         AddHelpCommand();
@@ -79,9 +213,17 @@ class CCryptMod : public CModule {
         AddCommand("ListKeys", static_cast<CModCommand::ModCmdFunc>(
                                    &CCryptMod::OnListKeysCommand),
                    "", "List all keys");
+        AddCommand("KeyX", static_cast<CModCommand::ModCmdFunc>(
+                                 &CCryptMod::OnKeyXCommand),
+                   "<Nick>", "Start a DH1080 key exchange with nick");
     }
 
-    ~CCryptMod() override {}
+    ~CCryptMod() override {
+        if (dh) {
+            DH_free(dh);
+            dh = NULL;
+        }
+    }
 
     bool OnLoad(const CString& sArgsi, CString& sMessage) override {
         MCString::iterator it = FindNV(NICK_PREFIX_KEY);
@@ -227,6 +369,41 @@ class CCryptMod : public CModule {
     }
 
     EModRet OnPrivNotice(CNick& Nick, CString& sMessage) override {
+        CString sCommand = sMessage.Token(0);
+        CString sOtherPubKey = sMessage.Token(1);
+
+        if ((sCommand.Equals("DH1080_INIT") || sCommand.Equals("DH1080_INIT_CBC")) && !sOtherPubKey.empty()) {
+            CString sSecretKey;
+            CString sTail = sMessage.Token(2); /* For fish10 */
+
+            /* remove trailing A */
+            if (sOtherPubKey.TrimSuffix("A") && DH1080_gen() && DH1080_comp(sOtherPubKey, sSecretKey)) {
+                PutModule("Received DH1080 public key from " + Nick.GetNick() + ", sending mine...");
+                PutIRC("NOTICE " + Nick.GetNick() + " :DH1080_FINISH " + sPubKey + "A" + (sTail.empty()?"":(" " + sTail)));
+                SetNV(Nick.GetNick().AsLower(), sSecretKey);
+                PutModule("Key for " + Nick.GetNick() + " successfully set.");
+                return HALT;
+            }
+            PutModule("Error in " + sCommand + " with " + Nick.GetNick() + ": " + (sSecretKey.empty()?"no secret key computed":sSecretKey));
+            return CONTINUE;
+
+        } else if (sCommand.Equals("DH1080_FINISH") && !sOtherPubKey.empty()) {
+            /*
+             * In theory we could get a DH1080_FINISH without us having sent a DH1080_INIT first,
+             * but then to have any use for the other user, they'd already have our pub key
+             */
+            CString sSecretKey;
+
+            /* remove trailing A */
+            if (sOtherPubKey.TrimSuffix("A") && DH1080_gen() && DH1080_comp(sOtherPubKey, sSecretKey)) {
+                SetNV(Nick.GetNick().AsLower(), sSecretKey);
+                PutModule("Key for " + Nick.GetNick() + " successfully set.");
+                return HALT;
+            }
+            PutModule("Error in " + sCommand + " with " + Nick.GetNick() + ": " + (sSecretKey.empty()?"no secret key computed":sSecretKey));
+            return CONTINUE;
+        }
+
         FilterIncoming(Nick.GetNick(), Nick, sMessage);
         return CONTINUE;
     }
@@ -320,6 +497,21 @@ class CCryptMod : public CModule {
                       "]");
         } else {
             PutModule("Usage: SetKey <#chan|Nick> <Key>");
+        }
+    }
+
+    void OnKeyXCommand(const CString& sCommand) {
+        CString sTarget = sCommand.Token(1);
+
+        if (!sTarget.empty()) {
+            if (DH1080_gen()) {
+                PutIRC("NOTICE " + sTarget + " :DH1080_INIT " + sPubKey + "A");
+                PutModule("Sent my DH1080 public key to " + sTarget + ", waiting for reply ...");
+            } else {
+                PutModule("Error generating our keys, nothing sent.");
+            }
+        } else {
+            PutModule("Usage: KeyX <Nick>");
         }
     }
 
