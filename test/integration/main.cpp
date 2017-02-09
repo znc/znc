@@ -80,6 +80,48 @@ class IO {
             m_readed += chunk;
         }
     }
+    /*
+     * Reads from Device until pattern is matched and returns this pattern
+     * up to and excluding the first newline. Pattern itself can contain a newline.
+     * Have to use second param as the ASSERT_*'s return a non-QByteArray.
+     */
+    void ReadUntilAndGet(QByteArray pattern, QByteArray& match) {
+        auto deadline = QDateTime::currentDateTime().addSecs(60);
+        while (true) {
+            int search = m_readed.indexOf(pattern);
+            if (search != -1) {
+                int start = 0;
+                /* Don't look for what we've already found */
+                if (pattern != "\n") {
+                  int patlen = pattern.length();
+                  start = search;
+                  pattern = QByteArray("\n");
+                  search = m_readed.indexOf(pattern, start + patlen);
+                }
+                if (search != -1) {
+                  match += m_readed.mid(start, search - start);
+                  m_readed.remove(0, search + 1);
+                  return;
+                }
+                /* No newline yet, add to retvalue and trunc output */
+                match += m_readed.mid(start);
+                m_readed.resize(0);
+            }
+            if (m_readed.length() > pattern.length()) {
+                m_readed = m_readed.right(pattern.length());
+            }
+            const int timeout_ms =
+                QDateTime::currentDateTime().msecsTo(deadline);
+            ASSERT_GT(timeout_ms, 0) << "Wanted:" << pattern.toStdString();
+            ASSERT_TRUE(m_device->waitForReadyRead(timeout_ms))
+                << "Wanted: " << pattern.toStdString();
+            QByteArray chunk = m_device->readAll();
+            if (m_verbose) {
+                std::cout << chunk.toStdString() << std::flush;
+            }
+            m_readed += chunk;
+        }
+    }
     void Write(QByteArray s = "", bool new_line = true) {
         if (!m_device) return;
         if (m_verbose) {
@@ -1984,6 +2026,75 @@ TEST_F(ZNCTest, ModuleCSRFOverride) {
     })->readAll().toStdString();
     Z;
     EXPECT_THAT(reply, HasSubstr("ipsum"));
+}
+
+TEST_F(ZNCTest, ModuleCrypt) {
+    QFile conf(m_dir.path() + "/configs/znc.conf");
+    ASSERT_TRUE(conf.open(QIODevice::Append | QIODevice::Text));
+    QTextStream(&conf) << "ServerThrottle = 1\n";
+    auto znc = Run();
+    Z;
+    auto ircd1 = ConnectIRCd();
+    Z;
+    auto client1 = LoginClient();
+    Z;
+    client1.Write("znc loadmod controlpanel");
+    client1.Write("PRIVMSG *controlpanel :CloneUser user user2");
+    client1.ReadUntil("User [user2] added!");
+    client1.Write("PRIVMSG *controlpanel :Set Nick user2 nick2");
+    Z;
+    client1.Write("znc loadmod crypt");
+    client1.ReadUntil("Loaded module");
+    Z;
+    auto ircd2 = ConnectIRCd();
+    Z;
+    auto client2 = ConnectClient();
+    client2.Write("PASS user2:hunter2");
+    client2.Write("NICK nick2");
+    client2.Write("USER user2/test x x :x");
+    Z;
+    client2.Write("znc loadmod crypt");
+    client2.ReadUntil("Loaded module");
+    Z;
+
+    client1.Write("PRIVMSG *crypt :keyx nick2");
+    client1.ReadUntil("Sent my DH1080 public key to nick2");
+    Z;
+
+    QByteArray pub1("");
+    ircd1.ReadUntilAndGet("NOTICE nick2 :DH1080_INIT ", pub1);
+    ircd2.Write(":user!user@user/test " + pub1);
+    Z;
+
+    client2.ReadUntil("Received DH1080 public key from user");
+    Z;
+    client2.ReadUntil("Key for user successfully set.");
+    Z;
+
+    QByteArray pub2("");
+    ircd2.ReadUntilAndGet("NOTICE user :DH1080_FINISH ", pub2);
+    ircd1.Write(":nick2!user2@user2/test " + pub2);
+    Z;
+
+    client1.ReadUntil("Key for nick2 successfully set.");
+    Z;
+
+    client1.Write("PRIVMSG *crypt :listkeys");
+    QByteArray key1("");
+    client1.ReadUntilAndGet("| nick2         | ", key1);
+    Z;
+    client2.Write("PRIVMSG *crypt :listkeys");
+    QByteArray key2("");
+    client2.ReadUntilAndGet("| user          | ", key2);
+    Z;
+    ASSERT_EQ(key1.mid(18), key2.mid(18));
+    client1.Write("PRIVMSG .nick2 :Hello");
+    QByteArray secretmsg;
+    ircd1.ReadUntilAndGet("PRIVMSG nick2 :+OK ", secretmsg);
+    Z;
+    ircd2.Write(":user!user@user/test " + secretmsg);
+    client2.ReadUntil("Hello");
+    Z;
 }
 
 }  // namespace
