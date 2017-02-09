@@ -45,7 +45,7 @@
 #include <znc/IRCNetwork.h>
 
 #define REQUIRESSL 1
-#define NICK_PREFIX_KEY "[nick-prefix]"
+#define NICK_PREFIX_KEY "@nick-prefix@"
 
 class CCryptMod : public CModule {
     CString NickPrefix() {
