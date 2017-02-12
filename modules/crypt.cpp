@@ -99,7 +99,6 @@ class CCryptMod : public CModule {
         /* Generate our keys on first call */
         if (!dh) {
             int len;
-            unsigned char *buf;
             const BIGNUM *bPrivKey = NULL;
             const BIGNUM *bPubKey = NULL;
             BIGNUM *bPrime = NULL;
@@ -124,24 +123,16 @@ class CCryptMod : public CModule {
 
             /* Get our private key */
             len = BN_num_bytes(bPrivKey);
-            buf = (unsigned char *)calloc(len, 1);
-            BN_bn2bin(bPrivKey, buf);
-            /*
-             * Use basic_string constructor with given start and end,
-             *  as we might have \0 and don't want to cast
-             */
-            sPrivKey = CString::basic_string(buf, &buf[len]);
+            sPrivKey.resize(len);
+            BN_bn2bin(bPrivKey, (unsigned char *)sPrivKey.data());
             sPrivKey.Base64Encode();
 
             /* Get our public key */
             len = BN_num_bytes(bPubKey);
-            buf = (unsigned char *)realloc(buf, len);
-            BN_bn2bin(bPubKey, buf);
-            sPubKey = CString::basic_string(buf, &buf[len]);
+            sPubKey.resize(len);
+            BN_bn2bin(bPubKey, (unsigned char *)sPubKey.data());
             sPubKey.Base64Encode();
 
-            if (buf)
-                free(buf);
         }
 
         return true;
@@ -151,7 +142,6 @@ class CCryptMod : public CModule {
     bool DH1080_comp(CString& sOtherPubKey, CString& sSecretKey) {
         unsigned long len;
         unsigned char *key;
-        unsigned char digest[SHA256_DIGEST_SIZE];
         BIGNUM *bOtherPubKey = NULL;
 
         /* Prepare other public key */
@@ -170,8 +160,8 @@ class CCryptMod : public CModule {
         }
 
         /* Get our secret key */
-        sha256(key, len, digest);
-        sSecretKey = CString::basic_string(digest, &(digest[sizeof digest]));
+        sSecretKey.resize(SHA256_DIGEST_SIZE);
+        sha256(key, len, (unsigned char *)sSecretKey.data());
         sSecretKey.Base64Encode();
         sSecretKey.TrimRight("=");
 
