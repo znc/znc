@@ -61,7 +61,7 @@ class CCryptMod : public CModule {
         if (it != EndNV()) {
             size_t sp = sStatusPrefix.size();
             size_t np = it->second.size();
-            if (sStatusPrefix.CaseCmp(it->second, (np > sp) ? sp : np ))
+            if (sStatusPrefix.CaseCmp(it->second, std::min(sp, np)) != 0)
                 return it->second;
         }
         return sStatusPrefix.StartsWith("*") ? "." : "*";
