@@ -45,6 +45,8 @@
 #include <znc/IRCNetwork.h>
 
 #define REQUIRESSL 1
+// To be removed in future versions
+#define NICK_PREFIX_OLD_KEY "[nick-prefix]"
 #define NICK_PREFIX_KEY "@nick-prefix@"
 
 class CCryptMod : public CModule {
@@ -80,6 +82,19 @@ class CCryptMod : public CModule {
     }
 
     ~CCryptMod() override {}
+
+    bool OnLoad(const CString& sArgsi, CString& sMessage) override {
+        MCString::iterator it = FindNV(NICK_PREFIX_KEY);
+        if (it == EndNV()) {
+            /* Don't have the new prefix key yet */
+            it = FindNV(NICK_PREFIX_OLD_KEY);
+            if (it != EndNV()) {
+                SetNV(NICK_PREFIX_KEY, it->second);
+                DelNV(NICK_PREFIX_OLD_KEY);
+            }
+        }
+        return true;
+    }
 
     EModRet OnUserMsg(CString& sTarget, CString& sMessage) override {
         sTarget.TrimPrefix(NickPrefix());
