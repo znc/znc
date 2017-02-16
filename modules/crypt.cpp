@@ -101,7 +101,7 @@ class CCryptMod : public CModule {
 
     bool DH1080_gen() {
         /* Generate our keys on first call */
-        if (!m_pDH) {
+        if (m_pDH == nullptr) {
             int len;
             const BIGNUM* bPrivKey = nullptr;
             const BIGNUM* bPubKey = nullptr;
@@ -111,11 +111,11 @@ class CCryptMod : public CModule {
 
             if (!BN_hex2bn(&bPrime, prime1080) || !BN_dec2bn(&bGen, "2") || !DH_set0_pqg(m_pDH, bPrime, nullptr, bGen) || !DH_generate_key(m_pDH)) {
                 /* one of them failed */
-                if (bPrime)
+                if (bPrime != nullptr)
                     BN_clear_free(bPrime);
-                if (bGen)
+                if (bGen != nullptr)
                     BN_clear_free(bGen);
-                if (m_pDH) {
+                if (m_pDH != nullptr) {
                     DH_free(m_pDH);
                     m_pDH = nullptr;
                 }
@@ -145,7 +145,7 @@ class CCryptMod : public CModule {
 
     bool DH1080_comp(CString& sOtherPubKey, CString& sSecretKey) {
         unsigned long len;
-        unsigned char* key;
+        unsigned char* key = nullptr;
         BIGNUM* bOtherPubKey = nullptr;
 
         /* Prepare other public key */
@@ -156,9 +156,9 @@ class CCryptMod : public CModule {
         key = (unsigned char*)calloc(DH_size(m_pDH), 1);
         if ((len = DH_compute_key(key, bOtherPubKey, m_pDH)) == -1) {
             sSecretKey = "";
-            if (bOtherPubKey)
+            if (bOtherPubKey != nullptr)
                 BN_clear_free(bOtherPubKey);
-            if (key)
+            if (key != nullptr)
                 free(key);
             return false;
         }
@@ -169,9 +169,9 @@ class CCryptMod : public CModule {
         sSecretKey.Base64Encode();
         sSecretKey.TrimRight("=");
 
-        if (bOtherPubKey)
+        if (bOtherPubKey != nullptr)
             BN_clear_free(bOtherPubKey);
-        if (key)
+        if (key != nullptr)
             free(key);
 
         return true;
@@ -213,7 +213,7 @@ class CCryptMod : public CModule {
     }
 
     ~CCryptMod() override {
-        if (m_pDH) {
+        if (m_pDH != nullptr) {
             DH_free(m_pDH);
             m_pDH = nullptr;
         }
