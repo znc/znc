@@ -62,7 +62,7 @@ class CCryptMod : public CModule {
             if (sStatusPrefix.CaseCmp(it->second, (np > sp) ? sp : np ))
                 return it->second;
         }
-        return sStatusPrefix.StrCmp("*", 1) ? "*" : ".";
+        return sStatusPrefix.StartsWith("*") ? "." : "*";
     }
 
   public:
