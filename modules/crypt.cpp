@@ -57,9 +57,9 @@ class CCryptMod : public CModule {
      * As used in other implementations like KVIrc, fish10, Quassel, FiSH-irssi, ...
      * all the way back to the original located at http://mircryption.sourceforge.net/Extras/McpsFishDH.zip
      */
-    const char* prime1080 = "FBE1022E23D213E8ACFA9AE8B9DFADA3EA6B7AC7A7B7E95AB5EB2DF858921FEADE95E6AC7BE7DE6ADBAB8A783E7AF7A7FA6A2B7BEB1E72EAE2B72F9FA2BFB2A2EFBEFAC868BADB3E828FA8BADFADA3E4CC1BE7E8AFE85E9698A783EB68FA07A77AB6AD7BEB618ACF9CA2897EB28A6189EFA07AB99A8A7FA9AE299EFA7BA66DEAFEFBEFBF0B7D8B";
+    const char* m_sPrime1080 = "FBE1022E23D213E8ACFA9AE8B9DFADA3EA6B7AC7A7B7E95AB5EB2DF858921FEADE95E6AC7BE7DE6ADBAB8A783E7AF7A7FA6A2B7BEB1E72EAE2B72F9FA2BFB2A2EFBEFAC868BADB3E828FA8BADFADA3E4CC1BE7E8AFE85E9698A783EB68FA07A77AB6AD7BEB618ACF9CA2897EB28A6189EFA07AB99A8A7FA9AE299EFA7BA66DEAFEFBEFBF0B7D8B";
     /* Generate our keys once and reuse, just like ssh keys */
-    DH* m_pDH = nullptr;
+    std::unique_ptr<DH, decltype(&DH_free)> m_pDH;
     CString m_sPrivKey;
     CString m_sPubKey;
 
@@ -101,29 +101,24 @@ class CCryptMod : public CModule {
 
     bool DH1080_gen() {
         /* Generate our keys on first call */
-        if (m_pDH == nullptr) {
+        if (m_sPrivKey.empty() || m_sPubKey.empty()) {
             int len;
             const BIGNUM* bPrivKey = nullptr;
             const BIGNUM* bPubKey = nullptr;
             BIGNUM* bPrime = nullptr;
             BIGNUM* bGen = nullptr;
-            m_pDH = DH_new();
 
-            if (!BN_hex2bn(&bPrime, prime1080) || !BN_dec2bn(&bGen, "2") || !DH_set0_pqg(m_pDH, bPrime, nullptr, bGen) || !DH_generate_key(m_pDH)) {
+            if (!BN_hex2bn(&bPrime, m_sPrime1080) || !BN_dec2bn(&bGen, "2") || !DH_set0_pqg(m_pDH.get(), bPrime, nullptr, bGen) || !DH_generate_key(m_pDH.get())) {
                 /* one of them failed */
                 if (bPrime != nullptr)
                     BN_clear_free(bPrime);
                 if (bGen != nullptr)
                     BN_clear_free(bGen);
-                if (m_pDH != nullptr) {
-                    DH_free(m_pDH);
-                    m_pDH = nullptr;
-                }
                 return false;
             }
 
             /* Get our keys */
-            DH_get0_key(m_pDH, &bPubKey, &bPrivKey);
+            DH_get0_key(m_pDH.get(), &bPubKey, &bPrivKey);
 
             /* Get our private key */
             len = BN_num_bytes(bPrivKey);
@@ -153,8 +148,8 @@ class CCryptMod : public CModule {
         bOtherPubKey = BN_bin2bn((unsigned char*)sOtherPubKey.data(), len, nullptr);
 
         /* Generate secret key */
-        key = (unsigned char*)calloc(DH_size(m_pDH), 1);
-        if ((len = DH_compute_key(key, bOtherPubKey, m_pDH)) == -1) {
+        key = (unsigned char*)calloc(DH_size(m_pDH.get()), 1);
+        if ((len = DH_compute_key(key, bOtherPubKey, m_pDH.get())) == -1) {
             sSecretKey = "";
             if (bOtherPubKey != nullptr)
                 BN_clear_free(bOtherPubKey);
@@ -196,7 +191,8 @@ class CCryptMod : public CModule {
 
 
   public:
-    MODCONSTRUCTOR(CCryptMod) {
+    /* MODCONSTRUCTOR(CLASS) is of form "CLASS(...) : CModule(...)" */
+    MODCONSTRUCTOR(CCryptMod) , m_pDH(DH_new(), DH_free) {
         AddHelpCommand();
         AddCommand("DelKey", static_cast<CModCommand::ModCmdFunc>(
                                  &CCryptMod::OnDelKeyCommand),
@@ -213,10 +209,6 @@ class CCryptMod : public CModule {
     }
 
     ~CCryptMod() override {
-        if (m_pDH != nullptr) {
-            DH_free(m_pDH);
-            m_pDH = nullptr;
-        }
     }
 
     bool OnLoad(const CString& sArgsi, CString& sMessage) override {
