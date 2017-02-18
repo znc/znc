@@ -113,6 +113,12 @@ AC_ARG_ENABLE( [swig],
 AC_ARG_ENABLE( [cyrus],
 	AS_HELP_STRING([--enable-cyrus], [enable cyrus]),
 	[if test "$enableval" = "yes" ; then CYRUS=1; fi],)
+
+AC_ARG_ENABLE( [otr],
+	AS_HELP_STRING([--enable-otr], [enable otr module]),
+	[OTR="$enableval"],
+	[OTR="auto"])
+
 AC_ARG_ENABLE( [optimization],
 	AS_HELP_STRING([--disable-optimization], [Disable some compiler optimizations to
 			decrease memory usage while compiling]),
@@ -604,6 +610,25 @@ if test -n "$CYRUS"; then
 		AC_MSG_ERROR([could not find libsasl2. Try --disable-cyrus.]))
 fi
 
+if test x"$OTR" != "xno"; then
+	AC_CHECK_LIB( otr, otrl_init,
+		[: Dont let autoconf add -lotr, Makefile handles that],
+		[LIBOTR_FOUND="no"])
+	if test x"$LIBOTR_FOUND" = "xno"; then
+		if test x"$OTR" = "xyes"; then
+			AC_MSG_ERROR([could not find libotr. Try --disable-otr.])
+		else
+			OTR_TEXT="no (libotr not found)"
+			OTR="no"
+		fi
+	else
+		OTR_TEXT="yes"
+		OTR="yes"
+	fi
+else
+	OTR_TEXT="no"
+fi
+
 # Check if we want modtcl
 AC_ARG_ENABLE( [tcl],
 	AS_HELP_STRING([--enable-tcl], [enable modtcl]),
@@ -687,6 +712,7 @@ AC_SUBST([MODLINK])
 AC_SUBST([NOSSL])
 AC_SUBST([TCL_FLAGS])
 AC_SUBST([CYRUS])
+AC_SUBST([OTR])
 AC_SUBST([MODDIR])
 AC_SUBST([DATADIR])
 AC_SUBST([PERL])
@@ -739,6 +765,7 @@ else
 fi
 echo "charset:      $HAVE_ICU"
 echo "zlib:         $ZLIB_TEXT"
+echo "otr:          $OTR_TEXT"
 echo "run from src: $RUNFROMSOURCE"
 echo
 echo "Now you can run \"$GNUMAKE\" to compile ZNC"
