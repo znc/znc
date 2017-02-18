@@ -55,44 +55,13 @@ using std::list;
 #endif
 void* inject_workaround_mod;
 
-// Could replace class CThread if merged into upstream.
-class COtrThread {
-  protected:
-    pthread_t m_pThr;
-
-    void CheckError(int retcode) {
-        if (retcode) {
-            CUtils::PrintError("Thread error: " + CString(strerror(errno)));
-            exit(1);
-        }
-    }
-
+class COtrGenKeyJob : public CModuleJob {
   public:
-    typedef void* threadRoutine(void*);
+    COtrGenKeyJob(CModule* pModule)
+        : CModuleJob(pModule, "OtrGenKey", "OTR key generator") {}
 
-    COtrThread(threadRoutine* func, void* arg) {
-        sigset_t old_sigmask, sigmask;
-
-        /* Block all signals. The thread will inherit our signal mask
-         * and thus won't ever try to handle signals.
-         */
-        int i = sigfillset(&sigmask);
-        i |= pthread_sigmask(SIG_SETMASK, &sigmask, &old_sigmask);
-        i |= pthread_create(&m_pThr, NULL, func, arg);
-        i |= pthread_sigmask(SIG_SETMASK, &old_sigmask, NULL);
-        CheckError(i);
-    }
-
-    void Detach() { CheckError(pthread_detach(m_pThr)); }
-
-    void Cancel() { CheckError(pthread_cancel(m_pThr)); }
-
-    void Join() { CheckError(pthread_join(m_pThr, NULL)); }
-
-    static void startThread(threadRoutine* func, void* arg) {
-        COtrThread th = COtrThread(func, arg);
-        th.Detach();
-    }
+    void runThread() override;
+    void runMain() override;
 };
 
 class COtrTimer : public CTimer {
@@ -104,54 +73,6 @@ class COtrTimer : public CTimer {
 
   protected:
     virtual void RunJob();
-};
-
-// When key generation thread finishes, it calls Notify() which invokes
-// ReadLine() in the main
-// thread where we can finish the key generation and clean up after the thread.
-class COtrGenKeyNotify : public CSocket {
-  private:
-    int m_iNotifyPipe[2];
-    bool m_bFatalErrors;
-
-  public:
-    COtrGenKeyNotify(CModule* pModule)
-        : CSocket(pModule), m_bFatalErrors(false) {
-        m_iNotifyPipe[0] = m_iNotifyPipe[1] = -1;
-        EnableReadLine();
-        if (pipe(m_iNotifyPipe) < 0) {
-            // On failure, the notification will do nothing and the thread will
-            // hang
-            // forever - better than crashing the whole process?
-            CUtils::PrintError("Pipe error: " + CString(strerror(errno)));
-            if (m_bFatalErrors) {
-                exit(1);
-            }
-            return;
-        }
-        ConnectFD(m_iNotifyPipe[0], m_iNotifyPipe[1], "OtrGenKeyPipe");
-        GetModule()->GetManager()->AddSock(this, "OtrGenKeyPipe");
-    }
-
-    // Thread calls Notify when it's finished
-    void Notify() const {
-        if (m_iNotifyPipe[1] == -1) {
-            return;
-        }
-
-        ssize_t ret = write(m_iNotifyPipe[1], "\n", 1);
-        if (ret < 0) {
-            CUtils::PrintError("Pipe write error: " + CString(strerror(errno)));
-            if (m_bFatalErrors) {
-                exit(1);
-            }
-        }
-    }
-
-    virtual bool CheckTimeout(time_t iNow) { return false; }
-
-    // Handle the notification
-    virtual void ReadLine(const CString& sLine);
 };
 
 struct COtrAppData {
@@ -171,7 +92,7 @@ struct COtrAppData {
 
 class COtrMod : public CModule {
     friend class COtrTimer;
-    friend class COtrGenKeyNotify;
+    friend class COtrGenKeyJob;
 
   private:
     static OtrlMessageAppOps m_xOtrOps;
@@ -183,14 +104,11 @@ class COtrMod : public CModule {
     VCString m_vsIgnored;
     COtrTimer* m_pOtrTimer;
 
-    // m_GenKeyRunning acts as a lock for those following it. We don't need an
-    // actual lock because
-    // it is accessed only from the main thread.
+    // m_GenKeyRunning acts as a lock for members following it. We don't need
+    // an actual lock because it is accessed only from the main thread.
     bool m_GenKeyRunning;
     void* m_NewKey;
     gcry_error_t m_GenKeyError;
-    COtrGenKeyNotify* m_GenKeyNotify;
-    COtrThread* m_GenKeyThread;
 
   public:
     MODCONSTRUCTOR(COtrMod) {}
@@ -295,10 +213,8 @@ class COtrMod : public CModule {
 
             PutModuleBuffered(
                 "Starting key generation in a background thread.");
-            m_GenKeyNotify = new COtrGenKeyNotify(this);
             m_GenKeyRunning = true;
-            m_GenKeyThread =
-                new COtrThread(GenKeyThreadFunc, static_cast<void*>(this));
+            AddJob(new COtrGenKeyJob(this));
         } else {
             PutModuleBuffered("Key generation is already running.");
         }
@@ -663,8 +579,6 @@ class COtrMod : public CModule {
 
         // Initialize userstate
         m_pUserState = otrl_userstate_create();
-        m_GenKeyNotify = NULL;
-        m_GenKeyThread = NULL;
         m_GenKeyRunning = false;
 
         m_pOtrTimer = NULL;
@@ -772,13 +686,6 @@ class COtrMod : public CModule {
     }
 
     virtual ~COtrMod() {
-        // Wait for keygen thread
-        if (m_GenKeyRunning) {
-            PutModuleBuffered("Killing key generation thread.");
-            m_GenKeyThread->Cancel();
-            m_GenKeyThread->Join();
-        }
-
         // No need to deactivate timers, they are removed in
         // CModule::~CModule().
         if (m_pUserState) otrl_userstate_free(m_pUserState);
@@ -946,18 +853,6 @@ class COtrMod : public CModule {
     }
 
   private:
-    // genkey thread routine
-    static void* GenKeyThreadFunc(void* data) {
-        COtrMod* mod = static_cast<COtrMod*>(data);
-        assert(mod);
-
-        gcry_error_t err = otrl_privkey_generate_calculate(mod->m_NewKey);
-        mod->m_GenKeyError = err;
-        mod->m_GenKeyNotify->Notify();
-
-        return NULL;
-    }
-
     // libotr callbacks
 
     static OtrlPolicy otrPolicy(void* opdata, ConnContext* context) {
@@ -1351,7 +1246,15 @@ void COtrTimer::RunJob() {
     otrl_message_poll(mod->m_pUserState, &mod->m_xOtrOps, mod);
 }
 
-void COtrGenKeyNotify::ReadLine(const CString& sLine) {
+void COtrGenKeyJob::runThread() {
+    COtrMod* mod = static_cast<COtrMod*>(GetModule());
+    assert(mod);
+
+    gcry_error_t err = otrl_privkey_generate_calculate(mod->m_NewKey);
+    mod->m_GenKeyError = err;
+}
+
+void COtrGenKeyJob::runMain() {
     COtrMod* mod = static_cast<COtrMod*>(GetModule());
     assert(mod);
     assert(!mod->m_sPrivkeyPath.empty());
@@ -1366,13 +1269,6 @@ void COtrGenKeyNotify::ReadLine(const CString& sLine) {
     } else {
         mod->PutModuleBuffered("Key generation finished.");
     }
-
-    mod->m_GenKeyThread->Join();
-    delete mod->m_GenKeyThread;
-    mod->m_GenKeyThread = NULL;
-
-    Close();  // mark socket for deletion - socket manager takes care of
-    mod->m_GenKeyNotify = NULL;  // it, we can drop the reference now
 
     mod->m_NewKey = NULL;
     mod->m_GenKeyRunning = false;
