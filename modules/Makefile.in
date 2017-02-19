@@ -88,7 +88,7 @@ FILES    := $(shell echo $(FILES) | sed -e "s:cyrusauth::")
 endif
 cyrusauthLDFLAGS := -lsasl2
 
-TARGETS  := $(addsuffix .so, $(FILES))
+TARGETS  := $(addsuffix .so, $(sort $(FILES)))
 
 CLEAN    += *.so *.o
 

@@ -135,24 +135,24 @@ static void GenerateHelp(const char* appname) {
         "\t-h, --help         List available command line options (this page)");
     CUtils::PrintMessage(
         "\t-v, --version      Output version information and exit");
-    CUtils::PrintMessage("\t-f, --foreground   Don't fork into the background");
-    CUtils::PrintMessage(
-        "\t-D, --debug        Output debugging information (Implies -f)");
-    CUtils::PrintMessage(
-        "\t-n, --no-color     Don't use escape sequences in the output");
-    CUtils::PrintMessage(
-        "\t-r, --allow-root   Don't complain if ZNC is run as root");
     CUtils::PrintMessage(
         "\t-c, --makeconf     Interactively create a new config");
     CUtils::PrintMessage(
-        "\t-s, --makepass     Generates a password for use in config");
+        "\t-d, --datadir      Set a different ZNC repository (default is "
+        "~/.znc)");
+    CUtils::PrintMessage(
+        "\t-D, --debug        Output debugging information (Implies -f)");
+    CUtils::PrintMessage("\t-f, --foreground   Don't fork into the background");
+    CUtils::PrintMessage(
+        "\t-n, --no-color     Don't use escape sequences in the output");
 #ifdef HAVE_LIBSSL
     CUtils::PrintMessage(
         "\t-p, --makepem      Generates a pemfile for use with SSL");
 #endif /* HAVE_LIBSSL */
     CUtils::PrintMessage(
-        "\t-d, --datadir      Set a different ZNC repository (default is "
-        "~/.znc)");
+        "\t-r, --allow-root   Don't complain if ZNC is run as root");
+    CUtils::PrintMessage(
+        "\t-s, --makepass     Generates a password for use in config");
 }
 
 class CSignalHandler {
