@@ -340,6 +340,7 @@ sub OnKick {}
 sub OnJoining {}
 sub OnJoin {}
 sub OnPart {}
+sub OnInvite {}
 sub OnChanBufferStarting {}
 sub OnChanBufferEnding {}
 sub OnChanBufferPlayLine {}

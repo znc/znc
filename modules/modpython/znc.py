@@ -291,6 +291,9 @@ class Module:
     def OnPart(self, Nick, Channel, sMessage=None):
         pass
 
+    def OnInvite(self, Nick, sChan):
+        pass
+
     def OnChanBufferStarting(self, Chan, Client):
         pass
 
