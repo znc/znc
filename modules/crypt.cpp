@@ -45,12 +45,26 @@
 #include <znc/IRCNetwork.h>
 
 #define REQUIRESSL 1
-#define NICK_PREFIX_KEY "[nick-prefix]"
+// To be removed in future versions
+#define NICK_PREFIX_OLD_KEY "[nick-prefix]"
+#define NICK_PREFIX_KEY "@nick-prefix@"
 
 class CCryptMod : public CModule {
     CString NickPrefix() {
         MCString::iterator it = FindNV(NICK_PREFIX_KEY);
-        return it != EndNV() ? it->second : "*";
+        /*
+         * Check for different Prefixes to not confuse modules with nicknames
+         * Also check for overlap for rare cases like:
+         * SP = "*"; NP = "*s"; "tatus" sends an encrypted message appearing at "*status"
+         */
+        CString sStatusPrefix = GetUser()->GetStatusPrefix();
+        if (it != EndNV()) {
+            size_t sp = sStatusPrefix.size();
+            size_t np = it->second.size();
+            if (sStatusPrefix.CaseCmp(it->second, std::min(sp, np)) != 0)
+                return it->second;
+        }
+        return sStatusPrefix.StartsWith("*") ? "." : "*";
     }
 
   public:
@@ -68,6 +82,19 @@ class CCryptMod : public CModule {
     }
 
     ~CCryptMod() override {}
+
+    bool OnLoad(const CString& sArgsi, CString& sMessage) override {
+        MCString::iterator it = FindNV(NICK_PREFIX_KEY);
+        if (it == EndNV()) {
+            /* Don't have the new prefix key yet */
+            it = FindNV(NICK_PREFIX_OLD_KEY);
+            if (it != EndNV()) {
+                SetNV(NICK_PREFIX_KEY, it->second);
+                DelNV(NICK_PREFIX_OLD_KEY);
+            }
+        }
+        return true;
+    }
 
     EModRet OnUserMsg(CString& sTarget, CString& sMessage) override {
         sTarget.TrimPrefix(NickPrefix());
