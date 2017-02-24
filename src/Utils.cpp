@@ -704,6 +704,7 @@ bool CTable::AddColumn(const CString& sName) {
     }
 
     m_vsHeaders.push_back(sName);
+    m_msuWidths[sName] = sName.size();
 
     return true;
 }
@@ -735,36 +736,63 @@ bool CTable::SetCell(const CString& sColumn, const CString& sValue,
 
     (*this)[uRowIdx][uColIdx] = sValue;
 
+    if (m_msuWidths[sColumn] < sValue.size())
+        m_msuWidths[sColumn] = sValue.size();
+
     return true;
 }
 
 bool CTable::GetLine(unsigned int uIdx, CString& sLine) const {
+    std::stringstream ssRet;
+
     if (empty()) {
         return false;
     }
-    if (m_vsOutput.empty()) {
-        m_vsOutput = Render();
-    }
-    if (uIdx >= m_vsOutput.size()) {
-        return false;
-    }
-    sLine = m_vsOutput[uIdx];
-    return true;
-}
 
-VCString CTable::Render() const {
-    VCString vsOutput;
-    vsOutput.reserve((m_vsHeaders.size() + 1) * size() + 1);
-    for (const VCString& vsRow : *this) {
-        vsOutput.emplace_back("------");
-        for (unsigned int i = 0; i < m_vsHeaders.size(); ++i) {
-            if (!vsRow[i].empty()) {
-                vsOutput.emplace_back(m_vsHeaders[i] + ": " + vsRow[i]);
+    if (uIdx == 1) {
+        ssRet.fill(' ');
+        ssRet << "| ";
+
+        for (unsigned int a = 0; a < m_vsHeaders.size(); a++) {
+            ssRet.width(GetColumnWidth(a));
+            ssRet << std::left << m_vsHeaders[a];
+            ssRet << ((a == m_vsHeaders.size() - 1) ? " |" : " | ");
+        }
+
+        sLine = ssRet.str();
+        return true;
+    } else if ((uIdx == 0) || (uIdx == 2) || (uIdx == (size() + 3))) {
+        ssRet.fill('-');
+        ssRet << "+-";
+
+        for (unsigned int a = 0; a < m_vsHeaders.size(); a++) {
+            ssRet.width(GetColumnWidth(a));
+            ssRet << std::left << "-";
+            ssRet << ((a == m_vsHeaders.size() - 1) ? "-+" : "-+-");
+        }
+
+        sLine = ssRet.str();
+        return true;
+    } else {
+        uIdx -= 3;
+
+        if (uIdx < size()) {
+            const std::vector<CString>& mRow = (*this)[uIdx];
+            ssRet.fill(' ');
+            ssRet << "| ";
+
+            for (unsigned int c = 0; c < m_vsHeaders.size(); c++) {
+                ssRet.width(GetColumnWidth(c));
+                ssRet << std::left << mRow[c];
+                ssRet << ((c == m_vsHeaders.size() - 1) ? " |" : " | ");
             }
+
+            sLine = ssRet.str();
+            return true;
         }
     }
-    vsOutput.emplace_back("------");
-    return vsOutput;
+
+    return false;
 }
 
 unsigned int CTable::GetColumnIndex(const CString& sName) const {
@@ -777,10 +805,26 @@ unsigned int CTable::GetColumnIndex(const CString& sName) const {
     return (unsigned int)-1;
 }
 
+CString::size_type CTable::GetColumnWidth(unsigned int uIdx) const {
+    if (uIdx >= m_vsHeaders.size()) {
+        return 0;
+    }
+
+    const CString& sColName = m_vsHeaders[uIdx];
+    std::map<CString, CString::size_type>::const_iterator it =
+        m_msuWidths.find(sColName);
+
+    if (it == m_msuWidths.end()) {
+        // AddColumn() and SetCell() should make sure that we get a value :/
+        return 0;
+    }
+    return it->second;
+}
+
 void CTable::Clear() {
     clear();
     m_vsHeaders.clear();
-    m_vsOutput.clear();
+    m_msuWidths.clear();
 }
 
 #ifdef HAVE_LIBSSL
