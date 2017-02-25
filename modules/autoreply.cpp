@@ -22,12 +22,10 @@ class CAutoReplyMod : public CModule {
   public:
     MODCONSTRUCTOR(CAutoReplyMod) {
         AddHelpCommand();
-        AddCommand("Set", static_cast<CModCommand::ModCmdFunc>(
-                              &CAutoReplyMod::OnSetCommand),
-                   "<reply>", "Sets a new reply");
-        AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(
-                               &CAutoReplyMod::OnShowCommand),
-                   "", "Displays the current query reply");
+        AddCommand("Set", t_d("<reply>"), t_d("Sets a new reply"),
+                   [=](const CString& sLine) { OnSetCommand(sLine); });
+        AddCommand("Show", "", t_d("Displays the current query reply"),
+                   [=](const CString& sLine) { OnShowCommand(sLine); });
         m_Messaged.SetTTL(1000 * 120);
     }
 
@@ -73,13 +71,14 @@ class CAutoReplyMod : public CModule {
     }
 
     void OnShowCommand(const CString& sCommand) {
-        PutModule("Current reply is: " + GetNV("Reply") + " (" + GetReply() +
-                  ")");
+        CString sReply = GetReply();
+        PutModule(t_f("Current reply is: {1} ({2})")(GetNV("Reply"), sReply));
     }
 
     void OnSetCommand(const CString& sCommand) {
         SetReply(sCommand.Token(1, true));
-        PutModule("New reply set");
+        PutModule(
+            t_f("New reply set to: {1} ({2})")(GetNV("Reply"), GetReply()));
     }
 
   private:
@@ -91,9 +90,9 @@ void TModInfo<CAutoReplyMod>(CModInfo& Info) {
     Info.SetWikiPage("autoreply");
     Info.AddType(CModInfo::NetworkModule);
     Info.SetHasArgs(true);
-    Info.SetArgsHelpText(
+    Info.SetArgsHelpText(Info.t_s(
         "You might specify a reply text. It is used when automatically "
-        "answering queries, if you are not connected to ZNC.");
+        "answering queries, if you are not connected to ZNC."));
 }
 
-USERMODULEDEFS(CAutoReplyMod, "Reply to queries when you are away")
+USERMODULEDEFS(CAutoReplyMod, t_s("Reply to queries when you are away"))
