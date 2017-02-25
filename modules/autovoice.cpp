@@ -117,22 +117,19 @@ class CAutoVoiceMod : public CModule {
   public:
     MODCONSTRUCTOR(CAutoVoiceMod) {
         AddHelpCommand();
-        AddCommand("ListUsers", static_cast<CModCommand::ModCmdFunc>(
-                                    &CAutoVoiceMod::OnListUsersCommand),
-                   "", "List all users");
-        AddCommand("AddChans", static_cast<CModCommand::ModCmdFunc>(
-                                   &CAutoVoiceMod::OnAddChansCommand),
-                   "<user> <channel> [channel] ...", "Adds channels to a user");
-        AddCommand("DelChans", static_cast<CModCommand::ModCmdFunc>(
-                                   &CAutoVoiceMod::OnDelChansCommand),
-                   "<user> <channel> [channel] ...",
-                   "Removes channels from a user");
-        AddCommand("AddUser", static_cast<CModCommand::ModCmdFunc>(
-                                  &CAutoVoiceMod::OnAddUserCommand),
-                   "<user> <hostmask> [channels]", "Adds a user");
-        AddCommand("DelUser", static_cast<CModCommand::ModCmdFunc>(
-                                  &CAutoVoiceMod::OnDelUserCommand),
-                   "<user>", "Removes a user");
+        AddCommand("ListUsers", "", t_d("List all users"),
+                   [=](const CString& sLine) { OnListUsersCommand(sLine); });
+        AddCommand("AddChans", t_d("<user> <channel> [channel] ..."),
+                   t_d("Adds channels to a user"),
+                   [=](const CString& sLine) { OnAddChansCommand(sLine); });
+        AddCommand("DelChans", t_d("<user> <channel> [channel] ..."),
+                   t_d("Removes channels from a user"),
+                   [=](const CString& sLine) { OnDelChansCommand(sLine); });
+        AddCommand("AddUser", t_d("<user> <hostmask> [channels]"),
+                   t_d("Adds a user"),
+                   [=](const CString& sLine) { OnAddUserCommand(sLine); });
+        AddCommand("DelUser", t_d("<user>"), t_d("Removes a user"),
+                   [=](const CString& sLine) { OnDelUserCommand(sLine); });
     }
 
     bool OnLoad(const CString& sArgs, CString& sMessage) override {
@@ -215,7 +212,7 @@ class CAutoVoiceMod : public CModule {
         CString sHost = sLine.Token(2);
 
         if (sHost.empty()) {
-            PutModule("Usage: AddUser <user> <hostmask> [channels]");
+            PutModule(t_s("Usage: AddUser <user> <hostmask> [channels]"));
         } else {
             CAutoVoiceUser* pUser = AddUser(sUser, sHost, sLine.Token(3, true));
 
@@ -229,7 +226,7 @@ class CAutoVoiceMod : public CModule {
         CString sUser = sLine.Token(1);
 
         if (sUser.empty()) {
-            PutModule("Usage: DelUser <user>");
+            PutModule(t_s("Usage: DelUser <user>"));
         } else {
             DelUser(sUser);
             DelNV(sUser);
@@ -238,21 +235,21 @@ class CAutoVoiceMod : public CModule {
 
     void OnListUsersCommand(const CString& sLine) {
         if (m_msUsers.empty()) {
-            PutModule("There are no users defined");
+            PutModule(t_s("There are no users defined"));
             return;
         }
 
         CTable Table;
 
-        Table.AddColumn("User");
-        Table.AddColumn("Hostmask");
-        Table.AddColumn("Channels");
+        Table.AddColumn(t_s("User"));
+        Table.AddColumn(t_s("Hostmask"));
+        Table.AddColumn(t_s("Channels"));
 
         for (const auto& it : m_msUsers) {
             Table.AddRow();
-            Table.SetCell("User", it.second->GetUsername());
-            Table.SetCell("Hostmask", it.second->GetHostmask());
-            Table.SetCell("Channels", it.second->GetChannels());
+            Table.SetCell(t_s("User"), it.second->GetUsername());
+            Table.SetCell(t_s("Hostmask"), it.second->GetHostmask());
+            Table.SetCell(t_s("Channels"), it.second->GetChannels());
         }
 
         PutModule(Table);
@@ -263,19 +260,19 @@ class CAutoVoiceMod : public CModule {
         CString sChans = sLine.Token(2, true);
 
         if (sChans.empty()) {
-            PutModule("Usage: AddChans <user> <channel> [channel] ...");
+            PutModule(t_s("Usage: AddChans <user> <channel> [channel] ..."));
             return;
         }
 
         CAutoVoiceUser* pUser = FindUser(sUser);
 
         if (!pUser) {
-            PutModule("No such user");
+            PutModule(t_s("No such user"));
             return;
         }
 
         pUser->AddChans(sChans);
-        PutModule("Channel(s) added to user [" + pUser->GetUsername() + "]");
+        PutModule(t_f("Channel(s) added to user {1}")(pUser->GetUsername()));
 
         SetNV(pUser->GetUsername(), pUser->ToString());
     }
@@ -285,20 +282,20 @@ class CAutoVoiceMod : public CModule {
         CString sChans = sLine.Token(2, true);
 
         if (sChans.empty()) {
-            PutModule("Usage: DelChans <user> <channel> [channel] ...");
+            PutModule(t_s("Usage: DelChans <user> <channel> [channel] ..."));
             return;
         }
 
         CAutoVoiceUser* pUser = FindUser(sUser);
 
         if (!pUser) {
-            PutModule("No such user");
+            PutModule(t_s("No such user"));
             return;
         }
 
         pUser->DelChans(sChans);
-        PutModule("Channel(s) Removed from user [" + pUser->GetUsername() +
-                  "]");
+        PutModule(
+            t_f("Channel(s) Removed from user {1}")(pUser->GetUsername()));
 
         SetNV(pUser->GetUsername(), pUser->ToString());
     }
@@ -329,25 +326,25 @@ class CAutoVoiceMod : public CModule {
             m_msUsers.find(sUser.AsLower());
 
         if (it == m_msUsers.end()) {
-            PutModule("That user does not exist");
+            PutModule(t_s("No such user"));
             return;
         }
 
         delete it->second;
         m_msUsers.erase(it);
-        PutModule("User [" + sUser + "] removed");
+        PutModule(t_f("User {1} removed")(sUser));
     }
 
     CAutoVoiceUser* AddUser(const CString& sUser, const CString& sHost,
                             const CString& sChans) {
         if (m_msUsers.find(sUser) != m_msUsers.end()) {
-            PutModule("That user already exists");
+            PutModule(t_s("That user already exists"));
             return nullptr;
         }
 
         CAutoVoiceUser* pUser = new CAutoVoiceUser(sUser, sHost, sChans);
         m_msUsers[sUser.AsLower()] = pUser;
-        PutModule("User [" + sUser + "] added with hostmask [" + sHost + "]");
+        PutModule(t_f("User {1} added with hostmask {2}")(sUser, sHost));
         return pUser;
     }
 
@@ -359,10 +356,10 @@ template <>
 void TModInfo<CAutoVoiceMod>(CModInfo& Info) {
     Info.SetWikiPage("autovoice");
     Info.SetHasArgs(true);
-    Info.SetArgsHelpText(
+    Info.SetArgsHelpText(Info.t_s(
         "Each argument is either a channel you want autovoice for (which can "
         "include wildcards) or, if it starts with !, it is an exception for "
-        "autovoice.");
+        "autovoice."));
 }
 
-NETWORKMODULEDEFS(CAutoVoiceMod, "Auto voice the good people")
+NETWORKMODULEDEFS(CAutoVoiceMod, t_s("Auto voice the good people"))

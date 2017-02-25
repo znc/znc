@@ -91,14 +91,14 @@ class CChanAttach : public CModule {
         if (sChan.empty()) {
             bHelp = true;
         } else if (Add(bNegated, sChan, sSearch, sHost)) {
-            PutModule("Added to list");
+            PutModule(t_s("Added to list"));
         } else {
-            PutModule(sLine.Token(1, true) + " is already added");
+            PutModule(t_f("{1} is already added")(sLine.Token(1, true)));
             bHelp = true;
         }
         if (bHelp) {
-            PutModule("Usage: Add [!]<#chan> <search> <host>");
-            PutModule("Wildcards are allowed");
+            PutModule(t_s("Usage: Add [!]<#chan> <search> <host>"));
+            PutModule(t_s("Wildcards are allowed"));
         }
     }
 
@@ -110,49 +110,47 @@ class CChanAttach : public CModule {
         CString sHost = sMsg.Token(2);
 
         if (Del(bNegated, sChan, sSearch, sHost)) {
-            PutModule("Removed " + sChan + " from list");
+            PutModule(t_f("Removed {1} from list")(sChan));
         } else {
-            PutModule("Usage: Del [!]<#chan> <search> <host>");
+            PutModule(t_s("Usage: Del [!]<#chan> <search> <host>"));
         }
     }
 
     void HandleList(const CString& sLine) {
         CTable Table;
-        Table.AddColumn("Neg");
-        Table.AddColumn("Chan");
-        Table.AddColumn("Search");
-        Table.AddColumn("Host");
+        Table.AddColumn(t_s("Neg"));
+        Table.AddColumn(t_s("Chan"));
+        Table.AddColumn(t_s("Search"));
+        Table.AddColumn(t_s("Host"));
 
         VAttachIter it = m_vMatches.begin();
         for (; it != m_vMatches.end(); ++it) {
             Table.AddRow();
-            Table.SetCell("Neg", it->IsNegated() ? "!" : "");
-            Table.SetCell("Chan", it->GetChans());
-            Table.SetCell("Search", it->GetSearch());
-            Table.SetCell("Host", it->GetHostMask());
+            Table.SetCell(t_s("Neg"), it->IsNegated() ? "!" : "");
+            Table.SetCell(t_s("Chan"), it->GetChans());
+            Table.SetCell(t_s("Search"), it->GetSearch());
+            Table.SetCell(t_s("Host"), it->GetHostMask());
         }
 
         if (Table.size()) {
             PutModule(Table);
         } else {
-            PutModule("You have no entries.");
+            PutModule(t_s("You have no entries."));
         }
     }
 
   public:
     MODCONSTRUCTOR(CChanAttach) {
         AddHelpCommand();
-        AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(
-                              &CChanAttach::HandleAdd),
-                   "[!]<#chan> <search> <host>",
-                   "Add an entry, use !#chan to negate and * for wildcards");
-        AddCommand("Del", static_cast<CModCommand::ModCmdFunc>(
-                              &CChanAttach::HandleDel),
-                   "[!]<#chan> <search> <host>",
-                   "Remove an entry, needs to be an exact match");
-        AddCommand("List", static_cast<CModCommand::ModCmdFunc>(
-                               &CChanAttach::HandleList),
-                   "", "List all entries");
+        AddCommand(
+            "Add", t_d("[!]<#chan> <search> <host>"),
+            t_d("Add an entry, use !#chan to negate and * for wildcards"),
+            [=](const CString& sLine) { HandleAdd(sLine); });
+        AddCommand("Del", t_d("[!]<#chan> <search> <host>"),
+                   t_d("Remove an entry, needs to be an exact match"),
+                   [=](const CString& sLine) { HandleDel(sLine); });
+        AddCommand("List", "", t_d("List all entries"),
+                   [=](const CString& sLine) { HandleList(sLine); });
     }
 
     ~CChanAttach() override {}
@@ -170,7 +168,7 @@ class CChanAttach : public CModule {
             CString sHost = sAdd.Token(2, true);
 
             if (!Add(bNegated, sChan, sSearch, sHost)) {
-                PutModule("Unable to add [" + *it + "]");
+                PutModule(t_f("Unable to add [{1}]")(*it));
             }
         }
 
@@ -281,8 +279,8 @@ void TModInfo<CChanAttach>(CModInfo& Info) {
     Info.AddType(CModInfo::UserModule);
     Info.SetWikiPage("autoattach");
     Info.SetHasArgs(true);
-    Info.SetArgsHelpText(
-        "List of channel masks and channel masks with ! before them.");
+    Info.SetArgsHelpText(Info.t_s(
+        "List of channel masks and channel masks with ! before them."));
 }
 
-NETWORKMODULEDEFS(CChanAttach, "Reattaches you to channels on activity.")
+NETWORKMODULEDEFS(CChanAttach, t_s("Reattaches you to channels on activity."))

@@ -669,7 +669,7 @@ struct hash<CString> : hash<std::string> {};
 }
 
 // Make translateable messages easy to write:
-// _f("Foo is {1}")(foo)
+// t_f("Foo is {1}")(foo)
 class CInlineFormatMessage {
   public:
     explicit CInlineFormatMessage(const CString& sFormat)

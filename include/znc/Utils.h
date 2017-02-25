@@ -112,7 +112,8 @@ class CException {
     EType m_eType;
 };
 
-/** Previously this generated a grid-like output from a given input.
+
+/** Generate a grid-like output from a given input.
  *
  *  @code
  *  CTable table;
@@ -129,15 +130,17 @@ class CException {
  *  }
  *  @endcode
  *
- *  But tables look awful in IRC. So now it puts every cell on separate line.
+ *  The above code would generate the following output:
+ *  @verbatim
++-------+-------+
+| a     | b     |
++-------+-------+
+| hello | world |
++-------+-------+@endverbatim
  */
 class CTable : protected std::vector<std::vector<CString>> {
   public:
-    /** Constructor
-     *
-     *  @param uPreferredWidth If width of table is bigger than this, text in cells will be wrapped to several lines, if possible
-     */
-    CTable() : m_vsHeaders(), m_vsOutput() {}
+    CTable() {}
     virtual ~CTable() {}
 
     /** Adds a new column to the table.
@@ -171,6 +174,14 @@ class CTable : protected std::vector<std::vector<CString>> {
      */
     bool GetLine(unsigned int uIdx, CString& sLine) const;
 
+    /** Return the width of the given column.
+     *  Please note that adding and filling new rows might change the
+     *  result of this function!
+     *  @param uIdx The index of the column you are interested in.
+     *  @return The width of the column.
+     */
+    CString::size_type GetColumnWidth(unsigned int uIdx) const;
+
     /// Completely clear the table.
     void Clear();
 
@@ -182,12 +193,11 @@ class CTable : protected std::vector<std::vector<CString>> {
 
   private:
     unsigned int GetColumnIndex(const CString& sName) const;
-    VCString Render() const;
 
   protected:
-    // TODO: cleanup these fields before 1.7.0 (I don't want to break ABI)
-    VCString m_vsHeaders;
-    mutable VCString m_vsOutput;  // Rendered table
+    std::vector<CString> m_vsHeaders;
+    // Used to cache the width of a column
+    std::map<CString, CString::size_type> m_msuWidths;
 };
 
 #ifdef HAVE_LIBSSL

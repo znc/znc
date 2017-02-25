@@ -1,0 +1,65 @@
+#: cyrusauth.cpp:42
+msgid "[yes|no]"
+msgstr ""
+
+#: cyrusauth.cpp:43
+msgid "Create ZNC user upon first successful login"
+msgstr ""
+
+#: cyrusauth.cpp:45
+msgid "[username]"
+msgstr ""
+
+#: cyrusauth.cpp:46
+msgid "User to be used as the template for new users"
+msgstr ""
+
+#: cyrusauth.cpp:59
+msgid "Access denied"
+msgstr ""
+
+#: cyrusauth.cpp:73
+msgid "Ignoring invalid SASL pwcheck method: {1}"
+msgstr ""
+
+#: cyrusauth.cpp:74
+msgid "Ignored invalid SASL pwcheck method"
+msgstr ""
+
+#: cyrusauth.cpp:82
+msgid "Need a pwcheck method as argument (saslauthd, auxprop)"
+msgstr ""
+
+#: cyrusauth.cpp:87
+msgid "SASL Could Not Be Initialized - Halting Startup"
+msgstr ""
+
+#: cyrusauth.cpp:180
+msgid "We will create users on their first login"
+msgstr ""
+
+#: cyrusauth.cpp:182
+msgid "We will not create users on their first login"
+msgstr ""
+
+#: cyrusauth.cpp:194
+msgid "We will clone {1}"
+msgstr ""
+
+#: cyrusauth.cpp:196
+msgid "We will not clone a user"
+msgstr ""
+
+#: cyrusauth.cpp:202
+msgid "Clone user disabled"
+msgstr ""
+
+#: cyrusauth.cpp:233
+msgid ""
+"This global module takes up to two arguments - the methods of authentication "
+"- auxprop and saslauthd"
+msgstr ""
+
+#: cyrusauth.cpp:239
+msgid "Allow users to authenticate via SASL password verification method"
+msgstr ""
