@@ -151,29 +151,26 @@ class CAutoOpMod : public CModule {
   public:
     MODCONSTRUCTOR(CAutoOpMod) {
         AddHelpCommand();
-        AddCommand("ListUsers", static_cast<CModCommand::ModCmdFunc>(
-                                    &CAutoOpMod::OnListUsersCommand),
-                   "", "List all users");
-        AddCommand("AddChans", static_cast<CModCommand::ModCmdFunc>(
-                                   &CAutoOpMod::OnAddChansCommand),
-                   "<user> <channel> [channel] ...", "Adds channels to a user");
-        AddCommand("DelChans", static_cast<CModCommand::ModCmdFunc>(
-                                   &CAutoOpMod::OnDelChansCommand),
-                   "<user> <channel> [channel] ...",
-                   "Removes channels from a user");
-        AddCommand("AddMasks", static_cast<CModCommand::ModCmdFunc>(
-                                   &CAutoOpMod::OnAddMasksCommand),
-                   "<user> <mask>,[mask] ...", "Adds masks to a user");
-        AddCommand("DelMasks", static_cast<CModCommand::ModCmdFunc>(
-                                   &CAutoOpMod::OnDelMasksCommand),
-                   "<user> <mask>,[mask] ...", "Removes masks from a user");
-        AddCommand("AddUser", static_cast<CModCommand::ModCmdFunc>(
-                                  &CAutoOpMod::OnAddUserCommand),
-                   "<user> <hostmask>[,<hostmasks>...] <key> [channels]",
-                   "Adds a user");
-        AddCommand("DelUser", static_cast<CModCommand::ModCmdFunc>(
-                                  &CAutoOpMod::OnDelUserCommand),
-                   "<user>", "Removes a user");
+        AddCommand("ListUsers", "", t_d("List all users"),
+                   [=](const CString& sLine) { OnListUsersCommand(sLine); });
+        AddCommand("AddChans", t_d("<user> <channel> [channel] ..."),
+                   t_d("Adds channels to a user"),
+                   [=](const CString& sLine) { OnAddChansCommand(sLine); });
+        AddCommand("DelChans", t_d("<user> <channel> [channel] ..."),
+                   t_d("Removes channels from a user"),
+                   [=](const CString& sLine) { OnDelChansCommand(sLine); });
+        AddCommand("AddMasks", t_d("<user> <mask>,[mask] ..."),
+                   t_d("Adds masks to a user"),
+                   [=](const CString& sLine) { OnAddMasksCommand(sLine); });
+        AddCommand("DelMasks", t_d("<user> <mask>,[mask] ..."),
+                   t_d("Removes masks from a user"),
+                   [=](const CString& sLine) { OnDelMasksCommand(sLine); });
+        AddCommand("AddUser",
+                   t_d("<user> <hostmask>[,<hostmasks>...] <key> [channels]"),
+                   t_d("Adds a user"),
+                   [=](const CString& sLine) { OnAddUserCommand(sLine); });
+        AddCommand("DelUser", t_d("<user>"), t_d("Removes a user"),
+                   [=](const CString& sLine) { OnDelUserCommand(sLine); });
     }
 
     bool OnLoad(const CString& sArgs, CString& sMessage) override {
@@ -275,8 +272,8 @@ class CAutoOpMod : public CModule {
 
         if (sHost.empty()) {
             PutModule(
-                "Usage: AddUser <user> <hostmask>[,<hostmasks>...] <key> "
-                "[channels]");
+                t_s("Usage: AddUser <user> <hostmask>[,<hostmasks>...] <key> "
+                    "[channels]"));
         } else {
             CAutoOpUser* pUser =
                 AddUser(sUser, sKey, sHost, sLine.Token(4, true));
@@ -291,7 +288,7 @@ class CAutoOpMod : public CModule {
         CString sUser = sLine.Token(1);
 
         if (sUser.empty()) {
-            PutModule("Usage: DelUser <user>");
+            PutModule(t_s("Usage: DelUser <user>"));
         } else {
             DelUser(sUser);
             DelNV(sUser);
@@ -300,16 +297,16 @@ class CAutoOpMod : public CModule {
 
     void OnListUsersCommand(const CString& sLine) {
         if (m_msUsers.empty()) {
-            PutModule("There are no users defined");
+            PutModule(t_s("There are no users defined"));
             return;
         }
 
         CTable Table;
 
-        Table.AddColumn("User");
-        Table.AddColumn("Hostmasks");
-        Table.AddColumn("Key");
-        Table.AddColumn("Channels");
+        Table.AddColumn(t_s("User"));
+        Table.AddColumn(t_s("Hostmasks"));
+        Table.AddColumn(t_s("Key"));
+        Table.AddColumn(t_s("Channels"));
 
         for (const auto& it : m_msUsers) {
             VCString vsHostmasks;
@@ -317,15 +314,15 @@ class CAutoOpMod : public CModule {
             for (unsigned int a = 0; a < vsHostmasks.size(); a++) {
                 Table.AddRow();
                 if (a == 0) {
-                    Table.SetCell("User", it.second->GetUsername());
-                    Table.SetCell("Key", it.second->GetUserKey());
-                    Table.SetCell("Channels", it.second->GetChannels());
+                    Table.SetCell(t_s("User"), it.second->GetUsername());
+                    Table.SetCell(t_s("Key"), it.second->GetUserKey());
+                    Table.SetCell(t_s("Channels"), it.second->GetChannels());
                 } else if (a == vsHostmasks.size() - 1) {
-                    Table.SetCell("User", "`-");
+                    Table.SetCell(t_s("User"), "`-");
                 } else {
-                    Table.SetCell("User", "|-");
+                    Table.SetCell(t_s("User"), "|-");
                 }
-                Table.SetCell("Hostmasks", vsHostmasks[a]);
+                Table.SetCell(t_s("Hostmasks"), vsHostmasks[a]);
             }
         }
 
@@ -337,19 +334,19 @@ class CAutoOpMod : public CModule {
         CString sChans = sLine.Token(2, true);
 
         if (sChans.empty()) {
-            PutModule("Usage: AddChans <user> <channel> [channel] ...");
+            PutModule(t_s("Usage: AddChans <user> <channel> [channel] ..."));
             return;
         }
 
         CAutoOpUser* pUser = FindUser(sUser);
 
         if (!pUser) {
-            PutModule("No such user");
+            PutModule(t_s("No such user"));
             return;
         }
 
         pUser->AddChans(sChans);
-        PutModule("Channel(s) added to user [" + pUser->GetUsername() + "]");
+        PutModule(t_f("Channel(s) added to user {1}")(pUser->GetUsername()));
         SetNV(pUser->GetUsername(), pUser->ToString());
     }
 
@@ -358,20 +355,20 @@ class CAutoOpMod : public CModule {
         CString sChans = sLine.Token(2, true);
 
         if (sChans.empty()) {
-            PutModule("Usage: DelChans <user> <channel> [channel] ...");
+            PutModule(t_s("Usage: DelChans <user> <channel> [channel] ..."));
             return;
         }
 
         CAutoOpUser* pUser = FindUser(sUser);
 
         if (!pUser) {
-            PutModule("No such user");
+            PutModule(t_s("No such user"));
             return;
         }
 
         pUser->DelChans(sChans);
-        PutModule("Channel(s) Removed from user [" + pUser->GetUsername() +
-                  "]");
+        PutModule(
+            t_f("Channel(s) Removed from user {1}")(pUser->GetUsername()));
         SetNV(pUser->GetUsername(), pUser->ToString());
     }
 
@@ -380,19 +377,19 @@ class CAutoOpMod : public CModule {
         CString sHostmasks = sLine.Token(2, true);
 
         if (sHostmasks.empty()) {
-            PutModule("Usage: AddMasks <user> <mask>,[mask] ...");
+            PutModule(t_s("Usage: AddMasks <user> <mask>,[mask] ..."));
             return;
         }
 
         CAutoOpUser* pUser = FindUser(sUser);
 
         if (!pUser) {
-            PutModule("No such user");
+            PutModule(t_s("No such user"));
             return;
         }
 
         pUser->AddHostmasks(sHostmasks);
-        PutModule("Hostmasks(s) added to user [" + pUser->GetUsername() + "]");
+        PutModule(t_f("Hostmasks(s) added to user {1}")(pUser->GetUsername()));
         SetNV(pUser->GetUsername(), pUser->ToString());
     }
 
@@ -401,26 +398,26 @@ class CAutoOpMod : public CModule {
         CString sHostmasks = sLine.Token(2, true);
 
         if (sHostmasks.empty()) {
-            PutModule("Usage: DelMasks <user> <mask>,[mask] ...");
+            PutModule(t_s("Usage: DelMasks <user> <mask>,[mask] ..."));
             return;
         }
 
         CAutoOpUser* pUser = FindUser(sUser);
 
         if (!pUser) {
-            PutModule("No such user");
+            PutModule(t_s("No such user"));
             return;
         }
 
         if (pUser->DelHostmasks(sHostmasks)) {
-            PutModule("Removed user [" + pUser->GetUsername() + "] with key [" +
-                      pUser->GetUserKey() + "] and channels [" +
-                      pUser->GetChannels() + "]");
+            PutModule(t_f("Removed user {1} with key {2} and channels {3}")(
+                pUser->GetUsername(), pUser->GetUserKey(),
+                pUser->GetChannels()));
             DelUser(sUser);
             DelNV(sUser);
         } else {
-            PutModule("Hostmasks(s) Removed from user [" +
-                      pUser->GetUsername() + "]");
+            PutModule(t_f("Hostmasks(s) Removed from user {1}")(
+                pUser->GetUsername()));
             SetNV(pUser->GetUsername(), pUser->ToString());
         }
     }
@@ -472,26 +469,25 @@ class CAutoOpMod : public CModule {
             m_msUsers.find(sUser.AsLower());
 
         if (it == m_msUsers.end()) {
-            PutModule("That user does not exist");
+            PutModule(t_s("No such user"));
             return;
         }
 
         delete it->second;
         m_msUsers.erase(it);
-        PutModule("User [" + sUser + "] removed");
+        PutModule(t_f("User {1} removed")(sUser));
     }
 
     CAutoOpUser* AddUser(const CString& sUser, const CString& sKey,
                          const CString& sHosts, const CString& sChans) {
         if (m_msUsers.find(sUser) != m_msUsers.end()) {
-            PutModule("That user already exists");
+            PutModule(t_s("That user already exists"));
             return nullptr;
         }
 
         CAutoOpUser* pUser = new CAutoOpUser(sUser, sKey, sHosts, sChans);
         m_msUsers[sUser.AsLower()] = pUser;
-        PutModule("User [" + sUser + "] added with hostmask(s) [" + sHosts +
-                  "]");
+        PutModule(t_f("User {1} added with hostmask(s) {2}")(sUser, sHosts));
         return pUser;
     }
 
@@ -532,21 +528,21 @@ class CAutoOpMod : public CModule {
 
         if (!bValid) {
             if (bMatchedHost) {
-                PutModule("[" + Nick.GetHostMask() +
-                          "] sent us a challenge but they are not opped in any "
-                          "defined channels.");
+                PutModule(t_f(
+                    "[{1}] sent us a challenge but they are not opped in any "
+                    "defined channels.")(Nick.GetHostMask()));
             } else {
-                PutModule("[" + Nick.GetHostMask() +
-                          "] sent us a challenge but they do not match a "
-                          "defined user.");
+                PutModule(
+                    t_f("[{1}] sent us a challenge but they do not match a "
+                        "defined user.")(Nick.GetHostMask()));
             }
 
             return false;
         }
 
         if (sChallenge.length() != AUTOOP_CHALLENGE_LENGTH) {
-            PutModule("WARNING! [" + Nick.GetHostMask() +
-                      "] sent an invalid challenge.");
+            PutModule(t_f("WARNING! [{1}] sent an invalid challenge.")(
+                Nick.GetHostMask()));
             return false;
         }
 
@@ -561,8 +557,8 @@ class CAutoOpMod : public CModule {
 
         if (itQueue == m_msQueue.end()) {
             PutModule(
-                "[" + Nick.GetHostMask() +
-                "] sent an unchallenged response.  This could be due to lag.");
+                t_f("[{1}] sent an unchallenged response.  This could be due "
+                    "to lag.")(Nick.GetHostMask()));
             return false;
         }
 
@@ -577,16 +573,18 @@ class CAutoOpMod : public CModule {
                     OpUser(Nick, *it.second);
                     return true;
                 } else {
-                    PutModule("WARNING! [" + Nick.GetHostMask() +
-                              "] sent a bad response.  Please verify that you "
-                              "have their correct password.");
+                    PutModule(
+                        t_f("WARNING! [{1}] sent a bad response.  Please "
+                            "verify that you have their correct password.")(
+                            Nick.GetHostMask()));
                     return false;
                 }
             }
         }
 
-        PutModule("WARNING! [" + Nick.GetHostMask() +
-                  "] sent a response but did not match any defined users.");
+        PutModule(
+            t_f("WARNING! [{1}] sent a response but did not match any defined "
+                "users.")(Nick.GetHostMask()));
         return false;
     }
 
@@ -643,4 +641,4 @@ void TModInfo<CAutoOpMod>(CModInfo& Info) {
     Info.SetWikiPage("autoop");
 }
 
-NETWORKMODULEDEFS(CAutoOpMod, "Auto op the good people")
+NETWORKMODULEDEFS(CAutoOpMod, t_s("Auto op the good people"))
