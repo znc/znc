@@ -62,6 +62,8 @@ class CBlockUser : public CModule {
         return true;
     }
 
+    /*If user is the on the blocked list tries to log in, displays - MESSAGE 
+    and stops their log in attempt.*/
     EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) override {
         if (IsBlocked(Auth->GetUsername())) {
             Auth->RefuseLogin(MESSAGE);
@@ -79,6 +81,7 @@ class CBlockUser : public CModule {
         }
     }
 
+    //Displays all blocked users as a list.
     void OnListCommand(const CString& sCommand) {
         CTable Table;
         MCString::iterator it;
@@ -93,6 +96,7 @@ class CBlockUser : public CModule {
         if (PutModule(Table) == 0) PutModule("No users blocked");
     }
 
+    //Blocks a user if possible(not self, not already blocked)
     void OnBlockCommand(const CString& sCommand) {
         CString sUser = sCommand.Token(1, true);
 
@@ -112,6 +116,7 @@ class CBlockUser : public CModule {
             PutModule("Could not block [" + sUser + "] (misspelled?)");
     }
 
+    //Unblocks someone from the blocked list.
     void OnUnblockCommand(const CString& sCommand) {
         CString sUser = sCommand.Token(1, true);
 
@@ -168,6 +173,8 @@ class CBlockUser : public CModule {
     }
 
   private:
+    /*Iterates through all blocked users and returns True if they 
+    are blocked, else false*/
     bool IsBlocked(const CString& sUser) {
         MCString::iterator it;
         for (it = BeginNV(); it != EndNV(); ++it) {
@@ -178,6 +185,7 @@ class CBlockUser : public CModule {
         return false;
     }
 
+    //Blocks the user
     bool Block(const CString& sUser) {
         CUser* pUser = CZNC::Get().FindUser(sUser);
 
