@@ -24,7 +24,6 @@ using std::vector;
 class CBlockUser : public CModule {
   public:
     MODCONSTRUCTOR(CBlockUser) {
-        //Creating all commands
         AddHelpCommand();
         AddCommand("List", static_cast<CModCommand::ModCmdFunc>(
                                &CBlockUser::OnListCommand),
@@ -63,7 +62,7 @@ class CBlockUser : public CModule {
         return true;
     }
 
-    /*If user is the on the blocked list and tries to log in, displays - MESSAGE 
+    /* If user is the on the blocked list and tries to log in, displays - MESSAGE 
     and stops their log in attempt.*/
     EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) override {
         if (IsBlocked(Auth->GetUsername())) {
@@ -82,7 +81,7 @@ class CBlockUser : public CModule {
         }
     }
 
-    //Displays all blocked users as a list.
+    // Displays all blocked users as a list.
     void OnListCommand(const CString& sCommand) {
         CTable Table;
         MCString::iterator it;
@@ -97,7 +96,7 @@ class CBlockUser : public CModule {
         if (PutModule(Table) == 0) PutModule("No users blocked");
     }
 
-    /*Blocks a user if possible(aka not self, not already blocked).
+    /* Blocks a user if possible(ie not self, not already blocked).
     Displays an error message if not possible. */
     void OnBlockCommand(const CString& sCommand) {
         CString sUser = sCommand.Token(1, true);
@@ -118,7 +117,7 @@ class CBlockUser : public CModule {
             PutModule("Could not block [" + sUser + "] (misspelled?)");
     }
 
-    //Unblocks someone from the blocked list.
+    // Unblocks someone from the blocked list.
     void OnUnblockCommand(const CString& sCommand) {
         CString sUser = sCommand.Token(1, true);
 
@@ -133,7 +132,7 @@ class CBlockUser : public CModule {
             PutModule("This user is not blocked");
     }
 
-    //Compressing all above functions into one for embedded web requests.
+    // Provides the same functionality of this module for embedded web requests.
     bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName,
                               CTemplate& Tmpl) override {
         if (sPageName == "webadmin/user" && WebSock.GetSession()->IsAdmin()) {
@@ -176,7 +175,7 @@ class CBlockUser : public CModule {
     }
 
   private:
-    /*Iterates through all blocked users and returns True if they 
+    /* Iterates through all blocked users and returns true if they 
     are blocked, else false*/
     bool IsBlocked(const CString& sUser) {
         MCString::iterator it;
@@ -188,13 +187,12 @@ class CBlockUser : public CModule {
         return false;
     }
 
-    //Blocks the user
     bool Block(const CString& sUser) {
         CUser* pUser = CZNC::Get().FindUser(sUser);
 
         if (!pUser) return false;
 
-        //Disconnect all clients
+        // Disconnect all clients
         vector<CClient*> vpClients = pUser->GetAllClients();
         vector<CClient*>::iterator it;
         for (it = vpClients.begin(); it != vpClients.end(); ++it) {
@@ -202,7 +200,7 @@ class CBlockUser : public CModule {
             (*it)->Close(Csock::CLT_AFTERWRITE);
         }
 
-        //Disconnect all networks from irc
+        // Disconnect all networks from irc
         vector<CIRCNetwork*> vNetworks = pUser->GetNetworks();
         for (vector<CIRCNetwork*>::iterator it2 = vNetworks.begin();
              it2 != vNetworks.end(); ++it2) {
