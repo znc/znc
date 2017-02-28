@@ -141,6 +141,8 @@ class Process : public IO<QProcess> {
         m_proc.setProcessEnvironment(env);
         setup(&m_proc);
         m_proc.start(cmd, args);
+        EXPECT_TRUE(m_proc.waitForStarted())
+            << "Failed to start ZNC, did you install it?";
     }
     ~Process() override {
         if (m_kill) m_proc.terminate();
