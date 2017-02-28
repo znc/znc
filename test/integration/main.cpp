@@ -438,8 +438,6 @@ TEST_F(ZNCTest, FixCVE20149403) {
                           {"name", "znc"},
                           {"enabled", "1"},
                       });
-    ircd.ReadUntil("JOIN #znc");
-    Z;
     EXPECT_THAT(HttpPost(request,
                          {
                              {"user", "user"},
