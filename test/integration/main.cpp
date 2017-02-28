@@ -779,7 +779,7 @@ TEST_F(ZNCTest, ControlpanelModule) {
     Z;
 
     client.Write(request + "ListCTCPs");
-    client.ReadUntil(response + "Request: VERSION");
+    client.ReadUntil(response + "| VERSION | Test  |");
     Z;
 
     client.Write(request + "ListMods");
@@ -791,11 +791,11 @@ TEST_F(ZNCTest, ControlpanelModule) {
     Z;
 
     client.Write(request + "ListNetworks");
-    client.ReadUntil(response + "Network: test");
+    client.ReadUntil(response + "| test ");
     Z;
 
     client.Write(request + "ListUsers");
-    client.ReadUntil(response + "Username: user");
+    client.ReadUntil(response + "| user ");
     Z;
 
     client.Write(request + "LoadModule");
@@ -1366,7 +1366,7 @@ TEST_F(ZNCTest, ControlpanelModule) {
     Z;
 
     client.Write(request + "ListCTCPs KindOne");
-    client.ReadUntil(response + "Request: VERSION");
+    client.ReadUntil(response + "| VERSION | Test");
     Z;
 
     client.Write(request + "ListMods KindOne");
@@ -1384,7 +1384,7 @@ TEST_F(ZNCTest, ControlpanelModule) {
     Z;
 
     client.Write(request + "ListMods KindOne");
-    client.ReadUntil(response + "Name: perform");
+    client.ReadUntil(response + "| perform |");
     Z;
 
     client.Write(request + "ListNetMods KindOne");
@@ -1392,11 +1392,11 @@ TEST_F(ZNCTest, ControlpanelModule) {
     Z;
 
     client.Write(request + "ListNetworks KindOne");
-    client.ReadUntil(response + "Network: freenode");
+    client.ReadUntil(response + "| freenode | No ");
     Z;
 
     client.Write(request + "ListUsers");
-    client.ReadUntil(response + "Username: user");
+    client.ReadUntil(response + "| user ");
     Z;
 
     client.Write(request + "LoadModule");
