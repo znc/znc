@@ -85,7 +85,7 @@ class IO {
      * up to and excluding the first newline. Pattern itself can contain a newline.
      * Have to use second param as the ASSERT_*'s return a non-QByteArray.
      */
-    void ReadUntilAndGet(QByteArray pattern, QByteArray& match = "") {
+    void ReadUntilAndGet(QByteArray pattern, QByteArray& match) {
         auto deadline = QDateTime::currentDateTime().addSecs(60);
         while (true) {
             int search = m_readed.indexOf(pattern);
@@ -2070,25 +2070,22 @@ TEST_F(ZNCTest, ModuleCrypt) {
 
     QByteArray pub2("");
     ircd2.ReadUntilAndGet("NOTICE nick :DH1080_FINISH ", pub2);
-    ircd1.Write(":nick2!user2@user2/test " + pub2);
+    /* Fix desync, client1 thinks it's nick is "user" instead of "nick" */
+    ircd1.Write(":nick2!user2@user2/test " + pub2.replace("nick", "user"));
     Z;
 
     client1.ReadUntil("Key for nick2 successfully set.");
     Z;
 
     client1.Write("PRIVMSG *crypt :listkeys");
-    client1.ReadUntil("Target: nick2");
-    Z;
     QByteArray key1("");
-    client1.ReadUntilAndGet("Key: ", key1);
+    client1.ReadUntilAndGet("| nick2         | ", key1);
     Z;
     client2.Write("PRIVMSG *crypt :listkeys");
-    client2.ReadUntil("Target: nick");
-    Z;
     QByteArray key2("");
-    client2.ReadUntilAndGet("Key: ", key2);
+    client2.ReadUntilAndGet("| nick          | ", key2);
     Z;
-    ASSERT_EQ(key1, key2);
+    ASSERT_EQ(key1.mid(18), key2.mid(18));
 }
 
 }  // namespace
