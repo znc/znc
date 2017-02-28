@@ -318,7 +318,8 @@ class ZNCTest : public testing::Test {
             out << content;
             file.close();
             Process p(
-                ZNC_BIN_DIR "/znc-buildmod", QStringList() << file.fileName(),
+                ZNC_BIN_DIR "/znc-buildmod",
+                QStringList() << "--verbose" << file.fileName(),
                 [&](QProcess* proc) {
                     proc->setWorkingDirectory(dir.absolutePath());
                     proc->setProcessChannelMode(QProcess::ForwardedChannels);
@@ -1874,7 +1875,8 @@ TEST_F(ZNCTest, BuildMod) {
     EXPECT_TRUE(dir.cd("modules"));
     {
         Process p(ZNC_BIN_DIR "/znc-buildmod",
-                  QStringList() << srcdir.filePath("file-not-found.cpp"),
+                  QStringList() << "--verbose"
+                                << srcdir.filePath("file-not-found.cpp"),
                   [&](QProcess* proc) {
                       proc->setWorkingDirectory(dir.absolutePath());
                       proc->setProcessChannelMode(QProcess::ForwardedChannels);
@@ -1883,7 +1885,8 @@ TEST_F(ZNCTest, BuildMod) {
     }
     {
         Process p(ZNC_BIN_DIR "/znc-buildmod",
-                  QStringList() << srcdir.filePath("testmod.cpp"),
+                  QStringList() << "--verbose"
+                                << srcdir.filePath("testmod.cpp"),
                   [&](QProcess* proc) {
                       proc->setWorkingDirectory(dir.absolutePath());
                       proc->setProcessChannelMode(QProcess::ForwardedChannels);

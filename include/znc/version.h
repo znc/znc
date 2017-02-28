@@ -13,7 +13,8 @@
 // Don't use this one
 #define VERSION (VERSION_MAJOR + VERSION_MINOR / 10.0)
 
-// You can add -DVERSION_EXTRA="stuff" to your CXXFLAGS!
+// autoconf: You can add -DVERSION_EXTRA="stuff" to your CXXFLAGS!
+// CMake: You can add -DVERSION_EXTRA=stuff to cmake!
 #ifndef VERSION_EXTRA
 #define VERSION_EXTRA ""
 #endif

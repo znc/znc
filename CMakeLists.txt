@@ -19,6 +19,8 @@ project(ZNC VERSION 1.7.0)
 set(ZNC_VERSION 1.7.x)
 set(append_git_version true)
 set(alpha_version "") # e.g. "-rc1"
+set(VERSION_EXTRA "" CACHE STRING
+	"Additional string appended to version, e.g. to mark distribution")
 
 set(PROJECT_VERSION "${ZNC_VERSION}")
 
@@ -336,7 +338,7 @@ macro(summary_line text var)
 	endif()
 endmacro()
 set(summary_lines
-	"ZNC ${ZNC_VERSION}${alpha_version} configured"
+	"ZNC ${ZNC_VERSION}${VERSION_EXTRA}${alpha_version} configured"
 	" "
 	"Prefix    : ${CMAKE_INSTALL_PREFIX}")
 summary_line("SSL      " "${OPENSSL_FOUND}")
