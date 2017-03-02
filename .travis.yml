@@ -112,7 +112,7 @@ script:
     - make VERBOSE=1 $UNITTEST
     - sudo make install
     - make VERBOSE=1 $INTTEST
-    - cd ..
+    - cd "$TRAVIS_BUILD_DIR"
     - /usr/local/bin/znc --version
 after_success:
     - test -r "$TRAVIS_BUILD_DIR/.travis_after_all.py" && python "$TRAVIS_BUILD_DIR/.travis_after_all.py" || echo No .travis_after_all.py found
