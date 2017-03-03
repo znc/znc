@@ -62,6 +62,8 @@ class CBlockUser : public CModule {
         return true;
     }
 
+    /* If a user is on the blocked list and tries to log in, displays - MESSAGE 
+    and stops their log in attempt.*/
     EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) override {
         if (IsBlocked(Auth->GetUsername())) {
             Auth->RefuseLogin(MESSAGE);
@@ -79,6 +81,7 @@ class CBlockUser : public CModule {
         }
     }
 
+    // Displays all blocked users as a list.
     void OnListCommand(const CString& sCommand) {
         CTable Table;
         MCString::iterator it;
@@ -93,6 +96,8 @@ class CBlockUser : public CModule {
         if (PutModule(Table) == 0) PutModule("No users blocked");
     }
 
+    /* Blocks a user if possible(ie not self, not already blocked).
+    Displays an error message if not possible. */
     void OnBlockCommand(const CString& sCommand) {
         CString sUser = sCommand.Token(1, true);
 
@@ -112,6 +117,7 @@ class CBlockUser : public CModule {
             PutModule("Could not block [" + sUser + "] (misspelled?)");
     }
 
+    // Unblocks a user from the blocked list.
     void OnUnblockCommand(const CString& sCommand) {
         CString sUser = sCommand.Token(1, true);
 
@@ -126,6 +132,7 @@ class CBlockUser : public CModule {
             PutModule("This user is not blocked");
     }
 
+    // Provides GUI to configure this module by adding a widget to user page in webadmin.
     bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName,
                               CTemplate& Tmpl) override {
         if (sPageName == "webadmin/user" && WebSock.GetSession()->IsAdmin()) {
@@ -168,6 +175,8 @@ class CBlockUser : public CModule {
     }
 
   private:
+    /* Iterates through all blocked users and returns true if the specified user (sUser)
+    is blocked, else returns false.*/
     bool IsBlocked(const CString& sUser) {
         MCString::iterator it;
         for (it = BeginNV(); it != EndNV(); ++it) {
