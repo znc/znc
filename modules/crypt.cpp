@@ -505,16 +505,20 @@ class CCryptMod : public CModule {
     }
 
     void OnNickPrefixCommand(const CString& sCommand) {
-        CString sPrefix = sCommand.Token(1, true);
+        CString sPrefix = sCommand.Token(1);
 
         if (sPrefix.empty()) {
             PutModule("Nick Prefix: " + NickPrefix());
         } else {
+            CString sTail = sCommand.Token(2, true);
             CString sStatusPrefix = GetUser()->GetStatusPrefix();
             size_t sp = sStatusPrefix.size();
             size_t np = sPrefix.size();
             SetNV(NICK_PREFIX_KEY, sPrefix);
-            PutModule("Setting Nick Prefix to " + sPrefix);
+            if (sTail.empty())
+                PutModule("Setting Nick Prefix to " + sPrefix);
+            else
+                PutModule("Setting Nick Prefix to " + sPrefix + ", ignoring rest after space.");
             if (sStatusPrefix.CaseCmp(sPrefix, std::min(sp, np)) == 0)
                 PutModule("WARNING: overlap with Status Prefix (" + sStatusPrefix + "), this Nick Prefix will not be used!");
         }
