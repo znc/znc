@@ -525,23 +525,23 @@ class CCryptMod : public CModule {
     }
 
     void OnListKeysCommand(const CString& sCommand) {
-        if (BeginNV() == EndNV() || BeginNV()->first.Equals(NICK_PREFIX_KEY)) {
-            PutModule("You have no encryption keys set.");
-        } else {
-            CTable Table;
-            Table.AddColumn("Target");
-            Table.AddColumn("Key");
+        CTable Table;
+        CString::size_type rows = 0;
+        Table.AddColumn("Target");
+        Table.AddColumn("Key");
 
-            for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
-                if (!it->first.Equals(NICK_PREFIX_KEY)) {
-                    Table.AddRow();
-                    Table.SetCell("Target", it->first);
-                    Table.SetCell("Key", it->second);
-                }
+        for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
+            if (!it->first.Equals(NICK_PREFIX_KEY)) {
+                /* Index starts at 0, we want amount of rows */
+                rows = Table.AddRow() + 1;
+                Table.SetCell("Target", it->first);
+                Table.SetCell("Key", it->second);
             }
-
-            PutModule(Table);
         }
+        if (rows == 0)
+            PutModule("You have no encryption keys set.");
+        else
+            PutModule(Table);
     }
 
     CString MakeIvec() {
