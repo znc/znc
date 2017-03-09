@@ -206,6 +206,9 @@ class CCryptMod : public CModule {
         AddCommand("KeyX", static_cast<CModCommand::ModCmdFunc>(
                                  &CCryptMod::OnKeyXCommand),
                    "<Nick>", "Start a DH1080 key exchange with nick");
+        AddCommand("NickPrefix", static_cast<CModCommand::ModCmdFunc>(
+                                 &CCryptMod::OnNickPrefixCommand),
+                   "[Prefix]", "Get or set the nick prefix, use : to disable");
     }
 
     ~CCryptMod() override {
@@ -501,8 +504,24 @@ class CCryptMod : public CModule {
         }
     }
 
+    void OnNickPrefixCommand(const CString& sCommand) {
+        CString sPrefix = sCommand.Token(1, true);
+
+        if (sPrefix.empty()) {
+            PutModule("Nick Prefix: " + NickPrefix());
+        } else {
+            CString sStatusPrefix = GetUser()->GetStatusPrefix();
+            size_t sp = sStatusPrefix.size();
+            size_t np = sPrefix.size();
+            SetNV(NICK_PREFIX_KEY, sPrefix);
+            PutModule("Setting Nick Prefix to " + sPrefix);
+            if (sStatusPrefix.CaseCmp(sPrefix, std::min(sp, np)) == 0)
+                PutModule("WARNING: overlap with Status Prefix (" + sStatusPrefix + "), this Nick Prefix will not be used!");
+        }
+    }
+
     void OnListKeysCommand(const CString& sCommand) {
-        if (BeginNV() == EndNV()) {
+        if (BeginNV() == EndNV() || BeginNV()->first.Equals(NICK_PREFIX_KEY)) {
             PutModule("You have no encryption keys set.");
         } else {
             CTable Table;
@@ -510,16 +529,11 @@ class CCryptMod : public CModule {
             Table.AddColumn("Key");
 
             for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
-                Table.AddRow();
-                Table.SetCell("Target", it->first);
-                Table.SetCell("Key", it->second);
-            }
-
-            MCString::iterator it = FindNV(NICK_PREFIX_KEY);
-            if (it == EndNV()) {
-                Table.AddRow();
-                Table.SetCell("Target", NICK_PREFIX_KEY);
-                Table.SetCell("Key", NickPrefix());
+                if (!it->first.Equals(NICK_PREFIX_KEY)) {
+                    Table.AddRow();
+                    Table.SetCell("Target", it->first);
+                    Table.SetCell("Key", it->second);
+                }
             }
 
             PutModule(Table);
