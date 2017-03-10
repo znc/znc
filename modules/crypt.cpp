@@ -528,19 +528,17 @@ class CCryptMod : public CModule {
 
     void OnListKeysCommand(const CString& sCommand) {
         CTable Table;
-        CString::size_type rows = 0;
         Table.AddColumn("Target");
         Table.AddColumn("Key");
 
         for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
             if (!it->first.Equals(NICK_PREFIX_KEY)) {
-                /* Index starts at 0, we want amount of rows */
-                rows = Table.AddRow() + 1;
+                Table.AddRow();
                 Table.SetCell("Target", it->first);
                 Table.SetCell("Key", it->second);
             }
         }
-        if (rows == 0)
+        if (Table.empty())
             PutModule("You have no encryption keys set.");
         else
             PutModule(Table);
