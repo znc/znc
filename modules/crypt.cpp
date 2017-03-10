@@ -510,7 +510,6 @@ class CCryptMod : public CModule {
         if (sPrefix.empty()) {
             PutModule("Nick Prefix: " + NickPrefix());
         } else {
-            CString sTail = sCommand.Token(2, true);
             CString sStatusPrefix = GetUser()->GetStatusPrefix();
             size_t sp = sStatusPrefix.size();
             size_t np = sPrefix.size();
@@ -518,10 +517,10 @@ class CCryptMod : public CModule {
                 PutModule("Overlap with Status Prefix (" + sStatusPrefix + "), this Nick Prefix will not be used!");
             else {
                 SetNV(NICK_PREFIX_KEY, sPrefix);
-                if (sTail.empty())
-                    PutModule("Setting Nick Prefix to " + sPrefix);
+                if (sPrefix.Equals(":"))
+                    PutModule("Disabling Nick Prefix, use :: to have : as Nick Prefix.");
                 else
-                    PutModule("Setting Nick Prefix to " + sPrefix + ", ignoring rest after space.");
+                    PutModule("Setting Nick Prefix to " + sPrefix);
             }
         }
     }
