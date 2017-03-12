@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
  * Copyright (C) 2008 by Stefan Rado
  * based on admin.cpp by Sebastian Ramacher
  * based on admin.cpp in crox branch
