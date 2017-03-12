@@ -1,3 +1,12 @@
+# ZNC 1.6.5 (2017-03-12)
+
+## Fixes
+
+* Fixed a regression of 1.6.4 which caused a crash in modperl/modpython.
+* Fixed the behavior of `verbose` command in the sasl module.
+
+
+
 # ZNC 1.6.4 (2016-12-10)
 
 ## Fixes
