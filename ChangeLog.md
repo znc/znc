@@ -1,22 +1,9 @@
-# (unreleased)
+# ZNC 1.6.5 (2017-03-12)
 
-## Changes (need to verify this)
+## Fixes
 
-* workarounds during config parsing for old ZNC versions removed
-    * incompatible configs give an error during startup indicating the problem
-    * versions including 0.206 and newer are still supported
-* rehash only reloads global settings, including global modules and listeners
-    * users are not reloaded any more - which makes rehash less dangerous
-* OnAddUser hook is only called if actually a new user added
-    * it is not called during ZNC startup any more
-* Fix build on Solaris 10
-* Fix build with LibreSSL
-* Added two network-specific config options to control TLS certificate
-  validation
-    * `TrustAllCerts`: Disables certificate validation. Will take precedence
-      over TrustPKI
-    * `TrustPKI`: Whether or not to trust PKI-valid Certificates. Setting this
-      to false will make znc trust only trusted certificates added by the user.
+* Fixed a regression of 1.6.4 which caused a crash in modperl/modpython.
+* Fixed the behavior of `verbose` command in the sasl module.
 
 
 
