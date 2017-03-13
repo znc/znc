@@ -47,6 +47,7 @@ class CLastSeenMod : public CModule {
     typedef multimap<time_t, CUser*> MTimeMulti;
     typedef map<CString, CUser*> MUsers;
 
+    // Shows all users as well as the time they were last seen online
     void ShowCommand(const CString& sLine) {
         if (!GetUser()->IsAdmin()) {
             PutModule("Access denied");
@@ -95,6 +96,7 @@ class CLastSeenMod : public CModule {
     bool WebRequiresAdmin() override { return true; }
     CString GetWebMenuTitle() override { return "Last Seen"; }
 
+    // Provides GUI to configure this module by adding a widget to user page in webadmin.
     bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
                       CTemplate& Tmpl) override {
         if (sPageName == "index") {
