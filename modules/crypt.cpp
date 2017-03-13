@@ -509,6 +509,8 @@ class CCryptMod : public CModule {
 
         if (sPrefix.empty()) {
             PutModule("Nick Prefix: " + NickPrefix());
+        } else if (sPrefix.size() > 1 && sPrefix.StartsWith(":")) {
+            PutModule("You cannot use : followed by other symbols as Nick Prefix.");
         } else {
             CString sStatusPrefix = GetUser()->GetStatusPrefix();
             size_t sp = sStatusPrefix.size();
@@ -518,7 +520,7 @@ class CCryptMod : public CModule {
             else {
                 SetNV(NICK_PREFIX_KEY, sPrefix);
                 if (sPrefix.Equals(":"))
-                    PutModule("Disabling Nick Prefix, use :: to have : as Nick Prefix.");
+                    PutModule("Disabling Nick Prefix.");
                 else
                     PutModule("Setting Nick Prefix to " + sPrefix);
             }
