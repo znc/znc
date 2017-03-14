@@ -183,7 +183,8 @@ class CCryptMod : public CModule {
         if (it != EndNV()) {
             size_t sp = sStatusPrefix.size();
             size_t np = it->second.size();
-            if (sStatusPrefix.CaseCmp(it->second, std::min(sp, np)) != 0)
+            int min = std::min(sp, np);
+            if (min == 0 || sStatusPrefix.CaseCmp(it->second, min) != 0)
                 return it->second;
         }
         return sStatusPrefix.StartsWith("*") ? "." : "*";
@@ -206,9 +207,12 @@ class CCryptMod : public CModule {
         AddCommand("KeyX", static_cast<CModCommand::ModCmdFunc>(
                                  &CCryptMod::OnKeyXCommand),
                    "<Nick>", "Start a DH1080 key exchange with nick");
-        AddCommand("NickPrefix", static_cast<CModCommand::ModCmdFunc>(
-                                 &CCryptMod::OnNickPrefixCommand),
-                   "[Prefix]", "Get or set the nick prefix, use : to disable");
+        AddCommand("GetNickPrefix", static_cast<CModCommand::ModCmdFunc>(
+                                 &CCryptMod::OnGetNickPrefixCommand),
+                   "", "Get the nick prefix");
+        AddCommand("SetNickPrefix", static_cast<CModCommand::ModCmdFunc>(
+                                 &CCryptMod::OnSetNickPrefixCommand),
+                   "[Prefix]", "Set the nick prefix, with no argument it's disabled.");
     }
 
     ~CCryptMod() override {
@@ -504,22 +508,28 @@ class CCryptMod : public CModule {
         }
     }
 
-    void OnNickPrefixCommand(const CString& sCommand) {
+    void OnGetNickPrefixCommand(const CString& sCommand) {
+        CString sPrefix = NickPrefix();
+        PutModule("Nick Prefix" + (sPrefix.empty() ? " disabled." : (": " + sPrefix)));
+    }
+
+    void OnSetNickPrefixCommand(const CString& sCommand) {
         CString sPrefix = sCommand.Token(1);
 
-        if (sPrefix.empty()) {
+/*        if (sPrefix.empty()) {
             PutModule("Nick Prefix: " + NickPrefix());
-        } else if (sPrefix.size() > 1 && sPrefix.StartsWith(":")) {
-            PutModule("You cannot use : followed by other symbols as Nick Prefix.");
+        } else */ if (sPrefix.StartsWith(":")) {
+            PutModule("You cannot use :, even followed by other symbols, as Nick Prefix.");
         } else {
             CString sStatusPrefix = GetUser()->GetStatusPrefix();
             size_t sp = sStatusPrefix.size();
             size_t np = sPrefix.size();
-            if (sStatusPrefix.CaseCmp(sPrefix, std::min(sp, np)) == 0)
+            int min = std::min(sp, np);
+            if (min > 0 && sStatusPrefix.CaseCmp(sPrefix, min) == 0)
                 PutModule("Overlap with Status Prefix (" + sStatusPrefix + "), this Nick Prefix will not be used!");
             else {
                 SetNV(NICK_PREFIX_KEY, sPrefix);
-                if (sPrefix.Equals(":"))
+                if (sPrefix.empty())
                     PutModule("Disabling Nick Prefix.");
                 else
                     PutModule("Setting Nick Prefix to " + sPrefix);
