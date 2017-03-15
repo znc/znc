@@ -516,9 +516,7 @@ class CCryptMod : public CModule {
     void OnSetNickPrefixCommand(const CString& sCommand) {
         CString sPrefix = sCommand.Token(1);
 
-/*        if (sPrefix.empty()) {
-            PutModule("Nick Prefix: " + NickPrefix());
-        } else */ if (sPrefix.StartsWith(":")) {
+        if (sPrefix.StartsWith(":")) {
             PutModule("You cannot use :, even followed by other symbols, as Nick Prefix.");
         } else {
             CString sStatusPrefix = GetUser()->GetStatusPrefix();
