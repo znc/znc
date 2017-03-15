@@ -183,7 +183,8 @@ class CCryptMod : public CModule {
         if (it != EndNV()) {
             size_t sp = sStatusPrefix.size();
             size_t np = it->second.size();
-            if (sStatusPrefix.CaseCmp(it->second, std::min(sp, np)) != 0)
+            int min = std::min(sp, np);
+            if (min == 0 || sStatusPrefix.CaseCmp(it->second, min) != 0)
                 return it->second;
         }
         return sStatusPrefix.StartsWith("*") ? "." : "*";
@@ -206,6 +207,12 @@ class CCryptMod : public CModule {
         AddCommand("KeyX", static_cast<CModCommand::ModCmdFunc>(
                                  &CCryptMod::OnKeyXCommand),
                    "<Nick>", "Start a DH1080 key exchange with nick");
+        AddCommand("GetNickPrefix", static_cast<CModCommand::ModCmdFunc>(
+                                 &CCryptMod::OnGetNickPrefixCommand),
+                   "", "Get the nick prefix");
+        AddCommand("SetNickPrefix", static_cast<CModCommand::ModCmdFunc>(
+                                 &CCryptMod::OnSetNickPrefixCommand),
+                   "[Prefix]", "Set the nick prefix, with no argument it's disabled.");
     }
 
     ~CCryptMod() override {
@@ -501,29 +508,49 @@ class CCryptMod : public CModule {
         }
     }
 
-    void OnListKeysCommand(const CString& sCommand) {
-        if (BeginNV() == EndNV()) {
-            PutModule("You have no encryption keys set.");
-        } else {
-            CTable Table;
-            Table.AddColumn("Target");
-            Table.AddColumn("Key");
+    void OnGetNickPrefixCommand(const CString& sCommand) {
+        CString sPrefix = NickPrefix();
+        PutModule("Nick Prefix" + (sPrefix.empty() ? " disabled." : (": " + sPrefix)));
+    }
 
-            for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
+    void OnSetNickPrefixCommand(const CString& sCommand) {
+        CString sPrefix = sCommand.Token(1);
+
+        if (sPrefix.StartsWith(":")) {
+            PutModule("You cannot use :, even followed by other symbols, as Nick Prefix.");
+        } else {
+            CString sStatusPrefix = GetUser()->GetStatusPrefix();
+            size_t sp = sStatusPrefix.size();
+            size_t np = sPrefix.size();
+            int min = std::min(sp, np);
+            if (min > 0 && sStatusPrefix.CaseCmp(sPrefix, min) == 0)
+                PutModule("Overlap with Status Prefix (" + sStatusPrefix + "), this Nick Prefix will not be used!");
+            else {
+                SetNV(NICK_PREFIX_KEY, sPrefix);
+                if (sPrefix.empty())
+                    PutModule("Disabling Nick Prefix.");
+                else
+                    PutModule("Setting Nick Prefix to " + sPrefix);
+            }
+        }
+    }
+
+    void OnListKeysCommand(const CString& sCommand) {
+        CTable Table;
+        Table.AddColumn("Target");
+        Table.AddColumn("Key");
+
+        for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
+            if (!it->first.Equals(NICK_PREFIX_KEY)) {
                 Table.AddRow();
                 Table.SetCell("Target", it->first);
                 Table.SetCell("Key", it->second);
             }
-
-            MCString::iterator it = FindNV(NICK_PREFIX_KEY);
-            if (it == EndNV()) {
-                Table.AddRow();
-                Table.SetCell("Target", NICK_PREFIX_KEY);
-                Table.SetCell("Key", NickPrefix());
-            }
-
-            PutModule(Table);
         }
+        if (Table.empty())
+            PutModule("You have no encryption keys set.");
+        else
+            PutModule(Table);
     }
 
     CString MakeIvec() {

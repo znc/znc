@@ -2078,13 +2078,13 @@ TEST_F(ZNCTest, ModuleCrypt) {
 
     client1.Write("PRIVMSG *crypt :listkeys");
     QByteArray key1("");
-    client1.ReadUntilAndGet("| nick2         | ", key1);
+    client1.ReadUntilAndGet("| nick2  | ", key1);
     Z;
     client2.Write("PRIVMSG *crypt :listkeys");
     QByteArray key2("");
-    client2.ReadUntilAndGet("| user          | ", key2);
+    client2.ReadUntilAndGet("| user   | ", key2);
     Z;
-    ASSERT_EQ(key1.mid(18), key2.mid(18));
+    ASSERT_EQ(key1.mid(11), key2.mid(11));
     client1.Write("PRIVMSG .nick2 :Hello");
     QByteArray secretmsg;
     ircd1.ReadUntilAndGet("PRIVMSG nick2 :+OK ", secretmsg);
