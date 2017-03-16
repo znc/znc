@@ -232,109 +232,15 @@ class CCryptMod : public CModule {
     }
 
     EModRet OnUserMsg(CString& sTarget, CString& sMessage) override {
-        sTarget.TrimPrefix(NickPrefix());
-
-        if (sMessage.TrimPrefix("``")) {
-            return CONTINUE;
-        }
-
-        MCString::iterator it = FindNV(sTarget.AsLower());
-
-        if (it != EndNV()) {
-            CChan* pChan = GetNetwork()->FindChan(sTarget);
-            CString sNickMask = GetNetwork()->GetIRCNick().GetNickMask();
-            if (pChan) {
-                if (!pChan->AutoClearChanBuffer())
-                    pChan->AddBuffer(":" + NickPrefix() + _NAMEDFMT(sNickMask) +
-                                         " PRIVMSG " + _NAMEDFMT(sTarget) +
-                                         " :{text}",
-                                     sMessage);
-                GetUser()->PutUser(":" + NickPrefix() + sNickMask +
-                                       " PRIVMSG " + sTarget + " :" + sMessage,
-                                   nullptr, GetClient());
-            }
-
-            CString sMsg = MakeIvec() + sMessage;
-            sMsg.Encrypt(it->second);
-            sMsg.Base64Encode();
-            sMsg = "+OK *" + sMsg;
-
-            PutIRC("PRIVMSG " + sTarget + " :" + sMsg);
-            return HALTCORE;
-        }
-
-        return CONTINUE;
+        return FilterOutgoing(sTarget, sMessage, "PRIVMSG", "", "");
     }
 
     EModRet OnUserNotice(CString& sTarget, CString& sMessage) override {
-        sTarget.TrimPrefix(NickPrefix());
-
-        if (sMessage.TrimPrefix("``")) {
-            return CONTINUE;
-        }
-
-        MCString::iterator it = FindNV(sTarget.AsLower());
-
-        if (it != EndNV()) {
-            CChan* pChan = GetNetwork()->FindChan(sTarget);
-            CString sNickMask = GetNetwork()->GetIRCNick().GetNickMask();
-            if (pChan) {
-                if (!pChan->AutoClearChanBuffer())
-                    pChan->AddBuffer(":" + NickPrefix() + _NAMEDFMT(sNickMask) +
-                                         " NOTICE " + _NAMEDFMT(sTarget) +
-                                         " :{text}",
-                                     sMessage);
-                GetUser()->PutUser(":" + NickPrefix() + sNickMask + " NOTICE " +
-                                       sTarget + " :" + sMessage,
-                                   nullptr, GetClient());
-            }
-
-            CString sMsg = MakeIvec() + sMessage;
-            sMsg.Encrypt(it->second);
-            sMsg.Base64Encode();
-            sMsg = "+OK *" + sMsg;
-
-            PutIRC("NOTICE " + sTarget + " :" + sMsg);
-            return HALTCORE;
-        }
-
-        return CONTINUE;
+        return FilterOutgoing(sTarget, sMessage, "NOTICE", "", "");
     }
 
     EModRet OnUserAction(CString& sTarget, CString& sMessage) override {
-        sTarget.TrimPrefix(NickPrefix());
-
-        if (sMessage.TrimPrefix("``")) {
-            return CONTINUE;
-        }
-
-        MCString::iterator it = FindNV(sTarget.AsLower());
-
-        if (it != EndNV()) {
-            CChan* pChan = GetNetwork()->FindChan(sTarget);
-            CString sNickMask = GetNetwork()->GetIRCNick().GetNickMask();
-            if (pChan) {
-                if (!pChan->AutoClearChanBuffer())
-                    pChan->AddBuffer(":" + NickPrefix() + _NAMEDFMT(sNickMask) +
-                                         " PRIVMSG " + _NAMEDFMT(sTarget) +
-                                         " :\001ACTION {text}\001",
-                                     sMessage);
-                GetUser()->PutUser(":" + NickPrefix() + sNickMask +
-                                       " PRIVMSG " + sTarget + " :\001ACTION " +
-                                       sMessage + "\001",
-                                   nullptr, GetClient());
-            }
-
-            CString sMsg = MakeIvec() + sMessage;
-            sMsg.Encrypt(it->second);
-            sMsg.Base64Encode();
-            sMsg = "+OK *" + sMsg;
-
-            PutIRC("PRIVMSG " + sTarget + " :\001ACTION " + sMsg + "\001");
-            return HALTCORE;
-        }
-
-        return CONTINUE;
+        return FilterOutgoing(sTarget, sMessage, "PRIVMSG", "\001ACTION ", "\001");
     }
 
     EModRet OnUserTopic(CString& sTarget, CString& sMessage) override {
@@ -442,6 +348,42 @@ class CCryptMod : public CModule {
             FilterIncoming(pChan->GetName(), *Nick, sTopic);
             sLine = sLine.Token(0) + " " + sLine.Token(1) + " " +
                     sLine.Token(2) + " " + pChan->GetName() + " :" + sTopic;
+        }
+
+        return CONTINUE;
+    }
+
+    EModRet FilterOutgoing(CString& sTarget, CString& sMessage, const CString& sType, const CString& sPreMsg, const CString& sPostMsg) {
+        sTarget.TrimPrefix(NickPrefix());
+
+        if (sMessage.TrimPrefix("``")) {
+            return CONTINUE;
+        }
+
+        MCString::iterator it = FindNV(sTarget.AsLower());
+
+        if (it != EndNV()) {
+            CChan* pChan = GetNetwork()->FindChan(sTarget);
+            CString sNickMask = GetNetwork()->GetIRCNick().GetNickMask();
+            if (pChan) {
+                if (!pChan->AutoClearChanBuffer())
+                    pChan->AddBuffer(":" + NickPrefix() + _NAMEDFMT(sNickMask) +
+                                         " " + sType + " " + _NAMEDFMT(sTarget) +
+                                         " :" + sPreMsg + "{text}" + sPostMsg,
+                                     sMessage);
+                GetUser()->PutUser(":" + NickPrefix() + sNickMask +
+                                       " " + sType + " " + sTarget + " :" +
+                                       sPreMsg + sMessage + sPostMsg,
+                                   nullptr, GetClient());
+            }
+
+            CString sMsg = MakeIvec() + sMessage;
+            sMsg.Encrypt(it->second);
+            sMsg.Base64Encode();
+            sMsg = "+OK *" + sMsg;
+
+            PutIRC(sType + " " + sTarget + " :" + sPreMsg + sMsg + sPostMsg);
+            return HALTCORE;
         }
 
         return CONTINUE;
