@@ -188,38 +188,6 @@ class COtrMod : public CModule {
         }
     }
 
-    void GenerateKey(bool bOverwrite = false) {
-        assert(m_pUserState);
-        const char* accountname = GetUser()->GetUserName().c_str();
-
-        if (!bOverwrite &&
-            otrl_privkey_find(m_pUserState, accountname, PROTOCOL_ID)) {
-
-            PutModuleBuffered("Private key already exists. Use " +
-                              Clr(Bold, "genkey --overwrite") +
-                              " to overwrite the old one.");
-            return;
-        }
-
-        if (!m_GenKeyRunning) {
-            gcry_error_t err;
-            err = otrl_privkey_generate_start(m_pUserState, accountname,
-                                              PROTOCOL_ID, &m_NewKey);
-            if (err) {
-                PutModuleBuffered(CString("Key generation failed: ") +
-                                  gcry_strerror(err));
-                return;
-            }
-
-            PutModuleBuffered(
-                "Starting key generation in a background thread.");
-            m_GenKeyRunning = true;
-            AddJob(new COtrGenKeyJob(this));
-        } else {
-            PutModuleBuffered("Key generation is already running.");
-        }
-    }
-
     void CmdInfo(const CString& sLine) {
         CTable table;
         table.AddColumn("Peer");
@@ -488,8 +456,56 @@ class COtrMod : public CModule {
     }
 
     void CmdGenKey(const CString& sLine) {
+        assert(m_pUserState);
+        const char* accountname = GetUser()->GetUserName().c_str();
+
+        bool bHasKey =
+            otrl_privkey_find(m_pUserState, accountname, PROTOCOL_ID);
         bool bOverwrite = sLine.Token(1).Equals("--overwrite");
-        GenerateKey(bOverwrite);
+        bool bReally = sLine.Token(1).Equals("--really");
+
+        if (bHasKey && !bOverwrite) {
+            PutModuleBuffered("Private key already exists. Use " +
+                              Clr(Bold, "genkey --overwrite") +
+                              " to overwrite the old one.");
+            return;
+        }
+
+        if (!bHasKey && !bReally) {
+            PutModuleBuffered(Clr(Red, "WARNING:") +
+                              " This plugin does not provide true end-to-end "
+                              "encryption, as the encryption terminates at "
+                              "the bouncer. You need to make sure that both "
+                              "the bouncer and your client's connection to "
+                              "it are secure.");
+            PutModuleBuffered(Clr(Bold, "NOTE:") +
+                              " If you're running this plugin on a VM, make "
+                              "sure it has sufficient entropy, otherwise ZNC "
+                              "might get stuck. Install haveged to increase "
+                              "available entropy.");
+            PutModuleBuffered(
+                "If you still want to generate new OTR key, type " +
+                Clr(Bold, "genkey --really") + ".");
+            return;
+        }
+
+        if (m_GenKeyRunning) {
+            PutModuleBuffered("Key generation is already running.");
+            return;
+        }
+
+        gcry_error_t err;
+        err = otrl_privkey_generate_start(m_pUserState, accountname,
+                                          PROTOCOL_ID, &m_NewKey);
+        if (err) {
+            PutModuleBuffered(CString("Key generation failed: ") +
+                              gcry_strerror(err));
+            return;
+        }
+
+        PutModuleBuffered("Starting key generation in a background thread.");
+        m_GenKeyRunning = true;
+        AddJob(new COtrGenKeyJob(this));
     }
 
     void SaveIgnores() {
@@ -661,7 +677,7 @@ class COtrMod : public CModule {
                    "Accepts wildcards.");
         AddCommand("GenKey",
                    static_cast<CModCommand::ModCmdFunc>(&COtrMod::CmdGenKey),
-                   "[--overwrite]", "Generate new private key.");
+                   "[--really|--overwrite]", "Generate new private key.");
 
         // Load list of ignored nicks
         GetNV("ignore").Split(" ", m_vsIgnored, false);
@@ -867,8 +883,8 @@ class COtrMod : public CModule {
 
         mod->PutModuleBuffered(
             "Someone wants to start an OTR session but you don't have a "
-            "key available.");
-        mod->GenerateKey();
+            "key available. Type " +
+            Clr(Bold, "genkey") + " to generate new one.");
     }
 
     static int otrIsLoggedIn(void* opdata, const char* accountname,
