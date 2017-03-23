@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -273,14 +273,15 @@ class CSampleMod : public CModule {
 
         return CONTINUE;
     }
-
+    // Appends "Sample:" to an outgoing message and colors it red.
     EModRet OnUserMsg(CString& sTarget, CString& sMessage) override {
         PutModule("[" + sTarget + "] usermsg [" + sMessage + "]");
         sMessage = "Sample: \0034" + sMessage + "\003";
 
         return CONTINUE;
     }
-
+    
+    // Bolds an incoming message.
     EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override {
         PutModule("[" + Nick.GetNick() + "] privmsg [" + sMessage + "]");
         sMessage = "\002" + sMessage + "\002";
