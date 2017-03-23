@@ -883,8 +883,8 @@ class COtrMod : public CModule {
 
         mod->PutModuleBuffered(
             "Someone wants to start an OTR session but you don't have a "
-            "key available. Type " +
-            Clr(Bold, "genkey") + " to generate new one.");
+            "key available. Type " + mod->Clr(Bold, "genkey") +
+            " to generate new one.");
     }
 
     static int otrIsLoggedIn(void* opdata, const char* accountname,

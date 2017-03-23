@@ -83,6 +83,7 @@ tristate('cyrus')
 tristate('charset', 'ICU')
 tristate('tcl')
 tristate('i18n')
+tristate('otr')
 
 class HandlePython(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
