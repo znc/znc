@@ -620,13 +620,16 @@ if test x"$OTR" != "xno"; then
 		else
 			OTR_TEXT="no (libotr not found)"
 			OTR="no"
+			OTR_INTTEST=""
 		fi
 	else
 		OTR_TEXT="yes"
 		OTR="yes"
+		OTR_INTTEST="-DWITH_OTR"
 	fi
 else
 	OTR_TEXT="no"
+	OTR_INTTEST=""
 fi
 
 # Check if we want modtcl
@@ -713,6 +716,7 @@ AC_SUBST([NOSSL])
 AC_SUBST([TCL_FLAGS])
 AC_SUBST([CYRUS])
 AC_SUBST([OTR])
+AC_SUBST([OTR_INTTEST])
 AC_SUBST([MODDIR])
 AC_SUBST([DATADIR])
 AC_SUBST([PERL])

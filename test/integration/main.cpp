@@ -2103,6 +2103,7 @@ TEST_F(ZNCTest, ModuleCrypt) {
     Z;
 }
 
+#ifdef WITH_OTR
 static void
 IsOtrCiphertext(std::string line) {
     EXPECT_THAT(line, MatchesRegex(":?\\S* ?PRIVMSG \\S+ :.OTR.*\\.?,?\\r?"));
@@ -2201,6 +2202,8 @@ TEST_F(ZNCTest, ModuleOtr) {
         ircd1.RelayPrivMsg(ircd2, ":user!user@user/test ", IsOtrCiphertext);
         Z;
     }
+    client2.ReadUntil("To complete, type auth user <secret>.");
+    Z;
     client2.Write("PRIVMSG *otr :auth user hunter2");
     Z;
     for (int i = 0; i < 8; i++) {
@@ -2227,6 +2230,8 @@ TEST_F(ZNCTest, ModuleOtr) {
         ircd1.RelayPrivMsg(ircd2, ":user!user@user/test ", IsOtrCiphertext);
         Z;
     }
+    client2.ReadUntil("To complete, type auth user <secret>.");
+    Z;
     client2.Write("PRIVMSG *otr :auth user the man who was thursday");
     Z;
     for (int i = 0; i < 8; i++) {
@@ -2289,5 +2294,6 @@ TEST_F(ZNCTest, ModuleOtr) {
     ircd1.ReadUntil("can you hear me");
     Z;
 }
+#endif /* WITH_OTR */
 
 }  // namespace
