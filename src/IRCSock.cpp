@@ -137,6 +137,9 @@ CIRCSock::~CIRCSock() {
 }
 
 void CIRCSock::Quit(const CString& sQuitMsg) {
+    if (IsClosed()) {
+        return;
+    }
     if (!m_bAuthed) {
         Close(CLT_NOW);
         return;
