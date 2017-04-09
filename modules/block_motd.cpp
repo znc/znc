@@ -15,6 +15,9 @@
  */
 
 #include <znc/Modules.h>
+#include <znc/IRCNetwork.h>
+
+using std::set;
 
 class CBlockMotd : public CModule {
   public:
@@ -30,13 +33,18 @@ class CBlockMotd : public CModule {
     ~CBlockMotd() override {}
 
     void OverrideCommand(const CString& sLine) {
-        m_bTemporaryAcceptMotd = true;
+        if (!GetNetwork() || !GetNetwork()->GetIRCSock()) {
+            PutModule("You are not connected to an IRC Server.");
+            return;
+        }
+
+        TemporarilyAcceptMotd();
         const CString sServer = sLine.Token(1);
 
         if (sServer.empty()) {
-            PutIRC("motd");
+            PutIRC("MOTD");
         } else {
-            PutIRC("motd " + sServer);
+            PutIRC("MOTD " + sServer);
         }
     }
 
@@ -44,21 +52,47 @@ class CBlockMotd : public CModule {
         const CString sCmd = sLine.Token(1);
 
         if ((sCmd == "375" /* begin of MOTD */ || sCmd == "372" /* MOTD */) &&
-            !m_bTemporaryAcceptMotd)
+            !ShouldTemporarilyAcceptMotd())
             return HALT;
 
         if (sCmd == "376" /* End of MOTD */) {
-            if (!m_bTemporaryAcceptMotd) {
+            if (!ShouldTemporarilyAcceptMotd()) {
                 sLine = sLine.Token(0) + " 422 " + sLine.Token(2) +
                         " :MOTD blocked by ZNC";
             }
-            m_bTemporaryAcceptMotd = false;
+            StopTemporarilyAcceptingMotd();
         }
+
+        if (sCmd == "422") {
+            // Server has no MOTD
+            StopTemporarilyAcceptingMotd();
+        }
+
         return CONTINUE;
     }
 
+    void OnIRCDisconnected() override {
+        StopTemporarilyAcceptingMotd();
+    }
+
+    bool ShouldTemporarilyAcceptMotd() const {
+        return m_sTemporaryAcceptedMotdSocks.count(GetNetwork()->GetIRCSock()) > 0;
+    }
+
+    void TemporarilyAcceptMotd() {
+        if (ShouldTemporarilyAcceptMotd()) {
+            return;
+        }
+
+        m_sTemporaryAcceptedMotdSocks.insert(GetNetwork()->GetIRCSock());
+    }
+
+    void StopTemporarilyAcceptingMotd() {
+        m_sTemporaryAcceptedMotdSocks.erase(GetNetwork()->GetIRCSock());
+    }
+
   private:
-    bool m_bTemporaryAcceptMotd = false;
+    set<CIRCSock *> m_sTemporaryAcceptedMotdSocks;
 };
 
 template <>
