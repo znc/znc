@@ -875,6 +875,9 @@ CModule::EModRet CModule::OnUserQuitMessage(CQuitMessage& Message) {
     Message.SetReason(sReason);
     return ret;
 }
+CModule::EModRet CModule::OnQuitIRCMessage(CQuitMessage& Message) {
+  return CONTINUE;
+}
 
 CModule::EModRet CModule::OnCTCPReply(CNick& Nick, CString& sMessage) {
     return CONTINUE;
@@ -1287,6 +1290,9 @@ bool CModules::OnUserQuit(CString& sMessage) {
 }
 bool CModules::OnUserQuitMessage(CQuitMessage& Message) {
     MODHALTCHK(OnUserQuitMessage(Message));
+}
+bool CModules::OnQuitIRCMessage(CQuitMessage& Message) {
+    MODHALTCHK(OnQuitIRCMessage(Message));
 }
 
 bool CModules::OnQuit(const CNick& Nick, const CString& sMessage,

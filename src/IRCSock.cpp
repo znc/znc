@@ -144,11 +144,19 @@ void CIRCSock::Quit(const CString& sQuitMsg) {
         Close(CLT_NOW);
         return;
     }
-    if (!sQuitMsg.empty()) {
-        PutIRC("QUIT :" + sQuitMsg);
-    } else {
-        PutIRC("QUIT :" + m_pNetwork->ExpandString(m_pNetwork->GetQuitMsg()));
-    }
+
+    bool bReturn = false;
+    const CString sLine("QUIT :" + (sQuitMsg.empty()
+          ? m_pNetwork->ExpandString(m_pNetwork->GetQuitMsg())
+          : sQuitMsg));
+    CMessage Message(sLine);
+    Message.SetNetwork(m_pNetwork);
+    Message.SetNick(m_pNetwork->GetIRCNick());
+
+    IRCSOCKMODULECALL(OnQuitIRCMessage(Message), &bReturn);
+    if (bReturn) return;
+
+    PutIRC(sLine);
     Close(CLT_AFTERWRITE);
 }
 

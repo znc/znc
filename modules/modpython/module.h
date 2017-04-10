@@ -163,6 +163,7 @@ class ZNC_EXPORT_LIB_EXPORT CPyModule : public CModule {
     EModRet OnUserPartMessage(CPartMessage& Message) override;
     EModRet OnUserTopicMessage(CTopicMessage& Message) override;
     EModRet OnUserQuitMessage(CQuitMessage& Message) override;
+    EModRet OnQuitIRCMessage(CQuitMessage& Message) override;
     EModRet OnCTCPReplyMessage(CCTCPMessage& Message) override;
     EModRet OnPrivCTCPMessage(CCTCPMessage& Message) override;
     EModRet OnChanCTCPMessage(CCTCPMessage& Message) override;
