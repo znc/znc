@@ -107,6 +107,7 @@ class CLogMod : public CModule {
                 const CString& sMessage) override;
     void OnQuit(const CNick& Nick, const CString& sMessage,
                 const vector<CChan*>& vChans) override;
+    EModRet OnQuitIRCMessage(CQuitMessage& Message) override;
     void OnJoin(const CNick& Nick, CChan& Channel) override;
     void OnPart(const CNick& Nick, CChan& Channel,
                 const CString& sMessage) override;
@@ -397,6 +398,12 @@ void CLogMod::OnQuit(const CNick& Nick, const CString& sMessage,
                        "@" + Nick.GetHost() + ") (" + sMessage + ")",
                    *pChan);
     }
+}
+
+CModule::EModRet CLogMod::OnQuitIRCMessage(CQuitMessage& Message) {
+  CIRCNetwork* pNetwork = GetNetwork();
+  OnQuit(Message.GetNick(), Message.GetReason(), pNetwork->GetChans());
+  return CONTINUE;
 }
 
 void CLogMod::OnJoin(const CNick& Nick, CChan& Channel) {
