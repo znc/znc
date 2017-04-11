@@ -173,6 +173,8 @@ class ZNC_EXPORT_LIB_EXPORT CPyModule : public CModule {
     EModRet OnPrivNoticeMessage(CNoticeMessage& Message) override;
     EModRet OnChanNoticeMessage(CNoticeMessage& Message) override;
     EModRet OnTopicMessage(CTopicMessage& Message) override;
+    EModRet OnSendToClientMessage(CMessage& Message) override;
+    EModRet OnSendToIRCMessage(CMessage& Message) override;
 
     // Global Modules
     EModRet OnAddUser(CUser& User, CString& sErrorRet) override;

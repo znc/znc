@@ -1026,18 +1026,24 @@ class CModule {
      */
     virtual EModRet OnDeleteNetwork(CIRCNetwork& Network);
 
-    /** Called when ZNC sends a raw traffic line to a client.
-     *  @param sLine The raw traffic line sent.
-     *  @param Client The client this line is sent to.
+    /** Called immediately before ZNC sends a raw traffic line to a client.
+     *  @since 1.7.0
+     *  @param Message The message being sent to the client.
      *  @warning Calling PutUser() from within this hook leads to infinite recursion.
      *  @return See CModule::EModRet.
      */
+    virtual EModRet OnSendToClientMessage(CMessage& Message);
+    /// @deprecated Use OnSendToClientMessage() instead.
     virtual EModRet OnSendToClient(CString& sLine, CClient& Client);
-    /** Called when ZNC sends a raw traffic line to the IRC server.
-     *  @param sLine The raw traffic line sent.
+
+    /** Called immediately before ZNC sends a raw traffic line to the IRC server.
+     *  @since 1.7.0
+     *  @param Message The message being sent to the IRC server.
      *  @warning Calling PutIRC() from within this hook leads to infinite recursion.
      *  @return See CModule::EModRet.
      */
+    virtual EModRet OnSendToIRCMessage(CMessage& Message);
+    /// @deprecated Use OnSendToIRCMessage() instead.
     virtual EModRet OnSendToIRC(CString& sLine);
 
     ModHandle GetDLL() { return m_pDLL; }
@@ -1515,7 +1521,9 @@ class CModules : public std::vector<CModule*> {
     bool OnDeleteNetwork(CIRCNetwork& Network);
 
     bool OnSendToClient(CString& sLine, CClient& Client);
+    bool OnSendToClientMessage(CMessage& Message);
     bool OnSendToIRC(CString& sLine);
+    bool OnSendToIRCMessage(CMessage& Message);
 
     bool OnServerCapAvailable(const CString& sCap);
     bool OnServerCapResult(const CString& sCap, bool bSuccess);

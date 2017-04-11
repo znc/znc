@@ -655,6 +655,12 @@ class Module:
     def OnUnknownUserRawMessage(self, msg):
         pass
 
+    def OnSendToClientMessage(self, msg):
+        pass
+
+    def OnSendToIRCMessage(self, msg):
+        pass
+
 
 def make_inherit(cl, parent, attr):
     def make_caller(parent, name, attr):

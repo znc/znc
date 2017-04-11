@@ -1154,13 +1154,20 @@ void CIRCSock::TrySend() {
         m_iSendsAllowed--;
         bool bSkip = false;
         CString& sLine = m_vsSendQueue.front();
-        IRCSOCKMODULECALL(OnSendToIRC(sLine), &bSkip);
+
+        CMessage Message(sLine);
+        Message.SetNetwork(m_pNetwork);
+        IRCSOCKMODULECALL(OnSendToIRCMessage(Message), &bSkip);
+
         if (!bSkip) {
-            ;
-            DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/"
-                      << m_pNetwork->GetName() << ") ZNC -> IRC [" << sLine
-                      << "]");
-            Write(sLine + "\r\n");
+            CString sCopy = Message.ToString();
+            IRCSOCKMODULECALL(OnSendToIRC(sCopy), &bSkip);
+            if (!bSkip) {
+                DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/"
+                        << m_pNetwork->GetName() << ") ZNC -> IRC [" << sCopy
+                        << "]");
+                Write(sCopy + "\r\n");
+            }
         }
         m_vsSendQueue.pop_front();
     }

@@ -577,6 +577,8 @@ sub OnTopicMessage {
 	$msg->SetTopic($topic);
 	return $ret;
 }
+sub OnSendToClientMessage {}
+sub OnSendToIRCMessage {}
 
 # In Perl "undefined" is allowed value, so perl modules may continue using OnMode and not OnMode2
 sub OnChanPermission2 { my $self = shift; $self->OnChanPermission(@_) }
