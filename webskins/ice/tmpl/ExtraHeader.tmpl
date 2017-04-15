@@ -1,0 +1,16 @@
+<script type="text/javascript">
+<!--
+window.onload = function() {
+    var wrapperHeight = document.getElementById('wrapper').clientHeight;
+    var bannerHeight = document.getElementById('banner_top').clientHeight;
+    var navHeight = document.getElementById('menu').clientHeight + 20;
+
+    var contentHeight = wrapperHeight - bannerHeight;
+
+    if (navHeight > contentHeight) {
+        var newHeight = navHeight + bannerHeight;
+        document.getElementById('wrapper').style.height = newHeight+"px";
+    }
+}
+-->
+</script>
