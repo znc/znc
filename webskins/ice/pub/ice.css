@@ -338,7 +338,13 @@ div.submitline {
 	clear: both;
 	position: relative;
 	top: -22px;
+	/*
+	This line doesn't need to be here with text-align: right, above. 
+	Don't know why it was. Fix for an old browser, maybe?
+	
 	margin-left: 380px;
+	
+	*/
 	color: #ddd;
 	padding: 0 5px 3px 0;
 }
