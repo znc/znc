@@ -892,7 +892,7 @@ class CModule {
      */
     virtual EModRet OnUserTopicRequest(CString& sChannel);
 
-    /** This module hook is called when a user requests to quit from network.
+    /** This module hook is called when a client quits ZNC.
      *  @since 1.7.0
      *  @param Message The quit message the client sent.
      *  @return See CModule::EModRet.
