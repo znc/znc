@@ -1,0 +1,43 @@
+<? INC Header.tmpl ?>
+
+<form action="" method="post">
+	<? INC _csrf_check.tmpl ?>
+	<div class="section">
+		<input type="hidden" name="submitted" value="1" />
+
+		<h3>Authentication</h3>
+		<div class="sectionbg">
+			<div class="sectionbody">
+				<div class="subsection">
+					<div class="inputlabel">Username:</div>
+						<input type="text" value="<? VAR Username ?>" name="user" class="half" maxlength="128"
+							   title="Please enter a username." />
+				</div>
+				<div class="subsection">
+					<div class="inputlabel">Password:</div>
+					<input type="password" name="password" class="half"
+						   title="Please enter a password." />
+				</div>
+				<div class="subsection">
+					<div class="inputlabel">Confirm password:</div>
+					<input type="password" name="password2" class="half"
+						   title="Please re-type the above password." />
+				</div>
+        <? IF Verify ?>
+				<div class="subsection">
+					<div class="inputlabel">Verification code:</div>
+					<input type="text" value="<? VAR Code ?>" name="code" class="half"
+						   title="Please enter your verification code" />
+				</div>
+        <? ENDIF ?>
+				<div style="clear: both;"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="submitline">
+		<input type="submit" value="Create" />
+	</div>
+</form>
+
+<? INC Footer.tmpl ?>
