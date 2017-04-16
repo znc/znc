@@ -939,6 +939,34 @@ CModule.AddSocket = FreeOwnership(func=CModule.AddSocket)
 CModule.AddSubPage = FreeOwnership(func=CModule.AddSubPage)
 
 
+def FreeOwnership(func):
+    """
+        Force release of python ownership of user object when adding it to znc
+
+        This solves #462
+    """
+    @wraps(func)
+    def _wrap(self, obj, *args):
+        # Bypass if first argument is not an SWIG object (like base type str)
+        if not hasattr(obj, 'thisown'):
+            return func(self, obj, *args)
+        # Move scope when function was successfully
+        if func(self, obj, *args):
+            obj.thisown = 0
+            return True
+        else:
+            return False
+    return _wrap
+
+CZNC.AddListener = FreeOwnership(func=CZNC.AddListener)
+CZNC.AddUser = FreeOwnership(func=CZNC.AddUser)
+CZNC.AddNetworkToQueue = FreeOwnership(func=CZNC.AddNetworkToQueue)
+CUser.AddNetwork = FreeOwnership(func=CUser.AddNetwork)
+CIRCNetwork.AddChan = FreeOwnership(func=CIRCNetwork.AddChan)
+CModule.AddSocket = FreeOwnership(func=CModule.AddSocket)
+CModule.AddSubPage = FreeOwnership(func=CModule.AddSubPage)
+
+
 class ModulesIter(collections.Iterator):
     def __init__(self, cmod):
         self._cmod = cmod
