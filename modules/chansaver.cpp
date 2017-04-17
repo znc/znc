@@ -77,6 +77,18 @@ public:
 			Channel.SetInConfig(false);
 		}
 	}
+
+	EModRet OnUserJoin(CString& sChannel, CString& sKey) override {
+		CIRCNetwork* pNetwork = GetNetwork();
+		if (pNetwork) {
+			// Force CChan to be created so that a key passed in the JOIN command is saved.
+			// Otherwise, if CChan didn't exist at this point and we weren't able to save
+			// the key, it would be lost in case the server later presented the key as '*'
+			// when ZNC requested the channel modes. (#811)
+			pNetwork->AddChan(sChannel, true);
+		}
+		return CONTINUE;
+	}
 };
 
 template<> void TModInfo<CChanSaverMod>(CModInfo& Info) {
