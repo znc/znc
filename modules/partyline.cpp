@@ -114,12 +114,10 @@ public:
 
 		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); ++it) {
 			CUser* pUser = it->second;
-			for (vector<CIRCNetwork*>::const_iterator i = pUser->GetNetworks().begin(); i != pUser->GetNetworks().end(); ++i) {
-				CIRCNetwork* pNetwork = *i;
-				if (pNetwork->GetIRCSock()) {
-					if (pNetwork->GetChanPrefixes().find(CHAN_PREFIX_1) == CString::npos) {
-						pNetwork->PutUser(":" + GetIRCServer(pNetwork) + " 005 " + pNetwork->GetIRCNick().GetNick() + " CHANTYPES=" + pNetwork->GetChanPrefixes() + CHAN_PREFIX_1 " :are supported by this server.");
-					}
+			for (CClient* pClient : pUser->GetAllClients()) {
+				CIRCNetwork* pNetwork = pClient->GetNetwork();
+				if (!pNetwork || !pNetwork->IsIRCConnected() || !pNetwork->GetChanPrefixes().Contains(CHAN_PREFIX_1)) {
+					pClient->PutClient(":" + GetIRCServer(pNetwork) + " 005 " + pClient->GetNick() + " CHANTYPES=" + (pNetwork ? pNetwork->GetChanPrefixes() : "") + CHAN_PREFIX_1 " :are supported by this server.");
 				}
 			}
 		}
@@ -130,7 +128,7 @@ public:
 
 		for (it = vsChans.begin(); it != vsChans.end(); ++it) {
 			if (it->Left(2) == CHAN_PREFIX) {
-				m_ssDefaultChans.insert(it->Left(32));
+				m_ssDefaultChans.insert(*it);
 			}
 		}
 
@@ -188,33 +186,26 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnRaw(CString& sLine) override {
-		if (sLine.Token(1) == "005") {
+	EModRet OnSendToClient(CString& sLine, CClient& Client) override {
+		if ((sLine.StartsWith(":") && sLine.Token(1) == "005") || (sLine.StartsWith("@") && sLine.Token(2) == "005")) {
 			CString::size_type uPos = sLine.AsUpper().find("CHANTYPES=");
 			if (uPos != CString::npos) {
-				uPos = sLine.find(" ", uPos);
+				CString sChanTypes = sLine.substr(uPos, sLine.find(" ", uPos) - uPos);
 
-				if (uPos == CString::npos)
-					sLine.append(CHAN_PREFIX_1);
-				else
-					sLine.insert(uPos, CHAN_PREFIX_1);
-				m_spInjectedPrefixes.insert(GetNetwork());
+				if (!sChanTypes.Contains(CHAN_PREFIX_1))
+					sLine.insert(uPos + sChanTypes.size(), CHAN_PREFIX_1);
 			}
 		}
 
 		return CONTINUE;
 	}
 
-	virtual void OnIRCDisconnected() override {
-		m_spInjectedPrefixes.erase(GetNetwork());
-	}
-
 	virtual void OnClientLogin() override {
 		CUser* pUser = GetUser();
 		CClient* pClient = GetClient();
 		CIRCNetwork* pNetwork = GetNetwork();
-		if (m_spInjectedPrefixes.find(pNetwork) == m_spInjectedPrefixes.end() && pNetwork && !pNetwork->GetChanPrefixes().empty()) {
-			pClient->PutClient(":" + GetIRCServer(pNetwork) + " 005 " + pClient->GetNick() + " CHANTYPES=" + pNetwork->GetChanPrefixes() + CHAN_PREFIX_1 " :are supported by this server.");
+		if (!pNetwork || !pNetwork->IsIRCConnected()) {
+			pClient->PutClient(":" + GetIRCServer(pNetwork) + " 005 " + pClient->GetNick() + " CHANTYPES=" + CHAN_PREFIX_1 " :are supported by this server.");
 		}
 
 		// Make sure this user is in the default channels
@@ -268,7 +259,13 @@ public:
 	}
 
 	virtual EModRet OnUserRaw(CString& sLine) override {
-		if (sLine.Equals("WHO " CHAN_PREFIX_1, false, 5)) {
+		if (sLine.StartsWith("PRIVMSG ") || sLine.StartsWith("NOTICE ")) {
+			return HandleMessage(sLine.Token(0), sLine.Token(1), sLine.Token(2, true).TrimPrefix_n(":"));
+		} else if (sLine.StartsWith("JOIN ")) {
+			return HandleJoin(sLine.Token(1), sLine.Token(2));
+		} else if (sLine.StartsWith("PART ")) {
+			return HandlePart(sLine.Token(1), sLine.Token(2, true).TrimPrefix_n(":"));
+		} else if (sLine.Equals("WHO " CHAN_PREFIX_1, false, 5)) {
 			return HALT;
 		} else if (sLine.Equals("MODE " CHAN_PREFIX_1, false, 6)) {
 			return HALT;
@@ -310,7 +307,7 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage) override {
+	EModRet HandlePart(const CString& sChannel, const CString& sMessage) {
 		if (sChannel.Left(1) != CHAN_PREFIX_1) {
 			return CONTINUE;
 		}
@@ -385,7 +382,7 @@ public:
 		}
 	}
 
-	virtual EModRet OnUserJoin(CString& sChannel, CString& sKey) override {
+	EModRet HandleJoin(const CString& sChannel, const CString& sKey) {
 		if (sChannel.Left(1) != CHAN_PREFIX_1) {
 			return CONTINUE;
 		}
@@ -395,7 +392,6 @@ public:
 			return HALT;
 		}
 
-		sChannel = sChannel.Left(32);
 		CPartylineChannel* pChannel = GetChannel(sChannel);
 
 		JoinUser(GetUser(), pChannel);
@@ -493,26 +489,6 @@ public:
 		}
 
 		return HALT;
-	}
-
-	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage) override {
-		return HandleMessage("PRIVMSG", sTarget, sMessage);
-	}
-
-	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage) override {
-		return HandleMessage("NOTICE", sTarget, sMessage);
-	}
-
-	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage) override {
-		return HandleMessage("PRIVMSG", sTarget, "\001ACTION " + sMessage + "\001");
-	}
-
-	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage) override {
-		return HandleMessage("PRIVMSG", sTarget, "\001" + sMessage + "\001");
-	}
-
-	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage) override {
-		return HandleMessage("NOTICE", sTarget, "\001" + sMessage + "\001");
 	}
 
 	const CString GetIRCServer(CIRCNetwork *pNetwork) {
@@ -625,7 +601,6 @@ public:
 
 private:
 	set<CPartylineChannel*> m_ssChannels;
-	set<CIRCNetwork*>       m_spInjectedPrefixes;
 	set<CString>            m_ssDefaultChans;
 };
 
