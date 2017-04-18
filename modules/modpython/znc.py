@@ -592,6 +592,9 @@ class Module:
         msg.SetReason(reason.s)
         return ret
 
+    def OnQuitIRCMessage(self, msg):
+        pass
+
     def OnCTCPReplyMessage(self, msg):
         text = String(msg.GetText())
         ret = self.OnCTCPReply(msg.GetNick(), text)

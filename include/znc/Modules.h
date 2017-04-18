@@ -901,6 +901,13 @@ class CModule {
     /// @deprecated Use OnUserQuitMessage() instead.
     virtual EModRet OnUserQuit(CString& sMessage);
 
+    /** This module hook is called when ZNC sends a quit message to a network.
+     *  @since 1.7.0
+     *  @param Message The quit message used.
+     *  @return See CModule::EModRet.
+     */
+    virtual EModRet OnQuitIRCMessage(CQuitMessage& Message);
+
     /** Called when we receive a CTCP reply <em>from IRC</em>.
      *  @since 1.7.0
      *  @param Message The CTCP reply message.
@@ -1488,6 +1495,7 @@ class CModules : public std::vector<CModule*> {
     bool OnUserTopicRequest(CString& sChannel);
     bool OnUserQuit(CString& sMessage);
     bool OnUserQuitMessage(CQuitMessage& Message);
+    bool OnQuitIRCMessage(CQuitMessage& Message);
 
     bool OnCTCPReply(CNick& Nick, CString& sMessage);
     bool OnCTCPReplyMessage(CCTCPMessage& Message);

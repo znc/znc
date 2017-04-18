@@ -507,6 +507,7 @@ sub OnUserQuitMessage {
 	$msg->SetReason($reason);
 	return $ret;
 }
+sub OnQuitIRCMessage {}
 sub OnCTCPReplyMessage {
 	my ($self, $msg) = @_;
 	my $text = $msg->GetText;
