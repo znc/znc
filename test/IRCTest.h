@@ -129,6 +129,16 @@ class TestModule : public CModule {
         OnMessage(msg);
     }
 
+    EModRet OnSendToClientMessage(CMessage& msg) override {
+        if (!bSendHooks) return CONTINUE;
+        vsHooks.push_back("OnSendToClientMessage");
+        return OnMessage(msg);
+    }
+    EModRet OnSendToIRCMessage(CMessage& msg) override {
+        if (!bSendHooks) return CONTINUE;
+        vsHooks.push_back("OnSendToIRCMessage");
+        return OnMessage(msg);
+    }
     EModRet OnUserCTCPReplyMessage(CCTCPMessage& msg) override {
         vsHooks.push_back("OnUserCTCPReplyMessage");
         return OnMessage(msg);
@@ -188,6 +198,7 @@ class TestModule : public CModule {
     std::vector<CClient*> vClients;
     std::vector<CChan*> vChannels;
     EModRet eAction = CONTINUE;
+    bool bSendHooks = false;
 };
 
 class IRCTest : public ::testing::Test {

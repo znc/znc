@@ -483,13 +483,8 @@ CString CClient::GetFullName() const {
 }
 
 void CClient::PutClient(const CString& sLine) {
-    bool bReturn = false;
-    CString sCopy = sLine;
-    NETWORKMODULECALL(OnSendToClient(sCopy, *this), m_pUser, m_pNetwork, this,
-                      &bReturn);
-    if (bReturn) return;
-    DEBUG("(" << GetFullName() << ") ZNC -> CLI [" << sCopy << "]");
-    Write(sCopy + "\r\n");
+    CMessage Message(sLine);
+    PutClient(Message);
 }
 
 bool CClient::PutClient(const CMessage& Message) {
@@ -563,10 +558,7 @@ bool CClient::PutClient(const CMessage& Message) {
         }
     }
 
-    CString sLine = Msg.ToString(CMessage::ExcludeTags);
-
-    // TODO: introduce a module hook that gives control over the tags that are
-    // sent
+    // TODO: add the ability to set a list of tags to send
     MCString mssTags;
 
     if (HasServerTime()) {
@@ -585,11 +577,22 @@ bool CClient::PutClient(const CMessage& Message) {
         }
     }
 
-    if (!mssTags.empty()) {
-        CUtils::SetMessageTags(sLine, mssTags);
-    }
+    Msg.SetTags(mssTags);
+    Msg.SetClient(this);
+    Msg.SetNetwork(m_pNetwork);
 
-    PutClient(sLine);
+    bool bReturn = false;
+    NETWORKMODULECALL(OnSendToClientMessage(Msg), m_pUser, m_pNetwork, this,
+                      &bReturn);
+    if (bReturn) return false;
+
+    CString sCopy = Msg.ToString();
+    NETWORKMODULECALL(OnSendToClient(sCopy, *this), m_pUser, m_pNetwork, this,
+                      &bReturn);
+    if (bReturn) return false;
+
+    DEBUG("(" << GetFullName() << ") ZNC -> CLI [" << sCopy << "]");
+    Write(sCopy + "\r\n");
     return true;
 }
 

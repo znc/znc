@@ -343,3 +343,23 @@ TEST_F(ClientTest, OnUserQuitMessage) {
     m_pTestClient->ReadLine(msg.ToString());
     EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // quit is never forwarded
 }
+
+TEST_F(ClientTest, OnSendToClientMessage) {
+    CMessage msg("PRIVMSG #chan :text");
+    m_pTestModule->eAction = CModule::HALT;
+    m_pTestModule->bSendHooks = true;
+    m_pTestClient->PutClient(msg.ToString());
+
+    EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnSendToClientMessage"));
+    EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
+    EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(m_pTestClient->GetNetwork()));
+    EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
+    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+    EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
+
+    m_pTestModule->eAction = CModule::CONTINUE;
+    m_pTestClient->ReadLine(msg.ToString());
+
+    EXPECT_THAT(m_pTestSock->vsLines, ElementsAre(msg.ToString()));
+    m_pTestModule->bSendHooks = false;
+}
