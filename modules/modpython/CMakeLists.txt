@@ -54,7 +54,7 @@ if(SWIG_FOUND)
 		-outdir "${CMAKE_CURRENT_BINARY_DIR}"
 		-o "${CMAKE_CURRENT_BINARY_DIR}/modpython_biglib.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/modpython.i"
-		DEPENDS "modpython.i"
+		DEPENDS "modpython.i" "${PROJECT_BINARY_DIR}/include/znc/Csocket.h"
 		IMPLICIT_DEPENDS CXX "${CMAKE_CURRENT_SOURCE_DIR}/modpython.i"
 		VERBATIM)
 else()
