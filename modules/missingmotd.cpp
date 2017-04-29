@@ -16,13 +16,16 @@
 
 #include <znc/Modules.h>
 #include <znc/Client.h>
+#include <znc/IRCNetwork.h>
 
 class CMissingMotd : public CModule {
   public:
     MODCONSTRUCTOR(CMissingMotd) {}
 
     void OnClientLogin() override {
-        PutUser(":irc.znc.in 422 " + GetClient()->GetNick() + " :MOTD File is missing");
+        if (!(GetNetwork() && GetNetwork()->IsIRCConnected())) {
+            GetClient()->PutClient(":irc.znc.in 422 " + GetClient()->GetNick() + " :MOTD File is missing");
+        }
     }
 };
 
