@@ -57,7 +57,7 @@ if(SWIG_FOUND)
 		-outdir "${CMAKE_CURRENT_BINARY_DIR}"
 		-o "${CMAKE_CURRENT_BINARY_DIR}/modperl_biglib.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/modperl.i"
-		DEPENDS "modperl.i" "${PROJECT_BINARY_DIR}/include/znc/Csocket.h"
+		DEPENDS "modperl.i" copy_csocket_h
 		IMPLICIT_DEPENDS CXX "${CMAKE_CURRENT_SOURCE_DIR}/modperl.i"
 		VERBATIM)
 else()
