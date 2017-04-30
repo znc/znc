@@ -15,13 +15,14 @@
  */
 
 #include <znc/Modules.h>
+#include <znc/Client.h>
 
 class CMissingMotd : public CModule {
   public:
     MODCONSTRUCTOR(CMissingMotd) {}
 
     void OnClientLogin() override {
-        PutUser(":irc.znc.in 422 :MOTD File is missing");
+        PutUser(":irc.znc.in 422 " + GetClient()->GetNick() + " :MOTD File is missing");
     }
 };
 
