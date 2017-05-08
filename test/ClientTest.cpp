@@ -188,6 +188,22 @@ TEST_F(ClientTest, StatusMsg) {
               m_pTestChan->GetBuffer().GetLine(0, *m_pTestClient));
 }
 
+TEST_F(ClientTest, TagSupport) {
+    m_pTestClient->SetTagSupport("test-tag", true);
+    CMessage tagmsg("@test-tag=yes;invalid-tag=no :nick!user@host PRIVMSG #chan :text");
+    m_pTestClient->PutClient(tagmsg);
+
+    EXPECT_THAT(m_pTestClient->vsLines,
+        ElementsAre("@test-tag=yes :nick!user@host PRIVMSG #chan :text"));
+
+    m_pTestClient->Reset();
+    m_pTestClient->SetTagSupport("test-tag", false);
+    m_pTestClient->PutClient(tagmsg);
+
+    EXPECT_THAT(m_pTestClient->vsLines,
+        ElementsAre(":nick!user@host PRIVMSG #chan :text"));
+}
+
 TEST_F(ClientTest, OnUserCTCPReplyMessage) {
     CMessage msg("NOTICE someone :\001VERSION 123\001");
     m_pTestModule->eAction = CModule::HALT;

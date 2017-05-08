@@ -558,23 +558,17 @@ bool CClient::PutClient(const CMessage& Message) {
         }
     }
 
-    // TODO: add the ability to set a list of tags to send
     MCString mssTags;
 
-    if (HasServerTime()) {
-        CString sServerTime = Msg.GetTag("time");
-        if (!sServerTime.empty()) {
-            mssTags["time"] = sServerTime;
-        } else {
-            mssTags["time"] = CUtils::FormatServerTime(Msg.GetTime());
+    for (const auto& it : Msg.GetTags()) {
+        if (IsTagEnabled(it.first)) {
+            mssTags[it.first] = it.second;
         }
     }
 
-    if (HasBatch()) {
-        CString sBatch = Msg.GetTag("batch");
-        if (!sBatch.empty()) {
-            mssTags["batch"] = sBatch;
-        }
+    if (HasServerTime()) {
+        // If the server didn't set the time tag, manually set it
+        mssTags.emplace("time", CUtils::FormatServerTime(Msg.GetTime()));
     }
 
     Msg.SetTags(mssTags);
@@ -820,6 +814,14 @@ void CClient::ParseIdentifier(const CString& sAuthLine) {
         }
     } else {
         m_sUser = sAuthLine;
+    }
+}
+
+void CClient::SetTagSupport(const CString& sTag, bool bState) {
+    if (bState) {
+        m_ssSupportedTags.insert(sTag);
+    } else {
+        m_ssSupportedTags.erase(sTag);
     }
 }
 
