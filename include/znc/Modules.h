@@ -1288,9 +1288,13 @@ class CModule {
     virtual bool IsClientCapSupported(CClient* pClient, const CString& sCap,
                                       bool bState);
     /** Called when we actually need to turn a capability on or off for a client.
+     *  If implementing a custom capability, make sure to call
+     *  pClient->SetTagSupport("tag-name", bState) for each tag that the
+     *  capability provides.
      *  @param pClient The client which requested the capability.
      *  @param sCap name of wanted capability.
      *  @param bState On or off, depending on which case client needs.
+     *  @see CClient::SetTagSupport()
      */
     virtual void OnClientCapRequest(CClient* pClient, const CString& sCap,
                                     bool bState);
