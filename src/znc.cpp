@@ -624,7 +624,7 @@ CString CZNC::MakeConfigHeader() {
            "//\n"
            "// But if you feel risky, you might want to read help on /znc "
            "saveconfig and /znc rehash.\n"
-           "// Also check http://en.znc.in/wiki/Configuration\n";
+           "// Also check http://wiki.znc.in/Configuration\n";
 }
 
 bool CZNC::WriteNewConfig(const CString& sConfigFile) {
