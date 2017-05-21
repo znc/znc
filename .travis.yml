@@ -13,59 +13,57 @@ matrix:
     include:
         - os: linux
           compiler: gcc
-          env: BUILD_TYPE=normal BUILD_WITH=cmake
+          env: BUILD_TYPE=normal BUILD_WITH=cmake COVERAGE=gcov
         - os: linux
           compiler: gcc
-          env: BUILD_TYPE=normal BUILD_WITH=autoconf
-        - os: linux
-          compiler: gcc
-          env: BUILD_TYPE=coverage BUILD_WITH=autoconf
+          env: BUILD_TYPE=normal BUILD_WITH=autoconf COVERAGE=gcov
         - os: linux
           compiler: clang
-          env: BUILD_TYPE=asan BUILD_WITH=cmake
+          env: BUILD_TYPE=asan BUILD_WITH=cmake COVERAGE=no
         - os: linux
           compiler: clang
-          env: BUILD_TYPE=tsan BUILD_WITH=cmake
+          env: BUILD_TYPE=tsan BUILD_WITH=cmake COVERAGE=no
         - os: osx
           osx_image: xcode6.4 # OS X 10.10
           compiler: clang
-          env: BUILD_TYPE=normal BUILD_WITH=cmake
+          env: BUILD_TYPE=normal BUILD_WITH=cmake COVERAGE=gcov
         - os: osx
           osx_image: xcode6.4 # OS X 10.10
           compiler: clang
-          env: BUILD_TYPE=normal BUILD_WITH=autoconf
+          env: BUILD_TYPE=normal BUILD_WITH=autoconf COVERAGE=gcov
         - os: osx
           osx_image: xcode7.3 # OS X 10.11
           compiler: clang
-          env: BUILD_TYPE=normal BUILD_WITH=cmake
+          env: BUILD_TYPE=normal BUILD_WITH=cmake COVERAGE=llvm
         - os: osx
           osx_image: xcode7.3 # OS X 10.11
           compiler: clang
-          env: BUILD_TYPE=normal BUILD_WITH=autoconf
+          env: BUILD_TYPE=normal BUILD_WITH=autoconf COVERAGE=llvm
         - os: osx
           osx_image: xcode8.2 # macOS 10.12
           compiler: clang
-          env: BUILD_TYPE=normal BUILD_WITH=cmake
+          env: BUILD_TYPE=normal BUILD_WITH=cmake COVERAGE=llvm
         - os: osx
           osx_image: xcode8.2 # macOS 10.12
           compiler: clang
-          env: BUILD_TYPE=normal BUILD_WITH=autoconf
+          env: BUILD_TYPE=normal BUILD_WITH=autoconf COVERAGE=llvm
         - os: linux
           compiler: gcc
-          env: BUILD_TYPE=tarball BUILD_WITH=cmake
+          env: BUILD_TYPE=tarball BUILD_WITH=cmake COVERAGE=gcov
         - os: linux
           compiler: gcc
-          env: BUILD_TYPE=tarball BUILD_WITH=autoconf
+          env: BUILD_TYPE=tarball BUILD_WITH=autoconf COVERAGE=gcov
 before_install:
     - "echo os: [$TRAVIS_OS_NAME] build: [$BUILD_TYPE]"
-    - if [[ "$BUILD_TYPE" == "normal" ]]; then export CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=; fi
-    - if [[ "$BUILD_TYPE" == "tarball" ]]; then export CFGFLAGS="--with-gtest=/usr/src/gtest --with-gmock=/usr/src/gmock --disable-swig" MYCXXFLAGS= MYLDFLAGS=; fi
-    - if [[ "$BUILD_TYPE" == "asan" ]]; then export CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fPIE" MYLDFLAGS="-fsanitize=address -pie"; fi
-    - if [[ "$BUILD_TYPE" == "tsan" ]]; then export CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=thread -O1 -fPIE" MYLDFLAGS="-fsanitize=thread"; fi
-    - if [[ "$BUILD_TYPE" == "coverage" ]]; then export CFGFLAGS="--enable-debug --disable-perl --disable-python" MYCXXFLAGS=--coverage MYLDFLAGS=--coverage DISABLED_ZNC_PERL_PYTHON_TEST=1; fi
-    - if [[ "$BUILD_WITH" == "cmake" ]]; then export CFGSUFFIX=.sh UNITTEST=unittest INTTEST=inttest; else export CFGSUFFIX= UNITTEST=test INTTEST=test2; fi
+    - export CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=
+    - if [[ "$BUILD_TYPE" == "tarball" ]]; then CFGFLAGS+=" --with-gtest=/usr/src/gtest --with-gmock=/usr/src/gmock --disable-swig"; fi
+    - if [[ "$BUILD_TYPE" == "asan" ]]; then MYCXXFLAGS+=" -fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fPIE" MYLDFLAGS+=" -fsanitize=address -pie"; fi
+    - if [[ "$BUILD_TYPE" == "tsan" ]]; then MYCXXFLAGS+=" -fsanitize=thread -O1 -fPIE" MYLDFLAGS+=" -fsanitize=thread"; fi
+    - if [[ "$BUILD_WITH" == "cmake" ]]; then CFGSUFFIX=.sh UNITTEST=unittest INTTEST=inttest; else CFGSUFFIX= UNITTEST=test INTTEST=test2; fi
+    - if [[ "$COVERAGE" == "gcov" ]]; then MYCXXFLAGS+=" --coverage" MYLDFLAGS+=" --coverage"; fi
+    - if [[ "$COVERAGE" == "llvm" ]]; then MYCXXFLAGS+=" -fprofile-instr-generate -fcoverage-mapping" MYLDFLAGS+=" -fprofile-instr-generate"; fi
       # UBSan randomly crashes clang, and very often :(
-      # CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=undefined -O1 -fPIE -fno-sanitize-recover" MYLDFLAGS="-fsanitize=undefined -pie -fno-sanitize-recover"
+      # CFGFLAGS= MYCXXFLAGS="-fsanitize=undefined -O1 -fPIE -fno-sanitize-recover" MYLDFLAGS="-fsanitize=undefined -pie -fno-sanitize-recover"
     - if [[ "$TRAVIS_REPO_SLUG" == "znc/znc" && "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_BRANCH" == "master" ]]; then openssl aes-256-cbc -d -in .travis-github.enc -out ~/znc-github-key -k ${SECRET_KEY}; fi
     - export SECRET_KEY=no
 install:
@@ -100,24 +98,28 @@ script:
     - if [[ "$BUILD_TYPE" != "tarball" && "$BUILD_WITH" != "cmake" ]]; then ./bootstrap.sh; fi
     - mkdir build
     - cd build
-    - ../configure$CFGSUFFIX --enable-perl --enable-python --enable-tcl --enable-cyrus --enable-charset $CFGFLAGS CXXFLAGS="$CXXFLAGS $MYCXXFLAGS" LDFLAGS="$LDFLAGS $MYLDFLAGS"
+    - ../configure$CFGSUFFIX --enable-debug --enable-perl --enable-python --enable-tcl --enable-cyrus --enable-charset $CFGFLAGS CXXFLAGS="$CXXFLAGS $MYCXXFLAGS" LDFLAGS="$LDFLAGS $MYLDFLAGS"
     - if [[ "$BUILD_WITH" == "cmake" ]]; then cmake --system-information; else cat config.log; fi
     - make VERBOSE=1
-    - make VERBOSE=1 $UNITTEST
+    - env LLVM_PROFILE_FILE="$PWD/unittest.profraw" make VERBOSE=1 $UNITTEST
     - sudo make install
-    - make VERBOSE=1 $INTTEST
-    - cd "$TRAVIS_BUILD_DIR"
+    - env LLVM_PROFILE_FILE="$PWD/inttest.profraw" make VERBOSE=1 $INTTEST
     - /usr/local/bin/znc --version
 after_success:
+    - |
+         if [[ "$TRAVIS_OS_NAME" == "osx" && "$COVERAGE" == "llvm" ]]; then
+             xcrun llvm-profdata merge unittest.profraw -o unittest.profdata
+             xcrun llvm-profdata merge inttest.profraw -o inttest.profdata
+             xcrun llvm-cov show -show-line-counts-or-regions -instr-profile=unittest.profdata test/unittest_bin > unittest-cmake-coverage.txt
+             xcrun llvm-cov show -show-line-counts-or-regions -instr-profile=unittest.profdata unittest > unittest-autoconf-coverage.txt
+             xcrun llvm-cov show -show-line-counts-or-regions -instr-profile=inttest.profdata /usr/local/bin/znc > inttest-znc-coverage.txt
+             find /usr/local/lib/znc -name '*.so' -or -name '*.bundle' | while read f; do xcrun llvm-cov show -show-line-counts-or-regions -instr-profile=inttest.profdata $f > inttest-$(basename $f)-coverage.txt; done
+         fi
+    - bash <(curl -s https://codecov.io/bash)
+    - cd "$TRAVIS_BUILD_DIR"
     - test -r "$TRAVIS_BUILD_DIR/.travis_after_all.py" && python "$TRAVIS_BUILD_DIR/.travis_after_all.py" || echo No .travis_after_all.py found
     - test -r .to_export_back && echo $(cat .to_export_back) || echo No .to_export_back found
     - export DUMMY_VAR=dummy-value $(cat .to_export_back)
-    - |
-          if [[ "$BUILD_TYPE" == "coverage" ]]; then
-              bash <(curl -s https://codecov.io/bash)
-          else
-              echo "No coverage for this build"
-          fi
     - |
           if [ "$BUILD_LEADER" == "YES" ] && [ "$BUILD_AGGREGATE_STATUS" == "others_succeeded" ] && [ "$TRAVIS_REPO_SLUG" == "znc/znc" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
               echo "All builds passed!"
