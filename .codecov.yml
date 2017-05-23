@@ -1,5 +1,7 @@
 ignore:
   - /test/
+  - /modules/modp*/*.cpp
+  - /modules/modp*/swig*
 codecov:
   ci:
     # Cygwin fails integration test with --coverage enabled, I don't know why
