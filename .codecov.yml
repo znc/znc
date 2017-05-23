@@ -1,2 +1,8 @@
 ignore:
   - /test/
+codecov:
+  ci:
+    # Cygwin fails integration test with --coverage enabled, I don't know why
+    - !appveyor
+    # FreeBSD doesn't support coverage yet (can't find libprofile_rt.a)
+    - !jenkins.znc.in
