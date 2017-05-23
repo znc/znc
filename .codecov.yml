@@ -1,4 +1,5 @@
 ignore:
+  - /cmake/
   - /test/
   - /modules/modp*/*.cpp
   - /modules/modp*/swig*
