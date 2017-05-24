@@ -43,3 +43,7 @@ target_include_directories(inttest PUBLIC
 	"${GMOCK_ROOT}" "${GMOCK_ROOT}/include")
 target_compile_definitions(inttest PRIVATE
 	"ZNC_BIN_DIR=\"${ZNC_BIN_DIR}\"")
+
+if(WITH_OTR)
+	target_compile_definitions(inttest PRIVATE "WITH_OTR=1")
+endif()

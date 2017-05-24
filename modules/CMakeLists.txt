@@ -61,6 +61,13 @@ else()
 	set(moddisable_cyrusauth true)
 endif()
 
+if(OTR_FOUND)
+	set(modcompile_otr PRIVATE ${OTR_CFLAGS})
+	set(modlink_otr ${OTR_LDFLAGS})
+else()
+	set(moddisable_otr true)
+endif()
+
 if(PERLLIBS_FOUND)
 	add_subdirectory(modperl)
 else()

@@ -48,6 +48,7 @@
 using testing::AnyOf;
 using testing::Eq;
 using testing::HasSubstr;
+using testing::MatchesRegex;
 
 namespace {
 
@@ -137,6 +138,14 @@ class IO {
             s.remove(0, res);
         }
         FlushIfCan(m_device);
+    }
+    void RelayPrivMsg(IO dest, QByteArray write_prefix, void (*check)(std::string line) = NULL) {
+            QByteArray message("");
+            ReadUntilAndGet("PRIVMSG", message);
+            if (check) {
+                check(message.toStdString());
+            }
+            dest.Write(write_prefix + message);
     }
     void Close() {
 #ifdef __CYGWIN__
@@ -2093,5 +2102,198 @@ TEST_F(ZNCTest, ModuleCrypt) {
     client2.ReadUntil("Hello");
     Z;
 }
+
+#ifdef WITH_OTR
+static void
+IsOtrCiphertext(std::string line) {
+    EXPECT_THAT(line, MatchesRegex(":?\\S* ?PRIVMSG \\S+ :.OTR.*\\.?,?\\r?"));
+}
+
+TEST_F(ZNCTest, ModuleOtr) {
+    QFile conf(m_dir.path() + "/configs/znc.conf");
+    ASSERT_TRUE(conf.open(QIODevice::Append | QIODevice::Text));
+    QTextStream(&conf) << "ServerThrottle = 1\n";
+    auto znc = Run();
+    Z;
+    auto ircd1 = ConnectIRCd();
+    Z;
+    auto client1 = LoginClient();
+    Z;
+    client1.Write("znc loadmod controlpanel");
+    client1.Write("PRIVMSG *controlpanel :CloneUser user user2");
+    client1.ReadUntil("User [user2] added!");
+    client1.Write("PRIVMSG *controlpanel :Set Nick user2 nick2");
+    Z;
+    client1.Write("znc loadmod otr");
+    client1.ReadUntil("Loaded module");
+    Z;
+    auto ircd2 = ConnectIRCd();
+    Z;
+    auto client2 = ConnectClient();
+    client2.Write("PASS user2:hunter2");
+    client2.Write("NICK nick2");
+    client2.Write("USER user2/test x x :x");
+    Z;
+    client2.Write("znc loadmod otr");
+    client2.ReadUntil("Loaded module");
+    Z;
+
+    // genkey without --really should produce a warning
+    client1.Write("PRIVMSG *otr :genkey");
+    client1.ReadUntil("genkey --really");
+    Z;
+
+    // generate keys
+    client1.Write("PRIVMSG *otr :genkey --really");
+    client1.ReadUntil("Key generation finished.");
+    Z;
+    client2.Write("PRIVMSG *otr :genkey --really");
+    client2.ReadUntil("Key generation finished.");
+    Z;
+
+    // do not overwrite existing key without --overwrite
+    client2.Write("PRIVMSG *otr :genkey --really");
+    client2.ReadUntil("genkey --overwrite");
+    Z;
+
+    // OTR handshake
+    client1.Write("PRIVMSG nick2 :?OTR?");
+    ircd1.RelayPrivMsg(ircd2, ":user!user@user/test ", IsOtrCiphertext);
+    Z;
+    ircd2.RelayPrivMsg(ircd1, ":nick2!user2@user2/test ", IsOtrCiphertext);
+    Z;
+    ircd1.RelayPrivMsg(ircd2, ":user!user@user/test ", IsOtrCiphertext);
+    Z;
+    ircd2.RelayPrivMsg(ircd1, ":nick2!user2@user2/test ", IsOtrCiphertext);
+    Z;
+    ircd2.RelayPrivMsg(ircd1, ":nick2!user2@user2/test ", IsOtrCiphertext);
+    Z;
+    ircd1.RelayPrivMsg(ircd2, ":user!user@user/test ", IsOtrCiphertext);
+    Z;
+    ircd1.RelayPrivMsg(ircd2, ":user!user@user/test ", IsOtrCiphertext);
+    Z;
+    client1.ReadUntil("Peer is not authenticated");
+    client2.ReadUntil("Peer is not authenticated");
+    Z;
+
+    // keys are initially not trusted
+    client1.Write("PRIVMSG *otr :info");
+    client1.ReadUntil("not trusted |");
+    Z;
+    client2.Write("PRIVMSG *otr :info");
+    client2.ReadUntil("not trusted |");
+    Z;
+
+    // send encrypted message
+    client1.Write("PRIVMSG nick2 :let's authenticate with question: what is my favorite book?");
+    ircd1.RelayPrivMsg(ircd2, ":user!user@user/test ", IsOtrCiphertext);
+    ircd1.RelayPrivMsg(ircd2, ":user!user@user/test ", IsOtrCiphertext);
+    client2.ReadUntil("let's authenticate with question: what is my favorite book?");
+    Z;
+    client2.Write("PRIVMSG user :m'kay");
+    ircd2.RelayPrivMsg(ircd1, ":nick2!user2@user2/test ", IsOtrCiphertext);
+    client1.ReadUntil("m'kay");
+    Z;
+
+    // try shared secret auth with non-matching secrets and check that it failed
+    client1.Write("PRIVMSG *otr :auth nick2 the man who was thursday");
+    Z;
+    for (int i = 0; i < 5; i++) {
+        ircd1.RelayPrivMsg(ircd2, ":user!user@user/test ", IsOtrCiphertext);
+        Z;
+    }
+    client2.ReadUntil("To complete, type auth user <secret>.");
+    Z;
+    client2.Write("PRIVMSG *otr :auth user hunter2");
+    Z;
+    for (int i = 0; i < 8; i++) {
+        ircd2.RelayPrivMsg(ircd1, ":nick2!user2@user2/test ", IsOtrCiphertext);
+        Z;
+    }
+    for (int i = 0; i < 6; i++) {
+        ircd1.RelayPrivMsg(ircd2, ":user!user@user/test ", IsOtrCiphertext);
+        Z;
+    }
+    for (int i = 0; i < 3; i++) {
+        ircd2.RelayPrivMsg(ircd1, ":nick2!user2@user2/test ", IsOtrCiphertext);
+        Z;
+    }
+    client1.ReadUntil("Authentication failed.");
+    Z;
+    client2.ReadUntil("Authentication failed.");
+    Z;
+
+    // successful auth with matching secrets
+    client1.Write("PRIVMSG *otr :auth nick2 the man who was thursday");
+    Z;
+    for (int i = 0; i < 5; i++) {
+        ircd1.RelayPrivMsg(ircd2, ":user!user@user/test ", IsOtrCiphertext);
+        Z;
+    }
+    client2.ReadUntil("To complete, type auth user <secret>.");
+    Z;
+    client2.Write("PRIVMSG *otr :auth user the man who was thursday");
+    Z;
+    for (int i = 0; i < 8; i++) {
+        ircd2.RelayPrivMsg(ircd1, ":nick2!user2@user2/test ", IsOtrCiphertext);
+        Z;
+    }
+    for (int i = 0; i < 6; i++) {
+        ircd1.RelayPrivMsg(ircd2, ":user!user@user/test ", IsOtrCiphertext);
+        Z;
+    }
+    for (int i = 0; i < 3; i++) {
+        ircd2.RelayPrivMsg(ircd1, ":nick2!user2@user2/test ", IsOtrCiphertext);
+        Z;
+    }
+    client1.ReadUntil("Successfully authenticated.");
+    Z;
+    client2.ReadUntil("Successfully authenticated.");
+    Z;
+
+    // check that the keys are trusted now
+    client1.Write("PRIVMSG *otr :info");
+    client1.ReadUntil("shared secret |");
+    Z;
+    client2.Write("PRIVMSG *otr :info");
+    client2.ReadUntil("shared secret |");
+    Z;
+
+    // manually distrust key
+    client1.Write("PRIVMSG *otr :distrust nick2");
+    client1.Write("PRIVMSG *otr :info");
+    client1.ReadUntil("not trusted |");
+    Z;
+
+    // manually trust key
+    client1.Write("PRIVMSG *otr :trust nick2");
+    client1.Write("PRIVMSG *otr :info");
+    client1.ReadUntil("manual |");
+    Z;
+
+    // check that after finish, the other party cannot send a message
+    client2.Write("PRIVMSG user :that's all folks");
+    ircd2.RelayPrivMsg(ircd1, ":nick2!user2@user2/test ", IsOtrCiphertext);
+    client1.ReadUntil("that's all folks");
+    Z;
+    client2.Write("PRIVMSG *otr :finish user");
+    client2.ReadUntil("Conversation finished.");
+    ircd2.RelayPrivMsg(ircd1, ":nick2!user2@user2/test ", IsOtrCiphertext);
+    client1.ReadUntil("Peer has finished the conversation.");
+    Z;
+    client1.Write("PRIVMSG nick2 :can you hear me");
+    client1.ReadUntil("Message has not been sent");
+    Z;
+    client2.Write("PRIVMSG user :lalala");
+    ircd2.ReadUntil("lalala");
+    Z;
+    client1.Write("PRIVMSG *otr :finish nick2");
+    client1.ReadUntil("Conversation finished.");
+    Z;
+    client1.Write("PRIVMSG nick2 :can you hear me");
+    ircd1.ReadUntil("can you hear me");
+    Z;
+}
+#endif /* WITH_OTR */
 
 }  // namespace
