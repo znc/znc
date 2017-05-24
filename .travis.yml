@@ -8,6 +8,7 @@ env:
 sudo: required
 dist: trusty
 
+# TODO: add Linux LLVM coverage; clang 3.5.0 on ubuntu trusty is too old.
 matrix:
     fast_finish: true
     include:
