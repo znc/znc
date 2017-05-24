@@ -54,8 +54,29 @@ matrix:
         - os: linux
           compiler: gcc
           env: BUILD_TYPE=tarball BUILD_WITH=autoconf COVERAGE=gcov
+        - stage: deploy
+          os: linux
+          before_install:
+          install:
+            - if [[ "$TRAVIS_REPO_SLUG" == "znc/znc" && "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_BRANCH" == "master" ]]; then ATTEMPT_DEPLOY=yes; else ATTEMPT_DEPLOY=no; fi
+            - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then openssl aes-256-cbc -d -in .travis-github.enc -out ~/znc-github-key -k ${SECRET_KEY}; fi
+            - export SECRET_KEY=no
+            - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then sudo apt-get update; fi
+            - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then sudo apt-get install -y doxygen graphviz; fi
+          script:
+            - |
+                  if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then
+                      mkdir -p ~/.ssh
+                      chmod 0600 ~/znc-github-key
+                      cp .travis.ssh ~/.ssh/config
+                      git config --global user.email "travis-ci@znc.in"
+                      git config --global user.name "znc-travis"
+                  fi
+            - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then ./.travis-generate-docs.sh; fi
+            - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then ./.travis-coverity-scan.py; fi
 before_install:
     - "echo os: [$TRAVIS_OS_NAME] build: [$BUILD_TYPE]"
+    - export SECRET_KEY=no
     - export CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=
     - if [[ "$BUILD_TYPE" == "tarball" ]]; then CFGFLAGS+=" --with-gtest=/usr/src/gtest --with-gmock=/usr/src/gmock --disable-swig"; fi
     - if [[ "$BUILD_TYPE" == "asan" ]]; then MYCXXFLAGS+=" -fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fPIE" MYLDFLAGS+=" -fsanitize=address -pie"; fi
@@ -65,8 +86,6 @@ before_install:
     - if [[ "$COVERAGE" == "llvm" ]]; then MYCXXFLAGS+=" -fprofile-instr-generate -fcoverage-mapping" MYLDFLAGS+=" -fprofile-instr-generate"; fi
       # UBSan randomly crashes clang, and very often :(
       # CFGFLAGS= MYCXXFLAGS="-fsanitize=undefined -O1 -fPIE -fno-sanitize-recover" MYLDFLAGS="-fsanitize=undefined -pie -fno-sanitize-recover"
-    - if [[ "$TRAVIS_REPO_SLUG" == "znc/znc" && "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_BRANCH" == "master" ]]; then openssl aes-256-cbc -d -in .travis-github.enc -out ~/znc-github-key -k ${SECRET_KEY}; fi
-    - export SECRET_KEY=no
 install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cat /proc/cpuinfo /proc/meminfo; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then lsb_release -a; fi
@@ -75,7 +94,7 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_TYPE" == "tarball" ]]; then sudo add-apt-repository -y ppa:ostogvin/tjo-develop; fi # gtest+gmock
     - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_WITH" == "cmake" ]]; then sudo add-apt-repository -y ppa:george-edison55/cmake-3.x; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y libperl-dev python3-dev tcl-dev libsasl2-dev libicu-dev swig3.0 doxygen graphviz qt55base python3-yaml libboost-locale-dev; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y libperl-dev python3-dev tcl-dev libsasl2-dev libicu-dev swig3.0 qt55base python3-yaml libboost-locale-dev; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_TYPE" == "tarball" ]]; then sudo apt-get install -y google-mock libgtest-dev; fi
       # Clang 3.5 TSan is broken on Travis Ubuntu 14.04. Clang 3.8 seems to work, but only without -pie (https://github.com/google/sanitizers/issues/503)
     - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_TYPE" == "tsan" ]]; then sudo apt-get install -y clang-3.8; export CC=clang-3.8 CXX=clang++-3.8; fi
@@ -117,23 +136,6 @@ after_success:
              find /usr/local/lib/znc -name '*.so' -or -name '*.bundle' | while read f; do xcrun llvm-cov show -show-line-counts-or-regions -instr-profile=inttest.profdata $f > inttest-$(basename $f)-coverage.txt; done
          fi
     - bash <(curl -s https://codecov.io/bash)
-    - cd "$TRAVIS_BUILD_DIR"
-    - test -r "$TRAVIS_BUILD_DIR/.travis_after_all.py" && python "$TRAVIS_BUILD_DIR/.travis_after_all.py" || echo No .travis_after_all.py found
-    - test -r .to_export_back && echo $(cat .to_export_back) || echo No .to_export_back found
-    - export DUMMY_VAR=dummy-value $(cat .to_export_back)
-    - |
-          if [ "$BUILD_LEADER" == "YES" ] && [ "$BUILD_AGGREGATE_STATUS" == "others_succeeded" ] && [ "$TRAVIS_REPO_SLUG" == "znc/znc" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
-              echo "All builds passed!"
-              mkdir -p ~/.ssh
-              chmod 0600 ~/znc-github-key
-              cp .travis.ssh ~/.ssh/config
-              git config --global user.email "travis-ci@znc.in"
-              git config --global user.name "znc-travis"
-              ./.travis-generate-docs.sh
-              ./.travis-coverity-scan.py
-          else
-              echo "Not leader"
-          fi
 notifications:
     irc:
         channels:
