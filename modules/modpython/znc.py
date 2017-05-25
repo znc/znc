@@ -14,6 +14,13 @@
 # limitations under the License.
 #
 
+_cov = None
+import os
+if os.environ.get('ZNC_MODPYTHON_COVERAGE'):
+    import coverage
+    _cov = coverage.Coverage(auto_data=True, branch=True)
+    _cov.start()
+
 from functools import wraps
 import imp
 import re
@@ -830,6 +837,8 @@ def unload_all():
         # add it back to set, otherwise unload_module will be sad
         _py_modules.add(mod)
         unload_module(mod)
+    if _cov:
+        _cov.stop()
 
 
 def gather_mod_info(cl, modinfo):

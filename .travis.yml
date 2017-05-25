@@ -95,12 +95,14 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_TYPE" == "tarball" ]]; then sudo add-apt-repository -y ppa:ostogvin/tjo-develop; fi # gtest+gmock
     - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_WITH" == "cmake" ]]; then sudo add-apt-repository -y ppa:george-edison55/cmake-3.x; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y libperl-dev python3-dev tcl-dev libsasl2-dev libicu-dev swig3.0 qt55base libboost-locale-dev; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y libperl-dev tcl-dev libsasl2-dev libicu-dev swig3.0 qt55base libboost-locale-dev; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_TYPE" == "tarball" ]]; then sudo apt-get install -y google-mock libgtest-dev; fi
       # Clang 3.5 TSan is broken on Travis Ubuntu 14.04. Clang 3.8 seems to work, but only without -pie (https://github.com/google/sanitizers/issues/503)
     - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_TYPE" == "tsan" ]]; then sudo apt-get install -y clang-3.8; export CC=clang-3.8 CXX=clang++-3.8; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then source /opt/qt55/bin/qt55-env.sh; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_WITH" == "cmake" ]]; then sudo apt-get install -y cmake; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then source ~/virtualenv/python3.5/bin/activate; fi  # for pip3
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PKG_CONFIG_PATH="/opt/python/3.5.2/lib/pkgconfig:$PKG_CONFIG_PATH" LD_LIBRARY_PATH="/opt/python/3.5.2/lib:$LD_LIBRARY_PATH"; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sw_vers; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sysctl -a | grep cpu; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sysctl -a | grep mem; fi
@@ -112,6 +114,8 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew info --json=v1 --installed | jq .; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PKG_CONFIG_PATH="$(brew --prefix qt5)/lib/pkgconfig:$PKG_CONFIG_PATH"; fi
     - "echo pkg-config path: [$PKG_CONFIG_PATH]"
+    - pip3 install coverage
+    - export ZNC_MODPYTHON_COVERAGE=1
 script:
     - if [[ "$BUILD_TYPE" == "tarball" ]]; then ./make-tarball.sh --nightly znc-git-2015-01-16 /tmp/znc-tarball.tar.gz; fi
     - if [[ "$BUILD_TYPE" == "tarball" ]]; then cd /tmp; tar xvf znc-tarball.tar.gz; fi
