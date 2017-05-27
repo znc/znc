@@ -77,7 +77,7 @@ C=
 endif
 
 ifneq "$(LIBZNC)" ""
-LIBS += -L.. -lznc -Wl,-rpath,$(LIBZNCDIR)
+LIBS += -L.. -lznc -lz -Wl,-rpath,$(LIBZNCDIR)
 endif
 
 CLEAN    :=

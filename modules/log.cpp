@@ -23,6 +23,7 @@
 #include <znc/Server.h>
 #include <time.h>
 #include <algorithm>
+#include <zlib.h>
 
 using std::vector;
 
@@ -259,13 +260,19 @@ void CLogMod::PutLog(const CString& sLine,
     CString sLogDir = LogFile.GetDir();
     struct stat ModDirInfo;
     CFile::GetInfo(GetSavePath(), ModDirInfo);
-    if (!CFile::Exists(sLogDir)) CDir::MakeDir(sLogDir, ModDirInfo.st_mode);
-    if (LogFile.Open(O_WRONLY | O_APPEND | O_CREAT)) {
-        LogFile.Write(CUtils::FormatTime(curtime, m_sTimestamp,
-                                         GetUser()->GetTimezone()) +
-                      " " + (m_bSanitize ? sLine.StripControls_n() : sLine) +
-                      "\n");
-    } else
+    if (!CFile::Exists(sLogDir))
+        CDir::MakeDir(sLogDir, ModDirInfo.st_mode);
+
+    if (LogFile.Open(O_WRONLY | O_APPEND | O_CREAT))
+    {
+        /* dirty hack */
+        gzFile gzf = gzopen(((std::string)sPath).c_str(), "a9");
+        gzprintf(gzf, "%s %s\n", ((std::string)(CUtils::FormatTime(curtime, m_sTimestamp,
+                                                                   GetUser()->GetTimezone()))).c_str() ,
+                 (m_bSanitize ? ((std::string)(sLine.StripControls_n())).c_str() : ((std::string)(sLine)).c_str()));
+        gzclose(gzf);
+    }
+    else
         DEBUG("Could not open log file [" << sPath << "]: " << strerror(errno));
 }
 
@@ -327,7 +334,7 @@ bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage) {
             if (!m_sLogPath.empty()) {
                 m_sLogPath += "/";
             }
-            m_sLogPath += "$NETWORK/$WINDOW/%Y-%m-%d.log";
+            m_sLogPath += "$NETWORK/$WINDOW/%Y-%m-%d.log.gz";
         }
     } else if (GetType() == CModInfo::NetworkModule) {
         if (m_sLogPath.Right(1) == "/" ||
@@ -335,7 +342,7 @@ bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage) {
             if (!m_sLogPath.empty()) {
                 m_sLogPath += "/";
             }
-            m_sLogPath += "$WINDOW/%Y-%m-%d.log";
+            m_sLogPath += "$WINDOW/%Y-%m-%d.log.gz";
         }
     } else {
         if (m_sLogPath.Right(1) == "/" ||
@@ -345,7 +352,7 @@ bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage) {
             if (!m_sLogPath.empty()) {
                 m_sLogPath += "/";
             }
-            m_sLogPath += "$USER/$NETWORK/$WINDOW/%Y-%m-%d.log";
+            m_sLogPath += "$USER/$NETWORK/$WINDOW/%Y-%m-%d.log.gz";
         }
     }
 
