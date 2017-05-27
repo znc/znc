@@ -67,7 +67,7 @@ else()
 	set(moddisable_modperl true)
 endif()
 
-if(PYTHONLIBS_FOUND)
+if(PYTHON_FOUND)
 	add_subdirectory(modpython)
 else()
 	set(moddisable_modpython true)

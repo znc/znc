@@ -19,7 +19,7 @@
 
 set(modinclude_modpython PUBLIC ${PYTHON_INCLUDE_DIRS}
 	"${CMAKE_CURRENT_BINARY_DIR}/.." PARENT_SCOPE)
-set(modlink_modpython PUBLIC ${PYTHON_LIBRARIES} PARENT_SCOPE)
+set(modlink_modpython PUBLIC ${PYTHON_LDFLAGS} PARENT_SCOPE)
 set(moddef_modpython PUBLIC "SWIG_TYPE_TABLE=znc" PARENT_SCOPE)
 set(moddepend_modpython modpython_functions modpython_swigruntime PARENT_SCOPE)
 
@@ -76,7 +76,7 @@ target_include_directories(modpython_lib PRIVATE
 	"${CMAKE_CURRENT_BINARY_DIR}/.."
 	"${CMAKE_CURRENT_SOURCE_DIR}/.."
 	${PYTHON_INCLUDE_DIRS})
-target_link_libraries(modpython_lib ${znc_link} ${PYTHON_LIBRARIES})
+target_link_libraries(modpython_lib ${znc_link} ${PYTHON_LDFLAGS})
 set_target_properties(modpython_lib PROPERTIES
 	PREFIX "_"
 	OUTPUT_NAME "znc_core"
