@@ -103,6 +103,9 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_WITH" == "cmake" ]]; then sudo apt-get install -y cmake; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then source ~/virtualenv/python3.5/bin/activate; fi  # for pip3
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PKG_CONFIG_PATH="/opt/python/3.5.2/lib/pkgconfig:$PKG_CONFIG_PATH" LD_LIBRARY_PATH="/opt/python/3.5.2/lib:$LD_LIBRARY_PATH"; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cpanm --local-lib=~/perl5 local::lib && eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib); fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cpanm --notest Devel::Cover::Report::Clover; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export ZNC_MODPERL_COVERAGE=1; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sw_vers; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sysctl -a | grep cpu; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sysctl -a | grep mem; fi
@@ -113,9 +116,9 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "osx" && "$BUILD_WITH" == "cmake" ]]; then brew outdated cmake || brew upgrade cmake; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew info --json=v1 --installed | jq .; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PKG_CONFIG_PATH="$(brew --prefix qt5)/lib/pkgconfig:$PKG_CONFIG_PATH"; fi
-    - "echo pkg-config path: [$PKG_CONFIG_PATH]"
     - pip3 install coverage
     - export ZNC_MODPYTHON_COVERAGE=1
+    - "echo pkg-config path: [$PKG_CONFIG_PATH]"
 script:
     - if [[ "$BUILD_TYPE" == "tarball" ]]; then ./make-tarball.sh --nightly znc-git-2015-01-16 /tmp/znc-tarball.tar.gz; fi
     - if [[ "$BUILD_TYPE" == "tarball" ]]; then cd /tmp; tar xvf znc-tarball.tar.gz; fi
@@ -128,9 +131,11 @@ script:
     - make VERBOSE=1
     - env LLVM_PROFILE_FILE="$PWD/unittest.profraw" make VERBOSE=1 $UNITTEST
     - sudo make install
-    - env LLVM_PROFILE_FILE="$PWD/inttest.profraw" make VERBOSE=1 $INTTEST
+      # TODO: use DEVEL_COVER_OPTIONS for https://metacpan.org/pod/Devel::Cover
+    - env LLVM_PROFILE_FILE="$PWD/inttest.profraw" ZNC_MODPERL_COVERAGE_OPTS="-db,$PWD/cover_db" make VERBOSE=1 $INTTEST
     - /usr/local/bin/znc --version
 after_success:
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ~/perl5/bin/cover --no-gcov --report=clover; fi
     - |
          if [[ "$TRAVIS_OS_NAME" == "osx" && "$COVERAGE" == "llvm" ]]; then
              xcrun llvm-profdata merge unittest.profraw -o unittest.profdata
