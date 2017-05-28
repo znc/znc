@@ -18,6 +18,11 @@ use 5.010;
 use strict;
 use warnings;
 use ZNC;
+
+# From http://search.cpan.org/dist/perl5lib/lib/perl5lib.pm
+use Config;
+use lib map { /(.*)/ } split /$Config{path_sep}/ => $ENV{PERL5LIB};
+
 use IO::File;
 use feature 'switch', 'say';
 
