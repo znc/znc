@@ -22,5 +22,5 @@ INC_PATH=-I${srcdir}/
 Name: ZNC
 Description: An advanced IRC proxy
 Version: ${version}
-URL: http://znc.in
+URL: https://znc.in
 Cflags: ${CPPFLAGS} ${MODFLAGS} ${INC_PATH}
