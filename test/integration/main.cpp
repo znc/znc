@@ -799,11 +799,11 @@ TEST_F(ZNCTest, ControlpanelModule) {
     Z;
 
     client.Write(request + "GetNetwork FloodRate user freenode");
-    client.ReadUntil(response + "FloodRate = 1.00");
+    client.ReadUntil(response + "FloodRate = 2.00");
     Z;
 
     client.Write(request + "GetNetwork FloodBurst user freenode");
-    client.ReadUntil(response + "FloodBurst = 4");
+    client.ReadUntil(response + "FloodBurst = 9");
     Z;
 
     client.Write(request + "GetNetwork JoinDelay user freenode");
