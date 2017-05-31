@@ -1386,11 +1386,11 @@ TEST_F(ZNCTest, ControlpanelModule) {
     Z;
 
     client.Write(request + "GetNetwork FloodRate KindOne freenode");
-    client.ReadUntil(response + "FloodRate = 1.00");
+    client.ReadUntil(response + "FloodRate = 2.00");
     Z;
 
     client.Write(request + "GetNetwork FloodBurst KindOne freenode");
-    client.ReadUntil(response + "FloodBurst = 4");
+    client.ReadUntil(response + "FloodBurst = 9");
     Z;
 
     client.Write(request + "GetNetwork JoinDelay KindOne freenode");
