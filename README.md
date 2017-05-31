@@ -1,4 +1,4 @@
-# [![ZNC](http://wiki.znc.in/resources/assets/wiki.png)](http://znc.in) - An advanced IRC bouncer
+# [![ZNC](https://wiki.znc.in/resources/assets/wiki.png)](https://znc.in) - An advanced IRC bouncer
 
 [![Travis Build Status](https://img.shields.io/travis/znc/znc/master.svg?label=linux%2Fmacos)](https://travis-ci.org/znc/znc)
 [![Jenkins Build Status](https://img.shields.io/jenkins/s/https/jenkins.znc.in/job/znc/job/znc/job/master.svg?label=freebsd)](https://jenkins.znc.in/job/znc/job/znc/job/master/)
@@ -158,12 +158,12 @@ These directories are also in there:
 
 This file shouldn't be too hard too understand. An explanation of all the
 items can be found on the
-[Configuration](http://wiki.znc.in/Configuration)-Page.
+[Configuration](https://wiki.znc.in/Configuration)-Page.
 **Warning: better not to edit config, while ZNC is running.** Use  the
 [webadmin] and [controlpanel] modules instead.
 
-[webadmin]:http://wiki.znc.in/Webadmin
-[controlpanel]:http://wiki.znc.in/Controlpanel
+[webadmin]:https://wiki.znc.in/Webadmin
+[controlpanel]:https://wiki.znc.in/Controlpanel
 
 If you changed some settings while ZNC is running, a simple
 `pkill -SIGUSR1 znc` will make ZNC rewrite its config file. Alternatively
@@ -178,17 +178,17 @@ and running make or with the `znc-buildmod` shell script.
 
 For additional info look in the wiki:
 
-- [Writing modules](http://wiki.znc.in/Writing_modules)
+- [Writing modules](https://wiki.znc.in/Writing_modules)
 
 Perl modules are loaded through the global module
-[ModPerl](http://wiki.znc.in/Modperl).
+[ModPerl](https://wiki.znc.in/Modperl).
 
 Python modules are loaded through the global module
-[ModPython](http://wiki.znc.in/Modpython).
+[ModPython](https://wiki.znc.in/Modpython).
 
 ## Further infos
 
-Please visit http://znc.in/ or
+Please visit https://znc.in/ or
 [#znc on freenode](ircs://irc.freenode.net:6697/#znc) if you still have
 questions.
 

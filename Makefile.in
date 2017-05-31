@@ -231,7 +231,7 @@ install: znc znc.service $(LIBZNC)
 	@echo " to generate a config file."
 	@echo ""
 	@echo " If you need help with using ZNC, please visit our wiki at:"
-	@echo "   http://znc.in"
+	@echo "   https://znc.in"
 
 uninstall:
 	rm $(DESTDIR)$(bindir)/znc

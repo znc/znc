@@ -15,7 +15,7 @@ Reporting bugs
       in debug mode and include the relevant part of the output. To enable
       debug mode, run ZNC with the `-D` flag.
 
-[The debugging page]:http://wiki.znc.in/Debugging
+[The debugging page]:https://wiki.znc.in/Debugging
 
 Code changes
 ============
@@ -24,4 +24,4 @@ Code changes
 * For deciding which branch to pull request, please see [the branches page]
   on wiki.znc.in.
 
-[The branches page]:http://wiki.znc.in/Branches
+[The branches page]:https://wiki.znc.in/Branches

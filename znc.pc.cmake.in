@@ -15,6 +15,6 @@ moddatadir=${datadir}/znc
 Name: ZNC
 Description: An advanced IRC proxy
 Version: ${version}
-URL: http://znc.in
+URL: https://znc.in
 Cflags: @CMAKE_CXX_FLAGS@ -I@CMAKE_INSTALL_FULL_INCLUDEDIR@ -include znc/zncconfig.h -Dznc_export_lib_EXPORTS
 Libs: @znclib_pc@

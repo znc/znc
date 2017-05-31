@@ -411,7 +411,7 @@ int main(int argc, char** argv) {
             CUtils::PrintError(
                 "No modules found. Perhaps you didn't install ZNC properly?");
             CUtils::PrintError(
-                "Read http://wiki.znc.in/Installation for instructions.");
+                "Read https://wiki.znc.in/Installation for instructions.");
             if (!CUtils::GetBoolInput(
                     "Do you really want to run ZNC without any modules?",
                     false)) {
