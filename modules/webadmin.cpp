@@ -1000,8 +1000,8 @@ class CWebAdminMod : public CModule {
                 Tmpl["TrustAllCerts"] = "false";
                 Tmpl["TrustPKI"] = "true";
                 Tmpl["FloodProtection"] = "true";
-                Tmpl["FloodRate"] = "1.0";
-                Tmpl["FloodBurst"] = "4";
+                Tmpl["FloodRate"] = "2.0";
+                Tmpl["FloodBurst"] = "9";
                 Tmpl["JoinDelay"] = "0";
                 breadNet["Text"] = t_s("Add Network");
             }
