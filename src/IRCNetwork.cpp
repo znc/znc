@@ -731,7 +731,6 @@ void CIRCNetwork::ClientDisconnected(CClient* pClient) {
     if (it != m_vClients.end()) {
         m_vClients.erase(it);
     }
-    pClient->ClearServerDependentCaps();
 }
 
 CUser* CIRCNetwork::GetUser() const { return m_pUser; }

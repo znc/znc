@@ -237,10 +237,11 @@ void CClient::SetNick(const CString& s) { m_sNick = s; }
 
 void CClient::SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect,
                          bool bReconnect) {
-    if (bDisconnect) {
-        if (m_pNetwork) {
-            m_pNetwork->ClientDisconnected(this);
+    if (m_pNetwork) {
+        m_pNetwork->ClientDisconnected(this);
 
+        if (bDisconnect) {
+            ClearServerDependentCaps();
             // Tell the client they are no longer in these channels.
             const vector<CChan*>& vChans = m_pNetwork->GetChans();
             for (const CChan* pChan : vChans) {
@@ -249,9 +250,9 @@ void CClient::SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect,
                               " PART " + pChan->GetName());
                 }
             }
-        } else if (m_pUser) {
-            m_pUser->UserDisconnected(this);
         }
+    } else if (m_pUser) {
+        m_pUser->UserDisconnected(this);
     }
 
     m_pNetwork = pNetwork;
@@ -445,7 +446,7 @@ void CClient::ConnectionRefused() {
 void CClient::Disconnected() {
     DEBUG(GetSockName() << " == Disconnected()");
     CIRCNetwork* pNetwork = m_pNetwork;
-    SetNetwork(nullptr, true, false);
+    SetNetwork(nullptr, false, false);
 
     if (m_pUser) {
         NETWORKMODULECALL(OnClientDisconnect(), m_pUser, pNetwork, this,
