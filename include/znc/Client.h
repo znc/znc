@@ -23,6 +23,7 @@
 #include <znc/Message.h>
 #include <znc/main.h>
 #include <memory>
+#include <functional>
 
 // Forward Declarations
 class CZNC;
