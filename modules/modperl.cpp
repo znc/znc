@@ -112,9 +112,6 @@ class CModPerl : public CModule {
             return false;
         }
         PL_exit_flags |= PERL_EXIT_DESTRUCT_END;
-        PSTART;
-        PCALL("ZNC::Core::Init");
-        PEND;
         return true;
     }
 

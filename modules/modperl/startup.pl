@@ -18,6 +18,21 @@ use 5.010;
 use strict;
 use warnings;
 use ZNC;
+
+# From http://search.cpan.org/dist/perl5lib/lib/perl5lib.pm
+use Config;
+use lib map { /(.*)/ } split /$Config{path_sep}/ => $ENV{PERL5LIB};
+
+BEGIN {
+	if ($ENV{ZNC_MODPERL_COVERAGE}) {
+		# Can't use DEVEL_COVER_OPTIONS because perl thinks it's tainted:
+		# https://github.com/pjcj/Devel--Cover/issues/187
+		my ($opts) = $ENV{ZNC_MODPERL_COVERAGE_OPTS} =~ /(.+)/;
+		require Devel::Cover;
+		Devel::Cover->import(split ',', $opts);
+	}
+}
+
 use IO::File;
 use feature 'switch', 'say';
 
