@@ -19,21 +19,19 @@
 
 using std::vector;
 
-#define MESSAGE "Your account has been disabled. Contact your administrator."
+#define MESSAGE \
+    t_s("Your account has been disabled. Contact your administrator.")
 
 class CBlockUser : public CModule {
   public:
     MODCONSTRUCTOR(CBlockUser) {
         AddHelpCommand();
-        AddCommand("List", static_cast<CModCommand::ModCmdFunc>(
-                               &CBlockUser::OnListCommand),
-                   "", "List blocked users");
-        AddCommand("Block", static_cast<CModCommand::ModCmdFunc>(
-                                &CBlockUser::OnBlockCommand),
-                   "<user>", "Block a user");
-        AddCommand("Unblock", static_cast<CModCommand::ModCmdFunc>(
-                                  &CBlockUser::OnUnblockCommand),
-                   "<user>", "Unblock a user");
+        AddCommand("List", "", t_d("List blocked users"),
+                   [this](const CString& sLine) { OnListCommand(sLine); });
+        AddCommand("Block", t_d("<user>"), t_d("Block a user"),
+                   [this](const CString& sLine) { OnBlockCommand(sLine); });
+        AddCommand("Unblock", t_d("<user>"), t_d("Unblock a user"),
+                   [this](const CString& sLine) { OnUnblockCommand(sLine); });
     }
 
     ~CBlockUser() override {}
@@ -54,7 +52,7 @@ class CBlockUser : public CModule {
 
         for (it = vArgs.begin(); it != vArgs.end(); ++it) {
             if (!Block(*it)) {
-                sMessage = "Could not block [" + *it + "]";
+                sMessage = t_f("Could not block {1}")(*it);
                 return false;
             }
         }
@@ -75,7 +73,7 @@ class CBlockUser : public CModule {
 
     void OnModCommand(const CString& sCommand) override {
         if (!GetUser()->IsAdmin()) {
-            PutModule("Access denied");
+            PutModule(t_s("Access denied"));
         } else {
             HandleCommand(sCommand);
         }
@@ -83,17 +81,14 @@ class CBlockUser : public CModule {
 
     // Displays all blocked users as a list.
     void OnListCommand(const CString& sCommand) {
-        CTable Table;
-        MCString::iterator it;
-
-        Table.AddColumn("Blocked user");
-
-        for (it = BeginNV(); it != EndNV(); ++it) {
-            Table.AddRow();
-            Table.SetCell("Blocked user", it->first);
+        if (BeginNV() == EndNV()) {
+            PutModule(t_s("No users are blocked"));
+            return;
         }
-
-        if (PutModule(Table) == 0) PutModule("No users blocked");
+        PutModule(t_s("Blocked users:"));
+        for (auto it = BeginNV(); it != EndNV(); ++it) {
+            PutModule(it->first);
+        }
     }
 
     /* Blocks a user if possible(ie not self, not already blocked).
@@ -102,19 +97,19 @@ class CBlockUser : public CModule {
         CString sUser = sCommand.Token(1, true);
 
         if (sUser.empty()) {
-            PutModule("Usage: Block <user>");
+            PutModule(t_s("Usage: Block <user>"));
             return;
         }
 
         if (GetUser()->GetUserName().Equals(sUser)) {
-            PutModule("You can't block yourself");
+            PutModule(t_s("You can't block yourself"));
             return;
         }
 
         if (Block(sUser))
-            PutModule("Blocked [" + sUser + "]");
+            PutModule(t_f("Blocked {1}")(sUser));
         else
-            PutModule("Could not block [" + sUser + "] (misspelled?)");
+            PutModule(t_f("Could not block {1} (misspelled?)")(sUser));
     }
 
     // Unblocks a user from the blocked list.
@@ -122,14 +117,14 @@ class CBlockUser : public CModule {
         CString sUser = sCommand.Token(1, true);
 
         if (sUser.empty()) {
-            PutModule("Usage: Unblock <user>");
+            PutModule(t_s("Usage: Unblock <user>"));
             return;
         }
 
         if (DelNV(sUser))
-            PutModule("Unblocked [" + sUser + "]");
+            PutModule(t_f("Unblocked {1}")(sUser));
         else
-            PutModule("This user is not blocked");
+            PutModule(t_s("This user is not blocked"));
     }
 
     // Provides GUI to configure this module by adding a widget to user page in webadmin.
@@ -148,24 +143,25 @@ class CBlockUser : public CModule {
                 if (Tmpl["Username"].Equals(
                         WebSock.GetSession()->GetUser()->GetUserName()) &&
                     WebSock.GetParam("embed_blockuser_block").ToBool()) {
-                    WebSock.GetSession()->AddError("You can't block yourself");
+                    WebSock.GetSession()->AddError(
+                        t_s("You can't block yourself"));
                 } else if (WebSock.GetParam("embed_blockuser_block").ToBool()) {
                     if (!WebSock.GetParam("embed_blockuser_old").ToBool()) {
                         if (Block(Tmpl["Username"])) {
                             WebSock.GetSession()->AddSuccess(
-                                "Blocked [" + Tmpl["Username"] + "]");
+                                t_f("Blocked {1}")(Tmpl["Username"]));
                         } else {
                             WebSock.GetSession()->AddError(
-                                "Couldn't block [" + Tmpl["Username"] + "]");
+                                t_f("Couldn't block {1}")(Tmpl["Username"]));
                         }
                     }
                 } else if (WebSock.GetParam("embed_blockuser_old").ToBool()) {
                     if (DelNV(Tmpl["Username"])) {
                         WebSock.GetSession()->AddSuccess(
-                            "Unblocked [" + Tmpl["Username"] + "]");
+                            t_f("Unblocked {1}")(Tmpl["Username"]));
                     } else {
                         WebSock.GetSession()->AddError(
-                            "User [" + Tmpl["Username"] + "is not blocked");
+                            t_f("User {1} is not blocked")(Tmpl["Username"]));
                     }
                 }
                 return true;
@@ -217,7 +213,7 @@ void TModInfo<CBlockUser>(CModInfo& Info) {
     Info.SetWikiPage("blockuser");
     Info.SetHasArgs(true);
     Info.SetArgsHelpText(
-        "Enter one or more user names. Separate them by spaces.");
+        Info.t_s("Enter one or more user names. Separate them by spaces."));
 }
 
-GLOBALMODULEDEFS(CBlockUser, "Block certain users from logging in.")
+GLOBALMODULEDEFS(CBlockUser, t_s("Block certain users from logging in."))

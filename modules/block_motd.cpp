@@ -23,18 +23,17 @@ class CBlockMotd : public CModule {
   public:
     MODCONSTRUCTOR(CBlockMotd) {
         AddHelpCommand();
-        AddCommand("GetMotd", static_cast<CModCommand::ModCmdFunc>(
-                                  &CBlockMotd::OverrideCommand),
-                   "[<server>]",
-                   "Override the block with this command. Can optionally "
-                   "specify which server to query.");
+        AddCommand("GetMotd", t_d("[<server>]"),
+                   t_d("Override the block with this command. Can optionally "
+                       "specify which server to query."),
+                   [this](const CString& sLine) { OverrideCommand(sLine); });
     }
 
     ~CBlockMotd() override {}
 
     void OverrideCommand(const CString& sLine) {
         if (!GetNetwork() || !GetNetwork()->GetIRCSock()) {
-            PutModule("You are not connected to an IRC Server.");
+            PutModule(t_s("You are not connected to an IRC Server."));
             return;
         }
 
@@ -102,5 +101,6 @@ void TModInfo<CBlockMotd>(CModInfo& Info) {
     Info.SetWikiPage("block_motd");
 }
 
-USERMODULEDEFS(CBlockMotd,
-               "Block the MOTD from IRC so it's not sent to your client(s).")
+USERMODULEDEFS(
+    CBlockMotd,
+    t_s("Block the MOTD from IRC so it's not sent to your client(s)."))
