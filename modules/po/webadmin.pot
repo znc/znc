@@ -947,7 +947,7 @@ msgstr ""
 msgid "Are you sure you want to delete user “{1}”?"
 msgstr ""
 
-#: webadmin.cpp:91 webadmin.cpp:1853
+#: webadmin.cpp:91 webadmin.cpp:1860
 msgid "Global Settings"
 msgstr ""
 
@@ -955,11 +955,11 @@ msgstr ""
 msgid "Your Settings"
 msgstr ""
 
-#: webadmin.cpp:94 webadmin.cpp:1665
+#: webadmin.cpp:94 webadmin.cpp:1672
 msgid "Traffic Info"
 msgstr ""
 
-#: webadmin.cpp:97 webadmin.cpp:1644
+#: webadmin.cpp:97 webadmin.cpp:1651
 msgid "Manage Users"
 msgstr ""
 
@@ -975,7 +975,7 @@ msgstr ""
 msgid "Timeout can't be less than 30 seconds!"
 msgstr ""
 
-#: webadmin.cpp:391 webadmin.cpp:419 webadmin.cpp:1169 webadmin.cpp:2035
+#: webadmin.cpp:391 webadmin.cpp:419 webadmin.cpp:1173 webadmin.cpp:2042
 msgid "Unable to load module [{1}]: {2}"
 msgstr ""
 
@@ -984,7 +984,7 @@ msgid "Unable to load module [{1}] with arguments [{2}]"
 msgstr ""
 
 #: webadmin.cpp:505 webadmin.cpp:609 webadmin.cpp:634 webadmin.cpp:656
-#: webadmin.cpp:690 webadmin.cpp:1236
+#: webadmin.cpp:690 webadmin.cpp:1240
 msgid "No such user"
 msgstr ""
 
@@ -1000,11 +1000,11 @@ msgstr ""
 msgid "Please don't delete yourself, suicide is not the answer!"
 msgstr ""
 
-#: webadmin.cpp:699 webadmin.cpp:921 webadmin.cpp:1300
+#: webadmin.cpp:699 webadmin.cpp:955 webadmin.cpp:1305
 msgid "Edit User [{1}]"
 msgstr ""
 
-#: webadmin.cpp:703 webadmin.cpp:953
+#: webadmin.cpp:703 webadmin.cpp:881
 msgid "Edit Network [{1}]"
 msgstr ""
 
@@ -1024,7 +1024,7 @@ msgstr ""
 msgid "Add Channel"
 msgstr ""
 
-#: webadmin.cpp:740 webadmin.cpp:1491
+#: webadmin.cpp:740 webadmin.cpp:1498
 msgid "Auto Clear Chan Buffer"
 msgstr ""
 
@@ -1056,130 +1056,130 @@ msgstr ""
 msgid "Channel was added/modified, but config file was not written"
 msgstr ""
 
-#: webadmin.cpp:929
+#: webadmin.cpp:878
 msgid "Edit Network [{1}] of User [{2}]"
 msgstr ""
 
-#: webadmin.cpp:990 webadmin.cpp:1058
+#: webadmin.cpp:885 webadmin.cpp:1062
 msgid ""
 "Network number limit reached. Ask an admin to increase the limit for you, or "
 "delete unneeded networks from Your Settings."
 msgstr ""
 
-#: webadmin.cpp:998
+#: webadmin.cpp:893
 msgid "Add Network for User [{1}]"
 msgstr ""
 
-#: webadmin.cpp:1006
+#: webadmin.cpp:894
 msgid "Add Network"
 msgstr ""
 
-#: webadmin.cpp:1052
+#: webadmin.cpp:1056
 msgid "Network name is a required argument"
 msgstr ""
 
-#: webadmin.cpp:1176 webadmin.cpp:2042
+#: webadmin.cpp:1180 webadmin.cpp:2049
 msgid "Unable to reload module [{1}]: {2}"
 msgstr ""
 
-#: webadmin.cpp:1213
+#: webadmin.cpp:1217
 msgid "Network was added/modified, but config file was not written"
 msgstr ""
 
-#: webadmin.cpp:1242
+#: webadmin.cpp:1246
 msgid "That network doesn't exist for this user"
 msgstr ""
 
-#: webadmin.cpp:1259
+#: webadmin.cpp:1263
 msgid "Network was deleted, but config file was not written"
 msgstr ""
 
-#: webadmin.cpp:1273
+#: webadmin.cpp:1277
 msgid "That channel doesn't exist for this network"
 msgstr ""
 
-#: webadmin.cpp:1282
+#: webadmin.cpp:1286
 msgid "Channel was deleted, but config file was not written"
 msgstr ""
 
-#: webadmin.cpp:1308
+#: webadmin.cpp:1314
 msgid "Clone User [{1}]"
 msgstr ""
 
-#: webadmin.cpp:1493
+#: webadmin.cpp:1500
 msgid ""
 "Automatically Clear Channel Buffer After Playback (the default value for new "
 "channels)"
 msgstr ""
 
-#: webadmin.cpp:1503
+#: webadmin.cpp:1510
 msgid "Multi Clients"
 msgstr ""
 
-#: webadmin.cpp:1510
+#: webadmin.cpp:1517
 msgid "Append Timestamps"
 msgstr ""
 
-#: webadmin.cpp:1517
+#: webadmin.cpp:1524
 msgid "Prepend Timestamps"
 msgstr ""
 
-#: webadmin.cpp:1525
+#: webadmin.cpp:1532
 msgid "Deny LoadMod"
 msgstr ""
 
-#: webadmin.cpp:1532
+#: webadmin.cpp:1539
 msgid "Admin"
 msgstr ""
 
-#: webadmin.cpp:1542
+#: webadmin.cpp:1549
 msgid "Deny SetBindHost"
 msgstr ""
 
-#: webadmin.cpp:1550
+#: webadmin.cpp:1557
 msgid "Auto Clear Query Buffer"
 msgstr ""
 
-#: webadmin.cpp:1552
+#: webadmin.cpp:1559
 msgid "Automatically Clear Query Buffer After Playback"
 msgstr ""
 
-#: webadmin.cpp:1576
+#: webadmin.cpp:1583
 msgid "Invalid Submission: User {1} already exists"
 msgstr ""
 
-#: webadmin.cpp:1598 webadmin.cpp:1609
+#: webadmin.cpp:1605 webadmin.cpp:1616
 msgid "Invalid submission: {1}"
 msgstr ""
 
-#: webadmin.cpp:1604
+#: webadmin.cpp:1611
 msgid "User was added, but config file was not written"
 msgstr ""
 
-#: webadmin.cpp:1615
+#: webadmin.cpp:1622
 msgid "User was edited, but config file was not written"
 msgstr ""
 
-#: webadmin.cpp:1773
+#: webadmin.cpp:1780
 msgid "Choose either IPv4 or IPv6 or both."
 msgstr ""
 
-#: webadmin.cpp:1790
+#: webadmin.cpp:1797
 msgid "Choose either IRC or HTTP or both."
 msgstr ""
 
-#: webadmin.cpp:1803 webadmin.cpp:1839
+#: webadmin.cpp:1810 webadmin.cpp:1846
 msgid "Port was changed, but config file was not written"
 msgstr ""
 
-#: webadmin.cpp:1829
+#: webadmin.cpp:1836
 msgid "Invalid request."
 msgstr ""
 
-#: webadmin.cpp:1843
+#: webadmin.cpp:1850
 msgid "The specified listener was not found."
 msgstr ""
 
-#: webadmin.cpp:2071
+#: webadmin.cpp:2078
 msgid "Settings were changed, but config file was not written"
 msgstr ""

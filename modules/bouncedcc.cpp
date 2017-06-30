@@ -98,12 +98,12 @@ class CBounceDCCMod : public CModule {
   public:
     void ListDCCsCommand(const CString& sLine) {
         CTable Table;
-        Table.AddColumn("Type");
-        Table.AddColumn("State");
-        Table.AddColumn("Speed");
-        Table.AddColumn("Nick");
-        Table.AddColumn("IP");
-        Table.AddColumn("File");
+        Table.AddColumn(t_s("Type", "list"));
+        Table.AddColumn(t_s("State", "list"));
+        Table.AddColumn(t_s("Speed", "list"));
+        Table.AddColumn(t_s("Nick", "list"));
+        Table.AddColumn(t_s("IP", "list"));
+        Table.AddColumn(t_s("File", "list"));
 
         set<CSocket*>::const_iterator it;
         for (it = BeginSockets(); it != EndSockets(); ++it) {
@@ -112,29 +112,29 @@ class CBounceDCCMod : public CModule {
 
             if (!(pSock->IsRemote())) {
                 Table.AddRow();
-                Table.SetCell("Nick", pSock->GetRemoteNick());
-                Table.SetCell("IP", pSock->GetRemoteAddr());
+                Table.SetCell(t_s("Nick", "list"), pSock->GetRemoteNick());
+                Table.SetCell(t_s("IP", "list"), pSock->GetRemoteAddr());
 
                 if (pSock->IsChat()) {
-                    Table.SetCell("Type", "Chat");
+                    Table.SetCell(t_s("Type", "list"), t_s("Chat", "list"));
                 } else {
-                    Table.SetCell("Type", "Xfer");
-                    Table.SetCell("File", pSock->GetFileName());
+                    Table.SetCell(t_s("Type", "list"), t_s("Xfer", "list"));
+                    Table.SetCell(t_s("File", "list"), pSock->GetFileName());
                 }
 
-                CString sState = "Waiting";
+                CString sState = t_s("Waiting");
                 if ((pSock->IsConnected()) || (pSock->IsPeerConnected())) {
-                    sState = "Halfway";
+                    sState = t_s("Halfway");
                     if ((pSock->IsConnected()) && (pSock->IsPeerConnected())) {
-                        sState = "Connected";
+                        sState = t_s("Connected");
                     }
                 }
-                Table.SetCell("State", sState);
+                Table.SetCell(t_s("State", "list"), sState);
             }
         }
 
         if (PutModule(Table) == 0) {
-            PutModule("You have no active DCCs.");
+            PutModule(t_s("You have no active DCCs."));
         }
     }
 
@@ -145,17 +145,16 @@ class CBounceDCCMod : public CModule {
             SetNV("UseClientIP", sValue);
         }
 
-        PutModule("UseClientIP: " + CString(GetNV("UseClientIP").ToBool()));
+        PutModule(t_f("Use client IP: {1}")(GetNV("UseClientIP").ToBool()));
     }
 
     MODCONSTRUCTOR(CBounceDCCMod) {
         AddHelpCommand();
-        AddCommand("ListDCCs", static_cast<CModCommand::ModCmdFunc>(
-                                   &CBounceDCCMod::ListDCCsCommand),
-                   "", "List all active DCCs");
-        AddCommand("UseClientIP", static_cast<CModCommand::ModCmdFunc>(
-                                      &CBounceDCCMod::UseClientIPCommand),
-                   "<true|false>");
+        AddCommand("ListDCCs", "", t_d("List all active DCCs"),
+                   [this](const CString& sLine) { ListDCCsCommand(sLine); });
+        AddCommand("UseClientIP", "<true|false>",
+                   t_d("Change the option to use IP of client"),
+                   [this](const CString& sLine) { UseClientIPCommand(sLine); });
     }
 
     ~CBounceDCCMod() override {}
@@ -381,10 +380,10 @@ void CDCCBounce::ReadLine(const CString& sData) {
 void CDCCBounce::ReachedMaxBuffer() {
     DEBUG(GetSockName() << " == ReachedMaxBuffer()");
 
-    CString sType = (m_bIsChat) ? "Chat" : "Xfer";
+    CString sType = m_bIsChat ? t_s("Chat", "type") : t_s("Xfer", "type");
 
-    m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick +
-                         "): Too long line received");
+    m_pModule->PutModule(t_f("DCC {1} Bounce ({2}): Too long line received")(
+        sType, m_sRemoteNick));
     Close();
 }
 
@@ -410,58 +409,62 @@ void CDCCBounce::ReadPaused() {
 
 void CDCCBounce::Timeout() {
     DEBUG(GetSockName() << " == Timeout()");
-    CString sType = (m_bIsChat) ? "Chat" : "Xfer";
+    CString sType = m_bIsChat ? t_s("Chat", "type") : t_s("Xfer", "type");
 
     if (IsRemote()) {
         CString sHost = Csock::GetHostName();
         if (!sHost.empty()) {
-            sHost = " to [" + sHost + " " + CString(Csock::GetPort()) + "]";
+            m_pModule->PutModule(t_f(
+                "DCC {1} Bounce ({2}): Timeout while connecting to {3} {4}")(
+                sType, m_sRemoteNick, sHost, Csock::GetPort()));
         } else {
-            sHost = ".";
+            m_pModule->PutModule(
+                t_f("DCC {1} Bounce ({2}): Timeout while connecting.")(
+                    sType, m_sRemoteNick));
         }
-
-        m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick +
-                             "): Timeout while connecting" + sHost);
     } else {
-        m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick +
-                             "): Timeout waiting for incoming connection [" +
-                             Csock::GetLocalIP() + ":" +
-                             CString(Csock::GetLocalPort()) + "]");
+        m_pModule->PutModule(t_f(
+            "DCC {1} Bounce ({2}): Timeout while waiting for incoming "
+            "connection on {3} {4}")(sType, m_sRemoteNick, Csock::GetLocalIP(),
+                                     Csock::GetLocalPort()));
     }
 }
 
 void CDCCBounce::ConnectionRefused() {
     DEBUG(GetSockName() << " == ConnectionRefused()");
 
-    CString sType = (m_bIsChat) ? "Chat" : "Xfer";
+    CString sType = m_bIsChat ? t_s("Chat", "type") : t_s("Xfer", "type");
     CString sHost = Csock::GetHostName();
     if (!sHost.empty()) {
-        sHost = " to [" + sHost + " " + CString(Csock::GetPort()) + "]";
+        m_pModule->PutModule(
+            t_f("DCC {1} Bounce ({2}): Connection refused while connecting to "
+                "{3} {4}")(sType, m_sRemoteNick, sHost, Csock::GetPort()));
     } else {
-        sHost = ".";
+        m_pModule->PutModule(
+            t_f("DCC {1} Bounce ({2}): Connection refused while connecting.")(
+                sType, m_sRemoteNick));
     }
-
-    m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick +
-                         "): Connection Refused while connecting" + sHost);
 }
 
 void CDCCBounce::SockError(int iErrno, const CString& sDescription) {
     DEBUG(GetSockName() << " == SockError(" << iErrno << ")");
-    CString sType = (m_bIsChat) ? "Chat" : "Xfer";
+    CString sType = m_bIsChat ? t_s("Chat", "type") : t_s("Xfer", "type");
 
     if (IsRemote()) {
         CString sHost = Csock::GetHostName();
         if (!sHost.empty()) {
-            sHost = "[" + sHost + " " + CString(Csock::GetPort()) + "]";
+            m_pModule->PutModule(t_f(
+                "DCC {1} Bounce ({2}): Socket error on {3} {4}: {5}")(
+                sType, m_sRemoteNick, sHost, Csock::GetPort(), sDescription));
+        } else {
+            m_pModule->PutModule(t_f("DCC {1} Bounce ({2}): Socket error: {3}")(
+                sType, m_sRemoteNick, sDescription));
         }
-
-        m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick +
-                             "): Socket error [" + sDescription + "]" + sHost);
     } else {
-        m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick +
-                             "): Socket error [" + sDescription + "] [" +
-                             Csock::GetLocalIP() + ":" +
-                             CString(Csock::GetLocalPort()) + "]");
+        m_pModule->PutModule(
+            t_f("DCC {1} Bounce ({2}): Socket error on {3} {4}: {5}")(
+                sType, m_sRemoteNick, Csock::GetLocalIP(),
+                Csock::GetLocalPort(), sDescription));
     }
 }
 
@@ -541,5 +544,5 @@ void TModInfo<CBounceDCCMod>(CModInfo& Info) {
 }
 
 USERMODULEDEFS(CBounceDCCMod,
-               "Bounces DCC transfers through ZNC instead of sending them "
-               "directly to the user. ")
+               t_s("Bounces DCC transfers through ZNC instead of sending them "
+                   "directly to the user. "))
