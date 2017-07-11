@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -237,10 +237,11 @@ void CClient::SetNick(const CString& s) { m_sNick = s; }
 
 void CClient::SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect,
                          bool bReconnect) {
-    if (bDisconnect) {
-        if (m_pNetwork) {
-            m_pNetwork->ClientDisconnected(this);
+    if (m_pNetwork) {
+        m_pNetwork->ClientDisconnected(this);
 
+        if (bDisconnect) {
+            ClearServerDependentCaps();
             // Tell the client they are no longer in these channels.
             const vector<CChan*>& vChans = m_pNetwork->GetChans();
             for (const CChan* pChan : vChans) {
@@ -249,9 +250,9 @@ void CClient::SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect,
                               " PART " + pChan->GetName());
                 }
             }
-        } else if (m_pUser) {
-            m_pUser->UserDisconnected(this);
         }
+    } else if (m_pUser) {
+        m_pUser->UserDisconnected(this);
     }
 
     m_pNetwork = pNetwork;
@@ -445,7 +446,7 @@ void CClient::ConnectionRefused() {
 void CClient::Disconnected() {
     DEBUG(GetSockName() << " == Disconnected()");
     CIRCNetwork* pNetwork = m_pNetwork;
-    SetNetwork(nullptr, true, false);
+    SetNetwork(nullptr, false, false);
 
     if (m_pUser) {
         NETWORKMODULECALL(OnClientDisconnect(), m_pUser, pNetwork, this,
@@ -483,13 +484,8 @@ CString CClient::GetFullName() const {
 }
 
 void CClient::PutClient(const CString& sLine) {
-    bool bReturn = false;
-    CString sCopy = sLine;
-    NETWORKMODULECALL(OnSendToClient(sCopy, *this), m_pUser, m_pNetwork, this,
-                      &bReturn);
-    if (bReturn) return;
-    DEBUG("(" << GetFullName() << ") ZNC -> CLI [" << sCopy << "]");
-    Write(sCopy + "\r\n");
+    CMessage Message(sLine);
+    PutClient(Message);
 }
 
 bool CClient::PutClient(const CMessage& Message) {
@@ -563,33 +559,35 @@ bool CClient::PutClient(const CMessage& Message) {
         }
     }
 
-    CString sLine = Msg.ToString(CMessage::ExcludeTags);
-
-    // TODO: introduce a module hook that gives control over the tags that are
-    // sent
     MCString mssTags;
 
+    for (const auto& it : Msg.GetTags()) {
+        if (IsTagEnabled(it.first)) {
+            mssTags[it.first] = it.second;
+        }
+    }
+
     if (HasServerTime()) {
-        CString sServerTime = Msg.GetTag("time");
-        if (!sServerTime.empty()) {
-            mssTags["time"] = sServerTime;
-        } else {
-            mssTags["time"] = CUtils::FormatServerTime(Msg.GetTime());
-        }
+        // If the server didn't set the time tag, manually set it
+        mssTags.emplace("time", CUtils::FormatServerTime(Msg.GetTime()));
     }
 
-    if (HasBatch()) {
-        CString sBatch = Msg.GetTag("batch");
-        if (!sBatch.empty()) {
-            mssTags["batch"] = sBatch;
-        }
-    }
+    Msg.SetTags(mssTags);
+    Msg.SetClient(this);
+    Msg.SetNetwork(m_pNetwork);
 
-    if (!mssTags.empty()) {
-        CUtils::SetMessageTags(sLine, mssTags);
-    }
+    bool bReturn = false;
+    NETWORKMODULECALL(OnSendToClientMessage(Msg), m_pUser, m_pNetwork, this,
+                      &bReturn);
+    if (bReturn) return false;
 
-    PutClient(sLine);
+    CString sCopy = Msg.ToString();
+    NETWORKMODULECALL(OnSendToClient(sCopy, *this), m_pUser, m_pNetwork, this,
+                      &bReturn);
+    if (bReturn) return false;
+
+    DEBUG("(" << GetFullName() << ") ZNC -> CLI [" << sCopy << "]");
+    Write(sCopy + "\r\n");
     return true;
 }
 
@@ -820,6 +818,14 @@ void CClient::ParseIdentifier(const CString& sAuthLine) {
     }
 }
 
+void CClient::SetTagSupport(const CString& sTag, bool bState) {
+    if (bState) {
+        m_ssSupportedTags.insert(sTag);
+    } else {
+        m_ssSupportedTags.erase(sTag);
+    }
+}
+
 void CClient::NotifyServerDependentCaps(const SCString& ssCaps) {
     for (const CString& sCap : ssCaps) {
         const auto& it = m_mCoreCaps.find(sCap);
@@ -882,13 +888,13 @@ void CClient::AddBuffer(const T& Message) {
 }
 
 void CClient::EchoMessage(const CMessage& Message) {
+    CMessage EchoedMessage = Message;
     for (CClient* pClient : GetClients()) {
         if (pClient->HasEchoMessage() ||
             (pClient != this && (m_pNetwork->IsChan(Message.GetParam(0)) ||
                                  pClient->HasSelfMessage()))) {
-            CMessage EchoMessage(Message);
-            EchoMessage.SetNick(GetNickMask());
-            pClient->PutClient(EchoMessage);
+            EchoedMessage.SetNick(GetNickMask());
+            pClient->PutClient(EchoedMessage);
         }
     }
 }

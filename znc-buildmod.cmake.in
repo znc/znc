@@ -58,8 +58,8 @@ with tempfile.TemporaryDirectory() as cmdir:
     with open(os.path.join(cmdir, 'CMakeLists.txt'), 'w') as cm:
         print('cmake_minimum_required(VERSION 3.1)', file=cm)
         print('project(ExternalModules)', file=cm)
-        print('find_package(ZNC @ZNC_VERSION_MAJOR@.@ZNC_VERSION_MINOR@ PATHS '
-                '@CMAKE_INSTALL_FULL_DATADIR@/znc)', file=cm)
+        print('find_package(ZNC @ZNC_VERSION_MAJOR@.@ZNC_VERSION_MINOR@ HINTS '
+            '@CMAKE_INSTALL_FULL_DATADIR@/znc REQUIRED)', file=cm)
         if args.verbose > 0:
             print('set(CMAKE_VERBOSE_MAKEFILE true)', file=cm)
 

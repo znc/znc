@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2013 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -669,7 +669,7 @@ struct hash<CString> : hash<std::string> {};
 }
 
 // Make translateable messages easy to write:
-// _f("Foo is {1}")(foo)
+// t_f("Foo is {1}")(foo)
 class CInlineFormatMessage {
   public:
     explicit CInlineFormatMessage(const CString& sFormat)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -434,80 +434,6 @@ void CClient::UserCommand(CString& sLine) {
                       "] channels matching [" + sPatterns + "]");
             PutStatus("Disabled [" + CString(uDisabled) + "] channels");
         }
-    } else if (sCommand.Equals("SHOWCHAN")) {
-        if (!m_pNetwork) {
-            PutStatus(
-                "You must be connected with a network to use this command");
-            return;
-        }
-
-        CString sChan = sLine.Token(1, true);
-        if (sChan.empty()) {
-            PutStatus("Usage: ShowChan <#chan>");
-            return;
-        }
-
-        CChan* pChan = m_pNetwork->FindChan(sChan);
-        if (!pChan) {
-            PutStatus("No such channel [" + sChan + "]");
-            return;
-        }
-        sChan = pChan->GetPermStr() + pChan->GetName();
-        CString sStatus = pChan->IsOn()
-                              ? (pChan->IsDetached() ? "Detached" : "Joined")
-                              : (pChan->IsDisabled() ? "Disabled" : "Trying");
-
-        CTable Table;
-        Table.AddColumn(sChan);
-        Table.AddColumn(sStatus);
-
-        Table.AddRow();
-        Table.SetCell(sChan, "InConfig");
-        Table.SetCell(sStatus, CString(pChan->InConfig() ? "yes" : "no"));
-
-        Table.AddRow();
-        Table.SetCell(sChan, "Buffer");
-        Table.SetCell(
-            sStatus,
-            CString(pChan->GetBuffer().Size()) + "/" +
-                CString(pChan->GetBufferCount()) +
-                CString(pChan->HasBufferCountSet() ? "" : " (default)"));
-
-        Table.AddRow();
-        Table.SetCell(sChan, "AutoClearChanBuffer");
-        Table.SetCell(
-            sStatus,
-            CString(pChan->AutoClearChanBuffer() ? "yes" : "no") +
-                CString(pChan->HasAutoClearChanBufferSet() ? ""
-                                                           : " (default)"));
-
-        if (pChan->IsOn()) {
-            Table.AddRow();
-            Table.SetCell(sChan, "Topic");
-            Table.SetCell(sStatus, pChan->GetTopic());
-
-            Table.AddRow();
-            Table.SetCell(sChan, "Modes");
-            Table.SetCell(sStatus, pChan->GetModeString());
-
-            Table.AddRow();
-            Table.SetCell(sChan, "Users");
-
-            VCString vsUsers;
-            vsUsers.push_back("All: " + CString(pChan->GetNickCount()));
-
-            CIRCSock* pIRCSock = m_pNetwork->GetIRCSock();
-            const CString& sPerms = pIRCSock ? pIRCSock->GetPerms() : "";
-            map<char, unsigned int> mPerms = pChan->GetPermCounts();
-            for (char cPerm : sPerms) {
-                vsUsers.push_back(CString(cPerm) + ": " +
-                                  CString(mPerms[cPerm]));
-            }
-            Table.SetCell(sStatus,
-                          CString(", ").Join(vsUsers.begin(), vsUsers.end()));
-        }
-
-        PutStatus(Table);
     } else if (sCommand.Equals("LISTCHANS")) {
         if (!m_pNetwork) {
             PutStatus(
@@ -541,6 +467,8 @@ void CClient::UserCommand(CString& sLine) {
         }
 
         const vector<CChan*>& vChans = pNetwork->GetChans();
+        CIRCSock* pIRCSock = pNetwork->GetIRCSock();
+        CString sPerms = pIRCSock ? pIRCSock->GetPerms() : "";
 
         if (vChans.empty()) {
             PutStatus("There are no channels defined.");
@@ -550,17 +478,40 @@ void CClient::UserCommand(CString& sLine) {
         CTable Table;
         Table.AddColumn("Name");
         Table.AddColumn("Status");
+        Table.AddColumn("Conf");
+        Table.AddColumn("Buf");
+        Table.AddColumn("Clear");
+        Table.AddColumn("Modes");
+        Table.AddColumn("Users");
+
+        for (char cPerm : sPerms) {
+            Table.AddColumn(CString(cPerm));
+        }
 
         unsigned int uNumDetached = 0, uNumDisabled = 0, uNumJoined = 0;
 
         for (const CChan* pChan : vChans) {
             Table.AddRow();
             Table.SetCell("Name", pChan->GetPermStr() + pChan->GetName());
+            Table.SetCell("Status",
+                          pChan->IsOn()
+                              ? (pChan->IsDetached() ? "Detached" : "Joined")
+                              : (pChan->IsDisabled() ? "Disabled" : "Trying"));
+            Table.SetCell("Conf", CString(pChan->InConfig() ? "yes" : ""));
+            Table.SetCell("Buf",
+                          CString(pChan->HasBufferCountSet() ? "*" : "") +
+                              CString(pChan->GetBufferCount()));
             Table.SetCell(
-                "Status",
-                ((pChan->IsOn())
-                     ? ((pChan->IsDetached()) ? "Detached" : "Joined")
-                     : ((pChan->IsDisabled()) ? "Disabled" : "Trying")));
+                "Clear",
+                CString(pChan->HasAutoClearChanBufferSet() ? "*" : "") +
+                    CString(pChan->AutoClearChanBuffer() ? "yes" : ""));
+            Table.SetCell("Modes", pChan->GetModeString());
+            Table.SetCell("Users", CString(pChan->GetNickCount()));
+
+            std::map<char, unsigned int> mPerms = pChan->GetPermCounts();
+            for (char cPerm : sPerms) {
+                Table.SetCell(CString(cPerm), CString(mPerms[cPerm]));
+            }
 
             if (pChan->IsDetached()) uNumDetached++;
             if (pChan->IsOn()) uNumJoined++;
@@ -1768,8 +1719,6 @@ void CClient::HelpUser(const CString& sFilter) {
         "List all trusted server SSL certificates of current IRC network.",
         sFilter);
 
-    AddCommandHelp(Table, "ShowChan", "<#chan>", "Show channel details",
-                   sFilter);
     AddCommandHelp(Table, "EnableChan", "<#chans>", "Enable channels", sFilter);
     AddCommandHelp(Table, "DisableChan", "<#chans>", "Disable channels",
                    sFilter);

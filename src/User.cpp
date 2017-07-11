@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1359,7 +1359,7 @@ CString CUser::GetRealName() const {
     // Not include version number via GetTag() because of
     // https://github.com/znc/znc/issues/818#issuecomment-70402820
     return (!m_sRealName.Trim_n().empty()) ? m_sRealName
-                                           : "ZNC - http://znc.in";
+                                           : "ZNC - https://znc.in";
 }
 const CString& CUser::GetBindHost() const { return m_sBindHost; }
 const CString& CUser::GetDCCBindHost() const { return m_sDCCBindHost; }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -152,8 +152,8 @@ CIRCNetwork::CIRCNetwork(CUser* pUser, const CString& sName)
       m_uServerIdx(0),
       m_IRCNick(),
       m_bIRCAway(false),
-      m_fFloodRate(1),
-      m_uFloodBurst(4),
+      m_fFloodRate(2),
+      m_uFloodBurst(9),
       m_RawBuffer(),
       m_MotdBuffer(),
       m_NoticeBuffer(),
@@ -731,7 +731,6 @@ void CIRCNetwork::ClientDisconnected(CClient* pClient) {
     if (it != m_vClients.end()) {
         m_vClients.erase(it);
     }
-    pClient->ClearServerDependentCaps();
 }
 
 CUser* CIRCNetwork::GetUser() const { return m_pUser; }

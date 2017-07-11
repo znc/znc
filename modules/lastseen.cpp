@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ class CLastSeenMod : public CModule {
     typedef multimap<time_t, CUser*> MTimeMulti;
     typedef map<CString, CUser*> MUsers;
 
+    // Shows all users as well as the time they were last seen online
     void ShowCommand(const CString& sLine) {
         if (!GetUser()->IsAdmin()) {
             PutModule("Access denied");

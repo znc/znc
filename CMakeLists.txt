@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ project(ZNC VERSION 1.7.0)
 set(ZNC_VERSION 1.7.x)
 set(append_git_version true)
 set(alpha_version "") # e.g. "-rc1"
+set(VERSION_EXTRA "" CACHE STRING
+	"Additional string appended to version, e.g. to mark distribution")
 
 set(PROJECT_VERSION "${ZNC_VERSION}")
 
@@ -127,7 +129,8 @@ set(HAVE_ICU "${ICU_FOUND}")
 
 set(WANT_PERL false CACHE BOOL "Support Perl modules")
 set(WANT_PYTHON false CACHE BOOL "Support Python modules")
-set(WANT_PYTHON_VERSION "" CACHE STRING "Python version to use, or empty")
+set(WANT_PYTHON_VERSION "python3" CACHE STRING
+	"Python version to use, e.g. python-3.5, this name is passed to pkg-config")
 if(WANT_PYTHON AND NOT ICU_FOUND)
 	message(FATAL_ERROR "Modpython requires ZNC to be compiled with charset "
 	"support, but ICU library not found")
@@ -169,11 +172,7 @@ if(WANT_PERL)
 endif()
 if (WANT_PYTHON)
 	find_package(Perl 5.10 REQUIRED)
-	if(WANT_PYTHON_VERSION)
-		find_package(PythonLibs "${WANT_PYTHON_VERSION}" EXACT REQUIRED)
-	else()
-		find_package(PythonLibs 3 REQUIRED)
-	endif()
+	pkg_check_modules(PYTHON "${WANT_PYTHON_VERSION}" REQUIRED)
 endif()
 
 set(WANT_TCL false CACHE BOOL "Support Tcl modules")
@@ -336,14 +335,14 @@ macro(summary_line text var)
 	endif()
 endmacro()
 set(summary_lines
-	"ZNC ${ZNC_VERSION}${alpha_version} configured"
+	"ZNC ${ZNC_VERSION}${VERSION_EXTRA}${alpha_version} configured"
 	" "
 	"Prefix    : ${CMAKE_INSTALL_PREFIX}")
 summary_line("SSL      " "${OPENSSL_FOUND}")
 summary_line("IPv6     " "${WANT_IPV6}")
 summary_line("Async DNS" "${HAVE_THREADED_DNS}")
 summary_line("Perl     " "${PERLLIBS_FOUND}")
-summary_line("Python   " "${PYTHONLIBS_FOUND}")
+summary_line("Python   " "${PYTHON_FOUND}")
 summary_line("Tcl      " "${TCL_FOUND}")
 summary_line("Cyrus    " "${CYRUS_FOUND}")
 summary_line("Charset  " "${ICU_FOUND}")

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,16 +23,15 @@ class CAutoCycleMod : public CModule {
   public:
     MODCONSTRUCTOR(CAutoCycleMod) {
         AddHelpCommand();
-        AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(
-                              &CAutoCycleMod::OnAddCommand),
-                   "[!]<#chan>",
-                   "Add an entry, use !#chan to negate and * for wildcards");
-        AddCommand("Del", static_cast<CModCommand::ModCmdFunc>(
-                              &CAutoCycleMod::OnDelCommand),
-                   "[!]<#chan>", "Remove an entry, needs to be an exact match");
-        AddCommand("List", static_cast<CModCommand::ModCmdFunc>(
-                               &CAutoCycleMod::OnListCommand),
-                   "", "List all entries");
+        AddCommand(
+            "Add", t_d("[!]<#chan>"),
+            t_d("Add an entry, use !#chan to negate and * for wildcards"),
+            [=](const CString& sLine) { OnAddCommand(sLine); });
+        AddCommand("Del", t_d("[!]<#chan>"),
+                   t_d("Remove an entry, needs to be an exact match"),
+                   [=](const CString& sLine) { OnDelCommand(sLine); });
+        AddCommand("List", "", t_d("List all entries"),
+                   [=](const CString& sLine) { OnListCommand(sLine); });
         m_recentlyCycled.SetTTL(15 * 1000);
     }
 
@@ -44,7 +43,7 @@ class CAutoCycleMod : public CModule {
 
         for (const CString& sChan : vsChans) {
             if (!Add(sChan)) {
-                PutModule("Unable to add [" + sChan + "]");
+                PutModule(t_f("Unable to add {1}")(sChan));
             }
         }
 
@@ -64,11 +63,11 @@ class CAutoCycleMod : public CModule {
         CString sChan = sLine.Token(1);
 
         if (AlreadyAdded(sChan)) {
-            PutModule(sChan + " is already added");
+            PutModule(t_f("{1} is already added")(sChan));
         } else if (Add(sChan)) {
-            PutModule("Added " + sChan + " to list");
+            PutModule(t_f("Added {1} to list")(sChan));
         } else {
-            PutModule("Usage: Add [!]<#chan>");
+            PutModule(t_s("Usage: Add [!]<#chan>"));
         }
     }
 
@@ -76,29 +75,29 @@ class CAutoCycleMod : public CModule {
         CString sChan = sLine.Token(1);
 
         if (Del(sChan))
-            PutModule("Removed " + sChan + " from list");
+            PutModule(t_f("Removed {1} from list")(sChan));
         else
-            PutModule("Usage: Del [!]<#chan>");
+            PutModule(t_s("Usage: Del [!]<#chan>"));
     }
 
     void OnListCommand(const CString& sLine) {
         CTable Table;
-        Table.AddColumn("Chan");
+        Table.AddColumn(t_s("Channel"));
 
         for (const CString& sChan : m_vsChans) {
             Table.AddRow();
-            Table.SetCell("Chan", sChan);
+            Table.SetCell(t_s("Channel"), sChan);
         }
 
         for (const CString& sChan : m_vsNegChans) {
             Table.AddRow();
-            Table.SetCell("Chan", "!" + sChan);
+            Table.SetCell(t_s("Channel"), "!" + sChan);
         }
 
         if (Table.size()) {
             PutModule(Table);
         } else {
-            PutModule("You have no entries.");
+            PutModule(t_s("You have no entries."));
         }
     }
 
@@ -226,9 +225,10 @@ template <>
 void TModInfo<CAutoCycleMod>(CModInfo& Info) {
     Info.SetWikiPage("autocycle");
     Info.SetHasArgs(true);
-    Info.SetArgsHelpText(
-        "List of channel masks and channel masks with ! before them.");
+    Info.SetArgsHelpText(Info.t_s(
+        "List of channel masks and channel masks with ! before them."));
 }
 
-NETWORKMODULEDEFS(CAutoCycleMod,
-                  "Rejoins channels to gain Op if you're the only user left")
+NETWORKMODULEDEFS(
+    CAutoCycleMod,
+    t_s("Rejoins channels to gain Op if you're the only user left"))

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@
 #include <znc/Message.h>
 #include <znc/main.h>
 #include <memory>
+#include <functional>
 
 // Forward Declarations
 class CZNC;
@@ -124,6 +125,7 @@ class CClient : public CIRCSocket {
           m_sIdentifier(""),
           m_spAuth(),
           m_ssAcceptedCaps(),
+          m_ssSupportedTags(),
           m_mCoreCaps({
               {"multi-prefix",
                {false, [this](bool bVal) { m_bNamesx = bVal; }}},
@@ -132,8 +134,14 @@ class CClient : public CIRCSocket {
               {"echo-message",
                {false, [this](bool bVal) { m_bEchoMessage = bVal; }}},
               {"server-time",
-               {false, [this](bool bVal) { m_bServerTime = bVal; }}},
-              {"batch", {false, [this](bool bVal) { m_bBatch = bVal; }}},
+               {false, [this](bool bVal) {
+                m_bServerTime = bVal;
+                SetTagSupport("time", bVal);
+               }}},
+              {"batch", {false, [this](bool bVal) {
+                m_bBatch = bVal;
+                SetTagSupport("batch", bVal);
+              }}},
               {"cap-notify",
                {false, [this](bool bVal) { m_bCapNotify = bVal; }}},
               {"away-notify",
@@ -258,6 +266,15 @@ class CClient : public CIRCSocket {
         return 1 == m_ssAcceptedCaps.count(sCap);
     }
 
+    bool IsTagEnabled(const CString& sTag) const {
+        return 1 == m_ssSupportedTags.count(sTag);
+    }
+    /** Registers a tag as being supported or unsupported by a client.
+     *  @param sTag The tag to register.
+     *  @param bState Whether the client supports the tag.
+     */
+    void SetTagSupport(const CString& sTag, bool bState);
+
     void NotifyServerDependentCaps(const SCString& ssCaps);
     void ClearServerDependentCaps();
 
@@ -336,6 +353,7 @@ class CClient : public CIRCSocket {
     CString m_sIdentifier;
     std::shared_ptr<CAuthBase> m_spAuth;
     SCString m_ssAcceptedCaps;
+    SCString m_ssSupportedTags;
     // The capabilities supported by the ZNC core - capability names mapped
     // to a pair which contains a bool describing whether the capability is
     // server-dependent, and a capability value change handler.

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,6 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+_cov = None
+import os
+if os.environ.get('ZNC_MODPYTHON_COVERAGE'):
+    import coverage
+    _cov = coverage.Coverage(auto_data=True, branch=True)
+    _cov.start()
 
 from functools import wraps
 import imp
@@ -309,6 +316,9 @@ class Module:
         pass
 
     def OnPart(self, Nick, Channel, sMessage=None):
+        pass
+
+    def OnInvite(self, Nick, sChan):
         pass
 
     def OnChanBufferStarting(self, Chan, Client):
@@ -652,6 +662,12 @@ class Module:
     def OnUnknownUserRawMessage(self, msg):
         pass
 
+    def OnSendToClientMessage(self, msg):
+        pass
+
+    def OnSendToIRCMessage(self, msg):
+        pass
+
 
 def make_inherit(cl, parent, attr):
     def make_caller(parent, name, attr):
@@ -821,6 +837,8 @@ def unload_all():
         # add it back to set, otherwise unload_module will be sad
         _py_modules.add(mod)
         unload_module(mod)
+    if _cov:
+        _cov.stop()
 
 
 def gather_mod_info(cl, modinfo):

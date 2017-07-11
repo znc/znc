@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
  * Author: imaginos <imaginos@imaginos.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -64,7 +64,7 @@ class CAway : public CModule {
         if (sCommand.Token(1) != "-quiet") {
             sReason = CUtils::FormatTime(curtime, sCommand.Token(1, true),
                                          GetUser()->GetTimezone());
-            PutModNotice("You have been marked as away");
+            PutModNotice(t_s("You have been marked as away"));
         } else {
             sReason = CUtils::FormatTime(curtime, sCommand.Token(2, true),
                                          GetUser()->GetTimezone());
@@ -75,7 +75,7 @@ class CAway : public CModule {
 
     void BackCommand(const CString& sCommand) {
         if ((m_vMessages.empty()) && (sCommand.Token(1) != "-quiet"))
-            PutModNotice("Welcome Back!");
+            PutModNotice(t_s("Welcome back!"));
         Ping();
         Back();
     }
@@ -97,21 +97,20 @@ class CAway : public CModule {
     void DeleteCommand(const CString& sCommand) {
         CString sWhich = sCommand.Token(1);
         if (sWhich == "all") {
-            PutModNotice("Deleted " + CString(m_vMessages.size()) +
-                         " Messages.");
+            PutModNotice(t_f("Deleted {1} messages")(m_vMessages.size()));
             for (u_int a = 0; a < m_vMessages.size(); a++)
                 m_vMessages.erase(m_vMessages.begin() + a--);
         } else if (sWhich.empty()) {
-            PutModNotice("USAGE: delete <num|all>");
+            PutModNotice(t_s("USAGE: delete <num|all>"));
             return;
         } else {
             u_int iNum = sWhich.ToUInt();
             if (iNum >= m_vMessages.size()) {
-                PutModNotice("Illegal Message # Requested");
+                PutModNotice(t_s("Illegal message # requested"));
                 return;
             } else {
                 m_vMessages.erase(m_vMessages.begin() + iNum);
-                PutModNotice("Message Erased.");
+                PutModNotice(t_s("Message erased"));
             }
             SaveBufferToDisk();
         }
@@ -120,9 +119,9 @@ class CAway : public CModule {
     void SaveCommand(const CString& sCommand) {
         if (m_saveMessages) {
             SaveBufferToDisk();
-            PutModNotice("Messages saved to disk.");
+            PutModNotice(t_s("Messages saved to disk"));
         } else {
-            PutModNotice("There are no messages to save.");
+            PutModNotice(t_s("There are no messages to save"));
         }
     }
 
@@ -133,7 +132,7 @@ class CAway : public CModule {
 
     void PassCommand(const CString& sCommand) {
         m_sPassword = sCommand.Token(1);
-        PutModNotice("Password Updated to [" + m_sPassword + "]");
+        PutModNotice(t_f("Password updated to [{1}]")(m_sPassword));
     }
 
     void ShowCommand(const CString& sCommand) {
@@ -145,7 +144,7 @@ class CAway : public CModule {
 
             if ((sTime.empty()) || (sWhom.empty()) || (sMessage.empty())) {
                 // illegal format
-                PutModule("Corrupt message! [" + m_vMessages[a] + "]");
+                PutModule(t_f("Corrupt message! [{1}]")(m_vMessages[a]));
                 m_vMessages.erase(m_vMessages.begin() + a--);
                 continue;
             }
@@ -157,7 +156,7 @@ class CAway : public CModule {
             size_t iCount = strftime(szFormat, 64, "%F %T", &t);
 
             if (iCount <= 0) {
-                PutModule("Corrupt time stamp! [" + m_vMessages[a] + "]");
+                PutModule(t_f("Corrupt time stamp! [{1}]")(m_vMessages[a]));
                 m_vMessages.erase(m_vMessages.begin() + a--);
                 continue;
             }
@@ -176,17 +175,17 @@ class CAway : public CModule {
                 PutModule(it->second[a]);
         }
 
-        PutModule("#--- End Messages");
+        PutModule(t_s("#--- End of messages"));
     }
 
     void EnableTimerCommand(const CString& sCommand) {
         SetAwayTime(300);
-        PutModule("Timer set to 300 seconds");
+        PutModule(t_s("Timer set to 300 seconds"));
     }
 
     void DisableTimerCommand(const CString& sCommand) {
         SetAwayTime(0);
-        PutModule("Timer disabled");
+        PutModule(t_s("Timer disabled"));
     }
 
     void SetTimerCommand(const CString& sCommand) {
@@ -195,14 +194,13 @@ class CAway : public CModule {
         SetAwayTime(iSetting);
 
         if (iSetting == 0)
-            PutModule("Timer disabled");
+            PutModule(t_s("Timer disabled"));
         else
-            PutModule("Timer set to " + CString(iSetting) + " seconds");
+            PutModule(t_f("Timer set to {1} seconds")(iSetting));
     }
 
     void TimerCommand(const CString& sCommand) {
-        PutModule("Current timer setting: " + CString(GetAwayTime()) +
-                  " seconds");
+        PutModule(t_f("Current timer setting: {1} seconds")(GetAwayTime()));
     }
 
   public:
@@ -277,16 +275,16 @@ class CAway : public CModule {
                 m_sPassword = CBlowfish::MD5(sMyArgs);
             } else {
                 sMessage =
-                    "This module needs as an argument a keyphrase used for "
-                    "encryption";
+                    t_s("This module needs as an argument a keyphrase used for "
+                        "encryption");
                 return false;
             }
 
             if (!BootStrap()) {
-                sMessage =
+                sMessage = t_s(
                     "Failed to decrypt your saved messages - "
                     "Did you give the right encryption key as an argument to "
-                    "this module?";
+                    "this module?");
                 m_bBootError = true;
                 return false;
             }
@@ -384,13 +382,11 @@ class CAway : public CModule {
         m_bIsAway = false;
         if (!m_vMessages.empty()) {
             if (bUsePrivMessage) {
-                PutModule("Welcome Back!");
-                PutModule("You have " + CString(m_vMessages.size()) +
-                          " messages!");
+                PutModule(t_s("Welcome back!"));
+                PutModule(t_f("You have {1} messages!")(m_vMessages.size()));
             } else {
-                PutModNotice("Welcome Back!");
-                PutModNotice("You have " + CString(m_vMessages.size()) +
-                             " messages!");
+                PutModNotice(t_s("Welcome back!"));
+                PutModNotice(t_f("You have {1} messages!")(m_vMessages.size()));
             }
         }
         m_sReason = "";
@@ -457,7 +453,7 @@ class CAway : public CModule {
         CFile File(sMessages);
 
         if (sMessages.empty() || !File.Open() || !File.ReadFile(sFile)) {
-            PutModule("Unable to find buffer");
+            PutModule(t_s("Unable to find buffer"));
             return (true);  // gonna be successful here
         }
 
@@ -470,7 +466,7 @@ class CAway : public CModule {
             if (sBuffer.Left(strlen(CRYPT_VERIFICATION_TOKEN)) !=
                 CRYPT_VERIFICATION_TOKEN) {
                 // failed to decode :(
-                PutModule("Unable to decode Encrypted messages");
+                PutModule(t_s("Unable to decode encrypted messages"));
                 return (false);
             }
             sBuffer.erase(0, strlen(CRYPT_VERIFICATION_TOKEN));
@@ -516,11 +512,11 @@ template <>
 void TModInfo<CAway>(CModInfo& Info) {
     Info.SetWikiPage("awaystore");
     Info.SetHasArgs(true);
-    Info.SetArgsHelpText(
+    Info.SetArgsHelpText(Info.t_s(
         "[ -notimer | -timer N ] [-chans]  passw0rd . N is number of seconds, "
-        "600 by default.");
+        "600 by default."));
 }
 
-NETWORKMODULEDEFS(CAway,
-                  "Adds auto-away with logging, useful when you use ZNC from "
-                  "different locations")
+NETWORKMODULEDEFS(
+    CAway, t_s("Adds auto-away with logging, useful when you use ZNC from "
+               "different locations"))

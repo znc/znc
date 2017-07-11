@@ -70,19 +70,19 @@ msgid "Save to config"
 msgstr "Сохранять в файл конфигурации"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:67
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:399
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:404
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:282
 msgid "Module {1}"
 msgstr "Модуль {1}"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:75
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:408
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:413
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:290
 msgid "Save and return"
 msgstr "Сохранить и вернуться"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:76
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:409
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:414
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:291
 msgid "Save and continue"
 msgstr "Сохранить и продолжить"
@@ -159,7 +159,7 @@ msgstr "Текущий"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:72
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:123
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:343
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:348
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:185
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:15
 msgid "Add"
@@ -170,12 +170,12 @@ msgid "Settings"
 msgstr "Настройки"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:90
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:362
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:367
 msgid "Skin:"
 msgstr "Тема:"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:94
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:368
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:373
 msgid "Default"
 msgstr "По умолчанию"
 
@@ -294,7 +294,7 @@ msgid "Loaded by users"
 msgstr "Загружено пользо&shy;вателями"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:231
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:419
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:424
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:187
 msgid "Save"
 msgstr "Сохранить"
@@ -580,79 +580,90 @@ msgstr ""
 "отключает с ошибкой «Max SendQ Exceeded»"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:316
+msgid "Timeout before reconnect:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:318
+msgid ""
+"How much time ZNC waits (in seconds) until it receives something from "
+"network or declares the connection timeout. This happens after attempts to "
+"ping the peer."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:321
 msgid "Max IRC Networks Number:"
 msgstr "Ограничение количества сетей IRC:"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:318
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:323
 msgid "Maximum number of IRC networks allowed for this user."
 msgstr ""
 "Наибольшее разрешённое число сетей IRC, которые может иметь этот "
 "пользователь."
 
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:321
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:326
 msgid "Substitutions"
 msgstr "подстановки"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:323
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:331
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:328
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:336
 msgid "CTCP Replies:"
 msgstr "Ответы CTCP:"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:327
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:332
 msgid "One reply per line. Example: <code>TIME Buy a watch!</code>"
 msgstr "По одному ответу в каждой строке. Пример: <code>TIME Купи часы!</code>"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:328
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:344
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:333
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:349
 msgid "{1} are available"
 msgstr "Доступны {1}"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:330
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:335
 msgid "Empty value means this CTCP request will be ignored"
 msgstr "Если пусто, этот запрос CTCP игнорируется"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:336
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:341
 msgid "Request"
 msgstr "Запрос"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:337
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:342
 msgid "Response"
 msgstr "Ответ"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:366
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:371
 msgid "- Global -"
 msgstr "- Глобальная -"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:372
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:377
 msgid "No other skins found"
 msgstr "Другие темы не найдены"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:378
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:383
 msgid "Language:"
 msgstr "Язык:"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:411
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:416
 msgid "Clone and return"
 msgstr "Склонировать и вернуться"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:412
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:417
 msgid "Clone and continue"
 msgstr "Склонировать и продолжить"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:414
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:419
 msgid "Create and return"
 msgstr "Создать и вернуться"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:415
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:420
 msgid "Create and continue"
 msgstr "Создать и продолжить"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:421
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:426
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:28
 msgid "Clone"
 msgstr "Склонировать"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:423
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:428
 msgid "Create"
 msgstr "Создать"
 
@@ -1000,7 +1011,7 @@ msgstr "Подтверждение удаления пользователя"
 msgid "Are you sure you want to delete user “{1}”?"
 msgstr "Вы действительно хотите удалить пользователя «{1}»?"
 
-#: webadmin.cpp:91 webadmin.cpp:1843
+#: webadmin.cpp:91 webadmin.cpp:1860
 msgid "Global Settings"
 msgstr "Глобальные настройки"
 
@@ -1008,11 +1019,11 @@ msgstr "Глобальные настройки"
 msgid "Your Settings"
 msgstr "Мои настройки"
 
-#: webadmin.cpp:94 webadmin.cpp:1655
+#: webadmin.cpp:94 webadmin.cpp:1672
 msgid "Traffic Info"
 msgstr "Трафик"
 
-#: webadmin.cpp:97 webadmin.cpp:1634
+#: webadmin.cpp:97 webadmin.cpp:1651
 msgid "Manage Users"
 msgstr "Пользователи"
 
@@ -1024,92 +1035,96 @@ msgstr "Ошибка: необходимо имя пользователя"
 msgid "Invalid Submission [Passwords do not match]"
 msgstr "Ошибка: пароли не совпадают"
 
-#: webadmin.cpp:383 webadmin.cpp:411 webadmin.cpp:1161 webadmin.cpp:2025
+#: webadmin.cpp:314
+msgid "Timeout can't be less than 30 seconds!"
+msgstr ""
+
+#: webadmin.cpp:391 webadmin.cpp:419 webadmin.cpp:1173 webadmin.cpp:2042
 msgid "Unable to load module [{1}]: {2}"
 msgstr "Не могу загрузить модуль [{1}]: {2}"
 
-#: webadmin.cpp:388 webadmin.cpp:416
+#: webadmin.cpp:396 webadmin.cpp:424
 msgid "Unable to load module [{1}] with arguments [{2}]"
 msgstr "Не могу загрузить модуль [{1}] с аргументами [{2}]"
 
-#: webadmin.cpp:497 webadmin.cpp:601 webadmin.cpp:626 webadmin.cpp:648
-#: webadmin.cpp:682 webadmin.cpp:1228
+#: webadmin.cpp:505 webadmin.cpp:609 webadmin.cpp:634 webadmin.cpp:656
+#: webadmin.cpp:690 webadmin.cpp:1240
 msgid "No such user"
 msgstr "Нет такого пользователя"
 
-#: webadmin.cpp:510 webadmin.cpp:542 webadmin.cpp:571 webadmin.cpp:587
+#: webadmin.cpp:518 webadmin.cpp:550 webadmin.cpp:579 webadmin.cpp:595
 msgid "No such user or network"
 msgstr "Нет такого пользователя"
 
-#: webadmin.cpp:552
+#: webadmin.cpp:560
 msgid "No such channel"
 msgstr "Нет такого канала"
 
-#: webadmin.cpp:618
+#: webadmin.cpp:626
 msgid "Please don't delete yourself, suicide is not the answer!"
 msgstr "Пожалуйста, не удаляйте себя, самоубийство — не ответ!"
 
-#: webadmin.cpp:691 webadmin.cpp:913 webadmin.cpp:1292
+#: webadmin.cpp:699 webadmin.cpp:955 webadmin.cpp:1305
 msgid "Edit User [{1}]"
 msgstr "Пользователь [{1}]"
 
-#: webadmin.cpp:695 webadmin.cpp:945
+#: webadmin.cpp:703 webadmin.cpp:881
 msgid "Edit Network [{1}]"
 msgstr "Сеть [{1}]"
 
-#: webadmin.cpp:705
+#: webadmin.cpp:713
 msgid "Edit Channel [{1}] of Network [{2}] of User [{3}]"
 msgstr "Канал [{1}] в сети [{2}] пользователя [{3}]"
 
-#: webadmin.cpp:712
+#: webadmin.cpp:720
 msgid "Edit Channel [{1}]"
 msgstr "Канал [{1}]"
 
-#: webadmin.cpp:720
+#: webadmin.cpp:728
 msgid "Add Channel to Network [{1}] of User [{2}]"
 msgstr "Новый канал для сети [{1}] пользователя [{2}]"
 
-#: webadmin.cpp:725
+#: webadmin.cpp:733
 msgid "Add Channel"
 msgstr "Новый канал"
 
-#: webadmin.cpp:732 webadmin.cpp:1481
+#: webadmin.cpp:740 webadmin.cpp:1498
 msgid "Auto Clear Chan Buffer"
 msgstr "Автоматически очищать буфер канала"
 
-#: webadmin.cpp:734
+#: webadmin.cpp:742
 msgid "Automatically Clear Channel Buffer After Playback"
 msgstr "Автоматически очищать буфер канала после воспроизведения"
 
-#: webadmin.cpp:742
+#: webadmin.cpp:750
 msgid "Detached"
 msgstr "Отделён"
 
-#: webadmin.cpp:749
+#: webadmin.cpp:757
 msgid "Enabled"
 msgstr "Включена"
 
-#: webadmin.cpp:773
+#: webadmin.cpp:781
 msgid "Channel name is a required argument"
 msgstr "Необходимо имя канала"
 
-#: webadmin.cpp:782
+#: webadmin.cpp:790
 msgid "Channel [{1}] already exists"
 msgstr "Канал [{1}] уже существует"
 
-#: webadmin.cpp:789
+#: webadmin.cpp:797
 msgid "Could not add channel [{1}]"
 msgstr "Не могу добавить канал [{1}]"
 
-#: webadmin.cpp:837
+#: webadmin.cpp:845
 msgid "Channel was added/modified, but config file was not written"
 msgstr "Канал добавлен/изменён, но записать конфигурацию в файл не удалось"
 
-#: webadmin.cpp:921
+#: webadmin.cpp:878
 msgid "Edit Network [{1}] of User [{2}]"
 msgstr "Сеть [{1}] пользователя [{2}]"
 
-#: webadmin.cpp:982 webadmin.cpp:1050
+#: webadmin.cpp:885 webadmin.cpp:1062
 msgid ""
 "Network number limit reached. Ask an admin to increase the limit for you, or "
 "delete unneeded networks from Your Settings."
@@ -1117,47 +1132,47 @@ msgstr ""
 "Достигнуто ограничение на количество сетей. Попросите администратора поднять "
 "вам лимит или удалите ненужные сети в «Моих настройках»"
 
-#: webadmin.cpp:990
+#: webadmin.cpp:893
 msgid "Add Network for User [{1}]"
 msgstr "Новая сеть пользователя [{1}]"
 
-#: webadmin.cpp:998
+#: webadmin.cpp:894
 msgid "Add Network"
 msgstr "Новая сеть"
 
-#: webadmin.cpp:1044
+#: webadmin.cpp:1056
 msgid "Network name is a required argument"
 msgstr "Необходимо имя сети"
 
-#: webadmin.cpp:1168 webadmin.cpp:2032
+#: webadmin.cpp:1180 webadmin.cpp:2049
 msgid "Unable to reload module [{1}]: {2}"
 msgstr "Не могу перегрузить модуль [{1}]: {2}"
 
-#: webadmin.cpp:1205
+#: webadmin.cpp:1217
 msgid "Network was added/modified, but config file was not written"
 msgstr "Сеть добавлена/изменена, но записать конфигурацию в файл не удалось"
 
-#: webadmin.cpp:1234
+#: webadmin.cpp:1246
 msgid "That network doesn't exist for this user"
 msgstr "У этого пользователя нет такой сети"
 
-#: webadmin.cpp:1251
+#: webadmin.cpp:1263
 msgid "Network was deleted, but config file was not written"
 msgstr "Сеть удалена, но записать конфигурацию в файл не удалось"
 
-#: webadmin.cpp:1265
+#: webadmin.cpp:1277
 msgid "That channel doesn't exist for this network"
 msgstr "В этой сети нет такого канала"
 
-#: webadmin.cpp:1274
+#: webadmin.cpp:1286
 msgid "Channel was deleted, but config file was not written"
 msgstr "Канал удалён, но записать конфигурацию в файл не удалось"
 
-#: webadmin.cpp:1300
+#: webadmin.cpp:1314
 msgid "Clone User [{1}]"
 msgstr "Клон пользователя [{1}]"
 
-#: webadmin.cpp:1483
+#: webadmin.cpp:1500
 msgid ""
 "Automatically Clear Channel Buffer After Playback (the default value for new "
 "channels)"
@@ -1165,74 +1180,74 @@ msgstr ""
 "Автоматически очищать буфер канала после воспроизведения (значение по "
 "умолчанию для новых каналов)"
 
-#: webadmin.cpp:1493
+#: webadmin.cpp:1510
 msgid "Multi Clients"
 msgstr "Много клиентов"
 
-#: webadmin.cpp:1500
+#: webadmin.cpp:1517
 msgid "Append Timestamps"
 msgstr "Метка времени в конце"
 
-#: webadmin.cpp:1507
+#: webadmin.cpp:1524
 msgid "Prepend Timestamps"
 msgstr "Метка времени в начале"
 
-#: webadmin.cpp:1515
+#: webadmin.cpp:1532
 msgid "Deny LoadMod"
 msgstr "Запрет загрузки модулей"
 
-#: webadmin.cpp:1522
+#: webadmin.cpp:1539
 msgid "Admin"
 msgstr "Администратор"
 
-#: webadmin.cpp:1532
+#: webadmin.cpp:1549
 msgid "Deny SetBindHost"
 msgstr "Запрет смены хоста"
 
-#: webadmin.cpp:1540
+#: webadmin.cpp:1557
 msgid "Auto Clear Query Buffer"
 msgstr "Автоматически очищать буфер личных сообщений"
 
-#: webadmin.cpp:1542
+#: webadmin.cpp:1559
 msgid "Automatically Clear Query Buffer After Playback"
 msgstr "Автоматически очищать буфер личных сообщений после воспроизведения"
 
-#: webadmin.cpp:1566
+#: webadmin.cpp:1583
 msgid "Invalid Submission: User {1} already exists"
 msgstr "Ошибка: пользователь {1} уже существует"
 
-#: webadmin.cpp:1588 webadmin.cpp:1599
+#: webadmin.cpp:1605 webadmin.cpp:1616
 msgid "Invalid submission: {1}"
 msgstr "Ошибка: {1}"
 
-#: webadmin.cpp:1594
+#: webadmin.cpp:1611
 msgid "User was added, but config file was not written"
 msgstr "Пользователь добавлен, но записать конфигурацию в файл не удалось"
 
-#: webadmin.cpp:1605
+#: webadmin.cpp:1622
 msgid "User was edited, but config file was not written"
 msgstr "Пользователь изменён, но записать конфигурацию в файл не удалось"
 
-#: webadmin.cpp:1763
+#: webadmin.cpp:1780
 msgid "Choose either IPv4 or IPv6 or both."
 msgstr "Выберите IPv4, IPv6 или и то, и другое."
 
-#: webadmin.cpp:1780
+#: webadmin.cpp:1797
 msgid "Choose either IRC or HTTP or both."
 msgstr "Выберите IRC, HTTP или и то, и другое."
 
-#: webadmin.cpp:1793 webadmin.cpp:1829
+#: webadmin.cpp:1810 webadmin.cpp:1846
 msgid "Port was changed, but config file was not written"
 msgstr "Порт изменён, но записать конфигурацию в файл не удалось"
 
-#: webadmin.cpp:1819
+#: webadmin.cpp:1836
 msgid "Invalid request."
 msgstr "Некорректный запрос."
 
-#: webadmin.cpp:1833
+#: webadmin.cpp:1850
 msgid "The specified listener was not found."
 msgstr "Указанный порт не найден."
 
-#: webadmin.cpp:2061
+#: webadmin.cpp:2078
 msgid "Settings were changed, but config file was not written"
 msgstr "Настройки изменены, но записать конфигурацию в файл не удалось"

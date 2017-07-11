@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
  * Copyright (C) 2006-2007, CNU <bshalm@broadpark.no>
  *(http://cnu.dieplz.net/znc)
  *
@@ -113,6 +113,8 @@ class CLogMod : public CModule {
     void OnNick(const CNick& OldNick, const CString& sNewNick,
                 const vector<CChan*>& vChans) override;
     EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) override;
+
+    EModRet OnSendToIRCMessage(CMessage& Message) override;
 
     /* notices */
     EModRet OnUserNotice(CString& sTarget, CString& sMessage) override;
@@ -397,6 +399,17 @@ void CLogMod::OnQuit(const CNick& Nick, const CString& sMessage,
                        "@" + Nick.GetHost() + ") (" + sMessage + ")",
                    *pChan);
     }
+}
+
+CModule::EModRet CLogMod::OnSendToIRCMessage(CMessage& Message) {
+    if (Message.GetType() != CMessage::Type::Quit) {
+        return CONTINUE;
+    }
+    CIRCNetwork* pNetwork = Message.GetNetwork();
+    OnQuit(pNetwork->GetIRCNick(),
+            Message.As<CQuitMessage>().GetReason(),
+            pNetwork->GetChans());
+    return CONTINUE;
 }
 
 void CLogMod::OnJoin(const CNick& Nick, CChan& Channel) {

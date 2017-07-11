@@ -1,2 +1,15 @@
 ignore:
+  - /cmake/
   - /test/
+  - /modules/modp*/*.cpp
+  - /modules/modp*/swig*
+  - /modules/modpython/znc_core.py
+  - /modules/modperl/ZNC.pm
+fixes:
+  - "usr/local/lib/znc/::modules/"  # C++ and Python seem to work without this, but Perl needs this.
+codecov:
+  ci:
+    # Cygwin fails integration test with --coverage enabled, I don't know why
+    - !appveyor
+    # FreeBSD doesn't support C++ coverage yet (can't find libprofile_rt.a)
+    - !jenkins.znc.in

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -983,7 +983,14 @@ CModule::EModRet CModule::OnDeleteNetwork(CIRCNetwork& Network) {
 CModule::EModRet CModule::OnSendToClient(CString& sLine, CClient& Client) {
     return CONTINUE;
 }
+CModule::EModRet CModule::OnSendToClientMessage(CMessage& Message) {
+    return CONTINUE;
+}
+
 CModule::EModRet CModule::OnSendToIRC(CString& sLine) { return CONTINUE; }
+CModule::EModRet CModule::OnSendToIRCMessage(CMessage& Message) {
+    return CONTINUE;
+}
 
 bool CModule::OnServerCapAvailable(const CString& sCap) { return false; }
 void CModule::OnServerCapResult(const CString& sCap, bool bSuccess) {}
@@ -1444,7 +1451,13 @@ bool CModules::OnDeleteNetwork(CIRCNetwork& Network) {
 bool CModules::OnSendToClient(CString& sLine, CClient& Client) {
     MODHALTCHK(OnSendToClient(sLine, Client));
 }
+bool CModules::OnSendToClientMessage(CMessage& Message) {
+    MODHALTCHK(OnSendToClientMessage(Message));
+}
 bool CModules::OnSendToIRC(CString& sLine) { MODHALTCHK(OnSendToIRC(sLine)); }
+bool CModules::OnSendToIRCMessage(CMessage& Message) {
+    MODHALTCHK(OnSendToIRCMessage(Message));
+}
 bool CModules::OnStatusCommand(CString& sCommand) {
     MODHALTCHK(OnStatusCommand(sCommand));
 }

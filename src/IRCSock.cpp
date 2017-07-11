@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -137,6 +137,9 @@ CIRCSock::~CIRCSock() {
 }
 
 void CIRCSock::Quit(const CString& sQuitMsg) {
+    if (IsClosed()) {
+        return;
+    }
     if (!m_bAuthed) {
         Close(CLT_NOW);
         return;
@@ -1151,13 +1154,20 @@ void CIRCSock::TrySend() {
         m_iSendsAllowed--;
         bool bSkip = false;
         CString& sLine = m_vsSendQueue.front();
-        IRCSOCKMODULECALL(OnSendToIRC(sLine), &bSkip);
+
+        CMessage Message(sLine);
+        Message.SetNetwork(m_pNetwork);
+        IRCSOCKMODULECALL(OnSendToIRCMessage(Message), &bSkip);
+
         if (!bSkip) {
-            ;
-            DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/"
-                      << m_pNetwork->GetName() << ") ZNC -> IRC [" << sLine
-                      << "]");
-            Write(sLine + "\r\n");
+            CString sCopy = Message.ToString();
+            IRCSOCKMODULECALL(OnSendToIRC(sCopy), &bSkip);
+            if (!bSkip) {
+                DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/"
+                        << m_pNetwork->GetName() << ") ZNC -> IRC [" << sCopy
+                        << "]");
+                Write(sCopy + "\r\n");
+            }
         }
         m_vsSendQueue.pop_front();
     }

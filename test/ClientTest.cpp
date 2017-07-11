@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -188,6 +188,22 @@ TEST_F(ClientTest, StatusMsg) {
               m_pTestChan->GetBuffer().GetLine(0, *m_pTestClient));
 }
 
+TEST_F(ClientTest, TagSupport) {
+    m_pTestClient->SetTagSupport("test-tag", true);
+    CMessage tagmsg("@test-tag=yes;invalid-tag=no :nick!user@host PRIVMSG #chan :text");
+    m_pTestClient->PutClient(tagmsg);
+
+    EXPECT_THAT(m_pTestClient->vsLines,
+        ElementsAre("@test-tag=yes :nick!user@host PRIVMSG #chan :text"));
+
+    m_pTestClient->Reset();
+    m_pTestClient->SetTagSupport("test-tag", false);
+    m_pTestClient->PutClient(tagmsg);
+
+    EXPECT_THAT(m_pTestClient->vsLines,
+        ElementsAre(":nick!user@host PRIVMSG #chan :text"));
+}
+
 TEST_F(ClientTest, OnUserCTCPReplyMessage) {
     CMessage msg("NOTICE someone :\001VERSION 123\001");
     m_pTestModule->eAction = CModule::HALT;
@@ -342,4 +358,24 @@ TEST_F(ClientTest, OnUserQuitMessage) {
     m_pTestModule->eAction = CModule::CONTINUE;
     m_pTestClient->ReadLine(msg.ToString());
     EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // quit is never forwarded
+}
+
+TEST_F(ClientTest, OnSendToClientMessage) {
+    CMessage msg("PRIVMSG #chan :text");
+    m_pTestModule->eAction = CModule::HALT;
+    m_pTestModule->bSendHooks = true;
+    m_pTestClient->PutClient(msg.ToString());
+
+    EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnSendToClientMessage"));
+    EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
+    EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(m_pTestClient->GetNetwork()));
+    EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
+    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+    EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
+
+    m_pTestModule->eAction = CModule::CONTINUE;
+    m_pTestClient->ReadLine(msg.ToString());
+
+    EXPECT_THAT(m_pTestSock->vsLines, ElementsAre(msg.ToString()));
+    m_pTestModule->bSendHooks = false;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -359,6 +359,25 @@ TEST_F(IRCSockTest, OnQuitMessage) {
     m_pTestSock->ReadLine(msg.ToString());
 
     EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString()));
+}
+
+TEST_F(IRCSockTest, OnSendToIRCMessage) {
+    CMessage msg(":nick PRIVMSG #chan :hello");
+    m_pTestModule->eAction = CModule::HALT;
+    m_pTestModule->bSendHooks = true;
+    m_pTestSock->PutIRC(msg.ToString());
+
+    EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnSendToIRCMessage"));
+    EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
+    EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(m_pTestNetwork));
+    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+    EXPECT_THAT(m_pTestClient->vsLines, IsEmpty());  // halt
+
+    m_pTestModule->eAction = CModule::CONTINUE;
+    m_pTestSock->ReadLine(msg.ToString());
+
+    EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString()));
+    m_pTestModule->bSendHooks = false;
 }
 
 TEST_F(IRCSockTest, OnTextMessage) {

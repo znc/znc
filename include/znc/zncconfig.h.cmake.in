@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@
 #define VERSION_MINOR @PROJECT_VERSION_MINOR@
 #define VERSION_PATCH @PROJECT_VERSION_PATCH@
 #define VERSION_STR "@PROJECT_VERSION@"
+#define VERSION_EXTRA "@VERSION_EXTRA@"
 
 #cmakedefine _GLIBCXX_DEBUG 1
 #cmakedefine _GLIBCXX_DEBUG_PEDANTIC 1

@@ -135,7 +135,7 @@
 					<? SETBLOCK FloodInputField_Rate ?>
 						<input type="number" name="floodrate" min="0.3" step="0.05" id="floodrate"
 						   title="<? FORMAT "The number of seconds per line. After changing this, reconnect ZNC to server." ?>"
-						<? IF FloodProtection ?> value="<? VAR FloodRate ?>" <? ELSE ?> value="1.00" disabled="disabled" <? ENDIF ?> />
+						<? IF FloodProtection ?> value="<? VAR FloodRate ?>" <? ELSE ?> value="2.00" disabled="disabled" <? ENDIF ?> />
 					<? ENDSETBLOCK ?>
 					<? FORMAT "{1} seconds per line" "FloodInputField_Rate ESC=" ?>
 				</div>
@@ -145,7 +145,7 @@
 					<? SETBLOCK FloodInputField_Burst ?>
 						<input type="number" name="floodburst" min="1" id="floodburst"
 						   title="<? FORMAT "Defines the number of lines, which can be sent immediately. After changing this, reconnect ZNC to server." ?>"
-						<? IF FloodProtection ?> value="<? VAR FloodBurst ?>" <? ELSE ?> value="4" disabled="disabled" <? ENDIF ?> />
+						<? IF FloodProtection ?> value="<? VAR FloodBurst ?>" <? ELSE ?> value="9" disabled="disabled" <? ENDIF ?> />
 					<? ENDSETBLOCK ?>
 					<? FORMAT "{1} lines can be sent immediately" "FloodInputField_Burst ESC=" ?>
 				</div>
@@ -237,7 +237,7 @@
 				<? LOOP ModuleLoop ?>
 					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
 						<td class="mod_name">
-							<input type="checkbox" name="loadmod" id="lm_<? VAR Name ?>" value="<? VAR Name ?>"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="lm_<? VAR Name ?>"> <? IF Wiki ?><a href="http://wiki.znc.in/<? VAR Wiki ?>" target="_blank" class="external"><? VAR Name ?></a> <? ELSE ?> <? VAR Name ?> <? ENDIF ?></label>
+							<input type="checkbox" name="loadmod" id="lm_<? VAR Name ?>" value="<? VAR Name ?>"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="lm_<? VAR Name ?>"> <? IF Wiki ?><a href="https://wiki.znc.in/<? VAR Wiki ?>" target="_blank" class="external"><? VAR Name ?></a> <? ELSE ?> <? VAR Name ?> <? ENDIF ?></label>
 						</td>
 						<td class="mod_args">
 							<? IF Disabled ?>

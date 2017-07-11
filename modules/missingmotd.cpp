@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,14 @@
  */
 
 #include <znc/Modules.h>
+#include <znc/Client.h>
 
 class CMissingMotd : public CModule {
   public:
     MODCONSTRUCTOR(CMissingMotd) {}
 
     void OnClientLogin() override {
-        PutUser(":irc.znc.in 422 :MOTD File is missing");
+        PutUser(":irc.znc.in 422 " + GetClient()->GetNick() + " :MOTD File is missing");
     }
 };
 

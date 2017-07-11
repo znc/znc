@@ -88,9 +88,7 @@ class HandlePython(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         extra_args.append('-DWANT_PYTHON=YES')
         if values is not None:
-            x = re.search(r'\d.*', values)
-            if x:
-                extra_args.append('-DWANT_PYTHON_VERSION=' + x.group(0))
+            extra_args.append('-DWANT_PYTHON_VERSION=' + values)
 
 group = parser.add_mutually_exclusive_group()
 group.add_argument('--enable-python', action=HandlePython, nargs='?',

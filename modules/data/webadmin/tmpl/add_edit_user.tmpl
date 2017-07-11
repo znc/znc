@@ -177,7 +177,7 @@
 				<? LOOP ModuleLoop ?>
 					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
 						<td class="mod_name">
-							<input type="checkbox" name="loadmod" id="lm_<? VAR Name ?>" value="<? VAR Name ?>"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="lm_<? VAR Name ?>"> <? IF Wiki ?><a href="http://wiki.znc.in/<? VAR Wiki ?>" target="_blank" class="external"><? VAR Name ?></a> <? ELSE ?> <? VAR Name ?> <? ENDIF ?></label>
+							<input type="checkbox" name="loadmod" id="lm_<? VAR Name ?>" value="<? VAR Name ?>"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="lm_<? VAR Name ?>"> <? IF Wiki ?><a href="https://wiki.znc.in/<? VAR Wiki ?>" target="_blank" class="external"><? VAR Name ?></a> <? ELSE ?> <? VAR Name ?> <? ENDIF ?></label>
 						</td>
 						<td class="mod_args">
 							<? IF Disabled ?>
@@ -323,7 +323,7 @@
 					       title="<? FORMAT "Maximum number of IRC networks allowed for this user." ?>" <? IF !ImAdmin ?>disabled="disabled"<? ENDIF ?> />
 				</div>
 
-				<? SETBLOCK Substitutions_Link ?><a href="http://wiki.znc.in/ExpandString" target="_blank" class="external"><? FORMAT "Substitutions" ?></a><? ENDSETBLOCK ?>
+				<? SETBLOCK Substitutions_Link ?><a href="https://wiki.znc.in/ExpandString" target="_blank" class="external"><? FORMAT "Substitutions" ?></a><? ENDSETBLOCK ?>
 				<div class="subsection half" id="ctcpreplies_plain">
 					<div class="inputlabel"><label for="ctcpreplies"><? FORMAT "CTCP Replies:" ?></label></div>
 					<div><textarea id="ctcpreplies" name="ctcpreplies" cols="70" rows="3" id="ctcpreplies_text"><? LOOP CTCPLoop ?><? VAR CTCP ?>

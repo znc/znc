@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -892,7 +892,7 @@ class CModule {
      */
     virtual EModRet OnUserTopicRequest(CString& sChannel);
 
-    /** This module hook is called when a user requests to quit from network.
+    /** This module hook is called when a client quits ZNC.
      *  @since 1.7.0
      *  @param Message The quit message the client sent.
      *  @return See CModule::EModRet.
@@ -1026,18 +1026,24 @@ class CModule {
      */
     virtual EModRet OnDeleteNetwork(CIRCNetwork& Network);
 
-    /** Called when ZNC sends a raw traffic line to a client.
-     *  @param sLine The raw traffic line sent.
-     *  @param Client The client this line is sent to.
+    /** Called immediately before ZNC sends a raw traffic line to a client.
+     *  @since 1.7.0
+     *  @param Message The message being sent to the client.
      *  @warning Calling PutUser() from within this hook leads to infinite recursion.
      *  @return See CModule::EModRet.
      */
+    virtual EModRet OnSendToClientMessage(CMessage& Message);
+    /// @deprecated Use OnSendToClientMessage() instead.
     virtual EModRet OnSendToClient(CString& sLine, CClient& Client);
-    /** Called when ZNC sends a raw traffic line to the IRC server.
-     *  @param sLine The raw traffic line sent.
+
+    /** Called immediately before ZNC sends a raw traffic line to the IRC server.
+     *  @since 1.7.0
+     *  @param Message The message being sent to the IRC server.
      *  @warning Calling PutIRC() from within this hook leads to infinite recursion.
      *  @return See CModule::EModRet.
      */
+    virtual EModRet OnSendToIRCMessage(CMessage& Message);
+    /// @deprecated Use OnSendToIRCMessage() instead.
     virtual EModRet OnSendToIRC(CString& sLine);
 
     ModHandle GetDLL() { return m_pDLL; }
@@ -1282,9 +1288,13 @@ class CModule {
     virtual bool IsClientCapSupported(CClient* pClient, const CString& sCap,
                                       bool bState);
     /** Called when we actually need to turn a capability on or off for a client.
+     *  If implementing a custom capability, make sure to call
+     *  pClient->SetTagSupport("tag-name", bState) for each tag that the
+     *  capability provides.
      *  @param pClient The client which requested the capability.
      *  @param sCap name of wanted capability.
      *  @param bState On or off, depending on which case client needs.
+     *  @see CClient::SetTagSupport()
      */
     virtual void OnClientCapRequest(CClient* pClient, const CString& sCap,
                                     bool bState);
@@ -1515,7 +1525,9 @@ class CModules : public std::vector<CModule*> {
     bool OnDeleteNetwork(CIRCNetwork& Network);
 
     bool OnSendToClient(CString& sLine, CClient& Client);
+    bool OnSendToClientMessage(CMessage& Message);
     bool OnSendToIRC(CString& sLine);
+    bool OnSendToIRCMessage(CMessage& Message);
 
     bool OnServerCapAvailable(const CString& sCap);
     bool OnServerCapResult(const CString& sCap, bool bSuccess);

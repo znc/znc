@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ else()
 	set(moddisable_modperl true)
 endif()
 
-if(PYTHONLIBS_FOUND)
+if(PYTHON_FOUND)
 	add_subdirectory(modpython)
 else()
 	set(moddisable_modpython true)

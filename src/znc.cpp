@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,8 +126,8 @@ CString CZNC::GetTag(bool bIncludeVersion, bool bHTML) {
     if (!Get().m_bHideVersion) {
         bIncludeVersion = true;
     }
-    CString sAddress =
-        bHTML ? "<a href=\"http://znc.in\">http://znc.in</a>" : "http://znc.in";
+    CString sAddress = bHTML ? "<a href=\"https://znc.in\">https://znc.in</a>"
+                             : "https://znc.in";
 
     if (!bIncludeVersion) {
         return "ZNC - " + sAddress;
@@ -624,7 +624,7 @@ CString CZNC::MakeConfigHeader() {
            "//\n"
            "// But if you feel risky, you might want to read help on /znc "
            "saveconfig and /znc rehash.\n"
-           "// Also check http://en.znc.in/wiki/Configuration\n";
+           "// Also check https://wiki.znc.in/Configuration\n";
 }
 
 bool CZNC::WriteNewConfig(const CString& sConfigFile) {

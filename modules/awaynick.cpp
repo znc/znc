@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ class CAwayNickMod : public CModule {
     MODCONSTRUCTOR(CAwayNickMod) {}
 
     bool OnLoad(const CString&, CString& sMessage) override {
-        sMessage = "retired module - see http://wiki.znc.in/awaynick";
+        sMessage = "retired module - see https://wiki.znc.in/awaynick";
         return false;
     }
 };
@@ -32,4 +32,4 @@ void TModInfo<CAwayNickMod>(CModInfo& Info) {
 }
 
 NETWORKMODULEDEFS(CAwayNickMod,
-                  "retired module - see http://wiki.znc.in/awaynick")
+                  "retired module - see https://wiki.znc.in/awaynick")

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ if(SWIG_FOUND)
 		-outdir "${CMAKE_CURRENT_BINARY_DIR}"
 		-o "${CMAKE_CURRENT_BINARY_DIR}/modperl_biglib.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/modperl.i"
-		DEPENDS "modperl.i"
+		DEPENDS "modperl.i" copy_csocket_h
 		IMPLICIT_DEPENDS CXX "${CMAKE_CURRENT_SOURCE_DIR}/modperl.i"
 		VERBATIM)
 else()

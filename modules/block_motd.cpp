@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,28 +15,35 @@
  */
 
 #include <znc/Modules.h>
+#include <znc/IRCNetwork.h>
+
+using std::set;
 
 class CBlockMotd : public CModule {
   public:
     MODCONSTRUCTOR(CBlockMotd) {
         AddHelpCommand();
-        AddCommand("GetMotd", static_cast<CModCommand::ModCmdFunc>(
-                                  &CBlockMotd::OverrideCommand),
-                   "[<server>]",
-                   "Override the block with this command. Can optionally "
-                   "specify which server to query.");
+        AddCommand("GetMotd", t_d("[<server>]"),
+                   t_d("Override the block with this command. Can optionally "
+                       "specify which server to query."),
+                   [this](const CString& sLine) { OverrideCommand(sLine); });
     }
 
     ~CBlockMotd() override {}
 
     void OverrideCommand(const CString& sLine) {
-        m_bTemporaryAcceptMotd = true;
+        if (!GetNetwork() || !GetNetwork()->GetIRCSock()) {
+            PutModule(t_s("You are not connected to an IRC Server."));
+            return;
+        }
+
+        TemporarilyAcceptMotd();
         const CString sServer = sLine.Token(1);
 
         if (sServer.empty()) {
-            PutIRC("motd");
+            PutIRC("MOTD");
         } else {
-            PutIRC("motd " + sServer);
+            PutIRC("MOTD " + sServer);
         }
     }
 
@@ -44,21 +51,47 @@ class CBlockMotd : public CModule {
         const CString sCmd = sLine.Token(1);
 
         if ((sCmd == "375" /* begin of MOTD */ || sCmd == "372" /* MOTD */) &&
-            !m_bTemporaryAcceptMotd)
+            !ShouldTemporarilyAcceptMotd())
             return HALT;
 
         if (sCmd == "376" /* End of MOTD */) {
-            if (!m_bTemporaryAcceptMotd) {
+            if (!ShouldTemporarilyAcceptMotd()) {
                 sLine = sLine.Token(0) + " 422 " + sLine.Token(2) +
                         " :MOTD blocked by ZNC";
             }
-            m_bTemporaryAcceptMotd = false;
+            StopTemporarilyAcceptingMotd();
         }
+
+        if (sCmd == "422") {
+            // Server has no MOTD
+            StopTemporarilyAcceptingMotd();
+        }
+
         return CONTINUE;
     }
 
+    void OnIRCDisconnected() override {
+        StopTemporarilyAcceptingMotd();
+    }
+
+    bool ShouldTemporarilyAcceptMotd() const {
+        return m_sTemporaryAcceptedMotdSocks.count(GetNetwork()->GetIRCSock()) > 0;
+    }
+
+    void TemporarilyAcceptMotd() {
+        if (ShouldTemporarilyAcceptMotd()) {
+            return;
+        }
+
+        m_sTemporaryAcceptedMotdSocks.insert(GetNetwork()->GetIRCSock());
+    }
+
+    void StopTemporarilyAcceptingMotd() {
+        m_sTemporaryAcceptedMotdSocks.erase(GetNetwork()->GetIRCSock());
+    }
+
   private:
-    bool m_bTemporaryAcceptMotd = false;
+    set<CIRCSock *> m_sTemporaryAcceptedMotdSocks;
 };
 
 template <>
@@ -68,5 +101,6 @@ void TModInfo<CBlockMotd>(CModInfo& Info) {
     Info.SetWikiPage("block_motd");
 }
 
-USERMODULEDEFS(CBlockMotd,
-               "Block the MOTD from IRC so it's not sent to your client(s).")
+USERMODULEDEFS(
+    CBlockMotd,
+    t_s("Block the MOTD from IRC so it's not sent to your client(s)."))
