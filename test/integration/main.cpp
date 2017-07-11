@@ -578,7 +578,7 @@ TEST_F(ZNCTest, ControlpanelModule) {
 
     client.Write(request + "AddServer user freenode 127.0.0.1 6667");
     client.ReadUntil(response +
-                     "Added IRC Server [127.0.0.1 6667] for network [freenode] "
+                     "Added IRC Server [127.0.0.1] for network [freenode] "
                      "for user [user].");
     Z;
 
@@ -1161,7 +1161,7 @@ TEST_F(ZNCTest, ControlpanelModule) {
 
     client.Write(request + "AddServer KindOne freenode 127.0.0.1 6667");
     client.ReadUntil(response +
-                     "Added IRC Server [127.0.0.1 6667] for network [freenode] "
+                     "Added IRC Server [127.0.0.1] for network [freenode] "
                      "for user [KindOne].");
     Z;
 
