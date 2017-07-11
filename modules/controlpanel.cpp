@@ -1127,7 +1127,7 @@ class CAdminMod : public CModule {
     void DelServer(const CString& sLine) {
         CString sUsername = sLine.Token(1);
         CString sNetwork = sLine.Token(2);
-        CString sServer = sLine.Token(3, true);
+        CString sServer = sLine.Token(3);
         unsigned short uPort = sLine.Token(4).ToUShort();
         CString sPass = sLine.Token(5);
 
