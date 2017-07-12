@@ -1126,7 +1126,7 @@ class CAdminMod : public CModule {
         CString sUsername = sLine.Token(1);
         CString sNetwork = sLine.Token(2);
         CString sServer = sLine.Token(3, true);
-        unsigned short uPort = sLine.Token(4);
+        unsigned short uPort = sLine.Token(4).ToUShort();
         CString sPass = sLine.Token(5);
 
         if (sServer.empty()) {
