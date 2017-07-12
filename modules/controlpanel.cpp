@@ -1098,12 +1098,10 @@ class CAdminMod : public CModule {
     void AddServer(const CString& sLine) {
         CString sUsername = sLine.Token(1);
         CString sNetwork = sLine.Token(2);
-        CString sServer = sLine.Token(3);
-        unsigned short uPort = sLine.Token(4).ToUShort();
-        CString sPass = sLine.Token(5);
+        CString sServer = sLine.Token(3, true);
 
         if (sServer.empty()) {
-            PutModule("Usage: AddServer <username> <network> <server> [port] [password]");
+            PutModule("Usage: AddServer <username> <network> <server> [[+]port] [password]");
             return;
         }
 
@@ -1115,7 +1113,7 @@ class CAdminMod : public CModule {
             return;
         }
 
-        if (pNetwork->AddServer(sServer, uPort, sPass))
+        if (pNetwork->AddServer(sServer))
             PutModule("Added IRC Server [" + sServer + "] for network [" +
                       sNetwork + "] for user [" + pUser->GetUserName() + "].");
         else
@@ -1127,12 +1125,12 @@ class CAdminMod : public CModule {
     void DelServer(const CString& sLine) {
         CString sUsername = sLine.Token(1);
         CString sNetwork = sLine.Token(2);
-        CString sServer = sLine.Token(3);
-        unsigned short uPort = sLine.Token(4).ToUShort();
+        CString sServer = sLine.Token(3, true);
+        unsigned short uPort = sLine.Token(4);
         CString sPass = sLine.Token(5);
 
         if (sServer.empty()) {
-            PutModule("Usage: DelServer <username> <network> <server> [port] [password]");
+            PutModule("Usage: DelServer <username> <network> <server> [[+]port] [password]");
             return;
         }
 
