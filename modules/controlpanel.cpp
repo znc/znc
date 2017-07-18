@@ -1101,7 +1101,7 @@ class CAdminMod : public CModule {
         CString sServer = sLine.Token(3, true);
 
         if (sServer.empty()) {
-            PutModule("Usage: AddServer <username> <network> <server>");
+            PutModule("Usage: AddServer <username> <network> <server> [[+]port] [password]");
             return;
         }
 
@@ -1130,7 +1130,7 @@ class CAdminMod : public CModule {
         CString sPass = sLine.Token(5);
 
         if (sServer.empty()) {
-            PutModule("Usage: DelServer <username> <network> <server>");
+            PutModule("Usage: DelServer <username> <network> <server> [[+]port] [password]");
             return;
         }
 
