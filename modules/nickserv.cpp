@@ -139,7 +139,11 @@ class CNickServ : public CModule {
             MCString msValues;
             msValues["password"] = GetNV("Password");
             PutIRC(CString::NamedFormat(GetNV("IdentifyCmd"), msValues));
-        } else if(Nick.NickEquals(sNickServName) && sMessage.find("Password accepted") != CString::npos && m_bJoinAfterIdentified) {
+        } else if(Nick.NickEquals(sNickServName) && m_bJoinAfterIdentified &&
+                 (sMessage.find("Password accepted") != CString::npos ||
+                  sMessage.find("now recognized") != CString::npos ||
+                  sMessage.find("now identified") != CString::npos ||
+                  sMessage.find("now logged in as") != CString::npos)) {
             m_bIdentified = true;
             GetNetwork()->JoinChans();
         }
