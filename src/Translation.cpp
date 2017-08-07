@@ -52,6 +52,7 @@ CString CTranslation::Plural(const CString& sDomain, const CString& sContext,
 
 const std::locale& CTranslation::LoadTranslation(const CString& sDomain) {
     CString sLanguage = m_sLanguageStack.empty() ? "" : m_sLanguageStack.back();
+    sLanguage.Replace("-", "_");
     if (sLanguage.empty()) sLanguage = "C";
 #ifdef HAVE_I18N
     // Not using built-in support for multiple domains in single std::locale
