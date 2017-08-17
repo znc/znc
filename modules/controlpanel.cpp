@@ -132,6 +132,7 @@ class CAdminMod : public CModule {
                 {"Encoding", str},
 #endif
                 {"QuitMsg", str},
+                {"Active", boolean},
                 {"TrustAllCerts", boolean},
                 {"TrustPKI", boolean},
             };
@@ -534,6 +535,8 @@ class CAdminMod : public CModule {
 #endif
         } else if (sVar.Equals("quitmsg")) {
             PutModule("QuitMsg = " + pNetwork->GetQuitMsg());
+        } else if (sVar.Equals("active")) {
+            PutModule("Active = " + CString(pNetwork->GetIRCConnectEnabled()));
         } else if (sVar.Equals("trustallcerts")) {
             PutModule("TrustAllCerts = " + CString(pNetwork->GetTrustAllCerts()));
         } else if (sVar.Equals("trustpki")) {
@@ -606,6 +609,10 @@ class CAdminMod : public CModule {
         } else if (sVar.Equals("quitmsg")) {
             pNetwork->SetQuitMsg(sValue);
             PutModule("QuitMsg = " + pNetwork->GetQuitMsg());
+        } else if (sVar.Equals("active")) {
+            bool b = sValue.ToBool();
+            pNetwork->SetIRCConnectEnabled(b);
+            PutModule("Active = " + CString(b));
         } else if (sVar.Equals("trustallcerts")) {
             bool b = sValue.ToBool();
             pNetwork->SetTrustAllCerts(b);
