@@ -15,10 +15,35 @@
  */
 
 #include <znc/Translation.h>
+#include <znc/FileUtils.h>
 
 #ifdef HAVE_I18N
 #include <boost/locale.hpp>
 #endif
+
+namespace {
+std::map<CString, CTranslationInfo> FillTranslations() {
+    std::map<CString, CTranslationInfo> mTranslations;
+    CDir Dir;
+    Dir.Fill(_DATADIR_ "/translations");
+    for (CFile* pFile : Dir) {
+        CString sName = pFile->GetShortName();
+        CTranslationInfo& translation = mTranslations[sName];
+        MCString msData;
+        // TODO: make the file format more sensible than this
+        msData.ReadFromDisk(pFile->GetLongName());
+        translation.sSelfName = msData["SelfName"];
+        // TODO: right-to-left support
+    }
+    return mTranslations;
+}
+}  // namespace
+
+std::map<CString, CTranslationInfo> CTranslationInfo::GetTranslations() {
+    static std::map<CString, CTranslationInfo> mTranslations =
+        FillTranslations();
+    return mTranslations;
+}
 
 CTranslation& CTranslation::Get() {
     static CTranslation translation;

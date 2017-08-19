@@ -20,6 +20,12 @@
 #include <znc/ZNCString.h>
 #include <unordered_map>
 
+struct CTranslationInfo {
+    static std::map<CString, CTranslationInfo> GetTranslations();
+
+    CString sSelfName;
+};
+
 // All instances of modules share single message map using this class stored in
 // CZNC.
 class CTranslation {
@@ -38,6 +44,7 @@ class CTranslation {
     void DelReference(const CString& sDomain);
 
   private:
+    // Domain is either "znc" or "znc-foo" where foo is a module name
     const std::locale& LoadTranslation(const CString& sDomain);
     std::unordered_map<CString /* domain */,
                        std::unordered_map<CString /* language */, std::locale>>

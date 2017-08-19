@@ -276,7 +276,9 @@ class CAdminMod : public CModule {
             PutModule("StatusPrefix = " + pUser->GetStatusPrefix());
 #ifdef HAVE_I18N
         else if (sVar == "language")
-            PutModule("Language = " + pUser->GetLanguage());
+            PutModule("Language = " + (pUser->GetLanguage().empty()
+                                           ? "en"
+                                           : pUser->GetLanguage()));
 #endif
 #ifdef HAVE_ICU
         else if (sVar == "clientencoding")
@@ -453,8 +455,22 @@ class CAdminMod : public CModule {
         }
 #ifdef HAVE_I18N
         else if (sVar == "language") {
-            pUser->SetLanguage(sValue);
-            PutModule("Language = " + pUser->GetLanguage());
+            auto mTranslations = CTranslationInfo::GetTranslations();
+            // TODO: maybe stop special-casing English
+            if (sValue == "en") {
+                pUser->SetLanguage("");
+                PutModule("Language is set to English");
+            } else if (mTranslations.count(sValue)) {
+                pUser->SetLanguage(sValue);
+                PutModule("Language = " + sValue);
+            } else {
+                VCString vsCodes = {"en"};
+                for (const auto it : mTranslations) {
+                    vsCodes.push_back(it.first);
+                }
+                PutModule("Supported languages: " +
+                          CString(", ").Join(vsCodes.begin(), vsCodes.end()));
+            }
         }
 #endif
 #ifdef HAVE_ICU

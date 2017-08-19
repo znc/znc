@@ -316,7 +316,11 @@ class CWebAdminMod : public CModule {
         pNewUser->SetNoTrafficTimeout(uNoTrafficTimeout);
 
 #ifdef HAVE_I18N
-        pNewUser->SetLanguage(WebSock.GetParam("language"));
+        CString sLanguage = WebSock.GetParam("language");
+        if (CTranslationInfo::GetTranslations().count(sLanguage) == 0) {
+            sLanguage = "";
+        }
+        pNewUser->SetLanguage(sLanguage);
 #endif
 #ifdef HAVE_ICU
         CString sEncodingUtf = WebSock.GetParam("encoding_utf");
@@ -1376,13 +1380,15 @@ class CWebAdminMod : public CModule {
 
 #ifdef HAVE_I18N
             Tmpl["HaveI18N"] = "true";
-            // TODO don't have them hardcoded here
+            // TODO maybe stop hardcoding English here
             CTemplate& l_en = Tmpl.AddRow("LanguageLoop");
             l_en["Code"] = "";
             l_en["Name"] = "English";
-            CTemplate& l_ru = Tmpl.AddRow("LanguageLoop");
-            l_ru["Code"] = "ru-RU";
-            l_ru["Name"] = "Russian";
+            for (const auto& it : CTranslationInfo::GetTranslations()) {
+                CTemplate& lang = Tmpl.AddRow("LanguageLoop");
+                lang["Code"] = it.first;
+                lang["Name"] = it.second.sSelfName;
+            }
 #else
             Tmpl["HaveI18N"] = "false";
 #endif
