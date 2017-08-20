@@ -635,6 +635,48 @@ class CAdminMod : public CModule {
         }
     }
 
+    void CloneNetwork(const CString& sLine) {
+        const CString sUsername = sLine.Token(1);
+        const CString sOldNetwork = sLine.Token(2);
+        const CString sNewNetwork = sLine.Token(3);
+
+        if (sOldNetwork.empty() || sNewNetwork.empty()) {
+            PutModule(
+                "Usage: CloneNetwork <username> <old network name> <new network name>");
+            return;
+        }
+
+        if (!CIRCNetwork::IsValidNetwork(sNewNetwork)) {
+            PutModule("Error: Network name should be alphanumeric.");
+            return;
+        }
+
+        CUser* pUser = FindUser(sUsername);
+        if (!pUser) {
+            PutModule("Error: User [" + sUsername + "] not found.");
+            return;
+        }
+
+        if (!GetUser()->IsAdmin() && !pUser->HasSpaceForNewNetwork()) {
+            PutStatus(
+                "Network number limit reached. Ask an admin to increase the "
+                "limit for you, or delete unneeded networks using /znc "
+                "DelNetwork <name>");
+            return;
+        }
+
+        CIRCNetwork* pOldNetwork = FindNetwork(pUser, sOldNetwork);
+        if (!pOldNetwork) {
+            PutModule("Error: Network [" + sOldNetwork + "] not found.");
+            return;
+        }
+
+        CIRCNetwork* pNewNetwork = new CIRCNetwork(pUser, *pOldNetwork);
+        pNewNetwork->SetName(sNewNetwork);
+
+        PutModule("Network [" + sOldNetwork + "] cloned to [" + sNewNetwork + "].");
+    }
+
     void AddChan(const CString& sLine) {
         const CString sUsername = sLine.Token(1);
         const CString sNetwork = sLine.Token(2);
@@ -1518,6 +1560,10 @@ class CAdminMod : public CModule {
                    static_cast<CModCommand::ModCmdFunc>(&CAdminMod::SetNetwork),
                    "<variable> <username> <network> <value>",
                    "Sets the variable's value for the given network");
+        AddCommand("CloneNetwork",
+                   static_cast<CModCommand::ModCmdFunc>(&CAdminMod::CloneNetwork),
+                   "<username> <old network name> <new network name>",
+                   "Clones a network");
         AddCommand("GetChan",
                    static_cast<CModCommand::ModCmdFunc>(&CAdminMod::GetChan),
                    "<variable> [username] <network> <chan>",
