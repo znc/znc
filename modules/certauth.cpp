@@ -28,19 +28,16 @@ class CSSLClientCertMod : public CModule {
   public:
     MODCONSTRUCTOR(CSSLClientCertMod) {
         AddHelpCommand();
-        AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(
-                              &CSSLClientCertMod::HandleAddCommand),
-                   "[pubkey]",
-                   "If pubkey is not provided will use the current key");
-        AddCommand("Del", static_cast<CModCommand::ModCmdFunc>(
-                              &CSSLClientCertMod::HandleDelCommand),
-                   "id");
-        AddCommand("List", static_cast<CModCommand::ModCmdFunc>(
-                               &CSSLClientCertMod::HandleListCommand),
-                   "", "List your public keys");
-        AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(
-                               &CSSLClientCertMod::HandleShowCommand),
-                   "", "Print your current key");
+        AddCommand("Add", t_d("[pubkey]"),
+                   t_d("Add a public key. If key is not provided "
+                       "will use the current key"),
+                   [=](const CString& sLine) { HandleAddCommand(sLine); });
+        AddCommand("Del", t_d("id"), t_d("Delete a key by its number in List"),
+                   [=](const CString& sLine) { HandleDelCommand(sLine); });
+        AddCommand("List", "", t_d("List your public keys"),
+                   [=](const CString& sLine) { HandleListCommand(sLine); });
+        AddCommand("Show", "", t_d("Print your current key"),
+                   [=](const CString& sLine) { HandleShowCommand(sLine); });
     }
 
     ~CSSLClientCertMod() override {}
@@ -142,9 +139,9 @@ class CSSLClientCertMod : public CModule {
         const CString sPubKey = GetKey(GetClient());
 
         if (sPubKey.empty()) {
-            PutModule("You are not connected with any valid public key");
+            PutModule(t_s("You are not connected with any valid public key"));
         } else {
-            PutModule("Your current public key is: " + sPubKey);
+            PutModule(t_f("Your current public key is: {1}")(sPubKey));
         }
     }
 
@@ -156,12 +153,13 @@ class CSSLClientCertMod : public CModule {
         }
 
         if (sPubKey.empty()) {
-            PutModule("You did not supply a public key or connect with one.");
+            PutModule(
+                t_s("You did not supply a public key or connect with one."));
         } else {
             if (AddKey(GetUser(), sPubKey)) {
-                PutModule("'" + sPubKey + "' added.");
+                PutModule(t_f("Key '{1}' added.")(sPubKey));
             } else {
-                PutModule("The key '" + sPubKey + "' is already added.");
+                PutModule(t_f("The key '{1}' is already added.")(sPubKey));
             }
         }
     }
@@ -169,26 +167,26 @@ class CSSLClientCertMod : public CModule {
     void HandleListCommand(const CString& sLine) {
         CTable Table;
 
-        Table.AddColumn("Id");
-        Table.AddColumn("Key");
+        Table.AddColumn(t_s("Id", "list"));
+        Table.AddColumn(t_s("Key", "list"));
 
         MSCString::const_iterator it = m_PubKeys.find(GetUser()->GetUserName());
         if (it == m_PubKeys.end()) {
-            PutModule("No keys set for your user");
+            PutModule(t_s("No keys set for your user"));
             return;
         }
 
         unsigned int id = 1;
         for (const CString& sKey : it->second) {
             Table.AddRow();
-            Table.SetCell("Id", CString(id++));
-            Table.SetCell("Key", sKey);
+            Table.SetCell(t_s("Id", "list"), CString(id++));
+            Table.SetCell(t_s("Key", "list"), sKey);
         }
 
         if (PutModule(Table) == 0) {
             // This double check is necessary, because the
             // set could be empty.
-            PutModule("No keys set for your user");
+            PutModule(t_s("No keys set for your user"));
         }
     }
 
@@ -197,12 +195,12 @@ class CSSLClientCertMod : public CModule {
         MSCString::iterator it = m_PubKeys.find(GetUser()->GetUserName());
 
         if (it == m_PubKeys.end()) {
-            PutModule("No keys set for your user");
+            PutModule(t_s("No keys set for your user"));
             return;
         }
 
         if (id == 0 || id > it->second.size()) {
-            PutModule("Invalid #, check \"list\"");
+            PutModule(t_s("Invalid #, check \"list\""));
             return;
         }
 
@@ -214,7 +212,7 @@ class CSSLClientCertMod : public CModule {
 
         it->second.erase(it2);
         if (it->second.size() == 0) m_PubKeys.erase(it);
-        PutModule("Removed");
+        PutModule(t_s("Removed"));
 
         Save();
     }
@@ -287,5 +285,6 @@ void TModInfo<CSSLClientCertMod>(CModInfo& Info) {
     Info.SetWikiPage("certauth");
 }
 
-GLOBALMODULEDEFS(CSSLClientCertMod,
-                 "Allow users to authenticate via SSL client certificates.")
+GLOBALMODULEDEFS(
+    CSSLClientCertMod,
+    t_s("Allows users to authenticate via SSL client certificates."))

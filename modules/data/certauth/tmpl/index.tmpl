@@ -1,17 +1,18 @@
+<? I18N znc-certauth ?>
 <? INC Header.tmpl ?>
 
 <form method="post" action="<? VAR URIPrefix TOP ?><? VAR ModPath ?>add">
 	<? INC _csrf_check.tmpl ?>
 	<div class="section">
-		<h3>Add A Note</h3>
+		<h3><? FORMAT "Add a key" ?></h3>
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection full">
-					<div class="inputlabel">Key:</div>
+					<div class="inputlabel"><? FORMAT "Key:" ?></div>
 					<input type="text" name="key" size="40" />
 				</div>
 				<div class="subsection submitline">
-					<input type="submit" name="add" value="Add Key" />
+					<input type="submit" name="add" value="<? FORMAT "Add Key" ?>" />
 				</div>
 			</div>
 		</div>
@@ -19,20 +20,20 @@
 </form>
 
 <? IF !KeyLoop ?>
-<p>You have no keys.</p>
+<p><? FORMAT "You have no keys." ?></p>
 <? ELSE ?>
 
 <table class="data">
 	<thead>
 		<tr>
 			<th></th>
-			<th>Key</th>
+			<th><? FORMAT CTX="web" "Key" ?></th>
 		</tr>
 	</thead>
 	<tbody>
 		<? LOOP KeyLoop ?>
 		<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
-			<td>[<a href="<? VAR ModPath ?>delete?key=<? VAR Key ESC=URL,HTML ?>">del</a>]</td>
+			<td>[<a href="<? VAR ModPath ?>delete?key=<? VAR Key ESC=URL,HTML ?>"><? FORMAT "del" ?></a>]</td>
 			<td><? VAR Key ?></td>
 		</tr>
 		<? ENDLOOP ?>

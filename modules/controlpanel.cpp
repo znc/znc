@@ -1500,73 +1500,63 @@ class CAdminMod : public CModule {
 
   public:
     MODCONSTRUCTOR(CAdminMod) {
-        AddCommand("Help",
-                   static_cast<CModCommand::ModCmdFunc>(&CAdminMod::PrintHelp),
-                   "[command] [variable]",
-                   "Prints help for matching commands and variables");
-        AddCommand("Get", static_cast<CModCommand::ModCmdFunc>(&CAdminMod::Get),
-                   "<variable> [username]",
-                   "Prints the variable's value for the given or current user");
-        AddCommand("Set", static_cast<CModCommand::ModCmdFunc>(&CAdminMod::Set),
-                   "<variable> <username> <value>",
-                   "Sets the variable's value for the given user");
-        AddCommand("GetNetwork",
-                   static_cast<CModCommand::ModCmdFunc>(&CAdminMod::GetNetwork),
-                   "<variable> [username] [network]",
-                   "Prints the variable's value for the given network");
-        AddCommand("SetNetwork",
-                   static_cast<CModCommand::ModCmdFunc>(&CAdminMod::SetNetwork),
-                   "<variable> <username> <network> <value>",
-                   "Sets the variable's value for the given network");
-        AddCommand("GetChan",
-                   static_cast<CModCommand::ModCmdFunc>(&CAdminMod::GetChan),
-                   "<variable> [username] <network> <chan>",
-                   "Prints the variable's value for the given channel");
+        AddCommand("Help", t_d("[command] [variable]"),
+                   t_d("Prints help for matching commands and variables"),
+                   [=](const CString& sLine) { PrintHelp(sLine); });
+        AddCommand(
+            "Get", t_d("<variable> [username]"),
+            t_d("Prints the variable's value for the given or current user"),
+            [=](const CString& sLine) { Get(sLine); });
+        AddCommand("Set", t_d("<variable> <username> <value>"),
+                   t_d("Sets the variable's value for the given user"),
+                   [=](const CString& sLine) { Set(sLine); });
+        AddCommand("GetNetwork", t_d("<variable> [username] [network]"),
+                   t_d("Prints the variable's value for the given network"),
+                   [=](const CString& sLine) { GetNetwork(sLine); });
+        AddCommand("SetNetwork", t_d("<variable> <username> <network> <value>"),
+                   t_d("Sets the variable's value for the given network"),
+                   [=](const CString& sLine) { SetNetwork(sLine); });
+        AddCommand("GetChan", t_d("<variable> [username] <network> <chan>"),
+                   t_d("Prints the variable's value for the given channel"),
+                   [=](const CString& sLine) { GetChan(sLine); });
         AddCommand("SetChan",
-                   static_cast<CModCommand::ModCmdFunc>(&CAdminMod::SetChan),
-                   "<variable> <username> <network> <chan> <value>",
-                   "Sets the variable's value for the given channel");
-        AddCommand("AddChan",
-                   static_cast<CModCommand::ModCmdFunc>(&CAdminMod::AddChan),
-                   "<username> <network> <chan>", "Adds a new channel");
-        AddCommand("DelChan",
-                   static_cast<CModCommand::ModCmdFunc>(&CAdminMod::DelChan),
-                   "<username> <network> <chan>", "Deletes a channel");
-        AddCommand("ListUsers",
-                   static_cast<CModCommand::ModCmdFunc>(&CAdminMod::ListUsers),
-                   "", "Lists users");
-        AddCommand("AddUser",
-                   static_cast<CModCommand::ModCmdFunc>(&CAdminMod::AddUser),
-                   "<username> <password>", "Adds a new user");
-        AddCommand("DelUser",
-                   static_cast<CModCommand::ModCmdFunc>(&CAdminMod::DelUser),
-                   "<username>", "Deletes a user");
-        AddCommand("CloneUser",
-                   static_cast<CModCommand::ModCmdFunc>(&CAdminMod::CloneUser),
-                   "<old username> <new username>", "Clones a user");
-        AddCommand("AddServer",
-                   static_cast<CModCommand::ModCmdFunc>(&CAdminMod::AddServer),
-                   "<username> <network> <server>",
-                   "Adds a new IRC server for the given or current user");
-        AddCommand("DelServer",
-                   static_cast<CModCommand::ModCmdFunc>(&CAdminMod::DelServer),
-                   "<username> <network> <server>",
-                   "Deletes an IRC server from the given or current user");
-        AddCommand(
-            "Reconnect",
-            static_cast<CModCommand::ModCmdFunc>(&CAdminMod::ReconnectUser),
-            "<username> <network>", "Cycles the user's IRC server connection");
-        AddCommand("Disconnect", static_cast<CModCommand::ModCmdFunc>(
-                                     &CAdminMod::DisconnectUser),
-                   "<username> <network>",
-                   "Disconnects the user from their IRC server");
-        AddCommand(
-            "LoadModule",
-            static_cast<CModCommand::ModCmdFunc>(&CAdminMod::LoadModuleForUser),
-            "<username> <modulename> [args]", "Loads a Module for a user");
-        AddCommand("UnLoadModule", static_cast<CModCommand::ModCmdFunc>(
-                                       &CAdminMod::UnLoadModuleForUser),
-                   "<username> <modulename>", "Removes a Module of a user");
+                   t_d("<variable> <username> <network> <chan> <value>"),
+                   t_d("Sets the variable's value for the given channel"),
+                   [=](const CString& sLine) { SetChan(sLine); });
+        AddCommand("AddChan", t_d("<username> <network> <chan>"),
+                   t_d("Adds a new channel"),
+                   [=](const CString& sLine) { AddChan(sLine); });
+        AddCommand("DelChan", t_d("<username> <network> <chan>"),
+                   t_d("Deletes a channel"),
+                   [=](const CString& sLine) { DelChan(sLine); });
+        AddCommand("ListUsers", "", t_d("Lists users"),
+                   [=](const CString& sLine) { ListUsers(sLine); });
+        AddCommand("AddUser", t_d("<username> <password>"),
+                   t_d("Adds a new user"),
+                   [=](const CString& sLine) { AddUser(sLine); });
+        AddCommand("DelUser", t_d("<username>"), t_d("Deletes a user"),
+                   [=](const CString& sLine) { DelUser(sLine); });
+        AddCommand("CloneUser", t_d("<old username> <new username>"),
+                   t_d("Clones a user"),
+                   [=](const CString& sLine) { CloneUser(sLine); });
+        AddCommand("AddServer", t_d("<username> <network> <server>"),
+                   t_d("Adds a new IRC server for the given or current user"),
+                   [=](const CString& sLine) { AddServer(sLine); });
+        AddCommand("DelServer", t_d("<username> <network> <server>"),
+                   t_d("Deletes an IRC server from the given or current user"),
+                   [=](const CString& sLine) { DelServer(sLine); });
+        AddCommand("Reconnect", t_d("<username> <network>"),
+                   t_d("Cycles the user's IRC server connection"),
+                   [=](const CString& sLine) { ReconnectUser(sLine); });
+        AddCommand("Disconnect", t_d("<username> <network>"),
+                   t_d("Disconnects the user from their IRC server"),
+                   [=](const CString& sLine) { DisconnectUser(sLine); });
+        AddCommand("LoadModule", t_d("<username> <modulename> [args]"),
+                   t_d("Loads a Module for a user"),
+                   [=](const CString& sLine) { LoadModuleForUser(sLine); });
+        AddCommand("UnLoadModule", t_d("<username> <modulename>"),
+                   t_d("Removes a Module of a user"),
+                   [=](const CString& sLine) { UnLoadModuleForUser(sLine); });
         AddCommand("ListMods", static_cast<CModCommand::ModCmdFunc>(
                                    &CAdminMod::ListModulesForUser),
                    "<username>", "Get the list of modules for a user");
@@ -1613,5 +1603,5 @@ void TModInfo<CAdminMod>(CModInfo& Info) {
 }
 
 USERMODULEDEFS(CAdminMod,
-               "Dynamic configuration through IRC. Allows editing only "
-               "yourself if you're not ZNC admin.")
+               t_s("Dynamic configuration through IRC. Allows editing only "
+               "yourself if you're not ZNC admin."))

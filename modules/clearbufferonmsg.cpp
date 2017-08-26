@@ -157,6 +157,5 @@ void TModInfo<CClearBufferOnMsgMod>(CModInfo& Info) {
     Info.SetArgsHelpText("[ [!]<msg|ctcp|action|notice|part|topic|quit|all> ]");
 }
 
-USERMODULEDEFS(
-    CClearBufferOnMsgMod,
-    "Clear all channel and query buffers whenever the user does something")
+USERMODULEDEFS(CClearBufferOnMsgMod, t_s("Clears all channel and query buffers "
+                                         "whenever the user does something"))

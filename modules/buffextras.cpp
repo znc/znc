@@ -111,4 +111,5 @@ void TModInfo<CBuffExtras>(CModInfo& Info) {
     Info.AddType(CModInfo::NetworkModule);
 }
 
-USERMODULEDEFS(CBuffExtras, t_s("Add joins, parts etc. to the playback buffer"))
+USERMODULEDEFS(CBuffExtras,
+               t_s("Adds joins, parts etc. to the playback buffer"))
