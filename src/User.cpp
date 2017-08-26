@@ -463,14 +463,6 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
             continue;
         }
 
-        // XXX Legacy crap, added in 1.7
-        if (sModName == "disconkick") {
-            sNotice =
-                "NOTICE: [disconkick] is integrated to core now, ignoring it";
-            CUtils::PrintMessage(sNotice);
-            continue;
-        }
-
         CString sModRet;
         CString sArgs = sMod.Token(1, true);
 
