@@ -41,8 +41,10 @@ class CBuffExtras : public CModule {
 
     void OnRawMode2(const CNick* pOpNick, CChan& Channel, const CString& sModes,
                     const CString& sArgs) override {
-        const CString sNickMask = pOpNick ? pOpNick->GetNickMask() : "Server";
-        AddBuffer(Channel, sNickMask + " set mode: " + sModes + " " + sArgs);
+        const CString sNickMask =
+            pOpNick ? pOpNick->GetNickMask() : t_s("Server");
+        AddBuffer(Channel,
+                  t_f("{1} set mode: {2} {3}")(sNickMask, sModes, sArgs));
     }
 
     void OnKickMessage(CKickMessage& Message) override {
@@ -50,8 +52,8 @@ class CBuffExtras : public CModule {
         const CString sKickedNick = Message.GetKickedNick();
         CChan& Channel = *Message.GetChan();
         const CString sMessage = Message.GetReason();
-        AddBuffer(Channel, OpNick.GetNickMask() + " kicked " + sKickedNick +
-                               " Reason: [" + sMessage + "]",
+        AddBuffer(Channel, t_f("{1} kicked {2} with reason: {3}")(
+                               OpNick.GetNickMask(), sKickedNick, sMessage),
                   &Message.GetTime(), Message.GetTags());
     }
 
@@ -59,8 +61,7 @@ class CBuffExtras : public CModule {
                        const vector<CChan*>& vChans) override {
         const CNick& Nick = Message.GetNick();
         const CString sMessage = Message.GetReason();
-        CString sMsg =
-            Nick.GetNickMask() + " quit with message: [" + sMessage + "]";
+        const CString sMsg = t_f("{1} quit: {2}")(Nick.GetNickMask(), sMessage);
         for (CChan* pChan : vChans) {
             AddBuffer(*pChan, sMsg, &Message.GetTime(), Message.GetTags());
         }
@@ -69,16 +70,15 @@ class CBuffExtras : public CModule {
     void OnJoinMessage(CJoinMessage& Message) override {
         const CNick& Nick = Message.GetNick();
         CChan& Channel = *Message.GetChan();
-        AddBuffer(Channel, Nick.GetNickMask() + " joined", &Message.GetTime(),
-                  Message.GetTags());
+        AddBuffer(Channel, t_f("{1} joined")(Nick.GetNickMask(), " joined"),
+                  &Message.GetTime(), Message.GetTags());
     }
 
     void OnPartMessage(CPartMessage& Message) override {
         const CNick& Nick = Message.GetNick();
         CChan& Channel = *Message.GetChan();
         const CString sMessage = Message.GetReason();
-        AddBuffer(Channel, Nick.GetNickMask() + " parted with message: [" +
-                               sMessage + "]",
+        AddBuffer(Channel, t_f("{1} parted: {2}")(Nick.GetNickMask(), sMessage),
                   &Message.GetTime(), Message.GetTags());
     }
 
@@ -86,7 +86,8 @@ class CBuffExtras : public CModule {
                        const vector<CChan*>& vChans) override {
         const CNick& OldNick = Message.GetNick();
         const CString sNewNick = Message.GetNewNick();
-        CString sMsg = OldNick.GetNickMask() + " is now known as " + sNewNick;
+        const CString sMsg =
+            t_f("{1} is now known as {2}")(OldNick.GetNickMask(), sNewNick);
         for (CChan* pChan : vChans) {
             AddBuffer(*pChan, sMsg, &Message.GetTime(), Message.GetTags());
         }
@@ -96,8 +97,8 @@ class CBuffExtras : public CModule {
         const CNick& Nick = Message.GetNick();
         CChan& Channel = *Message.GetChan();
         const CString sTopic = Message.GetTopic();
-        AddBuffer(Channel,
-                  Nick.GetNickMask() + " changed the topic to: " + sTopic,
+        AddBuffer(Channel, t_f("{1} changed the topic to: {2}")(
+                               Nick.GetNickMask(), sTopic),
                   &Message.GetTime(), Message.GetTags());
 
         return CONTINUE;
@@ -110,4 +111,4 @@ void TModInfo<CBuffExtras>(CModInfo& Info) {
     Info.AddType(CModInfo::NetworkModule);
 }
 
-USERMODULEDEFS(CBuffExtras, "Add joins, parts etc. to the playback buffer")
+USERMODULEDEFS(CBuffExtras, t_s("Add joins, parts etc. to the playback buffer"))

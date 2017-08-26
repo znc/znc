@@ -56,8 +56,8 @@ class CBlockMotd : public CModule {
 
         if (sCmd == "376" /* End of MOTD */) {
             if (!ShouldTemporarilyAcceptMotd()) {
-                sLine = sLine.Token(0) + " 422 " + sLine.Token(2) +
-                        " :MOTD blocked by ZNC";
+                sLine = sLine.Token(0) + " 422 " + sLine.Token(2) + " :" +
+                        t_s("MOTD blocked by ZNC");
             }
             StopTemporarilyAcceptingMotd();
         }
