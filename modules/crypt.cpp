@@ -39,12 +39,12 @@
 //       client in plain text.
 //
 
-#include <znc/Chan.h>
-#include <znc/User.h>
-#include <znc/IRCNetwork.h>
-#include <openssl/dh.h>
 #include <openssl/bn.h>
+#include <openssl/dh.h>
+#include <znc/Chan.h>
+#include <znc/IRCNetwork.h>
 #include <znc/SHA256.h>
+#include <znc/User.h>
 
 #define REQUIRESSL 1
 // To be removed in future versions
@@ -54,10 +54,15 @@
 class CCryptMod : public CModule {
   private:
     /*
-     * As used in other implementations like KVIrc, fish10, Quassel, FiSH-irssi, ...
-     * all the way back to the original located at http://mircryption.sourceforge.net/Extras/McpsFishDH.zip
+     * As used in other implementations like KVIrc, fish10, Quassel, FiSH-irssi,
+     * ... all the way back to the original located at
+     * http://mircryption.sourceforge.net/Extras/McpsFishDH.zip
      */
-    const char* m_sPrime1080 = "FBE1022E23D213E8ACFA9AE8B9DFADA3EA6B7AC7A7B7E95AB5EB2DF858921FEADE95E6AC7BE7DE6ADBAB8A783E7AF7A7FA6A2B7BEB1E72EAE2B72F9FA2BFB2A2EFBEFAC868BADB3E828FA8BADFADA3E4CC1BE7E8AFE85E9698A783EB68FA07A77AB6AD7BEB618ACF9CA2897EB28A6189EFA07AB99A8A7FA9AE299EFA7BA66DEAFEFBEFBF0B7D8B";
+    const char* m_sPrime1080 =
+        "FBE1022E23D213E8ACFA9AE8B9DFADA3EA6B7AC7A7B7E95AB5EB2DF858921FEADE95E6"
+        "AC7BE7DE6ADBAB8A783E7AF7A7FA6A2B7BEB1E72EAE2B72F9FA2BFB2A2EFBEFAC868BA"
+        "DB3E828FA8BADFADA3E4CC1BE7E8AFE85E9698A783EB68FA07A77AB6AD7BEB618ACF9C"
+        "A2897EB28A6189EFA07AB99A8A7FA9AE299EFA7BA66DEAFEFBEFBF0B7D8B";
     /* Generate our keys once and reuse, just like ssh keys */
     std::unique_ptr<DH, decltype(&DH_free)> m_pDH;
     CString m_sPrivKey;
@@ -68,7 +73,8 @@ class CCryptMod : public CModule {
         /* If the fields p and g in dh are nullptr, the corresponding input
          * parameters MUST be non-nullptr.  q may remain nullptr.
          */
-        if (dh == nullptr || (dh->p == nullptr && p == nullptr) || (dh->g == nullptr && g == nullptr))
+        if (dh == nullptr || (dh->p == nullptr && p == nullptr) ||
+            (dh->g == nullptr && g == nullptr))
             return 0;
 
         if (p != nullptr) {
@@ -88,12 +94,11 @@ class CCryptMod : public CModule {
         return 1;
     }
 
-    static void DH_get0_key(const DH* dh, const BIGNUM** pub_key, const BIGNUM** priv_key) {
+    static void DH_get0_key(const DH* dh, const BIGNUM** pub_key,
+                            const BIGNUM** priv_key) {
         if (dh != nullptr) {
-            if (pub_key != nullptr)
-                *pub_key = dh->pub_key;
-            if (priv_key != nullptr)
-                *priv_key = dh->priv_key;
+            if (pub_key != nullptr) *pub_key = dh->pub_key;
+            if (priv_key != nullptr) *priv_key = dh->priv_key;
         }
     }
 
@@ -108,12 +113,12 @@ class CCryptMod : public CModule {
             BIGNUM* bPrime = nullptr;
             BIGNUM* bGen = nullptr;
 
-            if (!BN_hex2bn(&bPrime, m_sPrime1080) || !BN_dec2bn(&bGen, "2") || !DH_set0_pqg(m_pDH.get(), bPrime, nullptr, bGen) || !DH_generate_key(m_pDH.get())) {
+            if (!BN_hex2bn(&bPrime, m_sPrime1080) || !BN_dec2bn(&bGen, "2") ||
+                !DH_set0_pqg(m_pDH.get(), bPrime, nullptr, bGen) ||
+                !DH_generate_key(m_pDH.get())) {
                 /* one of them failed */
-                if (bPrime != nullptr)
-                    BN_clear_free(bPrime);
-                if (bGen != nullptr)
-                    BN_clear_free(bGen);
+                if (bPrime != nullptr) BN_clear_free(bPrime);
+                if (bGen != nullptr) BN_clear_free(bGen);
                 return false;
             }
 
@@ -131,12 +136,10 @@ class CCryptMod : public CModule {
             m_sPubKey.resize(len);
             BN_bn2bin(bPubKey, (unsigned char*)m_sPubKey.data());
             m_sPubKey.Base64Encode();
-
         }
 
         return true;
     }
-
 
     bool DH1080_comp(CString& sOtherPubKey, CString& sSecretKey) {
         unsigned long len;
@@ -145,16 +148,15 @@ class CCryptMod : public CModule {
 
         /* Prepare other public key */
         len = sOtherPubKey.Base64Decode();
-        bOtherPubKey = BN_bin2bn((unsigned char*)sOtherPubKey.data(), len, nullptr);
+        bOtherPubKey =
+            BN_bin2bn((unsigned char*)sOtherPubKey.data(), len, nullptr);
 
         /* Generate secret key */
         key = (unsigned char*)calloc(DH_size(m_pDH.get()), 1);
         if ((len = DH_compute_key(key, bOtherPubKey, m_pDH.get())) == -1) {
             sSecretKey = "";
-            if (bOtherPubKey != nullptr)
-                BN_clear_free(bOtherPubKey);
-            if (key != nullptr)
-                free(key);
+            if (bOtherPubKey != nullptr) BN_clear_free(bOtherPubKey);
+            if (key != nullptr) free(key);
             return false;
         }
 
@@ -164,10 +166,8 @@ class CCryptMod : public CModule {
         sSecretKey.Base64Encode();
         sSecretKey.TrimRight("=");
 
-        if (bOtherPubKey != nullptr)
-            BN_clear_free(bOtherPubKey);
-        if (key != nullptr)
-            free(key);
+        if (bOtherPubKey != nullptr) BN_clear_free(bOtherPubKey);
+        if (key != nullptr) free(key);
 
         return true;
     }
@@ -177,7 +177,8 @@ class CCryptMod : public CModule {
         /*
          * Check for different Prefixes to not confuse modules with nicknames
          * Also check for overlap for rare cases like:
-         * SP = "*"; NP = "*s"; "tatus" sends an encrypted message appearing at "*status"
+         * SP = "*"; NP = "*s"; "tatus" sends an encrypted message appearing at
+         * "*status"
          */
         CString sStatusPrefix = GetUser()->GetStatusPrefix();
         if (it != EndNV()) {
@@ -190,10 +191,9 @@ class CCryptMod : public CModule {
         return sStatusPrefix.StartsWith("*") ? "." : "*";
     }
 
-
   public:
     /* MODCONSTRUCTOR(CLASS) is of form "CLASS(...) : CModule(...)" */
-    MODCONSTRUCTOR(CCryptMod) , m_pDH(DH_new(), DH_free) {
+    MODCONSTRUCTOR(CCryptMod), m_pDH(DH_new(), DH_free) {
         AddHelpCommand();
         AddCommand("DelKey", static_cast<CModCommand::ModCmdFunc>(
                                  &CCryptMod::OnDelKeyCommand),
@@ -205,17 +205,15 @@ class CCryptMod : public CModule {
                                    &CCryptMod::OnListKeysCommand),
                    "", "List all keys");
         AddCommand("KeyX", static_cast<CModCommand::ModCmdFunc>(
-                                 &CCryptMod::OnKeyXCommand),
+                               &CCryptMod::OnKeyXCommand),
                    "<Nick>", "Start a DH1080 key exchange with nick");
         AddCommand("GetNickPrefix", static_cast<CModCommand::ModCmdFunc>(
-                                 &CCryptMod::OnGetNickPrefixCommand),
+                                        &CCryptMod::OnGetNickPrefixCommand),
                    "", "Get the nick prefix");
         AddCommand("SetNickPrefix", static_cast<CModCommand::ModCmdFunc>(
-                                 &CCryptMod::OnSetNickPrefixCommand),
-                   "[Prefix]", "Set the nick prefix, with no argument it's disabled.");
-    }
-
-    ~CCryptMod() override {
+                                        &CCryptMod::OnSetNickPrefixCommand),
+                   "[Prefix]",
+                   "Set the nick prefix, with no argument it's disabled.");
     }
 
     bool OnLoad(const CString& sArgsi, CString& sMessage) override {
@@ -240,7 +238,8 @@ class CCryptMod : public CModule {
     }
 
     EModRet OnUserAction(CString& sTarget, CString& sMessage) override {
-        return FilterOutgoing(sTarget, sMessage, "PRIVMSG", "\001ACTION ", "\001");
+        return FilterOutgoing(sTarget, sMessage, "PRIVMSG", "\001ACTION ",
+                              "\001");
     }
 
     EModRet OnUserTopic(CString& sTarget, CString& sMessage) override {
@@ -271,35 +270,46 @@ class CCryptMod : public CModule {
         CString sCommand = sMessage.Token(0);
         CString sOtherPubKey = sMessage.Token(1);
 
-        if ((sCommand.Equals("DH1080_INIT") || sCommand.Equals("DH1080_INIT_CBC")) && !sOtherPubKey.empty()) {
+        if ((sCommand.Equals("DH1080_INIT") ||
+             sCommand.Equals("DH1080_INIT_CBC")) &&
+            !sOtherPubKey.empty()) {
             CString sSecretKey;
             CString sTail = sMessage.Token(2); /* For fish10 */
 
             /* remove trailing A */
-            if (sOtherPubKey.TrimSuffix("A") && DH1080_gen() && DH1080_comp(sOtherPubKey, sSecretKey)) {
-                PutModule("Received DH1080 public key from " + Nick.GetNick() + ", sending mine...");
-                PutIRC("NOTICE " + Nick.GetNick() + " :DH1080_FINISH " + m_sPubKey + "A" + (sTail.empty()?"":(" " + sTail)));
+            if (sOtherPubKey.TrimSuffix("A") && DH1080_gen() &&
+                DH1080_comp(sOtherPubKey, sSecretKey)) {
+                PutModule("Received DH1080 public key from " + Nick.GetNick() +
+                          ", sending mine...");
+                PutIRC("NOTICE " + Nick.GetNick() + " :DH1080_FINISH " +
+                       m_sPubKey + "A" + (sTail.empty() ? "" : (" " + sTail)));
                 SetNV(Nick.GetNick().AsLower(), sSecretKey);
                 PutModule("Key for " + Nick.GetNick() + " successfully set.");
                 return HALT;
             }
-            PutModule("Error in " + sCommand + " with " + Nick.GetNick() + ": " + (sSecretKey.empty()?"no secret key computed":sSecretKey));
+            PutModule(
+                "Error in " + sCommand + " with " + Nick.GetNick() + ": " +
+                (sSecretKey.empty() ? "no secret key computed" : sSecretKey));
             return CONTINUE;
 
         } else if (sCommand.Equals("DH1080_FINISH") && !sOtherPubKey.empty()) {
             /*
-             * In theory we could get a DH1080_FINISH without us having sent a DH1080_INIT first,
-             * but then to have any use for the other user, they'd already have our pub key
+             * In theory we could get a DH1080_FINISH without us having sent a
+             * DH1080_INIT first, but then to have any use for the other user,
+             * they'd already have our pub key
              */
             CString sSecretKey;
 
             /* remove trailing A */
-            if (sOtherPubKey.TrimSuffix("A") && DH1080_gen() && DH1080_comp(sOtherPubKey, sSecretKey)) {
+            if (sOtherPubKey.TrimSuffix("A") && DH1080_gen() &&
+                DH1080_comp(sOtherPubKey, sSecretKey)) {
                 SetNV(Nick.GetNick().AsLower(), sSecretKey);
                 PutModule("Key for " + Nick.GetNick() + " successfully set.");
                 return HALT;
             }
-            PutModule("Error in " + sCommand + " with " + Nick.GetNick() + ": " + (sSecretKey.empty()?"no secret key computed":sSecretKey));
+            PutModule(
+                "Error in " + sCommand + " with " + Nick.GetNick() + ": " +
+                (sSecretKey.empty() ? "no secret key computed" : sSecretKey));
             return CONTINUE;
         }
 
@@ -353,7 +363,9 @@ class CCryptMod : public CModule {
         return CONTINUE;
     }
 
-    EModRet FilterOutgoing(CString& sTarget, CString& sMessage, const CString& sType, const CString& sPreMsg, const CString& sPostMsg) {
+    EModRet FilterOutgoing(CString& sTarget, CString& sMessage,
+                           const CString& sType, const CString& sPreMsg,
+                           const CString& sPostMsg) {
         sTarget.TrimPrefix(NickPrefix());
 
         if (sMessage.TrimPrefix("``")) {
@@ -368,12 +380,13 @@ class CCryptMod : public CModule {
             if (pChan) {
                 if (!pChan->AutoClearChanBuffer())
                     pChan->AddBuffer(":" + NickPrefix() + _NAMEDFMT(sNickMask) +
-                                         " " + sType + " " + _NAMEDFMT(sTarget) +
-                                         " :" + sPreMsg + "{text}" + sPostMsg,
+                                         " " + sType + " " +
+                                         _NAMEDFMT(sTarget) + " :" + sPreMsg +
+                                         "{text}" + sPostMsg,
                                      sMessage);
-                GetUser()->PutUser(":" + NickPrefix() + sNickMask +
-                                       " " + sType + " " + sTarget + " :" +
-                                       sPreMsg + sMessage + sPostMsg,
+                GetUser()->PutUser(":" + NickPrefix() + sNickMask + " " +
+                                       sType + " " + sTarget + " :" + sPreMsg +
+                                       sMessage + sPostMsg,
                                    nullptr, GetClient());
             }
 
@@ -440,8 +453,10 @@ class CCryptMod : public CModule {
 
         if (!sTarget.empty()) {
             if (DH1080_gen()) {
-                PutIRC("NOTICE " + sTarget + " :DH1080_INIT " + m_sPubKey + "A");
-                PutModule("Sent my DH1080 public key to " + sTarget + ", waiting for reply ...");
+                PutIRC("NOTICE " + sTarget + " :DH1080_INIT " + m_sPubKey +
+                       "A");
+                PutModule("Sent my DH1080 public key to " + sTarget +
+                          ", waiting for reply ...");
             } else {
                 PutModule("Error generating our keys, nothing sent.");
             }
@@ -452,21 +467,25 @@ class CCryptMod : public CModule {
 
     void OnGetNickPrefixCommand(const CString& sCommand) {
         CString sPrefix = NickPrefix();
-        PutModule("Nick Prefix" + (sPrefix.empty() ? " disabled." : (": " + sPrefix)));
+        PutModule("Nick Prefix" +
+                  (sPrefix.empty() ? " disabled." : (": " + sPrefix)));
     }
 
     void OnSetNickPrefixCommand(const CString& sCommand) {
         CString sPrefix = sCommand.Token(1);
 
         if (sPrefix.StartsWith(":")) {
-            PutModule("You cannot use :, even followed by other symbols, as Nick Prefix.");
+            PutModule(
+                "You cannot use :, even followed by other symbols, as Nick "
+                "Prefix.");
         } else {
             CString sStatusPrefix = GetUser()->GetStatusPrefix();
             size_t sp = sStatusPrefix.size();
             size_t np = sPrefix.size();
             int min = std::min(sp, np);
             if (min > 0 && sStatusPrefix.CaseCmp(sPrefix, min) == 0)
-                PutModule("Overlap with Status Prefix (" + sStatusPrefix + "), this Nick Prefix will not be used!");
+                PutModule("Overlap with Status Prefix (" + sStatusPrefix +
+                          "), this Nick Prefix will not be used!");
             else {
                 SetNV(NICK_PREFIX_KEY, sPrefix);
                 if (sPrefix.empty())
