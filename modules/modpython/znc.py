@@ -921,6 +921,8 @@ def CreateWebSubPage(name, title='', params=dict(), admin=False):
 
 CUser.GetNetworks = CUser.GetNetworks_
 CIRCNetwork.GetChans = CIRCNetwork.GetChans_
+CIRCNetwork.GetServers = CIRCNetwork.GetServers_
+CIRCNetwork.GetQueries = CIRCNetwork.GetQueries_
 CChan.GetNicks = CChan.GetNicks_
 CZNC.GetUserMap = CZNC.GetUserMap_
 
