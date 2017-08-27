@@ -27,6 +27,7 @@
 #include "znc/Chan.h"
 #include "znc/User.h"
 #include "znc/IRCNetwork.h"
+#include "znc/Query.h"
 #include "znc/Client.h"
 #include "znc/IRCSock.h"
 #include "znc/Listener.h"
@@ -105,6 +106,8 @@ class MCString : public std::map<CString, CString> {};
 %template(BufLines) std::deque<CBufLine>;
 %template(VVString) std::vector<VCString>;
 %template(VClients) std::vector<CClient*>;
+%template(VServers) std::vector<CServer*>;
+%template(VQueries) std::vector<CQuery*>;
 
 #define REGISTER_ZNC_MESSAGE(M) \
     %template(As_ ## M) CMessage::As<M>;
@@ -163,6 +166,7 @@ class MCString : public std::map<CString, CString> {};
 %include "znc/Chan.h"
 %include "znc/User.h"
 %include "znc/IRCNetwork.h"
+%include "znc/Query.h"
 %include "znc/Client.h"
 %include "znc/IRCSock.h"
 %include "znc/Listener.h"
@@ -272,6 +276,12 @@ class CPyRetBool {
 	}
 	std::vector<CChan*> GetChans_() {
 		return $self->GetChans();
+	}
+	std::vector<CServer*> GetServers_() {
+		return $self->GetServers();
+	}
+	std::vector<CQuery*> GetQueries_() {
+		return $self->GetQueries();
 	}
 }
 
