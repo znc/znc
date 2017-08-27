@@ -195,25 +195,24 @@ class CCryptMod : public CModule {
     /* MODCONSTRUCTOR(CLASS) is of form "CLASS(...) : CModule(...)" */
     MODCONSTRUCTOR(CCryptMod), m_pDH(DH_new(), DH_free) {
         AddHelpCommand();
-        AddCommand("DelKey", static_cast<CModCommand::ModCmdFunc>(
-                                 &CCryptMod::OnDelKeyCommand),
-                   "<#chan|Nick>", "Remove a key for nick or channel");
-        AddCommand("SetKey", static_cast<CModCommand::ModCmdFunc>(
-                                 &CCryptMod::OnSetKeyCommand),
-                   "<#chan|Nick> <Key>", "Set a key for nick or channel");
-        AddCommand("ListKeys", static_cast<CModCommand::ModCmdFunc>(
-                                   &CCryptMod::OnListKeysCommand),
-                   "", "List all keys");
-        AddCommand("KeyX", static_cast<CModCommand::ModCmdFunc>(
-                               &CCryptMod::OnKeyXCommand),
-                   "<Nick>", "Start a DH1080 key exchange with nick");
-        AddCommand("GetNickPrefix", static_cast<CModCommand::ModCmdFunc>(
-                                        &CCryptMod::OnGetNickPrefixCommand),
-                   "", "Get the nick prefix");
-        AddCommand("SetNickPrefix", static_cast<CModCommand::ModCmdFunc>(
-                                        &CCryptMod::OnSetNickPrefixCommand),
-                   "[Prefix]",
-                   "Set the nick prefix, with no argument it's disabled.");
+        AddCommand("DelKey", t_d("<#chan|Nick>"),
+                   t_d("Remove a key for nick or channel"),
+                   [=](const CString& sLine) { OnDelKeyCommand(sLine); });
+        AddCommand("SetKey", t_d("<#chan|Nick> <Key>"),
+                   t_d("Set a key for nick or channel"),
+                   [=](const CString& sLine) { OnSetKeyCommand(sLine); });
+        AddCommand("ListKeys", "", t_d("List all keys"),
+                   [=](const CString& sLine) { OnListKeysCommand(sLine); });
+        AddCommand("KeyX", t_d("<Nick>"),
+                   t_d("Start a DH1080 key exchange with nick"),
+                   [=](const CString& sLine) { OnKeyXCommand(sLine); });
+        AddCommand(
+            "GetNickPrefix", "", t_d("Get the nick prefix"),
+            [=](const CString& sLine) { OnGetNickPrefixCommand(sLine); });
+        AddCommand(
+            "SetNickPrefix", t_d("[Prefix]"),
+            t_d("Set the nick prefix, with no argument it's disabled."),
+            [=](const CString& sLine) { OnSetNickPrefixCommand(sLine); });
     }
 
     bool OnLoad(const CString& sArgsi, CString& sMessage) override {
@@ -279,17 +278,19 @@ class CCryptMod : public CModule {
             /* remove trailing A */
             if (sOtherPubKey.TrimSuffix("A") && DH1080_gen() &&
                 DH1080_comp(sOtherPubKey, sSecretKey)) {
-                PutModule("Received DH1080 public key from " + Nick.GetNick() +
-                          ", sending mine...");
+                PutModule(
+                    t_f("Received DH1080 public key from {1}, sending mine...")(
+                        Nick.GetNick()));
                 PutIRC("NOTICE " + Nick.GetNick() + " :DH1080_FINISH " +
                        m_sPubKey + "A" + (sTail.empty() ? "" : (" " + sTail)));
                 SetNV(Nick.GetNick().AsLower(), sSecretKey);
-                PutModule("Key for " + Nick.GetNick() + " successfully set.");
+                PutModule(t_f("Key for {1} successfully set.")(Nick.GetNick()));
                 return HALT;
             }
-            PutModule(
-                "Error in " + sCommand + " with " + Nick.GetNick() + ": " +
-                (sSecretKey.empty() ? "no secret key computed" : sSecretKey));
+            PutModule(t_f("Error in {1} with {2}: {3}")(
+                sCommand, Nick.GetNick(),
+                (sSecretKey.empty() ? t_s("no secret key computed")
+                                    : sSecretKey)));
             return CONTINUE;
 
         } else if (sCommand.Equals("DH1080_FINISH") && !sOtherPubKey.empty()) {
@@ -304,12 +305,13 @@ class CCryptMod : public CModule {
             if (sOtherPubKey.TrimSuffix("A") && DH1080_gen() &&
                 DH1080_comp(sOtherPubKey, sSecretKey)) {
                 SetNV(Nick.GetNick().AsLower(), sSecretKey);
-                PutModule("Key for " + Nick.GetNick() + " successfully set.");
+                PutModule(t_f("Key for {1} successfully set.")(Nick.GetNick()));
                 return HALT;
             }
-            PutModule(
-                "Error in " + sCommand + " with " + Nick.GetNick() + ": " +
-                (sSecretKey.empty() ? "no secret key computed" : sSecretKey));
+            PutModule(t_f("Error in {1} with {2}: {3}")(
+                sCommand, Nick.GetNick(),
+                (sSecretKey.empty() ? t_s("no secret key computed")
+                                    : sSecretKey)));
             return CONTINUE;
         }
 
@@ -422,12 +424,12 @@ class CCryptMod : public CModule {
 
         if (!sTarget.empty()) {
             if (DelNV(sTarget.AsLower())) {
-                PutModule("Target [" + sTarget + "] deleted");
+                PutModule(t_f("Target [{1}] deleted")(sTarget));
             } else {
-                PutModule("Target [" + sTarget + "] not found");
+                PutModule(t_f("Target [{1}] not found")(sTarget));
             }
         } else {
-            PutModule("Usage DelKey <#chan|Nick>");
+            PutModule(t_s("Usage DelKey <#chan|Nick>"));
         }
     }
 
@@ -441,10 +443,10 @@ class CCryptMod : public CModule {
 
         if (!sKey.empty()) {
             SetNV(sTarget.AsLower(), sKey);
-            PutModule("Set encryption key for [" + sTarget + "] to [" + sKey +
-                      "]");
+            PutModule(
+                t_f("Set encryption key for [{1}] to [{2}]")(sTarget, sKey));
         } else {
-            PutModule("Usage: SetKey <#chan|Nick> <Key>");
+            PutModule(t_s("Usage: SetKey <#chan|Nick> <Key>"));
         }
     }
 
@@ -455,20 +457,22 @@ class CCryptMod : public CModule {
             if (DH1080_gen()) {
                 PutIRC("NOTICE " + sTarget + " :DH1080_INIT " + m_sPubKey +
                        "A");
-                PutModule("Sent my DH1080 public key to " + sTarget +
-                          ", waiting for reply ...");
+                PutModule(t_f("Sent my DH1080 public key to {1}, waiting for reply ...")(sTarget));
             } else {
-                PutModule("Error generating our keys, nothing sent.");
+                PutModule(t_s("Error generating our keys, nothing sent."));
             }
         } else {
-            PutModule("Usage: KeyX <Nick>");
+            PutModule(t_s("Usage: KeyX <Nick>"));
         }
     }
 
     void OnGetNickPrefixCommand(const CString& sCommand) {
         CString sPrefix = NickPrefix();
-        PutModule("Nick Prefix" +
-                  (sPrefix.empty() ? " disabled." : (": " + sPrefix)));
+        if (sPrefix.empty()) {
+            PutModule(t_s("Nick Prefix disabled."));
+        } else {
+            PutModule(t_f("Nick Prefix: {1}")(sPrefix));
+        }
     }
 
     void OnSetNickPrefixCommand(const CString& sCommand) {
@@ -476,40 +480,41 @@ class CCryptMod : public CModule {
 
         if (sPrefix.StartsWith(":")) {
             PutModule(
-                "You cannot use :, even followed by other symbols, as Nick "
-                "Prefix.");
+                t_s("You cannot use :, even followed by other symbols, as Nick "
+                    "Prefix."));
         } else {
             CString sStatusPrefix = GetUser()->GetStatusPrefix();
             size_t sp = sStatusPrefix.size();
             size_t np = sPrefix.size();
             int min = std::min(sp, np);
             if (min > 0 && sStatusPrefix.CaseCmp(sPrefix, min) == 0)
-                PutModule("Overlap with Status Prefix (" + sStatusPrefix +
-                          "), this Nick Prefix will not be used!");
+                PutModule(
+                    t_f("Overlap with Status Prefix ({1}), this Nick Prefix "
+                        "will not be used!")(sStatusPrefix));
             else {
                 SetNV(NICK_PREFIX_KEY, sPrefix);
                 if (sPrefix.empty())
-                    PutModule("Disabling Nick Prefix.");
+                    PutModule(t_s("Disabling Nick Prefix."));
                 else
-                    PutModule("Setting Nick Prefix to " + sPrefix);
+                    PutModule(t_f("Setting Nick Prefix to {1}")(sPrefix));
             }
         }
     }
 
     void OnListKeysCommand(const CString& sCommand) {
         CTable Table;
-        Table.AddColumn("Target");
-        Table.AddColumn("Key");
+        Table.AddColumn(t_s("Target", "listkeys"));
+        Table.AddColumn(t_s("Key", "listkeys"));
 
         for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
             if (!it->first.Equals(NICK_PREFIX_KEY)) {
                 Table.AddRow();
-                Table.SetCell("Target", it->first);
-                Table.SetCell("Key", it->second);
+                Table.SetCell(t_s("Target", "listkeys"), it->first);
+                Table.SetCell(t_s("Key", "listkeys"), it->second);
             }
         }
         if (Table.empty())
-            PutModule("You have no encryption keys set.");
+            PutModule(t_s("You have no encryption keys set."));
         else
             PutModule(Table);
     }
@@ -531,4 +536,4 @@ void TModInfo<CCryptMod>(CModInfo& Info) {
     Info.SetWikiPage("crypt");
 }
 
-NETWORKMODULEDEFS(CCryptMod, "Encryption for channel/private messages")
+NETWORKMODULEDEFS(CCryptMod, t_s("Encryption for channel/private messages"))
