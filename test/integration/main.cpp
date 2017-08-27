@@ -844,7 +844,7 @@ TEST_F(ZNCTest, ModuleCrypt) {
     Z;
     client1.Write("znc loadmod controlpanel");
     client1.Write("PRIVMSG *controlpanel :CloneUser user user2");
-    client1.ReadUntil("User [user2] added!");
+    client1.ReadUntil("User user2 added!");
     client1.Write("PRIVMSG *controlpanel :Set Nick user2 nick2");
     Z;
     client1.Write("znc loadmod crypt");
