@@ -29,7 +29,7 @@ msgstr ""
 
 #: webskins/_default_/tmpl/InfoBar.tmpl:2
 msgid "-Guest-"
-msgstr ""
+msgstr "-Гость-"
 
 #: webskins/_default_/tmpl/InfoBar.tmpl:5
 msgid "Logged in as: {1} (from {2})"
@@ -57,7 +57,7 @@ msgstr "Выйти"
 
 #: ClientCommand.cpp:51
 msgid "You must be connected with a network to use this command"
-msgstr ""
+msgstr "У вас должно быть стабильное интернет-соединения, для того чтобы использовать эту команду"
 
 #: ClientCommand.cpp:58
 msgid "Usage: ListNicks <#chan>"
