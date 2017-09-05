@@ -27,18 +27,12 @@ class CFloodDetachMod : public CModule {
         m_iThresholdMsgs = 0;
 
         AddHelpCommand();
-        AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(
-                               &CFloodDetachMod::ShowCommand),
-                   "");
-        AddCommand("Secs", static_cast<CModCommand::ModCmdFunc>(
-                               &CFloodDetachMod::SecsCommand),
-                   "[<limit>]");
-        AddCommand("Lines", static_cast<CModCommand::ModCmdFunc>(
-                                &CFloodDetachMod::LinesCommand),
-                   "[<limit>]");
-        AddCommand("Silent", static_cast<CModCommand::ModCmdFunc>(
-                                 &CFloodDetachMod::SilentCommand),
-                   "[yes|no]");
+        AddCommand("Show","",t_d("Show current limits"),[=](const CString& sLine){ShowCommand(sLine);});
+        AddCommand("Secs", t_d("[<limit>]"),
+                   t_d("Show or set number of seconds in the time interval"),
+                   [=](const CString& sLine) { SecsCommand(sLine); });
+        AddCommand("Lines",t_d("[<limit>]"),t_d("blahblah: description"),[=](const CString& sLine){LinesCommand(sLine);});
+        AddCommand("Silent",t_d("[yes|no]"),t_d("blahblah: description"),[=](const CString& sLine){SilentCommand(sLine);});
     }
 
     ~CFloodDetachMod() override {}
@@ -90,9 +84,8 @@ class CFloodDetachMod : public CModule {
                 // we detached because of a flood.
 
                 if (!GetNV("silent").ToBool()) {
-                    PutModule("Flood in [" + pChan->GetName() +
-                              "] is over, "
-                              "re-attaching...");
+                    PutModule(t_f("Flood in {1} is over, reattaching...")(
+                        pChan->GetName()));
                 }
                 // No buffer playback, makes sense, doesn't it?
                 pChan->ClearBuffer();
@@ -148,9 +141,8 @@ class CFloodDetachMod : public CModule {
 
         Channel.DetachUser();
         if (!GetNV("silent").ToBool()) {
-            PutModule("Channel [" + Channel.GetName() +
-                      "] was "
-                      "flooded, you've been detached");
+            PutModule(t_f("Channel {1} was flooded, you've been detached")(
+                Channel.GetName()));
         }
     }
 
@@ -185,23 +177,23 @@ class CFloodDetachMod : public CModule {
     }
 
     void ShowCommand(const CString& sLine) {
-        PutModule("Current limit is " + CString(m_iThresholdMsgs) +
-                  " lines "
-                  "in " +
-                  CString(m_iThresholdSecs) + " secs.");
+        CString sLines =
+            t_p("1 line", "{1} lines", m_iThresholdMsgs)(m_iThresholdMsgs);
+        CString sSeconds = t_p("every second", "every {1} seconds",
+                               m_iThresholdSecs)(m_iThresholdSecs);
+        PutModule(t_f("Current limit is {1} {2}")(sLines, sSeconds));
     }
 
     void SecsCommand(const CString& sLine) {
         const CString sArg = sLine.Token(1, true);
 
         if (sArg.empty()) {
-            PutModule("Seconds limit is [" + CString(m_iThresholdSecs) + "]");
+            PutModule(t_f("Seconds limit is {1}")(m_iThresholdSecs));
         } else {
             m_iThresholdSecs = sArg.ToUInt();
             if (m_iThresholdSecs == 0) m_iThresholdSecs = 1;
 
-            PutModule("Set seconds limit to [" + CString(m_iThresholdSecs) +
-                      "]");
+            PutModule(t_f("Set seconds limit to {1}")(m_iThresholdSecs));
             Save();
         }
     }
@@ -210,12 +202,12 @@ class CFloodDetachMod : public CModule {
         const CString sArg = sLine.Token(1, true);
 
         if (sArg.empty()) {
-            PutModule("Lines limit is [" + CString(m_iThresholdMsgs) + "]");
+            PutModule(t_f("Lines limit is {1}")(m_iThresholdMsgs));
         } else {
             m_iThresholdMsgs = sArg.ToUInt();
             if (m_iThresholdMsgs == 0) m_iThresholdMsgs = 2;
 
-            PutModule("Set lines limit to [" + CString(m_iThresholdMsgs) + "]");
+            PutModule(t_f("Set lines limit to {1}")(m_iThresholdMsgs));
             Save();
         }
     }
@@ -228,9 +220,9 @@ class CFloodDetachMod : public CModule {
         }
 
         if (GetNV("silent").ToBool()) {
-            PutModule("Module messages are disabled");
+            PutModule(t_s("Module messages are disabled"));
         } else {
-            PutModule("Module messages are enabled");
+            PutModule(t_s("Module messages are enabled"));
         }
     }
 
@@ -246,8 +238,8 @@ void TModInfo<CFloodDetachMod>(CModInfo& Info) {
     Info.SetWikiPage("flooddetach");
     Info.SetHasArgs(true);
     Info.SetArgsHelpText(
-        "This user module takes up to two arguments. Arguments are msgs and "
-        "secs numbers.");
+        Info.t_s("This user module takes up to two arguments. Arguments are "
+                 "numbers of messages and seconds."));
 }
 
-USERMODULEDEFS(CFloodDetachMod, "Detach channels when flooded")
+USERMODULEDEFS(CFloodDetachMod, t_s("Detach channels when flooded"))

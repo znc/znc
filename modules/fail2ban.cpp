@@ -22,22 +22,18 @@ class CFailToBanMod : public CModule {
     MODCONSTRUCTOR(CFailToBanMod) {
         AddHelpCommand();
         AddCommand(
-            "Timeout", static_cast<CModCommand::ModCmdFunc>(
-                           &CFailToBanMod::OnTimeoutCommand),
-            "[minutes]",
-            "The number of minutes IPs are blocked after a failed login.");
-        AddCommand("Attempts", static_cast<CModCommand::ModCmdFunc>(
-                                   &CFailToBanMod::OnAttemptsCommand),
-                   "[count]", "The number of allowed failed login attempts.");
-        AddCommand("Ban", static_cast<CModCommand::ModCmdFunc>(
-                              &CFailToBanMod::OnBanCommand),
-                   "<hosts>", "Ban the specified hosts.");
-        AddCommand("Unban", static_cast<CModCommand::ModCmdFunc>(
-                                &CFailToBanMod::OnUnbanCommand),
-                   "<hosts>", "Unban the specified hosts.");
-        AddCommand("List", static_cast<CModCommand::ModCmdFunc>(
-                               &CFailToBanMod::OnListCommand),
-                   "", "List banned hosts.");
+            "Timeout", t_d("[minutes]"),
+            t_d("The number of minutes IPs are blocked after a failed login."),
+            [=](const CString& sLine) { OnTimeoutCommand(sLine); });
+        AddCommand("Attempts", t_d("[count]"),
+                   t_d("The number of allowed failed login attempts."),
+                   [=](const CString& sLine) { OnAttemptsCommand(sLine); });
+        AddCommand("Ban", t_d("<hosts>"), t_d("Ban the specified hosts."),
+                   [=](const CString& sLine) { OnBanCommand(sLine); });
+        AddCommand("Unban", t_d("<hosts>"), t_d("Unban the specified hosts."),
+                   [=](const CString& sLine) { OnUnbanCommand(sLine); });
+        AddCommand("List", "", t_d("List banned hosts."),
+                   [=](const CString& sLine) { OnListCommand(sLine); });
     }
     ~CFailToBanMod() override {}
 
@@ -78,7 +74,7 @@ class CFailToBanMod : public CModule {
 
     void OnTimeoutCommand(const CString& sCommand) {
         if (!GetUser()->IsAdmin()) {
-            PutModule("Access denied");
+            PutModule(t_s("Access denied"));
             return;
         }
 
@@ -87,22 +83,21 @@ class CFailToBanMod : public CModule {
         if (!sArg.empty()) {
             unsigned int uTimeout = sArg.ToUInt();
             if (uTimeout == 0) {
-                PutModule("Usage: Timeout [minutes]");
+                PutModule(t_s("Usage: Timeout [minutes]"));
             } else {
                 m_Cache.SetTTL(uTimeout * 60 * 1000);
                 SetArgs(CString(m_Cache.GetTTL() / 60 / 1000) + " " +
                         CString(m_uiAllowedFailed));
-                PutModule("Timeout: " + CString(uTimeout) + " min");
+                PutModule(t_f("Timeout: {1} min")(uTimeout));
             }
         } else {
-            PutModule("Timeout: " + CString(m_Cache.GetTTL() / 60 / 1000) +
-                      " min");
+            PutModule(t_f("Timeout: {1} min")(m_Cache.GetTTL() / 60 / 1000));
         }
     }
 
     void OnAttemptsCommand(const CString& sCommand) {
         if (!GetUser()->IsAdmin()) {
-            PutModule("Access denied");
+            PutModule(t_s("Access denied"));
             return;
         }
 
@@ -111,28 +106,28 @@ class CFailToBanMod : public CModule {
         if (!sArg.empty()) {
             unsigned int uiAttempts = sArg.ToUInt();
             if (uiAttempts == 0) {
-                PutModule("Usage: Attempts [count]");
+                PutModule(t_s("Usage: Attempts [count]"));
             } else {
                 m_uiAllowedFailed = uiAttempts;
                 SetArgs(CString(m_Cache.GetTTL() / 60 / 1000) + " " +
                         CString(m_uiAllowedFailed));
-                PutModule("Attempts: " + CString(uiAttempts));
+                PutModule(t_f("Attempts: {1}")(uiAttempts));
             }
         } else {
-            PutModule("Attempts: " + CString(m_uiAllowedFailed));
+            PutModule(t_f("Attempts: {1}")(m_uiAllowedFailed));
         }
     }
 
     void OnBanCommand(const CString& sCommand) {
         if (!GetUser()->IsAdmin()) {
-            PutModule("Access denied");
+            PutModule(t_s("Access denied"));
             return;
         }
 
         CString sHosts = sCommand.Token(1, true);
 
         if (sHosts.empty()) {
-            PutStatus("Usage: Ban <hosts>");
+            PutStatus(t_s("Usage: Ban <hosts>"));
             return;
         }
 
@@ -142,20 +137,20 @@ class CFailToBanMod : public CModule {
 
         for (const CString& sHost : vsHosts) {
             Add(sHost, 0);
-            PutModule("Banned: " + sHost);
+            PutModule(t_f("Banned: {1}")(sHost));
         }
     }
 
     void OnUnbanCommand(const CString& sCommand) {
         if (!GetUser()->IsAdmin()) {
-            PutModule("Access denied");
+            PutModule(t_s("Access denied"));
             return;
         }
 
         CString sHosts = sCommand.Token(1, true);
 
         if (sHosts.empty()) {
-            PutStatus("Usage: Unban <hosts>");
+            PutStatus(t_s("Usage: Unban <hosts>"));
             return;
         }
 
@@ -165,31 +160,31 @@ class CFailToBanMod : public CModule {
 
         for (const CString& sHost : vsHosts) {
             if (Remove(sHost)) {
-                PutModule("Unbanned: " + sHost);
+                PutModule(t_f("Unbanned: {1}")(sHost));
             } else {
-                PutModule("Ignored: " + sHost);
+                PutModule(t_f("Ignored: {1}")(sHost));
             }
         }
     }
 
     void OnListCommand(const CString& sCommand) {
         if (!GetUser()->IsAdmin()) {
-            PutModule("Access denied");
+            PutModule(t_s("Access denied"));
             return;
         }
 
         CTable Table;
-        Table.AddColumn("Host");
-        Table.AddColumn("Attempts");
+        Table.AddColumn(t_s("Host", "list"));
+        Table.AddColumn(t_s("Attempts", "list"));
 
         for (const auto& it : m_Cache.GetItems()) {
             Table.AddRow();
-            Table.SetCell("Host", it.first);
-            Table.SetCell("Attempts", CString(it.second));
+            Table.SetCell(t_s("Host", "list"), it.first);
+            Table.SetCell(t_s("Attempts", "list"), CString(it.second));
         }
 
         if (Table.empty()) {
-            PutModule("No bans");
+            PutModule(t_s("No bans", "list"));
         } else {
             PutModule(Table);
         }
@@ -246,8 +241,9 @@ void TModInfo<CFailToBanMod>(CModInfo& Info) {
     Info.SetWikiPage("fail2ban");
     Info.SetHasArgs(true);
     Info.SetArgsHelpText(
-        "You might enter the time in minutes for the IP banning and the number "
-        "of failed logins before any action is taken.");
+        Info.t_s("You might enter the time in minutes for the IP banning and "
+                 "the number of failed logins before any action is taken."));
 }
 
-GLOBALMODULEDEFS(CFailToBanMod, "Block IPs for some time after a failed login.")
+GLOBALMODULEDEFS(CFailToBanMod,
+                 t_s("Block IPs for some time after a failed login."))
