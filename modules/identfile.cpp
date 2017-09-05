@@ -27,18 +27,16 @@ class CIdentFileModule : public CModule {
   public:
     MODCONSTRUCTOR(CIdentFileModule) {
         AddHelpCommand();
-        AddCommand("GetFile", static_cast<CModCommand::ModCmdFunc>(
-                                  &CIdentFileModule::GetFile));
-        AddCommand("SetFile", static_cast<CModCommand::ModCmdFunc>(
-                                  &CIdentFileModule::SetFile),
-                   "<file>");
-        AddCommand("GetFormat", static_cast<CModCommand::ModCmdFunc>(
-                                    &CIdentFileModule::GetFormat));
-        AddCommand("SetFormat", static_cast<CModCommand::ModCmdFunc>(
-                                    &CIdentFileModule::SetFormat),
-                   "<format>");
-        AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(
-                               &CIdentFileModule::Show));
+        AddCommand("GetFile", "", t_d("Show file name"),
+                   [=](const CString& sLine) { GetFile(sLine); });
+        AddCommand("SetFile", t_d("<file>"), t_d("Set file name"),
+                   [=](const CString& sLine) { SetFile(sLine); });
+        AddCommand("GetFormat", "", t_d("Show file format"),
+                   [=](const CString& sLine) { GetFormat(sLine); });
+        AddCommand("SetFormat", t_d("<format>"), t_d("Set file format"),
+                   [=](const CString& sLine) { SetFormat(sLine); });
+        AddCommand("Show", "", t_d("Show current state"),
+                   [=](const CString& sLine) { Show(sLine); });
 
         m_pISpoofLockFile = nullptr;
         m_pIRCSock = nullptr;
@@ -47,25 +45,25 @@ class CIdentFileModule : public CModule {
     ~CIdentFileModule() override { ReleaseISpoof(); }
 
     void GetFile(const CString& sLine) {
-        PutModule("File is set to: " + GetNV("File"));
+        PutModule(t_f("File is set to: {1}")(GetNV("File")));
     }
 
     void SetFile(const CString& sLine) {
         SetNV("File", sLine.Token(1, true));
-        PutModule("File has been set to: " + GetNV("File"));
+        PutModule(t_f("File has been set to: {1}")(GetNV("File")));
     }
 
     void SetFormat(const CString& sLine) {
         SetNV("Format", sLine.Token(1, true));
-        PutModule("Format has been set to: " + GetNV("Format"));
-        PutModule("Format would be expanded to: " +
-                  ExpandString(GetNV("Format")));
+        PutModule(t_f("Format has been set to: {1}")(GetNV("Format")));
+        PutModule(t_f("Format would be expanded to: {1}")(
+            ExpandString(GetNV("Format"))));
     }
 
     void GetFormat(const CString& sLine) {
-        PutModule("Format is set to: " + GetNV("Format"));
-        PutModule("Format would be expanded to: " +
-                  ExpandString(GetNV("Format")));
+        PutModule(t_f("Format is set to: {1}")(GetNV("Format")));
+        PutModule(t_f("Format would be expanded to: {1}")(
+            ExpandString(GetNV("Format"))));
     }
 
     void Show(const CString& sLine) {
@@ -77,7 +75,7 @@ class CIdentFileModule : public CModule {
                       m_pIRCSock->GetNetwork()->GetUser()->GetUserName() + "/" +
                       m_pIRCSock->GetNetwork()->GetName());
         } else {
-            PutModule("identfile is free");
+            PutModule(t_s("identfile is free"));
         }
     }
 
@@ -85,7 +83,7 @@ class CIdentFileModule : public CModule {
         if (GetUser()->IsAdmin()) {
             HandleCommand(sCommand);
         } else {
-            PutModule("Access denied");
+            PutModule(t_s("Access denied"));
         }
     }
 
@@ -180,15 +178,15 @@ class CIdentFileModule : public CModule {
         if (m_pISpoofLockFile != nullptr) {
             DEBUG("Aborting connection, ident spoof lock file exists");
             PutModule(
-                "Aborting connection, another user or network is currently "
-                "connecting and using the ident spoof file");
+                t_s("Aborting connection, another user or network is currently "
+                    "connecting and using the ident spoof file"));
             return HALTCORE;
         }
 
         if (!WriteISpoof()) {
             DEBUG("identfile [" + GetNV("File") + "] could not be written");
-            PutModule("[" + GetNV("File") +
-                      "] could not be written, retrying...");
+            PutModule(
+                t_f("[{1}] could not be written, retrying...")(GetNV("File")));
             return HALTCORE;
         }
 
@@ -222,4 +220,4 @@ void TModInfo<CIdentFileModule>(CModInfo& Info) {
 
 GLOBALMODULEDEFS(
     CIdentFileModule,
-    "Write the ident of a user to a file when they are trying to connect.")
+    t_s("Write the ident of a user to a file when they are trying to connect."))

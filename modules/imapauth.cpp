@@ -165,7 +165,7 @@ template <>
 void TModInfo<CIMAPAuthMod>(CModInfo& Info) {
     Info.SetWikiPage("imapauth");
     Info.SetHasArgs(true);
-    Info.SetArgsHelpText("[ server [+]port [ UserFormatString ] ]");
+    Info.SetArgsHelpText(Info.t_s("[ server [+]port [ UserFormatString ] ]"));
 }
 
-GLOBALMODULEDEFS(CIMAPAuthMod, "Allow users to authenticate via IMAP.")
+GLOBALMODULEDEFS(CIMAPAuthMod, t_s("Allow users to authenticate via IMAP."))
