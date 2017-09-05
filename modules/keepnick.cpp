@@ -36,15 +36,13 @@ class CKeepNickMod : public CModule {
   public:
     MODCONSTRUCTOR(CKeepNickMod) {
         AddHelpCommand();
-        AddCommand("Enable", static_cast<CModCommand::ModCmdFunc>(
-                                 &CKeepNickMod::OnEnableCommand),
-                   "", "Try to get your primary nick");
-        AddCommand("Disable", static_cast<CModCommand::ModCmdFunc>(
-                                  &CKeepNickMod::OnDisableCommand),
-                   "", "No longer trying to get your primary nick");
-        AddCommand("State", static_cast<CModCommand::ModCmdFunc>(
-                                &CKeepNickMod::OnStateCommand),
-                   "", "Show the current state");
+        AddCommand("Enable", "", t_d("Try to get your primary nick"),
+                   [=](const CString& sLine) { OnEnableCommand(sLine); });
+        AddCommand("Disable", "",
+                   t_d("No longer trying to get your primary nick"),
+                   [=](const CString& sLine) { OnDisableCommand(sLine); });
+        AddCommand("State", "", t_d("Show the current state"),
+                   [=](const CString& sLine) { OnStateCommand(sLine); });
     }
 
     ~CKeepNickMod() override {}
@@ -158,8 +156,8 @@ class CKeepNickMod : public CModule {
         // Indeed trying to change to this nick, generate a 433 for it.
         // This way we can *always* block incoming 433s from the server.
         PutUser(":" + GetNetwork()->GetIRCServer() + " 433 " +
-                GetNetwork()->GetIRCNick().GetNick() + " " + sNick +
-                " :ZNC is already trying to get this nickname");
+                GetNetwork()->GetIRCNick().GetNick() + " " + sNick + " :" +
+                t_s("ZNC is already trying to get this nickname"));
         return CONTINUE;
     }
 
@@ -174,15 +172,15 @@ class CKeepNickMod : public CModule {
             // :leguin.freenode.net 435 mynick badnick #chan :Cannot change nickname while banned on channel
             // clang-format on
             if (msg.GetCode() == 435) {
-                PutModule("Unable to obtain nick " + msg.GetParam(1) + ": " +
-                          msg.GetParam(3) + ", " + msg.GetParam(2));
+                PutModule(t_f("Unable to obtain nick {1}: {2}, {3}")(
+                    msg.GetParam(1), msg.GetParam(3), msg.GetParam(2)));
                 Disable();
             }
             // clang-format off
             // :irc1.unrealircd.org 447 mynick :Can not change nickname while on #chan (+N)
             // clang-format on
             if (msg.GetCode() == 447) {
-                PutModule("Unable to obtain nick: " + msg.GetParam(1));
+                PutModule(t_f("Unable to obtain nick {1}")(msg.GetParam(1)));
                 Disable();
             }
         }
@@ -192,19 +190,19 @@ class CKeepNickMod : public CModule {
 
     void OnEnableCommand(const CString& sCommand) {
         Enable();
-        PutModule("Trying to get your primary nick");
+        PutModule(t_s("Trying to get your primary nick"));
     }
 
     void OnDisableCommand(const CString& sCommand) {
         Disable();
-        PutModule("No longer trying to get your primary nick");
+        PutModule(t_s("No longer trying to get your primary nick"));
     }
 
     void OnStateCommand(const CString& sCommand) {
         if (m_pTimer)
-            PutModule("Currently trying to get your primary nick");
+            PutModule(t_s("Currently trying to get your primary nick"));
         else
-            PutModule("Currently disabled, try 'enable'");
+            PutModule(t_s("Currently disabled, try 'enable'"));
     }
 
   private:
@@ -225,4 +223,4 @@ void TModInfo<CKeepNickMod>(CModInfo& Info) {
     Info.SetWikiPage("keepnick");
 }
 
-NETWORKMODULEDEFS(CKeepNickMod, "Keep trying for your primary nick")
+NETWORKMODULEDEFS(CKeepNickMod, t_s("Keeps trying for your primary nick"))
