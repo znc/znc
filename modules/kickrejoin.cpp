@@ -73,7 +73,8 @@ class CRejoinMod : public CModule {
             if ((i == 0 && sArgs == "0") || i > 0)
                 delay = i;
             else {
-                sErrorMsg = "Illegal argument, must be a positive number or 0";
+                sErrorMsg =
+                    t_s("Illegal argument, must be a positive number or 0");
                 return false;
             }
         }

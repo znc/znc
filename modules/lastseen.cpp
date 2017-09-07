@@ -50,7 +50,7 @@ class CLastSeenMod : public CModule {
     // Shows all users as well as the time they were last seen online
     void ShowCommand(const CString& sLine) {
         if (!GetUser()->IsAdmin()) {
-            PutModule("Access denied");
+            PutModule(t_s("Access denied"));
             return;
         }
 
@@ -58,13 +58,14 @@ class CLastSeenMod : public CModule {
         MUsers::const_iterator it;
         CTable Table;
 
-        Table.AddColumn("User");
-        Table.AddColumn("Last Seen");
+        Table.AddColumn(t_s("User", "show"));
+        Table.AddColumn(t_s("Last Seen", "show"));
 
         for (it = mUsers.begin(); it != mUsers.end(); ++it) {
             Table.AddRow();
-            Table.SetCell("User", it->first);
-            Table.SetCell("Last Seen", FormatLastSeen(it->second, "never"));
+            Table.SetCell(t_s("User", "show"), it->first);
+            Table.SetCell(t_s("Last Seen", "show"),
+                          FormatLastSeen(it->second, t_s("never")));
         }
 
         PutModule(Table);
@@ -73,9 +74,9 @@ class CLastSeenMod : public CModule {
   public:
     MODCONSTRUCTOR(CLastSeenMod) {
         AddHelpCommand();
-        AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(
-                               &CLastSeenMod::ShowCommand),
-                   "", "Shows list of users and when they last logged in");
+        AddCommand("Show", "",
+                   t_d("Shows list of users and when they last logged in"),
+                   [=](const CString& sLine) { ShowCommand(sLine); });
     }
 
     ~CLastSeenMod() override {}
@@ -94,7 +95,7 @@ class CLastSeenMod : public CModule {
     // Web stuff:
 
     bool WebRequiresAdmin() override { return true; }
-    CString GetWebMenuTitle() override { return "Last Seen"; }
+    CString GetWebMenuTitle() override { return t_s("Last Seen"); }
 
     bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
                       CTemplate& Tmpl) override {
@@ -120,7 +121,7 @@ class CLastSeenMod : public CModule {
                 Row["Username"] = pUser->GetUserName();
                 Row["IsSelf"] =
                     CString(pUser == WebSock.GetSession()->GetUser());
-                Row["LastSeen"] = FormatLastSeen(pUser, "never");
+                Row["LastSeen"] = FormatLastSeen(pUser, t_s("never"));
             }
 
             return true;
@@ -149,4 +150,4 @@ void TModInfo<CLastSeenMod>(CModInfo& Info) {
 }
 
 GLOBALMODULEDEFS(CLastSeenMod,
-                 "Collects data about when a user last logged in.")
+                 t_s("Collects data about when a user last logged in."))

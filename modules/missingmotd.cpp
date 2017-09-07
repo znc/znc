@@ -22,7 +22,8 @@ class CMissingMotd : public CModule {
     MODCONSTRUCTOR(CMissingMotd) {}
 
     void OnClientLogin() override {
-        PutUser(":irc.znc.in 422 " + GetClient()->GetNick() + " :MOTD File is missing");
+        PutUser(":irc.znc.in 422 " + GetClient()->GetNick() +
+                " :MOTD File is missing");
     }
 };
 
@@ -32,4 +33,4 @@ void TModInfo<CMissingMotd>(CModInfo& Info) {
     Info.SetHasArgs(false);
 }
 
-USERMODULEDEFS(CMissingMotd, "Sends 422 to clients when they login")
+USERMODULEDEFS(CMissingMotd, t_s("Sends 422 to clients when they login"))

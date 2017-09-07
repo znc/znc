@@ -114,4 +114,4 @@ void TModInfo<CFOModule>(CModInfo& Info) {
     Info.SetWikiPage("modules_online");
 }
 
-NETWORKMODULEDEFS(CFOModule, "Make ZNC's *modules to be \"online\".")
+NETWORKMODULEDEFS(CFOModule, t_s("Makes ZNC's *modules to be \"online\"."))

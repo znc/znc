@@ -59,17 +59,15 @@ class CListSockets : public CModule {
   public:
     MODCONSTRUCTOR(CListSockets) {
         AddHelpCommand();
-        AddCommand(
-            "List",
-            static_cast<CModCommand::ModCmdFunc>(&CListSockets::OnListCommand),
-            "[-n]",
-            "Show the list of active sockets. Pass -n to show IP addresses");
+        AddCommand("List", t_d("[-n]"), t_d("Shows the list of active sockets. "
+                                            "Pass -n to show IP addresses"),
+                   [=](const CString& sLine) { OnListCommand(sLine); });
     }
 
     bool OnLoad(const CString& sArgs, CString& sMessage) override {
 #ifndef MOD_LISTSOCKETS_ALLOW_EVERYONE
         if (!GetUser()->IsAdmin()) {
-            sMessage = "You must be admin to use this module";
+            sMessage = t_s("You must be admin to use this module");
             return false;
         }
 #endif
@@ -95,7 +93,7 @@ class CListSockets : public CModule {
     }
 
     bool WebRequiresAdmin() override { return true; }
-    CString GetWebMenuTitle() override { return "List sockets"; }
+    CString GetWebMenuTitle() override { return t_s("List sockets"); }
 
     bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
                       CTemplate& Tmpl) override {
@@ -114,7 +112,8 @@ class CListSockets : public CModule {
                 Row["Name"] = pSocket->GetSockName();
                 Row["Created"] = GetCreatedTime(pSocket);
                 Row["State"] = GetSocketState(pSocket);
-                Row["SSL"] = pSocket->GetSSL() ? "Yes" : "No";
+                Row["SSL"] =
+                    pSocket->GetSSL() ? t_s("Yes", "ssl") : t_s("No", "ssl");
                 Row["Local"] = GetLocalHost(pSocket, true);
                 Row["Remote"] = GetRemoteHost(pSocket, true);
                 Row["In"] = CString::ToByteStr(pSocket->GetBytesRead());
@@ -140,17 +139,17 @@ class CListSockets : public CModule {
     CString GetSocketState(Csock* pSocket) {
         switch (pSocket->GetType()) {
             case Csock::LISTENER:
-                return "Listener";
+                return t_s("Listener");
             case Csock::INBOUND:
-                return "Inbound";
+                return t_s("Inbound");
             case Csock::OUTBOUND:
                 if (pSocket->IsConnected())
-                    return "Outbound";
+                    return t_s("Outbound");
                 else
-                    return "Connecting";
+                    return t_s("Connecting");
         }
 
-        return "UNKNOWN";
+        return t_s("UNKNOWN");
     }
 
     CString GetCreatedTime(Csock* pSocket) {
@@ -203,41 +202,46 @@ class CListSockets : public CModule {
 
     void ShowSocks(bool bShowHosts) {
         if (CZNC::Get().GetManager().empty()) {
-            PutStatus("You have no open sockets.");
+            PutStatus(t_s("You have no open sockets."));
             return;
         }
 
         std::priority_queue<CSocketSorter> socks = GetSockets();
 
         CTable Table;
-        Table.AddColumn("Name");
-        Table.AddColumn("Created");
-        Table.AddColumn("State");
+        Table.AddColumn(t_s("Name");
+        Table.AddColumn(t_s("Created");
+        Table.AddColumn(t_s("State");
 #ifdef HAVE_LIBSSL
-        Table.AddColumn("SSL");
+        Table.AddColumn(t_s("SSL");
 #endif
-        Table.AddColumn("Local");
-        Table.AddColumn("Remote");
-        Table.AddColumn("In");
-        Table.AddColumn("Out");
+        Table.AddColumn(t_s("Local");
+        Table.AddColumn(t_s("Remote");
+        Table.AddColumn(t_s("In");
+        Table.AddColumn(t_s("Out");
 
         while (!socks.empty()) {
             Csock* pSocket = socks.top().GetSock();
             socks.pop();
 
             Table.AddRow();
-            Table.SetCell("Name", pSocket->GetSockName());
-            Table.SetCell("Created", GetCreatedTime(pSocket));
-            Table.SetCell("State", GetSocketState(pSocket));
+            Table.SetCell(t_s("Name", pSocket->GetSockName());
+            Table.SetCell(t_s("Created", GetCreatedTime(pSocket));
+            Table.SetCell(t_s("State", GetSocketState(pSocket));
 
 #ifdef HAVE_LIBSSL
-            Table.SetCell("SSL", pSocket->GetSSL() ? "Yes" : "No");
+            Table.SetCell(t_s("SSL", pSocket->GetSSL()
+                                                   ? t_s("Yes", "ssl")
+                                                   : t_s("No", "ssl"));
 #endif
 
-            Table.SetCell("Local", GetLocalHost(pSocket, bShowHosts));
-            Table.SetCell("Remote", GetRemoteHost(pSocket, bShowHosts));
-            Table.SetCell("In", CString::ToByteStr(pSocket->GetBytesRead()));
-            Table.SetCell("Out",
+            Table.SetCell(t_s("Local",
+                          GetLocalHost(pSocket, bShowHosts));
+            Table.SetCell(t_s("Remote",
+                          GetRemoteHost(pSocket, bShowHosts));
+            Table.SetCell(t_s("In",
+                          CString::ToByteStr(pSocket->GetBytesRead()));
+            Table.SetCell(t_s("Out",
                           CString::ToByteStr(pSocket->GetBytesWritten()));
         }
 
@@ -253,4 +257,4 @@ void TModInfo<CListSockets>(CModInfo& Info) {
     Info.SetWikiPage("listsockets");
 }
 
-USERMODULEDEFS(CListSockets, "List active sockets")
+USERMODULEDEFS(CListSockets, t_s("Lists active sockets"))

@@ -1,13 +1,14 @@
+<? I18N znc-lastseen ?>
 <? INC Header.tmpl ?>
 
 <div class="toptable">
 	<table class="data">
 		<thead>
 			<tr>
-				<th>User</th>
-				<th>Last Seen</th>
-				<th>Info</th>
-				<? IF WebAdminLoaded ?><td>Action</td><? ENDIF ?>
+				<th><? FORMAT "User" ?></th>
+				<th><? FORMAT "Last Seen" ?></th>
+				<th><? FORMAT "Info" ?></th>
+				<? IF WebAdminLoaded ?><td><? FORMAT "Action" ?></td><? ENDIF ?>
 			</tr>
 		</thead>
 		<tbody>
@@ -17,8 +18,8 @@
 				<td><? VAR LastSeen DEFAULT="- unknown -" ?></td>
 				<td><? VAR Info ?></td>
 				<? IF WebAdminLoaded TOP ?><td><span class="nowrap">
-					[<a href="<? VAR URIPrefix TOP ?>/mods/global/webadmin/edituser?user=<?VAR Username ESC=URL?>">Edit</a>]
-					<? IF !IsSelf ?>[<a href="<? VAR URIPrefix TOP ?>/mods/global/webadmin/deluser?user=<?VAR Username ESC=URL?>">Delete</a>]<? ENDIF ?>
+					[<a href="<? VAR URIPrefix TOP ?>/mods/global/webadmin/edituser?user=<?VAR Username ESC=URL?>"><? FORMAT "Edit" ?></a>]
+					<? IF !IsSelf ?>[<a href="<? VAR URIPrefix TOP ?>/mods/global/webadmin/deluser?user=<?VAR Username ESC=URL?>"><? FORMAT "Delete" ?></a>]<? ENDIF ?>
 					</span></td><? ENDIF ?>
 			</tr>
 			<? ENDLOOP ?>

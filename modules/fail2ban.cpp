@@ -52,9 +52,9 @@ class CFailToBanMod : public CModule {
         } else if (timeout == 0 || m_uiAllowedFailed == 0 ||
                    !sArgs.Token(2, true).empty()) {
             sMessage =
-                "Invalid argument, must be the number of minutes "
-                "IPs are blocked after a failed login and can be "
-                "followed by number of allowed failed login attempts";
+                t_s("Invalid argument, must be the number of minutes IPs are "
+                    "blocked after a failed login and can be followed by "
+                    "number of allowed failed login attempts");
             return false;
         }
 

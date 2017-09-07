@@ -51,41 +51,33 @@ class CLogRule {
 };
 
 class CLogMod : public CModule {
-    void Set(const CString& sLine) {
-        const CString sVar = sLine.Token(1).AsLower();
-        bool b = sLine.Token(2).ToBool();
-
-        if (sVar == "joins" || sVar == "quits" || sVar == "nickchanges") {
-            SetNV(sVar, CString(b));
-            PutModule("Set " + sVar + " to " + CString(b));
-        } else
-            PutModule(sVar + " is invalid.");
-    }
-
   public:
     MODCONSTRUCTOR(CLogMod) {
         m_bSanitize = false;
         AddHelpCommand();
-        AddCommand("SetRules",
-                   static_cast<CModCommand::ModCmdFunc>(&CLogMod::SetRulesCmd),
-                   "<rules>",
-                   "Set logging rules, use !#chan or !query to negate and * "
-                   "for wildcards");
-        AddCommand("ClearRules", static_cast<CModCommand::ModCmdFunc>(
-                                     &CLogMod::ClearRulesCmd),
-                   "", "Clear all logging rules");
-        AddCommand("ListRules",
-                   static_cast<CModCommand::ModCmdFunc>(&CLogMod::ListRulesCmd),
-                   "", "List all logging rules");
         AddCommand(
-            "Set", static_cast<CModCommand::ModCmdFunc>(&CLogMod::Set),
-            "boolean",
-            "Set one of the following booleans, joins, quits, nickchanges");
+            "SetRules", t_d("<rules>"),
+            t_d("Set logging rules, use !#chan or !query to negate and * "),
+            [=](const CString& sLine) { SetRulesCmd(sLine); });
+        AddCommand("ClearRules", "", t_d("Clear all logging rules"),
+                   [=](const CString& sLine) { ClearRulesCmd(sLine); });
+        AddCommand("ListRules", "", t_d("List all logging rules"),
+                   [=](const CString& sLine) { ListRulesCmd(sLine); });
+        AddCommand(
+            "Set", t_d("<var> true|false"),
+            t_d("Set one of the following options: joins, quits, nickchanges"),
+            [=](const CString& sLine) { SetCmd(sLine); });
+        AddCommand("ShowSettings", "",
+                   t_d("Show current settings set by Set command"),
+                   [=](const CString& sLine) { ShowSettingsCmd(sLine); });
     }
 
     void SetRulesCmd(const CString& sLine);
     void ClearRulesCmd(const CString& sLine);
     void ListRulesCmd(const CString& sLine = "");
+    void SetCmd(const CString& sLine);
+    void ShowSettingsCmd(const CString& sLine);
+
     void SetRules(const VCString& vsRules);
     VCString SplitRules(const CString& sRules) const;
     CString JoinRules(const CString& sSeparator) const;
@@ -134,6 +126,10 @@ class CLogMod : public CModule {
     EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override;
 
   private:
+    bool NeedJoins() const;
+    bool NeedQuits() const;
+    bool NeedNickChanges() const;
+
     CString m_sLogPath;
     CString m_sTimestamp;
     bool m_bSanitize;
@@ -144,8 +140,8 @@ void CLogMod::SetRulesCmd(const CString& sLine) {
     VCString vsRules = SplitRules(sLine.Token(1, true));
 
     if (vsRules.empty()) {
-        PutModule("Usage: SetRules <rules>");
-        PutModule("Wildcards are allowed");
+        PutModule(t_s("Usage: SetRules <rules>"));
+        PutModule(t_s("Wildcards are allowed"));
     } else {
         SetRules(vsRules);
         SetNV("rules", JoinRules(","));
@@ -157,31 +153,77 @@ void CLogMod::ClearRulesCmd(const CString& sLine) {
     size_t uCount = m_vRules.size();
 
     if (uCount == 0) {
-        PutModule("No logging rules. Everything is logged.");
+        PutModule(t_s("No logging rules. Everything is logged."));
     } else {
         CString sRules = JoinRules(" ");
         SetRules(VCString());
         DelNV("rules");
-        PutModule(CString(uCount) + " rule(s) removed: " + sRules);
+        PutModule(t_p("1 rule removed: {2}", "{1} rules removed: {2}", uCount)(
+            uCount, sRules));
     }
 }
 
 void CLogMod::ListRulesCmd(const CString& sLine) {
     CTable Table;
-    Table.AddColumn("Rule");
-    Table.AddColumn("Logging enabled");
+    Table.AddColumn(t_s("Rule", "listrules"));
+    Table.AddColumn(t_s("Logging enabled", "listrules"));
 
     for (const CLogRule& Rule : m_vRules) {
         Table.AddRow();
-        Table.SetCell("Rule", Rule.GetRule());
-        Table.SetCell("Logging enabled", CString(Rule.IsEnabled()));
+        Table.SetCell(t_s("Rule", "listrules"), Rule.GetRule());
+        Table.SetCell(t_s("Logging enabled", "listrules"), CString(Rule.IsEnabled()));
     }
 
     if (Table.empty()) {
-        PutModule("No logging rules. Everything is logged.");
+        PutModule(t_s("No logging rules. Everything is logged."));
     } else {
         PutModule(Table);
     }
+}
+
+void CLogMod::SetCmd(const CString& sLine) {
+    const CString sVar = sLine.Token(1).AsLower();
+    const CString sValue = sLine.Token(2);
+    if (sValue.empty()) {
+        PutModule(
+            t_s("Usage: Set <var> true|false, where <var> is one of: joins, "
+                "quits, nickchanges"));
+        return;
+    }
+    bool b = sLine.Token(2).ToBool();
+    const std::unordered_map<CString, std::pair<CString, CString>>
+        mssResponses = {
+            {"joins", {t_s("Will log joins"), t_s("Will not log joins")}},
+            {"quits", {t_s("Will log quits"), t_s("Will not log quits")}},
+            {"nickchanges",
+             {t_s("Will log nick changes"), t_s("Will not log nick changes")}}};
+    auto it = mssResponses.find(sVar);
+    if (it == mssResponses.end()) {
+        PutModule(t_s(
+            "Unknown variable. Known variables: joins, quits, nickchanges"));
+        return;
+    }
+    SetNV(sVar, CString(b));
+    PutModule(b ? it->second.first : it->second.second);
+}
+
+void CLogMod::ShowSettingsCmd(const CString& sLine) {
+    PutModule(NeedJoins() ? t_s("Logging joins") : t_s("Not logging joins"));
+    PutModule(NeedQuits() ? t_s("Logging quits") : t_s("Not logging quits"));
+    PutModule(NeedNickChanges() ? t_s("Logging nick changes")
+                                : t_s("Not logging nick changes"));
+}
+
+bool CLogMod::NeedJoins() const {
+    return !HasNV("joins") || GetNV("joins").ToBool();
+}
+
+bool CLogMod::NeedQuits() const {
+    return !HasNV("quits") || GetNV("quits").ToBool();
+}
+
+bool CLogMod::NeedNickChanges() const {
+    return !HasNV("nickchanges") || GetNV("nickchanges").ToBool();
 }
 
 void CLogMod::SetRules(const VCString& vsRules) {
@@ -281,7 +323,7 @@ CString CLogMod::GetServer() {
     CServer* pServer = GetNetwork()->GetCurrentServer();
     CString sSSL;
 
-    if (!pServer) return "(no server)";
+    if (!pServer) return ("(no server)";
 
     if (pServer->IsSSL()) sSSL = "+";
     return pServer->GetName() + " " + sSSL + CString(pServer->GetPort());
@@ -305,9 +347,9 @@ bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage) {
         } else {
             // Only one arg may be LogPath
             if (bHaveLogPath) {
-                sMessage = "Invalid args [" + sArgs +
-                           "]. Only one log path allowed.  Check that there "
-                           "are no spaces in the path.";
+                sMessage =
+                    t_f("Invalid args [{1}]. Only one log path allowed.  Check "
+                        "that there are no spaces in the path.")(sArgs);
                 return false;
             }
             m_sLogPath = sArg;
@@ -356,15 +398,17 @@ bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage) {
     // Check if it's allowed to write in this path in general
     m_sLogPath = CDir::CheckPathPrefix(GetSavePath(), m_sLogPath);
     if (m_sLogPath.empty()) {
-        sMessage = "Invalid log path [" + m_sLogPath + "].";
+        sMessage = t_f("Invalid log path [{1}]")(m_sLogPath);
         return false;
     } else {
-        sMessage = "Logging to [" + m_sLogPath + "]. Using timestamp format '" +
-                   m_sTimestamp + "'";
+        sMessage = t_f("Logging to [{1}]. Using timestamp format '{2}'")(
+            m_sLogPath, m_sTimestamp);
         return true;
     }
 }
 
+// TODO consider writing translated strings to log. Currently user language
+// affects only UI.
 void CLogMod::OnIRCConnected() {
     PutLog("Connected to IRC (" + GetServer() + ")");
 }
@@ -393,7 +437,7 @@ void CLogMod::OnKick(const CNick& OpNick, const CString& sKickedNick,
 
 void CLogMod::OnQuit(const CNick& Nick, const CString& sMessage,
                      const vector<CChan*>& vChans) {
-    if (!HasNV("quits") || GetNV("quits").ToBool()) {
+    if (NeedQuits()) {
         for (CChan* pChan : vChans)
             PutLog("*** Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() +
                        "@" + Nick.GetHost() + ") (" + sMessage + ")",
@@ -413,10 +457,11 @@ CModule::EModRet CLogMod::OnSendToIRCMessage(CMessage& Message) {
 }
 
 void CLogMod::OnJoin(const CNick& Nick, CChan& Channel) {
-    if (!HasNV("joins") || GetNV("joins").ToBool())
+    if (NeedJoins()) {
         PutLog("*** Joins: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" +
                    Nick.GetHost() + ")",
                Channel);
+    }
 }
 
 void CLogMod::OnPart(const CNick& Nick, CChan& Channel,
@@ -428,7 +473,7 @@ void CLogMod::OnPart(const CNick& Nick, CChan& Channel,
 
 void CLogMod::OnNick(const CNick& OldNick, const CString& sNewNick,
                      const vector<CChan*>& vChans) {
-    if (!HasNV("nickchanges") || GetNV("nickchanges").ToBool()) {
+    if (NeedNickChanges()) {
         for (CChan* pChan : vChans)
             PutLog("*** " + OldNick.GetNick() + " is now known as " + sNewNick,
                    *pChan);
@@ -510,8 +555,9 @@ void TModInfo<CLogMod>(CModInfo& Info) {
     Info.AddType(CModInfo::NetworkModule);
     Info.AddType(CModInfo::GlobalModule);
     Info.SetHasArgs(true);
-    Info.SetArgsHelpText("[-sanitize] Optional path where to store logs.");
+    Info.SetArgsHelpText(
+        Info.t_s("[-sanitize] Optional path where to store logs."));
     Info.SetWikiPage("log");
 }
 
-USERMODULEDEFS(CLogMod, "Write IRC logs.")
+USERMODULEDEFS(CLogMod, t_s("Writes IRC logs."))

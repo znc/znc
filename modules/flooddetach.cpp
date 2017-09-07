@@ -27,12 +27,15 @@ class CFloodDetachMod : public CModule {
         m_iThresholdMsgs = 0;
 
         AddHelpCommand();
-        AddCommand("Show","",t_d("Show current limits"),[=](const CString& sLine){ShowCommand(sLine);});
+        AddCommand("Show", "", t_d("Show current limits"),
+                   [=](const CString& sLine) { ShowCommand(sLine); });
         AddCommand("Secs", t_d("[<limit>]"),
                    t_d("Show or set number of seconds in the time interval"),
                    [=](const CString& sLine) { SecsCommand(sLine); });
-        AddCommand("Lines",t_d("[<limit>]"),t_d("blahblah: description"),[=](const CString& sLine){LinesCommand(sLine);});
-        AddCommand("Silent",t_d("[yes|no]"),t_d("blahblah: description"),[=](const CString& sLine){SilentCommand(sLine);});
+        AddCommand("Lines", t_d("[<limit>]"), t_d("blahblah: description"),
+                   [=](const CString& sLine) { LinesCommand(sLine); });
+        AddCommand("Silent", t_d("[yes|no]"), t_d("blahblah: description"),
+                   [=](const CString& sLine) { SilentCommand(sLine); });
     }
 
     ~CFloodDetachMod() override {}
