@@ -323,7 +323,7 @@ CString CLogMod::GetServer() {
     CServer* pServer = GetNetwork()->GetCurrentServer();
     CString sSSL;
 
-    if (!pServer) return ("(no server)";
+    if (!pServer) return "(no server)";
 
     if (pServer->IsSSL()) sSSL = "+";
     return pServer->GetName() + " " + sSSL + CString(pServer->GetPort());

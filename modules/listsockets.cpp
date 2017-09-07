@@ -209,39 +209,39 @@ class CListSockets : public CModule {
         std::priority_queue<CSocketSorter> socks = GetSockets();
 
         CTable Table;
-        Table.AddColumn(t_s("Name");
-        Table.AddColumn(t_s("Created");
-        Table.AddColumn(t_s("State");
+        Table.AddColumn(t_s("Name"));
+        Table.AddColumn(t_s("Created"));
+        Table.AddColumn(t_s("State"));
 #ifdef HAVE_LIBSSL
-        Table.AddColumn(t_s("SSL");
+        Table.AddColumn(t_s("SSL"));
 #endif
-        Table.AddColumn(t_s("Local");
-        Table.AddColumn(t_s("Remote");
-        Table.AddColumn(t_s("In");
-        Table.AddColumn(t_s("Out");
+        Table.AddColumn(t_s("Local"));
+        Table.AddColumn(t_s("Remote"));
+        Table.AddColumn(t_s("In"));
+        Table.AddColumn(t_s("Out"));
 
         while (!socks.empty()) {
             Csock* pSocket = socks.top().GetSock();
             socks.pop();
 
             Table.AddRow();
-            Table.SetCell(t_s("Name", pSocket->GetSockName());
-            Table.SetCell(t_s("Created", GetCreatedTime(pSocket));
-            Table.SetCell(t_s("State", GetSocketState(pSocket));
+            Table.SetCell(t_s("Name"), pSocket->GetSockName());
+            Table.SetCell(t_s("Created"), GetCreatedTime(pSocket));
+            Table.SetCell(t_s("State"), GetSocketState(pSocket));
 
 #ifdef HAVE_LIBSSL
-            Table.SetCell(t_s("SSL", pSocket->GetSSL()
+            Table.SetCell(t_s("SSL"), pSocket->GetSSL()
                                                    ? t_s("Yes", "ssl")
                                                    : t_s("No", "ssl"));
 #endif
 
-            Table.SetCell(t_s("Local",
+            Table.SetCell(t_s("Local"),
                           GetLocalHost(pSocket, bShowHosts));
-            Table.SetCell(t_s("Remote",
+            Table.SetCell(t_s("Remote"),
                           GetRemoteHost(pSocket, bShowHosts));
-            Table.SetCell(t_s("In",
+            Table.SetCell(t_s("In"),
                           CString::ToByteStr(pSocket->GetBytesRead()));
-            Table.SetCell(t_s("Out",
+            Table.SetCell(t_s("Out"),
                           CString::ToByteStr(pSocket->GetBytesWritten()));
         }
 

@@ -33,7 +33,7 @@ class CLastSeenMod : public CModule {
     }
 
     const CString FormatLastSeen(const CUser* pUser,
-                                 const char* sDefault = "") {
+                                 const CString& sDefault = "") {
         time_t last = GetTime(pUser);
         if (last < 1) {
             return sDefault;
