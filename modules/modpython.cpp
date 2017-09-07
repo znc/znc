@@ -509,4 +509,4 @@ void TModInfo<CModPython>(CModInfo& Info) {
     Info.SetWikiPage("modpython");
 }
 
-GLOBALMODULEDEFS(CModPython, "Loads python scripts as ZNC modules")
+GLOBALMODULEDEFS(CModPython, t_s("Loads python scripts as ZNC modules"))

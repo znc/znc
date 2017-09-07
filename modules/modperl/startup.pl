@@ -695,7 +695,7 @@ sub t_p {
     return sub { sprintf $fmt, @_ }
 }
 
-# TODO is _d needed for perl? Maybe after AddCommand is implemented
+# TODO is t_d needed for perl? Maybe after AddCommand is implemented
 
 package ZNC::Timer;
 

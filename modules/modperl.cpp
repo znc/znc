@@ -379,4 +379,4 @@ void TModInfo<CModPerl>(CModInfo& Info) {
     Info.SetWikiPage("modperl");
 }
 
-GLOBALMODULEDEFS(CModPerl, "Loads perl scripts as ZNC modules")
+GLOBALMODULEDEFS(CModPerl, t_s("Loads perl scripts as ZNC modules"))

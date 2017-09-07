@@ -194,7 +194,7 @@ class Module:
                                         num)
         return fmt.format
 
-    # TODO is "d" needed for python? Maybe after AddCommand is implemented
+    # TODO is "t_d" needed for python? Maybe after AddCommand is implemented
 
     def OnLoad(self, sArgs, sMessage):
         return True
