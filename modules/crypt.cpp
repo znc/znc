@@ -68,7 +68,7 @@ class CCryptMod : public CModule {
     CString m_sPrivKey;
     CString m_sPubKey;
 
-#if OPENSSL_VERSION_NUMBER < 0X10100000L
+#if OPENSSL_VERSION_NUMBER < 0X10100000L || defined(LIBRESSL_VERSION_NUMBER)
     static int DH_set0_pqg(DH* dh, BIGNUM* p, BIGNUM* q, BIGNUM* g) {
         /* If the fields p and g in dh are nullptr, the corresponding input
          * parameters MUST be non-nullptr.  q may remain nullptr.
