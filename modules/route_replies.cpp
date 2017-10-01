@@ -171,6 +171,8 @@ static const struct {
         // MODE e
         {"348", false},
         {"349", true},
+        {"403", true}, /* rfc1459 ERR_NOSUCHCHANNEL */
+        {"442", true}, /* rfc1459 ERR_NOTONCHANNEL */
         {"467", true}, /* rfc1459 ERR_KEYSET */
         {"472", true}, /* rfc1459 ERR_UNKNOWNMODE */
         {"501", true}, /* rfc1459 ERR_UMODEUNKNOWNFLAG */
