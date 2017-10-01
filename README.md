@@ -9,16 +9,16 @@
 
 ## Table of contents
 
-- Minimal Requirements
-- Optional Requirements
-- Installing ZNC
-- Setting up znc.conf
-- Special config options
-- Using ZNC
-- File Locations
-- ZNC's config file
-- Writing own modules
-- Further infos
+- [Minimal Requirements](#minimal-requirements)
+- [Optional Requirements](#optional-requirements)
+- [Installing ZNC](#installing-znc)
+- [Setting up znc.conf](#setting-up-zncconf)
+- [Special config options](#special-config-options)
+- [Using ZNC](#using-znc)
+- [File Locations](#file-locations)
+- [ZNC's config file](#zncs-config-file)
+- [Writing own modules](#writing-own-modules)
+- [Further information](#further-information)
 
 ## Minimal Requirements
 
@@ -158,8 +158,8 @@ These directories are also in there:
 
 This file shouldn't be too hard too understand. An explanation of all the
 items can be found on the
-[Configuration](https://wiki.znc.in/Configuration)-Page.
-**Warning: better not to edit config, while ZNC is running.** Use  the
+[Configuration](https://wiki.znc.in/Configuration) page.
+**Warning: it is better not to edit config while ZNC is running.** Use the
 [webadmin] and [controlpanel] modules instead.
 
 [webadmin]:https://wiki.znc.in/Webadmin
@@ -186,11 +186,11 @@ Perl modules are loaded through the global module
 Python modules are loaded through the global module
 [ModPython](https://wiki.znc.in/Modpython).
 
-## Further infos
+## Further information
 
-Please visit https://znc.in/ or
-[#znc on freenode](ircs://irc.freenode.net:6697/#znc) if you still have
-questions.
+Please visit https://znc.in/ or #znc on freenode if you still have questions:
+- [freenode webchat](https://webchat.freenode.net/?nick=znc_....&channels=znc) 
+- [ircs://irc.freenode.net:6697/znc](ircs://irc.freenode.net:6697/znc)
 
 You can get the latest development version with git:
 `git clone https://github.com/znc/znc.git --recursive`
