@@ -20,6 +20,7 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 #include <znc/Query.h>
+#include <znc/ZNCDebug.h>
 
 using std::set;
 using std::map;
@@ -105,7 +106,8 @@ void CClient::ReadLine(const CString& sData) {
 
     sLine.TrimRight("\n\r");
 
-    DEBUG("(" << GetFullName() << ") CLI -> ZNC [" << sLine << "]");
+    DEBUG("(" << GetFullName() << ") CLI -> ZNC ["
+        << CDebug::Filter(sLine) << "]");
 
     MCString mssTags;
     if (sLine.StartsWith("@")) {
@@ -586,7 +588,8 @@ bool CClient::PutClient(const CMessage& Message) {
                       &bReturn);
     if (bReturn) return false;
 
-    DEBUG("(" << GetFullName() << ") ZNC -> CLI [" << sCopy << "]");
+    DEBUG("(" << GetFullName() << ") ZNC -> CLI ["
+        << CDebug::Filter(sCopy) << "]");
     Write(sCopy + "\r\n");
     return true;
 }

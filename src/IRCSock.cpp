@@ -20,6 +20,7 @@
 #include <znc/IRCNetwork.h>
 #include <znc/Server.h>
 #include <znc/Query.h>
+#include <znc/ZNCDebug.h>
 #include <time.h>
 
 using std::set;
@@ -1128,8 +1129,8 @@ void CIRCSock::PutIRC(const CString& sLine) {
     // TrySend()!)
     if (m_bFloodProtection && m_iSendsAllowed <= 0) {
         DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/"
-                  << m_pNetwork->GetName() << ") ZNC -> IRC [" << sLine
-                  << "] (queued)");
+                  << m_pNetwork->GetName() << ") ZNC -> IRC ["
+                  << CDebug::Filter(sLine) << "] (queued)");
     }
     m_vsSendQueue.push_back(sLine);
     TrySend();
@@ -1140,8 +1141,8 @@ void CIRCSock::PutIRCQuick(const CString& sLine) {
     // TrySend()!)
     if (m_bFloodProtection && m_iSendsAllowed <= 0) {
         DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/"
-                  << m_pNetwork->GetName() << ") ZNC -> IRC [" << sLine
-                  << "] (queued to front)");
+                  << m_pNetwork->GetName() << ") ZNC -> IRC ["
+                  << CDebug::Filter(sLine) << "] (queued to front)");
     }
     m_vsSendQueue.push_front(sLine);
     TrySend();
@@ -1164,8 +1165,8 @@ void CIRCSock::TrySend() {
             IRCSOCKMODULECALL(OnSendToIRC(sCopy), &bSkip);
             if (!bSkip) {
                 DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/"
-                        << m_pNetwork->GetName() << ") ZNC -> IRC [" << sCopy
-                        << "]");
+                        << m_pNetwork->GetName() << ") ZNC -> IRC ["
+                        << CDebug::Filter(sCopy) << "]");
                 Write(sCopy + "\r\n");
             }
         }
