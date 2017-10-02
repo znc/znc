@@ -20,6 +20,7 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 #include <znc/Query.h>
+#include <znc/ZNCDebug.h>
 
 using std::set;
 using std::map;
@@ -88,6 +89,12 @@ CClient::~CClient() {
 
 void CClient::SendRequiredPasswordNotice() {
     PutClient(":irc.znc.in 464 " + GetNick() + " :Password required");
+    if (CDebug::Debug()) {
+        PutClient(
+            ":irc.znc.in NOTICE " + GetNick() + " :*** "
+            "ZNC is presently running in DEBUG mode. Sensitive data during "
+            "your current session may be exposed to the host.");
+    }
     PutClient(
         ":irc.znc.in NOTICE " + GetNick() + " :*** "
         "You need to send your password. "
