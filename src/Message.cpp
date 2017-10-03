@@ -52,7 +52,7 @@ CString CMessage::GetParams(unsigned int uIdx, unsigned int uLen) const {
     if (m_vsParams.empty() || uLen == 0) {
         return "";
     }
-    if (uLen > m_vsParams.size() - uIdx - 1) {
+    if (uLen + uIdx + 1 > m_vsParams.size()) {
         uLen = m_vsParams.size() - uIdx;
     }
     VCString vsParams;

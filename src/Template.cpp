@@ -72,13 +72,13 @@ CString CTemplateLoopContext::GetValue(const CString& sName, bool bFromIf) {
     } else if (sName.Equals("__FIRST__")) {
         return ((GetRowIndex() == 0) ? "1" : "");
     } else if (sName.Equals("__LAST__")) {
-        return ((GetRowIndex() == m_pvRows->size() - 1) ? "1" : "");
+        return ((GetRowIndex() + 1 == m_pvRows->size()) ? "1" : "");
     } else if (sName.Equals("__OUTER__")) {
-        return ((GetRowIndex() == 0 || GetRowIndex() == m_pvRows->size() - 1)
+        return ((GetRowIndex() == 0 || GetRowIndex() + 1 == m_pvRows->size())
                     ? "1"
                     : "");
     } else if (sName.Equals("__INNER__")) {
-        return ((GetRowIndex() == 0 || GetRowIndex() == m_pvRows->size() - 1)
+        return ((GetRowIndex() == 0 || GetRowIndex() + 1 == m_pvRows->size())
                     ? ""
                     : "1");
     }
