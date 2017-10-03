@@ -1320,7 +1320,7 @@ void CIRCSock::ReachedMaxBuffer() {
 void CIRCSock::ParseISupport(const CMessage& Message) {
     const VCString vsParams = Message.GetParams();
 
-    for (size_t i = 1; i < vsParams.size() - 1; ++i) {
+    for (size_t i = 1; i + 1 < vsParams.size(); ++i) {
         const CString& sParam = vsParams[i];
         CString sName = sParam.Token(0, false, "=");
         CString sValue = sParam.Token(1, true, "=");
