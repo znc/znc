@@ -29,6 +29,22 @@ bool CDebug::debug =
     false;
 #endif
 
+CString CDebug::Filter(const CString& sUnfilteredLine) {
+    CString sFilteredLine = sUnfilteredLine;
+
+    // If the line is a PASS command to authenticate to a server / znc
+    if (sUnfilteredLine.StartsWith("PASS ")) {
+        VCString vsSafeCopy;
+        sUnfilteredLine.Split(":", vsSafeCopy);
+
+        if (vsSafeCopy.size() > 1) {
+            sFilteredLine = vsSafeCopy[0] + ":<censored>";
+        }
+    }
+
+    return sFilteredLine;
+}
+
 CDebugStream::~CDebugStream() {
     timeval tTime = CUtils::GetTime();
     time_t tSec = (time_t)tTime.tv_sec;  // some systems (e.g. openbsd) define
