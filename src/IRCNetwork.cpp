@@ -726,7 +726,7 @@ void CIRCNetwork::ClientConnected(CClient* pClient) {
             "You are currently disconnected from IRC. "
             "Use 'connect' to reconnect.");
 
-    if (CDebug::Debug()) {
+    if (CDebug::ActiveDebug()) {
         pClient->PutStatus("ZNC is presently running in DEBUG mode. Sensitive"
             " data during your current session may be exposed to the host.");
     }
