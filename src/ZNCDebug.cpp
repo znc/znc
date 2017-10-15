@@ -22,12 +22,7 @@
 #include <time.h>
 
 bool CDebug::stdoutIsTTY = true;
-bool CDebug::debug =
-#ifdef _DEBUG
-    true;
-#else
-    false;
-#endif
+bool CDebug::debug = false;
 
 CString CDebug::Filter(const CString& sUnfilteredLine) {
     CString sFilteredLine = sUnfilteredLine;
