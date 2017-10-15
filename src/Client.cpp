@@ -89,7 +89,7 @@ CClient::~CClient() {
 
 void CClient::SendRequiredPasswordNotice() {
     PutClient(":irc.znc.in 464 " + GetNick() + " :Password required");
-    if (CDebug::Debug()) {
+    if (CDebug::ActiveDebug()) {
         PutClient(
             ":irc.znc.in NOTICE " + GetNick() + " :*** "
             "ZNC is presently running in DEBUG mode. Sensitive data during "

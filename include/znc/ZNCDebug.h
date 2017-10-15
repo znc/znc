@@ -46,6 +46,7 @@ class CDebug {
     static bool StdoutIsTTY() { return stdoutIsTTY; }
     static void SetDebug(bool b) { debug = b; }
     static bool Debug() { return debug; }
+    static bool ActiveDebug() { return debug && stdoutIsTTY; }
 
     static CString Filter(const CString& sUnfilteredLine);
 
