@@ -16,6 +16,7 @@
 
 #include <znc/Modules.h>
 #include <znc/User.h>
+#include <znc/IRCNetwork.h>
 
 class CNickServ : public CModule {
     void DoNickCommand(const CString& sCmd, const CString& sNick) {
@@ -56,6 +57,18 @@ class CNickServ : public CModule {
         PutModule("Ok");
     }
 
+    void SetJoinAfterIdentifiedCommand(const CString& sLine) {
+        if(sLine.Token(1, true).ToBool()) {
+            SetNV("JoinAfterIdentified", "true");
+            m_bJoinAfterIdentified = true;
+            PutModule("Channels will be joined after identification.");
+        } else {
+            SetNV("JoinAfterIdentified", "false");
+            m_bJoinAfterIdentified = false;
+            PutModule("Channels will be joined immediately.");
+        }
+    }
+
     MODCONSTRUCTOR(CNickServ) {
         AddHelpCommand();
         AddCommand("Set",
@@ -79,6 +92,10 @@ class CNickServ : public CModule {
         AddCommand("SetCommand", static_cast<CModCommand::ModCmdFunc>(
                                      &CNickServ::SetCommandCommand),
                    "cmd new-pattern", "Set pattern for commands");
+        AddCommand("SetJoinAfterIdentified", static_cast<CModCommand::ModCmdFunc>(
+                                    &CNickServ::SetJoinAfterIdentifiedCommand),
+                   "true/false",
+                   "Set whether to join channels after NickServ Identification or instantly after connecting");
     }
 
     ~CNickServ() override {}
@@ -92,6 +109,9 @@ class CNickServ : public CModule {
         if (GetNV("IdentifyCmd").empty()) {
             SetNV("IdentifyCmd", "NICKSERV IDENTIFY {password}");
         }
+
+        CString sTmp;
+        m_bJoinAfterIdentified = (sTmp = GetNV("JoinAfterIdentified")).empty() ? false : sTmp.ToBool();
 
         return true;
     }
@@ -121,7 +141,20 @@ class CNickServ : public CModule {
             MCString msValues;
             msValues["password"] = GetNV("Password");
             PutIRC(CString::NamedFormat(GetNV("IdentifyCmd"), msValues));
+        } else if(Nick.NickEquals(sNickServName) && m_bJoinAfterIdentified &&
+                 (sMessage.find("Password accepted") != CString::npos ||
+                  sMessage.find("now recognized") != CString::npos ||
+                  sMessage.find("now identified") != CString::npos ||
+                  sMessage.find("now logged in as") != CString::npos)) {
+            m_bIdentified = true;
+            GetNetwork()->JoinChans();
         }
+    }
+
+    EModRet OnJoining(CChan& Channel) override {
+        if (!m_bIdentified && m_bJoinAfterIdentified)
+            return HALT;
+        return CONTINUE;
     }
 
     EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override {
@@ -133,6 +166,13 @@ class CNickServ : public CModule {
         HandleMessage(Nick, sMessage);
         return CONTINUE;
     }
+
+    void OnIRCDisconnected() override {
+        m_bIdentified = false;
+    }
+  private:
+    bool m_bIdentified{};
+    bool m_bJoinAfterIdentified{};
 };
 
 template <>
