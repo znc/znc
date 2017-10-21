@@ -39,15 +39,12 @@ class CSASLAuthMod : public CModule {
         m_cbs[1].context = nullptr;
 
         AddHelpCommand();
-        AddCommand("CreateUser", t_d("[yes|no]"),
-                   t_d("Create ZNC user upon first successful login"),
-                   [=](const CString& sLine) { CreateUserCommand(sLine); });
-        AddCommand("CloneUser", t_d("[username]"),
-                   t_d("User to be used as the template for new users"),
-                   [=](const CString& sLine) { CloneUserCommand(sLine); });
-        AddCommand("DisableCloneUser",
-                   static_cast<CModCommand::ModCmdFunc>(
-                       &CSASLAuthMod::DisableCloneUserCommand));
+        AddCommand("Show", "", t_d("Shows current settings"),
+                   [=](const CString& sLine) { ShowCommand(sLine); });
+        AddCommand("CreateUsers", t_d("yes|clone <username>|no"),
+                   t_d("Create ZNC users upon first successful login, "
+                       "optionally from a template"),
+                   [=](const CString& sLine) { CreateUsersCommand(sLine); });
     }
 
     ~CSASLAuthMod() override { sasl_done(); }
@@ -169,37 +166,39 @@ class CSASLAuthMod : public CModule {
 
     const CString& GetMethod() const { return m_sMethod; }
 
-    void CreateUserCommand(const CString& sLine) {
-        CString sCreate = sLine.Token(1);
-
-        if (!sCreate.empty()) {
-            SetNV("CreateUser", sCreate);
-        }
-
-        if (CreateUser()) {
-            PutModule(t_s("We will create users on their first login"));
-        } else {
+    void ShowCommand(const CString& sLine) {
+        if (!CreateUser()) {
             PutModule(t_s("We will not create users on their first login"));
-        }
-    }
-
-    void CloneUserCommand(const CString& sLine) {
-        CString sUsername = sLine.Token(1);
-
-        if (!sUsername.empty()) {
-            SetNV("CloneUser", sUsername);
-        }
-
-        if (ShouldCloneUser()) {
-            PutModule(t_f("We will clone {1}")(CloneUser()));
+        } else if (ShouldCloneUser()) {
+            PutModule(
+                t_f("We will create users on their first login, using user "
+                    "[{1}] as a template")(CloneUser()));
         } else {
-            PutModule(t_s("We will not clone a user"));
+            PutModule(t_s("We will create users on their first login"));
         }
     }
 
-    void DisableCloneUserCommand(const CString& sLine) {
-        DelNV("CloneUser");
-        PutModule(t_s("Clone user disabled"));
+    void CreateUsersCommand(const CString& sLine) {
+        CString sCreate = sLine.Token(1);
+        if (sCreate == "no") {
+            DelNV("CloneUser");
+            SetNV("CreateUser", CString(false));
+            PutModule(t_s("We will not create users on their first login"));
+        } else if (sCreate == "yes") {
+            DelNV("CloneUser");
+            SetNV("CreateUser", CString(true));
+            PutModule(t_s("We will create users on their first login"));
+        } else if (sCreate == "clone" && !sLine.Token(2).empty()) {
+            SetNV("CloneUser", sLine.Token(2));
+            SetNV("CreateUser", CString(true));
+            PutModule(
+                t_f("We will create users on their first login, using user "
+                    "[{1}] as a template")(sLine.Token(2)));
+        } else {
+            PutModule(
+                t_s("Usage: CreateUsers yes, CreateUsers no, or CreateUsers "
+                    "clone <username>"));
+        }
     }
 
     bool CreateUser() const { return GetNV("CreateUser").ToBool(); }

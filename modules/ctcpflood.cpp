@@ -22,15 +22,12 @@ class CCtcpFloodMod : public CModule {
   public:
     MODCONSTRUCTOR(CCtcpFloodMod) {
         AddHelpCommand();
-        AddCommand("Secs", static_cast<CModCommand::ModCmdFunc>(
-                               &CCtcpFloodMod::OnSecsCommand),
-                   "<limit>", "Set seconds limit");
-        AddCommand("Lines", static_cast<CModCommand::ModCmdFunc>(
-                                &CCtcpFloodMod::OnLinesCommand),
-                   "<limit>", "Set lines limit");
-        AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(
-                               &CCtcpFloodMod::OnShowCommand),
-                   "", "Show the current limits");
+        AddCommand("Secs", t_d("<limit>"), t_d("Set seconds limit"),
+                   [=](const CString& sLine) { OnSecsCommand(sLine); });
+        AddCommand("Lines", t_d("<limit>"), t_d("Set lines limit"),
+                   [=](const CString& sLine) { OnLinesCommand(sLine); });
+        AddCommand("Show", "", t_d("Show the current limits"),
+                   [=](const CString& sLine) { OnShowCommand(sLine); });
     }
 
     ~CCtcpFloodMod() override {}
@@ -76,8 +73,8 @@ class CCtcpFloodMod : public CModule {
         if (m_iNumCTCP < m_iThresholdMsgs)
             return CONTINUE;
         else if (m_iNumCTCP == m_iThresholdMsgs)
-            PutModule("Limit reached by [" + Nick.GetHostMask() +
-                      "], blocking all CTCP");
+            PutModule(t_f("Limit reached by {1}, blocking all CTCP")(
+                Nick.GetHostMask()));
 
         // Reset the timeout so that we continue blocking messages
         m_tLastCTCP = time(nullptr);
@@ -98,14 +95,14 @@ class CCtcpFloodMod : public CModule {
         const CString& sArg = sCommand.Token(1, true);
 
         if (sArg.empty()) {
-            PutModule("Usage: Secs <limit>");
+            PutModule(t_s("Usage: Secs <limit>"));
             return;
         }
 
         m_iThresholdSecs = sArg.ToUInt();
         if (m_iThresholdSecs == 0) m_iThresholdSecs = 1;
 
-        PutModule("Set seconds limit to [" + CString(m_iThresholdSecs) + "]");
+        OnShowCommand("");
         Save();
     }
 
@@ -113,22 +110,23 @@ class CCtcpFloodMod : public CModule {
         const CString& sArg = sCommand.Token(1, true);
 
         if (sArg.empty()) {
-            PutModule("Usage: Lines <limit>");
+            PutModule(t_s("Usage: Lines <limit>"));
             return;
         }
 
         m_iThresholdMsgs = sArg.ToUInt();
         if (m_iThresholdMsgs == 0) m_iThresholdMsgs = 2;
 
-        PutModule("Set lines limit to [" + CString(m_iThresholdMsgs) + "]");
+        OnShowCommand("");
         Save();
     }
 
     void OnShowCommand(const CString& sCommand) {
-        PutModule("Current limit is " + CString(m_iThresholdMsgs) +
-                  " CTCPs "
-                  "in " +
-                  CString(m_iThresholdSecs) + " secs");
+        CString sMsgs = t_p("1 CTCP message", "{1} CTCP messages",
+                            m_iThresholdMsgs)(m_iThresholdMsgs);
+        CString sSecs = t_p("every second", "every {1} seconds",
+                            m_iThresholdSecs)(m_iThresholdSecs);
+        PutModule(t_f("Current limit is {1} {2}")(sMsgs, sSecs));
     }
 
   private:
@@ -143,11 +141,11 @@ template <>
 void TModInfo<CCtcpFloodMod>(CModInfo& Info) {
     Info.SetWikiPage("ctcpflood");
     Info.SetHasArgs(true);
-    Info.SetArgsHelpText(
+    Info.SetArgsHelpText(Info.t_s(
         "This user module takes none to two arguments. The first argument is "
         "the number of lines after which the flood-protection is triggered. "
-        "The second argument is the time (s) to in which the number of lines "
-        "is reached. The default setting is 4 CTCPs in 2 seconds");
+        "The second argument is the time (sec) to in which the number of lines "
+        "is reached. The default setting is 4 CTCPs in 2 seconds"));
 }
 
-USERMODULEDEFS(CCtcpFloodMod, "Don't forward CTCP floods to clients")
+USERMODULEDEFS(CCtcpFloodMod, t_s("Don't forward CTCP floods to clients"))
