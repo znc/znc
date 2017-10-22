@@ -556,7 +556,7 @@ TEST_F(ZNCTest, NotifyConnectModule) {
     client2.Write("PASS :hunter2");
     client2.Write("NICK nick");
     client2.Write("USER user/test x x :x");
-    client.ReadUntil("NOTICE nick :*** user attached (from 127.0.0.1)");
+    client.ReadUntil("NOTICE nick :*** user attached from 127.0.0.1");
     Z;
 
     auto client3 = ConnectClient();
@@ -564,19 +564,19 @@ TEST_F(ZNCTest, NotifyConnectModule) {
     client3.Write("NICK nick");
     client3.Write("USER user@identifier/test x x :x");
     client.ReadUntil(
-        "NOTICE nick :*** user@identifier attached (from 127.0.0.1)");
+        "NOTICE nick :*** user@identifier attached from 127.0.0.1");
     Z;
     client2.ReadUntil(
-        "NOTICE nick :*** user@identifier attached (from 127.0.0.1)");
+        "NOTICE nick :*** user@identifier attached from 127.0.0.1");
     Z;
 
     client2.Write("QUIT");
-    client.ReadUntil("NOTICE nick :*** user detached (from 127.0.0.1)");
+    client.ReadUntil("NOTICE nick :*** user detached from 127.0.0.1");
     Z;
 
     client3.Close();
     client.ReadUntil(
-        "NOTICE nick :*** user@identifier detached (from 127.0.0.1)");
+        "NOTICE nick :*** user@identifier detached from 127.0.0.1");
     Z;
 }
 
