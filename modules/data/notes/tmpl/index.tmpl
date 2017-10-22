@@ -1,21 +1,22 @@
+<? I18N znc-notes ?>
 <? INC Header.tmpl ?>
 
 <form method="post" action="<? VAR URIPrefix TOP ?><? VAR ModPath ?>addnote">
 	<? INC _csrf_check.tmpl ?>
 	<div class="section">
-		<h3>Add A Note</h3>
+		<h3><? FORMAT "Add A Note" ?></h3>
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection third">
-					<div class="inputlabel">Key:</div>
+					<div class="inputlabel"><? FORMAT "Key:" ?></div>
 					<input type="text" name="key" size="8" />
 				</div>
 				<div class="subsection full">
-					<div class="inputlabel">Note:</div>
+					<div class="inputlabel"><? FORMAT "Note:" ?></div>
 					<input type="text" name="note" size="40" />
 				</div>
 				<div class="subsection submitline">
-					<input type="submit" name="add" value="Add Note" />
+					<input type="submit" name="add" value="<? FORMAT "Add Note" ?>" />
 				</div>
 			</div>
 		</div>
@@ -23,21 +24,21 @@
 </form>
 
 <? IF !NotesLoop ?>
-<p>You have no notes to display.</p>
+<p><? FORMAT "You have no notes to display." ?></p>
 <? ELSE ?>
 
 <table class="data">
 	<thead>
 		<tr>
 			<th style="width: 10px;"></th>
-			<th>Key</th>
-			<th>Note</th>
+			<th><? FORMAT "Key" ?></th>
+			<th><? FORMAT "Note" ?></th>
 		</tr>
 	</thead>
 	<tbody>
 		<? LOOP NotesLoop ?>
 		<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
-			<td><a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>delnote?key=<? VAR Key ESC=URL,HTML ?>"><img src="<? VAR URIPrefix TOP ?><? VAR ModFilesPath TOP ?>trash.gif" alt="[del]" /></a></td>
+			<td><a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>delnote?key=<? VAR Key ESC=URL,HTML ?>"><img src="<? VAR URIPrefix TOP ?><? VAR ModFilesPath TOP ?>trash.gif" alt="<? FORMAT "[del]" ?>" /></a></td>
 			<td><? VAR Key ?></td>
 			<td><? VAR Note ?></td>
 		</tr>

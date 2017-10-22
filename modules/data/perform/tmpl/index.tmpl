@@ -1,20 +1,21 @@
+<? I18N znc-perform ?>
 <? INC Header.tmpl ?>
 
 <form method="post" action="<? VAR URIPrefix TOP ?><? VAR ModPath ?>">
 	<? INC _csrf_check.tmpl ?>
 	<div class="section">
-		<h3>Perform</h3>
+		<h3><? FORMAT "Perform" ?></h3>
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection full">
-					<div class="inputlabel">Perform commands:</div>
+					<div class="inputlabel"><? FORMAT "Perform commands:" ?></div>
 					<textarea name="perform" cols="70" rows="5" class="monospace"><? LOOP PerformLoop ?><? VAR Perform ?>
 <? ENDLOOP ?>
 </textarea>
-					<br /><span class="info">Commands sent to the IRC server on connect, one per line.</span>
+					<br /><span class="info"><? FORMAT "Commands sent to the IRC server on connect, one per line." ?></span>
 				</div>
 				<div class="subsection submitline">
-					<input type="submit" name="save" value="Save" />
+					<input type="submit" name="save" value="<? FORMAT "Save" ?>" />
 				</div>
 			</div>
 		</div>

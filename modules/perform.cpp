@@ -21,12 +21,12 @@ class CPerform : public CModule {
         CString sPerf = sCommand.Token(1, true);
 
         if (sPerf.empty()) {
-            PutModule("Usage: add <command>");
+            PutModule(t_s("Usage: add <command>"));
             return;
         }
 
         m_vPerform.push_back(ParsePerform(sPerf));
-        PutModule("Added!");
+        PutModule(t_s("Added!"));
         Save();
     }
 
@@ -34,11 +34,11 @@ class CPerform : public CModule {
         u_int iNum = sCommand.Token(1, true).ToUInt();
 
         if (iNum > m_vPerform.size() || iNum <= 0) {
-            PutModule("Illegal # Requested");
+            PutModule(t_s("Illegal # Requested"));
             return;
         } else {
             m_vPerform.erase(m_vPerform.begin() + iNum - 1);
-            PutModule("Command Erased.");
+            PutModule(t_s("Command Erased."));
         }
         Save();
     }
@@ -47,30 +47,30 @@ class CPerform : public CModule {
         CTable Table;
         unsigned int index = 1;
 
-        Table.AddColumn("Id");
-        Table.AddColumn("Perform");
-        Table.AddColumn("Expanded");
+        Table.AddColumn(t_s("Id", "list"));
+        Table.AddColumn(t_s("Perform", "list"));
+        Table.AddColumn(t_s("Expanded", "list"));
 
         for (const CString& sPerf : m_vPerform) {
             Table.AddRow();
-            Table.SetCell("Id", CString(index++));
-            Table.SetCell("Perform", sPerf);
+            Table.SetCell(t_s("Id", "list"), CString(index++));
+            Table.SetCell(t_s("Perform", "list"), sPerf);
 
             CString sExpanded = ExpandString(sPerf);
 
             if (sExpanded != sPerf) {
-                Table.SetCell("Expanded", sExpanded);
+                Table.SetCell(t_s("Expanded", "list"), sExpanded);
             }
         }
 
         if (PutModule(Table) == 0) {
-            PutModule("No commands in your perform list.");
+            PutModule(t_s("No commands in your perform list."));
         }
     }
 
     void Execute(const CString& sCommand) {
         OnIRCConnected();
-        PutModule("perform commands sent");
+        PutModule(t_s("perform commands sent"));
     }
 
     void Swap(const CString& sCommand) {
@@ -79,11 +79,11 @@ class CPerform : public CModule {
 
         if (iNumA > m_vPerform.size() || iNumA <= 0 ||
             iNumB > m_vPerform.size() || iNumB <= 0) {
-            PutModule("Illegal # Requested");
+            PutModule(t_s("Illegal # Requested"));
         } else {
             std::iter_swap(m_vPerform.begin() + (iNumA - 1),
                            m_vPerform.begin() + (iNumB - 1));
-            PutModule("Commands Swapped.");
+            PutModule(t_s("Commands Swapped."));
             Save();
         }
     }
@@ -91,20 +91,20 @@ class CPerform : public CModule {
   public:
     MODCONSTRUCTOR(CPerform) {
         AddHelpCommand();
-        AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(&CPerform::Add),
-                   "<command>",
-                   "Adds perform command to be sent to the server on connect");
-        AddCommand("Del", static_cast<CModCommand::ModCmdFunc>(&CPerform::Del),
-                   "<number>", "Delete a perform command");
-        AddCommand("List",
-                   static_cast<CModCommand::ModCmdFunc>(&CPerform::List), "",
-                   "List the perform commands");
-        AddCommand("Execute",
-                   static_cast<CModCommand::ModCmdFunc>(&CPerform::Execute), "",
-                   "Send the perform commands to the server now");
-        AddCommand("Swap",
-                   static_cast<CModCommand::ModCmdFunc>(&CPerform::Swap),
-                   "<number> <number>", "Swap two perform commands");
+        AddCommand(
+            "Add", t_d("<command>"),
+            t_d("Adds perform command to be sent to the server on connect"),
+            [=](const CString& sLine) { Add(sLine); });
+        AddCommand("Del", t_d("<number>"), t_d("Delete a perform command"),
+                   [=](const CString& sLine) { Del(sLine); });
+        AddCommand("List", "", t_d("List the perform commands"),
+                   [=](const CString& sLine) { List(sLine); });
+        AddCommand("Execute", "",
+                   t_d("Send the perform commands to the server now"),
+                   [=](const CString& sLine) { Execute(sLine); });
+        AddCommand("Swap", t_d("<number> <number>"),
+                   t_d("Swap two perform commands"),
+                   [=](const CString& sLine) { Swap(sLine); });
     }
 
     ~CPerform() override {}
@@ -140,7 +140,7 @@ class CPerform : public CModule {
         }
     }
 
-    CString GetWebMenuTitle() override { return "Perform"; }
+    CString GetWebMenuTitle() override { return t_s("Perform"); }
 
     bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
                       CTemplate& Tmpl) override {
@@ -189,4 +189,4 @@ void TModInfo<CPerform>(CModInfo& Info) {
 
 NETWORKMODULEDEFS(
     CPerform,
-    "Keeps a list of commands to be executed when ZNC connects to IRC.")
+    t_s("Keeps a list of commands to be executed when ZNC connects to IRC."))

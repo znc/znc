@@ -28,14 +28,14 @@ class CNickServ : public CModule {
   public:
     void SetCommand(const CString& sLine) {
         SetNV("Password", sLine.Token(1, true));
-        PutModule("Password set");
+        PutModule(t_s("Password set"));
     }
 
     void ClearCommand(const CString& sLine) { DelNV("Password"); }
 
     void SetNSNameCommand(const CString& sLine) {
         SetNV("NickServName", sLine.Token(1, true));
-        PutModule("NickServ name set");
+        PutModule(t_s("NickServ name set"));
     }
 
     void ClearNSNameCommand(const CString& sLine) { DelNV("NickServName"); }
@@ -50,35 +50,33 @@ class CNickServ : public CModule {
         if (sCmd.Equals("IDENTIFY")) {
             SetNV("IdentifyCmd", sNewCmd);
         } else {
-            PutModule("No such editable command. See ViewCommands for list.");
+            PutModule(
+                t_s("No such editable command. See ViewCommands for list."));
             return;
         }
-        PutModule("Ok");
+        PutModule(t_s("Ok"));
     }
 
     MODCONSTRUCTOR(CNickServ) {
         AddHelpCommand();
-        AddCommand("Set",
-                   static_cast<CModCommand::ModCmdFunc>(&CNickServ::SetCommand),
-                   "password");
-        AddCommand("Clear", static_cast<CModCommand::ModCmdFunc>(
-                                &CNickServ::ClearCommand),
-                   "", "Clear your nickserv password");
-        AddCommand("SetNSName", static_cast<CModCommand::ModCmdFunc>(
-                                    &CNickServ::SetNSNameCommand),
-                   "nickname",
-                   "Set NickServ name (Useful on networks like EpiKnet, where "
-                   "NickServ is named Themis)");
-        AddCommand("ClearNSName", static_cast<CModCommand::ModCmdFunc>(
-                                      &CNickServ::ClearNSNameCommand),
-                   "", "Reset NickServ name to default (NickServ)");
-        AddCommand("ViewCommands", static_cast<CModCommand::ModCmdFunc>(
-                                       &CNickServ::ViewCommandsCommand),
-                   "",
-                   "Show patterns for lines, which are being sent to NickServ");
-        AddCommand("SetCommand", static_cast<CModCommand::ModCmdFunc>(
-                                     &CNickServ::SetCommandCommand),
-                   "cmd new-pattern", "Set pattern for commands");
+        AddCommand("Set", t_d("password"), t_d("Set your nickserv password"),
+                   [=](const CString& sLine) { SetCommand(sLine); });
+        AddCommand("Clear", "", t_d("Clear your nickserv password"),
+                   [=](const CString& sLine) { ClearCommand(sLine); });
+        AddCommand("SetNSName", t_d("nickname"),
+                   t_d("Set NickServ name (Useful on networks like EpiKnet, "
+                       "where NickServ is named Themis"),
+                   [=](const CString& sLine) { SetNSNameCommand(sLine); });
+        AddCommand("ClearNSName", "",
+                   t_d("Reset NickServ name to default (NickServ)"),
+                   [=](const CString& sLine) { ClearNSNameCommand(sLine); });
+        AddCommand(
+            "ViewCommands", "",
+            t_d("Show patterns for lines, which are being sent to NickServ"),
+            [=](const CString& sLine) { ViewCommandsCommand(sLine); });
+        AddCommand("SetCommand", t_d("cmd new-pattern"),
+                   t_d("Set pattern for commands"),
+                   [=](const CString& sLine) { SetCommandCommand(sLine); });
     }
 
     ~CNickServ() override {}
@@ -139,7 +137,8 @@ template <>
 void TModInfo<CNickServ>(CModInfo& Info) {
     Info.SetWikiPage("nickserv");
     Info.SetHasArgs(true);
-    Info.SetArgsHelpText("Please enter your nickserv password.");
+    Info.SetArgsHelpText(Info.t_s("Please enter your nickserv password."));
 }
 
-NETWORKMODULEDEFS(CNickServ, "Auths you with NickServ")
+NETWORKMODULEDEFS(CNickServ,
+                  t_s("Auths you with NickServ (prefer SASL module instead)"))

@@ -57,21 +57,21 @@ class CPartylineMod : public CModule {
   public:
     void ListChannelsCommand(const CString& sLine) {
         if (m_ssChannels.empty()) {
-            PutModule("There are no open channels.");
+            PutModule(t_s("There are no open channels."));
             return;
         }
 
         CTable Table;
 
-        Table.AddColumn("Channel");
-        Table.AddColumn("Users");
+        Table.AddColumn(t_s("Channel"));
+        Table.AddColumn(t_s("Users"));
 
         for (set<CPartylineChannel*>::const_iterator a = m_ssChannels.begin();
              a != m_ssChannels.end(); ++a) {
             Table.AddRow();
 
-            Table.SetCell("Channel", (*a)->GetName());
-            Table.SetCell("Users", CString((*a)->GetNicks().size()));
+            Table.SetCell(t_s("Channel"), (*a)->GetName());
+            Table.SetCell(t_s("Users"), CString((*a)->GetNicks().size()));
         }
 
         PutModule(Table);
@@ -79,9 +79,8 @@ class CPartylineMod : public CModule {
 
     MODCONSTRUCTOR(CPartylineMod) {
         AddHelpCommand();
-        AddCommand("List", static_cast<CModCommand::ModCmdFunc>(
-                               &CPartylineMod::ListChannelsCommand),
-                   "", "List all open channels");
+        AddCommand("List", "", t_d("List all open channels"),
+                   [=](const CString& sLine) { ListChannelsCommand(sLine); });
     }
 
     ~CPartylineMod() override {
@@ -733,9 +732,10 @@ void TModInfo<CPartylineMod>(CModInfo& Info) {
     Info.SetWikiPage("partyline");
     Info.SetHasArgs(true);
     Info.SetArgsHelpText(
-        "You may enter a list of channels the user joins, when entering the "
-        "internal partyline.");
+        Info.t_s("You may enter a list of channels the user joins, when "
+                 "entering the internal partyline."));
 }
 
-GLOBALMODULEDEFS(CPartylineMod,
-                 "Internal channels and queries for users connected to znc")
+GLOBALMODULEDEFS(
+    CPartylineMod,
+    t_s("Internal channels and queries for users connected to ZNC"))

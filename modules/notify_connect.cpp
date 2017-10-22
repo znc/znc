@@ -21,9 +21,9 @@ class CNotifyConnectMod : public CModule {
   public:
     MODCONSTRUCTOR(CNotifyConnectMod) {}
 
-    void OnClientLogin() override { NotifyAdmins("attached"); }
+    void OnClientLogin() override { NotifyAdmins(t_s("attached")); }
 
-    void OnClientDisconnect() override { NotifyAdmins("detached"); }
+    void OnClientDisconnect() override { NotifyAdmins(t_s("detached")); }
 
   private:
     void SendAdmins(const CString& msg) {
@@ -38,7 +38,7 @@ class CNotifyConnectMod : public CModule {
         }
         CString ip = GetClient()->GetRemoteIP();
 
-        SendAdmins(client + " " + event + " (from " + ip + ")");
+        SendAdmins(t_f("{1} {2} from {3}")(client, event, ip));
     }
 };
 
@@ -49,4 +49,4 @@ void TModInfo<CNotifyConnectMod>(CModInfo& Info) {
 
 GLOBALMODULEDEFS(
     CNotifyConnectMod,
-    "Notifies all admin users when a client connects or disconnects.")
+    t_s("Notifies all admin users when a client connects or disconnects."))
