@@ -117,3 +117,46 @@ TEST(UtilsTest, ServerTime) {
     }
     tzset();
 }
+
+TEST(UtilsTest, FormatTime) {
+    struct timeTest {
+        int sec, usec;
+        CString sResultL, sResultN, sResult3N;
+    };
+    timeTest aTimeTests[] = {
+        {42,  12345, "42.012", "42.012345000", "42.012"}, // leading zeroes
+        {42, 999999, "42.999", "42.999999000", "42.999"}, // (no) rounding
+        {42,      0, "42.000", "42.000000000", "42.000"}, // no tv_usec part
+    };
+
+    for (const timeTest& t : aTimeTests) {
+        timeval tv;
+        tv.tv_sec = t.sec;
+        tv.tv_usec = t.usec;
+
+        CString strL = CUtils::FormatTime(tv, "%s.%L", "UTC");
+        EXPECT_EQ(t.sResultL, strL);
+        CString strN = CUtils::FormatTime(tv, "%s.%N", "UTC");
+        EXPECT_EQ(t.sResultN, strN);
+        CString str3N = CUtils::FormatTime(tv, "%s.%3N", "UTC");
+        EXPECT_EQ(t.sResult3N, str3N);
+    }
+
+    // Test passthrough
+    timeval tv1;
+    tv1.tv_sec = 42;
+    tv1.tv_usec = 123456;
+    CString str1 = CUtils::FormatTime(tv1, "%s", "UTC");
+    EXPECT_EQ("42", str1);
+
+    // Test escapes
+    timeval tv2;
+    tv2.tv_sec = 42;
+    tv2.tv_usec = 123456;
+    CString str2 = CUtils::FormatTime(tv2, "%%L", "UTC");
+    EXPECT_EQ("%L", str2);
+
+    // Test suffix
+    CString str3 = CUtils::FormatTime(tv2, "a%Lb", "UTC");
+    EXPECT_EQ("a123b", str3);
+}

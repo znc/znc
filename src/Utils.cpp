@@ -499,6 +499,67 @@ CString CUtils::FormatTime(time_t t, const CString& sFormat,
     return s;
 }
 
+CString CUtils::FormatTime(const timeval& tv, const CString& sFormat,
+                           const CString& sTimezone) {
+    // Parse additional format specifiers before passing them to
+    // strftime, since the way strftime treats unknown format
+    // specifiers is undefined.
+    CString sFormat2;
+
+    // Make sure %% is parsed correctly, i.e. %%L is passed through to
+    // strftime to become %L, and not 123.
+    bool bInFormat = false;
+    int iDigits;
+    CString::size_type uLastCopied = 0, uFormatStart;
+
+    for (CString::size_type i = 0; i < sFormat.length(); i++) {
+        if (!bInFormat) {
+            if (sFormat[i] == '%') {
+                uFormatStart = i;
+                bInFormat = true;
+                iDigits = 9;
+            }
+        } else {
+            switch (sFormat[i]) {
+                case '0': case '1': case '2': case '3': case '4':
+                case '5': case '6': case '7': case '8': case '9':
+                    iDigits = sFormat[i] - '0';
+                    break;
+                case 'L':
+                    iDigits = 3;
+                    // fall-through
+                case 'N': {
+                    int iVal = tv.tv_usec;
+                    int iDigitDelta = iDigits - 6; // tv_user is in 10^-6 seconds
+                    for (; iDigitDelta > 0; iDigitDelta--)
+                        iVal *= 10;
+                    for (; iDigitDelta < 0; iDigitDelta++)
+                        iVal /= 10;
+                    sFormat2 += sFormat.substr(uLastCopied,
+                        uFormatStart - uLastCopied);
+                    CString sVal = CString(iVal);
+                    sFormat2 += CString(iDigits - sVal.length(), '0');
+                    sFormat2 += sVal;
+                    uLastCopied = i + 1;
+                    bInFormat = false;
+                    break;
+                }
+                default:
+                    bInFormat = false;
+            }
+        }
+    }
+
+    if (uLastCopied) {
+        sFormat2 += sFormat.substr(uLastCopied);
+        return FormatTime(tv.tv_sec, sFormat2, sTimezone);
+    } else {
+        // If there are no extended format specifiers, avoid doing any
+        // memory allocations entirely.
+        return FormatTime(tv.tv_sec, sFormat, sTimezone);
+    }
+}
+
 CString CUtils::FormatServerTime(const timeval& tv) {
     CString s_msec(tv.tv_usec / 1000);
     while (s_msec.length() < 3) {
