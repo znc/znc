@@ -52,7 +52,7 @@ CMessage CBufLine::ToMessage(const CClient& Client,
         mssThisParams["text"] = m_sText;
     } else {
         mssThisParams["text"] =
-            Client.GetUser()->AddTimestamp(Line.GetTime().tv_sec, m_sText);
+            Client.GetUser()->AddTimestamp(Line.GetTime(), m_sText);
     }
 
     // make a copy of params, because the following loop modifies the original

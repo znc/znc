@@ -603,17 +603,25 @@ CString& CUser::ExpandString(const CString& sStr, CString& sRet) const {
 }
 
 CString CUser::AddTimestamp(const CString& sStr) const {
-    time_t tm;
-    return AddTimestamp(time(&tm), sStr);
+    timeval tv;
+    gettimeofday(&tv, nullptr);
+    return AddTimestamp(tv, sStr);
 }
 
 CString CUser::AddTimestamp(time_t tm, const CString& sStr) const {
+    timeval tv;
+    tv.tv_sec = tm;
+    tv.tv_usec = 0;
+    return AddTimestamp(tv, sStr);
+}
+
+CString CUser::AddTimestamp(timeval tv, const CString& sStr) const {
     CString sRet = sStr;
 
     if (!GetTimestampFormat().empty() &&
         (m_bAppendTimestamp || m_bPrependTimestamp)) {
         CString sTimestamp =
-            CUtils::FormatTime(tm, GetTimestampFormat(), m_sTimezone);
+            CUtils::FormatTime(tv, GetTimestampFormat(), m_sTimezone);
         if (sTimestamp.empty()) {
             return sRet;
         }
