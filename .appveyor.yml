@@ -5,7 +5,7 @@
 version: 0.0.0.0.1-branch-{branch}-build-{build}
 clone_depth: 10
 cache:
-    - c:\cygwin-setup-cache
+    - c:\cygwin-setup-cache -> .appveyor.yml
 environment:
     matrix:
         - cygwin_url: https://cygwin.com/setup-x86_64.exe
