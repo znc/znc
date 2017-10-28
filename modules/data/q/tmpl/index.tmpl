@@ -1,3 +1,4 @@
+<? I18N znc-q ?>
 <? INC Header.tmpl ?>
 
 <form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>" method="post">
@@ -7,14 +8,14 @@
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection">
-					<div class="inputlabel">Username:</div>
+					<div class="inputlabel"><? FORMAT "Username:" ?></div>
 					<input type="text" name="user" value="<? VAR Username ?>" class="half" maxlength="128"
-							   title="Please enter a username." />
+							   title="<? FORMAT "Please enter a username." ?>" />
 				</div>
 				<div class="subsection">
-					<div class="inputlabel">Password:</div>
+					<div class="inputlabel"><? FORMAT "Password:" ?></div>
 					<input type="password" name="password" class="half"
-						   title="Please enter a password." autocomplete="off" />
+						   title="<? FORMAT "Please enter a password." ?>" autocomplete="off" />
 				</div>
 				<div style="clear: both;"></div>
 			</div>
@@ -22,7 +23,7 @@
 	</div>
 
 	<div class="section">
-		<h3>Options</h3>
+		<h3><? FORMAT "Options" ?></h3>
 		<div class="sectionbg">
 			<div class="sectionbody lotsofcheckboxes">
 				<? LOOP OptionLoop ?>
@@ -38,7 +39,7 @@
 
 	<div class="submitline">
 		<input type="hidden" name="submitted" value="1" />
-		<input type="submit" value="Save" />
+		<input type="submit" value="<? FORMAT "Save" ?>" />
 	</div>
 </form>
 

@@ -40,4 +40,4 @@ void TModInfo<CRawMod>(CModInfo& Info) {
     Info.AddType(CModInfo::UserModule);
 }
 
-NETWORKMODULEDEFS(CRawMod, "View all of the raw traffic")
+NETWORKMODULEDEFS(CRawMod, t_s("View all of the raw traffic"))

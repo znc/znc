@@ -206,10 +206,9 @@ class CRouteRepliesMod : public CModule {
         m_pReplies = nullptr;
 
         AddHelpCommand();
-        AddCommand("Silent", static_cast<CModCommand::ModCmdFunc>(
-                                 &CRouteRepliesMod::SilentCommand),
-                   "[yes|no]",
-                   "Decides whether to show the timeout messages or not");
+        AddCommand("Silent", t_d("[yes|no]"),
+                   t_d("Decides whether to show the timeout messages or not"),
+                   [=](const CString& sLine) { SilentCommand(sLine); });
     }
 
     ~CRouteRepliesMod() override {
@@ -348,19 +347,20 @@ class CRouteRepliesMod : public CModule {
 
         if (!GetNV("silent_timeouts").ToBool()) {
             PutModule(
-                "This module hit a timeout which is probably a connectivity "
-                "issue.");
+                t_s("This module hit a timeout which is probably a "
+                    "connectivity issue."));
             PutModule(
-                "However, if you can provide steps to reproduce this issue, "
-                "please do report a bug.");
-            PutModule("To disable this message, do \"/msg " + GetModNick() +
-                      " silent yes\"");
-            PutModule("Last request: " + m_sLastRequest);
-            PutModule("Expected replies: ");
+                t_s("However, if you can provide steps to reproduce this "
+                    "issue, please do report a bug."));
+            PutModule(
+                t_f("To disable this message, do \"/msg {1} silent yes\"")(
+                    GetModNick()));
+            PutModule(t_f("Last request: {1}")(m_sLastRequest));
+            PutModule(t_s("Expected replies:"));
 
             for (size_t i = 0; m_pReplies[i].szReply != nullptr; i++) {
                 if (m_pReplies[i].bLastResponse)
-                    PutModule(m_pReplies[i].szReply + CString(" (last)"));
+                    PutModule(t_f("{1} (last)")(m_pReplies[i].szReply));
                 else
                     PutModule(m_pReplies[i].szReply);
             }
@@ -431,8 +431,9 @@ class CRouteRepliesMod : public CModule {
             SetNV("silent_timeouts", sValue);
         }
 
-        CString sPrefix = GetNV("silent_timeouts").ToBool() ? "dis" : "en";
-        PutModule("Timeout messages are " + sPrefix + "abled.");
+        PutModule(GetNV("silent_timeouts").ToBool()
+                      ? t_s("Timeout messages are disabled.")
+                      : t_s("Timeout messages are enabled."));
     }
 
     CClient* m_pDoing;
@@ -453,4 +454,4 @@ void TModInfo<CRouteRepliesMod>(CModInfo& Info) {
 }
 
 NETWORKMODULEDEFS(CRouteRepliesMod,
-                  "Send replies (e.g. to /who) to the right client only")
+                  t_s("Send replies (e.g. to /who) to the right client only"))

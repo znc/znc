@@ -70,12 +70,12 @@ class CQModule : public CModule {
             // Also don't notify the user in case he already had mode +x set.
             if (GetNV("UseCloakedHost").empty()) {
                 if (!m_bCloaked)
-                    PutModule(
+                    PutModule(t_s(
                         "Notice: Your host will be cloaked the next time you "
                         "reconnect to IRC. "
                         "If you want to cloak your host now, /msg *q Cloak. "
                         "You can set your preference "
-                        "with /msg *q Set UseCloakedHost true/false.");
+                        "with /msg *q Set UseCloakedHost true/false."))k;
                 m_bUseCloakedHost = true;
                 SetUseCloakedHost(m_bUseCloakedHost);
                 m_bJoinAfterCloaked = true;
@@ -108,154 +108,158 @@ class CQModule : public CModule {
         CString sCommand = sLine.Token(0).AsLower();
 
         if (sCommand == "help") {
-            PutModule("The following commands are available:");
+            PutModule(t_s("The following commands are available:"));
             CTable Table;
-            Table.AddColumn("Command");
-            Table.AddColumn("Description");
+            Table.AddColumn(t_s("Command"));
+            Table.AddColumn(t_s("Description"));
             Table.AddRow();
-            Table.SetCell("Command", "Auth [<username> <password>]");
-            Table.SetCell("Description",
-                          "Tries to authenticate you with Q. Both parameters "
-                          "are optional.");
+            Table.SetCell(t_s("Command"), t_s("Auth [<username> <password>]"));
+            Table.SetCell(t_s("Description"),
+                          t_s("Tries to authenticate you with Q. Both "
+                              "parameters are optional."));
             Table.AddRow();
-            Table.SetCell("Command", "Cloak");
+            Table.SetCell(t_s("Command"), "Cloak");
             Table.SetCell(
-                "Description",
-                "Tries to set usermode +x to hide your real hostname.");
+                t_s("Description"),
+                t_s("Tries to set usermode +x to hide your real hostname."));
             Table.AddRow();
-            Table.SetCell("Command", "Status");
-            Table.SetCell("Description",
-                          "Prints the current status of the module.");
+            Table.SetCell(t_s("Command"), "Status");
+            Table.SetCell(t_s("Description"),
+                          t_s("Prints the current status of the module."));
             Table.AddRow();
-            Table.SetCell("Command", "Update");
-            Table.SetCell("Description",
-                          "Re-requests the current user information from Q.");
+            Table.SetCell(t_s("Command"), "Update");
+            Table.SetCell(
+                t_s("Description"),
+                t_s("Re-requests the current user information from Q."));
             Table.AddRow();
-            Table.SetCell("Command", "Set <setting> <value>");
-            Table.SetCell("Description",
-                          "Changes the value of the given setting. See the "
-                          "list of settings below.");
+            Table.SetCell(t_s("Command"), t_s("Set <setting> <value>"));
+            Table.SetCell(t_s("Description"),
+                          t_s("Changes the value of the given setting. See the "
+                              "list of settings below."));
             Table.AddRow();
-            Table.SetCell("Command", "Get");
-            Table.SetCell("Description",
-                          "Prints out the current configuration. See the list "
-                          "of settings below.");
+            Table.SetCell(t_s("Command"), "Get");
+            Table.SetCell(t_s("Description"),
+                          t_s("Prints out the current configuration. See the "
+                              "list of settings below."));
             PutModule(Table);
 
-            PutModule("The following settings are available:");
+            PutModule(t_s("The following settings are available:"));
             CTable Table2;
-            Table2.AddColumn("Setting");
-            Table2.AddColumn("Type");
-            Table2.AddColumn("Description");
+            Table2.AddColumn(t_s("Setting"));
+            Table2.AddColumn(t_s("Type"));
+            Table2.AddColumn(t_s("Description"));
             Table2.AddRow();
-            Table2.SetCell("Setting", "Username");
-            Table2.SetCell("Type", "String");
-            Table2.SetCell("Description", "Your Q username.");
+            Table2.SetCell(t_s("Setting"),"Username");
+            Table2.SetCell(t_s("Type"), t_s("String"));
+            Table2.SetCell(t_s("Description"), t_s("Your Q username."));
             Table2.AddRow();
-            Table2.SetCell("Setting", "Password");
-            Table2.SetCell("Type", "String");
-            Table2.SetCell("Description", "Your Q password.");
+            Table2.SetCell(t_s("Setting"), "Password");
+            Table2.SetCell(t_s("Type"), t_s("String"));
+            Table2.SetCell(t_s("Description"), t_s("Your Q password."));
             Table2.AddRow();
-            Table2.SetCell("Setting", "UseCloakedHost");
-            Table2.SetCell("Type", "Boolean");
-            Table2.SetCell("Description",
-                           "Whether to cloak your hostname (+x) automatically "
-                           "on connect.");
+            Table2.SetCell(t_s("Setting"), "UseCloakedHost");
+            Table2.SetCell(t_s("Type"), t_s("Boolean"));
+            Table2.SetCell(t_s("Description"),
+                           t_s("Whether to cloak your hostname (+x) "
+                               "automatically on connect."));
             Table2.AddRow();
-            Table2.SetCell("Setting", "UseChallenge");
-            Table2.SetCell("Type", "Boolean");
-            Table2.SetCell("Description",
-                           "Whether to use the CHALLENGEAUTH mechanism to "
-                           "avoid sending passwords in cleartext.");
+            Table2.SetCell(t_s("Setting"), "UseChallenge");
+            Table2.SetCell(t_s("Type"), t_s("Boolean"));
+            Table2.SetCell(t_s("Description"),
+                           t_s("Whether to use the CHALLENGEAUTH mechanism to "
+                               "avoid sending passwords in cleartext."));
             Table2.AddRow();
-            Table2.SetCell("Setting", "RequestPerms");
-            Table2.SetCell("Type", "Boolean");
+            Table2.SetCell(t_s("Setting"), "RequestPerms");
+            Table2.SetCell(t_s("Type"), t_s("Boolean"));
+            Table2.SetCell(t_s("Description"),
+                           t_s("Whether to request voice/op from Q on "
+                               "join/devoice/deop."));
+            Table2.AddRow();
+            Table2.SetCell(t_s("Setting"), "JoinOnInvite");
+            Table2.SetCell(t_s("Type"), t_s("Boolean"));
+            Table2.SetCell(t_s("Description"),
+                           t_s("Whether to join channels when Q invites you."));
+            Table2.AddRow();
+            Table2.SetCell(t_s("Setting"), "JoinAfterCloaked");
+            Table2.SetCell(t_s("Type"), t_s("Boolean"));
             Table2.SetCell(
-                "Description",
-                "Whether to request voice/op from Q on join/devoice/deop.");
-            Table2.AddRow();
-            Table2.SetCell("Setting", "JoinOnInvite");
-            Table2.SetCell("Type", "Boolean");
-            Table2.SetCell("Description",
-                           "Whether to join channels when Q invites you.");
-            Table2.AddRow();
-            Table2.SetCell("Setting", "JoinAfterCloaked");
-            Table2.SetCell("Type", "Boolean");
-            Table2.SetCell("Description",
-                           "Whether to delay joining channels until after you "
-                           "are cloaked.");
+                t_s("Description"),
+                t_s("Whether to delay joining channels until after you "
+                    "are cloaked."));
             PutModule(Table2);
 
             PutModule(
-                "This module takes 2 optional parameters: <username> "
-                "<password>");
-            PutModule("Module settings are stored between restarts.");
+                t_s("This module takes 2 optional parameters: <username> "
+                    "<password>"));
+            PutModule(t_s("Module settings are stored between restarts."));
 
         } else if (sCommand == "set") {
             CString sSetting = sLine.Token(1).AsLower();
             CString sValue = sLine.Token(2);
             if (sSetting.empty() || sValue.empty()) {
-                PutModule("Syntax: Set <setting> <value>");
+                PutModule(t_s("Syntax: Set <setting> <value>"));
             } else if (sSetting == "username") {
                 SetUsername(sValue);
-                PutModule("Username set");
+                PutModule(t_s("Username set"));
             } else if (sSetting == "password") {
                 SetPassword(sValue);
-                PutModule("Password set");
+                PutModule(t_s("Password set"));
             } else if (sSetting == "usecloakedhost") {
                 SetUseCloakedHost(sValue.ToBool());
-                PutModule("UseCloakedHost set");
+                PutModule(t_s("UseCloakedHost set"));
             } else if (sSetting == "usechallenge") {
                 SetUseChallenge(sValue.ToBool());
-                PutModule("UseChallenge set");
+                PutModule(t_s("UseChallenge set"));
             } else if (sSetting == "requestperms") {
                 SetRequestPerms(sValue.ToBool());
-                PutModule("RequestPerms set");
+                PutModule(t_s("RequestPerms set"));
             } else if (sSetting == "joinoninvite") {
                 SetJoinOnInvite(sValue.ToBool());
-                PutModule("JoinOnInvite set");
+                PutModule(t_s("JoinOnInvite set"));
             } else if (sSetting == "joinaftercloaked") {
                 SetJoinAfterCloaked(sValue.ToBool());
-                PutModule("JoinAfterCloaked set");
+                PutModule(t_s("JoinAfterCloaked set"));
             } else
-                PutModule("Unknown setting: " + sSetting);
+                PutModule(t_f("Unknown setting: {1}")(sSetting));
 
         } else if (sCommand == "get" || sCommand == "list") {
             CTable Table;
-            Table.AddColumn("Setting");
-            Table.AddColumn("Value");
+            Table.AddColumn(t_s("Setting"));
+            Table.AddColumn(t_s("Value"));
             Table.AddRow();
-            Table.SetCell("Setting", "Username");
-            Table.SetCell("Value", m_sUsername);
+            Table.SetCell(t_s("Setting"), "Username");
+            Table.SetCell(t_s("Value"), m_sUsername);
             Table.AddRow();
-            Table.SetCell("Setting", "Password");
-            Table.SetCell("Value", "*****");  // m_sPassword
+            Table.SetCell(t_s("Setting"), "Password");
+            Table.SetCell(t_s("Value"), "*****");  // m_sPassword
             Table.AddRow();
-            Table.SetCell("Setting", "UseCloakedHost");
-            Table.SetCell("Value", CString(m_bUseCloakedHost));
+            Table.SetCell(t_s("Setting"), "UseCloakedHost");
+            Table.SetCell(t_s("Value"), CString(m_bUseCloakedHost));
             Table.AddRow();
-            Table.SetCell("Setting", "UseChallenge");
-            Table.SetCell("Value", CString(m_bUseChallenge));
+            Table.SetCell(t_s("Setting"), "UseChallenge");
+            Table.SetCell(t_s("Value"), CString(m_bUseChallenge));
             Table.AddRow();
-            Table.SetCell("Setting", "RequestPerms");
-            Table.SetCell("Value", CString(m_bRequestPerms));
+            Table.SetCell(t_s("Setting"), "RequestPerms");
+            Table.SetCell(t_s("Value"), CString(m_bRequestPerms));
             Table.AddRow();
-            Table.SetCell("Setting", "JoinOnInvite");
-            Table.SetCell("Value", CString(m_bJoinOnInvite));
+            Table.SetCell(t_s("Setting"), "JoinOnInvite");
+            Table.SetCell(t_s("Value"), CString(m_bJoinOnInvite));
             Table.AddRow();
-            Table.SetCell("Setting", "JoinAfterCloaked");
-            Table.SetCell("Value", CString(m_bJoinAfterCloaked));
+            Table.SetCell(t_s("Setting"), "JoinAfterCloaked");
+            Table.SetCell(t_s("Value"), CString(m_bJoinAfterCloaked));
             PutModule(Table);
 
         } else if (sCommand == "status") {
-            PutModule("Connected: " + CString(IsIRCConnected() ? "yes" : "no"));
-            PutModule("Cloaked: " + CString(m_bCloaked ? "yes" : "no"));
-            PutModule("Authed: " + CString(m_bAuthed ? "yes" : "no"));
+            PutModule(IsIRCConnected() ? t_s("Connected: yes")
+                                       : t_s("Connected: no"));
+            PutModule(m_bCloaked ? t_s("Cloacked: yes") : t_s("Cloacked: no"));
+            PutModule(m_bAuthed ? t_s("Authenticated: yes")
+                                : t_s("Authenticated: no"));
 
         } else {
             // The following commands require an IRC connection.
             if (!IsIRCConnected()) {
-                PutModule("Error: You are not connected to IRC.");
+                PutModule(t_s("Error: You are not connected to IRC."));
                 return;
             }
 
@@ -263,20 +267,20 @@ class CQModule : public CModule {
                 if (!m_bCloaked)
                     Cloak();
                 else
-                    PutModule("Error: You are already cloaked!");
+                    PutModule(t_s("Error: You are already cloaked!"));
 
             } else if (sCommand == "auth") {
                 if (!m_bAuthed)
                     Auth(sLine.Token(1), sLine.Token(2));
                 else
-                    PutModule("Error: You are already authed!");
+                    PutModule(t_s("Error: You are already authed!"));
 
             } else if (sCommand == "update") {
                 WhoAmI();
-                PutModule("Update requested.");
+                PutModule(t_s("Update requested."));
 
             } else {
-                PutModule("Unknown command. Try 'help'.");
+                PutModule(t_s("Unknown command. Try 'help'."));
             }
         }
     }
@@ -286,7 +290,7 @@ class CQModule : public CModule {
         if (sLine.Token(1) == "396" &&
             sLine.Token(3).find("users.quakenet.org") != CString::npos) {
             m_bCloaked = true;
-            PutModule("Cloak successful: Your hostname is now cloaked.");
+            PutModule(t_s("Cloak successful: Your hostname is now cloaked."));
 
             // Join channels immediately after our spoof is set, but only if
             // both UseCloakedHost and JoinAfterCloaked is enabled. See #602.
@@ -366,40 +370,42 @@ class CQModule : public CModule {
             o1["Name"] = "usecloakedhost";
             o1["DisplayName"] = "UseCloakedHost";
             o1["Tooltip"] =
-                "Whether to cloak your hostname (+x) automatically on connect.";
+                t_s("Whether to cloak your hostname (+x) automatically on "
+                    "connect.");
             o1["Checked"] = CString(m_bUseCloakedHost);
 
             CTemplate& o2 = Tmpl.AddRow("OptionLoop");
             o2["Name"] = "usechallenge";
             o2["DisplayName"] = "UseChallenge";
             o2["Tooltip"] =
-                "Whether to use the CHALLENGEAUTH mechanism to avoid sending "
-                "passwords in cleartext.";
+                t_s("Whether to use the CHALLENGEAUTH mechanism to avoid "
+                    "sending passwords in cleartext.");
             o2["Checked"] = CString(m_bUseChallenge);
 
             CTemplate& o3 = Tmpl.AddRow("OptionLoop");
             o3["Name"] = "requestperms";
             o3["DisplayName"] = "RequestPerms";
             o3["Tooltip"] =
-                "Whether to request voice/op from Q on join/devoice/deop.";
+                t_s("Whether to request voice/op from Q on join/devoice/deop.");
             o3["Checked"] = CString(m_bRequestPerms);
 
             CTemplate& o4 = Tmpl.AddRow("OptionLoop");
             o4["Name"] = "joinoninvite";
             o4["DisplayName"] = "JoinOnInvite";
-            o4["Tooltip"] = "Whether to join channels when Q invites you.";
+            o4["Tooltip"] = t_s("Whether to join channels when Q invites you.");
             o4["Checked"] = CString(m_bJoinOnInvite);
 
             CTemplate& o5 = Tmpl.AddRow("OptionLoop");
             o5["Name"] = "joinaftercloaked";
             o5["DisplayName"] = "JoinAfterCloaked";
             o5["Tooltip"] =
-                "Whether to delay joining channels until after you are "
-                "cloaked.";
+                t_s("Whether to delay joining channels until after you are "
+                    "cloaked.");
             o5["Checked"] = CString(m_bJoinAfterCloaked);
 
             if (bSubmitted) {
-                WebSock.GetSession()->AddSuccess("Changes have been saved!");
+                WebSock.GetSession()->AddSuccess(
+                    t_s("Changes have been saved!"));
             }
 
             return true;
@@ -426,7 +432,7 @@ class CQModule : public CModule {
     void Cloak() {
         if (m_bCloaked) return;
 
-        PutModule("Cloak: Trying to cloak your hostname, setting +x...");
+        PutModule(t_s("Cloak: Trying to cloak your hostname, setting +x..."));
         PutIRC("MODE " + GetNetwork()->GetIRCSock()->GetNick() + " +x");
     }
 
@@ -443,17 +449,17 @@ class CQModule : public CModule {
 
         if (m_sUsername.empty() || m_sPassword.empty()) {
             PutModule(
-                "You have to set a username and password to use this module! "
-                "See 'help' for details.");
+                t_s("You have to set a username and password to use this "
+                    "module! See 'help' for details."));
             return;
         }
 
         if (m_bUseChallenge) {
-            PutModule("Auth: Requesting CHALLENGE...");
+            PutModule(t_s("Auth: Requesting CHALLENGE..."));
             m_bRequestedChallenge = true;
             PutQ("CHALLENGE");
         } else {
-            PutModule("Auth: Sending AUTH request...");
+            PutModule(t_s("Auth: Sending AUTH request..."));
             PutQ("AUTH " + m_sUsername + " " + m_sPassword);
         }
     }
@@ -469,7 +475,8 @@ class CQModule : public CModule {
         CString sKey = CString(sUsername + ":" + sPasswordHash).SHA256();
         CString sResponse = HMAC_SHA256(sKey, sChallenge);
 
-        PutModule("Auth: Received challenge, sending CHALLENGEAUTH request...");
+        PutModule(
+            t_s("Auth: Received challenge, sending CHALLENGEAUTH request..."));
         PutQ("CHALLENGEAUTH " + m_sUsername + " " + sResponse +
              " HMAC-SHA-256");
     }
@@ -511,11 +518,11 @@ class CQModule : public CModule {
         // AUTH
         else if (sMessage.Equals("Username or password incorrect.")) {
             m_bAuthed = false;
-            PutModule("Auth failed: " + sMessage);
+            PutModule(t_f("Authentication failed: {1}")(sMessage));
             return HALT;
         } else if (sMessage.WildCmp("You are now logged in as *.")) {
             m_bAuthed = true;
-            PutModule("Auth successful: " + sMessage);
+            PutModule(t_f("Authentication successful: {1}")(sMessage));
             WhoAmI();
             return HALT;
         } else if (m_bRequestedChallenge &&
@@ -529,8 +536,8 @@ class CQModule : public CModule {
                     ChallengeAuth(sMessage.Token(1));
                 } else {
                     PutModule(
-                        "Auth failed: Q does not support HMAC-SHA-256 for "
-                        "CHALLENGEAUTH, falling back to standard AUTH.");
+                        t_s("Auth failed: Q does not support HMAC-SHA-256 for "
+                            "CHALLENGEAUTH, falling back to standard AUTH."));
                     SetUseChallenge(false);
                     Auth();
                 }
@@ -556,8 +563,8 @@ class CQModule : public CModule {
             bool bAutoOp = (sModes.find("a") != CString::npos);
             if (bMaster || bOp) {
                 if (!bAutoOp) {
-                    PutModule("RequestPerms: Requesting op on " +
-                              Channel.GetName());
+                    PutModule(t_f("RequestPerms: Requesting op on {1}")(
+                        Channel.GetName()));
                     PutQ("OP " + Channel.GetName());
                 }
                 return;
@@ -569,8 +576,8 @@ class CQModule : public CModule {
             bool bAutoVoice = (sModes.find("g") != CString::npos);
             if (bMaster || bVoice) {
                 if (!bAutoVoice) {
-                    PutModule("RequestPerms: Requesting voice on " +
-                              Channel.GetName());
+                    PutModule(t_f("RequestPerms: Requesting voice on {1}")(
+                        Channel.GetName()));
                     PutQ("VOICE " + Channel.GetName());
                 }
                 return;
@@ -675,7 +682,8 @@ template <>
 void TModInfo<CQModule>(CModInfo& Info) {
     Info.SetWikiPage("Q");
     Info.SetHasArgs(true);
-    Info.SetArgsHelpText("Please provide your username and password for Q.");
+    Info.SetArgsHelpText(
+        Info.t_s("Please provide your username and password for Q."));
 }
 
-NETWORKMODULEDEFS(CQModule, "Auths you with QuakeNet's Q bot.")
+NETWORKMODULEDEFS(CQModule, t_s("Auths you with QuakeNet's Q bot."))
