@@ -115,11 +115,12 @@ class CSChat : public CModule {
     ~CSChat() override {}
 
     bool OnLoad(const CString& sArgs, CString& sMessage) override {
-        m_sPemFile = sArgs;
-
-        if (m_sPemFile.empty()) {
-            m_sPemFile = CZNC::Get().GetPemLocation();
+        if (sArgs.empty()) {
+            sMessage = "Argument must be path to PEM file";
+            return false;
         }
+
+        m_sPemFile = CDir::CheckPathPrefix(GetSavePath(), sArgs);
 
         if (!CFile::Exists(m_sPemFile)) {
             sMessage = "Unable to load pem file [" + m_sPemFile + "]";
