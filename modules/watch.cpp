@@ -331,7 +331,7 @@ class CWatcherMod : public CModule {
             SetSources(sCommand.Token(1).ToUInt(), sCommand.Token(2, true));
         } else if (sCmdName.Equals("CLEAR")) {
             m_lsWatchers.clear();
-            PutModule("All entries cleared.");
+            PutModule(t_s("All entries cleared."));
             Save();
         } else if (sCmdName.Equals("BUFFER")) {
             CString sCount = sCommand.Token(1);
@@ -340,12 +340,12 @@ class CWatcherMod : public CModule {
                 m_Buffer.SetLineCount(sCount.ToUInt());
             }
 
-            PutModule("Buffer count is set to [" +
-                      CString(m_Buffer.GetLineCount()) + "]");
+            PutModule(
+                t_f("Buffer count is set to {1}")(m_Buffer.GetLineCount()));
         } else if (sCmdName.Equals("DEL")) {
             Remove(sCommand.Token(1).ToUInt());
         } else {
-            PutModule("Unknown command: [" + sCmdName + "]");
+            PutModule(t_f("Unknown command: {1}")(sCmdName));
         }
     }
 
@@ -394,15 +394,15 @@ class CWatcherMod : public CModule {
                 (*it).SetDisabled(bDisabled);
             }
 
-            PutModule(((bDisabled) ? "Disabled all entries."
-                                   : "Enabled all entries."));
+            PutModule(bDisabled ? t_s("Disabled all entries.")
+                                : t_s("Enabled all entries."));
             Save();
             return;
         }
 
         uIdx--;  // "convert" index to zero based
         if (uIdx >= m_lsWatchers.size()) {
-            PutModule("Invalid Id");
+            PutModule(t_s("Invalid Id"));
             return;
         }
 
@@ -410,8 +410,10 @@ class CWatcherMod : public CModule {
         for (unsigned int a = 0; a < uIdx; a++) ++it;
 
         (*it).SetDisabled(bDisabled);
-        PutModule("Id " + CString(uIdx + 1) +
-                  ((bDisabled) ? " Disabled" : " Enabled"));
+        if (bDisabled)
+            PutModule(t_f("Id {1} disabled")(uIdx + 1));
+        else
+            PutModule(t_f("Id {1} enabled")(uIdx + 1));
         Save();
     }
 
@@ -422,15 +424,17 @@ class CWatcherMod : public CModule {
                 (*it).SetDetachedClientOnly(bDetachedClientOnly);
             }
 
-            PutModule(CString("Set DetachedClientOnly for all entries to: ") +
-                      ((bDetachedClientOnly) ? "Yes" : "No"));
+            if (bDetachedClientOnly)
+                PutModule(t_s("Set DetachedClientOnly for all entries to Yes"));
+            else
+                PutModule(t_s("Set DetachedClientOnly for all entries to No"));
             Save();
             return;
         }
 
         uIdx--;  // "convert" index to zero based
         if (uIdx >= m_lsWatchers.size()) {
-            PutModule("Invalid Id");
+            PutModule(t_s("Invalid Id"));
             return;
         }
 
@@ -438,8 +442,10 @@ class CWatcherMod : public CModule {
         for (unsigned int a = 0; a < uIdx; a++) ++it;
 
         (*it).SetDetachedClientOnly(bDetachedClientOnly);
-        PutModule("Id " + CString(uIdx + 1) + " set to: " +
-                  ((bDetachedClientOnly) ? "Yes" : "No"));
+        if (bDetachedClientOnly)
+            PutModule(t_f("Id {1} set to Yes")(uIdx + 1));
+        else
+            PutModule(t_f("Id {1} set to No")(uIdx + 1));
         Save();
     }
 
@@ -450,15 +456,18 @@ class CWatcherMod : public CModule {
                 (*it).SetDetachedChannelOnly(bDetachedChannelOnly);
             }
 
-            PutModule(CString("Set DetachedChannelOnly for all entries to: ") +
-                      ((bDetachedChannelOnly) ? "Yes" : "No"));
+            if (bDetachedChannelOnly)
+                PutModule(
+                    t_s("Set DetachedChannelOnly for all entries to Yes"));
+            else
+                PutModule(t_s("Set DetachedChannelOnly for all entries to No"));
             Save();
             return;
         }
 
         uIdx--;  // "convert" index to zero based
         if (uIdx >= m_lsWatchers.size()) {
-            PutModule("Invalid Id");
+            PutModule(t_s("Invalid Id"));
             return;
         }
 
@@ -466,21 +475,23 @@ class CWatcherMod : public CModule {
         for (unsigned int a = 0; a < uIdx; a++) ++it;
 
         (*it).SetDetachedChannelOnly(bDetachedChannelOnly);
-        PutModule("Id " + CString(uIdx + 1) + " set to: " +
-                  ((bDetachedChannelOnly) ? "Yes" : "No"));
+        if (bDetachedChannelOnly)
+            PutModule(t_f("Id {1} set to Yes")(uIdx + 1));
+        else
+            PutModule(t_f("Id {1} set to No")(uIdx + 1));
         Save();
     }
 
     void List() {
         CTable Table;
-        Table.AddColumn("Id");
-        Table.AddColumn("HostMask");
-        Table.AddColumn("Target");
-        Table.AddColumn("Pattern");
-        Table.AddColumn("Sources");
-        Table.AddColumn("Off");
-        Table.AddColumn("DetachedClientOnly");
-        Table.AddColumn("DetachedChannelOnly");
+        Table.AddColumn(t_s("Id"));
+        Table.AddColumn(t_s("HostMask"));
+        Table.AddColumn(t_s("Target"));
+        Table.AddColumn(t_s("Pattern"));
+        Table.AddColumn(t_s("Sources"));
+        Table.AddColumn(t_s("Off"));
+        Table.AddColumn(t_s("DetachedClientOnly"));
+        Table.AddColumn(t_s("DetachedChannelOnly"));
 
         unsigned int uIdx = 1;
 
@@ -489,28 +500,31 @@ class CWatcherMod : public CModule {
             CWatchEntry& WatchEntry = *it;
 
             Table.AddRow();
-            Table.SetCell("Id", CString(uIdx));
-            Table.SetCell("HostMask", WatchEntry.GetHostMask());
-            Table.SetCell("Target", WatchEntry.GetTarget());
-            Table.SetCell("Pattern", WatchEntry.GetPattern());
-            Table.SetCell("Sources", WatchEntry.GetSourcesStr());
-            Table.SetCell("Off", (WatchEntry.IsDisabled()) ? "Off" : "");
-            Table.SetCell("DetachedClientOnly",
-                          (WatchEntry.IsDetachedClientOnly()) ? "Yes" : "No");
-            Table.SetCell("DetachedChannelOnly",
-                          (WatchEntry.IsDetachedChannelOnly()) ? "Yes" : "No");
+            Table.SetCell(t_s("Id"), CString(uIdx));
+            Table.SetCell(t_s("HostMask"), WatchEntry.GetHostMask());
+            Table.SetCell(t_s("Target"), WatchEntry.GetTarget());
+            Table.SetCell(t_s("Pattern"), WatchEntry.GetPattern());
+            Table.SetCell(t_s("Sources"), WatchEntry.GetSourcesStr());
+            Table.SetCell(t_s("Off"),
+                          (WatchEntry.IsDisabled()) ? t_s("Off") : "");
+            Table.SetCell(
+                t_s("DetachedClientOnly"),
+                WatchEntry.IsDetachedClientOnly() ? t_s("Yes") : t_s("No"));
+            Table.SetCell(
+                t_s("DetachedChannelOnly"),
+                WatchEntry.IsDetachedChannelOnly() ? t_s("Yes") : t_s("No"));
         }
 
         if (Table.size()) {
             PutModule(Table);
         } else {
-            PutModule("You have no entries.");
+            PutModule(t_s("You have no entries."));
         }
     }
 
     void Dump() {
         if (m_lsWatchers.empty()) {
-            PutModule("You have no entries.");
+            PutModule(t_s("You have no entries."));
             return;
         }
 
@@ -553,7 +567,7 @@ class CWatcherMod : public CModule {
     void SetSources(unsigned int uIdx, const CString& sSources) {
         uIdx--;  // "convert" index to zero based
         if (uIdx >= m_lsWatchers.size()) {
-            PutModule("Invalid Id");
+            PutModule(t_s("Invalid Id"));
             return;
         }
 
@@ -561,14 +575,14 @@ class CWatcherMod : public CModule {
         for (unsigned int a = 0; a < uIdx; a++) ++it;
 
         (*it).SetSources(sSources);
-        PutModule("Sources set for Id " + CString(uIdx + 1) + ".");
+        PutModule(t_f("Sources set for Id {1}.")(uIdx + 1));
         Save();
     }
 
     void Remove(unsigned int uIdx) {
         uIdx--;  // "convert" index to zero based
         if (uIdx >= m_lsWatchers.size()) {
-            PutModule("Invalid Id");
+            PutModule(t_s("Invalid Id"));
             return;
         }
 
@@ -576,71 +590,79 @@ class CWatcherMod : public CModule {
         for (unsigned int a = 0; a < uIdx; a++) ++it;
 
         m_lsWatchers.erase(it);
-        PutModule("Id " + CString(uIdx + 1) + " Removed.");
+        PutModule(t_f("Id {1} removed.")(uIdx + 1));
         Save();
     }
 
     void Help() {
         CTable Table;
 
-        Table.AddColumn("Command");
-        Table.AddColumn("Description");
+        Table.AddColumn(t_s("Command"));
+        Table.AddColumn(t_s("Description"));
 
         Table.AddRow();
-        Table.SetCell("Command", "Add <HostMask> [Target] [Pattern]");
-        Table.SetCell("Description", "Used to add an entry to watch for.");
+        Table.SetCell(t_s("Command"), t_s("Add <HostMask> [Target] [Pattern]"));
+        Table.SetCell(t_s("Description"),
+                      t_s("Used to add an entry to watch for."));
 
         Table.AddRow();
-        Table.SetCell("Command", "List");
-        Table.SetCell("Description", "List all entries being watched.");
+        Table.SetCell(t_s("Command"), t_s("List"));
+        Table.SetCell(t_s("Description"),
+                      t_s("List all entries being watched."));
 
         Table.AddRow();
-        Table.SetCell("Command", "Dump");
-        Table.SetCell("Description",
-                      "Dump a list of all current entries to be used later.");
+        Table.SetCell(t_s("Command"), t_s("Dump"));
+        Table.SetCell(
+            t_s("Description"),
+            t_s("Dump a list of all current entries to be used later."));
 
         Table.AddRow();
-        Table.SetCell("Command", "Del <Id>");
-        Table.SetCell("Description",
-                      "Deletes Id from the list of watched entries.");
+        Table.SetCell(t_s("Command"), t_s("Del <Id>"));
+        Table.SetCell(t_s("Description"),
+                      t_s("Deletes Id from the list of watched entries."));
 
         Table.AddRow();
-        Table.SetCell("Command", "Clear");
-        Table.SetCell("Description", "Delete all entries.");
+        Table.SetCell(t_s("Command"), t_s("Clear"));
+        Table.SetCell(t_s("Description"), t_s("Delete all entries."));
 
         Table.AddRow();
-        Table.SetCell("Command", "Enable <Id | *>");
-        Table.SetCell("Description", "Enable a disabled entry.");
+        Table.SetCell(t_s("Command"), t_s("Enable <Id | *>"));
+        Table.SetCell(t_s("Description"), t_s("Enable a disabled entry."));
 
         Table.AddRow();
-        Table.SetCell("Command", "Disable <Id | *>");
-        Table.SetCell("Description", "Disable (but don't delete) an entry.");
+        Table.SetCell(t_s("Command"), t_s("Disable <Id | *>"));
+        Table.SetCell(t_s("Description"),
+                      t_s("Disable (but don't delete) an entry."));
 
         Table.AddRow();
-        Table.SetCell("Command",
-                      "SetDetachedClientOnly <Id | *> <True | False>");
-        Table.SetCell("Description",
-                      "Enable or disable detached client only for an entry.");
+        Table.SetCell(t_s("Command"),
+                      t_s("SetDetachedClientOnly <Id | *> <True | False>"));
+        Table.SetCell(
+            t_s("Description"),
+            t_s("Enable or disable detached client only for an entry."));
 
         Table.AddRow();
-        Table.SetCell("Command",
-                      "SetDetachedChannelOnly <Id | *> <True | False>");
-        Table.SetCell("Description",
-                      "Enable or disable detached channel only for an entry.");
+        Table.SetCell(t_s("Command"),
+                      t_s("SetDetachedChannelOnly <Id | *> <True | False>"));
+        Table.SetCell(
+            t_s("Description"),
+            t_s("Enable or disable detached channel only for an entry."));
 
         Table.AddRow();
-        Table.SetCell("Command", "Buffer [Count]");
-        Table.SetCell("Description",
-                      "Show/Set the amount of buffered lines while detached.");
+        Table.SetCell(t_s("Command"), t_s("Buffer [Count]"));
+        Table.SetCell(
+            t_s("Description"),
+            t_s("Show/Set the amount of buffered lines while detached."));
 
         Table.AddRow();
-        Table.SetCell("Command", "SetSources <Id> [#chan priv #foo* !#bar]");
-        Table.SetCell("Description",
-                      "Set the source channels that you care about.");
+        Table.SetCell(t_s("Command"),
+                      t_s("SetSources <Id> [#chan priv #foo* !#bar]"));
+        Table.SetCell(t_s("Description"),
+                      t_s("Set the source channels that you care about."));
 
         Table.AddRow();
-        Table.SetCell("Command", "Help");
-        Table.SetCell("Description", "This help.");
+        Table.SetCell(t_s("Command"), t_s("Help"));
+        Table.SetCell(t_s("Description"), t_s("This help."));
 
         PutModule(Table);
     }
@@ -656,23 +678,21 @@ class CWatcherMod : public CModule {
             for (list<CWatchEntry>::iterator it = m_lsWatchers.begin();
                  it != m_lsWatchers.end(); ++it) {
                 if (*it == WatchEntry) {
-                    sMessage = "Entry for [" + WatchEntry.GetHostMask() +
-                               "] already exists.";
+                    sMessage = t_f("Entry for {1} already exists.")(
+                        WatchEntry.GetHostMask());
                     bExists = true;
                     break;
                 }
             }
 
             if (!bExists) {
-                sMessage = "Adding entry: [" + WatchEntry.GetHostMask() +
-                           "] watching for "
-                           "[" +
-                           WatchEntry.GetPattern() + "] -> [" +
-                           WatchEntry.GetTarget() + "]";
+                sMessage = t_f("Adding entry: {1} watching for [{2}] -> {3}")(
+                    WatchEntry.GetHostMask(), WatchEntry.GetPattern(),
+                    WatchEntry.GetTarget());
                 m_lsWatchers.push_back(WatchEntry);
             }
         } else {
-            sMessage = "Watch: Not enough arguments.  Try Help";
+            sMessage = t_s("Watch: Not enough arguments.  Try Help");
         }
 
         if (bNotice) {
@@ -740,7 +760,8 @@ class CWatcherMod : public CModule {
             m_lsWatchers.push_back(WatchEntry);
         }
 
-        if (bWarn) PutModule("WARNING: malformed entry found while loading");
+        if (bWarn)
+            PutModule(t_s("WARNING: malformed entry found while loading"));
     }
 
     list<CWatchEntry> m_lsWatchers;
@@ -752,5 +773,6 @@ void TModInfo<CWatcherMod>(CModInfo& Info) {
     Info.SetWikiPage("watch");
 }
 
-NETWORKMODULEDEFS(CWatcherMod,
-                  "Copy activity from a specific user into a separate window")
+NETWORKMODULEDEFS(
+    CWatcherMod,
+    t_s("Copy activity from a specific user into a separate window"))

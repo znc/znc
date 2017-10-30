@@ -75,7 +75,7 @@ class CQModule : public CModule {
                         "reconnect to IRC. "
                         "If you want to cloak your host now, /msg *q Cloak. "
                         "You can set your preference "
-                        "with /msg *q Set UseCloakedHost true/false."))k;
+                        "with /msg *q Set UseCloakedHost true/false."));
                 m_bUseCloakedHost = true;
                 SetUseCloakedHost(m_bUseCloakedHost);
                 m_bJoinAfterCloaked = true;

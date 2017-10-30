@@ -28,9 +28,9 @@ class CSampleJob : public CModuleJob {
 
     ~CSampleJob() override {
         if (wasCancelled()) {
-            GetModule()->PutModule("Sample job cancelled");
+            GetModule()->PutModule(GetModule()->t_s("Sample job cancelled"));
         } else {
-            GetModule()->PutModule("Sample job destroyed");
+            GetModule()->PutModule(GetModule()->t_s("Sample job destroyed"));
         }
     }
 
@@ -46,7 +46,9 @@ class CSampleJob : public CModuleJob {
         }
     }
 
-    void runMain() override { GetModule()->PutModule("Sample job done"); }
+    void runMain() override {
+        GetModule()->PutModule(GetModule()->t_s("Sample job done"));
+    }
 };
 #endif
 
@@ -59,7 +61,9 @@ class CSampleTimer : public CTimer {
 
   private:
   protected:
-    void RunJob() override { GetModule()->PutModule("TEST!!!!"); }
+    void RunJob() override {
+        GetModule()->PutModule(GetModule()->t_s("TEST!!!!"));
+    }
 };
 
 class CSampleMod : public CModule {
@@ -67,7 +71,7 @@ class CSampleMod : public CModule {
     MODCONSTRUCTOR(CSampleMod) {}
 
     bool OnLoad(const CString& sArgs, CString& sMessage) override {
-        PutModule("I'm being loaded with the arguments: [" + sArgs + "]");
+        PutModule(t_f("I'm being loaded with the arguments: {1}")(sArgs));
 // AddTimer(new CSampleTimer(this, 300, 0, "Sample", "Sample timer for sample
 // things."));
 // AddTimer(new CSampleTimer(this, 5, 20, "Another", "Another sample timer."));
@@ -78,7 +82,7 @@ class CSampleMod : public CModule {
         return true;
     }
 
-    ~CSampleMod() override { PutModule("I'm being unloaded!"); }
+    ~CSampleMod() override { PutModule(t_s("I'm being unloaded!")); }
 
     bool OnBoot() override {
         // This is called when the app starts up (only modules that are loaded
@@ -86,10 +90,12 @@ class CSampleMod : public CModule {
         return true;
     }
 
-    void OnIRCConnected() override { PutModule("You got connected BoyOh."); }
+    void OnIRCConnected() override {
+        PutModule(t_s("You got connected BoyOh."));
+    }
 
     void OnIRCDisconnected() override {
-        PutModule("You got disconnected BoyOh.");
+        PutModule(t_s("You got disconnected BoyOh."));
     }
 
     EModRet OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent,
@@ -107,99 +113,98 @@ class CSampleMod : public CModule {
     void OnChanPermission(const CNick& OpNick, const CNick& Nick,
                           CChan& Channel, unsigned char uMode, bool bAdded,
                           bool bNoChange) override {
-        PutModule(((bNoChange) ? "[0] [" : "[1] [") + OpNick.GetNick() +
-                  "] set mode [" + Channel.GetName() +
-                  ((bAdded) ? "] +" : "] -") + CString(uMode) + " " +
-                  Nick.GetNick());
+        PutModule(t_f("{1} {2} set mode on {3} {4}{5} {6}")(
+            bNoChange, OpNick.GetNick(), Channel.GetName(), bAdded ? '+' : '-',
+            uMode, Nick.GetNick()));
     }
 
     void OnOp(const CNick& OpNick, const CNick& Nick, CChan& Channel,
               bool bNoChange) override {
-        PutModule(((bNoChange) ? "[0] [" : "[1] [") + OpNick.GetNick() +
-                  "] opped [" + Nick.GetNick() + "] on [" + Channel.GetName() +
-                  "]");
+        PutModule(t_f("{1} {2} opped {3} on {4}")(
+            bNoChange, OpNick.GetNick(), Nick.GetNick(), Channel.GetName()));
     }
 
     void OnDeop(const CNick& OpNick, const CNick& Nick, CChan& Channel,
                 bool bNoChange) override {
-        PutModule(((bNoChange) ? "[0] [" : "[1] [") + OpNick.GetNick() +
-                  "] deopped [" + Nick.GetNick() + "] on [" +
-                  Channel.GetName() + "]");
+        PutModule(t_f("{1} {2} deopped {3} on {4}")(
+            bNoChange, OpNick.GetNick(), Nick.GetNick(), Channel.GetName()));
     }
 
     void OnVoice(const CNick& OpNick, const CNick& Nick, CChan& Channel,
                  bool bNoChange) override {
-        PutModule(((bNoChange) ? "[0] [" : "[1] [") + OpNick.GetNick() +
-                  "] voiced [" + Nick.GetNick() + "] on [" + Channel.GetName() +
-                  "]");
+        PutModule(t_f("{1} {2} voiced {3} on {4}")(
+            bNoChange, OpNick.GetNick(), Nick.GetNick(), Channel.GetName()));
     }
 
     void OnDevoice(const CNick& OpNick, const CNick& Nick, CChan& Channel,
                    bool bNoChange) override {
-        PutModule(((bNoChange) ? "[0] [" : "[1] [") + OpNick.GetNick() +
-                  "] devoiced [" + Nick.GetNick() + "] on [" +
-                  Channel.GetName() + "]");
+        PutModule(t_f("{1} {2} devoiced {3} on {4}")(
+            bNoChange, OpNick.GetNick(), Nick.GetNick(), Channel.GetName()));
     }
 
     void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes,
                    const CString& sArgs) override {
-        PutModule("* " + OpNick.GetNick() + " sets mode: " + sModes + " " +
-                  sArgs + " (" + Channel.GetName() + ")");
+        PutModule(t_f("* {1} sets mode: {2} {3} on {4}")(
+            OpNick.GetNick(), sModes, sArgs, Channel.GetName()));
     }
 
     EModRet OnRaw(CString& sLine) override {
-        // PutModule("OnRaw() [" + sLine + "]");
+        // PutModule(t_f("OnRaw(): {1}")(sLine));
         return CONTINUE;
     }
 
     EModRet OnUserRaw(CString& sLine) override {
-        // PutModule("UserRaw() [" + sLine + "]");
+        // PutModule(t_f("OnUserRaw(): {1}")(sLine));
         return CONTINUE;
     }
 
     void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel,
                 const CString& sMessage) override {
-        PutModule("[" + OpNick.GetNick() + "] kicked [" + sKickedNick +
-                  "] from [" + Channel.GetName() + "] with the msg [" +
-                  sMessage + "]");
+        PutModule(t_f("{1} kicked {2} from {3} with the msg {4}")(
+            OpNick.GetNick(), sKickedNick, Channel.GetName(), sMessage));
     }
 
     void OnQuit(const CNick& Nick, const CString& sMessage,
                 const vector<CChan*>& vChans) override {
-        PutModule("* Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() + "!" +
-                  Nick.GetHost() + ") (" + sMessage + ")");
+        PutModule(t_p("* {1} ({2}@{3}) quits ({4}) from channel: {6}",
+                      "* {1} ({2}@{3}) quits ({4}) from {5} channels: {6}",
+                      vChans.size())(
+            Nick.GetNick(), Nick.GetIdent(), Nick.GetHost(), sMessage,
+            vChans.size(), CString(", ").Join(vChans.begin(), vChans.end())));
     }
 
     EModRet OnTimerAutoJoin(CChan& Channel) override {
-        PutModule("Attempting to join " + Channel.GetName());
+        PutModule(t_f("Attempting to join {1}")(Channel.GetName()));
         return CONTINUE;
     }
 
     void OnJoin(const CNick& Nick, CChan& Channel) override {
-        PutModule("* Joins: " + Nick.GetNick() + " (" + Nick.GetIdent() + "!" +
-                  Nick.GetHost() + ")");
+        PutModule(t_f("* {1} ({2}@{3}) joins {4}")(
+            Nick.GetNick(), Nick.GetIdent(), Nick.GetHost(),
+            Channel.GetName()));
     }
 
     void OnPart(const CNick& Nick, CChan& Channel,
                 const CString& sMessage) override {
-        PutModule("* Parts: " + Nick.GetNick() + " (" + Nick.GetIdent() + "!" +
-                  Nick.GetHost() + ")");
+        PutModule(t_f("* {1} ({2}@{3}) parts {4}")(
+            Nick.GetNick(), Nick.GetIdent(), Nick.GetHost(),
+            Channel.GetName()));
     }
 
     EModRet OnInvite(const CNick& Nick, const CString& sChan) override {
         if (sChan.Equals("#test")) {
-            PutModule(Nick.GetNick() + " invited us to " + sChan +
-                      ", ignoring invites to " + sChan);
+            PutModule(t_f("{1} invited us to {2}, ignoring invites to {2}")(
+                Nick.GetNick(), sChan));
             return HALT;
         }
 
-        PutModule(Nick.GetNick() + " invited us to " + sChan);
+        PutModule(t_f("{1} invited us to {2}")(Nick.GetNick(), sChan));
         return CONTINUE;
     }
 
     void OnNick(const CNick& OldNick, const CString& sNewNick,
                 const vector<CChan*>& vChans) override {
-        PutModule("* " + OldNick.GetNick() + " is now known as " + sNewNick);
+        PutModule(t_f("{1} is now known as {2}")(OldNick.GetNick(), sNewNick));
     }
 
     EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage) override {
@@ -261,15 +266,15 @@ class CSampleMod : public CModule {
     }
 
     EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) override {
-        PutModule("* " + Nick.GetNick() + " changes topic on " +
-                  Channel.GetName() + " to '" + sTopic + "'");
+        PutModule(t_f("{1} changes topic on {2} to {3}")(
+            Nick.GetNick(), Channel.GetName(), sTopic));
 
         return CONTINUE;
     }
 
     EModRet OnUserTopic(CString& sTarget, CString& sTopic) override {
-        PutModule("* " + GetClient()->GetNick() + " changed topic on " +
-                  sTarget + " to '" + sTopic + "'");
+        PutModule(t_f("{1} changes topic on {2} to {3}")(GetClient()->GetNick(),
+                                                         sTarget, sTopic));
 
         return CONTINUE;
     }
@@ -309,7 +314,7 @@ class CSampleMod : public CModule {
 
     EModRet OnStatusCommand(CString& sCommand) override {
         if (sCommand.Equals("SAMPLE")) {
-            PutModule("Hi, I'm your friendly sample module.");
+            PutModule(t_s("Hi, I'm your friendly sample module."));
             return HALT;
         }
 
@@ -321,7 +326,8 @@ template <>
 void TModInfo<CSampleMod>(CModInfo& Info) {
     Info.SetWikiPage("sample");
     Info.SetHasArgs(true);
-    Info.SetArgsHelpText("Description of module arguments goes here.");
+    Info.SetArgsHelpText(
+        Info.t_s("Description of module arguments goes here."));
 }
 
-MODULEDEFS(CSampleMod, "To be used as a sample for writing modules")
+MODULEDEFS(CSampleMod, t_s("To be used as a sample for writing modules"))

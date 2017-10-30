@@ -1,3 +1,4 @@
+<? I18N znc-send_raw ?>
 <? ADDROW JSLoop HREF=/modfiles/user/send_raw/select.js ?>
 <? INC Header.tmpl ?>
 
@@ -5,17 +6,17 @@
 	<? INC _csrf_check.tmpl ?>
 
 	<div class="section">
-		<h3>Send a raw IRC line</h3>
+		<h3><? FORMAT "Send a raw IRC line" ?></h3>
 
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection third" id="userblock" style="display:none">
-					<div class="inputlabel">User:</div>
-					<input id="user" type="text" disabled="disabled" title="To change user, click to Network selector"/>
+					<div class="inputlabel"><? FORMAT "User:" ?></div>
+					<input id="user" type="text" disabled="disabled" title="<? FORMAT "To change user, click to Network selector" ?>"/>
 				</div>
 
 				<div class="subsection third">
-					<div class="inputlabel" id="networklabel">User/Network:</div>
+					<div class="inputlabel" id="networklabel"><? FORMAT "User/Network:" ?></div>
 					<select name="network" id="selectnetwork" onchange="javascript:updateUser()">
 						<? LOOP UserLoop ?>
 							<optgroup label="<? VAR Username ?>">
@@ -28,20 +29,20 @@
 				</div>
 
 				<div class="subsection third">
-					<div class="inputlabel">Send to:</div>
+					<div class="inputlabel"><? FORMAT "Send to:" ?></div>
 					<select name="send_to">
-						<option value="client"<? IF to_client ?> selected="yes"<? ENDIF ?>>Client</option>
-						<option value="server"<? IF to_server ?> selected="yes"<? ENDIF ?>>Server</option>
+						<option value="client"<? IF to_client ?> selected="yes"<? ENDIF ?>><? FORMAT "Client" ?></option>
+						<option value="server"<? IF to_server ?> selected="yes"<? ENDIF ?>><? FORMAT "Server" ?></option>
 					</select>
 				</div>
 
 				<div class="subsection full">
-					<div class="inputlabel">Line:</div>
+					<div class="inputlabel"><? FORMAT "Line:" ?></div>
 					<input type="text" name="line" value="<? VAR line ?>" />
 				</div>
 
 				<div class="subsection submitline">
-					<input type="submit" value="Send"/>
+					<input type="submit" value="<? FORMAT "Send" ?>"/>
 				</div>
 			</div>
 		</div>

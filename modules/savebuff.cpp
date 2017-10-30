@@ -62,15 +62,12 @@ class CSaveBuff : public CModule {
         m_bBootError = false;
 
         AddHelpCommand();
-        AddCommand("SetPass", static_cast<CModCommand::ModCmdFunc>(
-                                  &CSaveBuff::OnSetPassCommand),
-                   "<password>", "Sets the password");
-        AddCommand("Replay", static_cast<CModCommand::ModCmdFunc>(
-                                 &CSaveBuff::OnReplayCommand),
-                   "<buffer>", "Replays the buffer");
-        AddCommand("Save", static_cast<CModCommand::ModCmdFunc>(
-                               &CSaveBuff::OnSaveCommand),
-                   "", "Saves all buffers");
+        AddCommand("SetPass", t_d("<password>"), t_d("Sets the password"),
+                   [=](const CString& sLine) { OnSetPassCommand(sLine); });
+        AddCommand("Replay", t_d("<buffer>"), t_d("Replays the buffer"),
+                   [=](const CString& sLine) { OnReplayCommand(sLine); });
+        AddCommand("Save", "", t_d("Saves all buffers"),
+                   [=](const CString& sLine) { OnSaveCommand(sLine); });
     }
     ~CSaveBuff() override {
         if (!m_bBootError) {
@@ -220,10 +217,10 @@ class CSaveBuff : public CModule {
                 }
             }
         } else {
-            PutModule(
+            PutModule(t_s(
                 "Password is unset usually meaning the decryption failed. You "
                 "can setpass to the appropriate pass and things should start "
-                "working, or setpass to a new pass and save to reinstantiate");
+                "working, or setpass to a new pass and save to reinstantiate"));
         }
     }
 
@@ -232,7 +229,7 @@ class CSaveBuff : public CModule {
 
         if (sArgs.empty()) sArgs = CRYPT_LAME_PASS;
 
-        PutModule("Password set to [" + sArgs + "]");
+        PutModule(t_f("Password set to [{1}]")(sArgs));
         m_sPassword = CBlowfish::MD5(sArgs);
     }
 
@@ -262,7 +259,7 @@ class CSaveBuff : public CModule {
         CString sArgs = sCmdLine.Token(1, true);
 
         Replay(sArgs);
-        PutModule("Replayed " + sArgs);
+        PutModule(t_f("Replayed {1}")(sArgs));
     }
 
     void OnSaveCommand(const CString& sCmdLine) {
@@ -341,7 +338,7 @@ class CSaveBuff : public CModule {
                 if (sBuffer.TrimLeft(sName + "\n")) return QueryBuffer;
             }
 
-            PutModule("Unable to decode Encrypted file [" + sPath + "]");
+            PutModule(t_f("Unable to decode Encrypted file {1}")(sPath));
             return InvalidBuffer;
         }
         return EmptyBuffer;
@@ -357,10 +354,10 @@ template <>
 void TModInfo<CSaveBuff>(CModInfo& Info) {
     Info.SetWikiPage("savebuff");
     Info.SetHasArgs(true);
-    Info.SetArgsHelpText(
+    Info.SetArgsHelpText(Info.t_s(
         "This user module takes up to one arguments. Either --ask-pass or the "
-        "password itself (which may contain spaces) or nothing");
+        "password itself (which may contain spaces) or nothing"));
 }
 
 NETWORKMODULEDEFS(CSaveBuff,
-                  "Stores channel and query buffers to disk, encrypted")
+                  t_s("Stores channel and query buffers to disk, encrypted"))

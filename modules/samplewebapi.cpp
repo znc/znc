@@ -30,7 +30,7 @@ class CSampleWebAPIMod : public CModule {
         }
 
         if (WebSock.IsPost()) {
-            // print the text we just recieved
+            // print the text we just received
             CString text = WebSock.GetRawParam("text", true);
             WebSock.PrintHeader(text.length(), "text/plain; charset=UTF-8");
             WebSock.Write(text);
@@ -56,4 +56,4 @@ void TModInfo<CSampleWebAPIMod>(CModInfo& Info) {
     Info.SetWikiPage("samplewebapi");
 }
 
-GLOBALMODULEDEFS(CSampleWebAPIMod, "Sample Web API module.")
+GLOBALMODULEDEFS(CSampleWebAPIMod, t_s("Sample Web API module."))

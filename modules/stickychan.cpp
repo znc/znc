@@ -25,15 +25,12 @@ class CStickyChan : public CModule {
   public:
     MODCONSTRUCTOR(CStickyChan) {
         AddHelpCommand();
-        AddCommand("Stick", static_cast<CModCommand::ModCmdFunc>(
-                                &CStickyChan::OnStickCommand),
-                   "<#channel> [key]", "Sticks a channel");
-        AddCommand("Unstick", static_cast<CModCommand::ModCmdFunc>(
-                                  &CStickyChan::OnUnstickCommand),
-                   "<#channel>", "Unsticks a channel");
-        AddCommand("List", static_cast<CModCommand::ModCmdFunc>(
-                               &CStickyChan::OnListCommand),
-                   "", "Lists sticky channels");
+        AddCommand("Stick", t_d("<#channel> [key]"), t_d("Sticks a channel"),
+                   [=](const CString& sLine) { OnStickCommand(sLine); });
+        AddCommand("Unstick", t_d("<#channel>"), t_d("Unsticks a channel"),
+                   [=](const CString& sLine) { OnUnstickCommand(sLine); });
+        AddCommand("List", "", t_d("Lists sticky channels"),
+                   [=](const CString& sLine) { OnListCommand(sLine); });
     }
     ~CStickyChan() override {}
 
@@ -75,21 +72,21 @@ class CStickyChan : public CModule {
     void OnStickCommand(const CString& sCommand) {
         CString sChannel = sCommand.Token(1).AsLower();
         if (sChannel.empty()) {
-            PutModule("Usage: Stick <#channel> [key]");
+            PutModule(t_s("Usage: Stick <#channel> [key]"));
             return;
         }
         SetNV(sChannel, sCommand.Token(2), true);
-        PutModule("Stuck " + sChannel);
+        PutModule(t_f("Stuck {1}")(sChannel));
     }
 
     void OnUnstickCommand(const CString& sCommand) {
         CString sChannel = sCommand.Token(1);
         if (sChannel.empty()) {
-            PutModule("Usage: Unstick <#channel>");
+            PutModule(t_s("Usage: Unstick <#channel>"));
             return;
         }
         DelNV(sChannel, true);
-        PutModule("Unstuck " + sChannel);
+        PutModule(t_f("Unstuck {1}")(sChannel));
     }
 
     void OnListCommand(const CString& sCommand) {
@@ -101,7 +98,7 @@ class CStickyChan : public CModule {
                 PutModule(CString(i) + ": " + it->first + " (" + it->second +
                           ")");
         }
-        PutModule(" -- End of List");
+        PutModule(t_s(" -- End of List"));
     }
 
     void RunJob() {
@@ -115,8 +112,8 @@ class CStickyChan : public CModule {
                 if (!it->second.empty()) pChan->SetKey(it->second);
                 if (!pNetwork->AddChan(pChan)) {
                     /* AddChan() deleted that channel */
-                    PutModule("Could not join [" + it->first +
-                              "] (# prefix missing?)");
+                    PutModule(t_f("Could not join {1} (# prefix missing?)")(
+                        it->first));
                     continue;
                 }
             }
@@ -128,7 +125,7 @@ class CStickyChan : public CModule {
         }
     }
 
-    CString GetWebMenuTitle() override { return "Sticky Chans"; }
+    CString GetWebMenuTitle() override { return t_s("Sticky Channels"); }
 
     bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
                       CTemplate& Tmpl) override {
@@ -159,7 +156,8 @@ class CStickyChan : public CModule {
             }
 
             if (bSubmitted) {
-                WebSock.GetSession()->AddSuccess("Changes have been saved!");
+                WebSock.GetSession()->AddSuccess(
+                    t_s("Changes have been saved!"));
             }
 
             return true;
@@ -183,11 +181,12 @@ class CStickyChan : public CModule {
                     // no password support for now unless chansaver is active
                     // too
                     SetNV(sChan, "");
-                    WebSock.GetSession()->AddSuccess("Channel become sticky!");
+                    WebSock.GetSession()->AddSuccess(
+                        t_s("Channel became sticky!"));
                 } else if (!bNewStick && bStick) {
                     DelNV(sChan);
                     WebSock.GetSession()->AddSuccess(
-                        "Channel stopped being sticky!");
+                        t_s("Channel stopped being sticky!"));
                 }
             }
             return true;
@@ -208,9 +207,9 @@ class CStickyChan : public CModule {
             CString sChannel = sLine.Token(3);
             for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
                 if (sChannel.Equals(it->first)) {
-                    PutModule("Channel [" + sChannel +
-                              "] cannot be joined, it is an illegal channel "
-                              "name. Unsticking.");
+                    PutModule(
+                        t_f("Channel {1} cannot be joined, it is an illegal "
+                            "channel name. Unsticking.")(sChannel));
                     OnUnstickCommand("unstick " + sChannel);
                     return CONTINUE;
                 }
@@ -246,8 +245,9 @@ template <>
 void TModInfo<CStickyChan>(CModInfo& Info) {
     Info.SetWikiPage("stickychan");
     Info.SetHasArgs(true);
-    Info.SetArgsHelpText("List of channels, separated by comma.");
+    Info.SetArgsHelpText(Info.t_s("List of channels, separated by comma."));
 }
 
-NETWORKMODULEDEFS(CStickyChan,
-                  "configless sticky chans, keeps you there very stickily even")
+NETWORKMODULEDEFS(
+    CStickyChan,
+    t_s("configless sticky chans, keeps you there very stickily even"))

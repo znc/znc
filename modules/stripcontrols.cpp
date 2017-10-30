@@ -60,5 +60,5 @@ void TModInfo<CStripControlsMod>(CModInfo& Info) {
 }
 
 NETWORKMODULEDEFS(CStripControlsMod,
-                  "Strips control codes (Colors, Bold, ..) from channel and "
-                  "private messages.")
+                  t_s("Strips control codes (Colors, Bold, ..) from channel "
+                      "and private messages."))

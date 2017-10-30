@@ -18,17 +18,6 @@
 #include <znc/IRCSock.h>
 #include <algorithm>
 
-static const struct {
-    const char* szName;
-    const char* szDescription;
-    const bool bDefault;
-} SupportedMechanisms[] = {
-      {"EXTERNAL", "TLS certificate, for use with the *cert module", true},
-      {"PLAIN",
-       "Plain text negotiation, this should work always if the network "
-       "supports SASL",
-       true}};
-
 #define NV_REQUIRE_AUTH "require_auth"
 #define NV_MECHANISMS "mechanisms"
 
@@ -57,29 +46,37 @@ class Mechanisms : public VCString {
 };
 
 class CSASLMod : public CModule {
+    const struct {
+        const char* szName;
+        CDelayedTranslation sDescription;
+        bool bDefault;
+    } SupportedMechanisms[2] = {
+        {"EXTERNAL", t_d("TLS certificate, for use with the *cert module"),
+         true},
+        {"PLAIN", t_d("Plain text negotiation, this should work always if the "
+                      "network supports SASL"),
+         true}};
+
   public:
     MODCONSTRUCTOR(CSASLMod) {
-        AddCommand("Help",
-                   static_cast<CModCommand::ModCmdFunc>(&CSASLMod::PrintHelp),
-                   "search", "Generate this output");
-        AddCommand("Set", static_cast<CModCommand::ModCmdFunc>(&CSASLMod::Set),
-                   "[<username> [<password>]]",
-                   "Set username and password for the mechanisms that need "
-                   "them. Password is optional. Without parameters, returns "
-                   "information about current settings.");
-        AddCommand("Mechanism", static_cast<CModCommand::ModCmdFunc>(
-                                    &CSASLMod::SetMechanismCommand),
-                   "[mechanism[ ...]]",
-                   "Set the mechanisms to be attempted (in order)");
-        AddCommand(
-            "RequireAuth",
-            static_cast<CModCommand::ModCmdFunc>(&CSASLMod::RequireAuthCommand),
-            "[yes|no]", "Don't connect unless SASL authentication succeeds");
+        AddCommand("Help", t_d("search"), t_d("Generate this output"),
+                   [=](const CString& sLine) { PrintHelp(sLine); });
+        AddCommand("Set", t_d("[<username> [<password>]]"),
+                   t_d("Set username and password for the mechanisms that need "
+                       "them. Password is optional. Without parameters, "
+                       "returns information about current settings."),
+                   [=](const CString& sLine) { Set(sLine); });
+        AddCommand("Mechanism", t_d("[mechanism[ ...]]"),
+                   t_d("Set the mechanisms to be attempted (in order)"),
+                   [=](const CString& sLine) { SetMechanismCommand(sLine); });
+        AddCommand("RequireAuth", t_d("[yes|no]"),
+                   t_d("Don't connect unless SASL authentication succeeds"),
+                   [=](const CString& sLine) { RequireAuthCommand(sLine); });
         AddCommand("Verbose", "yes|no", "Set verbosity level, useful to debug",
                    [&](const CString& sLine) {
-            m_bVerbose = sLine.Token(1, true).ToBool();
-            PutModule("Verbose: " + CString(m_bVerbose));
-        });
+                       m_bVerbose = sLine.Token(1, true).ToBool();
+                       PutModule("Verbose: " + CString(m_bVerbose));
+                   });
 
         m_bAuthenticated = false;
     }
@@ -88,16 +85,16 @@ class CSASLMod : public CModule {
         HandleHelpCommand(sLine);
 
         CTable Mechanisms;
-        Mechanisms.AddColumn("Mechanism");
-        Mechanisms.AddColumn("Description");
+        Mechanisms.AddColumn(t_s("Mechanism"));
+        Mechanisms.AddColumn(t_s("Description"));
 
         for (const auto& it : SupportedMechanisms) {
             Mechanisms.AddRow();
-            Mechanisms.SetCell("Mechanism", it.szName);
-            Mechanisms.SetCell("Description", it.szDescription);
+            Mechanisms.SetCell(t_s("Mechanism"), it.szName);
+            Mechanisms.SetCell(t_s("Description"), it.sDescription.Resolve());
         }
 
-        PutModule("The following mechanisms are available:");
+        PutModule(t_s("The following mechanisms are available:"));
         PutModule(Mechanisms);
     }
 
@@ -106,16 +103,24 @@ class CSASLMod : public CModule {
             CString sUsername = GetNV("username");
             CString sPassword = GetNV("password");
 
-            PutModule("Username is currently " + (sUsername.empty() ? "not set" : "set to '" + sUsername + "'") +
-                      ", a password was " + (sPassword.empty() ? "not " : "") + "supplied.");
+            if (sUsername.empty()) {
+                PutModule(t_s("Username is currently not set"));
+            } else {
+                PutModule(t_f("Username is currently set to '{1}'")(sUsername));
+            }
+            if (sPassword.empty()) {
+                PutModule(t_s("Password was not supplied"));
+            } else {
+                PutModule(t_s("Password was supplied"));
+            }
             return;
         }
 
         SetNV("username", sLine.Token(1));
         SetNV("password", sLine.Token(2));
 
-        PutModule("Username has been set to [" + GetNV("username") + "]");
-        PutModule("Password has been set to [" + GetNV("password") + "]");
+        PutModule(t_f("Username has been set to [{1}]")(GetNV("username")));
+        PutModule(t_f("Password has been set to [{1}]")(GetNV("password")));
     }
 
     void SetMechanismCommand(const CString& sLine) {
@@ -135,7 +140,7 @@ class CSASLMod : public CModule {
             SetNV(NV_MECHANISMS, sMechanisms);
         }
 
-        PutModule("Current mechanisms set: " + GetMechanismsString());
+        PutModule(t_f("Current mechanisms set: {1}")(GetMechanismsString()));
     }
 
     void RequireAuthCommand(const CString& sLine) {
@@ -144,9 +149,9 @@ class CSASLMod : public CModule {
         }
 
         if (GetNV(NV_REQUIRE_AUTH).ToBool()) {
-            PutModule("We require SASL negotiation to connect");
+            PutModule(t_s("We require SASL negotiation to connect"));
         } else {
-            PutModule("We will connect even if SASL fails");
+            PutModule(t_s("We will connect even if SASL fails"));
         }
     }
 
@@ -183,8 +188,8 @@ class CSASLMod : public CModule {
     void CheckRequireAuth() {
         if (!m_bAuthenticated && GetNV(NV_REQUIRE_AUTH).ToBool()) {
             GetNetwork()->SetIRCConnectEnabled(false);
-            PutModule("Disabling network, we require authentication.");
-            PutModule("Use 'RequireAuth no' to disable.");
+            PutModule(t_s("Disabling network, we require authentication."));
+            PutModule(t_s("Use 'RequireAuth no' to disable."));
         }
     }
 
@@ -236,7 +241,8 @@ class CSASLMod : public CModule {
         if (msg.GetCode() == 903) {
             /* SASL success! */
             if (m_bVerbose) {
-                PutModule(m_Mechanisms.GetCurrent() + " mechanism succeeded.");
+                PutModule(
+                    t_f("{1} mechanism succeeded.")(m_Mechanisms.GetCurrent()));
             }
             GetNetwork()->GetIRCSock()->ResumeCap();
             m_bAuthenticated = true;
@@ -247,7 +253,8 @@ class CSASLMod : public CModule {
             DEBUG("sasl: Mechanism [" << m_Mechanisms.GetCurrent()
                                       << "] failed.");
             if (m_bVerbose) {
-                PutModule(m_Mechanisms.GetCurrent() + " mechanism failed.");
+                PutModule(
+                    t_f("{1} mechanism failed.")(m_Mechanisms.GetCurrent()));
             }
 
             if (m_Mechanisms.HasNext()) {
@@ -280,7 +287,7 @@ class CSASLMod : public CModule {
 
     void OnIRCDisconnected() override { m_bAuthenticated = false; }
 
-    CString GetWebMenuTitle() override { return "SASL"; }
+    CString GetWebMenuTitle() override { return t_s("SASL"); }
 
     bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
                       CTemplate& Tmpl) override {
@@ -308,7 +315,7 @@ class CSASLMod : public CModule {
             CTemplate& Row = Tmpl.AddRow("MechanismLoop");
             CString sName(it.szName);
             Row["Name"] = sName;
-            Row["Description"] = CString(it.szDescription);
+            Row["Description"] = it.sDescription.Resolve();
         }
 
         return true;
@@ -325,6 +332,5 @@ void TModInfo<CSASLMod>(CModInfo& Info) {
     Info.SetWikiPage("sasl");
 }
 
-NETWORKMODULEDEFS(CSASLMod,
-                  "Adds support for sasl authentication capability to "
-                  "authenticate to an IRC server")
+NETWORKMODULEDEFS(CSASLMod, t_s("Adds support for sasl authentication "
+                                "capability to authenticate to an IRC server"))

@@ -1,29 +1,30 @@
+<? I18N znc-sasl ?>
 <? INC Header.tmpl ?>
 
 <form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>" method="post">
 	<? INC _csrf_check.tmpl ?>
 	<div class="section">
-		<h3>SASL</h3>
+		<h3><? FORMAT "SASL" ?></h3>
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection">
-					<div class="inputlabel">Username:</div>
+					<div class="inputlabel"><? FORMAT "Username:" ?></div>
 					<input type="text" name="username" value="<? VAR Username ?>" class="half" maxlength="128"
-							   title="Please enter a username." />
+							   title="<? FORMAT "Please enter a username." ?>" />
 				</div>
 				<div class="subsection">
-					<div class="inputlabel">Password:</div>
+					<div class="inputlabel"><? FORMAT "Password:" ?></div>
 					<input type="password" name="password" class="half"
-						   title="Please enter a password." autocomplete="off" />
+						   title="<? FORMAT "Please enter a password." ?>" autocomplete="off" />
 				</div>
 			</div>
 		</div>
-		<h3>Options</h3>
+		<h3><? FORMAT "Options" ?></h3>
 		<div class="sectionbg">
 			<div class="sectionbody lotsofcheckboxes">
-				<span class="checkboxandlabel" title="Connect only if SASL authentication succeeds.">
+				<span class="checkboxandlabel" title="<? FORMAT "Connect only if SASL authentication succeeds." ?>">
 					<input type="checkbox" name="require_auth" id="opt_require_auth" value="1"<? IF RequireAuth ?> checked="checked"<? ENDIF ?> />
-					<label for="opt_require_auth">Require authentication</label>
+					<label for="opt_require_auth"><? FORMAT "Require authentication" ?></label>
 				</span>
 				<div style="clear:both;"></div>
 			</div>
@@ -31,15 +32,15 @@
 	</div>
 
 	<div class="section">
-		<h3>Mechanisms</h3>
+		<h3><? FORMAT "Mechanisms" ?></h3>
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection">
 					<table class="data">
 						<thead>
 							<tr>
-								<th>Name</th>
-								<th>Description</th>
+								<th><? FORMAT "Name" ?></th>
+								<th><? FORMAT "Description" ?></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -53,7 +54,7 @@
 					</table>
 				</div>
 				<div class="subsection">
-					<div class="inputlabel">Selected mechanisms and their order:</div>
+					<div class="inputlabel"><? FORMAT "Selected mechanisms and their order:" ?></div>
 					<input type="text" name="mechanisms" id="mechanisms" value="<? VAR Mechanisms ?>" class="half"/>
 					<script>
 					$("#mechanisms").selectize({
@@ -70,7 +71,7 @@
 
 	<div class="submitline">
 		<input type="hidden" name="submitted" value="1" />
-		<input type="submit" value="Save" />
+		<input type="submit" value="<? FORMAT "Save" ?>" />
 	</div>
 </form>
 

@@ -1,3 +1,4 @@
+<? I18N znc-stickychan ?>
 <? INC Header.tmpl ?>
 
 <form method="post" action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>">
@@ -5,8 +6,8 @@
 	<table class="data">
 		<thead>
 			<tr>
-				<th>Name</th>
-				<th>Sticky</th>
+				<th><? FORMAT "Name" ?></th>
+				<th><? FORMAT "Sticky" ?></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -21,7 +22,7 @@
 
 	<div class="submitline">
 		<input type="hidden" name="submitted" value="1" />
-		<input type="submit" value="Save" />
+		<input type="submit" value="<? FORMAT "Save" ?>" />
 	</div>
 </form>
 

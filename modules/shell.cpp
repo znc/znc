@@ -33,9 +33,8 @@ class CShellSock : public CExecSock {
         m_pClient = pClient;
 
         if (Execute(sExec) == -1) {
-            CString s = "Failed to execute: ";
-            s += strerror(errno);
-            ReadLine(s);
+            auto e = errno;
+            ReadLine(t_f("Failed to execute: {1}")(strerror(e)));
             return;
         }
 
@@ -73,7 +72,7 @@ class CShellMod : public CModule {
     bool OnLoad(const CString& sArgs, CString& sMessage) override {
 #ifndef MOD_SHELL_ALLOW_EVERYONE
         if (!GetUser()->IsAdmin()) {
-            sMessage = "You must be admin to use the shell module";
+            sMessage = t_s("You must be admin to use the shell module");
             return false;
         }
 #endif
@@ -167,7 +166,8 @@ void TModInfo<CShellMod>(CModInfo& Info) {
 }
 
 #ifdef MOD_SHELL_ALLOW_EVERYONE
-USERMODULEDEFS(CShellMod, "Gives shell access")
+USERMODULEDEFS(CShellMod, t_s("Gives shell access"))
 #else
-USERMODULEDEFS(CShellMod, "Gives shell access. Only ZNC admins can use it.")
+USERMODULEDEFS(CShellMod,
+               t_s("Gives shell access. Only ZNC admins can use it."))
 #endif

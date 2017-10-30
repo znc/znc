@@ -53,27 +53,25 @@ class CSimpleAway : public CModule {
         m_bWeSetAway = false;
 
         AddHelpCommand();
-        AddCommand("Reason", static_cast<CModCommand::ModCmdFunc>(
-                                 &CSimpleAway::OnReasonCommand),
-                   "[<text>]",
-                   "Prints or sets the away reason (%awaytime% is replaced "
-                   "with the time you were set away, supports substitutions "
-                   "using ExpandString)");
+        AddCommand("Reason", t_d("[<text>]"),
+                   t_d("Prints or sets the away reason (%awaytime% is replaced "
+                       "with the time you were set away, supports "
+                       "substitutions using ExpandString)"),
+                   [=](const CString& sLine) { OnReasonCommand(sLine); });
         AddCommand(
-            "Timer",
-            static_cast<CModCommand::ModCmdFunc>(&CSimpleAway::OnTimerCommand),
-            "", "Prints the current time to wait before setting you away");
-        AddCommand("SetTimer", static_cast<CModCommand::ModCmdFunc>(
-                                   &CSimpleAway::OnSetTimerCommand),
-                   "<seconds>",
-                   "Sets the time to wait before setting you away");
-        AddCommand("DisableTimer", static_cast<CModCommand::ModCmdFunc>(
-                                       &CSimpleAway::OnDisableTimerCommand),
-                   "", "Disables the wait time before setting you away");
+            "Timer", "",
+            t_d("Prints the current time to wait before setting you away"),
+            [=](const CString& sLine) { OnTimerCommand(sLine); });
+        AddCommand("SetTimer", t_d("<seconds>"),
+                   t_d("Sets the time to wait before setting you away"),
+                   [=](const CString& sLine) { OnSetTimerCommand(sLine); });
+        AddCommand("DisableTimer", "",
+                   t_d("Disables the wait time before setting you away"),
+                   [=](const CString& sLine) { OnDisableTimerCommand(sLine); });
         AddCommand(
-            "MinClients", static_cast<CModCommand::ModCmdFunc>(
-                              &CSimpleAway::OnMinClientsCommand),
-            "", "Get or set the minimum number of clients before going away");
+            "MinClients", "",
+            t_d("Get or set the minimum number of clients before going away"),
+            [=](const CString& sLine) { OnMinClientsCommand(sLine); });
     }
 
     ~CSimpleAway() override {}
@@ -135,38 +133,40 @@ class CSimpleAway : public CModule {
 
         if (!sReason.empty()) {
             SetReason(sReason);
-            PutModule("Away reason set");
+            PutModule(t_s("Away reason set"));
         } else {
-            PutModule("Away reason: " + m_sReason);
-            PutModule("Current away reason would be: " + ExpandReason());
+            PutModule(t_f("Away reason: {1}")(m_sReason));
+            PutModule(t_f("Current away reason would be: {1}")(ExpandReason()));
         }
     }
 
     void OnTimerCommand(const CString& sLine) {
-        PutModule("Current timer setting: " + CString(m_iAwayWait) +
-                  " seconds");
+        PutModule(t_p("Current timer setting: 1 second",
+                      "Current timer setting: {1} seconds",
+                      m_iAwayWait)(m_iAwayWait));
     }
 
     void OnSetTimerCommand(const CString& sLine) {
         SetAwayWait(sLine.Token(1).ToUInt());
 
         if (m_iAwayWait == 0)
-            PutModule("Timer disabled");
+            PutModule(t_s("Timer disabled"));
         else
-            PutModule("Timer set to " + CString(m_iAwayWait) + " seconds");
+            PutModule(t_p("Timer set to 1 second", "Timer set to: {1} seconds",
+                          m_iAwayWait)(m_iAwayWait));
     }
 
     void OnDisableTimerCommand(const CString& sLine) {
         SetAwayWait(0);
-        PutModule("Timer disabled");
+        PutModule(t_s("Timer disabled"));
     }
 
     void OnMinClientsCommand(const CString& sLine) {
         if (sLine.Token(1).empty()) {
-            PutModule("Current MinClients setting: " + CString(m_iMinClients));
+            PutModule(t_f("Current MinClients setting: {1}")(m_iMinClients));
         } else {
             SetMinClients(sLine.Token(1).ToUInt());
-            PutModule("MinClients set to " + CString(m_iMinClients));
+            PutModule(t_f("MinClients set to {1}")(m_iMinClients));
         }
     }
 
@@ -250,10 +250,10 @@ void TModInfo<CSimpleAway>(CModInfo& Info) {
     Info.SetWikiPage("simple_away");
     Info.SetHasArgs(true);
     Info.SetArgsHelpText(
-        "You might enter up to 3 arguments, like -notimer awaymessage or "
-        "-timer 5 awaymessage.");
+        Info.t_s("You might enter up to 3 arguments, like -notimer awaymessage "
+                 "or -timer 5 awaymessage."));
 }
 
 NETWORKMODULEDEFS(CSimpleAway,
-                  "This module will automatically set you away on IRC while "
-                  "you are disconnected from the bouncer.")
+                  t_s("This module will automatically set you away on IRC "
+                      "while you are disconnected from the bouncer."))
