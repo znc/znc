@@ -39,6 +39,17 @@ CConfig CListener::ToConfig() const {
     return listenerConfig;
 }
 
+void CListener::setupSSL(CRealListener* listener) const {
+#ifdef HAVE_LIBSSL
+    if (IsSSL()) {
+        m_pListener->SetSSL(true);
+        m_pListener->SetPemLocation(CZNC::Get().GetPemLocation());
+        m_pListener->SetKeyLocation(CZNC::Get().GetKeyLocation());
+        m_pListener->SetDHParamLocation(CZNC::Get().GetDHParamLocation());
+    }
+#endif
+}
+
 CTCPListener::~CTCPListener() {
 }
 
@@ -50,14 +61,10 @@ bool CTCPListener::Listen() {
 
     m_pListener = new CRealListener(*this);
 
+    setupSSL(m_pListener);
     bool bSSL = false;
 #ifdef HAVE_LIBSSL
-    if (IsSSL()) {
-        bSSL = true;
-        m_pListener->SetPemLocation(CZNC::Get().GetPemLocation());
-        m_pListener->SetKeyLocation(CZNC::Get().GetKeyLocation());
-        m_pListener->SetDHParamLocation(CZNC::Get().GetDHParamLocation());
-    }
+    bSSL = IsSSL();
 #endif
 
     // If e.g. getaddrinfo() fails, the following might not set errno.
@@ -90,15 +97,7 @@ bool CUnixListener::Listen() {
     CString sName = "unix:" + m_sPath;
 
     m_pListener = new CRealListener(*this);
-
-#ifdef HAVE_LIBSSL
-    if (IsSSL()) {
-        m_pListener->SetSSL(true);
-        m_pListener->SetPemLocation(CZNC::Get().GetPemLocation());
-        m_pListener->SetKeyLocation(CZNC::Get().GetKeyLocation());
-        m_pListener->SetDHParamLocation(CZNC::Get().GetDHParamLocation());
-    }
-#endif
+    setupSSL(m_pListener);
 
     CZNC::Get().GetManager().AddSock(m_pListener, sName);
     return m_pListener->ListenUnix(m_sPath);
