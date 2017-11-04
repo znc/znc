@@ -118,30 +118,28 @@ TEST(UtilsTest, ServerTime) {
     tzset();
 }
 
+class TimeTest : public testing::TestWithParam<
+                     std::tuple<timeval, CString, CString, CString>> {};
+
+TEST_P(TimeTest, FormatTime) {
+    timeval tv = std::get<0>(GetParam());
+    EXPECT_EQ(std::get<1>(GetParam()), CUtils::FormatTime(tv, "%s.%L", "UTC"));
+    EXPECT_EQ(std::get<2>(GetParam()), CUtils::FormatTime(tv, "%s.%N", "UTC"));
+    EXPECT_EQ(std::get<3>(GetParam()), CUtils::FormatTime(tv, "%s.%3N", "UTC"));
+}
+
+INSTANTIATE_TEST_CASE_P(
+    TimeTest, TimeTest,
+    testing::Values(
+        // leading zeroes
+        std::make_tuple(timeval{42, 12345}, "42.012", "42.012345000", "42.012"),
+        // (no) rounding
+        std::make_tuple(timeval{42, 999999}, "42.999", "42.999999000",
+                        "42.999"),
+        // no tv_usec part
+        std::make_tuple(timeval{42, 0}, "42.000", "42.000000000", "42.000")));
+
 TEST(UtilsTest, FormatTime) {
-    struct timeTest {
-        int sec, usec;
-        CString sResultL, sResultN, sResult3N;
-    };
-    timeTest aTimeTests[] = {
-        {42,  12345, "42.012", "42.012345000", "42.012"}, // leading zeroes
-        {42, 999999, "42.999", "42.999999000", "42.999"}, // (no) rounding
-        {42,      0, "42.000", "42.000000000", "42.000"}, // no tv_usec part
-    };
-
-    for (const timeTest& t : aTimeTests) {
-        timeval tv;
-        tv.tv_sec = t.sec;
-        tv.tv_usec = t.usec;
-
-        CString strL = CUtils::FormatTime(tv, "%s.%L", "UTC");
-        EXPECT_EQ(t.sResultL, strL);
-        CString strN = CUtils::FormatTime(tv, "%s.%N", "UTC");
-        EXPECT_EQ(t.sResultN, strN);
-        CString str3N = CUtils::FormatTime(tv, "%s.%3N", "UTC");
-        EXPECT_EQ(t.sResult3N, str3N);
-    }
-
     // Test passthrough
     timeval tv1;
     tv1.tv_sec = 42;
