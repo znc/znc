@@ -1623,7 +1623,7 @@ bool CZNC::AddListener(const CString& sLine, CString& sError) {
                        sError);
 }
 
-bool CZNC::AddListener(unsigned short uPort, const CString& sBindHost,
+bool CZNC::AddTCPListener(unsigned short uPort, const CString& sBindHost,
                        const CString& sURIPrefixRaw, bool bSSL, EAddrType eAddr,
                        CListener::EAcceptType eAccept, CString& sError) {
     CString sHostComment;
@@ -1717,9 +1717,9 @@ bool CZNC::AddListener(unsigned short uPort, const CString& sBindHost,
     return true;
 }
 
-bool CZNC::AddListener(const CString& sPath, const CString& sURIPrefixRaw,
-                       bool bSSL, CListener::EAcceptType eAccept,
-                       CString& sError) {
+bool CZNC::AddUnixListener(const CString& sPath, const CString& sURIPrefixRaw,
+                           bool bSSL, CListener::EAcceptType eAccept,
+                           CString& sError) {
     CUtils::PrintAction("Binding to path [" + sPath + "]");
 
 #ifndef HAVE_LIBSSL
@@ -1838,10 +1838,10 @@ bool CZNC::AddListener(CConfig* pConfig, CString& sError) {
             return false;
         }
 
-        return AddListener(uPort, sBindHost, sURIPrefix, bSSL, eAddr, eAccept,
-                           sError);
+        return AddTCPListener(uPort, sBindHost, sURIPrefix, bSSL, eAddr,
+                              eAccept, sError);
     }
-    return AddListener(sPath, sURIPrefix, bSSL, eAccept, sError);
+    return AddUnixListener(sPath, sURIPrefix, bSSL, eAccept, sError);
 }
 
 bool CZNC::AddListener(CListener* pListener) {

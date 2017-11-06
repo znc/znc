@@ -201,12 +201,20 @@ class CZNC {
     CListener* FindListener(u_short uPort, const CString& BindHost,
                             EAddrType eAddr);
     bool AddListener(CListener*);
+    bool AddTCPListener(unsigned short uPort, const CString& sBindHost,
+                        const CString& sURIPrefix, bool bSSL, EAddrType eAddr,
+                        CListener::EAcceptType eAccept, CString& sError);
+    bool AddUnixListener(const CString& sPath, const CString& sURIPrefix, bool bSSL,
+                         CListener::EAcceptType eAccept, CString& sError);
+    bool DelListener(CListener*);
+
+    // For backwards-compatibility TODO: Remove
+    /// @deprecated use AddTCPListener
     bool AddListener(unsigned short uPort, const CString& sBindHost,
                      const CString& sURIPrefix, bool bSSL, EAddrType eAddr,
-                     CListener::EAcceptType eAccept, CString& sError);
-    bool AddListener(const CString& sPath, const CString& sURIPrefix, bool bSSL,
-                     CListener::EAcceptType eAccept, CString& sError);
-    bool DelListener(CListener*);
+                     CListener::EAcceptType eAccept, CString& sError) {
+        return AddTCPListener(uPort, sBindHost, sURIPrefix, bSSL, eAddr, eAccept, sError);
+    }
 
     // Message of the Day
     void SetMotd(const CString& sMessage) {
