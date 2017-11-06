@@ -19,6 +19,7 @@
 
 #include <QCoreApplication>
 #include <QDateTime>
+#include <QLocalSocket>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
@@ -151,6 +152,7 @@ class IO {
     // Need to flush QTcpSocket, and QIODevice doesn't have flush at all...
     static void FlushIfCan(QIODevice*) {}
     static void FlushIfCan(QTcpSocket* sock) { sock->flush(); }
+    static void FlushIfCan(QLocalSocket* sock) { sock->flush(); }
 
     Device* m_device;
     bool m_verbose;
@@ -899,6 +901,46 @@ TEST_F(ZNCTest, ModuleCrypt) {
     ircd2.Write(":user!user@user/test " + secretmsg);
     client2.ReadUntil("Hello");
     Z;
+}
+
+TEST(UnixSocketTest, Connect) {
+    // Create a config
+    QTemporaryDir tempDir;
+    QDir dir(tempDir.path());
+    QString socketName = dir.filePath("socket");
+    dir.mkdir("configs");
+    QFile config(dir.filePath("configs/znc.conf"));
+    ASSERT_TRUE(config.open(QIODevice::WriteOnly | QIODevice::Text));
+    Z;
+
+    QTextStream out(&config);
+    // FIXME: Hardcoding a version is bad
+    out << "Version = 1.7.x\n<Listener 42>\nPath = ";
+    out << socketName;
+    out << "\nSSL = false\n</Listener>\n";
+    out << "<User test>\nPass = test\nAdmin = true\n</User>\n";
+    config.close();
+    Z;
+
+    // Start znc
+    Process p(ZNC_BIN_DIR "/znc", QStringList() << "--debug"
+                                                << "--datadir" << dir.path());
+    p.ReadUntil("https://znc.in");
+    Z;
+
+    // Connect to it and log in
+    QLocalSocket socket;
+    socket.connectToServer(socketName);
+    ASSERT_TRUE(socket.waitForConnected())
+        << socket.errorString().toStdString();
+    Z;
+
+    auto wrapper = IO<QLocalSocket>(&socket, true);
+    wrapper.Write("PASS :test:test");
+    wrapper.Write("NICK test");
+    wrapper.Write("USER user/test x x :x");
+    Z;
+    wrapper.ReadUntil("Welcome to ZNC");
 }
 
 }  // namespace
