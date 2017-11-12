@@ -382,7 +382,10 @@ class ZNCTest : public testing::Test {
             ASSERT_TRUE(file.open(QIODevice::WriteOnly | QIODevice::Text));
             QTextStream out(&file);
             for (const QString& line : lines) {
-                out << line.midRef(maxoffset) << "\n";
+                // QTextStream::operator<<(const QStringRef &string) was
+                // introduced in Qt 5.6; let's keep minimum required version
+                // less than that for now.
+                out << line.mid(maxoffset) << "\n";
             }
         } else {
             // Write as is
