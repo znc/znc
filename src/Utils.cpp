@@ -121,7 +121,6 @@ void CUtils::GenerateCert(FILE* pOut, const CString& sHost) {
     X509_NAME_add_entry_by_txt(pName, "emailAddress", MBSTRING_ASC,
                                (unsigned char*)sEmailAddr.c_str(), -1, -1, 0);
 
-    X509_set_subject_name(pCert.get(), pName);
     X509_set_issuer_name(pCert.get(), pName);
 
     if (!X509_sign(pCert.get(), pKey.get(), EVP_sha256())) return;
