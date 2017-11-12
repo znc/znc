@@ -353,6 +353,7 @@ class ZNCTest : public testing::Test {
         ASSERT_TRUE(dir.mkpath("modules"));
         ASSERT_TRUE(dir.cd("modules"));
         if (name.endsWith(".cpp")) {
+            // Compile
             QTemporaryDir srcdir;
             QFile file(QDir(srcdir.path()).filePath(name));
             ASSERT_TRUE(file.open(QIODevice::WriteOnly | QIODevice::Text));
@@ -366,7 +367,25 @@ class ZNCTest : public testing::Test {
                     proc->setProcessChannelMode(QProcess::ForwardedChannels);
                 });
             p.ShouldFinishItself();
+        } else if (name.endsWith(".py")) {
+            // Dedent
+            QStringList lines = content.split("\n");
+            int maxoffset = -1;
+            for (const QString& line : lines) {
+                int nonspace = line.indexOf(QRegExp("\\S"));
+                if (nonspace == -1) continue;
+                if (nonspace < maxoffset || maxoffset == -1)
+                    maxoffset = nonspace;
+            }
+            if (maxoffset == -1) maxoffset = 0;
+            QFile file(dir.filePath(name));
+            ASSERT_TRUE(file.open(QIODevice::WriteOnly | QIODevice::Text));
+            QTextStream out(&file);
+            for (const QString& line : lines) {
+                out << line.midRef(maxoffset) << "\n";
+            }
         } else {
+            // Write as is
             QFile file(dir.filePath(name));
             ASSERT_TRUE(file.open(QIODevice::WriteOnly | QIODevice::Text));
             QTextStream out(&file);
