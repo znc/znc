@@ -1,0 +1,4 @@
+#: stripcontrols.cpp:63
+msgid ""
+"Strips control codes (Colors, Bold, ..) from channel and private messages."
+msgstr ""

@@ -23,17 +23,13 @@ msgid ""
 "code>”). Once you have loaded some Web-enabled modules, the menu will expand."
 msgstr ""
 "Нет загруженных модулей с поддержкой веб-интерфейса. Вы можете загрузить их "
-"из IRC («<code>/msg *status help</code>» и «<code>/msg *status loadmod "
-"&lt;модуль&gt;</code>»). Когда такие модули будут загружены, они будут "
-"доступны в меню сбоку."
+"из IRC («<code>/msg *status help</code>» и «<code>/msg *status loadmod &lt;"
+"модуль&gt;</code>»). Когда такие модули будут загружены, они будут доступны "
+"в меню сбоку."
 
-#: webskins/_default_/tmpl/InfoBar.tmpl:2
-msgid "-Guest-"
-msgstr ""
-
-#: webskins/_default_/tmpl/InfoBar.tmpl:5
-msgid "Logged in as: {1} (from {2})"
-msgstr "Вы вошли как: {1} (c {2})"
+#: webskins/_default_/tmpl/LoginBar.tmpl:3
+msgid "Logout"
+msgstr "Выйти"
 
 #: webskins/_default_/tmpl/Menu.tmpl:4
 msgid "Home"
@@ -51,9 +47,13 @@ msgstr "Пользовательские модули"
 msgid "Network Modules ({1})"
 msgstr "Модули сети {1}"
 
-#: webskins/_default_/tmpl/LoginBar.tmpl:3
-msgid "Logout"
-msgstr "Выйти"
+#: webskins/_default_/tmpl/InfoBar.tmpl:2
+msgid "-Guest-"
+msgstr ""
+
+#: webskins/_default_/tmpl/InfoBar.tmpl:5
+msgid "Logged in as: {1} (from {2})"
+msgstr "Вы вошли как: {1} (c {2})"
 
 #: ClientCommand.cpp:51
 msgid "You must be connected with a network to use this command"
@@ -74,5 +74,3 @@ msgstr ""
 #: ClientCommand.cpp:79
 msgid "No nicks on [{1}]"
 msgstr ""
-
-

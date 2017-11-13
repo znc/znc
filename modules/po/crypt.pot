@@ -1,0 +1,129 @@
+#: crypt.cpp:198
+msgid "<#chan|Nick>"
+msgstr ""
+
+#: crypt.cpp:199
+msgid "Remove a key for nick or channel"
+msgstr ""
+
+#: crypt.cpp:201
+msgid "<#chan|Nick> <Key>"
+msgstr ""
+
+#: crypt.cpp:202
+msgid "Set a key for nick or channel"
+msgstr ""
+
+#: crypt.cpp:204
+msgid "List all keys"
+msgstr ""
+
+#: crypt.cpp:206
+msgid "<Nick>"
+msgstr ""
+
+#: crypt.cpp:207
+msgid "Start a DH1080 key exchange with nick"
+msgstr ""
+
+#: crypt.cpp:210
+msgid "Get the nick prefix"
+msgstr ""
+
+#: crypt.cpp:213
+msgid "[Prefix]"
+msgstr ""
+
+#: crypt.cpp:214
+msgid "Set the nick prefix, with no argument it's disabled."
+msgstr ""
+
+#: crypt.cpp:282
+msgid "Received DH1080 public key from {1}, sending mine..."
+msgstr ""
+
+#: crypt.cpp:287 crypt.cpp:308
+msgid "Key for {1} successfully set."
+msgstr ""
+
+#: crypt.cpp:290 crypt.cpp:311
+msgid "Error in {1} with {2}: {3}"
+msgstr ""
+
+#: crypt.cpp:292 crypt.cpp:313
+msgid "no secret key computed"
+msgstr ""
+
+#: crypt.cpp:427
+msgid "Target [{1}] deleted"
+msgstr ""
+
+#: crypt.cpp:429
+msgid "Target [{1}] not found"
+msgstr ""
+
+#: crypt.cpp:432
+msgid "Usage DelKey <#chan|Nick>"
+msgstr ""
+
+#: crypt.cpp:447
+msgid "Set encryption key for [{1}] to [{2}]"
+msgstr ""
+
+#: crypt.cpp:449
+msgid "Usage: SetKey <#chan|Nick> <Key>"
+msgstr ""
+
+#: crypt.cpp:460
+msgid "Sent my DH1080 public key to {1}, waiting for reply ..."
+msgstr ""
+
+#: crypt.cpp:462
+msgid "Error generating our keys, nothing sent."
+msgstr ""
+
+#: crypt.cpp:465
+msgid "Usage: KeyX <Nick>"
+msgstr ""
+
+#: crypt.cpp:472
+msgid "Nick Prefix disabled."
+msgstr ""
+
+#: crypt.cpp:474
+msgid "Nick Prefix: {1}"
+msgstr ""
+
+#: crypt.cpp:483
+msgid "You cannot use :, even followed by other symbols, as Nick Prefix."
+msgstr ""
+
+#: crypt.cpp:492
+msgid "Overlap with Status Prefix ({1}), this Nick Prefix will not be used!"
+msgstr ""
+
+#: crypt.cpp:497
+msgid "Disabling Nick Prefix."
+msgstr ""
+
+#: crypt.cpp:499
+msgid "Setting Nick Prefix to {1}"
+msgstr ""
+
+#: crypt.cpp:506 crypt.cpp:512
+msgctxt "listkeys"
+msgid "Target"
+msgstr ""
+
+#: crypt.cpp:507 crypt.cpp:513
+msgctxt "listkeys"
+msgid "Key"
+msgstr ""
+
+#: crypt.cpp:517
+msgid "You have no encryption keys set."
+msgstr ""
+
+#: crypt.cpp:539
+msgid "Encryption for channel/private messages"
+msgstr ""

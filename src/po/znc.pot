@@ -14,12 +14,8 @@ msgid ""
 "code>”). Once you have loaded some Web-enabled modules, the menu will expand."
 msgstr ""
 
-#: webskins/_default_/tmpl/InfoBar.tmpl:2
-msgid "-Guest-"
-msgstr ""
-
-#: webskins/_default_/tmpl/InfoBar.tmpl:5
-msgid "Logged in as: {1} (from {2})"
+#: webskins/_default_/tmpl/LoginBar.tmpl:3
+msgid "Logout"
 msgstr ""
 
 #: webskins/_default_/tmpl/Menu.tmpl:4
@@ -38,8 +34,12 @@ msgstr ""
 msgid "Network Modules ({1})"
 msgstr ""
 
-#: webskins/_default_/tmpl/LoginBar.tmpl:3
-msgid "Logout"
+#: webskins/_default_/tmpl/InfoBar.tmpl:2
+msgid "-Guest-"
+msgstr ""
+
+#: webskins/_default_/tmpl/InfoBar.tmpl:5
+msgid "Logged in as: {1} (from {2})"
 msgstr ""
 
 #: ClientCommand.cpp:51

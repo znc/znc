@@ -3,6 +3,24 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: modules/po/../data/webadmin/tmpl/del_user.tmpl:5
+msgid "Confirm User Deletion"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/del_user.tmpl:9
+msgid "Are you sure you want to delete user “{1}”?"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/del_user.tmpl:14
+#: modules/po/../data/webadmin/tmpl/del_network.tmpl:14
+msgid "Yes"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/del_user.tmpl:17
+#: modules/po/../data/webadmin/tmpl/del_network.tmpl:17
+msgid "No"
+msgstr ""
+
 #: modules/po/../data/webadmin/tmpl/index.tmpl:5
 msgid "Welcome to the ZNC webadmin module."
 msgstr ""
@@ -10,275 +28,6 @@ msgstr ""
 #: modules/po/../data/webadmin/tmpl/index.tmpl:6
 msgid ""
 "All changes you make will be in effect immediately after you submitted them."
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:12
-msgid "Channel Info"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:17
-msgid "Channel Name:"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:19
-msgid "The channel name."
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:24
-msgid "Key:"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:26
-msgid "The password of the channel, if there is one."
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:30
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:235
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:254
-msgid "Buffer Size:"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:32
-msgid "The buffer count."
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:36
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:229
-msgid "Default Modes:"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:38
-msgid "The default modes of the channel."
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:46
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:264
-msgid "Flags"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:51
-msgid "Save to config"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:67
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:404
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:282
-msgid "Module {1}"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:75
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:413
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:290
-msgid "Save and return"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:76
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:414
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:291
-msgid "Save and continue"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:78
-msgid "Add Channel and return"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:79
-msgid "Add Channel and continue"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:6
-msgid "Listen Port(s)"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:13
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:102
-msgid "Port"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:14
-msgid "BindHost"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:15
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:103
-msgid "SSL"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:16
-msgid "IPv4"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:17
-msgid "IPv6"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:18
-msgid "IRC"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:19
-msgid "HTTP"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:20
-msgid "URIPrefix"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:21
-#: modules/po/../data/webadmin/tmpl/listusers.tmpl:29
-msgid "Delete"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:53
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:140
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:204
-msgid "Del"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:56
-msgid ""
-"To delete port which you use to access webadmin itself, either connect to "
-"webadmin via another port, or do it in IRC (/znc DelPort)"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:56
-msgid "Current"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:72
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:123
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:348
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:185
-#: modules/po/../data/webadmin/tmpl/listusers.tmpl:15
-msgid "Add"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:86
-msgid "Settings"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:90
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:367
-msgid "Skin:"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:94
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:373
-msgid "Default"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:102
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:79
-msgid "Status Prefix:"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:104
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:81
-msgid "The prefix for the status and module queries."
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:105
-msgid "Default for new users only."
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:110
-msgid "Maximum Buffer Size:"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:112
-msgid "Sets the global Max Buffer Size a user can have."
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:117
-msgid "Connect Delay:"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:119
-msgid ""
-"The time between connection attempts to IRC servers, in seconds. This "
-"affects the connection between ZNC and the IRC server; not the connection "
-"between your IRC client and ZNC."
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:124
-msgid "Server Throttle:"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:126
-msgid ""
-"The minimal time between two connect attempts to the same hostname, in "
-"seconds. Some servers refuse your connection if you reconnect too fast."
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:131
-msgid "Anonymous Connection Limit per IP:"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:133
-msgid "Limits the number of unidentified connections per IP."
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:138
-msgid "Protect Web Sessions:"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:140
-msgid "Disallow IP changing during each web session"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:145
-msgid "Hide ZNC Version:"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:147
-msgid "Hide version number from non-ZNC users"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:152
-msgid "MOTD:"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:156
-msgid "“Message of the Day”, sent to all ZNC users on connect."
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:164
-msgid "Global Modules"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:170
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:125
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:168
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:188
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:228
-msgid "Name"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:171
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:169
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:229
-msgid "Arguments"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:172
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:170
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:230
-msgid "Description"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:173
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:172
-msgid "Loaded by networks"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:174
-msgid "Loaded by users"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:231
-#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:424
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:187
-msgid "Save"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:15
@@ -358,6 +107,16 @@ msgstr ""
 msgid "The Ident is sent to server as username."
 msgstr ""
 
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:79
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:102
+msgid "Status Prefix:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:81
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:104
+msgid "The prefix for the status and module queries."
+msgstr ""
+
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:85
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:51
 msgid "Realname:"
@@ -393,6 +152,22 @@ msgstr ""
 msgid "Networks"
 msgstr ""
 
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:123
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:348
+#: modules/po/../data/webadmin/tmpl/listusers.tmpl:15
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:185
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:72
+msgid "Add"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:125
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:168
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:188
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:228
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:170
+msgid "Name"
+msgstr ""
+
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:126
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:18
 msgid "Clients"
@@ -411,9 +186,15 @@ msgid "← Add a network (opens in same page)"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:140
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:204
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:27
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:204
 msgid "Edit"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:140
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:204
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:53
+msgid "Del"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:154
@@ -433,14 +214,36 @@ msgstr ""
 msgid "Modules"
 msgstr ""
 
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:169
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:229
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:171
+msgid "Arguments"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:170
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:230
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:172
+msgid "Description"
+msgstr ""
+
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:171
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:231
 msgid "Loaded globally"
 msgstr ""
 
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:172
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:173
+msgid "Loaded by networks"
+msgstr ""
+
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:225
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:176
 msgid "Channels"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:229
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:36
+msgid "Default Modes:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:231
@@ -452,6 +255,12 @@ msgstr ""
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:238
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:257
 msgid "Empty = use standard value"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:235
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:254
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:30
+msgid "Buffer Size:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:237
@@ -478,6 +287,11 @@ msgid ""
 "This is the amount of lines that the playback buffer will store for queries "
 "before dropping off the oldest line. The buffers are stored in the memory by "
 "default."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:264
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:46
+msgid "Flags"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:279
@@ -585,8 +399,18 @@ msgstr ""
 msgid "Response"
 msgstr ""
 
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:367
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:90
+msgid "Skin:"
+msgstr ""
+
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:371
 msgid "- Global -"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:373
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:94
+msgid "Default"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:377
@@ -595,6 +419,24 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:383
 msgid "Language:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:404
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:67
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:282
+msgid "Module {1}"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:413
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:75
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:290
+msgid "Save and return"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:414
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:76
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:291
+msgid "Save and continue"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:416
@@ -613,6 +455,12 @@ msgstr ""
 msgid "Create and continue"
 msgstr ""
 
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:424
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:187
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:231
+msgid "Save"
+msgstr ""
+
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:426
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:28
 msgid "Clone"
@@ -620,6 +468,63 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:428
 msgid "Create"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/del_network.tmpl:5
+msgid "Confirm Network Deletion"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/del_network.tmpl:9
+msgid "Are you sure you want to delete network “{2}” of user “{1}”?"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/listusers.tmpl:16
+msgid "Username"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/listusers.tmpl:29
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:21
+msgid "Delete"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:12
+msgid "Channel Info"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:17
+msgid "Channel Name:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:19
+msgid "The channel name."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:24
+msgid "Key:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:26
+msgid "The password of the channel, if there is one."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:32
+msgid "The buffer count."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:38
+msgid "The default modes of the channel."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:51
+msgid "Save to config"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:78
+msgid "Add Channel and return"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:79
+msgid "Add Channel and continue"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:6
@@ -726,6 +631,16 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:101
 msgid "Hostname"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:102
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:13
+msgid "Port"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:103
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:15
+msgid "SSL"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:104
@@ -844,28 +759,6 @@ msgstr ""
 msgid "Add Network and continue"
 msgstr ""
 
-#: modules/po/../data/webadmin/tmpl/listusers.tmpl:16
-msgid "Username"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/del_network.tmpl:5
-msgid "Confirm Network Deletion"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/del_network.tmpl:9
-msgid "Are you sure you want to delete network “{2}” of user “{1}”?"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/del_network.tmpl:14
-#: modules/po/../data/webadmin/tmpl/del_user.tmpl:14
-msgid "Yes"
-msgstr ""
-
-#: modules/po/../data/webadmin/tmpl/del_network.tmpl:17
-#: modules/po/../data/webadmin/tmpl/del_user.tmpl:17
-msgid "No"
-msgstr ""
-
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:7
 msgid "Information"
 msgstr ""
@@ -939,12 +832,119 @@ msgstr ""
 msgid "Network"
 msgstr ""
 
-#: modules/po/../data/webadmin/tmpl/del_user.tmpl:5
-msgid "Confirm User Deletion"
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:6
+msgid "Listen Port(s)"
 msgstr ""
 
-#: modules/po/../data/webadmin/tmpl/del_user.tmpl:9
-msgid "Are you sure you want to delete user “{1}”?"
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:14
+msgid "BindHost"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:16
+msgid "IPv4"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:17
+msgid "IPv6"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:18
+msgid "IRC"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:19
+msgid "HTTP"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:20
+msgid "URIPrefix"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:56
+msgid ""
+"To delete port which you use to access webadmin itself, either connect to "
+"webadmin via another port, or do it in IRC (/znc DelPort)"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:56
+msgid "Current"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:86
+msgid "Settings"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:105
+msgid "Default for new users only."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:110
+msgid "Maximum Buffer Size:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:112
+msgid "Sets the global Max Buffer Size a user can have."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:117
+msgid "Connect Delay:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:119
+msgid ""
+"The time between connection attempts to IRC servers, in seconds. This "
+"affects the connection between ZNC and the IRC server; not the connection "
+"between your IRC client and ZNC."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:124
+msgid "Server Throttle:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:126
+msgid ""
+"The minimal time between two connect attempts to the same hostname, in "
+"seconds. Some servers refuse your connection if you reconnect too fast."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:131
+msgid "Anonymous Connection Limit per IP:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:133
+msgid "Limits the number of unidentified connections per IP."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:138
+msgid "Protect Web Sessions:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:140
+msgid "Disallow IP changing during each web session"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:145
+msgid "Hide ZNC Version:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:147
+msgid "Hide version number from non-ZNC users"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:152
+msgid "MOTD:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:156
+msgid "“Message of the Day”, sent to all ZNC users on connect."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:164
+msgid "Global Modules"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:174
+msgid "Loaded by users"
 msgstr ""
 
 #: webadmin.cpp:91 webadmin.cpp:1866

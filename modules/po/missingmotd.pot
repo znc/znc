@@ -1,0 +1,3 @@
+#: missingmotd.cpp:36
+msgid "Sends 422 to clients when they login"
+msgstr ""

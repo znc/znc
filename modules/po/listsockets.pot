@@ -1,0 +1,104 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:7 listsockets.cpp:212
+#: listsockets.cpp:228
+msgid "Name"
+msgstr ""
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:8 listsockets.cpp:213
+#: listsockets.cpp:229
+msgid "Created"
+msgstr ""
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:9 listsockets.cpp:214
+#: listsockets.cpp:230
+msgid "State"
+msgstr ""
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:10 listsockets.cpp:216
+#: listsockets.cpp:233
+msgid "SSL"
+msgstr ""
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:11 listsockets.cpp:218
+#: listsockets.cpp:238
+msgid "Local"
+msgstr ""
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:12 listsockets.cpp:219
+#: listsockets.cpp:240
+msgid "Remote"
+msgstr ""
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:13
+msgid "Data In"
+msgstr ""
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:14
+msgid "Data Out"
+msgstr ""
+
+#: listsockets.cpp:62
+msgid "[-n]"
+msgstr ""
+
+#: listsockets.cpp:62
+msgid "Shows the list of active sockets. Pass -n to show IP addresses"
+msgstr ""
+
+#: listsockets.cpp:70
+msgid "You must be admin to use this module"
+msgstr ""
+
+#: listsockets.cpp:96
+msgid "List sockets"
+msgstr ""
+
+#: listsockets.cpp:116 listsockets.cpp:234
+msgctxt "ssl"
+msgid "Yes"
+msgstr ""
+
+#: listsockets.cpp:116 listsockets.cpp:235
+msgctxt "ssl"
+msgid "No"
+msgstr ""
+
+#: listsockets.cpp:142
+msgid "Listener"
+msgstr ""
+
+#: listsockets.cpp:144
+msgid "Inbound"
+msgstr ""
+
+#: listsockets.cpp:147
+msgid "Outbound"
+msgstr ""
+
+#: listsockets.cpp:149
+msgid "Connecting"
+msgstr ""
+
+#: listsockets.cpp:152
+msgid "UNKNOWN"
+msgstr ""
+
+#: listsockets.cpp:205
+msgid "You have no open sockets."
+msgstr ""
+
+#: listsockets.cpp:220 listsockets.cpp:242
+msgid "In"
+msgstr ""
+
+#: listsockets.cpp:221 listsockets.cpp:244
+msgid "Out"
+msgstr ""
+
+#: listsockets.cpp:260
+msgid "Lists active sockets"
+msgstr ""
