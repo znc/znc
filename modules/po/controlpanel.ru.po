@@ -1,0 +1,692 @@
+#: controlpanel.cpp:51 controlpanel.cpp:63
+msgctxt "helptable"
+msgid "Type"
+msgstr ""
+
+#: controlpanel.cpp:52 controlpanel.cpp:65
+msgctxt "helptable"
+msgid "Variables"
+msgstr ""
+
+#: controlpanel.cpp:77
+msgid "String"
+msgstr ""
+
+#: controlpanel.cpp:78
+msgid "Boolean (true/false)"
+msgstr ""
+
+#: controlpanel.cpp:79
+msgid "Integer"
+msgstr ""
+
+#: controlpanel.cpp:80
+msgid "Double"
+msgstr ""
+
+#: controlpanel.cpp:122
+msgid "The following variables are available when using the Set/Get commands:"
+msgstr ""
+
+#: controlpanel.cpp:145
+msgid "The following variables are available when using the SetNetwork/GetNetwork commands:"
+msgstr ""
+
+#: controlpanel.cpp:158
+msgid "The following variables are available when using the SetChan/GetChan commands:"
+msgstr ""
+
+#: controlpanel.cpp:164
+msgid "You can use $user as the user name and $network as the network name for modifying your own user and network."
+msgstr ""
+
+#: controlpanel.cpp:173 controlpanel.cpp:949 controlpanel.cpp:986
+msgid "Error: User [{1}] does not exist!"
+msgstr ""
+
+#: controlpanel.cpp:178
+msgid "Error: You need to have admin rights to modify other users!"
+msgstr ""
+
+#: controlpanel.cpp:188
+msgid "Error: You cannot use $network to modify other users!"
+msgstr ""
+
+#: controlpanel.cpp:196
+msgid "Error: User {1} does not have a network named [{2}]."
+msgstr ""
+
+#: controlpanel.cpp:208
+msgid "Usage: Get <variable> [username]"
+msgstr ""
+
+#: controlpanel.cpp:295 controlpanel.cpp:490 controlpanel.cpp:565
+#: controlpanel.cpp:641 controlpanel.cpp:776 controlpanel.cpp:861
+msgid "Error: Unknown variable"
+msgstr ""
+
+#: controlpanel.cpp:304
+msgid "Usage: Set <variable> <username> <value>"
+msgstr ""
+
+#: controlpanel.cpp:326 controlpanel.cpp:606
+msgid "This bind host is already set!"
+msgstr ""
+
+#: controlpanel.cpp:333 controlpanel.cpp:345 controlpanel.cpp:353
+#: controlpanel.cpp:416 controlpanel.cpp:435 controlpanel.cpp:453
+#: controlpanel.cpp:613
+msgid "Access denied!"
+msgstr ""
+
+#: controlpanel.cpp:367 controlpanel.cpp:376 controlpanel.cpp:825
+msgid "Setting failed, limit for buffer size is {1}"
+msgstr ""
+
+#: controlpanel.cpp:396
+msgid "Password has been changed!"
+msgstr ""
+
+#: controlpanel.cpp:404
+msgid "Timeout can't be less than 30 seconds!"
+msgstr ""
+
+#: controlpanel.cpp:460
+msgid "That would be a bad idea!"
+msgstr ""
+
+#: controlpanel.cpp:478
+msgid "Supported languages: {1}"
+msgstr ""
+
+#: controlpanel.cpp:502
+msgid "Usage: GetNetwork <variable> [username] [network]"
+msgstr ""
+
+#: controlpanel.cpp:521
+msgid "Error: A network must be specified to get another users settings."
+msgstr ""
+
+#: controlpanel.cpp:527
+msgid "You are not currently attached to a network."
+msgstr ""
+
+#: controlpanel.cpp:533
+msgid "Error: Invalid network."
+msgstr ""
+
+#: controlpanel.cpp:577
+msgid "Usage: SetNetwork <variable> <username> <network> <value>"
+msgstr ""
+
+#: controlpanel.cpp:651
+msgid "Usage: AddChan <username> <network> <channel>"
+msgstr ""
+
+#: controlpanel.cpp:664
+msgid "Error: User {1} already has a channel named {2}."
+msgstr ""
+
+#: controlpanel.cpp:671
+msgid "Channel {1} for user {2} added to network {3}."
+msgstr ""
+
+#: controlpanel.cpp:675
+msgid "Could not add channel {1} for user {2} to network {3}, does it already exist?"
+msgstr ""
+
+#: controlpanel.cpp:685
+msgid "Usage: DelChan <username> <network> <channel>"
+msgstr ""
+
+#: controlpanel.cpp:700
+msgid "Error: User {1} does not have any channel matching [{2}] in network {3}"
+msgstr ""
+
+#: controlpanel.cpp:713
+msgid "Channel {1} is deleted from network {2} of user {3}"
+msgid_plural "Channels {2} are deleted from network {2} of user {3}"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: controlpanel.cpp:728
+msgid "Usage: GetChan <variable> <username> <network> <chan>"
+msgstr ""
+
+#: controlpanel.cpp:742 controlpanel.cpp:806
+msgid "Error: No channels matching [{1}] found."
+msgstr ""
+
+#: controlpanel.cpp:791
+msgid "Usage: SetChan <variable> <username> <network> <chan> <value>"
+msgstr ""
+
+#: controlpanel.cpp:872 controlpanel.cpp:882
+msgctxt "listusers"
+msgid "Username"
+msgstr ""
+
+#: controlpanel.cpp:873 controlpanel.cpp:883
+msgctxt "listusers"
+msgid "Realname"
+msgstr ""
+
+#: controlpanel.cpp:874 controlpanel.cpp:886 controlpanel.cpp:888
+msgctxt "listusers"
+msgid "IsAdmin"
+msgstr ""
+
+#: controlpanel.cpp:875 controlpanel.cpp:889
+msgctxt "listusers"
+msgid "Nick"
+msgstr ""
+
+#: controlpanel.cpp:876 controlpanel.cpp:890
+msgctxt "listusers"
+msgid "AltNick"
+msgstr ""
+
+#: controlpanel.cpp:877 controlpanel.cpp:891
+msgctxt "listusers"
+msgid "Ident"
+msgstr ""
+
+#: controlpanel.cpp:878 controlpanel.cpp:892
+msgctxt "listusers"
+msgid "BindHost"
+msgstr ""
+
+#: controlpanel.cpp:886 controlpanel.cpp:1126
+msgid "No"
+msgstr ""
+
+#: controlpanel.cpp:888 controlpanel.cpp:1118
+msgid "Yes"
+msgstr ""
+
+#: controlpanel.cpp:902 controlpanel.cpp:971
+msgid "Error: You need to have admin rights to add new users!"
+msgstr ""
+
+#: controlpanel.cpp:908
+msgid "Usage: AddUser <username> <password>"
+msgstr ""
+
+#: controlpanel.cpp:913
+msgid "Error: User {1} already exists!"
+msgstr ""
+
+#: controlpanel.cpp:925 controlpanel.cpp:1000
+msgid "Error: User not added: {1}"
+msgstr ""
+
+#: controlpanel.cpp:929 controlpanel.cpp:1004
+msgid "User {1} added!"
+msgstr ""
+
+#: controlpanel.cpp:936
+msgid "Error: You need to have admin rights to delete users!"
+msgstr ""
+
+#: controlpanel.cpp:942
+msgid "Usage: DelUser <username>"
+msgstr ""
+
+#: controlpanel.cpp:954
+msgid "Error: You can't delete yourself!"
+msgstr ""
+
+#: controlpanel.cpp:960
+msgid "Error: Internal error!"
+msgstr ""
+
+#: controlpanel.cpp:964
+msgid "User {1} deleted!"
+msgstr ""
+
+#: controlpanel.cpp:979
+msgid "Usage: CloneUser <old username> <new username>"
+msgstr ""
+
+#: controlpanel.cpp:994
+msgid "Error: Cloning failed: {1}"
+msgstr ""
+
+#: controlpanel.cpp:1023
+msgid "Usage: AddNetwork [user] network"
+msgstr ""
+
+#: controlpanel.cpp:1029
+msgid "Network number limit reached. Ask an admin to increase the limit for you, or delete unneeded networks using /znc DelNetwork <name>"
+msgstr ""
+
+#: controlpanel.cpp:1037
+msgid "Error: User {1} already has a network with the name {2}"
+msgstr ""
+
+#: controlpanel.cpp:1044
+msgid "Network {1} added to user {2}."
+msgstr ""
+
+#: controlpanel.cpp:1048
+msgid "Error: Network [{1}] could not be added for user {2}: {3}"
+msgstr ""
+
+#: controlpanel.cpp:1068
+msgid "Usage: DelNetwork [user] network"
+msgstr ""
+
+#: controlpanel.cpp:1079
+msgid "The currently active network can be deleted via {1}status"
+msgstr ""
+
+#: controlpanel.cpp:1085
+msgid "Network {1} deleted for user {2}."
+msgstr ""
+
+#: controlpanel.cpp:1089
+msgid "Error: Network {1} could not be deleted for user {2}."
+msgstr ""
+
+#: controlpanel.cpp:1108 controlpanel.cpp:1116
+msgctxt "listnetworks"
+msgid "Network"
+msgstr ""
+
+#: controlpanel.cpp:1109 controlpanel.cpp:1118 controlpanel.cpp:1126
+msgctxt "listnetworks"
+msgid "OnIRC"
+msgstr ""
+
+#: controlpanel.cpp:1110 controlpanel.cpp:1119
+msgctxt "listnetworks"
+msgid "IRC Server"
+msgstr ""
+
+#: controlpanel.cpp:1111 controlpanel.cpp:1121
+msgctxt "listnetworks"
+msgid "IRC User"
+msgstr ""
+
+#: controlpanel.cpp:1112 controlpanel.cpp:1123
+msgctxt "listnetworks"
+msgid "Channels"
+msgstr ""
+
+#: controlpanel.cpp:1131
+msgid "No networks"
+msgstr ""
+
+#: controlpanel.cpp:1142
+msgid "Usage: AddServer <username> <network> <server> [[+]port] [password]"
+msgstr ""
+
+#: controlpanel.cpp:1156
+msgid "Added IRC Server {1} to network {2} for user {3}."
+msgstr ""
+
+#: controlpanel.cpp:1160
+msgid "Error: Could not add IRC server {1} to network {2} for user {3}."
+msgstr ""
+
+#: controlpanel.cpp:1173
+msgid "Usage: DelServer <username> <network> <server> [[+]port] [password]"
+msgstr ""
+
+#: controlpanel.cpp:1188
+msgid "Deleted IRC Server {1} from network {2} for user {3}."
+msgstr ""
+
+#: controlpanel.cpp:1192
+msgid "Error: Could not delete IRC server {1} from network {2} for user {3}."
+msgstr ""
+
+#: controlpanel.cpp:1202
+msgid "Usage: Reconnect <username> <network>"
+msgstr ""
+
+#: controlpanel.cpp:1229
+msgid "Queued network {1} of user {2} for a reconnect."
+msgstr ""
+
+#: controlpanel.cpp:1238
+msgid "Usage: Disconnect <username> <network>"
+msgstr ""
+
+#: controlpanel.cpp:1253
+msgid "Closed IRC connection for network {1} of user {2}."
+msgstr ""
+
+#: controlpanel.cpp:1268 controlpanel.cpp:1272
+msgctxt "listctcp"
+msgid "Request"
+msgstr ""
+
+#: controlpanel.cpp:1269 controlpanel.cpp:1273
+msgctxt "listctcp"
+msgid "Reply"
+msgstr ""
+
+#: controlpanel.cpp:1277
+msgid "No CTCP replies for user {1} are configured"
+msgstr ""
+
+#: controlpanel.cpp:1280
+msgid "CTCP replies for user {1}:"
+msgstr ""
+
+#: controlpanel.cpp:1296
+msgid "Usage: AddCTCP [user] [request] [reply]"
+msgstr ""
+
+#: controlpanel.cpp:1298
+msgid "This will cause ZNC to reply to the CTCP instead of forwarding it to clients."
+msgstr ""
+
+#: controlpanel.cpp:1301
+msgid "An empty reply will cause the CTCP request to be blocked."
+msgstr ""
+
+#: controlpanel.cpp:1310
+msgid "CTCP requests {1} to user {2} will now be blocked."
+msgstr ""
+
+#: controlpanel.cpp:1314
+msgid "CTCP requests {1} to user {2} will now get reply: {3}"
+msgstr ""
+
+#: controlpanel.cpp:1331
+msgid "Usage: DelCTCP [user] [request]"
+msgstr ""
+
+#: controlpanel.cpp:1337
+msgid "CTCP requests {1} to user {2} will now be sent to IRC clients"
+msgstr ""
+
+#: controlpanel.cpp:1341
+msgid "CTCP requests {1} to user {2} will be sent to IRC clients (nothing has changed)"
+msgstr ""
+
+#: controlpanel.cpp:1351 controlpanel.cpp:1425
+msgid "Loading modules has been disabled."
+msgstr ""
+
+#: controlpanel.cpp:1360
+msgid "Error: Unable to load module {1}: {2}"
+msgstr ""
+
+#: controlpanel.cpp:1363
+msgid "Loaded module {1}"
+msgstr ""
+
+#: controlpanel.cpp:1368
+msgid "Error: Unable to reload module {1}: {2}"
+msgstr ""
+
+#: controlpanel.cpp:1371
+msgid "Reloaded module {1}"
+msgstr ""
+
+#: controlpanel.cpp:1375
+msgid "Error: Unable to load module {1} because it is already loaded"
+msgstr ""
+
+#: controlpanel.cpp:1386
+msgid "Usage: LoadModule <username> <modulename> [args]"
+msgstr ""
+
+#: controlpanel.cpp:1405
+msgid "Usage: LoadNetModule <username> <network> <modulename> [args]"
+msgstr ""
+
+#: controlpanel.cpp:1430
+msgid "Please use /znc unloadmod {1}"
+msgstr ""
+
+#: controlpanel.cpp:1436
+msgid "Error: Unable to unload module {1}: {2}"
+msgstr ""
+
+#: controlpanel.cpp:1439
+msgid "Unloaded module {1}"
+msgstr ""
+
+#: controlpanel.cpp:1448
+msgid "Usage: UnloadModule <username> <modulename>"
+msgstr ""
+
+#: controlpanel.cpp:1465
+msgid "Usage: UnloadNetModule <username> <network> <modulename>"
+msgstr ""
+
+#: controlpanel.cpp:1482 controlpanel.cpp:1487
+msgctxt "listmodules"
+msgid "Name"
+msgstr ""
+
+#: controlpanel.cpp:1483 controlpanel.cpp:1488
+msgctxt "listmodules"
+msgid "Arguments"
+msgstr ""
+
+#: controlpanel.cpp:1507
+msgid "User {1} has no modules loaded."
+msgstr ""
+
+#: controlpanel.cpp:1511
+msgid "Modules loaded for user {1}:"
+msgstr ""
+
+#: controlpanel.cpp:1531
+msgid "Network {1} of user {2} hasno modules loaded."
+msgstr ""
+
+#: controlpanel.cpp:1535
+msgid "Modules loaded for network {1} of user {2}:"
+msgstr ""
+
+#: controlpanel.cpp:1542
+msgid "[command] [variable]"
+msgstr ""
+
+#: controlpanel.cpp:1543
+msgid "Prints help for matching commands and variables"
+msgstr ""
+
+#: controlpanel.cpp:1546
+msgid "<variable> [username]"
+msgstr ""
+
+#: controlpanel.cpp:1547
+msgid "Prints the variable's value for the given or current user"
+msgstr ""
+
+#: controlpanel.cpp:1549
+msgid "<variable> <username> <value>"
+msgstr ""
+
+#: controlpanel.cpp:1550
+msgid "Sets the variable's value for the given user"
+msgstr ""
+
+#: controlpanel.cpp:1552
+msgid "<variable> [username] [network]"
+msgstr ""
+
+#: controlpanel.cpp:1553
+msgid "Prints the variable's value for the given network"
+msgstr ""
+
+#: controlpanel.cpp:1555
+msgid "<variable> <username> <network> <value>"
+msgstr ""
+
+#: controlpanel.cpp:1556
+msgid "Sets the variable's value for the given network"
+msgstr ""
+
+#: controlpanel.cpp:1558
+msgid "<variable> [username] <network> <chan>"
+msgstr ""
+
+#: controlpanel.cpp:1559
+msgid "Prints the variable's value for the given channel"
+msgstr ""
+
+#: controlpanel.cpp:1562
+msgid "<variable> <username> <network> <chan> <value>"
+msgstr ""
+
+#: controlpanel.cpp:1563
+msgid "Sets the variable's value for the given channel"
+msgstr ""
+
+#: controlpanel.cpp:1565 controlpanel.cpp:1568
+msgid "<username> <network> <chan>"
+msgstr ""
+
+#: controlpanel.cpp:1566
+msgid "Adds a new channel"
+msgstr ""
+
+#: controlpanel.cpp:1569
+msgid "Deletes a channel"
+msgstr ""
+
+#: controlpanel.cpp:1571
+msgid "Lists users"
+msgstr ""
+
+#: controlpanel.cpp:1573
+msgid "<username> <password>"
+msgstr ""
+
+#: controlpanel.cpp:1574
+msgid "Adds a new user"
+msgstr ""
+
+#: controlpanel.cpp:1576 controlpanel.cpp:1599 controlpanel.cpp:1613
+msgid "<username>"
+msgstr ""
+
+#: controlpanel.cpp:1576
+msgid "Deletes a user"
+msgstr ""
+
+#: controlpanel.cpp:1578
+msgid "<old username> <new username>"
+msgstr ""
+
+#: controlpanel.cpp:1579
+msgid "Clones a user"
+msgstr ""
+
+#: controlpanel.cpp:1581 controlpanel.cpp:1584
+msgid "<username> <network> <server>"
+msgstr ""
+
+#: controlpanel.cpp:1582
+msgid "Adds a new IRC server for the given or current user"
+msgstr ""
+
+#: controlpanel.cpp:1585
+msgid "Deletes an IRC server from the given or current user"
+msgstr ""
+
+#: controlpanel.cpp:1587 controlpanel.cpp:1590 controlpanel.cpp:1610
+msgid "<username> <network>"
+msgstr ""
+
+#: controlpanel.cpp:1588
+msgid "Cycles the user's IRC server connection"
+msgstr ""
+
+#: controlpanel.cpp:1591
+msgid "Disconnects the user from their IRC server"
+msgstr ""
+
+#: controlpanel.cpp:1593
+msgid "<username> <modulename> [args]"
+msgstr ""
+
+#: controlpanel.cpp:1594
+msgid "Loads a Module for a user"
+msgstr ""
+
+#: controlpanel.cpp:1596
+msgid "<username> <modulename>"
+msgstr ""
+
+#: controlpanel.cpp:1597
+msgid "Removes a Module of a user"
+msgstr ""
+
+#: controlpanel.cpp:1600
+msgid "Get the list of modules for a user"
+msgstr ""
+
+#: controlpanel.cpp:1603
+msgid "<username> <network> <modulename> [args]"
+msgstr ""
+
+#: controlpanel.cpp:1604
+msgid "Loads a Module for a network"
+msgstr ""
+
+#: controlpanel.cpp:1607
+msgid "<username> <network> <modulename>"
+msgstr ""
+
+#: controlpanel.cpp:1608
+msgid "Removes a Module of a network"
+msgstr ""
+
+#: controlpanel.cpp:1611
+msgid "Get the list of modules for a network"
+msgstr ""
+
+#: controlpanel.cpp:1614
+msgid "List the configured CTCP replies"
+msgstr ""
+
+#: controlpanel.cpp:1616
+msgid "<username> <ctcp> [reply]"
+msgstr ""
+
+#: controlpanel.cpp:1617
+msgid "Configure a new CTCP reply"
+msgstr ""
+
+#: controlpanel.cpp:1619
+msgid "<username> <ctcp>"
+msgstr ""
+
+#: controlpanel.cpp:1620
+msgid "Remove a CTCP reply"
+msgstr ""
+
+#: controlpanel.cpp:1624 controlpanel.cpp:1627
+msgid "[username] <network>"
+msgstr ""
+
+#: controlpanel.cpp:1625
+msgid "Add a network for a user"
+msgstr ""
+
+#: controlpanel.cpp:1628
+msgid "Delete a network for a user"
+msgstr ""
+
+#: controlpanel.cpp:1630
+msgid "[username]"
+msgstr ""
+
+#: controlpanel.cpp:1631
+msgid "List all networks for a user"
+msgstr ""
+
+#: controlpanel.cpp:1644
+msgid "Dynamic configuration through IRC. Allows editing only yourself if you're not ZNC admin."
+msgstr ""
+
