@@ -1,0 +1,4 @@
+#: modpython.cpp:512
+msgid "Loads python scripts as ZNC modules"
+msgstr ""
+
