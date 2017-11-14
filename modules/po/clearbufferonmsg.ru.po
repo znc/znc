@@ -1,0 +1,4 @@
+#: clearbufferonmsg.cpp:160
+msgid "Clears all channel and query buffers whenever the user does something"
+msgstr ""
+
