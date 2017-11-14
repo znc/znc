@@ -1,0 +1,10 @@
+project_identifier: znc-bouncer
+preserve_hierarchy: true
+
+files:
+  - source: /src/po/znc.pot
+    translation: /src/po/znc.%two_letters_code%.po
+    update_option: update_as_unapproved
+  - source: "/modules/po/*.pot"
+    translation: /modules/po/%file_name%.%two_letters_code%.po
+    update_option: update_as_unapproved
