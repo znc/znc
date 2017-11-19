@@ -1,0 +1,66 @@
+#!groovy
+import groovy.json.JsonSlurper;
+
+// TODO refactor this after ZNC 1.7 is released, because we'll need many branches
+def upstream_user = 'znc'
+def upstream_repo = 'znc'
+def upstream_branch = 'master'
+def my_user = 'znc-jenkins'
+def my_repo = 'znc'
+def my_branch = 'l10n_master'
+
+timestamps {
+  node {
+    timeout(time: 30, unit: 'MINUTES') {
+      def crowdin_cli = "java -jar ${tool 'crowdin-cli'}/crowdin-cli.jar --config .ci/crowdin.yml"
+      stage('Checkout') {
+        step([$class: 'WsCleanup'])
+        checkout([$class: 'GitSCM', branches: [[name: "*/${upstream_branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'SubmoduleOption', recursiveSubmodules: true]], userRemoteConfigs: [[credentialsId: '6ef10f80-20dc-4661-af45-52a6e1e15749', name: 'upstream', url: "github.com:${upstream_user}/${upstream_repo}.git"]]])
+      }
+      stage('Prepare strings') {
+        dir("build") {
+          sh "cmake .."
+          sh 'make translation'
+        }
+        sh 'rm -rf build/'
+        sh 'git status'
+      }
+      stage('Crowdin') {
+        withCredentials([string(credentialsId: '11c7e2b4-f990-4670-98a4-c89d2a5a2f43', variable: 'CROWDIN_API_KEY')]) {
+          withEnv(['CROWDIN_BASE_PATH='+pwd()]) {
+            sh "$crowdin_cli upload sources --branch ${upstream_branch}"
+            // sh "$crowdin_cli upload translations --branch ${upstream_branch}"
+            sh "$crowdin_cli download --branch ${upstream_branch}"
+          }
+        }
+      }
+      stage('Push') {
+        sh 'git config user.name "ZNC-Jenkins"'
+        sh 'git config user.email jenkins@znc.in'
+        sh 'git status'
+        sh 'git add .'
+        sh 'git commit -m "Update translations from Crowdin"'
+        sh "git remote add my github.com:${my_user}/${my_repo}.git"
+        // TODO simplify when https://issues.jenkins-ci.org/browse/JENKINS-28335 is fixed
+        withCredentials([sshUserPrivateKey(credentialsId: '6ef10f80-20dc-4661-af45-52a6e1e15749', keyFileVariable: 'GITHUB_KEY')]) {
+          sh 'echo ssh -i $GITHUB_KEY -l git -o StrictHostKeyChecking=no \\"\\$@\\" > run_ssh.sh'
+          sh 'chmod +x run_ssh.sh'
+          withEnv(['GIT_SSH=run_ssh.sh']) {
+            sh "git push my HEAD:refs/heads/${my_branch} -f"
+          }
+        }
+        // Create pull request if it doesn't exist yet
+        withCredentials([string(credentialsId: '7a2546ae-8a29-4eab-921c-6a4803456dce', variable: 'GITHUB_OAUTH_KEY')]) {
+          def headers = [[maskValue: true, name: 'Authorization', value: "token ${env.GITHUB_OAUTH_KEY}"], [maskValue: false, name: 'Accept', value: 'application/vnd.github.v3+json'], [maskValue: false, name: 'User-Agent', value: 'https://github.com/znc/znc/blob/master/.ci/Jenkinsfile.crowdin']]
+          def pulls = httpRequest consoleLogResponseBody: true, customHeaders: headers, url: "https://api.github.com/repos/${upstream_user}/${upstream_repo}/pulls", requestBody: '{"head":"'+my_user+':'+my_branch+'","base":"'+upstream_branch+'"}'
+          pulls = new JsonSlurper().parseText(pulls.content)
+          if (!pulls) {
+            httpRequest consoleLogResponseBody: true, customHeaders: headers, url: "https://api.github.com/repos/${upstream_user}/${upstream_repo}/pulls", httpMode: 'POST', requestBody: '{"head":"'+my_user+':'+my_branch+'","base":"'+upstream_branch+'","title":"Update translations from Crowdin"}'
+          }
+        }
+      }
+    }
+  }
+}
+
+// vim: set ts=2 sw=2 et:
