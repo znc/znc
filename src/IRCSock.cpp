@@ -856,15 +856,13 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
             m_pNetwork->SetIRCNick(m_Nick);
             m_pNetwork->SetIRCServer(sServer);
 
-            const vector<CChan*>& vChans = m_pNetwork->GetChans();
-
-            for (CChan* pChan : vChans) {
-                pChan->OnWho(sNick, sIdent, sHost);
-            }
-
             CChan* pChan = m_pNetwork->FindChan(sChan);
-            if (pChan && pChan->IsDetached()) {
-                return true;
+
+            if (pChan) {
+                pChan->OnWho(sNick, sIdent, sHost);
+                if (pChan->IsDetached()) {
+                    return true;
+                }
             }
 
             break;
