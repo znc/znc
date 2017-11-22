@@ -62,7 +62,7 @@ timestamps {
         // Create pull request if it doesn't exist yet
         withCredentials([string(credentialsId: '7a2546ae-8a29-4eab-921c-6a4803456dce', variable: 'GITHUB_OAUTH_KEY')]) {
           def headers = [[maskValue: true, name: 'Authorization', value: "token ${env.GITHUB_OAUTH_KEY}"], [maskValue: false, name: 'Accept', value: 'application/vnd.github.v3+json'], [maskValue: false, name: 'User-Agent', value: 'https://github.com/znc/znc/blob/master/.ci/Jenkinsfile.crowdin']]
-          def pulls = httpRequest consoleLogResponseBody: true, customHeaders: headers, url: "https://api.github.com/repos/${upstream_user}/${upstream_repo}/pulls", requestBody: '{"head":"'+my_user+':'+my_branch+'","base":"'+upstream_branch+'"}'
+          def pulls = httpRequest consoleLogResponseBody: true, customHeaders: headers, url: "https://api.github.com/repos/${upstream_user}/${upstream_repo}/pulls?head=${my_user}:${my_branch}&base=${upstream_branch}"
           pulls = new JsonSlurper().parseText(pulls.content)
           if (!pulls) {
             httpRequest consoleLogResponseBody: true, customHeaders: headers, url: "https://api.github.com/repos/${upstream_user}/${upstream_repo}/pulls", httpMode: 'POST', requestBody: '{"head":"'+my_user+':'+my_branch+'","base":"'+upstream_branch+'","title":"Update translations","body":"From https://crowdin.com/project/znc-bouncer"}'
