@@ -1,3 +1,8 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
 #: controlpanel.cpp:51 controlpanel.cpp:63
 msgctxt "helptable"
 msgid "Type"

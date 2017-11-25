@@ -55,17 +55,20 @@ for tmpl_dir in args.tmpl_dirs:
                     else:
                         tmpl.append('msgstr ""')
                     tmpl.append('')
-if tmpl:
-    with open(tmpl_pot, 'wt', encoding='utf8') as f:
-        print('msgid ""', file=f)
-        print('msgstr ""', file=f)
-        print(r'"Content-Type: text/plain; charset=UTF-8\n"', file=f)
-        print(r'"Content-Transfer-Encoding: 8bit\n"', file=f)
-        print(file=f)
-        for line in tmpl:
-            print(line, file=f)
-    subprocess.check_call(['msguniq', '-o', tmpl_uniq_pot, tmpl_pot])
-    pot_list.append(tmpl_uniq_pot)
+
+# Bundle header to .tmpl, even if there were no .tmpl files.
+# Some .tmpl files contain non-ASCII characters, and the header is needed
+# anyway, because it's omitted from xgettext call below.
+with open(tmpl_pot, 'wt', encoding='utf8') as f:
+    print('msgid ""', file=f)
+    print('msgstr ""', file=f)
+    print(r'"Content-Type: text/plain; charset=UTF-8\n"', file=f)
+    print(r'"Content-Transfer-Encoding: 8bit\n"', file=f)
+    print(file=f)
+    for line in tmpl:
+        print(line, file=f)
+subprocess.check_call(['msguniq', '--force-po', '-o', tmpl_uniq_pot, tmpl_pot])
+pot_list.append(tmpl_uniq_pot)
 
 # .cpp
 main_pot = args.tmp_prefix + '_main.pot'
