@@ -711,7 +711,7 @@ class CAdminMod : public CModule {
         }
 
         PutModule(t_p("Channel {1} is deleted from network {2} of user {3}",
-                      "Channels {2} are deleted from network {2} of user {3}",
+                      "Channels {1} are deleted from network {2} of user {3}",
                       vsNames.size())(
             CString(", ").Join(vsNames.begin(), vsNames.end()),
             pNetwork->GetName(), sUsername));
