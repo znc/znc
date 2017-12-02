@@ -77,7 +77,7 @@ class CAdminMod : public CModule {
         const CString str = t_s("String");
         const CString boolean = t_s("Boolean (true/false)");
         const CString integer = t_s("Integer");
-        const CString doublenum = t_s("Double");
+        const CString number = t_s("Number");
 
         const CString sCmdFilter = sLine.Token(1, false);
         const CString sVarFilter = sLine.Token(2, true).AsLower();
@@ -131,7 +131,7 @@ class CAdminMod : public CModule {
                 {"Ident", str},
                 {"RealName", str},
                 {"BindHost", str},
-                {"FloodRate", doublenum},
+                {"FloodRate", number},
                 {"FloodBurst", integer},
                 {"JoinDelay", integer},
 #ifdef HAVE_ICU
