@@ -271,9 +271,9 @@ void CLogMod::PutLog(const CString& sLine,
     }
 
     CString sPath;
-    time_t curtime;
+    timeval curtime;
 
-    time(&curtime);
+    gettimeofday(&curtime, nullptr);
     // Generate file name
     sPath = CUtils::FormatTime(curtime, m_sLogPath, GetUser()->GetTimezone());
     if (sPath.empty()) {

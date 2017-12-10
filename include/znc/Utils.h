@@ -79,6 +79,21 @@ class CUtils {
     static CString CTime(time_t t, const CString& sTZ);
     static CString FormatTime(time_t t, const CString& sFormat,
                               const CString& sTZ);
+    /** Supports an additional format specifier for formatting sub-second values:
+     *
+     * - %f - sub-second fraction
+     *   - %3f - millisecond (default, if no width is specified)
+     *   - %6f - microsecond
+     *
+     * However, note that timeval only supports microsecond precision
+     * (thus, formatting with higher-than-microsecond precision will
+     * always result in trailing zeroes), and IRC server-time is specified
+     * in millisecond precision (thus formatting received timestamps with
+     * higher-than-millisecond precision will always result in trailing
+     * zeroes).
+     */
+    static CString FormatTime(const timeval& tv, const CString& sFormat,
+                              const CString& sTZ);
     static CString FormatServerTime(const timeval& tv);
     static timeval ParseServerTime(const CString& sTime);
     static SCString GetTimezones();

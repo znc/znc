@@ -58,8 +58,8 @@ class CAwayJob : public CTimer {
 class CAway : public CModule {
     void AwayCommand(const CString& sCommand) {
         CString sReason;
-        time_t curtime;
-        time(&curtime);
+        timeval curtime;
+        gettimeofday(&curtime, nullptr);
 
         if (sCommand.Token(1) != "-quiet") {
             sReason = CUtils::FormatTime(curtime, sCommand.Token(1, true),

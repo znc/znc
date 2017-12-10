@@ -117,3 +117,43 @@ TEST(UtilsTest, ServerTime) {
     }
     tzset();
 }
+
+class TimeTest : public testing::TestWithParam<
+                     std::tuple<timeval, CString, CString, CString>> {};
+
+TEST_P(TimeTest, FormatTime) {
+    timeval tv = std::get<0>(GetParam());
+    EXPECT_EQ(std::get<1>(GetParam()), CUtils::FormatTime(tv, "%s.%f", "UTC"));
+    EXPECT_EQ(std::get<2>(GetParam()), CUtils::FormatTime(tv, "%s.%6f", "UTC"));
+    EXPECT_EQ(std::get<3>(GetParam()), CUtils::FormatTime(tv, "%s.%9f", "UTC"));
+}
+
+INSTANTIATE_TEST_CASE_P(
+    TimeTest, TimeTest,
+    testing::Values(
+        // leading zeroes
+        std::make_tuple(timeval{42, 12345}, "42.012", "42.012345", "42.012345000"),
+        // (no) rounding
+        std::make_tuple(timeval{42, 999999}, "42.999", "42.999999", "42.999999000"),
+        // no tv_usec part
+        std::make_tuple(timeval{42, 0}, "42.000", "42.000000", "42.000000000")));
+
+TEST(UtilsTest, FormatTime) {
+    // Test passthrough
+    timeval tv1;
+    tv1.tv_sec = 42;
+    tv1.tv_usec = 123456;
+    CString str1 = CUtils::FormatTime(tv1, "%s", "UTC");
+    EXPECT_EQ("42", str1);
+
+    // Test escapes
+    timeval tv2;
+    tv2.tv_sec = 42;
+    tv2.tv_usec = 123456;
+    CString str2 = CUtils::FormatTime(tv2, "%%f", "UTC");
+    EXPECT_EQ("%f", str2);
+
+    // Test suffix
+    CString str3 = CUtils::FormatTime(tv2, "a%fb", "UTC");
+    EXPECT_EQ("a123b", str3);
+}
