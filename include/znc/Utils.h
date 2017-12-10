@@ -79,13 +79,11 @@ class CUtils {
     static CString CTime(time_t t, const CString& sTZ);
     static CString FormatTime(time_t t, const CString& sFormat,
                               const CString& sTZ);
-    /** Supports additional format specifiers for formatting sub-second values:
+    /** Supports an additional format specifier for formatting sub-second values:
      *
-     * - %L - millisecond, 3 digits (ruby extension)
-     * - %N - sub-second fraction (ruby extension)
-     *   - %3N - millisecond
-     *   - %6N - microsecond
-     *   - %9N - nanosecond (default if no digit specified)
+     * - %f - sub-second fraction
+     *   - %3f - millisecond (default, if no width is specified)
+     *   - %6f - microsecond
      *
      * However, note that timeval only supports microsecond precision
      * (thus, formatting with higher-than-microsecond precision will

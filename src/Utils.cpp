@@ -506,8 +506,8 @@ CString CUtils::FormatTime(const timeval& tv, const CString& sFormat,
     // specifiers is undefined.
     CString sFormat2;
 
-    // Make sure %% is parsed correctly, i.e. %%L is passed through to
-    // strftime to become %L, and not 123.
+    // Make sure %% is parsed correctly, i.e. %%f is passed through to
+    // strftime to become %f, and not 123.
     bool bInFormat = false;
     int iDigits;
     CString::size_type uLastCopied = 0, uFormatStart;
@@ -517,7 +517,7 @@ CString CUtils::FormatTime(const timeval& tv, const CString& sFormat,
             if (sFormat[i] == '%') {
                 uFormatStart = i;
                 bInFormat = true;
-                iDigits = 9;
+                iDigits = 3;
             }
         } else {
             switch (sFormat[i]) {
@@ -525,10 +525,7 @@ CString CUtils::FormatTime(const timeval& tv, const CString& sFormat,
                 case '5': case '6': case '7': case '8': case '9':
                     iDigits = sFormat[i] - '0';
                     break;
-                case 'L':
-                    iDigits = 3;
-                    // fall-through
-                case 'N': {
+                case 'f': {
                     int iVal = tv.tv_usec;
                     int iDigitDelta = iDigits - 6; // tv_user is in 10^-6 seconds
                     for (; iDigitDelta > 0; iDigitDelta--)

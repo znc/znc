@@ -157,7 +157,7 @@ class CListSockets : public CModule {
         timeval tv;
         tv.tv_sec = iStartTime / 1000;
         tv.tv_usec = iStartTime % 1000 * 1000;
-        return CUtils::FormatTime(tv, "%Y-%m-%d %H:%M:%S.%L",
+        return CUtils::FormatTime(tv, "%Y-%m-%d %H:%M:%S.%f",
                                   GetUser()->GetTimezone());
     }
 
