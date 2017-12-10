@@ -856,13 +856,21 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
             m_pNetwork->SetIRCNick(m_Nick);
             m_pNetwork->SetIRCServer(sServer);
 
-            CChan* pChan = m_pNetwork->FindChan(sChan);
+            // A nick can only have one ident and hostname. Yes, you can query
+            // this information per-channel, but it is still global. For
+            // example, if the client supports UHNAMES, but the IRC server does
+            // not, then AFAIR "passive snooping of WHO replies" is the only way
+            // that ZNC can figure out the ident and host for the UHNAMES
+            // replies.
+            const vector<CChan*>& vChans = m_pNetwork->GetChans();
 
-            if (pChan) {
+            for (CChan* pChan : vChans) {
                 pChan->OnWho(sNick, sIdent, sHost);
-                if (pChan->IsDetached()) {
-                    return true;
-                }
+            }
+
+            CChan* pChan = m_pNetwork->FindChan(sChan);
+            if (pChan && pChan->IsDetached()) {
+                return true;
             }
 
             break;
