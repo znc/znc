@@ -95,17 +95,32 @@ set_target_properties(znclib PROPERTIES
 	OUTPUT_NAME "znc"
 	SOVERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
 
+# CMake started supporting metafeature cxx_std_11 only in 3.8
+set(required_cxx11_features
+	cxx_range_for cxx_nullptr cxx_override
+	cxx_lambdas cxx_auto_type)
+target_compile_features(znc PUBLIC ${required_cxx11_features})
+target_compile_features(znclib PUBLIC ${required_cxx11_features})
+
+add_library(ZNC INTERFACE)
+target_link_libraries(ZNC INTERFACE ${znc_link})
+target_compile_definitions(ZNC INTERFACE "znc_export_lib_EXPORTS")
+
 if(HAVE_I18N)
 	add_subdirectory(po)
 endif()
 
 
 install(TARGETS znc ${install_lib}
-	EXPORT znc
+	EXPORT znc_internal
 	RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
 	LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 	# this one is libznc.dll.a for cygwin
 	ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
-install(EXPORT znc
+install(TARGETS ZNC EXPORT znc_public)
+install(EXPORT znc_internal
 	DESTINATION "${CMAKE_INSTALL_DATADIR}/znc/cmake"
-	NAMESPACE znc_internal_)
+	NAMESPACE ZNC::internal::)
+install(EXPORT znc_public
+	DESTINATION "${CMAKE_INSTALL_DATADIR}/znc/cmake"
+	NAMESPACE ZNC::)

@@ -24,8 +24,7 @@ function(add_cxx_module mod modpath)
 		PREFIX ""
 		SUFFIX ".so"
 		NO_SONAME true
-		CXX_VISIBILITY_PRESET "hidden"
-		COMPILE_DEFINITIONS "znc_export_lib_EXPORTS")
+		CXX_VISIBILITY_PRESET "hidden")
 	if(moddef_${mod})
 		target_compile_definitions("module_${mod}" ${moddef_${mod}})
 	endif()
@@ -41,7 +40,7 @@ function(add_cxx_module mod modpath)
 	# ${znclib_LIB_DEPENDS} is to overcome OSX's need for -undefined suppress
 	# when accessing symbols exported by dependencies of znclib (e.g.
 	# openssl), but not used in znclib itself
-	target_link_libraries("module_${mod}" PRIVATE ${znc_link} ${modlink_${mod}}
+	target_link_libraries("module_${mod}" PRIVATE ZNC ${modlink_${mod}}
 		${znclib_LIB_DEPENDS})
 	set_target_properties("module_${mod}" PROPERTIES "" "" ${modprop_${mod}})
 	install(TARGETS "module_${mod}"

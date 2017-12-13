@@ -14,7 +14,8 @@
 # limitations under the License.
 #
 
-include("${CMAKE_CURRENT_LIST_DIR}/znc.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/znc_internal.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/znc_public.cmake")
 include(CMakeParseArguments)
 
 # For some reason cygwin fails to build modules if Threads::Threads
@@ -36,16 +37,12 @@ endif()
 function(znc_setup_module)
 	cmake_parse_arguments(znc_mod "" "TARGET;NAME" "" ${ARGN})
 	set_target_properties("${znc_mod_TARGET}" PROPERTIES
-		CXX_STANDARD 11
-		CXX_STANDARD_REQUIRED true
 		OUTPUT_NAME "${znc_mod_NAME}"
 		PREFIX ""
 		SUFFIX ".so"
 		NO_SONAME true
-		CXX_VISIBILITY_PRESET "hidden"
-		COMPILE_DEFINITIONS "znc_export_lib_EXPORTS")
-	set(znc_link "@znc_link@")
-	target_link_libraries("${znc_mod_TARGET}" PUBLIC "znc_internal_${znc_link}")
+		CXX_VISIBILITY_PRESET "hidden")
+	target_link_libraries("${znc_mod_TARGET}" PRIVATE ZNC::ZNC)
 endfunction()
 
 message(STATUS "Found ZNC @ZNC_VERSION@")
