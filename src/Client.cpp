@@ -368,10 +368,9 @@ void CAuthBase::RefuseLogin(const CString& sReason) {
     // login. Use sReason because there are other reasons than "wrong
     // password" for a login to be rejected (e.g. fail2ban).
     if (pUser) {
-        pUser->PutStatus("A client from [" + GetRemoteIP() +
-                         "] attempted "
-                         "to login as you, but was rejected [" +
-                         sReason + "].");
+        pUser->PutStatusNotice("A client from [" + GetRemoteIP() + "] attempted "
+                               "to login as you, but was rejected [" +
+                               sReason + "].");
     }
 
     GLOBALMODULECALL(OnFailedLogin(GetUsername(), GetRemoteIP()), NOTHING);
