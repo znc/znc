@@ -36,14 +36,16 @@ pot_list = []
 tmpl_pot = args.tmp_prefix + '_tmpl.pot'
 tmpl_uniq_pot = args.tmp_prefix + '_tmpl_uniq.pot'
 tmpl = []
-pattern = re.compile(r'<\?\s*(?:FORMAT|(PLURAL))\s+(?:CTX="([^"]+?)"\s+)?"([^"]+?)"(?(1)\s+"([^"]+?)"|).*?\?>')
+pattern = re.compile(r'<\?\s*(?:FORMAT|(PLURAL))\s+(?:CTX="([^"]+?)"\s+)?"([^"]+?)"(?(1)\s+"([^"]+?)"|).*?(?:"TRANSLATORS:\s*([^"]+?)")?\s*\?>')
 for tmpl_dir in args.tmpl_dirs:
     for fname in glob.iglob(tmpl_dir + '/*.tmpl'):
         fbase = fname[len(args.strip_prefix):]
         with open(fname, 'rt', encoding='utf8') as f:
             for linenum, line in enumerate(f):
                 for x in pattern.finditer(line):
-                    text, plural, context = x.group(3), x.group(4), x.group(2)
+                    text, plural, context, comment = x.group(3), x.group(4), x.group(2), x.group(5)
+                    if comment:
+                        tmpl.append('#  {}'.format(comment))
                     tmpl.append('#: {}:{}'.format(fbase, linenum + 1))
                     if context:
                         tmpl.append('msgctxt "{}"'.format(context))

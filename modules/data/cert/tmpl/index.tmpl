@@ -2,8 +2,8 @@
 <? INC Header.tmpl ?>
 
 <? IF Cert ?>
-<? SETBLOCK DELLINK ?><a href="<? VAR URIPrefix TOP ?><? VAR ModPath ?>delete"><? FORMAT "here" ?></a><? ENDSETBLOCK ?>
-<p><? FORMAT "You already have a certificate set, use the form below to overwrite the current certificate. Alternatively click {1} to delete your certificate." "DELLINK ESC=" ?></p>
+<? SETBLOCK DELLINK ?><a href="<? VAR URIPrefix TOP ?><? VAR ModPath ?>delete"><? FORMAT "here" "TRANSLATORS: this text is inserted into `click here` in the other string"?></a><? ENDSETBLOCK ?>
+<p><? FORMAT "You already have a certificate set, use the form below to overwrite the current certificate. Alternatively click {1} to delete your certificate." "DELLINK ESC=" "TRANSLATORS: {1} is `here`, translateable in the other string" ?></p>
 <? ELSE ?>
 <p><? FORMAT "You do not have a certificate yet." ?></p>
 <? ENDIF ?>
