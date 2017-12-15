@@ -1,0 +1,71 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: znc-bouncer\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: de\n"
+"X-Crowdin-File: /master/src/po/znc.pot\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+"PO-Revision-Date: 2017-12-14 20:23-0500\n"
+
+#: webskins/_default_/tmpl/InfoBar.tmpl:6
+msgid "Logged in as: {1}"
+msgstr ""
+
+#: webskins/_default_/tmpl/InfoBar.tmpl:8
+msgid "Not logged in"
+msgstr ""
+
+#: webskins/_default_/tmpl/LoginBar.tmpl:3
+msgid "Logout"
+msgstr "Abmelden"
+
+#: webskins/_default_/tmpl/Menu.tmpl:4
+msgid "Home"
+msgstr "Startseite"
+
+#: webskins/_default_/tmpl/Menu.tmpl:7
+msgid "Global Modules"
+msgstr "Globale Module"
+
+#: webskins/_default_/tmpl/Menu.tmpl:20
+msgid "User Modules"
+msgstr "Benutzer-Module"
+
+#: webskins/_default_/tmpl/Menu.tmpl:35
+msgid "Network Modules ({1})"
+msgstr "Netzwerk-Module ({1})"
+
+#: webskins/_default_/tmpl/index.tmpl:6
+msgid "Welcome to ZNC's web interface!"
+msgstr "Willkommen bei ZNCs Web-Oberfläche!"
+
+#: webskins/_default_/tmpl/index.tmpl:11
+msgid "No Web-enabled modules have been loaded. Load modules from IRC (“<code>/msg *status help</code>” and “<code>/msg *status loadmod &lt;module&gt;</code>”). Once you have loaded some Web-enabled modules, the menu will expand."
+msgstr "Es wurden keine Web-fähigen Module geladen. Lade Module über IRC (\"<code>/msg *status help</code>\" und \"<code>/msg *status loadmod &lt;module&gt;</code>\"). Sobald einige Web-fähige Module geladen wurden, wird das Menü größer."
+
+#: ClientCommand.cpp:51
+msgid "You must be connected with a network to use this command"
+msgstr "Sie müssen mit einem Netzwerk verbunden sein um diesen Befehl zu verwenden"
+
+#: ClientCommand.cpp:58
+msgid "Usage: ListNicks <#chan>"
+msgstr "Verwendung: ListNicks <#chan>"
+
+#: ClientCommand.cpp:65
+msgid "You are not on [{1}]"
+msgstr "Sie sind nicht in [{1}]"
+
+#: ClientCommand.cpp:70
+msgid "You are not on [{1}] (trying)"
+msgstr "Sie sind nicht in [{1}] (wird versucht)"
+
+#: ClientCommand.cpp:79
+msgid "No nicks on [{1}]"
+msgstr "Keine Nicks in [{1}]"
+

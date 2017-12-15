@@ -2,16 +2,14 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: znc-bouncer\n"
 
-#: webskins/_default_/tmpl/index.tmpl:6
-msgid "Welcome to ZNC's web interface!"
+#: webskins/_default_/tmpl/InfoBar.tmpl:6
+msgid "Logged in as: {1}"
 msgstr ""
 
-#: webskins/_default_/tmpl/index.tmpl:11
-msgid ""
-"No Web-enabled modules have been loaded. Load modules from IRC (“<code>/msg "
-"*status help</code>” and “<code>/msg *status loadmod &lt;module&gt;</"
-"code>”). Once you have loaded some Web-enabled modules, the menu will expand."
+#: webskins/_default_/tmpl/InfoBar.tmpl:8
+msgid "Not logged in"
 msgstr ""
 
 #: webskins/_default_/tmpl/LoginBar.tmpl:3
@@ -34,12 +32,15 @@ msgstr ""
 msgid "Network Modules ({1})"
 msgstr ""
 
-#: webskins/_default_/tmpl/InfoBar.tmpl:2
-msgid "-Guest-"
+#: webskins/_default_/tmpl/index.tmpl:6
+msgid "Welcome to ZNC's web interface!"
 msgstr ""
 
-#: webskins/_default_/tmpl/InfoBar.tmpl:5
-msgid "Logged in as: {1} (from {2})"
+#: webskins/_default_/tmpl/index.tmpl:11
+msgid ""
+"No Web-enabled modules have been loaded. Load modules from IRC (“<code>/msg "
+"*status help</code>” and “<code>/msg *status loadmod &lt;module&gt;</"
+"code>”). Once you have loaded some Web-enabled modules, the menu will expand."
 msgstr ""
 
 #: ClientCommand.cpp:51

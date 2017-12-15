@@ -1,0 +1,103 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: znc-bouncer\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: ru\n"
+"X-Crowdin-File: /master/modules/po/stickychan.pot\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+"PO-Revision-Date: 2017-12-14 20:23-0500\n"
+
+#: modules/po/../data/stickychan/tmpl/index.tmpl:9
+msgid "Name"
+msgstr ""
+
+#: modules/po/../data/stickychan/tmpl/index.tmpl:10
+msgid "Sticky"
+msgstr ""
+
+#: modules/po/../data/stickychan/tmpl/index.tmpl:25
+msgid "Save"
+msgstr ""
+
+#: modules/po/../data/stickychan/tmpl/stickychan_WebadminChan.tmpl:8
+msgid "Channel is sticky"
+msgstr ""
+
+#: stickychan.cpp:28
+msgid "<#channel> [key]"
+msgstr ""
+
+#: stickychan.cpp:28
+msgid "Sticks a channel"
+msgstr ""
+
+#: stickychan.cpp:30
+msgid "<#channel>"
+msgstr ""
+
+#: stickychan.cpp:30
+msgid "Unsticks a channel"
+msgstr ""
+
+#: stickychan.cpp:32
+msgid "Lists sticky channels"
+msgstr ""
+
+#: stickychan.cpp:75
+msgid "Usage: Stick <#channel> [key]"
+msgstr ""
+
+#: stickychan.cpp:79
+msgid "Stuck {1}"
+msgstr ""
+
+#: stickychan.cpp:85
+msgid "Usage: Unstick <#channel>"
+msgstr ""
+
+#: stickychan.cpp:89
+msgid "Unstuck {1}"
+msgstr ""
+
+#: stickychan.cpp:101
+msgid " -- End of List"
+msgstr ""
+
+#: stickychan.cpp:115
+msgid "Could not join {1} (# prefix missing?)"
+msgstr ""
+
+#: stickychan.cpp:128
+msgid "Sticky Channels"
+msgstr ""
+
+#: stickychan.cpp:160
+msgid "Changes have been saved!"
+msgstr ""
+
+#: stickychan.cpp:185
+msgid "Channel became sticky!"
+msgstr ""
+
+#: stickychan.cpp:189
+msgid "Channel stopped being sticky!"
+msgstr ""
+
+#: stickychan.cpp:211
+msgid "Channel {1} cannot be joined, it is an illegal channel name. Unsticking."
+msgstr ""
+
+#: stickychan.cpp:248
+msgid "List of channels, separated by comma."
+msgstr ""
+
+#: stickychan.cpp:253
+msgid "configless sticky chans, keeps you there very stickily even"
+msgstr ""
+

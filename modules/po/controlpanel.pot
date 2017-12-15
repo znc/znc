@@ -2,6 +2,7 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: znc-bouncer\n"
 
 #: controlpanel.cpp:51 controlpanel.cpp:63
 msgctxt "helptable"
@@ -26,7 +27,7 @@ msgid "Integer"
 msgstr ""
 
 #: controlpanel.cpp:80
-msgid "Double"
+msgid "Number"
 msgstr ""
 
 #: controlpanel.cpp:122
@@ -157,7 +158,7 @@ msgstr ""
 
 #: controlpanel.cpp:713
 msgid "Channel {1} is deleted from network {2} of user {3}"
-msgid_plural "Channels {2} are deleted from network {2} of user {3}"
+msgid_plural "Channels {1} are deleted from network {2} of user {3}"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -495,7 +496,7 @@ msgid "Modules loaded for user {1}:"
 msgstr ""
 
 #: controlpanel.cpp:1531
-msgid "Network {1} of user {2} hasno modules loaded."
+msgid "Network {1} of user {2} has no modules loaded."
 msgstr ""
 
 #: controlpanel.cpp:1535

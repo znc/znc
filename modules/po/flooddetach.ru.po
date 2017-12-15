@@ -1,0 +1,93 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: znc-bouncer\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: ru\n"
+"X-Crowdin-File: /master/modules/po/flooddetach.pot\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+"PO-Revision-Date: 2017-12-14 20:23-0500\n"
+
+#: flooddetach.cpp:30
+msgid "Show current limits"
+msgstr ""
+
+#: flooddetach.cpp:32 flooddetach.cpp:35
+msgid "[<limit>]"
+msgstr ""
+
+#: flooddetach.cpp:33
+msgid "Show or set number of seconds in the time interval"
+msgstr ""
+
+#: flooddetach.cpp:35 flooddetach.cpp:37
+msgid "blahblah: description"
+msgstr ""
+
+#: flooddetach.cpp:37
+msgid "[yes|no]"
+msgstr ""
+
+#: flooddetach.cpp:90
+msgid "Flood in {1} is over, reattaching..."
+msgstr ""
+
+#: flooddetach.cpp:147
+msgid "Channel {1} was flooded, you've been detached"
+msgstr ""
+
+#: flooddetach.cpp:184
+msgid "1 line"
+msgid_plural "{1} lines"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: flooddetach.cpp:185
+msgid "every second"
+msgid_plural "every {1} seconds"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: flooddetach.cpp:187
+msgid "Current limit is {1} {2}"
+msgstr ""
+
+#: flooddetach.cpp:194
+msgid "Seconds limit is {1}"
+msgstr ""
+
+#: flooddetach.cpp:199
+msgid "Set seconds limit to {1}"
+msgstr ""
+
+#: flooddetach.cpp:208
+msgid "Lines limit is {1}"
+msgstr ""
+
+#: flooddetach.cpp:213
+msgid "Set lines limit to {1}"
+msgstr ""
+
+#: flooddetach.cpp:226
+msgid "Module messages are disabled"
+msgstr ""
+
+#: flooddetach.cpp:228
+msgid "Module messages are enabled"
+msgstr ""
+
+#: flooddetach.cpp:244
+msgid "This user module takes up to two arguments. Arguments are numbers of messages and seconds."
+msgstr ""
+
+#: flooddetach.cpp:248
+msgid "Detach channels when flooded"
+msgstr ""
+
