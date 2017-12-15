@@ -2,34 +2,35 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: znc-bouncer\n"
 
-#: modules/po/../data/listsockets/tmpl/index.tmpl:7 listsockets.cpp:212
-#: listsockets.cpp:228
+#: modules/po/../data/listsockets/tmpl/index.tmpl:7 listsockets.cpp:214
+#: listsockets.cpp:230
 msgid "Name"
 msgstr ""
 
-#: modules/po/../data/listsockets/tmpl/index.tmpl:8 listsockets.cpp:213
-#: listsockets.cpp:229
+#: modules/po/../data/listsockets/tmpl/index.tmpl:8 listsockets.cpp:215
+#: listsockets.cpp:231
 msgid "Created"
 msgstr ""
 
-#: modules/po/../data/listsockets/tmpl/index.tmpl:9 listsockets.cpp:214
-#: listsockets.cpp:230
+#: modules/po/../data/listsockets/tmpl/index.tmpl:9 listsockets.cpp:216
+#: listsockets.cpp:232
 msgid "State"
 msgstr ""
 
-#: modules/po/../data/listsockets/tmpl/index.tmpl:10 listsockets.cpp:216
-#: listsockets.cpp:233
+#: modules/po/../data/listsockets/tmpl/index.tmpl:10 listsockets.cpp:218
+#: listsockets.cpp:235
 msgid "SSL"
 msgstr ""
 
-#: modules/po/../data/listsockets/tmpl/index.tmpl:11 listsockets.cpp:218
-#: listsockets.cpp:238
+#: modules/po/../data/listsockets/tmpl/index.tmpl:11 listsockets.cpp:220
+#: listsockets.cpp:240
 msgid "Local"
 msgstr ""
 
-#: modules/po/../data/listsockets/tmpl/index.tmpl:12 listsockets.cpp:219
-#: listsockets.cpp:240
+#: modules/po/../data/listsockets/tmpl/index.tmpl:12 listsockets.cpp:221
+#: listsockets.cpp:242
 msgid "Remote"
 msgstr ""
 
@@ -57,12 +58,12 @@ msgstr ""
 msgid "List sockets"
 msgstr ""
 
-#: listsockets.cpp:116 listsockets.cpp:234
+#: listsockets.cpp:116 listsockets.cpp:236
 msgctxt "ssl"
 msgid "Yes"
 msgstr ""
 
-#: listsockets.cpp:116 listsockets.cpp:235
+#: listsockets.cpp:116 listsockets.cpp:237
 msgctxt "ssl"
 msgid "No"
 msgstr ""
@@ -87,18 +88,18 @@ msgstr ""
 msgid "UNKNOWN"
 msgstr ""
 
-#: listsockets.cpp:205
+#: listsockets.cpp:207
 msgid "You have no open sockets."
 msgstr ""
 
-#: listsockets.cpp:220 listsockets.cpp:242
+#: listsockets.cpp:222 listsockets.cpp:244
 msgid "In"
 msgstr ""
 
-#: listsockets.cpp:221 listsockets.cpp:244
+#: listsockets.cpp:223 listsockets.cpp:246
 msgid "Out"
 msgstr ""
 
-#: listsockets.cpp:260
+#: listsockets.cpp:262
 msgid "Lists active sockets"
 msgstr ""

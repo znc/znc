@@ -1,0 +1,35 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: znc-bouncer\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: ru\n"
+"X-Crowdin-File: /master/modules/po/block_motd.pot\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+"PO-Revision-Date: 2017-12-14 20:23-0500\n"
+
+#: block_motd.cpp:26
+msgid "[<server>]"
+msgstr ""
+
+#: block_motd.cpp:27
+msgid "Override the block with this command. Can optionally specify which server to query."
+msgstr ""
+
+#: block_motd.cpp:36
+msgid "You are not connected to an IRC Server."
+msgstr ""
+
+#: block_motd.cpp:60
+msgid "MOTD blocked by ZNC"
+msgstr ""
+
+#: block_motd.cpp:106
+msgid "Block the MOTD from IRC so it's not sent to your client(s)."
+msgstr ""
+
