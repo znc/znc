@@ -121,6 +121,7 @@ install:
     - export ZNC_MODPYTHON_COVERAGE=1
     - "echo pkg-config path: [$PKG_CONFIG_PATH]"
 script:
+    - set -v
     - if [[ "$BUILD_TYPE" == "tarball" ]]; then ./make-tarball.sh --nightly znc-git-2015-01-16 /tmp/znc-tarball.tar.gz; fi
     - if [[ "$BUILD_TYPE" == "tarball" ]]; then cd /tmp; tar xvf znc-tarball.tar.gz; fi
     - if [[ "$BUILD_TYPE" == "tarball" ]]; then cd /tmp/znc-git-2015-01-16; fi
