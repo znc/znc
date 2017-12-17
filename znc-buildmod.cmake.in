@@ -96,4 +96,8 @@ with tempfile.TemporaryDirectory() as cmdir:
         subprocess.check_call(['cmake', '--build', '.'], cwd=build)
 
         for so in glob.iglob(os.path.join(build, '*.so')):
+            try:
+                os.remove(os.path.basename(so))
+            except OSError:
+                pass
             shutil.copy(so, os.getcwd())
