@@ -4,6 +4,7 @@ bool WebRequiresAdmin()
 CString GetWebMenuTitle()
 bool OnWebPreRequest(CWebSock& WebSock, const CString& sPageName)
 bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl)
+bool ValidateWebRequestCSRFCheck(CWebSock& WebSock, const CString& sPageName)
 VWebSubPages* _GetSubPages()=nullptr
 void OnPreRehash()
 void OnPostRehash()

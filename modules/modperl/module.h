@@ -42,6 +42,8 @@ class ZNC_EXPORT_LIB_EXPORT CPerlModule : public CModule {
     bool OnWebPreRequest(CWebSock& WebSock, const CString& sPageName) override;
     bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
                       CTemplate& Tmpl) override;
+    bool ValidateWebRequestCSRFCheck(CWebSock& WebSock,
+                                     const CString& sPageName) override;
     VWebSubPages& GetSubPages() override;
     void OnPreRehash() override;
     void OnPostRehash() override;
