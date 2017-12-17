@@ -37,6 +37,7 @@
 #serial 5
 
 m4_define([_AX_CXX_COMPILE_STDCXX_11_testbody], [[
+  #include <map>
   template <typename T>
     struct check
     {
@@ -81,6 +82,11 @@ m4_define([_AX_CXX_COMPILE_STDCXX_11_testbody], [[
         void test() {
             func<foo>(0);
         }
+    }
+
+    void test_map() {
+        std::map<int, int> m;
+        m.emplace(2, 4);
     }
 ]])
 
