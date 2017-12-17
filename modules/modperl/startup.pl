@@ -223,7 +223,7 @@ sub CallModFunc {
 	my $func = shift;
 	my @arg = @_;
 	my $res = $pmod->$func(@arg);
-	(defined $res, $res, @arg)
+	(defined $res, $res//0, @arg)
 }
 
 sub CallTimer {

@@ -67,7 +67,7 @@ namespace {
 	}
 }
 #define PSTART_IDF(Func) PSTART; XPUSHs(GetPerlObj()); PUSH_STR(#Func)
-#define PCALLMOD(Error, Success) PCALL("ZNC::Core::CallModFunc"); if (SvTRUE(ERRSV)) { DEBUG("Perl hook died with: " + PString(ERRSV)); Error; } else { if (!SvIV(ST(0))) { Error; } Success; } PEND
+#define PCALLMOD(Error, Success) PCALL("ZNC::Core::CallModFunc"); if (SvTRUE(ERRSV)) { DEBUG("Perl hook died with: " + PString(ERRSV)); Error; } else if (SvIV(ST(0))) { Success; } else { Error; } PEND
 
 EOF
 
