@@ -248,14 +248,6 @@ while (<$in>) {
 	my ($type, $name, $args, $default) = /(\S+)\s+(\w+)\((.*)\)(?:=(\w+))?/ or next;
 	$type =~ s/(EModRet)/CModule::$1/;
 	$type =~ s/^\s*(.*?)\s*$/$1/;
-	unless (defined $default) {
-		given ($type) {
-			when ('bool')			 { $default = 'true' }
-			when ('CModule::EModRet') { $default = 'CONTINUE' }
-			when ('CString')		  { $default = '""' }
-			when (/\*$/)			  { $default = "($type)nullptr" }
-		}
-	}
 	my @arg = map {
 		my ($t, $v) = /^\s*(.*\W)\s*(\w+)\s*$/;
 		$t =~ s/^\s*(.*?)\s*$/$1/;
@@ -263,10 +255,13 @@ while (<$in>) {
 		{type=>$t, var=>$v, base=>$tb, mod=>$tm//'', pyvar=>"pyArg_$v", error=>"can't convert parameter '$v' to PyObject"}
 	} split /,/, $args;
 
+	unless (defined $default) {
+		$default = "CModule::$name(" . (join ', ', map { $_->{var} } @arg) . ")";
+	}
+
 	unshift @arg, {type=>'$func$', var=>"", base=>"", mod=>"", pyvar=>"pyName", error=>"can't convert string '$name' to PyObject"};
 
 	my $cleanup = '';
-	$default = '' if $type eq 'void';
 
 	say $out "$type CPyModule::$name($args) {";
 	for my $a (@arg) {
@@ -413,7 +408,7 @@ while (<$in>) {
 				say $out "\t\t} else { result = (CModule::EModRet)x; }";
 			}
 			when ('bool') {
-  				say $out "\t\tint x = PyObject_IsTrue(pyRes);";
+				say $out "\t\tint x = PyObject_IsTrue(pyRes);";
 				say $out "\t\tif (-1 == x) {";
 				say $out "\t\t\tCString sPyErr = m_pModPython->GetPyExceptionStr();";
 				say $out "\t\t\tDEBUG".'("modpython: " << (GetUser() ? GetUser()->GetUserName() : CString("<no user>")) << "/" << GetModName() << '."\"/$name was expected to return EModRet but: \" << sPyErr);";

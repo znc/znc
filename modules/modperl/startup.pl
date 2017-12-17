@@ -221,14 +221,9 @@ sub ModInfoByPath {
 sub CallModFunc {
 	my $pmod = shift;
 	my $func = shift;
-	my $default = shift;
 	my @arg = @_;
 	my $res = $pmod->$func(@arg);
-#	print "Returned from $func(@_): $res, (@arg)\n";
-	unless (defined $res) {
-		$res = $default if defined $default;
-	}
-	($res, @arg)
+	(defined $res, $res, @arg)
 }
 
 sub CallTimer {
