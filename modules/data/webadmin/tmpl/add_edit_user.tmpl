@@ -40,6 +40,12 @@
 					<input id="password2" type="password" name="password2" class="half"
 						   title="<? FORMAT "Please re-type the above password." ?>"/>
 				</div>
+				<div class="subsection">
+					<div class="inputlabel"><label for="authonlyviamodule"><? FORMAT "Auth Only Via Module:" ?></label></div>
+					<input id="authonlyviamodule" type="checkbox" name="authonlyviamodule"
+						    title="<? FORMAT "Allow user authentication by external modules only, disabling built-in password authentication." ?>"
+						    <? IF AuthOnlyViaModule ?>checked="checked" <? ENDIF ?><? IF !ImAdmin ?>disabled="disabled" <? ENDIF ?>/>
+				</div>
 				<div class="subsection half">
 					<div class="inputlabel"><label for="allowedips"><? FORMAT "Allowed IPs:" ?></label></div>
 					<textarea id="allowedips" name="allowedips" cols="70" rows="5"><? LOOP AllowedHostLoop ?><? VAR Host ?>

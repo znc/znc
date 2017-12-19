@@ -108,6 +108,7 @@ class CAdminMod : public CModule {
                 {"Admin", boolean},
                 {"AppendTimestamp", boolean},
                 {"PrependTimestamp", boolean},
+                {"AuthOnlyViaModule", boolean},
                 {"TimestampFormat", str},
                 {"DCCBindHost", str},
                 {"StatusPrefix", str},
@@ -273,6 +274,9 @@ class CAdminMod : public CModule {
         else if (sVar == "prependtimestamp")
             PutModule("PrependTimestamp = " +
                       CString(pUser->GetTimestampPrepend()));
+        else if (sVar == "authonlyviamodule")
+            PutModule("AuthOnlyViaModule = " +
+                      CString(pUser->AuthOnlyViaModule()));
         else if (sVar == "timestampformat")
             PutModule("TimestampFormat = " + pUser->GetTimestampFormat());
         else if (sVar == "dccbindhost")
@@ -442,6 +446,14 @@ class CAdminMod : public CModule {
             bool b = sValue.ToBool();
             pUser->SetTimestampAppend(b);
             PutModule("AppendTimestamp = " + CString(b));
+        } else if (sVar == "authonlyviamodule") {
+            if (GetUser()->IsAdmin()) {
+                bool b = sValue.ToBool();
+                pUser->SetAuthOnlyViaModule(b);
+                PutModule("AuthOnlyViaModule = " + CString(b));
+            } else {
+                PutModule(t_s("Access denied!"));
+            }
         } else if (sVar == "timestampformat") {
             pUser->SetTimestampFormat(sValue);
             PutModule("TimestampFormat = " + sValue);

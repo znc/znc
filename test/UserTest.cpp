@@ -119,3 +119,33 @@ TEST_F(UserTest, IsHostAllowed) {
             << "Allow-host is " << h.sMask;
     }
 }
+
+TEST_F(UserTest, TestAuthOnlyViaModule) {
+    CUser user("user");
+    user.SetPass("password", CUser::HASH_NONE);
+
+    bool bAuthOnlyViaModuleDefault = CZNC::Get().GetAuthOnlyViaModule();
+
+    CZNC::Get().SetAuthOnlyViaModule(false);
+    user.SetAuthOnlyViaModule(false);
+
+    EXPECT_TRUE(user.CheckPass("password"));
+
+    // user-level only
+    user.SetAuthOnlyViaModule(true);
+    EXPECT_FALSE(user.CheckPass("password"));
+
+    // re-enabling built-in authentication
+    user.SetAuthOnlyViaModule(false);
+    EXPECT_TRUE(user.CheckPass("password"));
+
+    // on at global level, off at user level
+    CZNC::Get().SetAuthOnlyViaModule(true);
+    EXPECT_FALSE(user.CheckPass("password"));
+
+    // on at both levels
+    user.SetAuthOnlyViaModule(true);
+    EXPECT_FALSE(user.CheckPass("password"));
+
+    CZNC::Get().SetAuthOnlyViaModule(bAuthOnlyViaModuleDefault);
+}

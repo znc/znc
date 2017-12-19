@@ -76,6 +76,7 @@ CZNC::CZNC()
       m_sConnectThrottle(),
       m_bProtectWebSessions(true),
       m_bHideVersion(false),
+      m_bAuthOnlyViaModule(false),
       m_Translation("znc"),
       m_uiConfigWriteDelay(0),
       m_pConfigTimer(nullptr) {
@@ -492,6 +493,7 @@ bool CZNC::WriteConfig() {
     config.AddKeyValuePair("ProtectWebSessions",
                            CString(m_bProtectWebSessions));
     config.AddKeyValuePair("HideVersion", CString(m_bHideVersion));
+    config.AddKeyValuePair("AuthOnlyViaModule", CString(m_bAuthOnlyViaModule));
     config.AddKeyValuePair("Version", CString(VERSION_STR));
     config.AddKeyValuePair("ConfigWriteDelay", CString(m_uiConfigWriteDelay));
 
@@ -1215,6 +1217,8 @@ bool CZNC::LoadGlobal(CConfig& config, CString& sError) {
         m_bProtectWebSessions = sVal.ToBool();
     if (config.FindStringEntry("hideversion", sVal))
         m_bHideVersion = sVal.ToBool();
+    if (config.FindStringEntry("authonlyviamodule", sVal))
+        m_bAuthOnlyViaModule = sVal.ToBool();
     if (config.FindStringEntry("sslprotocols", sVal)) {
         if (!SetSSLProtocols(sVal)) {
             VCString vsProtocols = GetAvailableSSLProtocols();
