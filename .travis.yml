@@ -79,6 +79,7 @@ matrix:
             - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then ./.travis-coverity-scan.py; fi
           after_success:
 before_install:
+    - python -c "import fcntl; fcntl.fcntl(1, fcntl.F_SETFL, 0)"  # https://github.com/travis-ci/travis-ci/issues/8920
     - "echo os: [$TRAVIS_OS_NAME] build: [$BUILD_TYPE]"
     - export SECRET_KEY=no
     - export CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=
