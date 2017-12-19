@@ -447,9 +447,13 @@ class CAdminMod : public CModule {
             pUser->SetTimestampAppend(b);
             PutModule("AppendTimestamp = " + CString(b));
         } else if (sVar == "builtinauthdisabled") {
-            bool b = sValue.ToBool();
-            pUser->SetBuiltinAuthDisabled(b);
-            PutModule("BuiltinAuthDisabled = " + CString(b));
+            if (GetUser()->IsAdmin()) {
+                bool b = sValue.ToBool();
+                pUser->SetBuiltinAuthDisabled(b);
+                PutModule("BuiltinAuthDisabled = " + CString(b));
+            } else {
+                PutModule(t_s("Access denied!"));
+            }
         } else if (sVar == "timestampformat") {
             pUser->SetTimestampFormat(sValue);
             PutModule("TimestampFormat = " + sValue);
