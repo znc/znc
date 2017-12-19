@@ -299,6 +299,8 @@ class CWebAdminMod : public CModule {
             WebSock.GetParam("appendtimestamp").ToBool());
         pNewUser->SetTimestampPrepend(
             WebSock.GetParam("prependtimestamp").ToBool());
+        pNewUser->SetBuiltinAuthDisabled(
+            WebSock.GetParam("builtinauthdisabled").ToBool());
         pNewUser->SetTimezone(WebSock.GetParam("timezone"));
         pNewUser->SetJoinTries(WebSock.GetParam("jointries").ToUInt());
         pNewUser->SetMaxJoins(WebSock.GetParam("maxjoins").ToUInt());
@@ -1567,6 +1569,13 @@ class CWebAdminMod : public CModule {
                 o12["Checked"] = "true";
             }
 
+            CTemplate& o13 = Tmpl.AddRow("OptionLoop");
+            o13["Name"] = "builtinauthdisabled";
+            o13["DisplayName"] = t_s("Built-in Authentication Disabled");
+            if (pUser->BuiltinAuthDisabled()) {
+                o13["Checked"] = "true";
+            }
+
             FOR_EACH_MODULE(i, pUser) {
                 CTemplate& mod = Tmpl.AddRow("EmbeddedModuleLoop");
                 mod.insert(Tmpl.begin(), Tmpl.end());
@@ -1872,6 +1881,7 @@ class CWebAdminMod : public CModule {
             Tmpl["ProtectWebSessions"] =
                 CString(CZNC::Get().GetProtectWebSessions());
             Tmpl["HideVersion"] = CString(CZNC::Get().GetHideVersion());
+            Tmpl["BuiltinAuthDisabled"] = CString(CZNC::Get().GetBuiltinAuthDisabled());
 
             const VCString& vsMotd = CZNC::Get().GetMotd();
             for (const CString& sMotd : vsMotd) {
@@ -2018,6 +2028,8 @@ class CWebAdminMod : public CModule {
         CZNC::Get().SetProtectWebSessions(sArg.ToBool());
         sArg = WebSock.GetParam("hideversion");
         CZNC::Get().SetHideVersion(sArg.ToBool());
+        sArg = WebSock.GetParam("builtinauthdisabled");
+        CZNC::Get().SetBuiltinAuthDisabled(sArg.ToBool());
 
         VCString vsArgs;
         WebSock.GetRawParam("motd").Split("\n", vsArgs);

@@ -147,6 +147,12 @@
 						<label for="hideversion_checkbox"><? FORMAT "Hide version number from non-ZNC users" ?></label></div>
 				</div>
 
+				<div class="subsection">
+					<div class="inputlabel"><? FORMAT "Disable Built-in Auth: " ?></div>
+					<div class="checkbox"><input type="checkbox" name="builtinauthdisabled" id="builtinauthdisabled_checkbox"<? IF BuiltinAuthDisabled ?> checked="checked"<? ENDIF ?> />
+						<label for="builtinauthdisabled_checkbox"><? FORMAT "Disable built-in password authentication for all users" ?></label></div>
+				</div>
+
 
 				<div class="subsection twothird">
 					<div class="inputlabel"><label for="motd"><? FORMAT "MOTD:" ?></label></div>

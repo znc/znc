@@ -108,6 +108,7 @@ class CAdminMod : public CModule {
                 {"Admin", boolean},
                 {"AppendTimestamp", boolean},
                 {"PrependTimestamp", boolean},
+                {"BuiltinAuthDisabled", boolean},
                 {"TimestampFormat", str},
                 {"DCCBindHost", str},
                 {"StatusPrefix", str},
@@ -273,6 +274,9 @@ class CAdminMod : public CModule {
         else if (sVar == "prependtimestamp")
             PutModule("PrependTimestamp = " +
                       CString(pUser->GetTimestampPrepend()));
+        else if (sVar == "builtinauthdisabled")
+            PutModule("BuiltinAuthDisabled = " +
+                      CString(pUser->BuiltinAuthDisabled()));
         else if (sVar == "timestampformat")
             PutModule("TimestampFormat = " + pUser->GetTimestampFormat());
         else if (sVar == "dccbindhost")
@@ -442,6 +446,10 @@ class CAdminMod : public CModule {
             bool b = sValue.ToBool();
             pUser->SetTimestampAppend(b);
             PutModule("AppendTimestamp = " + CString(b));
+        } else if (sVar == "builtinauthdisabled") {
+            bool b = sValue.ToBool();
+            pUser->SetBuiltinAuthDisabled(b);
+            PutModule("BuiltinAuthDisabled = " + CString(b));
         } else if (sVar == "timestampformat") {
             pUser->SetTimestampFormat(sValue);
             PutModule("TimestampFormat = " + sValue);
