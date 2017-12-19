@@ -119,3 +119,29 @@ TEST_F(UserTest, IsHostAllowed) {
             << "Allow-host is " << h.sMask;
     }
 }
+
+TEST_F(UserTest, TestBuiltinAuthDisabled) {
+    CUser user("user");
+    user.SetPass("password", CUser::HASH_NONE);
+
+    CZNC::Get().SetBuiltinAuthDisabled(false);
+    user.SetBuiltinAuthDisabled(false);
+
+    EXPECT_TRUE(user.CheckPass("password"));
+
+    // user-level only
+    user.SetBuiltinAuthDisabled(true);
+    EXPECT_FALSE(user.CheckPass("password"));
+
+    // re-enabling built-in authentication
+    user.SetBuiltinAuthDisabled(false);
+    EXPECT_TRUE(user.CheckPass("password"));
+
+    // on at global level, off at user level
+    CZNC::Get().SetBuiltinAuthDisabled(true);
+    EXPECT_FALSE(user.CheckPass("password"));
+
+    // on at both levels
+    user.SetBuiltinAuthDisabled(true);
+    EXPECT_FALSE(user.CheckPass("password"));
+}
