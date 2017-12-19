@@ -120,28 +120,28 @@ TEST_F(UserTest, IsHostAllowed) {
     }
 }
 
-TEST_F(UserTest, TestBuiltinAuthDisabled) {
+TEST_F(UserTest, TestOnlyModulesMayAuth) {
     CUser user("user");
     user.SetPass("password", CUser::HASH_NONE);
 
-    CZNC::Get().SetBuiltinAuthDisabled(false);
-    user.SetBuiltinAuthDisabled(false);
+    CZNC::Get().SetOnlyModulesMayAuth(false);
+    user.SetOnlyModulesMayAuth(false);
 
     EXPECT_TRUE(user.CheckPass("password"));
 
     // user-level only
-    user.SetBuiltinAuthDisabled(true);
+    user.SetOnlyModulesMayAuth(true);
     EXPECT_FALSE(user.CheckPass("password"));
 
     // re-enabling built-in authentication
-    user.SetBuiltinAuthDisabled(false);
+    user.SetOnlyModulesMayAuth(false);
     EXPECT_TRUE(user.CheckPass("password"));
 
     // on at global level, off at user level
-    CZNC::Get().SetBuiltinAuthDisabled(true);
+    CZNC::Get().SetOnlyModulesMayAuth(true);
     EXPECT_FALSE(user.CheckPass("password"));
 
     // on at both levels
-    user.SetBuiltinAuthDisabled(true);
+    user.SetOnlyModulesMayAuth(true);
     EXPECT_FALSE(user.CheckPass("password"));
 }

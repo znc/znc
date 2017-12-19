@@ -88,7 +88,7 @@ CUser::CUser(const CString& sUserName)
       m_bBeingDeleted(false),
       m_bAppendTimestamp(false),
       m_bPrependTimestamp(true),
-      m_bBuiltinAuthDisabled(false),
+      m_bOnlyModulesMayAuth(false),
       m_pUserTimer(nullptr),
       m_vIRCNetworks(),
       m_vClients(),
@@ -171,7 +171,7 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
         {"denysetvhost", &CUser::SetDenySetBindHost},
         {"appendtimestamp", &CUser::SetTimestampAppend},
         {"prependtimestamp", &CUser::SetTimestampPrepend},
-        {"builtinauthdisabled", &CUser::SetBuiltinAuthDisabled},
+        {"onlymodulesmayauth", &CUser::SetOnlyModulesMayAuth},
     };
 
     for (const auto& Option : StringOptions) {
@@ -803,7 +803,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
     SetDenyLoadMod(User.DenyLoadMod());
     SetAdmin(User.IsAdmin());
     SetDenySetBindHost(User.DenySetBindHost());
-    SetBuiltinAuthDisabled(User.BuiltinAuthDisabled());
+    SetOnlyModulesMayAuth(User.OnlyModulesMayAuth());
     SetTimestampAppend(User.GetTimestampAppend());
     SetTimestampPrepend(User.GetTimestampPrepend());
     SetTimestampFormat(User.GetTimestampFormat());
@@ -966,7 +966,7 @@ CConfig CUser::ToConfig() const {
     config.AddKeyValuePair("TimestampFormat", GetTimestampFormat());
     config.AddKeyValuePair("AppendTimestamp", CString(GetTimestampAppend()));
     config.AddKeyValuePair("PrependTimestamp", CString(GetTimestampPrepend()));
-    config.AddKeyValuePair("BuiltinAuthDisabled", CString(BuiltinAuthDisabled()));
+    config.AddKeyValuePair("OnlyModulesMayAuth", CString(OnlyModulesMayAuth()));
     config.AddKeyValuePair("Timezone", m_sTimezone);
     config.AddKeyValuePair("JoinTries", CString(m_uMaxJoinTries));
     config.AddKeyValuePair("MaxNetworks", CString(m_uMaxNetworks));
@@ -1016,7 +1016,7 @@ CConfig CUser::ToConfig() const {
 }
 
 bool CUser::CheckPass(const CString& sPass) const {
-    if(BuiltinAuthDisabled() || CZNC::Get().GetBuiltinAuthDisabled()) {
+    if(OnlyModulesMayAuth() || CZNC::Get().GetOnlyModulesMayAuth()) {
         return false;
     }
 
@@ -1378,7 +1378,7 @@ bool CUser::DenyLoadMod() const { return m_bDenyLoadMod; }
 bool CUser::IsAdmin() const { return m_bAdmin; }
 bool CUser::DenySetBindHost() const { return m_bDenySetBindHost; }
 bool CUser::MultiClients() const { return m_bMultiClients; }
-bool CUser::BuiltinAuthDisabled() const { return m_bBuiltinAuthDisabled; }
+bool CUser::OnlyModulesMayAuth() const { return m_bOnlyModulesMayAuth; }
 const CString& CUser::GetStatusPrefix() const { return m_sStatusPrefix; }
 const CString& CUser::GetDefaultChanModes() const {
     return m_sDefaultChanModes;

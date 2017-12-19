@@ -123,7 +123,7 @@ class CZNC {
     }
     void SetProtectWebSessions(bool b) { m_bProtectWebSessions = b; }
     void SetHideVersion(bool b) { m_bHideVersion = b; }
-    void SetBuiltinAuthDisabled(bool b) { m_bBuiltinAuthDisabled = b; }
+    void SetOnlyModulesMayAuth(bool b) { m_bOnlyModulesMayAuth = b; }
     void SetConnectDelay(unsigned int i);
     void SetSSLCiphers(const CString& sCiphers) { m_sSSLCiphers = sCiphers; }
     bool SetSSLProtocols(const CString& sProtocols);
@@ -167,7 +167,7 @@ class CZNC {
     unsigned int GetConnectDelay() const { return m_uiConnectDelay; }
     bool GetProtectWebSessions() const { return m_bProtectWebSessions; }
     bool GetHideVersion() const { return m_bHideVersion; }
-    bool GetBuiltinAuthDisabled() const { return m_bBuiltinAuthDisabled; }
+    bool GetOnlyModulesMayAuth() const { return m_bOnlyModulesMayAuth; }
     CString GetSSLCiphers() const { return m_sSSLCiphers; }
     CString GetSSLProtocols() const { return m_sSSLProtocols; }
     Csock::EDisableProtocol GetDisabledSSLProtocols() const {
@@ -307,7 +307,7 @@ class CZNC {
     TCacheMap<CString> m_sConnectThrottle;
     bool m_bProtectWebSessions;
     bool m_bHideVersion;
-    bool m_bBuiltinAuthDisabled;
+    bool m_bOnlyModulesMayAuth;
     CTranslationDomainRefHolder m_Translation;
     unsigned int m_uiConfigWriteDelay;
     CConfigWriteTimer* m_pConfigTimer;
