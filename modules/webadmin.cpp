@@ -211,10 +211,12 @@ class CWebAdminMod : public CModule {
         }
 
         sArg = WebSock.GetParam("onlymodulesmayauth");
-        if(spSession->IsAdmin()) {
-            if(!sArg.empty()) {
+        if (spSession->IsAdmin()) {
+            if (!sArg.empty()) {
                 pNewUser->SetOnlyModulesMayAuth(sArg.ToBool());
             }
+        } else if (pUser) {
+            pNewUser->SetOnlyModulesMayAuth(pUser->OnlyModulesMayAuth());
         }
 
         VCString vsArgs;
