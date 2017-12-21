@@ -66,7 +66,6 @@ with open(tmpl_pot, 'wt', encoding='utf8') as f:
     print('msgstr ""', file=f)
     print(r'"Content-Type: text/plain; charset=UTF-8\n"', file=f)
     print(r'"Content-Transfer-Encoding: 8bit\n"', file=f)
-    print(r'"Project-Id-Version: znc-bouncer\n"', file=f)
     print(file=f)
     for line in tmpl:
         print(line, file=f)
