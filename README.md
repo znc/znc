@@ -26,7 +26,7 @@ Core:
 
 * GNU make
 * pkg-config
-* GCC 4.7 or clang 3.2
+* GCC 4.8 or clang 3.2
 * Either of:
     * autoconf and automake (but only if building from git, not from tarball)
     * CMake
