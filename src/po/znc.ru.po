@@ -3,7 +3,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Project-Id-Version: znc-bouncer\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: ru\n"
@@ -11,7 +12,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: webskins/_default_/tmpl/InfoBar.tmpl:6
 msgid "Logged in as: {1}"
@@ -46,8 +46,15 @@ msgid "Welcome to ZNC's web interface!"
 msgstr "Добро пожаловать в веб-интерфейс ZNC!"
 
 #: webskins/_default_/tmpl/index.tmpl:11
-msgid "No Web-enabled modules have been loaded. Load modules from IRC (“<code>/msg *status help</code>” and “<code>/msg *status loadmod &lt;module&gt;</code>”). Once you have loaded some Web-enabled modules, the menu will expand."
-msgstr "Нет загруженных модулей с поддержкой веб-интерфейса. Вы можете загрузить их из IRC («<code>/msg *status help</code>» и «<code>/msg *status loadmod &lt;модуль&gt;</code>»). Когда такие модули будут загружены, они будут доступны в меню сбоку."
+msgid ""
+"No Web-enabled modules have been loaded. Load modules from IRC (“<code>/msg "
+"*status help</code>” and “<code>/msg *status loadmod &lt;module&gt;</"
+"code>”). Once you have loaded some Web-enabled modules, the menu will expand."
+msgstr ""
+"Нет загруженных модулей с поддержкой веб-интерфейса. Вы можете загрузить их "
+"из IRC («<code>/msg *status help</code>» и «<code>/msg *status loadmod &lt;"
+"модуль&gt;</code>»). Когда такие модули будут загружены, они будут доступны "
+"в меню сбоку."
 
 #: ClientCommand.cpp:51
 msgid "You must be connected with a network to use this command"
@@ -68,4 +75,3 @@ msgstr ""
 #: ClientCommand.cpp:79
 msgid "No nicks on [{1}]"
 msgstr ""
-

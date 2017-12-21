@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: simple_away.cpp:56
 msgid "[<text>]"
@@ -19,7 +18,9 @@ msgstr ""
 
 #: simple_away.cpp:57
 #, c-format
-msgid "Prints or sets the away reason (%awaytime% is replaced with the time you were set away, supports substitutions using ExpandString)"
+msgid ""
+"Prints or sets the away reason (%awaytime% is replaced with the time you "
+"were set away, supports substitutions using ExpandString)"
 msgstr ""
 
 #: simple_away.cpp:63
@@ -79,10 +80,13 @@ msgid "MinClients set to {1}"
 msgstr ""
 
 #: simple_away.cpp:253
-msgid "You might enter up to 3 arguments, like -notimer awaymessage or -timer 5 awaymessage."
+msgid ""
+"You might enter up to 3 arguments, like -notimer awaymessage or -timer 5 "
+"awaymessage."
 msgstr ""
 
 #: simple_away.cpp:258
-msgid "This module will automatically set you away on IRC while you are disconnected from the bouncer."
+msgid ""
+"This module will automatically set you away on IRC while you are "
+"disconnected from the bouncer."
 msgstr ""
-

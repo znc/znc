@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: bouncedcc.cpp:101 bouncedcc.cpp:119 bouncedcc.cpp:121
 msgctxt "list"
@@ -104,7 +103,9 @@ msgid "DCC {1} Bounce ({2}): Timeout while connecting."
 msgstr ""
 
 #: bouncedcc.cpp:427
-msgid "DCC {1} Bounce ({2}): Timeout while waiting for incoming connection on {3} {4}"
+msgid ""
+"DCC {1} Bounce ({2}): Timeout while waiting for incoming connection on {3} "
+"{4}"
 msgstr ""
 
 #: bouncedcc.cpp:440
@@ -124,6 +125,7 @@ msgid "DCC {1} Bounce ({2}): Socket error: {3}"
 msgstr ""
 
 #: bouncedcc.cpp:547
-msgid "Bounces DCC transfers through ZNC instead of sending them directly to the user. "
+msgid ""
+"Bounces DCC transfers through ZNC instead of sending them directly to the "
+"user. "
 msgstr ""
-

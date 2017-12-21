@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: autoreply.cpp:25
 msgid "<reply>"
@@ -34,10 +33,13 @@ msgid "New reply set to: {1} ({2})"
 msgstr "Neue Antwort gesetzt auf: {1} ({2})"
 
 #: autoreply.cpp:94
-msgid "You might specify a reply text. It is used when automatically answering queries, if you are not connected to ZNC."
-msgstr "Erlaubt es einen Antwort-Text zu setzen. Dieser wird verwendet wenn automatisch Queries beantwortet werden, falls du nicht zu ZNC verbunden bist."
+msgid ""
+"You might specify a reply text. It is used when automatically answering "
+"queries, if you are not connected to ZNC."
+msgstr ""
+"Erlaubt es einen Antwort-Text zu setzen. Dieser wird verwendet wenn "
+"automatisch Queries beantwortet werden, falls du nicht zu ZNC verbunden bist."
 
 #: autoreply.cpp:98
 msgid "Reply to queries when you are away"
 msgstr "Auf Queries antworten when du nicht da bist"
-

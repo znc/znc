@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: identfile.cpp:30
 msgid "Show file name"
@@ -70,7 +69,9 @@ msgid "Access denied"
 msgstr ""
 
 #: identfile.cpp:181
-msgid "Aborting connection, another user or network is currently connecting and using the ident spoof file"
+msgid ""
+"Aborting connection, another user or network is currently connecting and "
+"using the ident spoof file"
 msgstr ""
 
 #: identfile.cpp:189
@@ -80,4 +81,3 @@ msgstr ""
 #: identfile.cpp:223
 msgid "Write the ident of a user to a file when they are trying to connect."
 msgstr ""
-

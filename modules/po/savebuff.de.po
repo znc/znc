@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: savebuff.cpp:65
 msgid "<password>"
@@ -34,7 +33,10 @@ msgid "Saves all buffers"
 msgstr ""
 
 #: savebuff.cpp:221
-msgid "Password is unset usually meaning the decryption failed. You can setpass to the appropriate pass and things should start working, or setpass to a new pass and save to reinstantiate"
+msgid ""
+"Password is unset usually meaning the decryption failed. You can setpass to "
+"the appropriate pass and things should start working, or setpass to a new "
+"pass and save to reinstantiate"
 msgstr ""
 
 #: savebuff.cpp:232
@@ -50,10 +52,11 @@ msgid "Unable to decode Encrypted file {1}"
 msgstr ""
 
 #: savebuff.cpp:358
-msgid "This user module takes up to one arguments. Either --ask-pass or the password itself (which may contain spaces) or nothing"
+msgid ""
+"This user module takes up to one arguments. Either --ask-pass or the "
+"password itself (which may contain spaces) or nothing"
 msgstr ""
 
 #: savebuff.cpp:363
 msgid "Stores channel and query buffers to disk, encrypted"
 msgstr ""
-

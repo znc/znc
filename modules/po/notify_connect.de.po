@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: notify_connect.cpp:24
 msgid "attached"
@@ -28,4 +27,3 @@ msgstr ""
 #: notify_connect.cpp:52
 msgid "Notifies all admin users when a client connects or disconnects."
 msgstr ""
-

@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: alias.cpp:141
 msgid "missing required parameter: {1}"
@@ -113,7 +112,8 @@ msgstr "Zeigt die Aktionen an, die vom Alias durchgeführt werden."
 
 #: alias.cpp:362
 msgid "Generate a list of commands to copy your alias config."
-msgstr "Erzeugt eine Liste an Befehlen um ihre Alias-Konfiguration zu kopieren."
+msgstr ""
+"Erzeugt eine Liste an Befehlen um ihre Alias-Konfiguration zu kopieren."
 
 #: alias.cpp:374
 msgid "Clearing all of them!"
@@ -122,4 +122,3 @@ msgstr "Alle von ihnen werden gelöscht!"
 #: alias.cpp:409
 msgid "Provides bouncer-side command alias support."
 msgstr "Bietet Alias-Unterstützung im Bouncer an."
-

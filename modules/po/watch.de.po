@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: watch.cpp:334
 msgid "All entries cleared."
@@ -248,4 +247,3 @@ msgstr ""
 #: watch.cpp:778
 msgid "Copy activity from a specific user into a separate window"
 msgstr ""
-

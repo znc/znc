@@ -11,14 +11,15 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: block_motd.cpp:26
 msgid "[<server>]"
 msgstr ""
 
 #: block_motd.cpp:27
-msgid "Override the block with this command. Can optionally specify which server to query."
+msgid ""
+"Override the block with this command. Can optionally specify which server to "
+"query."
 msgstr ""
 
 #: block_motd.cpp:36
@@ -32,4 +33,3 @@ msgstr ""
 #: block_motd.cpp:106
 msgid "Block the MOTD from IRC so it's not sent to your client(s)."
 msgstr ""
-

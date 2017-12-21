@@ -3,7 +3,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Project-Id-Version: znc-bouncer\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: ru\n"
@@ -11,7 +12,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: clientnotify.cpp:47
 msgid "<message|notice|off>"
@@ -39,7 +39,9 @@ msgstr ""
 
 #: clientnotify.cpp:81 clientnotify.cpp:95
 msgid "<This message is impossible for 1 client>"
-msgid_plural "Another client authenticated as your user. Use the 'ListClients' command to see all {1} clients."
+msgid_plural ""
+"Another client authenticated as your user. Use the 'ListClients' command to "
+"see all {1} clients."
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
@@ -61,10 +63,13 @@ msgid "Usage: OnDisconnect <on|off>"
 msgstr ""
 
 #: clientnotify.cpp:145
-msgid "Current settings: Method: {1}, for unseen IP addresses only: {2}, notify on disconnecting clients: {3}"
+msgid ""
+"Current settings: Method: {1}, for unseen IP addresses only: {2}, notify on "
+"disconnecting clients: {3}"
 msgstr ""
 
 #: clientnotify.cpp:157
-msgid "Notifies you when another IRC client logs into or out of your account. Configurable."
+msgid ""
+"Notifies you when another IRC client logs into or out of your account. "
+"Configurable."
 msgstr ""
-

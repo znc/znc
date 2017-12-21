@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: ctcpflood.cpp:25 ctcpflood.cpp:27
 msgid "<limit>"
@@ -58,10 +57,13 @@ msgid "Current limit is {1} {2}"
 msgstr ""
 
 #: ctcpflood.cpp:145
-msgid "This user module takes none to two arguments. The first argument is the number of lines after which the flood-protection is triggered. The second argument is the time (sec) to in which the number of lines is reached. The default setting is 4 CTCPs in 2 seconds"
+msgid ""
+"This user module takes none to two arguments. The first argument is the "
+"number of lines after which the flood-protection is triggered. The second "
+"argument is the time (sec) to in which the number of lines is reached. The "
+"default setting is 4 CTCPs in 2 seconds"
 msgstr ""
 
 #: ctcpflood.cpp:151
 msgid "Don't forward CTCP floods to clients"
 msgstr ""
-

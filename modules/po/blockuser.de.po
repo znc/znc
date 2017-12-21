@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: modules/po/../data/blockuser/tmpl/blockuser_WebadminUser.tmpl:9
 msgid "Account is blocked"
@@ -96,4 +95,3 @@ msgstr "Einen oder mehrere Benutzernamen durch Leerzeichen getrennt eingeben."
 #: blockuser.cpp:219
 msgid "Block certain users from logging in."
 msgstr ""
-

@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: route_replies.cpp:209
 msgid "[yes|no]"
@@ -26,7 +25,9 @@ msgid "This module hit a timeout which is probably a connectivity issue."
 msgstr ""
 
 #: route_replies.cpp:353
-msgid "However, if you can provide steps to reproduce this issue, please do report a bug."
+msgid ""
+"However, if you can provide steps to reproduce this issue, please do report "
+"a bug."
 msgstr ""
 
 #: route_replies.cpp:356
@@ -56,4 +57,3 @@ msgstr ""
 #: route_replies.cpp:457
 msgid "Send replies (e.g. to /who) to the right client only"
 msgstr ""
-

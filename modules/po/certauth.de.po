@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:7
 msgid "Add a key"
@@ -44,7 +43,9 @@ msgstr ""
 
 #: certauth.cpp:32
 msgid "Add a public key. If key is not provided will use the current key"
-msgstr "Einen öffentlichen Schlüssel hinzufügen. Falls kein Schlüssel angegeben wird, dann wird der aktuelle Schlüsse verwunden"
+msgstr ""
+"Einen öffentlichen Schlüssel hinzufügen. Falls kein Schlüssel angegeben "
+"wird, dann wird der aktuelle Schlüsse verwunden"
 
 #: certauth.cpp:35
 msgid "id"
@@ -72,7 +73,8 @@ msgstr "Dein aktuelle öffentlicher Schlüssel ist: {1}"
 
 #: certauth.cpp:157
 msgid "You did not supply a public key or connect with one."
-msgstr "Es wurde kein öffentlicher Schlüssel angegeben oder zum Verbinden verwendet."
+msgstr ""
+"Es wurde kein öffentlicher Schlüssel angegeben oder zum Verbinden verwendet."
 
 #: certauth.cpp:160
 msgid "Key '{1}' added."
@@ -106,5 +108,5 @@ msgstr "Entfernt"
 
 #: certauth.cpp:290
 msgid "Allows users to authenticate via SSL client certificates."
-msgstr "Ermöglicht es Benutzern sich über SSL-Client-Zertifikate zu authentifizieren."
-
+msgstr ""
+"Ermöglicht es Benutzern sich über SSL-Client-Zertifikate zu authentifizieren."

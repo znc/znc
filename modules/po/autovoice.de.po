@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: autovoice.cpp:120
 msgid "List all users"
@@ -102,10 +101,14 @@ msgid "User {1} added with hostmask {2}"
 msgstr ""
 
 #: autovoice.cpp:360
-msgid "Each argument is either a channel you want autovoice for (which can include wildcards) or, if it starts with !, it is an exception for autovoice."
-msgstr "Jedes Argument ist entweder ein Kanel in dem autovoice aktiviert sein soll (wobei Wildcards erlaubt sind) oder, falls es mit einem ! beginnt, eine Ausnahme für autovoice."
+msgid ""
+"Each argument is either a channel you want autovoice for (which can include "
+"wildcards) or, if it starts with !, it is an exception for autovoice."
+msgstr ""
+"Jedes Argument ist entweder ein Kanel in dem autovoice aktiviert sein soll "
+"(wobei Wildcards erlaubt sind) oder, falls es mit einem ! beginnt, eine "
+"Ausnahme für autovoice."
 
 #: autovoice.cpp:365
 msgid "Auto voice the good people"
 msgstr ""
-

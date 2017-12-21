@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:9
 msgid "Send a raw IRC line"
@@ -108,4 +107,3 @@ msgstr ""
 #: send_raw.cpp:159
 msgid "Lets you send some raw IRC lines as/to someone else"
 msgstr ""
-
