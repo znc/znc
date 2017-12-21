@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:8
 msgid "User"
@@ -66,4 +65,3 @@ msgstr ""
 #: lastseen.cpp:153
 msgid "Collects data about when a user last logged in."
 msgstr ""
-

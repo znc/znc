@@ -2,7 +2,6 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Project-Id-Version: znc-bouncer\n"
 
 #: autocycle.cpp:27 autocycle.cpp:30
 msgid "[!]<#chan>"

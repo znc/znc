@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: autoop.cpp:154
 msgid "List all users"
@@ -138,12 +137,17 @@ msgid "User {1} added with hostmask(s) {2}"
 msgstr ""
 
 #: autoop.cpp:532
-msgid "[{1}] sent us a challenge but they are not opped in any defined channels."
-msgstr "[{1}] hat uns eine Challenge gesendet, aber ist in keinem der definierten Kanäle geopt."
+msgid ""
+"[{1}] sent us a challenge but they are not opped in any defined channels."
+msgstr ""
+"[{1}] hat uns eine Challenge gesendet, aber ist in keinem der definierten "
+"Kanäle geopt."
 
 #: autoop.cpp:536
 msgid "[{1}] sent us a challenge but they do not match a defined user."
-msgstr "[{1}] hat uns eine Challenge gesendet, aber entspricht keinem definierten Benutzer."
+msgstr ""
+"[{1}] hat uns eine Challenge gesendet, aber entspricht keinem definierten "
+"Benutzer."
 
 #: autoop.cpp:544
 msgid "WARNING! [{1}] sent an invalid challenge."
@@ -151,17 +155,23 @@ msgstr "WARNUNG! [{1}] hat eine ungültige Challenge gesendet."
 
 #: autoop.cpp:560
 msgid "[{1}] sent an unchallenged response.  This could be due to lag."
-msgstr "[{1}] hat eine unangeforderte Antwort gesendet. Dies könnte an Lag liegen."
+msgstr ""
+"[{1}] hat eine unangeforderte Antwort gesendet. Dies könnte an Lag liegen."
 
 #: autoop.cpp:577
-msgid "WARNING! [{1}] sent a bad response.  Please verify that you have their correct password."
-msgstr "WARNUNG! [{1}] hat eine schlechte Antwort gesendet. Bitte überprüfe, dass du deren korrektes Passwort hast."
+msgid ""
+"WARNING! [{1}] sent a bad response.  Please verify that you have their "
+"correct password."
+msgstr ""
+"WARNUNG! [{1}] hat eine schlechte Antwort gesendet. Bitte überprüfe, dass du "
+"deren korrektes Passwort hast."
 
 #: autoop.cpp:586
 msgid "WARNING! [{1}] sent a response but did not match any defined users."
-msgstr "WARNUNG! [{1}] hat eine Antwort gesendet, aber entspricht keinem definierten Benutzer."
+msgstr ""
+"WARNUNG! [{1}] hat eine Antwort gesendet, aber entspricht keinem definierten "
+"Benutzer."
 
 #: autoop.cpp:644
 msgid "Auto op the good people"
 msgstr "Gebe automatisch Op an die guten Leute"
-

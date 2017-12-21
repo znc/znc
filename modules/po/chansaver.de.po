@@ -11,9 +11,7 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: chansaver.cpp:91
 msgid "Keeps config up-to-date when user joins/parts."
 msgstr ""
-

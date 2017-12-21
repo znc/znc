@@ -11,9 +11,7 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: samplewebapi.cpp:59
 msgid "Sample Web API module."
 msgstr "Beispiel-Modul für die Web-API."
-

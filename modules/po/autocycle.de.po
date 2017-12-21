@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: autocycle.cpp:27 autocycle.cpp:30
 msgid "[!]<#chan>"
@@ -68,4 +67,3 @@ msgstr ""
 #: autocycle.cpp:234
 msgid "Rejoins channels to gain Op if you're the only user left"
 msgstr ""
-

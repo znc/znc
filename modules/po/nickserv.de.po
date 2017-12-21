@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: nickserv.cpp:31
 msgid "Password set"
@@ -46,7 +45,9 @@ msgid "nickname"
 msgstr ""
 
 #: nickserv.cpp:67
-msgid "Set NickServ name (Useful on networks like EpiKnet, where NickServ is named Themis"
+msgid ""
+"Set NickServ name (Useful on networks like EpiKnet, where NickServ is named "
+"Themis"
 msgstr ""
 
 #: nickserv.cpp:71
@@ -72,4 +73,3 @@ msgstr ""
 #: nickserv.cpp:144
 msgid "Auths you with NickServ (prefer SASL module instead)"
 msgstr ""
-

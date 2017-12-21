@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: keepnick.cpp:39
 msgid "Try to get your primary nick"
@@ -52,4 +51,3 @@ msgstr ""
 #: keepnick.cpp:226
 msgid "Keeps trying for your primary nick"
 msgstr ""
-

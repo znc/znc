@@ -11,9 +11,7 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: clearbufferonmsg.cpp:160
 msgid "Clears all channel and query buffers whenever the user does something"
 msgstr "Löscht alle Kanal- und Query-Puffer immer wenn der Benutzer etwas tut"
-

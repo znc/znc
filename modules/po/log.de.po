@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: log.cpp:59
 msgid "<rules>"
@@ -70,7 +69,8 @@ msgid "Logging enabled"
 msgstr ""
 
 #: log.cpp:189
-msgid "Usage: Set <var> true|false, where <var> is one of: joins, quits, nickchanges"
+msgid ""
+"Usage: Set <var> true|false, where <var> is one of: joins, quits, nickchanges"
 msgstr ""
 
 #: log.cpp:196
@@ -126,7 +126,9 @@ msgid "Not logging nick changes"
 msgstr ""
 
 #: log.cpp:351
-msgid "Invalid args [{1}]. Only one log path allowed.  Check that there are no spaces in the path."
+msgid ""
+"Invalid args [{1}]. Only one log path allowed.  Check that there are no "
+"spaces in the path."
 msgstr ""
 
 #: log.cpp:401
@@ -144,4 +146,3 @@ msgstr ""
 #: log.cpp:563
 msgid "Writes IRC logs."
 msgstr ""
-

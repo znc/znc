@@ -11,9 +11,9 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: stripcontrols.cpp:63
-msgid "Strips control codes (Colors, Bold, ..) from channel and private messages."
-msgstr "Entfernt Steuercodes (Farben, Fett,...) von Kanal- und Query-Nachrichten."
-
+msgid ""
+"Strips control codes (Colors, Bold, ..) from channel and private messages."
+msgstr ""
+"Entfernt Steuercodes (Farben, Fett,...) von Kanal- und Query-Nachrichten."

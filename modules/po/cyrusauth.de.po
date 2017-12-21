@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: cyrusauth.cpp:42
 msgid "Shows current settings"
@@ -22,7 +21,8 @@ msgid "yes|clone <username>|no"
 msgstr ""
 
 #: cyrusauth.cpp:45
-msgid "Create ZNC users upon first successful login, optionally from a template"
+msgid ""
+"Create ZNC users upon first successful login, optionally from a template"
 msgstr ""
 
 #: cyrusauth.cpp:56
@@ -50,7 +50,8 @@ msgid "We will not create users on their first login"
 msgstr ""
 
 #: cyrusauth.cpp:174 cyrusauth.cpp:195
-msgid "We will create users on their first login, using user [{1}] as a template"
+msgid ""
+"We will create users on their first login, using user [{1}] as a template"
 msgstr ""
 
 #: cyrusauth.cpp:177 cyrusauth.cpp:190
@@ -62,10 +63,11 @@ msgid "Usage: CreateUsers yes, CreateUsers no, or CreateUsers clone <username>"
 msgstr ""
 
 #: cyrusauth.cpp:232
-msgid "This global module takes up to two arguments - the methods of authentication - auxprop and saslauthd"
+msgid ""
+"This global module takes up to two arguments - the methods of authentication "
+"- auxprop and saslauthd"
 msgstr ""
 
 #: cyrusauth.cpp:238
 msgid "Allow users to authenticate via SASL password verification method"
 msgstr ""
-

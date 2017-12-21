@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:7 sasl.cpp:290
 msgid "SASL"
@@ -70,7 +69,8 @@ msgid "TLS certificate, for use with the *cert module"
 msgstr ""
 
 #: sasl.cpp:56
-msgid "Plain text negotiation, this should work always if the network supports SASL"
+msgid ""
+"Plain text negotiation, this should work always if the network supports SASL"
 msgstr ""
 
 #: sasl.cpp:62
@@ -86,7 +86,9 @@ msgid "[<username> [<password>]]"
 msgstr ""
 
 #: sasl.cpp:65
-msgid "Set username and password for the mechanisms that need them. Password is optional. Without parameters, returns information about current settings."
+msgid ""
+"Set username and password for the mechanisms that need them. Password is "
+"optional. Without parameters, returns information about current settings."
 msgstr ""
 
 #: sasl.cpp:69
@@ -166,6 +168,7 @@ msgid "{1} mechanism failed."
 msgstr ""
 
 #: sasl.cpp:335
-msgid "Adds support for sasl authentication capability to authenticate to an IRC server"
+msgid ""
+"Adds support for sasl authentication capability to authenticate to an IRC "
+"server"
 msgstr ""
-

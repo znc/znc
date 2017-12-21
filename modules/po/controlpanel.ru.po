@@ -3,7 +3,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Project-Id-Version: znc-bouncer\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: ru\n"
@@ -11,7 +12,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: controlpanel.cpp:51 controlpanel.cpp:63
 msgctxt "helptable"
@@ -44,15 +44,21 @@ msgid "The following variables are available when using the Set/Get commands:"
 msgstr ""
 
 #: controlpanel.cpp:145
-msgid "The following variables are available when using the SetNetwork/GetNetwork commands:"
+msgid ""
+"The following variables are available when using the SetNetwork/GetNetwork "
+"commands:"
 msgstr ""
 
 #: controlpanel.cpp:158
-msgid "The following variables are available when using the SetChan/GetChan commands:"
+msgid ""
+"The following variables are available when using the SetChan/GetChan "
+"commands:"
 msgstr ""
 
 #: controlpanel.cpp:164
-msgid "You can use $user as the user name and $network as the network name for modifying your own user and network."
+msgid ""
+"You can use $user as the user name and $network as the network name for "
+"modifying your own user and network."
 msgstr ""
 
 #: controlpanel.cpp:173 controlpanel.cpp:949 controlpanel.cpp:986
@@ -147,7 +153,8 @@ msgid "Channel {1} for user {2} added to network {3}."
 msgstr ""
 
 #: controlpanel.cpp:675
-msgid "Could not add channel {1} for user {2} to network {3}, does it already exist?"
+msgid ""
+"Could not add channel {1} for user {2} to network {3}, does it already exist?"
 msgstr ""
 
 #: controlpanel.cpp:685
@@ -273,7 +280,9 @@ msgid "Usage: AddNetwork [user] network"
 msgstr ""
 
 #: controlpanel.cpp:1029
-msgid "Network number limit reached. Ask an admin to increase the limit for you, or delete unneeded networks using /znc DelNetwork <name>"
+msgid ""
+"Network number limit reached. Ask an admin to increase the limit for you, or "
+"delete unneeded networks using /znc DelNetwork <name>"
 msgstr ""
 
 #: controlpanel.cpp:1037
@@ -396,7 +405,8 @@ msgid "Usage: AddCTCP [user] [request] [reply]"
 msgstr ""
 
 #: controlpanel.cpp:1298
-msgid "This will cause ZNC to reply to the CTCP instead of forwarding it to clients."
+msgid ""
+"This will cause ZNC to reply to the CTCP instead of forwarding it to clients."
 msgstr ""
 
 #: controlpanel.cpp:1301
@@ -420,7 +430,9 @@ msgid "CTCP requests {1} to user {2} will now be sent to IRC clients"
 msgstr ""
 
 #: controlpanel.cpp:1341
-msgid "CTCP requests {1} to user {2} will be sent to IRC clients (nothing has changed)"
+msgid ""
+"CTCP requests {1} to user {2} will be sent to IRC clients (nothing has "
+"changed)"
 msgstr ""
 
 #: controlpanel.cpp:1351 controlpanel.cpp:1425
@@ -702,6 +714,7 @@ msgid "List all networks for a user"
 msgstr ""
 
 #: controlpanel.cpp:1644
-msgid "Dynamic configuration through IRC. Allows editing only yourself if you're not ZNC admin."
+msgid ""
+"Dynamic configuration through IRC. Allows editing only yourself if you're "
+"not ZNC admin."
 msgstr ""
-

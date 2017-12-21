@@ -3,7 +3,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Project-Id-Version: znc-bouncer\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: ru\n"
@@ -11,7 +12,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #  this text is inserted into `click here` in the other string
 #: modules/po/../data/cert/tmpl/index.tmpl:5
@@ -20,8 +20,12 @@ msgstr "сюда"
 
 #  {1} is `here`, translateable in the other string
 #: modules/po/../data/cert/tmpl/index.tmpl:6
-msgid "You already have a certificate set, use the form below to overwrite the current certificate. Alternatively click {1} to delete your certificate."
-msgstr "У вас уже есть сертификат, с помощью формы ниже можно его изменить. Чтобы удалить сертификат, нажмите {1}."
+msgid ""
+"You already have a certificate set, use the form below to overwrite the "
+"current certificate. Alternatively click {1} to delete your certificate."
+msgstr ""
+"У вас уже есть сертификат, с помощью формы ниже можно его изменить. Чтобы "
+"удалить сертификат, нажмите {1}."
 
 #: modules/po/../data/cert/tmpl/index.tmpl:8
 msgid "You do not have a certificate yet."
@@ -52,7 +56,9 @@ msgid "You have a certificate in {1}"
 msgstr "Ваш сертификат лежит в {1}"
 
 #: cert.cpp:41
-msgid "You do not have a certificate. Please use the web interface to add a certificate"
+msgid ""
+"You do not have a certificate. Please use the web interface to add a "
+"certificate"
 msgstr "У вас нет сертификата. Пожалуйста, добавьте его через веб-интерфейс."
 
 #: cert.cpp:44
@@ -70,4 +76,3 @@ msgstr "Показать текущий сертификат"
 #: cert.cpp:105
 msgid "Use a ssl certificate to connect to a server"
 msgstr "Соединение с сервером с помошью сертификата SSL"
-

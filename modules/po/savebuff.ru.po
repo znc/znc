@@ -3,7 +3,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Project-Id-Version: znc-bouncer\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: ru\n"
@@ -11,7 +12,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: savebuff.cpp:65
 msgid "<password>"
@@ -34,7 +34,10 @@ msgid "Saves all buffers"
 msgstr ""
 
 #: savebuff.cpp:221
-msgid "Password is unset usually meaning the decryption failed. You can setpass to the appropriate pass and things should start working, or setpass to a new pass and save to reinstantiate"
+msgid ""
+"Password is unset usually meaning the decryption failed. You can setpass to "
+"the appropriate pass and things should start working, or setpass to a new "
+"pass and save to reinstantiate"
 msgstr ""
 
 #: savebuff.cpp:232
@@ -50,10 +53,11 @@ msgid "Unable to decode Encrypted file {1}"
 msgstr ""
 
 #: savebuff.cpp:358
-msgid "This user module takes up to one arguments. Either --ask-pass or the password itself (which may contain spaces) or nothing"
+msgid ""
+"This user module takes up to one arguments. Either --ask-pass or the "
+"password itself (which may contain spaces) or nothing"
 msgstr ""
 
 #: savebuff.cpp:363
 msgid "Stores channel and query buffers to disk, encrypted"
 msgstr ""
-

@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: autoattach.cpp:94
 msgid "Added to list"
@@ -84,4 +83,3 @@ msgstr ""
 #: autoattach.cpp:286
 msgid "Reattaches you to channels on activity."
 msgstr ""
-

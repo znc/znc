@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: sample.cpp:31
 msgid "Sample job cancelled"
@@ -118,4 +117,3 @@ msgstr "Modulbeschreibung kommt hier hin."
 #: sample.cpp:333
 msgid "To be used as a sample for writing modules"
 msgstr "Als Muster zum Schreiben von Modulen zu verwenden"
-

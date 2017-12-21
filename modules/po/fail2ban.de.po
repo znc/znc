@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: fail2ban.cpp:25
 msgid "[minutes]"
@@ -19,7 +18,9 @@ msgstr "[Minuten]"
 
 #: fail2ban.cpp:26
 msgid "The number of minutes IPs are blocked after a failed login."
-msgstr "Die Anzahl an Minuten, die IPs nach einem fehlgeschlagenen Anmeldeversuch blockiert werden."
+msgstr ""
+"Die Anzahl an Minuten, die IPs nach einem fehlgeschlagenen Anmeldeversuch "
+"blockiert werden."
 
 #: fail2ban.cpp:28
 msgid "[count]"
@@ -46,7 +47,9 @@ msgid "List banned hosts."
 msgstr ""
 
 #: fail2ban.cpp:55
-msgid "Invalid argument, must be the number of minutes IPs are blocked after a failed login and can be followed by number of allowed failed login attempts"
+msgid ""
+"Invalid argument, must be the number of minutes IPs are blocked after a "
+"failed login and can be followed by number of allowed failed login attempts"
 msgstr ""
 
 #: fail2ban.cpp:77 fail2ban.cpp:100 fail2ban.cpp:123 fail2ban.cpp:146
@@ -106,10 +109,11 @@ msgid "No bans"
 msgstr ""
 
 #: fail2ban.cpp:244
-msgid "You might enter the time in minutes for the IP banning and the number of failed logins before any action is taken."
+msgid ""
+"You might enter the time in minutes for the IP banning and the number of "
+"failed logins before any action is taken."
 msgstr ""
 
 #: fail2ban.cpp:249
 msgid "Block IPs for some time after a failed login."
 msgstr "Blockiere IPs für eine Weile nach fehlgeschlagenen Anmeldungen."
-

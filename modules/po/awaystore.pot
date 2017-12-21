@@ -2,7 +2,6 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Project-Id-Version: znc-bouncer\n"
 
 #: awaystore.cpp:67
 msgid "You have been marked as away"

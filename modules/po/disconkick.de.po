@@ -11,13 +11,13 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: disconkick.cpp:32
 msgid "You have been disconnected from the IRC server"
 msgstr ""
 
 #: disconkick.cpp:45
-msgid "Kicks the client from all channels when the connection to the IRC server is lost"
+msgid ""
+"Kicks the client from all channels when the connection to the IRC server is "
+"lost"
 msgstr ""
-

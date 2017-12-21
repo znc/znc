@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: modules/po/../data/q/tmpl/index.tmpl:11
 msgid "Username:"
@@ -38,7 +37,10 @@ msgid "Save"
 msgstr ""
 
 #: q.cpp:74
-msgid "Notice: Your host will be cloaked the next time you reconnect to IRC. If you want to cloak your host now, /msg *q Cloak. You can set your preference with /msg *q Set UseCloakedHost true/false."
+msgid ""
+"Notice: Your host will be cloaked the next time you reconnect to IRC. If you "
+"want to cloak your host now, /msg *q Cloak. You can set your preference "
+"with /msg *q Set UseCloakedHost true/false."
 msgstr ""
 
 #: q.cpp:111
@@ -123,7 +125,9 @@ msgid "Whether to cloak your hostname (+x) automatically on connect."
 msgstr ""
 
 #: q.cpp:169 q.cpp:381
-msgid "Whether to use the CHALLENGEAUTH mechanism to avoid sending passwords in cleartext."
+msgid ""
+"Whether to use the CHALLENGEAUTH mechanism to avoid sending passwords in "
+"cleartext."
 msgstr ""
 
 #: q.cpp:175 q.cpp:389
@@ -244,7 +248,9 @@ msgid "Cloak: Trying to cloak your hostname, setting +x..."
 msgstr ""
 
 #: q.cpp:452
-msgid "You have to set a username and password to use this module! See 'help' for details."
+msgid ""
+"You have to set a username and password to use this module! See 'help' for "
+"details."
 msgstr ""
 
 #: q.cpp:458
@@ -268,7 +274,9 @@ msgid "Authentication successful: {1}"
 msgstr ""
 
 #: q.cpp:539
-msgid "Auth failed: Q does not support HMAC-SHA-256 for CHALLENGEAUTH, falling back to standard AUTH."
+msgid ""
+"Auth failed: Q does not support HMAC-SHA-256 for CHALLENGEAUTH, falling back "
+"to standard AUTH."
 msgstr ""
 
 #: q.cpp:566
@@ -286,4 +294,3 @@ msgstr ""
 #: q.cpp:689
 msgid "Auths you with QuakeNet's Q bot."
 msgstr ""
-

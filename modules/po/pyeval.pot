@@ -2,7 +2,6 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Project-Id-Version: znc-bouncer\n"
 
 #: pyeval.py:49
 msgid "You must have admin privileges to load this module."

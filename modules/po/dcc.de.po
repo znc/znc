@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: dcc.cpp:88
 msgid "<nick> <file>"
@@ -46,7 +45,8 @@ msgid "Receiving [{1}] from [{2}]: File already exists."
 msgstr ""
 
 #: dcc.cpp:167
-msgid "Attempting to connect to [{1} {2}] in order to download [{3}] from [{4}]."
+msgid ""
+"Attempting to connect to [{1} {2}] in order to download [{3}] from [{4}]."
 msgstr ""
 
 #: dcc.cpp:179
@@ -225,4 +225,3 @@ msgstr ""
 #: dcc.cpp:623
 msgid "This module allows you to transfer files to and from ZNC"
 msgstr ""
-

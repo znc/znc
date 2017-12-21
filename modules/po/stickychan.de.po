@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: modules/po/../data/stickychan/tmpl/index.tmpl:9
 msgid "Name"
@@ -90,7 +89,8 @@ msgid "Channel stopped being sticky!"
 msgstr ""
 
 #: stickychan.cpp:211
-msgid "Channel {1} cannot be joined, it is an illegal channel name. Unsticking."
+msgid ""
+"Channel {1} cannot be joined, it is an illegal channel name. Unsticking."
 msgstr ""
 
 #: stickychan.cpp:248
@@ -100,4 +100,3 @@ msgstr ""
 #: stickychan.cpp:253
 msgid "configless sticky chans, keeps you there very stickily even"
 msgstr ""
-

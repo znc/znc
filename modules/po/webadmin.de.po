@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:12
 msgid "Channel Info"
@@ -98,7 +97,9 @@ msgid "&lt;network&gt;"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:14
-msgid "To connect to this network from your IRC client, you can set the server password field as <code>{1}</code> or username field as <code>{2}</code>"
+msgid ""
+"To connect to this network from your IRC client, you can set the server "
+"password field as <code>{1}</code> or username field as <code>{2}</code>"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:24
@@ -106,7 +107,9 @@ msgid "Network Info"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:25
-msgid "Nick, AltNick, Ident, RealName, BindHost can be left empty to use the value from the user."
+msgid ""
+"Nick, AltNick, Ident, RealName, BindHost can be left empty to use the value "
+"from the user."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:29
@@ -184,7 +187,8 @@ msgid "Trust all certs:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:79
-msgid "Disable certificate validation (takes precedence over TrustPKI). INSECURE!"
+msgid ""
+"Disable certificate validation (takes precedence over TrustPKI). INSECURE!"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:83
@@ -192,7 +196,9 @@ msgid "Trust the PKI:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:85
-msgid "Setting this to false will trust only certificates you added fingerprints for."
+msgid ""
+"Setting this to false will trust only certificates you added fingerprints "
+"for."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:89
@@ -227,7 +233,9 @@ msgid "SHA-256 fingerprints of trusted SSL certificates of this IRC network:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:120
-msgid "When these certificates are encountered, checks for hostname, expiration date, CA are skipped"
+msgid ""
+"When these certificates are encountered, checks for hostname, expiration "
+"date, CA are skipped"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:124
@@ -235,7 +243,10 @@ msgid "Flood protection:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:127
-msgid "You might enable the flood protection. This prevents “excess flood” errors, which occur, when your IRC bot is command flooded or spammed. After changing this, reconnect ZNC to server."
+msgid ""
+"You might enable the flood protection. This prevents “excess flood” errors, "
+"which occur, when your IRC bot is command flooded or spammed. After changing "
+"this, reconnect ZNC to server."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:130
@@ -248,7 +259,8 @@ msgid "Flood protection rate:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:137
-msgid "The number of seconds per line. After changing this, reconnect ZNC to server."
+msgid ""
+"The number of seconds per line. After changing this, reconnect ZNC to server."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:140
@@ -260,7 +272,9 @@ msgid "Flood protection burst:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:147
-msgid "Defines the number of lines, which can be sent immediately. After changing this, reconnect ZNC to server."
+msgid ""
+"Defines the number of lines, which can be sent immediately. After changing "
+"this, reconnect ZNC to server."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:150
@@ -272,7 +286,9 @@ msgid "Channel join delay:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:157
-msgid "Defines the delay in seconds, until channels are joined after getting connected."
+msgid ""
+"Defines the delay in seconds, until channels are joined after getting "
+"connected."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:160
@@ -293,7 +309,8 @@ msgid "Channels"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:178
-msgid "You will be able to add + modify channels here after you created the network."
+msgid ""
+"You will be able to add + modify channels here after you created the network."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:185
@@ -417,7 +434,9 @@ msgid "Allowed IPs:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:48
-msgid "Leave empty to allow connections from all IPs.<br/>Otherwise, one entry per line, wildcards * and ? are available."
+msgid ""
+"Leave empty to allow connections from all IPs.<br/>Otherwise, one entry per "
+"line, wildcards * and ? are available."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:56
@@ -425,7 +444,9 @@ msgid "IRC Information"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:58
-msgid "Nick, AltNick, Ident, RealName and QuitMsg can be left empty to use default values."
+msgid ""
+"Nick, AltNick, Ident, RealName and QuitMsg can be left empty to use default "
+"values."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:76
@@ -470,11 +491,15 @@ msgid "← Add a network (opens in same page)"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:154
-msgid "You will be able to add + modify networks here after you have cloned the user."
+msgid ""
+"You will be able to add + modify networks here after you have cloned the "
+"user."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:156
-msgid "You will be able to add + modify networks here after you have created the user."
+msgid ""
+"You will be able to add + modify networks here after you have created the "
+"user."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:172
@@ -483,7 +508,8 @@ msgid "Loaded by networks"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:231
-msgid "These are the default modes ZNC will set when you join an empty channel."
+msgid ""
+"These are the default modes ZNC will set when you join an empty channel."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:232
@@ -493,7 +519,10 @@ msgid "Empty = use standard value"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:237
-msgid "This is the amount of lines that the playback buffer will store for channels before dropping off the oldest line. The buffers are stored in the memory by default."
+msgid ""
+"This is the amount of lines that the playback buffer will store for channels "
+"before dropping off the oldest line. The buffers are stored in the memory by "
+"default."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:245
@@ -509,7 +538,10 @@ msgid "Maximum number of query buffers. 0 is unlimited."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:256
-msgid "This is the amount of lines that the playback buffer will store for queries before dropping off the oldest line. The buffers are stored in the memory by default."
+msgid ""
+"This is the amount of lines that the playback buffer will store for queries "
+"before dropping off the oldest line. The buffers are stored in the memory by "
+"default."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:279
@@ -517,7 +549,8 @@ msgid "ZNC Behavior"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:280
-msgid "Any of the following text boxes can be left empty to use their default value."
+msgid ""
+"Any of the following text boxes can be left empty to use their default value."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:284
@@ -525,7 +558,10 @@ msgid "Timestamp Format:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:286
-msgid "The format for the timestamps used in buffers, for example [%H:%M:%S]. This setting is ignored in new IRC clients, which use server-time. If your client supports server-time, change timestamp format in client settings instead."
+msgid ""
+"The format for the timestamps used in buffers, for example [%H:%M:%S]. This "
+"setting is ignored in new IRC clients, which use server-time. If your client "
+"supports server-time, change timestamp format in client settings instead."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:289
@@ -549,7 +585,9 @@ msgid "Join Tries:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:308
-msgid "This defines how many times ZNC tries to join a channel, if the first join failed, e.g. due to channel mode +i/+k or if you are banned."
+msgid ""
+"This defines how many times ZNC tries to join a channel, if the first join "
+"failed, e.g. due to channel mode +i/+k or if you are banned."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:311
@@ -557,7 +595,9 @@ msgid "Join speed:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:313
-msgid "How many channels are joined in one JOIN command. 0 is unlimited (default). Set to small positive value if you get disconnected with “Max SendQ Exceeded”"
+msgid ""
+"How many channels are joined in one JOIN command. 0 is unlimited (default). "
+"Set to small positive value if you get disconnected with “Max SendQ Exceeded”"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:316
@@ -565,7 +605,10 @@ msgid "Timeout before reconnect:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:318
-msgid "How much time ZNC waits (in seconds) until it receives something from network or declares the connection timeout. This happens after attempts to ping the peer."
+msgid ""
+"How much time ZNC waits (in seconds) until it receives something from "
+"network or declares the connection timeout. This happens after attempts to "
+"ping the peer."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:321
@@ -712,7 +755,8 @@ msgid "Welcome to the ZNC webadmin module."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/index.tmpl:6
-msgid "All changes you make will be in effect immediately after you submitted them."
+msgid ""
+"All changes you make will be in effect immediately after you submitted them."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:16
@@ -753,7 +797,9 @@ msgid "URIPrefix"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:56
-msgid "To delete port which you use to access webadmin itself, either connect to webadmin via another port, or do it in IRC (/znc DelPort)"
+msgid ""
+"To delete port which you use to access webadmin itself, either connect to "
+"webadmin via another port, or do it in IRC (/znc DelPort)"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:56
@@ -781,7 +827,10 @@ msgid "Connect Delay:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:119
-msgid "The time between connection attempts to IRC servers, in seconds. This affects the connection between ZNC and the IRC server; not the connection between your IRC client and ZNC."
+msgid ""
+"The time between connection attempts to IRC servers, in seconds. This "
+"affects the connection between ZNC and the IRC server; not the connection "
+"between your IRC client and ZNC."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:124
@@ -789,7 +838,9 @@ msgid "Server Throttle:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:126
-msgid "The minimal time between two connect attempts to the same hostname, in seconds. Some servers refuse your connection if you reconnect too fast."
+msgid ""
+"The minimal time between two connect attempts to the same hostname, in "
+"seconds. Some servers refuse your connection if you reconnect too fast."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:131
@@ -1019,7 +1070,9 @@ msgid "Edit Network [{1}] of User [{2}]"
 msgstr ""
 
 #: webadmin.cpp:889 webadmin.cpp:1066
-msgid "Network number limit reached. Ask an admin to increase the limit for you, or delete unneeded networks from Your Settings."
+msgid ""
+"Network number limit reached. Ask an admin to increase the limit for you, or "
+"delete unneeded networks from Your Settings."
 msgstr ""
 
 #: webadmin.cpp:897
@@ -1063,7 +1116,9 @@ msgid "Clone User [{1}]"
 msgstr ""
 
 #: webadmin.cpp:1506
-msgid "Automatically Clear Channel Buffer After Playback (the default value for new channels)"
+msgid ""
+"Automatically Clear Channel Buffer After Playback (the default value for new "
+"channels)"
 msgstr ""
 
 #: webadmin.cpp:1516
@@ -1137,4 +1192,3 @@ msgstr ""
 #: webadmin.cpp:2084
 msgid "Settings were changed, but config file was not written"
 msgstr ""
-

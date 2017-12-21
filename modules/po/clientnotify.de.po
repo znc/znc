@@ -11,7 +11,6 @@ msgstr ""
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2017-12-14 20:23-0500\n"
 
 #: clientnotify.cpp:47
 msgid "<message|notice|off>"
@@ -27,7 +26,8 @@ msgstr ""
 
 #: clientnotify.cpp:51
 msgid "Turns notifications for unseen IP addresses on or off"
-msgstr "Schaltet Benachrichtigungen für bisher nicht gesehene IP-Adressen an oder aus"
+msgstr ""
+"Schaltet Benachrichtigungen für bisher nicht gesehene IP-Adressen an oder aus"
 
 #: clientnotify.cpp:55
 msgid "Turns notifications for clients disconnecting on or off"
@@ -39,9 +39,13 @@ msgstr "Zeigt die aktuellen Einstellungen an"
 
 #: clientnotify.cpp:81 clientnotify.cpp:95
 msgid "<This message is impossible for 1 client>"
-msgid_plural "Another client authenticated as your user. Use the 'ListClients' command to see all {1} clients."
+msgid_plural ""
+"Another client authenticated as your user. Use the 'ListClients' command to "
+"see all {1} clients."
 msgstr[0] ""
-msgstr[1] "Ein anderer Client hat sich als dein Benutzer authentifiziert. Verwende den 'ListClients'-Befehl um alle {1} Clients zu sehen."
+msgstr[1] ""
+"Ein anderer Client hat sich als dein Benutzer authentifiziert. Verwende den "
+"'ListClients'-Befehl um alle {1} Clients zu sehen."
 
 #: clientnotify.cpp:108
 msgid "Usage: Method <message|notice|off>"
@@ -60,10 +64,15 @@ msgid "Usage: OnDisconnect <on|off>"
 msgstr "Verwendung: OnDisconnect <on|off>"
 
 #: clientnotify.cpp:145
-msgid "Current settings: Method: {1}, for unseen IP addresses only: {2}, notify on disconnecting clients: {3}"
+msgid ""
+"Current settings: Method: {1}, for unseen IP addresses only: {2}, notify on "
+"disconnecting clients: {3}"
 msgstr ""
 
 #: clientnotify.cpp:157
-msgid "Notifies you when another IRC client logs into or out of your account. Configurable."
-msgstr "Benachrichtigt dicht wenn ein anderer IRC-Client in deinen Account ein- oder aus deinem Account ausloggt. Konfigurierbar."
-
+msgid ""
+"Notifies you when another IRC client logs into or out of your account. "
+"Configurable."
+msgstr ""
+"Benachrichtigt dicht wenn ein anderer IRC-Client in deinen Account ein- oder "
+"aus deinem Account ausloggt. Konfigurierbar."
