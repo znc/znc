@@ -38,6 +38,8 @@ timestamps {
             sh "$crowdin_cli download --branch ${upstream_branch}"
           }
         }
+        sh 'find . -name "*.po" -exec msgfilter -i "{}" -o "{}.replacement" .ci/cleanup-po.pl ";"'
+        sh 'find . -name "*.po" -exec mv "{}.replacement" "{}" ";"'
       }
       stage('Push') {
         sh 'git config user.name "ZNC-Jenkins"'
