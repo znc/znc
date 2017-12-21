@@ -120,32 +120,32 @@ TEST_F(UserTest, IsHostAllowed) {
     }
 }
 
-TEST_F(UserTest, TestOnlyModulesMayAuth) {
+TEST_F(UserTest, TestAuthOnlyViaModule) {
     CUser user("user");
     user.SetPass("password", CUser::HASH_NONE);
 
-    bool bOnlyModulesMayAuthDefault = CZNC::Get().GetOnlyModulesMayAuth();
+    bool bAuthOnlyViaModuleDefault = CZNC::Get().GetAuthOnlyViaModule();
 
-    CZNC::Get().SetOnlyModulesMayAuth(false);
-    user.SetOnlyModulesMayAuth(false);
+    CZNC::Get().SetAuthOnlyViaModule(false);
+    user.SetAuthOnlyViaModule(false);
 
     EXPECT_TRUE(user.CheckPass("password"));
 
     // user-level only
-    user.SetOnlyModulesMayAuth(true);
+    user.SetAuthOnlyViaModule(true);
     EXPECT_FALSE(user.CheckPass("password"));
 
     // re-enabling built-in authentication
-    user.SetOnlyModulesMayAuth(false);
+    user.SetAuthOnlyViaModule(false);
     EXPECT_TRUE(user.CheckPass("password"));
 
     // on at global level, off at user level
-    CZNC::Get().SetOnlyModulesMayAuth(true);
+    CZNC::Get().SetAuthOnlyViaModule(true);
     EXPECT_FALSE(user.CheckPass("password"));
 
     // on at both levels
-    user.SetOnlyModulesMayAuth(true);
+    user.SetAuthOnlyViaModule(true);
     EXPECT_FALSE(user.CheckPass("password"));
 
-    CZNC::Get().SetOnlyModulesMayAuth(bOnlyModulesMayAuthDefault);
+    CZNC::Get().SetAuthOnlyViaModule(bAuthOnlyViaModuleDefault);
 }

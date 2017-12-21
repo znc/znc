@@ -210,13 +210,13 @@ class CWebAdminMod : public CModule {
             pNewUser->SetPass(sHash, CUser::HASH_DEFAULT, sSalt);
         }
 
-        sArg = WebSock.GetParam("onlymodulesmayauth");
+        sArg = WebSock.GetParam("authonlyviamodule");
         if (spSession->IsAdmin()) {
             if (!sArg.empty()) {
-                pNewUser->SetOnlyModulesMayAuth(sArg.ToBool());
+                pNewUser->SetAuthOnlyViaModule(sArg.ToBool());
             }
         } else if (pUser) {
-            pNewUser->SetOnlyModulesMayAuth(pUser->OnlyModulesMayAuth());
+            pNewUser->SetAuthOnlyViaModule(pUser->AuthOnlyViaModule());
         }
 
         VCString vsArgs;
@@ -353,14 +353,14 @@ class CWebAdminMod : public CModule {
             pNewUser->SetDenyLoadMod(WebSock.GetParam("denyloadmod").ToBool());
             pNewUser->SetDenySetBindHost(
                 WebSock.GetParam("denysetbindhost").ToBool());
-            pNewUser->SetOnlyModulesMayAuth(
-                WebSock.GetParam("onlymodulesmayauth").ToBool());
+            pNewUser->SetAuthOnlyViaModule(
+                WebSock.GetParam("authonlyviamodule").ToBool());
             sArg = WebSock.GetParam("maxnetworks");
             if (!sArg.empty()) pNewUser->SetMaxNetworks(sArg.ToUInt());
         } else if (pUser) {
             pNewUser->SetDenyLoadMod(pUser->DenyLoadMod());
             pNewUser->SetDenySetBindHost(pUser->DenySetBindHost());
-            pNewUser->SetOnlyModulesMayAuth(pUser->OnlyModulesMayAuth());
+            pNewUser->SetAuthOnlyViaModule(pUser->AuthOnlyViaModule());
             pNewUser->SetMaxNetworks(pUser->MaxNetworks());
         }
 
@@ -1339,7 +1339,7 @@ class CWebAdminMod : public CModule {
             Tmpl["ImAdmin"] = CString(spSession->IsAdmin());
 
             Tmpl["Username"] = pUser->GetUserName();
-            Tmpl["OnlyModulesMayAuth"] = CString(pUser->OnlyModulesMayAuth());
+            Tmpl["AuthOnlyViaModule"] = CString(pUser->AuthOnlyViaModule());
             Tmpl["Nick"] = pUser->GetNick();
             Tmpl["AltNick"] = pUser->GetAltNick();
             Tmpl["StatusPrefix"] = pUser->GetStatusPrefix();
@@ -1885,7 +1885,7 @@ class CWebAdminMod : public CModule {
             Tmpl["ProtectWebSessions"] =
                 CString(CZNC::Get().GetProtectWebSessions());
             Tmpl["HideVersion"] = CString(CZNC::Get().GetHideVersion());
-            Tmpl["OnlyModulesMayAuth"] = CString(CZNC::Get().GetOnlyModulesMayAuth());
+            Tmpl["AuthOnlyViaModule"] = CString(CZNC::Get().GetAuthOnlyViaModule());
 
             const VCString& vsMotd = CZNC::Get().GetMotd();
             for (const CString& sMotd : vsMotd) {
@@ -2032,8 +2032,8 @@ class CWebAdminMod : public CModule {
         CZNC::Get().SetProtectWebSessions(sArg.ToBool());
         sArg = WebSock.GetParam("hideversion");
         CZNC::Get().SetHideVersion(sArg.ToBool());
-        sArg = WebSock.GetParam("onlymodulesmayauth");
-        CZNC::Get().SetOnlyModulesMayAuth(sArg.ToBool());
+        sArg = WebSock.GetParam("authonlyviamodule");
+        CZNC::Get().SetAuthOnlyViaModule(sArg.ToBool());
 
         VCString vsArgs;
         WebSock.GetRawParam("motd").Split("\n", vsArgs);

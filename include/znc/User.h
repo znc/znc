@@ -150,7 +150,7 @@ class CUser {
     void SetTimestampFormat(const CString& s) { m_sTimestampFormat = s; }
     void SetTimestampAppend(bool b) { m_bAppendTimestamp = b; }
     void SetTimestampPrepend(bool b) { m_bPrependTimestamp = b; }
-    void SetOnlyModulesMayAuth(bool b) { m_bOnlyModulesMayAuth = b; }
+    void SetAuthOnlyViaModule(bool b) { m_bAuthOnlyViaModule = b; }
     void SetTimezone(const CString& s) { m_sTimezone = s; }
     void SetJoinTries(unsigned int i) { m_uMaxJoinTries = i; }
     void SetMaxJoins(unsigned int i) { m_uMaxJoins = i; }
@@ -186,7 +186,7 @@ class CUser {
     bool IsAdmin() const;
     bool DenySetBindHost() const;
     bool MultiClients() const;
-    bool OnlyModulesMayAuth() const;
+    bool AuthOnlyViaModule() const;
     const CString& GetStatusPrefix() const;
     const CString& GetDefaultChanModes() const;
     /** How long must an IRC connection be idle before ZNC sends a ping */
@@ -252,7 +252,7 @@ class CUser {
     bool m_bBeingDeleted;
     bool m_bAppendTimestamp;
     bool m_bPrependTimestamp;
-    bool m_bOnlyModulesMayAuth;
+    bool m_bAuthOnlyViaModule;
 
     CUserTimer* m_pUserTimer;
 

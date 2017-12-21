@@ -41,10 +41,10 @@
 						   title="<? FORMAT "Please re-type the above password." ?>"/>
 				</div>
 				<div class="subsection">
-					<div class="inputlabel"><label for="onlymodulesmayauth"><? FORMAT "Only Modules May Authenticate:" ?></label></div>
-					<input id="onlymodulesmayauth" type="checkbox" name="onlymodulesmayauth"
+					<div class="inputlabel"><label for="authonlyviamodule"><? FORMAT "Auth Only Via Module:" ?></label></div>
+					<input id="authonlyviamodule" type="checkbox" name="authonlyviamodule"
 						    title="<? FORMAT "Allow user authentication by external modules only, disabling built-in password authentication." ?>"
-						    <? IF OnlyModulesMayAuth ?>checked="checked" <? ENDIF ?><? IF !ImAdmin ?>disabled="disabled" <? ENDIF ?>/>
+						    <? IF AuthOnlyViaModule ?>checked="checked" <? ENDIF ?><? IF !ImAdmin ?>disabled="disabled" <? ENDIF ?>/>
 				</div>
 				<div class="subsection half">
 					<div class="inputlabel"><label for="allowedips"><? FORMAT "Allowed IPs:" ?></label></div>
