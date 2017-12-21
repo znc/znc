@@ -124,6 +124,8 @@ TEST_F(UserTest, TestOnlyModulesMayAuth) {
     CUser user("user");
     user.SetPass("password", CUser::HASH_NONE);
 
+    bool bOnlyModulesMayAuthDefault = CZNC::Get().GetOnlyModulesMayAuth();
+
     CZNC::Get().SetOnlyModulesMayAuth(false);
     user.SetOnlyModulesMayAuth(false);
 
@@ -144,4 +146,6 @@ TEST_F(UserTest, TestOnlyModulesMayAuth) {
     // on at both levels
     user.SetOnlyModulesMayAuth(true);
     EXPECT_FALSE(user.CheckPass("password"));
+
+    CZNC::Get().SetOnlyModulesMayAuth(bOnlyModulesMayAuthDefault);
 }
