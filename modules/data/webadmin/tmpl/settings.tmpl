@@ -147,6 +147,12 @@
 						<label for="hideversion_checkbox"><? FORMAT "Hide version number from non-ZNC users" ?></label></div>
 				</div>
 
+				<div class="subsection">
+					<div class="inputlabel"><? FORMAT "Auth Only Via Module:" ?></div>
+					<div class="checkbox"><input type="checkbox" name="authonlyviamodule" id="authonlyviamodule_checkbox"<? IF AuthOnlyViaModule ?> checked="checked"<? ENDIF ?> />
+						<label for="authonlyviamodule_checkbox"><? FORMAT "Allow user authentication by external modules only" ?></label></div>
+				</div>
+
 
 				<div class="subsection twothird">
 					<div class="inputlabel"><label for="motd"><? FORMAT "MOTD:" ?></label></div>

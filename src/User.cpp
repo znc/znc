@@ -88,6 +88,7 @@ CUser::CUser(const CString& sUserName)
       m_bBeingDeleted(false),
       m_bAppendTimestamp(false),
       m_bPrependTimestamp(true),
+      m_bAuthOnlyViaModule(false),
       m_pUserTimer(nullptr),
       m_vIRCNetworks(),
       m_vClients(),
@@ -170,6 +171,7 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
         {"denysetvhost", &CUser::SetDenySetBindHost},
         {"appendtimestamp", &CUser::SetTimestampAppend},
         {"prependtimestamp", &CUser::SetTimestampPrepend},
+        {"authonlyviamodule", &CUser::SetAuthOnlyViaModule},
     };
 
     for (const auto& Option : StringOptions) {
@@ -801,6 +803,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
     SetDenyLoadMod(User.DenyLoadMod());
     SetAdmin(User.IsAdmin());
     SetDenySetBindHost(User.DenySetBindHost());
+    SetAuthOnlyViaModule(User.AuthOnlyViaModule());
     SetTimestampAppend(User.GetTimestampAppend());
     SetTimestampPrepend(User.GetTimestampPrepend());
     SetTimestampFormat(User.GetTimestampFormat());
@@ -963,6 +966,7 @@ CConfig CUser::ToConfig() const {
     config.AddKeyValuePair("TimestampFormat", GetTimestampFormat());
     config.AddKeyValuePair("AppendTimestamp", CString(GetTimestampAppend()));
     config.AddKeyValuePair("PrependTimestamp", CString(GetTimestampPrepend()));
+    config.AddKeyValuePair("AuthOnlyViaModule", CString(AuthOnlyViaModule()));
     config.AddKeyValuePair("Timezone", m_sTimezone);
     config.AddKeyValuePair("JoinTries", CString(m_uMaxJoinTries));
     config.AddKeyValuePair("MaxNetworks", CString(m_uMaxNetworks));
@@ -1012,6 +1016,10 @@ CConfig CUser::ToConfig() const {
 }
 
 bool CUser::CheckPass(const CString& sPass) const {
+    if(AuthOnlyViaModule() || CZNC::Get().GetAuthOnlyViaModule()) {
+        return false;
+    }
+
     switch (m_eHashType) {
         case HASH_MD5:
             return m_sPass.Equals(CUtils::SaltedMD5Hash(sPass, m_sPassSalt));
@@ -1370,6 +1378,7 @@ bool CUser::DenyLoadMod() const { return m_bDenyLoadMod; }
 bool CUser::IsAdmin() const { return m_bAdmin; }
 bool CUser::DenySetBindHost() const { return m_bDenySetBindHost; }
 bool CUser::MultiClients() const { return m_bMultiClients; }
+bool CUser::AuthOnlyViaModule() const { return m_bAuthOnlyViaModule; }
 const CString& CUser::GetStatusPrefix() const { return m_sStatusPrefix; }
 const CString& CUser::GetDefaultChanModes() const {
     return m_sDefaultChanModes;
