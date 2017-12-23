@@ -189,10 +189,10 @@ void CHTTPSock::ReadLine(const CString& sData) {
             m_sForwardedIP = sIP;
         }
     } else if (sName.Equals("X-Forwarded-CertFP:")) {
-        bool bTrusted = IsTrustedProxy(GetRemoteIP());
-        if(bTrusted) {
+        if (IsTrustedProxy(GetRemoteIP())) {
             m_sForwardedCertFP = sLine.Token(1, true);
-            DEBUG("Got a forwarded CertFP '" << m_sForwardedCertFP << "'");
+            DEBUG(GetSockName()
+                  << " Got a forwarded CertFP '" << m_sForwardedCertFP << "'");
         }
     } else if (sName.Equals("If-None-Match:")) {
         // this is for proper client cache support (HTTP 304) on static files:
@@ -553,7 +553,7 @@ const CString& CHTTPSock::GetURI() const { return m_sURI; }
 
 const CString& CHTTPSock::GetURIPrefix() const { return m_sURIPrefix; }
 
-long CHTTPSock::GetPeerFingerprint(CS_STRING& sResult) const {
+long CHTTPSock::GetPeerFingerprint(CString& sResult) const {
     if(m_sForwardedCertFP.empty()) {
         return CSocket::GetPeerFingerprint(sResult);
     }

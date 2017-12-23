@@ -86,7 +86,7 @@ class CHTTPSock : public CSocket {
     const CString& GetURI() const;
     const CString& GetURIPrefix() const;
     bool IsPost() const;
-    long GetPeerFingerprint(CS_STRING& sResult) const override;
+    long GetPeerFingerprint(CString& sResult) const override;
     // !Getters
 
     // Parameter access
