@@ -142,7 +142,7 @@ class CCryptMod : public CModule {
     }
 
     bool DH1080_comp(CString& sOtherPubKey, CString& sSecretKey) {
-        unsigned long len;
+        long len;
         unsigned char* key = nullptr;
         BIGNUM* bOtherPubKey = nullptr;
 
