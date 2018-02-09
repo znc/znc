@@ -352,11 +352,11 @@ bool CFile::Open(int iFlags, mode_t iMode) {
     }
 
     // We never want to get a controlling TTY through this -> O_NOCTTY
-    iMode |= O_NOCTTY;
+    iFlags |= O_NOCTTY;
 
     // Some weird OS from MS needs O_BINARY or else it generates fake EOFs
     // when reading ^Z from a file.
-    iMode |= O_BINARY;
+    iFlags |= O_BINARY;
 
     m_iFD = open(m_sLongName.c_str(), iFlags, iMode);
     if (m_iFD < 0) {
