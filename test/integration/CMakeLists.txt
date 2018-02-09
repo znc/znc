@@ -33,7 +33,6 @@ set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS
 	"GTEST_HAS_POSIX_RE=0")
 
 add_executable(inttest "main.cpp"
-	"${GMOCK_ROOT}/src/gmock_main.cc"
 	"${GTEST_ROOT}/src/gtest-all.cc"
 	"${GMOCK_ROOT}/src/gmock-all.cc")
 

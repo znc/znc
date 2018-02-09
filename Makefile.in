@@ -110,9 +110,9 @@ unittest: $(LIB_OBJS) test/gtest-all.o test/gmock-all.o test/gmock-main.o $(TEST
 	$(E) Linking unit test...
 	$(Q)$(CXX) $(LDFLAGS) -o $@ $(LIB_OBJS) test/gtest-all.o test/gmock-all.o test/gmock-main.o $(TESTS) $(LIBS)
 
-inttest: test/Integration.o test/Int-gtest-all.o test/Int-gmock-all.o test/Int-gmock-main.o
+inttest: test/Integration.o test/Int-gtest-all.o test/Int-gmock-all.o
 	$(E) Linking integration test...
-	$(Q)g++ -std=c++11 -o $@ test/Integration.o test/Int-gtest-all.o test/Int-gmock-all.o test/Int-gmock-main.o $(LIBS) $(qt_LIBS)
+	$(Q)g++ -std=c++11 -o $@ test/Integration.o test/Int-gtest-all.o test/Int-gmock-all.o $(LIBS) $(qt_LIBS)
 
 man:
 	@$(MAKE) -C man $(C)
