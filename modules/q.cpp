@@ -61,7 +61,7 @@ class CQModule : public CModule {
 
         if (IsIRCConnected()) {
             // check for usermode +x if we are already connected
-            set<unsigned char> scUserModes =
+            set<char> scUserModes =
                 GetNetwork()->GetIRCSock()->GetUserModes();
             if (scUserModes.find('x') != scUserModes.end()) m_bCloaked = true;
 

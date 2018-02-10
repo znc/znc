@@ -575,16 +575,21 @@ class CModule {
      *  @param pOpNick The nick who sent the mode change, or nullptr if set by server.
      *  @param Nick The nick whose channel mode changes.
      *  @param Channel The channel on which the user mode is changed.
-     *  @param uMode The mode character that is changed, e.g. '@' for op.
+     *  @param cMode The mode character that is changed, e.g. '@' for op.
      *  @param bAdded True if the mode is added, else false.
      *  @param bNoChange true if this mode change doesn't change anything
      *                   because the nick already had this permission.
      *  @see CIRCSock::GetModeType() for converting uMode into a mode (e.g.
      *       'o' for op).
      */
+    virtual void OnChanPermission3(const CNick* pOpNick, const CNick& Nick,
+                                   CChan& Channel, char cMode,
+                                   bool bAdded, bool bNoChange);
+    /// @deprecated. Use OnChanPermission3.
     virtual void OnChanPermission2(const CNick* pOpNick, const CNick& Nick,
                                    CChan& Channel, unsigned char uMode,
                                    bool bAdded, bool bNoChange);
+    /// @deprecated. Use OnChanPermission3.
     virtual void OnChanPermission(const CNick& OpNick, const CNick& Nick,
                                   CChan& Channel, unsigned char uMode,
                                   bool bAdded, bool bNoChange);
@@ -1404,6 +1409,9 @@ class CModules : public std::vector<CModule*> {
                            CString& sRealName);
     bool OnBroadcast(CString& sMessage);
 
+    bool OnChanPermission3(const CNick* pOpNick, const CNick& Nick,
+                           CChan& Channel, char cMode, bool bAdded,
+                           bool bNoChange);
     bool OnChanPermission2(const CNick* pOpNick, const CNick& Nick,
                            CChan& Channel, unsigned char uMode, bool bAdded,
                            bool bNoChange);

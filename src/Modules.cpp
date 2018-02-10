@@ -617,6 +617,11 @@ CModule::EModRet CModule::OnIRCRegistration(CString& sPass, CString& sNick,
 }
 CModule::EModRet CModule::OnBroadcast(CString& sMessage) { return CONTINUE; }
 
+void CModule::OnChanPermission3(const CNick* pOpNick, const CNick& Nick,
+                                CChan& Channel, char cMode,
+                                bool bAdded, bool bNoChange) {
+    OnChanPermission2(pOpNick, Nick, Channel, cMode, bAdded, bNoChange);
+}
 void CModule::OnChanPermission2(const CNick* pOpNick, const CNick& Nick,
                                 CChan& Channel, unsigned char uMode,
                                 bool bAdded, bool bNoChange) {
@@ -1144,6 +1149,13 @@ bool CModules::OnIRCDisconnected() {
     return false;
 }
 
+bool CModules::OnChanPermission3(const CNick* pOpNick, const CNick& Nick,
+                                 CChan& Channel, char cMode,
+                                 bool bAdded, bool bNoChange) {
+    MODUNLOADCHK(
+        OnChanPermission3(pOpNick, Nick, Channel, cMode, bAdded, bNoChange));
+    return false;
+}
 bool CModules::OnChanPermission2(const CNick* pOpNick, const CNick& Nick,
                                  CChan& Channel, unsigned char uMode,
                                  bool bAdded, bool bNoChange) {

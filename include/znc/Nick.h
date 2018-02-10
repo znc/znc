@@ -47,14 +47,19 @@ class CNick {
     void SetNick(const CString& s);
     void SetIdent(const CString& s);
     void SetHost(const CString& s);
-    bool AddPerm(unsigned char uPerm);
-    bool RemPerm(unsigned char uPerm);
+    /// e.g. '@' for chanop.
+    bool AddPerm(char cPerm);
+    /// e.g. '@' for chanop.
+    bool RemPerm(char cPerm);
     // !Setters
 
     // Getters
+    /// e.g. '@' for chanop.
     CString GetPermStr() const;
-    unsigned char GetPermChar() const;
-    bool HasPerm(unsigned char uPerm) const;
+    /// e.g. '@' for chanop.
+    char GetPermChar() const;
+    /// e.g. '@' for chanop.
+    bool HasPerm(char cPerm) const;
     const CString& GetNick() const;
     const CString& GetIdent() const;
     const CString& GetHost() const;

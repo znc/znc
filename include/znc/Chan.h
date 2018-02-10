@@ -77,8 +77,8 @@ class CChan {
     // Modes
     void SetModes(const CString& s);
     void ModeChange(const CString& sModes, const CNick* OpNick = nullptr);
-    bool AddMode(unsigned char uMode, const CString& sArg);
-    bool RemMode(unsigned char uMode);
+    bool AddMode(char cMode, const CString& sArg);
+    bool RemMode(char cMode);
     CString GetModeString() const;
     CString GetModeArg(CString& sArgs) const;
     CString GetModeForNames() const;
@@ -120,10 +120,14 @@ class CChan {
     // !Buffer
 
     // m_Nick wrappers
+    /// e.g. '@' for chanop.
     CString GetPermStr() const { return m_Nick.GetPermStr(); }
-    bool HasPerm(unsigned char uPerm) const { return m_Nick.HasPerm(uPerm); }
-    bool AddPerm(unsigned char uPerm) { return m_Nick.AddPerm(uPerm); }
-    bool RemPerm(unsigned char uPerm) { return m_Nick.RemPerm(uPerm); }
+    /// e.g. '@' for chanop.
+    bool HasPerm(char cPerm) const { return m_Nick.HasPerm(cPerm); }
+    /// e.g. '@' for chanop.
+    bool AddPerm(char cPerm) { return m_Nick.AddPerm(cPerm); }
+    /// e.g. '@' for chanop.
+    bool RemPerm(char cPerm) { return m_Nick.RemPerm(cPerm); }
     // !wrappers
 
     // Setters
@@ -154,14 +158,14 @@ class CChan {
     // Getters
     CIRCNetwork* GetNetwork() const { return m_pNetwork; }
     bool IsModeKnown() const { return m_bModeKnown; }
-    bool HasMode(unsigned char uMode) const;
+    bool HasMode(char cMode) const;
     CString GetOptions() const;
-    CString GetModeArg(unsigned char uMode) const;
+    CString GetModeArg(char cMode) const;
     std::map<char, unsigned int> GetPermCounts() const;
     bool IsOn() const { return m_bIsOn; }
     const CString& GetName() const { return m_sName; }
-    const std::map<unsigned char, CString>& GetModes() const {
-        return m_musModes;
+    const std::map<char, CString>& GetModes() const {
+        return m_mcsModes;
     }
     const CString& GetKey() const { return m_sKey; }
     const CString& GetTopic() const { return m_sTopic; }
@@ -204,7 +208,7 @@ class CChan {
     CBuffer m_Buffer;
 
     bool m_bModeKnown;
-    std::map<unsigned char, CString> m_musModes;
+    std::map<char, CString> m_mcsModes;
 };
 
 #endif  // !ZNC_CHAN_H

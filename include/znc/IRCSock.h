@@ -78,10 +78,10 @@ class CIRCSock : public CIRCSocket {
 
     // Getters
     unsigned int GetMaxNickLen() const { return m_uMaxNickLen; }
-    EChanModeArgs GetModeType(unsigned char uMode) const;
-    unsigned char GetPermFromMode(unsigned char uMode) const;
-    const std::map<unsigned char, EChanModeArgs>& GetChanModes() const {
-        return m_mueChanModes;
+    EChanModeArgs GetModeType(char cMode) const;
+    char GetPermFromMode(char cMode) const;
+    const std::map<char, EChanModeArgs>& GetChanModes() const {
+        return m_mceChanModes;
     }
     bool IsPermChar(const char c) const {
         return (c != '\0' && GetPerms().find(c) != CString::npos);
@@ -101,7 +101,7 @@ class CIRCSock : public CIRCSocket {
     bool HasAccountNotify() const { return m_bAccountNotify; }
     bool HasExtendedJoin() const { return m_bExtendedJoin; }
     bool HasServerTime() const { return m_bServerTime; }
-    const std::set<unsigned char>& GetUserModes() const {
+    const std::set<char>& GetUserModes() const {
         return m_scUserModes;
     }
     // This is true if we are past raw 001
@@ -160,8 +160,8 @@ class CIRCSock : public CIRCSocket {
     bool m_bServerTime;
     CString m_sPerms;
     CString m_sPermModes;
-    std::set<unsigned char> m_scUserModes;
-    std::map<unsigned char, EChanModeArgs> m_mueChanModes;
+    std::set<char> m_scUserModes;
+    std::map<char, EChanModeArgs> m_mceChanModes;
     CIRCNetwork* m_pNetwork;
     CNick m_Nick;
     CString m_sPass;

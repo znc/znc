@@ -72,7 +72,7 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork)
       m_sPerms("*!@%+"),
       m_sPermModes("qaohv"),
       m_scUserModes(),
-      m_mueChanModes(),
+      m_mceChanModes(),
       m_pNetwork(pNetwork),
       m_Nick(),
       m_sPass(""),
@@ -94,16 +94,16 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork)
     m_Nick.SetHost(m_pNetwork->GetBindHost());
     SetEncoding(m_pNetwork->GetEncoding());
 
-    m_mueChanModes['b'] = ListArg;
-    m_mueChanModes['e'] = ListArg;
-    m_mueChanModes['I'] = ListArg;
-    m_mueChanModes['k'] = HasArg;
-    m_mueChanModes['l'] = ArgWhenSet;
-    m_mueChanModes['p'] = NoArg;
-    m_mueChanModes['s'] = NoArg;
-    m_mueChanModes['t'] = NoArg;
-    m_mueChanModes['i'] = NoArg;
-    m_mueChanModes['n'] = NoArg;
+    m_mceChanModes['b'] = ListArg;
+    m_mceChanModes['e'] = ListArg;
+    m_mceChanModes['I'] = ListArg;
+    m_mceChanModes['k'] = HasArg;
+    m_mceChanModes['l'] = ArgWhenSet;
+    m_mceChanModes['p'] = NoArg;
+    m_mceChanModes['s'] = NoArg;
+    m_mceChanModes['t'] = NoArg;
+    m_mceChanModes['i'] = NoArg;
+    m_mceChanModes['n'] = NoArg;
 
     pNetwork->SetIRCSocket(this);
 
@@ -566,17 +566,17 @@ bool CIRCSock::OnModeMessage(CModeMessage& Message) {
            m_pNetwork->GetUser(), nullptr, );
         */
         for (unsigned int a = 0; a < sModeArg.size(); a++) {
-            const unsigned char& uMode = sModeArg[a];
+            const char& cMode = sModeArg[a];
 
-            if (uMode == '+') {
+            if (cMode == '+') {
                 bAdd = true;
-            } else if (uMode == '-') {
+            } else if (cMode == '-') {
                 bAdd = false;
             } else {
                 if (bAdd) {
-                    m_scUserModes.insert(uMode);
+                    m_scUserModes.insert(cMode);
                 } else {
-                    m_scUserModes.erase(uMode);
+                    m_scUserModes.erase(cMode);
                 }
             }
         }
@@ -1230,7 +1230,7 @@ void CIRCSock::Disconnected() {
     // otherwise, on reconnect, it might think it still
     // had user modes that it actually doesn't have.
     CString sUserMode;
-    for (unsigned char cMode : m_scUserModes) {
+    for (char cMode : m_scUserModes) {
         sUserMode += cMode;
     }
     if (!sUserMode.empty()) {
@@ -1357,13 +1357,13 @@ void CIRCSock::ParseISupport(const CMessage& Message) {
             }
         } else if (sName.Equals("CHANMODES")) {
             if (!sValue.empty()) {
-                m_mueChanModes.clear();
+                m_mceChanModes.clear();
 
                 for (unsigned int a = 0; a < 4; a++) {
                     CString sModes = sValue.Token(a, false, ",");
 
                     for (unsigned int b = 0; b < sModes.size(); b++) {
-                        m_mueChanModes[sModes[b]] = (EChanModeArgs)a;
+                        m_mceChanModes[sModes[b]] = (EChanModeArgs)a;
                     }
                 }
             }
@@ -1445,10 +1445,10 @@ void CIRCSock::SendAltNick(const CString& sBadNick) {
     m_Nick.SetNick(sNewNick);
 }
 
-unsigned char CIRCSock::GetPermFromMode(unsigned char uMode) const {
+char CIRCSock::GetPermFromMode(char cMode) const {
     if (m_sPermModes.size() == m_sPerms.size()) {
         for (unsigned int a = 0; a < m_sPermModes.size(); a++) {
-            if (m_sPermModes[a] == uMode) {
+            if (m_sPermModes[a] == cMode) {
                 return m_sPerms[a];
             }
         }
@@ -1457,11 +1457,11 @@ unsigned char CIRCSock::GetPermFromMode(unsigned char uMode) const {
     return 0;
 }
 
-CIRCSock::EChanModeArgs CIRCSock::GetModeType(unsigned char uMode) const {
-    map<unsigned char, EChanModeArgs>::const_iterator it =
-        m_mueChanModes.find(uMode);
+CIRCSock::EChanModeArgs CIRCSock::GetModeType(char cMode) const {
+    map<char, EChanModeArgs>::const_iterator it =
+        m_mceChanModes.find(cMode);
 
-    if (it == m_mueChanModes.end()) {
+    if (it == m_mceChanModes.end()) {
         return NoArg;
     }
 

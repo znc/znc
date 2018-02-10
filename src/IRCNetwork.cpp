@@ -667,8 +667,8 @@ void CIRCNetwork::ClientConnected(CClient* pClient) {
 
     if (GetIRCSock() != nullptr) {
         CString sUserMode("");
-        const set<unsigned char>& scUserModes = GetIRCSock()->GetUserModes();
-        for (unsigned char cMode : scUserModes) {
+        const set<char>& scUserModes = GetIRCSock()->GetUserModes();
+        for (char cMode : scUserModes) {
             sUserMode += cMode;
         }
         if (!sUserMode.empty()) {
