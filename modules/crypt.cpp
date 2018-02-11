@@ -34,8 +34,8 @@
 // admin.
 //       The keys are currently stored in plain text, so anyone with access to
 //       your account (or root) can obtain them.
-//       It is strongly suggested that you enable SSL between znc and your
-//       client otherwise the encryption stops at znc and gets sent to your
+//       It is strongly suggested that you enable SSL between ZNC and your
+//       client otherwise the encryption stops at ZNC and gets sent to your
 //       client in plain text.
 //
 
@@ -58,7 +58,7 @@ class CCryptMod : public CModule {
      * ... all the way back to the original located at
      * http://mircryption.sourceforge.net/Extras/McpsFishDH.zip
      */
-    const char* m_sPrime1080 =
+    static constexpr const char* m_sPrime1080 =
         "FBE1022E23D213E8ACFA9AE8B9DFADA3EA6B7AC7A7B7E95AB5EB2DF858921FEADE95E6"
         "AC7BE7DE6ADBAB8A783E7AF7A7FA6A2B7BEB1E72EAE2B72F9FA2BFB2A2EFBEFAC868BA"
         "DB3E828FA8BADFADA3E4CC1BE7E8AFE85E9698A783EB68FA07A77AB6AD7BEB618ACF9C"
@@ -228,35 +228,23 @@ class CCryptMod : public CModule {
         return true;
     }
 
-    EModRet OnUserMsg(CString& sTarget, CString& sMessage) override {
-        return FilterOutgoing(sTarget, sMessage, "PRIVMSG", "", "");
+    EModRet OnUserTextMessage(CTextMessage& Message) override {
+        FilterOutgoing(Message);
+        return CONTINUE;
     }
 
-    EModRet OnUserNotice(CString& sTarget, CString& sMessage) override {
-        return FilterOutgoing(sTarget, sMessage, "NOTICE", "", "");
+    EModRet OnUserNoticeMessage(CNoticeMessage& Message) override {
+        FilterOutgoing(Message);
+        return CONTINUE;
     }
 
-    EModRet OnUserAction(CString& sTarget, CString& sMessage) override {
-        return FilterOutgoing(sTarget, sMessage, "PRIVMSG", "\001ACTION ",
-                              "\001");
+    EModRet OnUserActionMessage(CActionMessage& Message) override {
+        FilterOutgoing(Message);
+        return CONTINUE;
     }
 
-    EModRet OnUserTopic(CString& sTarget, CString& sMessage) override {
-        sTarget.TrimPrefix(NickPrefix());
-
-        if (sMessage.TrimPrefix("``")) {
-            return CONTINUE;
-        }
-
-        MCString::iterator it = FindNV(sTarget.AsLower());
-
-        if (it != EndNV()) {
-            sMessage = MakeIvec() + sMessage;
-            sMessage.Encrypt(it->second);
-            sMessage.Base64Encode();
-            sMessage = "+OK *" + sMessage;
-        }
-
+    EModRet OnUserTopicMessage(CTopicMessage& Message) override {
+        FilterOutgoing(Message);
         return CONTINUE;
     }
 
@@ -365,43 +353,25 @@ class CCryptMod : public CModule {
         return CONTINUE;
     }
 
-    EModRet FilterOutgoing(CString& sTarget, CString& sMessage,
-                           const CString& sType, const CString& sPreMsg,
-                           const CString& sPostMsg) {
+    template <typename T>
+    void FilterOutgoing(T& Msg) {
+        CString sTarget = Msg.GetTarget();
         sTarget.TrimPrefix(NickPrefix());
+        Msg.SetTarget(sTarget);
+
+        CString sMessage = Msg.GetText();
 
         if (sMessage.TrimPrefix("``")) {
-            return CONTINUE;
+            return;
         }
 
         MCString::iterator it = FindNV(sTarget.AsLower());
-
         if (it != EndNV()) {
-            CChan* pChan = GetNetwork()->FindChan(sTarget);
-            CString sNickMask = GetNetwork()->GetIRCNick().GetNickMask();
-            if (pChan) {
-                if (!pChan->AutoClearChanBuffer())
-                    pChan->AddBuffer(":" + NickPrefix() + _NAMEDFMT(sNickMask) +
-                                         " " + sType + " " +
-                                         _NAMEDFMT(sTarget) + " :" + sPreMsg +
-                                         "{text}" + sPostMsg,
-                                     sMessage);
-                GetUser()->PutUser(":" + NickPrefix() + sNickMask + " " +
-                                       sType + " " + sTarget + " :" + sPreMsg +
-                                       sMessage + sPostMsg,
-                                   nullptr, GetClient());
-            }
-
-            CString sMsg = MakeIvec() + sMessage;
-            sMsg.Encrypt(it->second);
-            sMsg.Base64Encode();
-            sMsg = "+OK *" + sMsg;
-
-            PutIRC(sType + " " + sTarget + " :" + sPreMsg + sMsg + sPostMsg);
-            return HALTCORE;
+            sMessage = MakeIvec() + sMessage;
+            sMessage.Encrypt(it->second);
+            sMessage.Base64Encode();
+            Msg.SetText("+OK *" + sMessage);
         }
-
-        return CONTINUE;
     }
 
     void FilterIncoming(const CString& sTarget, CNick& Nick,

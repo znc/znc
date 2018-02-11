@@ -757,6 +757,7 @@ TEST_F(ZNCTest, ModuleCrypt) {
     ASSERT_TRUE(conf.open(QIODevice::Append | QIODevice::Text));
     QTextStream(&conf) << "ServerThrottle = 1\n";
     auto znc = Run();
+
     auto ircd1 = ConnectIRCd();
     auto client1 = LoginClient();
     client1.Write("znc loadmod controlpanel");
@@ -765,6 +766,7 @@ TEST_F(ZNCTest, ModuleCrypt) {
     client1.Write("PRIVMSG *controlpanel :Set Nick user2 nick2");
     client1.Write("znc loadmod crypt");
     client1.ReadUntil("Loaded module");
+
     auto ircd2 = ConnectIRCd();
     auto client2 = ConnectClient();
     client2.Write("PASS user2:hunter2");
@@ -796,11 +798,13 @@ TEST_F(ZNCTest, ModuleCrypt) {
     QByteArray key2("");
     client2.ReadUntilAndGet("| user   | ", key2);
     ASSERT_EQ(key1.mid(11), key2.mid(11));
+    client1.Write("CAP REQ :echo-message");
     client1.Write("PRIVMSG .nick2 :Hello");
     QByteArray secretmsg;
     ircd1.ReadUntilAndGet("PRIVMSG nick2 :+OK ", secretmsg);
     ircd2.Write(":user!user@user/test " + secretmsg);
     client2.ReadUntil("Hello");
+    client1.ReadUntil(secretmsg);  // by echo-message
 }
 
 }  // namespace
