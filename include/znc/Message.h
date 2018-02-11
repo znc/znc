@@ -275,6 +275,8 @@ class CKickMessage : public CTargetMessage {
     void SetKickedNick(const CString& sNick) { SetParam(1, sNick); }
     CString GetReason() const { return GetParam(2); }
     void SetReason(const CString& sReason) { SetParam(2, sReason); }
+    CString GetText() const { return GetReason(); }
+    void SetText(const CString& sText) { SetReason(sText); }
 };
 REGISTER_ZNC_MESSAGE(CKickMessage);
 
@@ -282,6 +284,8 @@ class CPartMessage : public CTargetMessage {
   public:
     CString GetReason() const { return GetParam(1); }
     void SetReason(const CString& sReason) { SetParam(1, sReason); }
+    CString GetText() const { return GetReason(); }
+    void SetText(const CString& sText) { SetReason(sText); }
 };
 REGISTER_ZNC_MESSAGE(CPartMessage);
 
@@ -289,6 +293,8 @@ class CQuitMessage : public CMessage {
   public:
     CString GetReason() const { return GetParam(0); }
     void SetReason(const CString& sReason) { SetParam(0, sReason); }
+    CString GetText() const { return GetReason(); }
+    void SetText(const CString& sText) { SetReason(sText); }
 };
 REGISTER_ZNC_MESSAGE(CQuitMessage);
 
@@ -303,6 +309,8 @@ class CTopicMessage : public CTargetMessage {
   public:
     CString GetTopic() const { return GetParam(1); }
     void SetTopic(const CString& sTopic) { SetParam(1, sTopic); }
+    CString GetText() const { return GetTopic(); }
+    void SetText(const CString& sText) { SetTopic(sText); }
 };
 REGISTER_ZNC_MESSAGE(CTopicMessage);
 
