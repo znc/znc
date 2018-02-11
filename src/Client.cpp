@@ -948,6 +948,10 @@ bool CClient::OnActionMessage(CActionMessage& Message) {
 
     for (CString& sTarget : vTargets) {
         Message.SetTarget(sTarget);
+        if (m_pNetwork) {
+            // May be nullptr.
+            Message.SetChan(m_pNetwork->FindChan(sTarget));
+        }
 
         bool bContinue = false;
         NETWORKMODULECALL(OnUserActionMessage(Message), m_pUser, m_pNetwork,
@@ -999,6 +1003,10 @@ bool CClient::OnCTCPMessage(CCTCPMessage& Message) {
 
     for (CString& sTarget : vTargets) {
         Message.SetTarget(sTarget);
+        if (m_pNetwork) {
+            // May be nullptr.
+            Message.SetChan(m_pNetwork->FindChan(sTarget));
+        }
 
         bool bContinue = false;
         if (Message.IsReply()) {
@@ -1045,6 +1053,10 @@ bool CClient::OnJoinMessage(CJoinMessage& Message) {
     for (unsigned int a = 0; a < vsChans.size(); a++) {
         Message.SetTarget(vsChans[a]);
         Message.SetKey((a < vsKeys.size()) ? vsKeys[a] : "");
+        if (m_pNetwork) {
+            // May be nullptr.
+            Message.SetChan(m_pNetwork->FindChan(vsChans[a]));
+        }
         bool bContinue = false;
         NETWORKMODULECALL(OnUserJoinMessage(Message), m_pUser, m_pNetwork, this,
                           &bContinue);
@@ -1110,6 +1122,10 @@ bool CClient::OnNoticeMessage(CNoticeMessage& Message) {
 
     for (CString& sTarget : vTargets) {
         Message.SetTarget(sTarget);
+        if (m_pNetwork) {
+            // May be nullptr.
+            Message.SetChan(m_pNetwork->FindChan(sTarget));
+        }
 
         if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
             if (!sTarget.Equals("status")) {
@@ -1154,6 +1170,10 @@ bool CClient::OnPartMessage(CPartMessage& Message) {
     for (CString& sChan : vsChans) {
         bool bContinue = false;
         Message.SetTarget(sChan);
+        if (m_pNetwork) {
+            // May be nullptr.
+            Message.SetChan(m_pNetwork->FindChan(sChan));
+        }
         NETWORKMODULECALL(OnUserPartMessage(Message), m_pUser, m_pNetwork, this,
                           &bContinue);
         if (bContinue) continue;
@@ -1214,6 +1234,10 @@ bool CClient::OnTextMessage(CTextMessage& Message) {
 
     for (CString& sTarget : vTargets) {
         Message.SetTarget(sTarget);
+        if (m_pNetwork) {
+            // May be nullptr.
+            Message.SetChan(m_pNetwork->FindChan(sTarget));
+        }
 
         if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
             EchoMessage(Message);
@@ -1256,6 +1280,10 @@ bool CClient::OnTopicMessage(CTopicMessage& Message) {
     bool bReturn = false;
     CString sChan = Message.GetTarget();
     CString sTopic = Message.GetTopic();
+    if (m_pNetwork) {
+        // May be nullptr.
+        Message.SetChan(m_pNetwork->FindChan(sChan));
+    }
 
     if (!sTopic.empty()) {
         NETWORKMODULECALL(OnUserTopicMessage(Message), m_pUser, m_pNetwork,
