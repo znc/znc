@@ -250,7 +250,7 @@ TEST_F(ClientTest, OnUserActionMessage) {
     EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
     EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
     EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
-    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(m_pTestChan));
     EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
 
     m_pTestModule->eAction = CModule::CONTINUE;
@@ -267,7 +267,7 @@ TEST_F(ClientTest, OnUserTextMessage) {
     EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
     EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
     EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
-    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(m_pTestChan));
     EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
 
     m_pTestModule->eAction = CModule::CONTINUE;
@@ -284,7 +284,7 @@ TEST_F(ClientTest, OnUserNoticeMessage) {
     EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
     EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
     EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
-    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(m_pTestChan));
     EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
 
     m_pTestModule->eAction = CModule::CONTINUE;
@@ -301,7 +301,7 @@ TEST_F(ClientTest, OnUserJoinMessage) {
     EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
     EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
     EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
-    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(m_pTestChan));
     EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
 
     m_pTestModule->eAction = CModule::CONTINUE;
@@ -310,7 +310,8 @@ TEST_F(ClientTest, OnUserJoinMessage) {
 }
 
 TEST_F(ClientTest, OnUserPartMessage) {
-    CMessage msg("PART #znc");
+    m_pTestChan->SetIsOn(true);
+    CMessage msg("PART #chan");
     m_pTestModule->eAction = CModule::HALT;
     m_pTestClient->ReadLine(msg.ToString());
 
@@ -318,7 +319,7 @@ TEST_F(ClientTest, OnUserPartMessage) {
     EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
     EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
     EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
-    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(m_pTestChan));
     EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
 
     m_pTestModule->eAction = CModule::CONTINUE;
@@ -335,7 +336,7 @@ TEST_F(ClientTest, OnUserTopicMessage) {
     EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
     EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
     EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
-    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(m_pTestChan));
     EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
 
     m_pTestModule->eAction = CModule::CONTINUE;
