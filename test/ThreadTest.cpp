@@ -174,8 +174,8 @@ TEST(Thread, CancelJobWhenDone) {
     fd_set fds;
     FD_ZERO(&fds);
     FD_SET(CThreadPool::Get().getReadFD(), &fds);
-    EXPECT_EQ(1, select(1 + CThreadPool::Get().getReadFD(), &fds, nullptr,
-                        nullptr, nullptr));
+    EXPECT_EQ(select(1 + CThreadPool::Get().getReadFD(), &fds, nullptr,
+                     nullptr, nullptr), 1);
 
     // And only cancel it afterwards
     CThreadPool::Get().cancelJob(pJob);

@@ -115,7 +115,7 @@ TEST_F(UserTest, IsHostAllowed) {
     for (const hostTest& h : aHostTests) {
         CUser user("user");
         user.AddAllowedHost(h.sMask);
-        EXPECT_EQ(h.bExpectedResult, user.IsHostAllowed(h.sIP))
+        EXPECT_EQ(user.IsHostAllowed(h.sIP), h.bExpectedResult)
             << "Allow-host is " << h.sMask;
     }
 }

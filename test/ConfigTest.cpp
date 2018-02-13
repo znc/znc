@@ -47,7 +47,7 @@ class CConfigErrorTest : public CConfigTest {
         CString sError;
         EXPECT_FALSE(conf.Parse(File, sError));
 
-        EXPECT_EQ(sExpectError, sError);
+        EXPECT_EQ(sError, sExpectError);
     }
 };
 
@@ -66,7 +66,7 @@ class CConfigSuccessTest : public CConfigTest {
         CString sOutput;
         ToString(sOutput, conf);
 
-        EXPECT_EQ(sExpectedOutput, sOutput);
+        EXPECT_EQ(sOutput, sExpectedOutput);
     }
 
     void ToString(CString& sRes, CConfig& conf) {

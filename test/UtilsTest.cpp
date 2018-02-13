@@ -19,38 +19,38 @@
 #include <znc/Utils.h>
 
 TEST(IRC32, GetMessageTags) {
-    EXPECT_EQ(MCString(), CUtils::GetMessageTags(""));
-    EXPECT_EQ(MCString(), CUtils::GetMessageTags(
-                              ":nick!ident@host PRIVMSG #chan :hello world"));
+    EXPECT_EQ(CUtils::GetMessageTags(""), MCString());
+    EXPECT_EQ(CUtils::GetMessageTags(
+                  ":nick!ident@host PRIVMSG #chan :hello world"), MCString());
 
     MCString exp = {{"a", "b"}};
-    EXPECT_EQ(exp, CUtils::GetMessageTags("@a=b"));
-    EXPECT_EQ(exp, CUtils::GetMessageTags(
-                       "@a=b :nick!ident@host PRIVMSG #chan :hello world"));
-    EXPECT_EQ(exp, CUtils::GetMessageTags("@a=b :rest"));
+    EXPECT_EQ(CUtils::GetMessageTags("@a=b"), exp);
+    EXPECT_EQ(CUtils::GetMessageTags(
+                  "@a=b :nick!ident@host PRIVMSG #chan :hello world"), exp);
+    EXPECT_EQ(CUtils::GetMessageTags("@a=b :rest"), exp);
     exp.clear();
 
     exp = {{"ab", "cdef"}, {"znc.in/gh-ij", "klmn,op"}};
-    EXPECT_EQ(exp,
-              CUtils::GetMessageTags("@ab=cdef;znc.in/gh-ij=klmn,op :rest"));
+    EXPECT_EQ(CUtils::GetMessageTags("@ab=cdef;znc.in/gh-ij=klmn,op :rest"),
+              exp);
 
     exp = {{"a", "==b=="}};
-    EXPECT_EQ(exp, CUtils::GetMessageTags("@a===b== :rest"));
+    EXPECT_EQ(CUtils::GetMessageTags("@a===b== :rest"), exp);
     exp.clear();
 
     exp = {{"a", ""}, {"b", "c"}, {"d", ""}};
-    EXPECT_EQ(exp, CUtils::GetMessageTags("@a;b=c;d :rest"));
+    EXPECT_EQ(CUtils::GetMessageTags("@a;b=c;d :rest"), exp);
 
     exp = {{"semi-colon", ";"}, {"space", " "}, {"NUL", {'\0'}},
            {"backslash", "\\"}, {"CR", {'\r'}}, {"LF", {'\n'}}};
     EXPECT_EQ(
-        exp,
         CUtils::GetMessageTags(
-            R"(@semi-colon=\:;space=\s;NUL=\0;backslash=\\;CR=\r;LF=\n :rest)"));
+            R"(@semi-colon=\:;space=\s;NUL=\0;backslash=\\;CR=\r;LF=\n :rest)"),
+        exp);
     exp.clear();
 
     exp = {{"a", "; \\\r\n"}};
-    EXPECT_EQ(exp, CUtils::GetMessageTags(R"(@a=\:\s\\\r\n :rest)"));
+    EXPECT_EQ(CUtils::GetMessageTags(R"(@a=\:\s\\\r\n :rest)"), exp);
     exp.clear();
 }
 
@@ -59,30 +59,30 @@ TEST(IRC32, SetMessageTags) {
 
     sLine = ":rest";
     CUtils::SetMessageTags(sLine, MCString());
-    EXPECT_EQ(":rest", sLine);
+    EXPECT_EQ(sLine, ":rest");
 
     MCString tags = {{"a", "b"}};
     CUtils::SetMessageTags(sLine, tags);
-    EXPECT_EQ("@a=b :rest", sLine);
+    EXPECT_EQ(sLine, "@a=b :rest");
 
     tags = {{"a", "b"}, {"c", "d"}};
     CUtils::SetMessageTags(sLine, tags);
-    EXPECT_EQ("@a=b;c=d :rest", sLine);
+    EXPECT_EQ(sLine, "@a=b;c=d :rest");
 
     tags = {{"a", "b"}, {"c", "d"}, {"e", ""}};
     CUtils::SetMessageTags(sLine, tags);
-    EXPECT_EQ("@a=b;c=d;e :rest", sLine);
+    EXPECT_EQ(sLine, "@a=b;c=d;e :rest");
 
     tags = {{"semi-colon", ";"}, {"space", " "}, {"NUL", {'\0'}},
             {"backslash", "\\"}, {"CR", {'\r'}}, {"LF", {'\n'}}};
     CUtils::SetMessageTags(sLine, tags);
     EXPECT_EQ(
-        R"(@CR=\r;LF=\n;NUL=\0;backslash=\\;semi-colon=\:;space=\s :rest)",
-        sLine);
+        sLine,
+        R"(@CR=\r;LF=\n;NUL=\0;backslash=\\;semi-colon=\:;space=\s :rest)");
 
     tags = {{"a", "; \\\r\n"}};
     CUtils::SetMessageTags(sLine, tags);
-    EXPECT_EQ(R"(@a=\:\s\\\r\n :rest)", sLine);
+    EXPECT_EQ(sLine, R"(@a=\:\s\\\r\n :rest)");
 }
 
 TEST(UtilsTest, ServerTime) {
@@ -93,7 +93,7 @@ TEST(UtilsTest, ServerTime) {
 
     timeval tv1 = CUtils::ParseServerTime("2011-10-19T16:40:51.620Z");
     CString str1 = CUtils::FormatServerTime(tv1);
-    EXPECT_EQ("2011-10-19T16:40:51.620Z", str1);
+    EXPECT_EQ(str1, "2011-10-19T16:40:51.620Z");
 
     timeval now = CUtils::GetTime();
 
@@ -102,12 +102,12 @@ TEST(UtilsTest, ServerTime) {
 
     CString str2 = CUtils::FormatServerTime(now);
     timeval tv2 = CUtils::ParseServerTime(str2);
-    EXPECT_EQ(now.tv_sec, tv2.tv_sec);
-    EXPECT_EQ(now.tv_usec, tv2.tv_usec);
+    EXPECT_EQ(tv2.tv_sec, now.tv_sec);
+    EXPECT_EQ(tv2.tv_usec, now.tv_usec);
 
     timeval tv3 = CUtils::ParseServerTime("invalid");
     CString str3 = CUtils::FormatServerTime(tv3);
-    EXPECT_EQ("1970-01-01T00:00:00.000Z", str3);
+    EXPECT_EQ(str3, "1970-01-01T00:00:00.000Z");
 
     if (oldTZ) {
         setenv("TZ", oldTZ, 1);
@@ -144,16 +144,16 @@ TEST(UtilsTest, FormatTime) {
     tv1.tv_sec = 42;
     tv1.tv_usec = 123456;
     CString str1 = CUtils::FormatTime(tv1, "%s", "UTC");
-    EXPECT_EQ("42", str1);
+    EXPECT_EQ(str1, "42");
 
     // Test escapes
     timeval tv2;
     tv2.tv_sec = 42;
     tv2.tv_usec = 123456;
     CString str2 = CUtils::FormatTime(tv2, "%%f", "UTC");
-    EXPECT_EQ("%f", str2);
+    EXPECT_EQ(str2, "%f");
 
     // Test suffix
     CString str3 = CUtils::FormatTime(tv2, "a%fb", "UTC");
-    EXPECT_EQ("a123b", str3);
+    EXPECT_EQ(str3, "a123b");
 }

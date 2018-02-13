@@ -65,15 +65,15 @@ TEST_F(IRCSockTest, OnActionMessage) {
 
     CMessage msg(":nick PRIVMSG #chan :\001ACTION hello\001");
     auto CON = Invoke([&](CMessage& m) {
-        EXPECT_EQ(msg.ToString(), m.ToString());
-        EXPECT_EQ(m_pTestNetwork, m.GetNetwork());
-        EXPECT_EQ(pExpectedChan, m.GetChan());
+        EXPECT_EQ(m.ToString(), msg.ToString());
+        EXPECT_EQ(m.GetNetwork(), m_pTestNetwork);
+        EXPECT_EQ(m.GetChan(), pExpectedChan);
         return CModule::CONTINUE;
     });
     auto HAL = Invoke([&](CMessage& m) {
-        EXPECT_EQ(msg.ToString(), m.ToString());
-        EXPECT_EQ(m_pTestNetwork, m.GetNetwork());
-        EXPECT_EQ(pExpectedChan, m.GetChan());
+        EXPECT_EQ(m.ToString(), msg.ToString());
+        EXPECT_EQ(m.GetNetwork(), m_pTestNetwork);
+        EXPECT_EQ(m.GetChan(), pExpectedChan);
         return CModule::HALT;
     });
     auto Reset = [&]() {
@@ -458,7 +458,7 @@ TEST_F(IRCSockTest, ISupport) {
         ":are supported by this server");
     EXPECT_THAT(m_pTestSock->GetISupport(), ContainerEq(m1));
     for (const auto& it : m1) {
-        EXPECT_EQ(it.second, m_pTestSock->GetISupport(it.first));
+        EXPECT_EQ(m_pTestSock->GetISupport(it.first), it.second);
     }
 
     MCString m2 = {
@@ -489,7 +489,7 @@ TEST_F(IRCSockTest, ISupport) {
         "MONITOR: :are supported by this server");
     EXPECT_THAT(m_pTestSock->GetISupport(), ContainerEq(m12));
     for (const auto& it : m2) {
-        EXPECT_EQ(it.second, m_pTestSock->GetISupport(it.first));
+        EXPECT_EQ(m_pTestSock->GetISupport(it.first), it.second);
     }
 
     MCString m3 = {
@@ -506,12 +506,12 @@ TEST_F(IRCSockTest, ISupport) {
         "ELIST=CTU :are supported by this server");
     EXPECT_THAT(m_pTestSock->GetISupport(), ContainerEq(m123));
     for (const auto& it : m3) {
-        EXPECT_EQ(it.second, m_pTestSock->GetISupport(it.first));
+        EXPECT_EQ(m_pTestSock->GetISupport(it.first), it.second);
     }
 
-    EXPECT_EQ("default", m_pTestSock->GetISupport("FOOBAR", "default"));
-    EXPECT_EQ("3.0", m_pTestSock->GetISupport("CLIENTVER", "default"));
-    EXPECT_EQ("", m_pTestSock->GetISupport("SAFELIST", "default"));
+    EXPECT_EQ(m_pTestSock->GetISupport("FOOBAR", "default"), "default");
+    EXPECT_EQ(m_pTestSock->GetISupport("CLIENTVER", "default"), "3.0");
+    EXPECT_EQ(m_pTestSock->GetISupport("SAFELIST", "default"), "");
 }
 
 TEST_F(IRCSockTest, StatusMsg) {
@@ -524,9 +524,9 @@ TEST_F(IRCSockTest, StatusMsg) {
     m_pTestUser->SetAutoClearChanBuffer(false);
     m_pTestSock->ReadLine(":someone PRIVMSG @#chan :hello ops");
 
-    EXPECT_EQ(1u, m_pTestChan->GetBuffer().Size());
+    EXPECT_EQ(m_pTestChan->GetBuffer().Size(), 1u);
 
     m_pTestUser->SetTimestampPrepend(false);
-    EXPECT_EQ(":someone PRIVMSG @#chan :hello ops",
-              m_pTestChan->GetBuffer().GetLine(0, *m_pTestClient));
+    EXPECT_EQ(m_pTestChan->GetBuffer().GetLine(0, *m_pTestClient),
+              ":someone PRIVMSG @#chan :hello ops");
 }

@@ -28,19 +28,19 @@ class ClientTest : public IRCTest {
                   const CString& sPass) const {
         CClient client;
         client.ParsePass(sInput);
-        EXPECT_EQ(sUser, client.m_sUser);
-        EXPECT_EQ(sIdentifier, client.m_sIdentifier);
-        EXPECT_EQ(sNetwork, client.m_sNetwork);
-        EXPECT_EQ(sPass, client.m_sPass);
+        EXPECT_EQ(client.m_sUser, sUser);
+        EXPECT_EQ(client.m_sIdentifier, sIdentifier);
+        EXPECT_EQ(client.m_sNetwork, sNetwork);
+        EXPECT_EQ(client.m_sPass, sPass);
     }
 
     void testUser(const CString& sInput, const CString& sUser,
                   const CString& sIdentifier, const CString& sNetwork) const {
         CClient client;
         client.ParseUser(sInput);
-        EXPECT_EQ(sUser, client.m_sUser);
-        EXPECT_EQ(sIdentifier, client.m_sIdentifier);
-        EXPECT_EQ(sNetwork, client.m_sNetwork);
+        EXPECT_EQ(client.m_sUser, sUser);
+        EXPECT_EQ(client.m_sIdentifier, sIdentifier);
+        EXPECT_EQ(client.m_sNetwork, sNetwork);
     }
 };
 
@@ -181,11 +181,11 @@ TEST_F(ClientTest, StatusMsg) {
     m_pTestUser->SetAutoClearChanBuffer(false);
     m_pTestClient->ReadLine("PRIVMSG @#chan :hello ops");
 
-    EXPECT_EQ(1u, m_pTestChan->GetBuffer().Size());
+    EXPECT_EQ(m_pTestChan->GetBuffer().Size(), 1u);
 
     m_pTestUser->SetTimestampPrepend(false);
-    EXPECT_EQ(":me PRIVMSG @#chan :hello ops",
-              m_pTestChan->GetBuffer().GetLine(0, *m_pTestClient));
+    EXPECT_EQ(m_pTestChan->GetBuffer().GetLine(0, *m_pTestClient),
+              ":me PRIVMSG @#chan :hello ops");
 }
 
 TEST_F(ClientTest, TagSupport) {
