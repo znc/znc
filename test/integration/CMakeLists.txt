@@ -32,12 +32,19 @@ find_package(Qt5Network 5.4 REQUIRED HINTS ${Qt5_HINTS})
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS
 	"GTEST_HAS_POSIX_RE=0")
 
-add_executable(inttest "main.cpp"
+add_executable(inttest
+	"framework/main.cpp"
+	"framework/base.cpp"
+	"framework/znctest.cpp"
+	"tests/core.cpp"
+	"tests/modules.cpp"
+	"tests/scripting.cpp"
 	"${GTEST_ROOT}/src/gtest-all.cc"
 	"${GMOCK_ROOT}/src/gmock-all.cc")
 
 target_link_libraries(inttest Qt5::Network Threads::Threads)
 target_include_directories(inttest PUBLIC
+	"${PROJECT_SOURCE_DIR}/framework"
 	"${GTEST_ROOT}" "${GTEST_ROOT}/include"
 	"${GMOCK_ROOT}" "${GMOCK_ROOT}/include")
 target_compile_definitions(inttest PRIVATE

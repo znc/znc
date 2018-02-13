@@ -154,7 +154,7 @@ test/gmock-main.o: $(GMOCK_DIR)/src/gmock_main.cc Makefile
 	$(Q)$(CXX) $(CXXFLAGS) $(GTEST_FLAGS) -c -o $@ $< -MD -MF .depend/gmock-main.dep -MT $@
 
 # Qt fails under TSAN, so CXXFLAGS/LDFLAGS can't be used.
-test/Integration.o: test/integration/main.cpp Makefile
+test/Integration.o: test/integration/autoconf-all.cpp Makefile
 	@mkdir -p .depend test
 	$(E) Building test object Integration...
 	$(Q)g++ $(qt_CFLAGS) $(GTEST_FLAGS) -c -o $@ $< -MD -MF .depend/Integration.test.dep -MT $@ '-DZNC_BIN_DIR="$(bindir)"' '-DZNC_SRC_DIR="$(realpath $(srcdir))"'
