@@ -1065,13 +1065,20 @@ bool CClient::OnJoinMessage(CJoinMessage& Message) {
         CString sChannel = Message.GetTarget();
         CString sKey = Message.GetKey();
 
-        CChan* pChan = m_pNetwork ? m_pNetwork->FindChan(sChannel) : nullptr;
-        if (pChan) {
-            if (pChan->IsDetached())
-                pChan->AttachUser(this);
-            else
-                pChan->JoinUser(sKey);
-            continue;
+        if (m_pNetwork) {
+            CChan* pChan = m_pNetwork->FindChan(sChannel);
+            if (pChan) {
+                if (pChan->IsDetached())
+                    pChan->AttachUser(this);
+                else
+                    pChan->JoinUser(sKey);
+                continue;
+            } else if (!sChannel.empty()) {
+                pChan = new CChan(sChannel, m_pNetwork, false);
+                if (m_pNetwork->AddChan(pChan)) {
+                    pChan->SetKey(sKey);
+                }
+            }
         }
 
         if (!sChannel.empty()) {
