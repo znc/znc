@@ -1021,8 +1021,6 @@ bool CClient::OnCTCPMessage(CCTCPMessage& Message) {
         }
 
         if (m_pNetwork) {
-            AddBuffer(Message);
-            EchoMessage(Message);
             PutIRC(Message.ToString(CMessage::ExcludePrefix |
                                     CMessage::ExcludeTags));
         }
