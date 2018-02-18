@@ -170,16 +170,11 @@ class CSimpleAway : public CModule {
         }
     }
 
-    EModRet OnUserRaw(CString& sLine) override {
-        if (!sLine.Token(0).Equals("AWAY")) return CONTINUE;
+    EModRet OnUserRawMessage(CMessage& msg) override {
+        if (!msg.GetCommand().Equals("AWAY")) return CONTINUE;
 
         // If a client set us away, we don't touch that away message
-        const CString sArg = sLine.Token(1, true).Trim_n(" ");
-        if (sArg.empty() || sArg == ":")
-            m_bClientSetAway = false;
-        else
-            m_bClientSetAway = true;
-
+        m_bClientSetAway = !msg.GetParam(0).Trim_n(" ").empty();
         m_bWeSetAway = false;
 
         return CONTINUE;

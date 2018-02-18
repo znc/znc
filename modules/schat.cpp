@@ -141,18 +141,18 @@ class CSChat : public CModule {
         }
     }
 
-    EModRet OnUserRaw(CString& sLine) override {
-        if (sLine.StartsWith("schat ")) {
-            OnModCommand("chat " + sLine.substr(6));
-            return (HALT);
+    EModRet OnUserRawMessage(CMessage& msg) override {
+        if (!msg.GetCommand().Equals("schat")) return CONTINUE;
 
-        } else if (sLine.Equals("schat")) {
+        const CString sParams = msg.GetParams(0);
+        if (sParams.empty()) {
             PutModule("SChat User Area ...");
             OnModCommand("help");
-            return (HALT);
+        } else {
+            OnModCommand("chat " + sParams);
         }
 
-        return (CONTINUE);
+        return HALT;
     }
 
     void OnModCommand(const CString& sCommand) override {

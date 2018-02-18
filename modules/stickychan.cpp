@@ -194,17 +194,15 @@ class CStickyChan : public CModule {
         return false;
     }
 
-    EModRet OnRaw(CString& sLine) override {
-        CString sNumeric = sLine.Token(1);
-
-        if (sNumeric.Equals("479")) {
+    EModRet OnNumericMessage(CNumericMessage& msg) override {
+        if (msg.GetCode() == 479) {
             // ERR_BADCHANNAME (juped channels or illegal channel name - ircd
             // hybrid)
             // prevent the module from getting into an infinite loop of trying
             // to join it.
             // :irc.network.net 479 mynick #channel :Illegal channel name
 
-            CString sChannel = sLine.Token(3);
+            const CString sChannel = msg.GetParam(1);
             for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
                 if (sChannel.Equals(it->first)) {
                     PutModule(
