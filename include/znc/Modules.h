@@ -805,7 +805,6 @@ class CModule {
 
     /** This module hook is called when a client sends a raw traffic line to ZNC.
      *  @param sLine The raw traffic line sent.
-     *  @note The line does not include message tags. Use OnUserRawMessage() to access them.
      *  @return See CModule::EModRet.
      */
     virtual EModRet OnUserRaw(CString& sLine);

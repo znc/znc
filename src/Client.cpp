@@ -115,12 +115,6 @@ void CClient::ReadLine(const CString& sData) {
     DEBUG("(" << GetFullName() << ") CLI -> ZNC ["
         << CDebug::Filter(sLine) << "]");
 
-    MCString mssTags;
-    if (sLine.StartsWith("@")) {
-        mssTags = CUtils::GetMessageTags(sLine);
-        sLine = sLine.Token(1, true);
-    }
-
     bool bReturn = false;
     if (IsAttached()) {
         NETWORKMODULECALL(OnUserRaw(sLine), m_pUser, m_pNetwork, this,
@@ -132,7 +126,6 @@ void CClient::ReadLine(const CString& sData) {
 
     CMessage Message(sLine);
     Message.SetClient(this);
-    Message.SetTags(mssTags);
 
     if (IsAttached()) {
         NETWORKMODULECALL(OnUserRawMessage(Message), m_pUser, m_pNetwork, this,
