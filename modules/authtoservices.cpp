@@ -250,12 +250,7 @@ class CAuthToServices : public CModule {
     }
 
     bool OnLoad(const CString& sArgs, CString& sMessage) override {
-        if (!sArgs.empty() && sArgs != "<hidden>") {
-            SetNV("Password", sArgs);
-            SetArgs("<hidden>");
-        }
-
-        if(!GetNV("NotFirstLoad").ToBool()) {
+        if (sArgs == "as_sasl") {
             if (LoadOtherModuleNV("sasl", m_mssSaslRegistry)) {
                 SetNV("RequireSASL", m_mssSaslRegistry["require_auth"]);
                 SetNV("SASLMechanisms", m_mssSaslRegistry["mechanisms"]);
@@ -263,12 +258,22 @@ class CAuthToServices : public CModule {
                 SetNV("Password", m_mssSaslRegistry["password"]);
 
                 PutModule(t_s("Migrated configuration from SASL module."));
-            } else if (LoadOtherModuleNV("nickserv", m_mssNickservRegistry)) {
+            } else {
+                PutModule(t_s("Could not migrate configuration from SASL module."));
+            }
+        }
+        else if (sArgs == "as_nickserv") {
+            if (LoadOtherModuleNV("nickserv", m_mssNickservRegistry)) {
                 SetNV("Password", m_mssNickservRegistry["Password"]);
                 SetNV("IdentifyCmd", m_mssNickservRegistry["IdentifyCmd"]);
-                SetNV("NickServName", m_mssSaslRegistry["NickServName"]);
+
+                if(!m_mssSaslRegistry["NickServName"].empty()) {
+                    SetNV("NickServName", m_mssSaslRegistry["NickServName"]);
+                }
 
                 PutModule(t_s("Migrated configuration from NickServ module."));
+            } else {
+                PutModule(t_s("Could not migrate configuration from NickServ module."));
             }
         }
 

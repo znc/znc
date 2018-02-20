@@ -369,6 +369,21 @@ struct TOption {
     void (CIRCNetwork::*pSetter)(T);
 };
 
+bool CIRCNetwork::ModuleInConfig(CConfig* pConfig, const CString& sModule) const {
+    VCString vsList;
+    bool bFound;
+
+    pConfig->FindStringVector("loadmodule", vsList);
+
+    for (const CString& sLoadMod : vsList) {
+        if (sLoadMod.Token(0).Equals(sModule)) {
+            bFound = true;
+        }
+    }
+
+    return bFound;
+}
+
 bool CIRCNetwork::ParseConfig(CConfig* pConfig, CString& sError,
                               bool bUpgrade) {
     VCString vsList;
@@ -424,6 +439,9 @@ bool CIRCNetwork::ParseConfig(CConfig* pConfig, CString& sError,
         for (const CString& sValue : vsList) {
             CString sModName = sValue.Token(0);
             CString sNotice = "Loading network module [" + sModName + "]";
+            CString sModRet;
+            CString sArgs = sValue.Token(1, true);
+
 
             // XXX Legacy crap, added in ZNC 0.203, modified in 0.207
             // Note that 0.203 == 0.207
@@ -450,8 +468,43 @@ bool CIRCNetwork::ParseConfig(CConfig* pConfig, CString& sError,
                 sModName = "modules_online";
             }
 
-            CString sModRet;
-            CString sArgs = sValue.Token(1, true);
+            // XXX Legacy crap
+            if (sModName == "sasl") {
+                if(ModuleInConfig(pConfig, "authtoservices")) {
+                    CUtils::PrintAction(
+                        "NOTICE: [sasl] is replaced by [authtoservices], "
+                        "so not loading [sasl]");
+                    continue;
+                } else {
+                    sNotice =
+                        "NOTICE: [sasl] was merged into [authtoservices], "
+                        "loading that with [sasl]'s configuration instead";
+                    sModName = "authtoservices";
+                    sArgs = "as_sasl";
+                }
+            }
+
+            if (sModName == "nickserv") {
+                if (ModuleInConfig(pConfig, "sasl")) {
+                    CUtils::PrintAction(
+                        "NOTICE: [nickserv] was merged into [authtoservices], "
+                        "which will load using your [sasl] configuration. Not "
+                        "loading [nickserv]");
+                    continue;
+                } else if (ModuleInConfig(pConfig, "authtoservices")) {
+                    CUtils::PrintAction(
+                        "NOTICE: [nickserv] is replaced by [authtoservices], "
+                        "so not loading [nickserv]");
+                    continue;
+                } else {
+                    sNotice =
+                        "NOTICE: [nisckserv] was merged into [authtoservices], "
+                        "loading that with [nickserv]'s configuration instead";
+                    sModName = "authtoservices";
+                    sArgs = "as_nickserv";
+                }
+            }
+
 
             bool bModRet = LoadModule(sModName, sArgs, sNotice, sModRet);
 
@@ -460,13 +513,7 @@ bool CIRCNetwork::ParseConfig(CConfig* pConfig, CString& sError,
                 // as external module)
                 if (sModName == "awaynick") {
                     // load simple_away instead, unless it's already on the list
-                    bool bFound = false;
-                    for (const CString& sLoadMod : vsList) {
-                        if (sLoadMod.Token(0).Equals("simple_away")) {
-                            bFound = true;
-                        }
-                    }
-                    if (!bFound) {
+                    if (!ModuleInConfig(pConfig, "simple_away")) {
                         sNotice =
                             "Loading network module [simple_away] instead";
                         sModName = "simple_away";
