@@ -287,9 +287,12 @@ class CAuthToServices : public CModule {
     }
 
     const CString GetAccount() {
-        return (!GetNV("Account").empty()
-                ? GetNV("Account")
-                : GetNetwork()->GetIRCNick().GetNick());
+        if(GetNV("Account").empty()) {
+            CString sNick = GetNetwork()->GetNick();
+            DEBUG("Account is empty, using " + sNick + " instead");
+            return sNick;
+        }
+        return GetNV("Account");
     }
 
     // NickServ authentication
