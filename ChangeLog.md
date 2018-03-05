@@ -1,6 +1,14 @@
-# ZNC 1.6.5 (2017-03-12)
+# ZNC 1.6.6 (2018-03-05)
 
-## Fixes
+* Fix use-after-free in `znc --makepem`. It was broken for a long time, but
+  started segfaulting only now. This is a useability fix, not a security fix,
+  because self-signed (or signed by a CA) certificates can be created
+  without using `--makepem`, and then combined into znc.pem.
+* Fix build on Cygwin.
+
+
+
+# ZNC 1.6.5 (2017-03-12)
 
 * Fixed a regression of 1.6.4 which caused a crash in modperl/modpython.
 * Fixed the behavior of `verbose` command in the sasl module.
