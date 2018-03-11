@@ -114,7 +114,7 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew config; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew list --versions; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install swig python3 icu4c jq openssl qt5 gettext; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install swig python3 icu4c jq qt5 gettext; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" && "$BUILD_WITH" == "cmake" ]]; then brew outdated cmake || brew upgrade cmake; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew info --json=v1 --installed | jq .; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PKG_CONFIG_PATH="$(brew --prefix qt5)/lib/pkgconfig:$PKG_CONFIG_PATH"; fi
