@@ -1052,12 +1052,18 @@ class CModule {
 
     ModHandle GetDLL() { return m_pDLL; }
 
-    /** This function sends a given raw IRC line to the IRC server, if we
+    /** This function sends a given IRC line to the IRC server, if we
      *  are connected to one. Else this line is discarded.
      *  @param sLine The line which should be sent.
      *  @return true if the line was queued for sending.
      */
     virtual bool PutIRC(const CString& sLine);
+    /** This function sends a given IRC message to the IRC server, if we
+     *  are connected to one. Else this message is discarded.
+     *  @param Message The message which should be sent.
+     *  @return true if the message was queued for sending.
+     */
+    virtual bool PutIRC(const CMessage& Message);
     /** This function sends a given raw IRC line to a client.
      *  If we are in a module hook which is called for a specific client,
      *  only that client will get the line, else all connected clients will

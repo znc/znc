@@ -84,7 +84,7 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork)
       m_lastCTCP(0),
       m_uNumCTCP(0),
       m_mISupport(),
-      m_vsSendQueue(),
+      m_vSendQueue(),
       m_iSendsAllowed(pNetwork->GetFloodBurst()),
       m_uFloodBurst(pNetwork->GetFloodBurst()),
       m_fFloodRate(pNetwork->GetFloodRate()),
@@ -1131,14 +1131,18 @@ bool CIRCSock::OnWallopsMessage(CMessage& Message) {
 }
 
 void CIRCSock::PutIRC(const CString& sLine) {
+    PutIRC(CMessage(sLine));
+}
+
+void CIRCSock::PutIRC(const CMessage& Message) {
     // Only print if the line won't get sent immediately (same condition as in
     // TrySend()!)
     if (m_bFloodProtection && m_iSendsAllowed <= 0) {
         DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/"
                   << m_pNetwork->GetName() << ") ZNC -> IRC ["
-                  << CDebug::Filter(sLine) << "] (queued)");
+                  << CDebug::Filter(Message.ToString()) << "] (queued)");
     }
-    m_vsSendQueue.push_back(sLine);
+    m_vSendQueue.push_back(Message);
     TrySend();
 }
 
@@ -1150,33 +1154,45 @@ void CIRCSock::PutIRCQuick(const CString& sLine) {
                   << m_pNetwork->GetName() << ") ZNC -> IRC ["
                   << CDebug::Filter(sLine) << "] (queued to front)");
     }
-    m_vsSendQueue.push_front(sLine);
+    m_vSendQueue.emplace_front(sLine);
     TrySend();
 }
 
 void CIRCSock::TrySend() {
     // This condition must be the same as in PutIRC() and PutIRCQuick()!
-    while (!m_vsSendQueue.empty() &&
+    while (!m_vSendQueue.empty() &&
            (!m_bFloodProtection || m_iSendsAllowed > 0)) {
         m_iSendsAllowed--;
-        bool bSkip = false;
-        CString& sLine = m_vsSendQueue.front();
+        CMessage& Message = m_vSendQueue.front();
 
-        CMessage Message(sLine);
+        MCString mssTags;
+        for (const auto& it : Message.GetTags()) {
+            if (IsTagEnabled(it.first)) {
+                mssTags[it.first] = it.second;
+            }
+        }
+        Message.SetTags(mssTags);
         Message.SetNetwork(m_pNetwork);
+
+        bool bSkip = false;
         IRCSOCKMODULECALL(OnSendToIRCMessage(Message), &bSkip);
 
         if (!bSkip) {
-            CString sCopy = Message.ToString();
-            IRCSOCKMODULECALL(OnSendToIRC(sCopy), &bSkip);
-            if (!bSkip) {
-                DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/"
-                        << m_pNetwork->GetName() << ") ZNC -> IRC ["
-                        << CDebug::Filter(sCopy) << "]");
-                Write(sCopy + "\r\n");
-            }
+            PutIRCRaw(Message.ToString());
         }
-        m_vsSendQueue.pop_front();
+        m_vSendQueue.pop_front();
+    }
+}
+
+void CIRCSock::PutIRCRaw(const CString& sLine) {
+    CString sCopy = sLine;
+    bool bSkip = false;
+    IRCSOCKMODULECALL(OnSendToIRC(sCopy), &bSkip);
+    if (!bSkip) {
+        DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/"
+                  << m_pNetwork->GetName() << ") ZNC -> IRC ["
+                  << CDebug::Filter(sCopy) << "]");
+        Write(sCopy + "\r\n");
     }
 }
 
@@ -1473,3 +1489,12 @@ void CIRCSock::ResetChans() {
         it.second->Reset();
     }
 }
+
+void CIRCSock::SetTagSupport(const CString& sTag, bool bState) {
+    if (bState) {
+        m_ssSupportedTags.insert(sTag);
+    } else {
+        m_ssSupportedTags.erase(sTag);
+    }
+}
+

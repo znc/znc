@@ -1376,6 +1376,17 @@ bool CIRCNetwork::PutIRC(const CString& sLine) {
     return true;
 }
 
+bool CIRCNetwork::PutIRC(const CMessage& Message) {
+    CIRCSock* pIRCSock = GetIRCSock();
+
+    if (!pIRCSock) {
+        return false;
+    }
+
+    pIRCSock->PutIRC(Message);
+    return true;
+}
+
 void CIRCNetwork::ClearQueryBuffer() {
     std::for_each(m_vQueries.begin(), m_vQueries.end(),
                   std::default_delete<CQuery>());

@@ -1001,13 +1001,16 @@ bool CModule::OnServerCapAvailable(const CString& sCap) { return false; }
 void CModule::OnServerCapResult(const CString& sCap, bool bSuccess) {}
 
 bool CModule::PutIRC(const CString& sLine) {
-    return (m_pNetwork) ? m_pNetwork->PutIRC(sLine) : false;
+    return m_pNetwork ? m_pNetwork->PutIRC(sLine) : false;
+}
+bool CModule::PutIRC(const CMessage& Message) {
+    return m_pNetwork ? m_pNetwork->PutIRC(Message) : false;
 }
 bool CModule::PutUser(const CString& sLine) {
-    return (m_pNetwork) ? m_pNetwork->PutUser(sLine, m_pClient) : false;
+    return m_pNetwork ? m_pNetwork->PutUser(sLine, m_pClient) : false;
 }
 bool CModule::PutStatus(const CString& sLine) {
-    return (m_pNetwork) ? m_pNetwork->PutStatus(sLine, m_pClient) : false;
+    return m_pNetwork ? m_pNetwork->PutStatus(sLine, m_pClient) : false;
 }
 unsigned int CModule::PutModule(const CTable& table) {
     if (!m_pUser) return 0;

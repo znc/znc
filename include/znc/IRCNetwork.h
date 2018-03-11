@@ -155,6 +155,7 @@ class CIRCNetwork {
     void CheckIRCConnect();
 
     bool PutIRC(const CString& sLine);
+    bool PutIRC(const CMessage& Message);
 
     // Buffers
     void AddRawBuffer(const CMessage& Format, const CString& sText = "") {

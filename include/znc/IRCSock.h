@@ -56,8 +56,46 @@ class CIRCSock : public CIRCSocket {
     void SockError(int iErrno, const CString& sDescription) override;
     void Timeout() override;
     void ReachedMaxBuffer() override;
-
+    /** Sends a raw data line to the server.
+     *  @param sLine The line to be sent.
+     *
+     *  The line is first passed \e unmodified to the \ref
+     *  CModule::OnSendToIRC() module hook. If no module halts the process,
+     *  the line is then sent to the server.
+     *
+     *  Prefer \l PutIRC() instead.
+     */
+    void PutIRCRaw(const CString& sLine);
+    /** Sends a message to the server.
+     *  See \l PutIRC(const CMessage&) for details.
+     */
     void PutIRC(const CString& sLine);
+    /** Sends a message to the server.
+     *  @param  Message The message to be sent.
+     *  @note   Only known and compatible messages and tags are sent.
+     *
+     *  This method can delay the delivery of the message to honor protection
+     *  from flood.
+     *
+     *  This method ensures that only tags, that were negotiated with CAP REQ
+     *  and CAP ACK, are sent. Not all IRC server are capable of handling all
+     *  messages and tags. Thus, in order to stay compatible with a variety of
+     *  IRC servers, ZNC has to filter out messages and tags that the server
+     *  has not explicitly acknowleged.
+     *
+     *  Additional tags can be added via \l CIRCSock::SetTagSupport().
+     *
+     *  @warning Bypassing the filter may cause troubles to some older IRC
+     *  servers.
+     *
+     *  It is possible to bypass the filter by converting a message to a string
+     *  using \l CMessage::ToString(), and passing the resulting raw line to the
+     *  \l CIRCSock::PutIRCRaw(const CString& sLine):
+     *  \code
+     *  pServer->PutIRCRaw(Message.ToString());
+     *  \endcode
+     */
+    void PutIRC(const CMessage& Message);
     void PutIRCQuick(const CString& sLine);  //!< Should be used for PONG only
     void ResetChans();
     void Quit(const CString& sQuitMsg = "");
@@ -71,6 +109,16 @@ class CIRCSock : public CIRCSocket {
      *  should be resumed again.
      */
     void ResumeCap();
+    
+    bool IsTagEnabled(const CString& sTag) const {
+        return 1 == m_ssSupportedTags.count(sTag);
+    }
+    /** Registers a tag as being supported or unsupported by the server.
+     *  This doesn't affect tags which the server sends.
+     *  @param sTag The tag to register.
+     *  @param bState Whether the client supports the tag.
+     */
+    void SetTagSupport(const CString& sTag, bool bState);
 
     // Setters
     void SetPass(const CString& s) { m_sPass = s; }
@@ -175,11 +223,12 @@ class CIRCSock : public CIRCSocket {
     static const time_t m_uCTCPFloodTime;
     static const unsigned int m_uCTCPFloodCount;
     MCString m_mISupport;
-    std::deque<CString> m_vsSendQueue;
+    std::deque<CMessage> m_vSendQueue;
     short int m_iSendsAllowed;
     unsigned short int m_uFloodBurst;
     double m_fFloodRate;
     bool m_bFloodProtection;
+    SCString m_ssSupportedTags;
 
     friend class CIRCFloodTimer;
 };
