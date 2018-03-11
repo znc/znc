@@ -193,7 +193,7 @@ class CRouteTimeout : public CTimer {
 };
 
 struct queued_req {
-    CString sLine;
+    CMessage msg;
     const struct reply* reply;
 };
 
@@ -218,7 +218,7 @@ class CRouteRepliesMod : public CModule {
             it = m_vsPending.begin();
 
             while (!it->second.empty()) {
-                PutIRC(it->second[0].sLine);
+                PutIRC(it->second[0].msg);
                 it->second.erase(it->second.begin());
             }
 
@@ -268,7 +268,7 @@ class CRouteRepliesMod : public CModule {
             // :server 461 nick WHO :Not enough parameters
             CString sOrigCmd = msg.GetParam(1);
 
-            if (m_sLastRequest.Token(0).Equals(sOrigCmd)) {
+            if (m_LastRequest.GetCommand().Equals(sOrigCmd)) {
                 // This is the reply to the last request
                 if (RouteReply(msg, true)) return HALTCORE;
                 return CONTINUE;
@@ -290,22 +290,22 @@ class CRouteRepliesMod : public CModule {
         return CONTINUE;
     }
 
-    EModRet OnUserRaw(CString& sLine) override {
-        CString sCmd = sLine.Token(0).AsUpper();
+    EModRet OnUserRawMessage(CMessage& Message) override {
+        const CString& sCmd = Message.GetCommand();
 
         if (!GetNetwork()->GetIRCSock() ||
             !GetNetwork()->GetIRCSock()->IsConnected())
             return CONTINUE;
 
-        if (sCmd.Equals("MODE")) {
+        if (Message.GetType() == CMessage::Type::Mode) {
             // Check if this is a mode request that needs to be handled
 
             // If there are arguments to a mode change,
             // we must not route it.
-            if (!sLine.Token(3, true).empty()) return CONTINUE;
+            if (!Message.GetParams(2).empty()) return CONTINUE;
 
             // Grab the mode change parameter
-            CString sMode = sLine.Token(2);
+            CString sMode = Message.GetParam(1);
 
             // If this is a channel mode request, znc core replies to it
             if (sMode.empty()) return CONTINUE;
@@ -331,7 +331,7 @@ class CRouteRepliesMod : public CModule {
 
         for (size_t i = 0; vRouteReplies[i].szRequest != nullptr; i++) {
             if (vRouteReplies[i].szRequest == sCmd) {
-                struct queued_req req = {sLine, vRouteReplies[i].vReplies};
+                struct queued_req req = {Message, vRouteReplies[i].vReplies};
                 m_vsPending[GetClient()].push_back(req);
                 SendRequest();
 
@@ -355,7 +355,7 @@ class CRouteRepliesMod : public CModule {
             PutModule(
                 t_f("To disable this message, do \"/msg {1} silent yes\"")(
                     GetModNick()));
-            PutModule(t_f("Last request: {1}")(m_sLastRequest));
+            PutModule(t_f("Last request: {1}")(m_LastRequest.ToString()));
             PutModule(t_s("Expected replies:"));
 
             for (size_t i = 0; m_pReplies[i].szReply != nullptr; i++) {
@@ -419,8 +419,8 @@ class CRouteRepliesMod : public CModule {
 
         m_pDoing = it->first;
         m_pReplies = it->second[0].reply;
-        m_sLastRequest = it->second[0].sLine;
-        PutIRC(it->second[0].sLine);
+        m_LastRequest = it->second[0].msg;
+        PutIRC(it->second[0].msg);
         it->second.erase(it->second.begin());
     }
 
@@ -440,7 +440,7 @@ class CRouteRepliesMod : public CModule {
     const struct reply* m_pReplies;
     requestQueue m_vsPending;
     // This field is only used for display purpose.
-    CString m_sLastRequest;
+    CMessage m_LastRequest;
 };
 
 void CRouteTimeout::RunJob() {

@@ -47,22 +47,20 @@ class CBlockMotd : public CModule {
         }
     }
 
-    EModRet OnRaw(CString& sLine) override {
-        const CString sCmd = sLine.Token(1);
-
-        if ((sCmd == "375" /* begin of MOTD */ || sCmd == "372" /* MOTD */) &&
+    EModRet OnNumericMessage(CNumericMessage& Message) override {
+        if ((Message.GetCode() == 375 /* begin of MOTD */ ||
+             Message.GetCode() == 372 /* MOTD */) &&
             !ShouldTemporarilyAcceptMotd())
             return HALT;
 
-        if (sCmd == "376" /* End of MOTD */) {
+        if (Message.GetCode() == 376 /* End of MOTD */) {
             if (!ShouldTemporarilyAcceptMotd()) {
-                sLine = sLine.Token(0) + " 422 " + sLine.Token(2) + " :" +
-                        t_s("MOTD blocked by ZNC");
+                Message.SetParam(1, t_s("MOTD blocked by ZNC"));
             }
             StopTemporarilyAcceptingMotd();
         }
 
-        if (sCmd == "422") {
+        if (Message.GetCode() == 422) {
             // Server has no MOTD
             StopTemporarilyAcceptingMotd();
         }

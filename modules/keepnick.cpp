@@ -138,18 +138,16 @@ class CKeepNickMod : public CModule {
         m_pTimer = nullptr;
     }
 
-    EModRet OnUserRaw(CString& sLine) override {
+    EModRet OnUserRawMessage(CMessage& Message) override {
         // We don't care if we are not connected to IRC
         if (!GetNetwork()->IsIRCConnected()) return CONTINUE;
 
         // We are trying to get the config nick and this is a /nick?
-        if (!m_pTimer || !sLine.Token(0).Equals("NICK")) return CONTINUE;
+        if (!m_pTimer || Message.GetType() != CMessage::Type::Nick)
+            return CONTINUE;
 
         // Is the nick change for the nick we are trying to get?
-        CString sNick = sLine.Token(1);
-
-        // Don't even think of using spaces in your nick!
-        if (sNick.Left(1) == ":") sNick.LeftChomp();
+        const CString sNick = Message.As<CNickMessage>().GetNewNick();
 
         if (!sNick.Equals(GetNick())) return CONTINUE;
 

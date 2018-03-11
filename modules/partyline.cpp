@@ -204,17 +204,14 @@ class CPartylineMod : public CModule {
         return CONTINUE;
     }
 
-    EModRet OnRaw(CString& sLine) override {
-        if (sLine.Token(1) == "005") {
-            CString::size_type uPos = sLine.AsUpper().find("CHANTYPES=");
-            if (uPos != CString::npos) {
-                uPos = sLine.find(" ", uPos);
-
-                if (uPos == CString::npos)
-                    sLine.append(CHAN_PREFIX_1);
-                else
-                    sLine.insert(uPos, CHAN_PREFIX_1);
-                m_spInjectedPrefixes.insert(GetNetwork());
+    EModRet OnNumericMessage(CNumericMessage& Msg) override {
+        if (Msg.GetCode() == 5) {
+            for (int i = 0; i < Msg.GetParams().size(); ++i) {
+                if (Msg.GetParams()[i].StartsWith("CHANTYPES=")) {
+                    Msg.SetParam(i, Msg.GetParam(i) + CHAN_PREFIX_1);
+                    m_spInjectedPrefixes.insert(GetNetwork());
+                    break;
+                }
             }
         }
 
@@ -302,14 +299,15 @@ class CPartylineMod : public CModule {
         }
     }
 
-    EModRet OnUserRaw(CString& sLine) override {
-        if (sLine.StartsWith("WHO " CHAN_PREFIX_1)) {
+    EModRet OnUserRawMessage(CMessage& Msg) override {
+        if ((Msg.GetCommand().Equals("WHO") ||
+             Msg.GetCommand().Equals("MODE")) &&
+            Msg.GetParam(0).StartsWith(CHAN_PREFIX_1)) {
             return HALT;
-        } else if (sLine.StartsWith("MODE " CHAN_PREFIX_1)) {
-            return HALT;
-        } else if (sLine.StartsWith("TOPIC " CHAN_PREFIX)) {
-            CString sChannel = sLine.Token(1);
-            CString sTopic = sLine.Token(2, true);
+        } else if (Msg.GetCommand().Equals("TOPIC") &&
+                   Msg.GetParam(0).StartsWith(CHAN_PREFIX)) {
+            const CString sChannel = Msg.As<CTopicMessage>().GetTarget();
+            CString sTopic = Msg.As<CTopicMessage>().GetText();
 
             sTopic.TrimPrefix(":");
 

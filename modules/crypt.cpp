@@ -334,20 +334,18 @@ class CCryptMod : public CModule {
         return CONTINUE;
     }
 
-    EModRet OnRaw(CString& sLine) override {
-        if (!sLine.Token(1).Equals("332")) {
+    EModRet OnNumericMessage(CNumericMessage& Message) override {
+        if (Message.GetCode() != 332) {
             return CONTINUE;
         }
 
-        CChan* pChan = GetNetwork()->FindChan(sLine.Token(3));
+        CChan* pChan = GetNetwork()->FindChan(Message.GetParam(1));
         if (pChan) {
-            CNick* Nick = pChan->FindNick(sLine.Token(2));
-            CString sTopic = sLine.Token(4, true);
-            sTopic.TrimPrefix(":");
+            CNick* Nick = pChan->FindNick(Message.GetParam(0));
+            CString sTopic = Message.GetParam(2);
 
             FilterIncoming(pChan->GetName(), *Nick, sTopic);
-            sLine = sLine.Token(0) + " " + sLine.Token(1) + " " +
-                    sLine.Token(2) + " " + pChan->GetName() + " :" + sTopic;
+            Message.SetParam(2, sTopic);
         }
 
         return CONTINUE;

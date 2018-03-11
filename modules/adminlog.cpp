@@ -68,17 +68,15 @@ class CAdminLogMod : public CModule {
             "] disconnected from IRC");
     }
 
-    EModRet OnRaw(CString& sLine) override {
-        if (sLine.StartsWith("ERROR ")) {
+    EModRet OnRawMessage(CMessage& Message) override {
+        if (Message.GetCommand().Equals("ERROR")) {
             // ERROR :Closing Link: nick[24.24.24.24] (Excess Flood)
             // ERROR :Closing Link: nick[24.24.24.24] Killer (Local kill by
             // Killer (reason))
-            CString sError(sLine.substr(6));
-            if (sError.Left(1) == ":") sError.LeftChomp();
             Log("[" + GetUser()->GetUserName() + "/" + GetNetwork()->GetName() +
                     "] disconnected from IRC: " +
                     GetNetwork()->GetCurrentServer()->GetName() + " [" +
-                    sError + "]",
+                    Message.GetParams(1) + "]",
                 LOG_NOTICE);
         }
         return CONTINUE;
