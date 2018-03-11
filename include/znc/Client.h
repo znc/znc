@@ -202,11 +202,18 @@ class CClient : public CIRCSocket {
     /** Sends a raw data line to the client.
      *  @param sLine The line to be sent.
      *
-     *  The line is first passed \e unmodified to the \ref CModule::OnSendToClient()
-     *  module hook. If no module halts the process, the line is then sent to the client.
+     *  The line is first passed \e unmodified to the \ref
+     *  CModule::OnSendToClient() module hook. If no module halts the process,
+     *  the line is then sent to the client.
      *
      *  These lines appear in the debug output in the following syntax:
      *  \code [time] (user/network) ZNC -> CLI [line] \endcode
+     *
+     *  Prefer \l PutClient() instead.
+     */
+    bool PutClientRaw(const CString& sLine);
+    /** Sends a message to the client.
+     *  See \l PutClient(const CMessage&) for details.
      */
     void PutClient(const CString& sLine);
     /** Sends a message to the client.
@@ -245,14 +252,17 @@ class CClient : public CIRCSocket {
      *  ----------- | ----------
      *  \c time     | \l CClient::HasServerTime() (<a href="http://ircv3.net/specs/extensions/server-time-3.2.html">server-time</a>)
      *  \c batch    | \l CClient::HasBatch() (<a href="http://ircv3.net/specs/extensions/batch-3.2.html">batch</a>)
+     *  
+     *  Additional tags can be added via \l CClient::SetTagSupport().
      *
-     *  @warning Bypassing the filter may cause troubles to some older IRC clients.
+     *  @warning Bypassing the filter may cause troubles to some older IRC
+     *  clients.
      *
      *  It is possible to bypass the filter by converting a message to a string
      *  using \l CMessage::ToString(), and passing the resulting raw line to the
-     *  \l CClient::PutClient(const CString& sLine) overload:
+     *  \l CClient::PutClientRaw(const CString& sLine):
      *  \code
-     *  pClient->PutClient(Message.ToString());
+     *  pClient->PutClientRaw(Message.ToString());
      *  \endcode
      */
     bool PutClient(const CMessage& Message);
@@ -269,7 +279,8 @@ class CClient : public CIRCSocket {
     bool IsTagEnabled(const CString& sTag) const {
         return 1 == m_ssSupportedTags.count(sTag);
     }
-    /** Registers a tag as being supported or unsupported by a client.
+    /** Registers a tag as being supported or unsupported by the client.
+     *  This doesn't affect tags which the client sends.
      *  @param sTag The tag to register.
      *  @param bState Whether the client supports the tag.
      */

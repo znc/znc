@@ -484,8 +484,7 @@ CString CClient::GetFullName() const {
 }
 
 void CClient::PutClient(const CString& sLine) {
-    CMessage Message(sLine);
-    PutClient(Message);
+    PutClient(CMessage(sLine));
 }
 
 bool CClient::PutClient(const CMessage& Message) {
@@ -581,7 +580,12 @@ bool CClient::PutClient(const CMessage& Message) {
                       &bReturn);
     if (bReturn) return false;
 
-    CString sCopy = Msg.ToString();
+    return PutClientRaw(Msg.ToString());
+}
+
+bool CClient::PutClientRaw(const CString& sLine) {
+    CString sCopy = sLine;
+    bool bReturn = false;
     NETWORKMODULECALL(OnSendToClient(sCopy, *this), m_pUser, m_pNetwork, this,
                       &bReturn);
     if (bReturn) return false;
