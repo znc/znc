@@ -43,92 +43,92 @@ msgstr ""
 msgid "Set the nick prefix, with no argument it's disabled."
 msgstr ""
 
-#: crypt.cpp:282
+#: crypt.cpp:270
 msgid "Received DH1080 public key from {1}, sending mine..."
 msgstr ""
 
-#: crypt.cpp:287 crypt.cpp:308
+#: crypt.cpp:275 crypt.cpp:296
 msgid "Key for {1} successfully set."
 msgstr ""
 
-#: crypt.cpp:290 crypt.cpp:311
+#: crypt.cpp:278 crypt.cpp:299
 msgid "Error in {1} with {2}: {3}"
 msgstr ""
 
-#: crypt.cpp:292 crypt.cpp:313
+#: crypt.cpp:280 crypt.cpp:301
 msgid "no secret key computed"
 msgstr ""
 
-#: crypt.cpp:427
+#: crypt.cpp:395
 msgid "Target [{1}] deleted"
 msgstr ""
 
-#: crypt.cpp:429
+#: crypt.cpp:397
 msgid "Target [{1}] not found"
 msgstr ""
 
-#: crypt.cpp:432
+#: crypt.cpp:400
 msgid "Usage DelKey <#chan|Nick>"
 msgstr ""
 
-#: crypt.cpp:447
+#: crypt.cpp:415
 msgid "Set encryption key for [{1}] to [{2}]"
 msgstr ""
 
-#: crypt.cpp:449
+#: crypt.cpp:417
 msgid "Usage: SetKey <#chan|Nick> <Key>"
 msgstr ""
 
-#: crypt.cpp:460
+#: crypt.cpp:428
 msgid "Sent my DH1080 public key to {1}, waiting for reply ..."
 msgstr ""
 
-#: crypt.cpp:462
+#: crypt.cpp:430
 msgid "Error generating our keys, nothing sent."
 msgstr ""
 
-#: crypt.cpp:465
+#: crypt.cpp:433
 msgid "Usage: KeyX <Nick>"
 msgstr ""
 
-#: crypt.cpp:472
+#: crypt.cpp:440
 msgid "Nick Prefix disabled."
 msgstr ""
 
-#: crypt.cpp:474
+#: crypt.cpp:442
 msgid "Nick Prefix: {1}"
 msgstr ""
 
-#: crypt.cpp:483
+#: crypt.cpp:451
 msgid "You cannot use :, even followed by other symbols, as Nick Prefix."
 msgstr ""
 
-#: crypt.cpp:492
+#: crypt.cpp:460
 msgid "Overlap with Status Prefix ({1}), this Nick Prefix will not be used!"
 msgstr ""
 
-#: crypt.cpp:497
+#: crypt.cpp:465
 msgid "Disabling Nick Prefix."
 msgstr ""
 
-#: crypt.cpp:499
+#: crypt.cpp:467
 msgid "Setting Nick Prefix to {1}"
 msgstr ""
 
-#: crypt.cpp:506 crypt.cpp:512
+#: crypt.cpp:474 crypt.cpp:480
 msgctxt "listkeys"
 msgid "Target"
 msgstr ""
 
-#: crypt.cpp:507 crypt.cpp:513
+#: crypt.cpp:475 crypt.cpp:481
 msgctxt "listkeys"
 msgid "Key"
 msgstr ""
 
-#: crypt.cpp:517
+#: crypt.cpp:485
 msgid "You have no encryption keys set."
 msgstr ""
 
-#: crypt.cpp:539
+#: crypt.cpp:507
 msgid "Encryption for channel/private messages"
 msgstr ""

@@ -2,8 +2,9 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 "
+"&& n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 "
+"&& n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: ru\n"
@@ -27,10 +28,10 @@ msgstr ""
 msgid "You are not connected to an IRC Server."
 msgstr ""
 
-#: block_motd.cpp:60
+#: block_motd.cpp:58
 msgid "MOTD blocked by ZNC"
 msgstr ""
 
-#: block_motd.cpp:106
+#: block_motd.cpp:104
 msgid "Block the MOTD from IRC so it's not sent to your client(s)."
 msgstr ""

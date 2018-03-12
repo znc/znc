@@ -2,8 +2,9 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 "
+"&& n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 "
+"&& n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: ru\n"
@@ -17,7 +18,7 @@ msgstr ""
 msgid "Try to get your primary nick"
 msgstr ""
 
-#: keepnick.cpp:42 keepnick.cpp:198
+#: keepnick.cpp:42 keepnick.cpp:196
 msgid "No longer trying to get your primary nick"
 msgstr ""
 
@@ -25,30 +26,30 @@ msgstr ""
 msgid "Show the current state"
 msgstr ""
 
-#: keepnick.cpp:160
+#: keepnick.cpp:158
 msgid "ZNC is already trying to get this nickname"
 msgstr ""
 
-#: keepnick.cpp:175
+#: keepnick.cpp:173
 msgid "Unable to obtain nick {1}: {2}, {3}"
 msgstr ""
 
-#: keepnick.cpp:183
+#: keepnick.cpp:181
 msgid "Unable to obtain nick {1}"
 msgstr ""
 
-#: keepnick.cpp:193
+#: keepnick.cpp:191
 msgid "Trying to get your primary nick"
 msgstr ""
 
-#: keepnick.cpp:203
+#: keepnick.cpp:201
 msgid "Currently trying to get your primary nick"
 msgstr ""
 
-#: keepnick.cpp:205
+#: keepnick.cpp:203
 msgid "Currently disabled, try 'enable'"
 msgstr ""
 
-#: keepnick.cpp:226
+#: keepnick.cpp:224
 msgid "Keeps trying for your primary nick"
 msgstr ""

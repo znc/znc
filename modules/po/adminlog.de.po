@@ -24,46 +24,46 @@ msgstr "<file|syslog|both> [Pfad]"
 msgid "Set the logging target"
 msgstr "Das Log-Ziel setzen"
 
-#: adminlog.cpp:144
+#: adminlog.cpp:142
 msgid "Access denied"
 msgstr "Zutritt verweigert"
 
-#: adminlog.cpp:158
+#: adminlog.cpp:156
 msgid "Now logging to file"
 msgstr "Es wird jetzt ein Datei-Protokoll geschrieben"
 
-#: adminlog.cpp:162
+#: adminlog.cpp:160
 msgid "Now only logging to syslog"
 msgstr "Es wird nun ins Syslog geschrieben"
 
-#: adminlog.cpp:166
+#: adminlog.cpp:164
 msgid "Now logging to syslog and file"
 msgstr "Es wird nun ins Syslog und eine Protokoll-Datei geschrieben"
 
-#: adminlog.cpp:170
+#: adminlog.cpp:168
 msgid "Usage: Target <file|syslog|both> [path]"
 msgstr "Verwendung: Target <file|syslog|both> [Pfad]"
 
-#: adminlog.cpp:172
+#: adminlog.cpp:170
 msgid "Unknown target"
 msgstr "Unbekanntes Ziel"
 
-#: adminlog.cpp:194
+#: adminlog.cpp:192
 msgid "Logging is enabled for file"
 msgstr "Es wird ein Datei-Protokoll geschrieben"
 
-#: adminlog.cpp:197
+#: adminlog.cpp:195
 msgid "Logging is enabled for syslog"
 msgstr "Es wird ins Syslog geschrieben"
 
-#: adminlog.cpp:200
+#: adminlog.cpp:198
 msgid "Logging is enabled for both, file and syslog"
 msgstr "Es wird sowohl eine Protokoll-Datei als auch ins Syslog geschrieben"
 
-#: adminlog.cpp:206
+#: adminlog.cpp:204
 msgid "Log file will be written to {1}"
 msgstr "Datei-Protokoll wird nach {1} geschrieben"
 
-#: adminlog.cpp:224
+#: adminlog.cpp:222
 msgid "Log ZNC events to file and/or syslog."
 msgstr "Protokolliere ZNC-Ereignisse in eine Datei und/order ins Syslog."
