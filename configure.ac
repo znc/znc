@@ -8,7 +8,7 @@ dnl Needed for AC_PATH_PROGS_FEATURE_CHECK which was added in 2.62
 AC_PREREQ([2.62])
 dnl Keep the version number in sync with version.h!
 AC_INIT([znc], [1.7.x])
-LIBZNC_VERSION=1.7
+LIBZNC_VERSION=1.7.x
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([src/znc.cpp])
 AC_LANG([C++])
