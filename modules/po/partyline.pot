@@ -19,12 +19,12 @@ msgstr ""
 msgid "List all open channels"
 msgstr ""
 
-#: partyline.cpp:735
+#: partyline.cpp:733
 msgid ""
 "You may enter a list of channels the user joins, when entering the internal "
 "partyline."
 msgstr ""
 
-#: partyline.cpp:741
+#: partyline.cpp:739
 msgid "Internal channels and queries for users connected to ZNC"
 msgstr ""

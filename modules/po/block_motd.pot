@@ -17,10 +17,10 @@ msgstr ""
 msgid "You are not connected to an IRC Server."
 msgstr ""
 
-#: block_motd.cpp:60
+#: block_motd.cpp:58
 msgid "MOTD blocked by ZNC"
 msgstr ""
 
-#: block_motd.cpp:106
+#: block_motd.cpp:104
 msgid "Block the MOTD from IRC so it's not sent to your client(s)."
 msgstr ""
