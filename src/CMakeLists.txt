@@ -93,7 +93,7 @@ set_target_properties(znclib ${znc_link} PROPERTIES
 # The following options are relevant only on cygwin
 set_target_properties(znclib PROPERTIES
 	OUTPUT_NAME "znc"
-	SOVERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
+	SOVERSION "${ZNC_VERSION}")
 
 # CMake started supporting metafeature cxx_std_11 only in 3.8
 set(required_cxx11_features
