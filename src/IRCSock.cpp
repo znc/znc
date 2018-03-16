@@ -758,8 +758,16 @@ void CIRCSock::ReadLine(const CString& sData) {
 					if (OnPrivMsg(Nick, sMsg)) {
 						return;
 					}
-				} else {
+				} else if(m_pNetwork->IsChan(sTarget)) {
 					if (OnChanMsg(Nick, sTarget, sMsg)) {
+						return;
+					}
+				} else if(Nick.GetNick().Equals(GetNick())) {
+					if (!m_pNetwork->IsUserOnline() || !m_pNetwork->GetUser()->AutoClearQueryBuffer()) {
+						CQuery* pQuery = m_pNetwork->AddQuery(sTarget);
+						if (pQuery) {
+							pQuery->AddBuffer(":{target} PRIVMSG " + sTarget + " :{text}", sMsg);
+						}
 						return;
 					}
 				}
