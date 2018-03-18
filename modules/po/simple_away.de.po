@@ -79,13 +79,13 @@ msgstr ""
 msgid "MinClients set to {1}"
 msgstr ""
 
-#: simple_away.cpp:253
+#: simple_away.cpp:248
 msgid ""
 "You might enter up to 3 arguments, like -notimer awaymessage or -timer 5 "
 "awaymessage."
 msgstr ""
 
-#: simple_away.cpp:258
+#: simple_away.cpp:253
 msgid ""
 "This module will automatically set you away on IRC while you are "
 "disconnected from the bouncer."

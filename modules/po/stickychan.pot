@@ -79,15 +79,15 @@ msgstr ""
 msgid "Channel stopped being sticky!"
 msgstr ""
 
-#: stickychan.cpp:211
+#: stickychan.cpp:209
 msgid ""
 "Channel {1} cannot be joined, it is an illegal channel name. Unsticking."
 msgstr ""
 
-#: stickychan.cpp:248
+#: stickychan.cpp:246
 msgid "List of channels, separated by comma."
 msgstr ""
 
-#: stickychan.cpp:253
+#: stickychan.cpp:251
 msgid "configless sticky chans, keeps you there very stickily even"
 msgstr ""
