@@ -54,6 +54,11 @@ cyrusauth:
 Character Encodings:
 * To get proper character encoding and charsets install ICU (`libicu4-dev`)
 
+I18N (UI translation)
+* CMake-based build only
+* Boost.Locale
+* gettext is a build dependency
+
 ## Installing ZNC
 
 Currently there are 2 build systems in place: CMake and `./configure`.
