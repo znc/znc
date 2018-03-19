@@ -67,7 +67,9 @@ but calls CMake with CMake-style parameters.
 Installation from source code is performed using the CMake toolchain.
 
 ```shell
-cmake .
+mkdir build
+cd build
+cmake ..
 make
 make install
 ```
@@ -87,7 +89,9 @@ If you are building from git, you will need to run `./autogen.sh` first to
 produce the `configure` script.
 
 ```shell
-./configure
+mkdir build
+cd build
+../configure
 make
 make install
 ```
