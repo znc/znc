@@ -21,6 +21,7 @@
 #include <znc/Nick.h>
 #include <znc/ZNCString.h>
 #include <znc/Buffer.h>
+#include <znc/Translation.h>
 #include <map>
 
 // Forward Declarations
@@ -31,7 +32,7 @@ class CConfig;
 class CFile;
 // !Forward Declarations
 
-class CChan {
+class CChan : private CCoreTranslationMixin {
   public:
     typedef enum {
         Voice = '+',
