@@ -129,7 +129,7 @@ void CClient::UserCommand(CString& sLine) {
         PutStatus(t_p("There was {1} channel matching [{2}]",
                       "There were {1} channels matching [{2}]",
                       sChans.size())(sChans.size(), sPatterns));
-        PutStatus(t_p("Attached {1} channel", "Attached {2} channels",
+        PutStatus(t_p("Attached {1} channel", "Attached {1} channels",
                       uAttachedChans)(uAttachedChans));
     } else if (sCommand.Equals("DETACH")) {
         if (!m_pNetwork) {
@@ -151,7 +151,7 @@ void CClient::UserCommand(CString& sLine) {
         PutStatus(t_p("There was {1} channel matching [{2}]",
                       "There were {1} channels matching [{2}]",
                       sChans.size())(sChans.size(), sPatterns));
-        PutStatus(t_p("Detached {1} channel", "Detached {2} channels",
+        PutStatus(t_p("Detached {1} channel", "Detached {1} channels",
                       uDetached)(uDetached));
     } else if (sCommand.Equals("VERSION")) {
         PutStatus(CZNC::GetTag());
