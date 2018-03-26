@@ -1654,187 +1654,244 @@ void CClient::UserPortCommand(CString& sLine) {
     }
 }
 
-static void AddCommandHelp(CTable& Table, const CString& sCmd,
-                           const CString& sArgs, const CString& sDesc,
-                           const CString& sFilter = "") {
-    if (sFilter.empty() || sCmd.StartsWith(sFilter) ||
-        sCmd.AsLower().WildCmp(sFilter.AsLower())) {
-        Table.AddRow();
-        Table.SetCell("Command", sCmd + " " + sArgs);
-        Table.SetCell("Description", sDesc);
-    }
-}
-
 void CClient::HelpUser(const CString& sFilter) {
     CTable Table;
-    Table.AddColumn("Command");
-    Table.AddColumn("Description");
+    Table.AddColumn(t_s("Command", "helpcmd"));
+    Table.AddColumn(t_s("Description", "helpcmd"));
 
     if (sFilter.empty()) {
         PutStatus(
-            "In the following list all occurrences of <#chan> support "
-            "wildcards (* and ?)");
-        PutStatus("(Except ListNicks)");
+            t_s("In the following list all occurrences of <#chan> support "
+                "wildcards (* and ?) except ListNicks"));
     }
 
-    AddCommandHelp(Table, "Version", "", "Print which version of ZNC this is",
-                   sFilter);
+    const auto AddCommandHelp = [&](const CString& sCmd, const CString& sArgs,
+                                    const CString& sDesc) {
+        if (sFilter.empty() || sCmd.StartsWith(sFilter) ||
+            sCmd.AsLower().WildCmp(sFilter.AsLower())) {
+            Table.AddRow();
+            Table.SetCell(t_s("Command", "helpcmd"), sCmd + " " + sArgs);
+            Table.SetCell(t_s("Description", "helpcmd"), sDesc);
+        }
+    };
 
-    AddCommandHelp(Table, "ListMods", "", "List all loaded modules", sFilter);
-    AddCommandHelp(Table, "ListAvailMods", "", "List all available modules",
-                   sFilter);
+    AddCommandHelp(
+        "Version", "",
+        t_s("Print which version of ZNC this is", "helpcmd|Version|desc"));
+
+    AddCommandHelp("ListMods", "",
+                   t_s("List all loaded modules", "helpcmd|ListMods|desc"));
+    AddCommandHelp(
+        "ListAvailMods", "",
+        t_s("List all available modules", "helpcmd|ListAvailMods|desc"));
     if (!m_pUser->IsAdmin()) {
         // If they are an admin we will add this command below with an argument
-        AddCommandHelp(Table, "ListChans", "", "List all channels", sFilter);
+        AddCommandHelp("ListChans", "",
+                       t_s("List all channels", "helpcmd|ListChans|desc"));
     }
-    AddCommandHelp(Table, "ListNicks", "<#chan>", "List all nicks on a channel",
-                   sFilter);
+    AddCommandHelp(
+        "ListNicks", t_s("<#chan>", "helpcmd|ListNicks|args"),
+        t_s("List all nicks on a channel", "helpcmd|ListNicks|desc"));
     if (!m_pUser->IsAdmin()) {
-        AddCommandHelp(Table, "ListClients", "",
-                       "List all clients connected to your ZNC user", sFilter);
+        AddCommandHelp("ListClients", "",
+                       t_s("List all clients connected to your ZNC user",
+                           "helpcmd|ListClients|desc"));
     }
-    AddCommandHelp(Table, "ListServers", "",
-                   "List all servers of current IRC network", sFilter);
+    AddCommandHelp("ListServers", "",
+                   t_s("List all servers of current IRC network",
+                       "helpcmd|ListServers|desc"));
 
-    AddCommandHelp(Table, "AddNetwork", "<name>", "Add a network to your user",
-                   sFilter);
-    AddCommandHelp(Table, "DelNetwork", "<name>",
-                   "Delete a network from your user", sFilter);
-    AddCommandHelp(Table, "ListNetworks", "", "List all networks", sFilter);
+    AddCommandHelp(
+        "AddNetwork", t_s("<name>", "helpcmd|AddNetwork|args"),
+        t_s("Add a network to your user", "helpcmd|AddNetwork|desc"));
+    AddCommandHelp(
+        "DelNetwork", t_s("<name>", "helpcmd|DelNetwork|args"),
+        t_s("Delete a network from your user", "helpcmd|DelNetwork|desc"));
+    AddCommandHelp("ListNetworks", "",
+                   t_s("List all networks", "helpcmd|ListNetworks|desc"));
     if (m_pUser->IsAdmin()) {
-        AddCommandHelp(Table, "MoveNetwork",
-                       "<old user> <old network> <new user> [new network]",
-                       "Move an IRC network from one user to another", sFilter);
+        AddCommandHelp("MoveNetwork",
+                       t_s("<old user> <old network> <new user> [new network]",
+                           "helpcmd|MoveNetwork|args"),
+                       t_s("Move an IRC network from one user to another",
+                           "helpcmd|MoveNetwork|desc"));
     }
-    AddCommandHelp(Table, "JumpNetwork", "<network>",
-                   "Jump to another network (Alternatively, you can connect to "
-                   "ZNC several times, using `user/network` as username)",
-                   sFilter);
-
-    AddCommandHelp(Table, "AddServer", "<host> [[+]port] [pass]",
-                   "Add a server to the list of alternate/backup servers of "
-                   "current IRC network.",
-                   sFilter);
-    AddCommandHelp(Table, "DelServer", "<host> [port] [pass]",
-                   "Remove a server from the list of alternate/backup servers "
-                   "of current IRC network",
-                   sFilter);
-
-    AddCommandHelp(Table, "AddTrustedServerFingerprint", "<fi:ng:er>",
-                   "Add a trusted server SSL certificate fingerprint (SHA-256) "
-                   "to current IRC network.",
-                   sFilter);
     AddCommandHelp(
-        Table, "DelTrustedServerFingerprint", "<fi:ng:er>",
-        "Delete a trusted server SSL certificate from current IRC network.",
-        sFilter);
+        "JumpNetwork", t_s("<network>", "helpcmd|JumpNetwork|args"),
+        t_s("Jump to another network (Alternatively, you can connect to ZNC "
+            "several times, using `user/network` as username)",
+            "helpcmd|JumpNetwork|desc"));
+
+    AddCommandHelp("AddServer",
+                   t_s("<host> [[+]port] [pass]", "helpcmd|AddServer|args"),
+                   t_s("Add a server to the list of alternate/backup servers "
+                       "of current IRC network.",
+                       "helpcmd|AddServer|desc"));
+    AddCommandHelp("DelServer",
+                   t_s("<host> [port] [pass]", "helpcmd|DelServer|args"),
+                   t_s("Remove a server from the list of alternate/backup "
+                       "servers of current IRC network",
+                       "helpcmd|DelServer|desc"));
+
     AddCommandHelp(
-        Table, "ListTrustedServerFingerprints", "",
-        "List all trusted server SSL certificates of current IRC network.",
-        sFilter);
+        "AddTrustedServerFingerprint",
+        t_s("<fi:ng:er>", "helpcmd|AddTrustedServerFingerprint|args"),
+        t_s("Add a trusted server SSL certificate fingerprint (SHA-256) to "
+            "current IRC network.",
+            "helpcmd|AddTrustedServerFingerprint|desc"));
+    AddCommandHelp(
+        "DelTrustedServerFingerprint",
+        t_s("<fi:ng:er>", "helpcmd|DelTrustedServerFingerprint|args"),
+        t_s("Delete a trusted server SSL certificate from current IRC network.",
+            "helpcmd|DelTrustedServerFingerprint|desc"));
+    AddCommandHelp(
+        "ListTrustedServerFingerprints", "",
+        t_s("List all trusted server SSL certificates of current IRC network.",
+            "helpcmd|ListTrustedServerFingerprints|desc"));
 
-    AddCommandHelp(Table, "EnableChan", "<#chans>", "Enable channels", sFilter);
-    AddCommandHelp(Table, "DisableChan", "<#chans>", "Disable channels",
-                   sFilter);
-    AddCommandHelp(Table, "Attach", "<#chans>", "Attach to channels", sFilter);
-    AddCommandHelp(Table, "Detach", "<#chans>", "Detach from channels",
-                   sFilter);
-    AddCommandHelp(Table, "Topics", "", "Show topics in all your channels",
-                   sFilter);
+    AddCommandHelp("EnableChan", t_s("<#chans>", "helpcmd|EnableChan|args"),
+                   t_s("Enable channels", "helpcmd|EnableChan|desc"));
+    AddCommandHelp("DisableChan", t_s("<#chans>", "helpcmd|DisableChan|args"),
+                   t_s("Disable channels", "helpcmd|DisableChan|desc"));
+    AddCommandHelp("Attach", t_s("<#chans>", "helpcmd|Attach|args"),
+                   t_s("Attach to channels", "helpcmd|Attach|desc"));
+    AddCommandHelp("Detach", t_s("<#chans>", "helpcmd|Detach|args"),
+                   t_s("Detach from channels", "helpcmd|Detach|desc"));
+    AddCommandHelp(
+        "Topics", "",
+        t_s("Show topics in all your channels", "helpcmd|Topics|desc"));
 
-    AddCommandHelp(Table, "PlayBuffer", "<#chan|query>",
-                   "Play back the specified buffer", sFilter);
-    AddCommandHelp(Table, "ClearBuffer", "<#chan|query>",
-                   "Clear the specified buffer", sFilter);
-    AddCommandHelp(Table, "ClearAllBuffers", "",
-                   "Clear all channel and query buffers", sFilter);
-    AddCommandHelp(Table, "ClearAllChannelBuffers", "",
-                   "Clear the channel buffers", sFilter);
-    AddCommandHelp(Table, "ClearAllQueryBuffers", "", "Clear the query buffers",
-                   sFilter);
-    AddCommandHelp(Table, "SetBuffer", "<#chan|query> [linecount]",
-                   "Set the buffer count", sFilter);
+    AddCommandHelp(
+        "PlayBuffer", t_s("<#chan|query>", "helpcmd|PlayBuffer|args"),
+        t_s("Play back the specified buffer", "helpcmd|PlayBuffer|desc"));
+    AddCommandHelp(
+        "ClearBuffer", t_s("<#chan|query>", "helpcmd|ClearBuffer|args"),
+        t_s("Clear the specified buffer", "helpcmd|ClearBuffer|desc"));
+    AddCommandHelp("ClearAllBuffers", "",
+                   t_s("Clear all channel and query buffers",
+                       "helpcmd|ClearAllBuffers|desc"));
+    AddCommandHelp("ClearAllChannelBuffers", "",
+                   t_s("Clear the channel buffers",
+                       "helpcmd|ClearAllChannelBuffers|desc"));
+    AddCommandHelp(
+        "ClearAllQueryBuffers", "",
+        t_s("Clear the query buffers", "helpcmd|ClearAllQueryBuffers|desc"));
+    AddCommandHelp("SetBuffer",
+                   t_s("<#chan|query> [linecount]", "helpcmd|SetBuffer|args"),
+                   t_s("Set the buffer count", "helpcmd|SetBuffer|desc"));
 
     if (m_pUser->IsAdmin() || !m_pUser->DenySetBindHost()) {
-        AddCommandHelp(Table, "SetBindHost", "<host (IP preferred)>",
-                       "Set the bind host for this connection", sFilter);
-        AddCommandHelp(Table, "SetUserBindHost", "<host (IP preferred)>",
-                       "Set the default bind host for this user", sFilter);
-        AddCommandHelp(Table, "ClearBindHost", "",
-                       "Clear the bind host for this connection", sFilter);
-        AddCommandHelp(Table, "ClearUserBindHost", "",
-                       "Clear the default bind host for this user", sFilter);
+        AddCommandHelp("SetBindHost",
+                       t_s("<host (IP preferred)>", "helpcmd|SetBindHost|args"),
+                       t_s("Set the bind host for this network",
+                           "helpcmd|SetBindHost|desc"));
+        AddCommandHelp(
+            "SetUserBindHost",
+            t_s("<host (IP preferred)>", "helpcmd|SetUserBindHost|args"),
+            t_s("Set the default bind host for this user",
+                "helpcmd|SetUserBindHost|desc"));
+        AddCommandHelp("ClearBindHost", "",
+                       t_s("Clear the bind host for this network",
+                           "helpcmd|ClearBindHost|desc"));
+        AddCommandHelp("ClearUserBindHost", "",
+                       t_s("Clear the default bind host for this user",
+                           "helpcmd|ClearUserBindHost|desc"));
     }
 
-    AddCommandHelp(Table, "ShowBindHost", "",
-                   "Show currently selected bind host", sFilter);
-    AddCommandHelp(Table, "Jump", "[server]",
-                   "Jump to the next or the specified server", sFilter);
-    AddCommandHelp(Table, "Disconnect", "[message]", "Disconnect from IRC",
-                   sFilter);
-    AddCommandHelp(Table, "Connect", "", "Reconnect to IRC", sFilter);
-    AddCommandHelp(Table, "Uptime", "",
-                   "Show for how long ZNC has been running", sFilter);
+    AddCommandHelp(
+        "ShowBindHost", "",
+        t_s("Show currently selected bind host", "helpcmd|ShowBindHost|desc"));
+    AddCommandHelp(
+        "Jump", t_s("[server]", "helpcmd|Jump|args"),
+        t_s("Jump to the next or the specified server", "helpcmd|Jump|desc"));
+    AddCommandHelp("Disconnect", t_s("[message]", "helpcmd|Disconnect|args"),
+                   t_s("Disconnect from IRC", "helpcmd|Disconnect|desc"));
+    AddCommandHelp("Connect", "",
+                   t_s("Reconnect to IRC", "helpcmd|Connect|desc"));
+    AddCommandHelp(
+        "Uptime", "",
+        t_s("Show for how long ZNC has been running", "helpcmd|Uptime|desc"));
 
     if (!m_pUser->DenyLoadMod()) {
-        AddCommandHelp(Table, "LoadMod",
-                       "[--type=global|user|network] <module>", "Load a module",
-                       sFilter);
-        AddCommandHelp(Table, "UnloadMod",
-                       "[--type=global|user|network] <module>",
-                       "Unload a module", sFilter);
-        AddCommandHelp(Table, "ReloadMod",
-                       "[--type=global|user|network] <module>",
-                       "Reload a module", sFilter);
+        AddCommandHelp("LoadMod",
+                       t_s("[--type=global|user|network] <module>",
+                           "helpcmd|LoadMod|args"),
+                       t_s("Load a module", "helpcmd|LoadMod|desc"));
+        AddCommandHelp("UnloadMod",
+                       t_s("[--type=global|user|network] <module>",
+                           "helpcmd|UnloadMod|args"),
+                       t_s("Unload a module", "helpcmd|UnloadMod|desc"));
+        AddCommandHelp("ReloadMod",
+                       t_s("[--type=global|user|network] <module>",
+                           "helpcmd|ReloadMod|args"),
+                       t_s("Reload a module", "helpcmd|ReloadMod|desc"));
         if (m_pUser->IsAdmin()) {
-            AddCommandHelp(Table, "UpdateMod", "<module>",
-                           "Reload a module everywhere", sFilter);
+            AddCommandHelp(
+                "UpdateMod", t_s("<module>", "helpcmd|UpdateMod|args"),
+                t_s("Reload a module everywhere", "helpcmd|UpdateMod|desc"));
         }
     }
 
-    AddCommandHelp(Table, "ShowMOTD", "", "Show ZNC's message of the day",
-                   sFilter);
+    AddCommandHelp(
+        "ShowMOTD", "",
+        t_s("Show ZNC's message of the day", "helpcmd|ShowMOTD|desc"));
 
     if (m_pUser->IsAdmin()) {
-        AddCommandHelp(Table, "SetMOTD", "<message>",
-                       "Set ZNC's message of the day", sFilter);
-        AddCommandHelp(Table, "AddMOTD", "<message>",
-                       "Append <message> to ZNC's MOTD", sFilter);
-        AddCommandHelp(Table, "ClearMOTD", "", "Clear ZNC's MOTD", sFilter);
-        AddCommandHelp(Table, "ListPorts", "", "Show all active listeners",
-                       sFilter);
         AddCommandHelp(
-            Table, "AddPort",
-            "<[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost [uriprefix]]",
-            "Add another port for ZNC to listen on", sFilter);
-        AddCommandHelp(Table, "DelPort", "<port> <ipv4|ipv6|all> [bindhost]",
-                       "Remove a port from ZNC", sFilter);
+            "SetMOTD", t_s("<message>", "helpcmd|SetMOTD|args"),
+            t_s("Set ZNC's message of the day", "helpcmd|SetMOTD|desc"));
         AddCommandHelp(
-            Table, "Rehash", "",
-            "Reload global settings, modules, and listeners from znc.conf",
-            sFilter);
-        AddCommandHelp(Table, "SaveConfig", "",
-                       "Save the current settings to disk", sFilter);
-        AddCommandHelp(Table, "ListUsers", "",
-                       "List all ZNC users and their connection status",
-                       sFilter);
-        AddCommandHelp(Table, "ListAllUserNetworks", "",
-                       "List all ZNC users and their networks", sFilter);
-        AddCommandHelp(Table, "ListChans", "[user <network>]",
-                       "List all channels", sFilter);
-        AddCommandHelp(Table, "ListClients", "[user]",
-                       "List all connected clients", sFilter);
-        AddCommandHelp(Table, "Traffic", "",
-                       "Show basic traffic stats for all ZNC users", sFilter);
-        AddCommandHelp(Table, "Broadcast", "[message]",
-                       "Broadcast a message to all ZNC users", sFilter);
-        AddCommandHelp(Table, "Shutdown", "[message]",
-                       "Shut down ZNC completely", sFilter);
-        AddCommandHelp(Table, "Restart", "[message]", "Restart ZNC", sFilter);
+            "AddMOTD", t_s("<message>", "helpcmd|AddMOTD|args"),
+            t_s("Append <message> to ZNC's MOTD", "helpcmd|AddMOTD|desc"));
+        AddCommandHelp("ClearMOTD", "",
+                       t_s("Clear ZNC's MOTD", "helpcmd|ClearMOTD|desc"));
+        AddCommandHelp(
+            "ListPorts", "",
+            t_s("Show all active listeners", "helpcmd|ListPorts|desc"));
+        AddCommandHelp("AddPort",
+                       t_s("<[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost "
+                           "[uriprefix]]",
+                           "helpcmd|AddPort|args"),
+                       t_s("Add another port for ZNC to listen on",
+                           "helpcmd|AddPort|desc"));
+        AddCommandHelp(
+            "DelPort",
+            t_s("<port> <ipv4|ipv6|all> [bindhost]", "helpcmd|DelPort|args"),
+            t_s("Remove a port from ZNC", "helpcmd|DelPort|desc"));
+        AddCommandHelp(
+            "Rehash", "",
+            t_s("Reload global settings, modules, and listeners from znc.conf",
+                "helpcmd|Rehash|desc"));
+        AddCommandHelp("SaveConfig", "",
+                       t_s("Save the current settings to disk",
+                           "helpcmd|SaveConfig|desc"));
+        AddCommandHelp("ListUsers", "",
+                       t_s("List all ZNC users and their connection status",
+                           "helpcmd|ListUsers|desc"));
+        AddCommandHelp("ListAllUserNetworks", "",
+                       t_s("List all ZNC users and their networks",
+                           "helpcmd|ListAllUserNetworks|desc"));
+        AddCommandHelp("ListChans",
+                       t_s("[user <network>]", "helpcmd|ListChans|args"),
+                       t_s("List all channels", "helpcmd|ListChans|desc"));
+        AddCommandHelp(
+            "ListClients", t_s("[user]", "helpcmd|ListClients|args"),
+            t_s("List all connected clients", "helpcmd|ListClients|desc"));
+        AddCommandHelp("Traffic", "",
+                       t_s("Show basic traffic stats for all ZNC users",
+                           "helpcmd|Traffic|desc"));
+        AddCommandHelp("Broadcast", t_s("[message]", "helpcmd|Broadcast|args"),
+                       t_s("Broadcast a message to all ZNC users",
+                           "helpcmd|Broadcast|desc"));
+        AddCommandHelp(
+            "Shutdown", t_s("[message]", "helpcmd|Shutdown|args"),
+            t_s("Shut down ZNC completely", "helpcmd|Shutdown|desc"));
+        AddCommandHelp("Restart", t_s("[message]", "helpcmd|Restart|args"),
+                       t_s("Restart ZNC", "helpcmd|Restart|desc"));
     }
 
     if (Table.empty()) {
-        PutStatus("No matches for '" + sFilter + "'");
+        PutStatus(t_f("No matches for '{1}'")(sFilter));
     } else {
         PutStatus(Table);
     }
