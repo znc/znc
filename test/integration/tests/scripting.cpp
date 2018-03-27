@@ -57,5 +57,47 @@ TEST_F(ZNCTest, Modpython) {
     client.ReadUntil("Hi\xEF\xBF\xBD, github issue");
 }
 
+TEST_F(ZNCTest, ModpythonSocket) {
+    if (QProcessEnvironment::systemEnvironment().value(
+            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
+        return;
+    }
+    auto znc = Run();
+    znc->CanLeak();
+
+    InstallModule("socktest.py", R"(
+        import znc
+
+        class acc(znc.Socket):
+            def OnReadData(self, data):
+                self.GetModule().PutModule('received {} bytes'.format(len(data)))
+                self.Close()
+
+        class lis(znc.Socket):
+            def OnAccepted(self, host, port):
+                sock = self.GetModule().CreateSocket(acc)
+                sock.DisableReadLine()
+                return sock
+
+        class socktest(znc.Module):
+            def OnLoad(self, args, ret):
+                listen = self.CreateSocket(lis)
+                self.port = listen.Listen()
+                return True
+
+            def OnModCommand(self, cmd):
+                sock = self.CreateSocket()
+                sock.Connect('127.0.0.1', self.port)
+                sock.WriteBytes(b'blah')
+    )");
+
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod modpython");
+    client.Write("znc loadmod socktest");
+    client.Write("PRIVMSG *socktest :foo");
+    client.ReadUntil("received 4 bytes");
+}
+
 }  // namespace
 }  // namespace znc_inttest
