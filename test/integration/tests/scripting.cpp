@@ -99,5 +99,58 @@ TEST_F(ZNCTest, ModpythonSocket) {
     client.ReadUntil("received 4 bytes");
 }
 
+TEST_F(ZNCTest, ModperlSocket) {
+    if (QProcessEnvironment::systemEnvironment().value(
+            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
+        return;
+    }
+	auto znc = Run();
+	znc->CanLeak();
+
+	InstallModule("socktest.pm", R"(
+		package socktest::acc;
+		use base 'ZNC::Socket';
+		sub OnReadData {
+			my ($self, $data, $len) = @_;
+			$self->GetModule->PutModule("received $len bytes");
+			$self->Close;
+		}
+
+		package socktest::lis;
+		use base 'ZNC::Socket';
+		sub OnAccepted {
+			my $self = shift;
+			return $self->GetModule->CreateSocket('socktest::acc');
+		}
+
+		package socktest::conn;
+		use base 'ZNC::Socket';
+
+		package socktest;
+		use base 'ZNC::Module';
+		sub OnLoad {
+			my $self = shift;
+			my $listen = $self->CreateSocket('socktest::lis');
+			$self->{port} = $listen->Listen;
+			return 1;
+		}
+		sub OnModCommand {
+			my ($self, $cmd) = @_;
+			my $sock = $self->CreateSocket('socktest::conn');
+			$sock->Connect('127.0.0.1', $self->{port});
+			$sock->Write('blah');
+		}
+
+		1;
+	)");
+
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod modperl");
+    client.Write("znc loadmod socktest");
+    client.Write("PRIVMSG *socktest :foo");
+    client.ReadUntil("received 4 bytes");
+}
+
 }  // namespace
 }  // namespace znc_inttest
