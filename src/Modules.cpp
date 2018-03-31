@@ -525,8 +525,9 @@ bool CModule::AddCommand(const CString& sCmd, const COptionalTranslation& Args,
 }
 
 void CModule::AddHelpCommand() {
-    AddCommand("Help", &CModule::HandleHelpCommand, "search",
-               "Generate this output");
+    AddCommand("Help", t_d("<search>", "modhelpcmd"),
+               t_d("Generate this output", "modhelpcmd"),
+               [=](const CString& sLine) { HandleHelpCommand(sLine); });
 }
 
 bool CModule::RemCommand(const CString& sCmd) {
@@ -569,7 +570,7 @@ void CModule::HandleHelpCommand(const CString& sLine) {
         }
     }
     if (Table.empty()) {
-        PutModule("No matches for '" + sFilter + "'");
+        PutModule(t_f("No matches for '{1}'")(sFilter));
     } else {
         PutModule(Table);
     }
@@ -687,9 +688,9 @@ void CModule::OnUnknownModCommand(const CString& sLine) {
         // This function is only called if OnModCommand wasn't
         // overriden, so no false warnings for modules which don't use
         // CModCommand for command handling.
-        PutModule("This module doesn't implement any commands.");
+        PutModule(t_s("This module doesn't implement any commands."));
     else
-        PutModule("Unknown command!");
+        PutModule(t_s("Unknown command!"));
 }
 
 void CModule::OnQuit(const CNick& Nick, const CString& sMessage,
@@ -1629,7 +1630,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs,
     sRetMsg = "";
 
     if (FindModule(sModule) != nullptr) {
-        sRetMsg = "Module [" + sModule + "] already loaded.";
+        sRetMsg = t_f("Module {1} already loaded.")(sModule);
         return false;
     }
 
@@ -1643,7 +1644,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs,
     CModInfo Info;
 
     if (!FindModPath(sModule, sModPath, sDataPath)) {
-        sRetMsg = "Unable to find module [" + sModule + "]";
+        sRetMsg = t_f("Unable to find module {1}")(sModule);
         return false;
     }
     Info.SetName(sModule);
@@ -1655,20 +1656,20 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs,
 
     if (!Info.SupportsType(eType)) {
         dlclose(p);
-        sRetMsg = "Module [" + sModule + "] does not support module type [" +
-                  CModInfo::ModuleTypeToString(eType) + "].";
+        sRetMsg = t_f("Module {1} does not support module type {1}.")(
+            sModule, CModInfo::ModuleTypeToString(eType));
         return false;
     }
 
     if (!pUser && eType == CModInfo::UserModule) {
         dlclose(p);
-        sRetMsg = "Module [" + sModule + "] requires a user.";
+        sRetMsg = t_f("Module {1} requires a user.")(sModule);
         return false;
     }
 
     if (!pNetwork && eType == CModInfo::NetworkModule) {
         dlclose(p);
-        sRetMsg = "Module [" + sModule + "] requires a network.";
+        sRetMsg = t_f("Module {1} requires a network.")(sModule);
         return false;
     }
 
@@ -1684,15 +1685,15 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs,
         bLoaded = pModule->OnLoad(sArgs, sRetMsg);
     } catch (const CModule::EModException&) {
         bLoaded = false;
-        sRetMsg = "Caught an exception";
+        sRetMsg = t_s("Caught an exception");
     }
 
     if (!bLoaded) {
         UnloadModule(sModule, sModPath);
         if (!sRetMsg.empty())
-            sRetMsg = "Module [" + sModule + "] aborted: " + sRetMsg;
+            sRetMsg = t_f("Module {1} aborted: {2}")(sModule, sRetMsg);
         else
-            sRetMsg = "Module [" + sModule + "] aborted.";
+            sRetMsg = t_f("Module {1} aborted.")(sModule);
         return false;
     }
 
@@ -1716,7 +1717,7 @@ bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
     sRetMsg = "";
 
     if (!pModule) {
-        sRetMsg = "Module [" + sMod + "] not loaded.";
+        sRetMsg = t_f("Module [{1}] not loaded.")(sMod);
         return false;
     }
 
@@ -1740,12 +1741,12 @@ bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
         }
 
         dlclose(p);
-        sRetMsg = "Module [" + sMod + "] unloaded";
+        sRetMsg = t_f("Module {1} unloaded.")(sMod);
 
         return true;
     }
 
-    sRetMsg = "Unable to unload module [" + sMod + "]";
+    sRetMsg = t_f("Unable to unload module {1}.")(sMod);
     return false;
 }
 
@@ -1758,7 +1759,7 @@ bool CModules::ReloadModule(const CString& sModule, const CString& sArgs,
     CModule* pModule = FindModule(sMod);
 
     if (!pModule) {
-        sRetMsg = "Module [" + sMod + "] not loaded";
+        sRetMsg = t_f("Module [{1}] not loaded.")(sMod);
         return false;
     }
 
@@ -1774,7 +1775,7 @@ bool CModules::ReloadModule(const CString& sModule, const CString& sArgs,
         return false;
     }
 
-    sRetMsg = "Reloaded module [" + sMod + "]";
+    sRetMsg = t_f("Reloaded module {1}.")(sMod);
     return true;
 }
 
@@ -1789,7 +1790,7 @@ bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule,
     if (bHandled) return bSuccess;
 
     if (!FindModPath(sModule, sModPath, sTmp)) {
-        sRetMsg = "Unable to find module [" + sModule + "]";
+        sRetMsg = t_f("Unable to find module {1}.")(sModule);
         return false;
     }
 
@@ -1915,9 +1916,8 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath,
             ((sModule[a] < 'a') || (sModule[a] > 'z')) &&
             ((sModule[a] < 'A') || (sModule[a] > 'Z')) && (sModule[a] != '_')) {
             sRetMsg =
-                "Module names can only contain letters, numbers and "
-                "underscores, [" +
-                sModule + "] is invalid.";
+                t_f("Module names can only contain letters, numbers and "
+                    "underscores, [{1}] is invalid")(sModule);
             return nullptr;
         }
     }
@@ -1940,8 +1940,8 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath,
         // dlerror() returns pointer to static buffer, which may be overwritten
         // very soon with another dl call also it may just return null.
         const char* cDlError = dlerror();
-        CString sDlError = cDlError ? cDlError : "Unknown error";
-        sRetMsg = "Unable to open module [" + sModule + "] [" + sDlError + "]";
+        CString sDlError = cDlError ? cDlError : t_s("Unknown error");
+        sRetMsg = t_f("Unable to open module {1}: {2}")(sModule, sDlError);
         return nullptr;
     }
 
@@ -1950,30 +1950,28 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath,
     *reinterpret_cast<void**>(&fpZNCModuleEntry) = dlsym(p, "ZNCModuleEntry");
     if (!fpZNCModuleEntry) {
         dlclose(p);
-        sRetMsg = "Could not find ZNCModuleEntry in module [" + sModule + "]";
+        sRetMsg = t_f("Could not find ZNCModuleEntry in module {1}")(sModule);
         return nullptr;
     }
     const CModuleEntry* pModuleEntry = fpZNCModuleEntry();
 
     if (std::strcmp(pModuleEntry->pcVersion, VERSION_STR) ||
         std::strcmp(pModuleEntry->pcVersionExtra, VERSION_EXTRA)) {
-        sRetMsg = "Version mismatch for module [" + sModule +
-                  "] (core is " VERSION_STR VERSION_EXTRA
-                  ", module is built for " +
-                  CString(pModuleEntry->pcVersion) +
-                  pModuleEntry->pcVersionExtra + "), recompile this module.";
+        sRetMsg = t_f(
+            "Version mismatch for module {1}: core is {2}, module is built for "
+            "{3}. Recompile this module.")(
+            sModule, VERSION_STR VERSION_EXTRA,
+            CString(pModuleEntry->pcVersion) + pModuleEntry->pcVersionExtra);
         dlclose(p);
         return nullptr;
     }
 
     if (std::strcmp(pModuleEntry->pcCompileOptions,
                     ZNC_COMPILE_OPTIONS_STRING)) {
-        sRetMsg =
-            "Module [" + sModule +
-            "] is built incompatibly (core is '" ZNC_COMPILE_OPTIONS_STRING
-            "', module is '" +
-            CString(pModuleEntry->pcCompileOptions) +
-            "'), recompile this module.";
+        sRetMsg = t_f(
+            "Module {1} is built incompatibly: core is '{2}', module is '{3}'. "
+            "Recompile this module.")(sModule, ZNC_COMPILE_OPTIONS_STRING,
+                                      pModuleEntry->pcCompileOptions);
         dlclose(p);
         return nullptr;
     }
@@ -2001,14 +1999,14 @@ CModCommand::CModCommand(const CString& sCmd, CmdFunc func,
     : m_sCmd(sCmd), m_pFunc(std::move(func)), m_Args(Args), m_Desc(Desc) {}
 
 void CModCommand::InitHelp(CTable& Table) {
-    Table.AddColumn("Command");
-    Table.AddColumn("Description");
+    Table.AddColumn(t_s("Command", "modhelpcmd"));
+    Table.AddColumn(t_s("Description", "modhelpcmd"));
 }
 
 void CModCommand::AddHelp(CTable& Table) const {
     Table.AddRow();
-    Table.SetCell("Command", GetCommand() + " " + GetArgs());
-    Table.SetCell("Description", GetDescription());
+    Table.SetCell(t_s("Command", "modhelpcmd"), GetCommand() + " " + GetArgs());
+    Table.SetCell(t_s("Description", "modhelpcmd"), GetDescription());
 }
 
 CString CModule::t_s(const CString& sEnglish, const CString& sContext) const {

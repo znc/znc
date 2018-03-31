@@ -72,7 +72,7 @@ using std::vector;
                 }                                                             \
             }                                                                 \
         } else {                                                              \
-            PutStatus("No such module [" + MOD + "]");                        \
+            PutStatus(t_f("No such module {1}")(MOD));                        \
         }                                                                     \
     }
 
@@ -361,9 +361,9 @@ void CAuthBase::RefuseLogin(const CString& sReason) {
     // login. Use sReason because there are other reasons than "wrong
     // password" for a login to be rejected (e.g. fail2ban).
     if (pUser) {
-        pUser->PutStatusNotice("A client from [" + GetRemoteIP() + "] attempted "
-                               "to login as you, but was rejected [" +
-                               sReason + "].");
+        pUser->PutStatusNotice(t_f(
+            "A client from {1} attempted to login as you, but was rejected: "
+            "{2}")(GetRemoteIP(), sReason));
     }
 
     GLOBALMODULECALL(OnFailedLogin(GetUsername(), GetRemoteIP()), NOTHING);
@@ -397,7 +397,7 @@ void CClient::AcceptLogin(CUser& User) {
     if (!m_sNetwork.empty()) {
         m_pNetwork = m_pUser->FindNetwork(m_sNetwork);
         if (!m_pNetwork) {
-            PutStatus("Network (" + m_sNetwork + ") doesn't exist.");
+            PutStatus(t_f("Network {1} doesn't exist.")(m_sNetwork));
         }
     } else if (!m_pUser->GetNetworks().empty()) {
         // If a user didn't supply a network, and they have a network called
@@ -411,21 +411,20 @@ void CClient::AcceptLogin(CUser& User) {
         if (!m_pNetwork) m_pNetwork = *m_pUser->GetNetworks().begin();
         if (m_pNetwork && m_pUser->GetNetworks().size() > 1) {
             PutStatusNotice(
-                "You have several networks configured, but no network was "
-                "specified for the connection.");
-            PutStatusNotice("Selecting network [" + m_pNetwork->GetName() +
-                            "]. To see list of all configured networks, use "
-                            "/znc ListNetworks");
+                t_s("You have several networks configured, but no network was "
+                    "specified for the connection."));
             PutStatusNotice(
+                t_f("Selecting network {1}. To see list of all configured "
+                    "networks, use /znc ListNetworks")(m_pNetwork->GetName()));
+            PutStatusNotice(t_f(
                 "If you want to choose another network, use /znc JumpNetwork "
-                "<network>, or connect to ZNC with username " +
-                m_pUser->GetUserName() + "/<network> (instead of just " +
-                m_pUser->GetUserName() + ")");
+                "<network>, or connect to ZNC with username {1}/<network> "
+                "(instead of just {1})")(m_pUser->GetUserName()));
         }
     } else {
         PutStatusNotice(
-            "You have no networks configured. Use /znc AddNetwork <network> to "
-            "add one.");
+            t_s("You have no networks configured. Use /znc AddNetwork "
+                "<network> to add one."));
     }
 
     SetNetwork(m_pNetwork, false);
@@ -435,7 +434,7 @@ void CClient::AcceptLogin(CUser& User) {
     NETWORKMODULECALL(OnClientLogin(), m_pUser, m_pNetwork, this, NOTHING);
 }
 
-void CClient::Timeout() { PutClient("ERROR :Closing link [Timeout]"); }
+void CClient::Timeout() { PutClient("ERROR :" + t_s("Closing link: Timeout")); }
 
 void CClient::Connected() { DEBUG(GetSockName() << " == Connected();"); }
 
@@ -457,15 +456,15 @@ void CClient::Disconnected() {
 void CClient::ReachedMaxBuffer() {
     DEBUG(GetSockName() << " == ReachedMaxBuffer()");
     if (IsAttached()) {
-        PutClient("ERROR :Closing link [Too long raw line]");
+        PutClient("ERROR :" + t_s("Closing link: Too long raw line"));
     }
     Close();
 }
 
 void CClient::BouncedOff() {
     PutStatusNotice(
-        "You are being disconnected because another user just authenticated as "
-        "you.");
+        t_s("You are being disconnected because another user just "
+            "authenticated as you."));
     Close(Csock::CLT_AFTERWRITE);
 }
 
@@ -1018,9 +1017,9 @@ bool CClient::OnCTCPMessage(CCTCPMessage& Message) {
         if (!GetIRCSock()) {
             // Some lagmeters do a NOTICE to their own nick, ignore those.
             if (!sTarget.Equals(m_sNick))
-                PutStatus("Your CTCP to [" + Message.GetTarget() +
-                          "] got lost, "
-                          "you are not connected to IRC!");
+                PutStatus(t_f(
+                    "Your CTCP to {1} got lost, you are not connected to IRC!")(
+                    Message.GetTarget()));
             continue;
         }
 
@@ -1145,9 +1144,9 @@ bool CClient::OnNoticeMessage(CNoticeMessage& Message) {
         if (!GetIRCSock()) {
             // Some lagmeters do a NOTICE to their own nick, ignore those.
             if (!sTarget.Equals(m_sNick))
-                PutStatus("Your notice to [" + Message.GetTarget() +
-                          "] got lost, "
-                          "you are not connected to IRC!");
+                PutStatus(
+                    t_f("Your notice to {1} got lost, you are not connected to "
+                        "IRC!")(Message.GetTarget()));
             continue;
         }
 
@@ -1185,7 +1184,7 @@ bool CClient::OnPartMessage(CPartMessage& Message) {
         CChan* pChan = m_pNetwork ? m_pNetwork->FindChan(sChan) : nullptr;
 
         if (pChan && !pChan->IsOn()) {
-            PutStatusNotice("Removing channel [" + sChan + "]");
+            PutStatusNotice(t_f("Removing channel {1}")(sChan));
             m_pNetwork->DelChan(sChan);
         } else {
             sChans += (sChans.empty()) ? sChan : CString("," + sChan);
@@ -1261,9 +1260,9 @@ bool CClient::OnTextMessage(CTextMessage& Message) {
         if (!GetIRCSock()) {
             // Some lagmeters do a PRIVMSG to their own nick, ignore those.
             if (!sTarget.Equals(m_sNick))
-                PutStatus("Your message to [" + Message.GetTarget() +
-                          "] got lost, "
-                          "you are not connected to IRC!");
+                PutStatus(
+                    t_f("Your message to {1} got lost, you are not connected "
+                        "to IRC!")(Message.GetTarget()));
             continue;
         }
 
@@ -1315,13 +1314,13 @@ bool CClient::OnOtherMessage(CMessage& Message) {
 
         if (sTarget.Equals("status")) {
             if (sModCommand.empty())
-                PutStatus("Hello. How may I help you?");
+                PutStatus(t_s("Hello. How may I help you?"));
             else
                 UserCommand(sModCommand);
         } else {
             if (sModCommand.empty())
                 CALLMOD(sTarget, this, m_pUser, m_pNetwork,
-                        PutModule("Hello. How may I help you?"))
+                        PutModule(t_s("Hello. How may I help you?")))
             else
                 CALLMOD(sTarget, this, m_pUser, m_pNetwork,
                         OnModCommand(sModCommand))
@@ -1335,16 +1334,18 @@ bool CClient::OnOtherMessage(CMessage& Message) {
         CString sPatterns = Message.GetParams(0);
 
         if (sPatterns.empty()) {
-            PutStatusNotice("Usage: /attach <#chans>");
+            PutStatusNotice(t_s("Usage: /attach <#chans>"));
             return true;
         }
 
         set<CChan*> sChans = MatchChans(sPatterns);
         unsigned int uAttachedChans = AttachChans(sChans);
 
-        PutStatusNotice("There were [" + CString(sChans.size()) +
-                        "] channels matching [" + sPatterns + "]");
-        PutStatusNotice("Attached [" + CString(uAttachedChans) + "] channels");
+        PutStatusNotice(t_p("There was {1} channel matching [{2}]",
+                            "There were {1} channels matching [{2}]",
+                            sChans.size())(sChans.size(), sPatterns));
+        PutStatusNotice(t_p("Attached {1} channel", "Attached {1} channels",
+                            uAttachedChans)(uAttachedChans));
 
         return true;
     } else if (sCommand.Equals("DETACH")) {
@@ -1355,16 +1356,18 @@ bool CClient::OnOtherMessage(CMessage& Message) {
         CString sPatterns = Message.GetParams(0);
 
         if (sPatterns.empty()) {
-            PutStatusNotice("Usage: /detach <#chans>");
+            PutStatusNotice(t_s("Usage: /detach <#chans>"));
             return true;
         }
 
         set<CChan*> sChans = MatchChans(sPatterns);
         unsigned int uDetached = DetachChans(sChans);
 
-        PutStatusNotice("There were [" + CString(sChans.size()) +
-                        "] channels matching [" + sPatterns + "]");
-        PutStatusNotice("Detached [" + CString(uDetached) + "] channels");
+        PutStatusNotice(t_p("There was {1} channel matching [{2}]",
+                            "There were {1} channels matching [{2}]",
+                            sChans.size())(sChans.size(), sPatterns));
+        PutStatusNotice(t_p("Detached {1} channel", "Detached {1} channels",
+                            uDetached)(uDetached));
 
         return true;
     } else if (sCommand.Equals("PROTOCTL")) {

@@ -35,7 +35,7 @@ class CMessage;
 class CChan;
 // !Forward Declarations
 
-class CAuthBase {
+class CAuthBase : private CCoreTranslationMixin {
   public:
     CAuthBase(const CString& sUsername, const CString& sPassword,
               CZNCSock* pSock)
