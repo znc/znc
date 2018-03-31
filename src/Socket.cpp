@@ -30,7 +30,7 @@
 #ifdef HAVE_LIBSSL
 // Copypasted from
 // https://wiki.mozilla.org/Security/Server_Side_TLS#Intermediate_compatibility_.28default.29
-// at 2016-06-03
+// at 2018-04-01
 static CString ZNC_DefaultCipher() {
     return "ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-"
            "ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-"
