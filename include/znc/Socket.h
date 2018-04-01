@@ -24,7 +24,7 @@
 
 class CModule;
 
-class CZNCSock : public Csock, public CCoreTranslationMixin {
+class CZNCSock : public Csock, protected CCoreTranslationMixin {
   public:
     CZNCSock(int timeout = 60);
     CZNCSock(const CString& sHost, u_short port, int timeout = 60);
