@@ -333,16 +333,19 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind,
 
     try {
         if (ssTargets4.empty() && ssTargets6.empty()) {
-            throw "Can't resolve server hostname";
+            throw t_s("Can't resolve server hostname");
         } else if (task->sBindhost.empty()) {
             // Choose random target
             std::tie(sTargetHost, std::ignore) =
                 RandomFrom2SetsWithBias(ssTargets4, ssTargets6, gen);
         } else if (ssBinds4.empty() && ssBinds6.empty()) {
-            throw "Can't resolve bind hostname. Try /znc ClearBindHost and /znc ClearUserBindHost";
+            throw t_s(
+                "Can't resolve bind hostname. Try /znc ClearBindHost and /znc "
+                "ClearUserBindHost");
         } else if (ssBinds4.empty()) {
             if (ssTargets6.empty()) {
-                throw "Server address is IPv4-only, but bindhost is IPv6-only";
+                throw t_s(
+                    "Server address is IPv4-only, but bindhost is IPv6-only");
             } else {
                 // Choose random target and bindhost from IPv6-only sets
                 sTargetHost = RandomFromSet(ssTargets6, gen);
@@ -350,7 +353,8 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind,
             }
         } else if (ssBinds6.empty()) {
             if (ssTargets4.empty()) {
-                throw "Server address is IPv6-only, but bindhost is IPv4-only";
+                throw t_s(
+                    "Server address is IPv6-only, but bindhost is IPv4-only");
             } else {
                 // Choose random target and bindhost from IPv4-only sets
                 sTargetHost = RandomFromSet(ssTargets4, gen);
@@ -370,7 +374,7 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind,
                        << "] using bindhost [" << sBindhost << "]");
         FinishConnect(sTargetHost, task->iPort, task->sSockName, task->iTimeout,
                       task->bSSL, sBindhost, task->pcSock);
-    } catch (const char* s) {
+    } catch (const CString& s) {
         DEBUG(task->sSockName << ", dns resolving error: " << s);
         task->pcSock->SetSockName(task->sSockName);
         task->pcSock->SockError(-1, s);
@@ -508,7 +512,7 @@ void CSocket::ReachedMaxBuffer() {
     DEBUG(GetSockName() << " == ReachedMaxBuffer()");
     if (m_pModule)
         m_pModule->PutModule(
-            "Some socket reached its max buffer limit and was closed!");
+            t_s("Some socket reached its max buffer limit and was closed!"));
     Close();
 }
 

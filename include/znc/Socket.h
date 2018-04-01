@@ -72,7 +72,8 @@ class CZNCSock : public Csock, public CCoreTranslationMixin {
 
 enum EAddrType { ADDR_IPV4ONLY, ADDR_IPV6ONLY, ADDR_ALL };
 
-class CSockManager : public TSocketManager<CZNCSock> {
+class CSockManager : public TSocketManager<CZNCSock>,
+                     private CCoreTranslationMixin {
   public:
     CSockManager();
     virtual ~CSockManager();
