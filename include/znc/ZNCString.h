@@ -697,4 +697,11 @@ class CInlineFormatMessage {
     CString m_sFormat;
 };
 
+// For gtest
+#ifdef GTEST_FAIL
+inline void PrintTo(const CString& s, std::ostream* os) {
+    *os << '"' << s.Escape_n(CString::EDEBUG) << '"';
+}
+#endif
+
 #endif  // !ZNCSTRING_H
