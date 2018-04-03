@@ -21,6 +21,7 @@
 #include <znc/Utils.h>
 #include <znc/Buffer.h>
 #include <znc/Nick.h>
+#include <znc/Translation.h>
 #include <set>
 #include <vector>
 
@@ -34,7 +35,7 @@ class CIRCSock;
 class CUserTimer;
 class CServer;
 
-class CUser {
+class CUser : private CCoreTranslationMixin {
   public:
     CUser(const CString& sUserName);
     ~CUser();

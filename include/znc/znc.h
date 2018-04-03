@@ -35,7 +35,7 @@ class CConfigWriteTimer;
 class CConfig;
 class CFile;
 
-class CZNC {
+class CZNC : private CCoreTranslationMixin {
   public:
     CZNC();
     ~CZNC();
@@ -253,6 +253,8 @@ class CZNC {
     static void DumpConfig(const CConfig* Config);
 
   private:
+    static CString FormatBindError();
+
     CFile* InitPidFile();
 
     bool ReadConfig(CConfig& config, CString& sError);
