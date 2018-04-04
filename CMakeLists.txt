@@ -192,6 +192,7 @@ if(Boost_LOCALE_FOUND AND GETTEXT_MSGFMT_EXECUTABLE)
 	set(HAVE_I18N true)
 else()
 	set(HAVE_I18N false)
+	message(STATUS "Boost.Locale is not found, disabling i18n support")
 endif()
 
 if(HAVE_I18N AND GETTEXT_MSGMERGE_EXECUTABLE)
