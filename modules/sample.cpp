@@ -91,11 +91,11 @@ class CSampleMod : public CModule {
     }
 
     void OnIRCConnected() override {
-        PutModule(t_s("You got connected BoyOh."));
+        PutModule(t_s("You got connected."));
     }
 
     void OnIRCDisconnected() override {
-        PutModule(t_s("You got disconnected BoyOh."));
+        PutModule(t_s("You got disconnected."));
     }
 
     EModRet OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent,
