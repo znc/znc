@@ -100,7 +100,6 @@ class CSampleMod : public CModule {
 
     EModRet OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent,
                               CString& sRealName) override {
-        sRealName += " - ZNC";
         return CONTINUE;
     }
 
