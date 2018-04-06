@@ -15,6 +15,7 @@
  */
 
 #include <znc/SSLVerifyHost.h>
+#include <znc/Translation.h>
 
 #ifdef HAVE_LIBSSL
 #if defined(OPENSSL_VERSION_NUMBER) && !defined(LIBRESSL_VERSION_NUMBER) && OPENSSL_VERSION_NUMBER >= 0x10100007
@@ -432,6 +433,9 @@ static HostnameValidationResult validate_hostname(const char* hostname,
 
 bool ZNC_SSLVerifyHost(const CString& sHost, const X509* pCert,
                        CString& sError) {
+    struct Tr : CCoreTranslationMixin {
+        using CCoreTranslationMixin::t_s;
+    };
     DEBUG("SSLVerifyHost: checking " << sHost);
     ZNC_iSECPartners::HostnameValidationResult eResult =
         ZNC_iSECPartners::validate_hostname(sHost.c_str(), pCert);
@@ -441,15 +445,15 @@ bool ZNC_SSLVerifyHost(const CString& sHost, const X509* pCert,
             return true;
         case ZNC_iSECPartners::MatchNotFound:
             DEBUG("SSLVerifyHost: host doesn't match");
-            sError = "hostname doesn't match";
+            sError = Tr::t_s("hostname doesn't match");
             return false;
         case ZNC_iSECPartners::MalformedCertificate:
             DEBUG("SSLVerifyHost: malformed cert");
-            sError = "malformed hostname in certificate";
+            sError = Tr::t_s("malformed hostname in certificate");
             return false;
         default:
             DEBUG("SSLVerifyHost: error");
-            sError = "hostname verification error";
+            sError = Tr::t_s("hostname verification error");
             return false;
     }
 }

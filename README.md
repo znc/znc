@@ -43,8 +43,8 @@ modperl:
 * SWIG if building from git
 
 modpython:
-* python and its bundled libpython
-* perl is required
+* python3 and its bundled libpython
+* perl is a build dependency
 * macOS: Python from Homebrew is preferred over system version
 * SWIG if building from git
 
@@ -53,6 +53,11 @@ cyrusauth:
 
 Character Encodings:
 * To get proper character encoding and charsets install ICU (`libicu4-dev`)
+
+I18N (UI translation)
+* CMake-based build only
+* Boost.Locale
+* gettext is a build dependency
 
 ## Installing ZNC
 
@@ -67,7 +72,9 @@ but calls CMake with CMake-style parameters.
 Installation from source code is performed using the CMake toolchain.
 
 ```shell
-cmake .
+mkdir build
+cd build
+cmake ..
 make
 make install
 ```
@@ -87,7 +94,9 @@ If you are building from git, you will need to run `./autogen.sh` first to
 produce the `configure` script.
 
 ```shell
-./configure
+mkdir build
+cd build
+../configure
 make
 make install
 ```

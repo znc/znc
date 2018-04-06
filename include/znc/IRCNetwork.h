@@ -37,7 +37,7 @@ class CIRCNetworkPingTimer;
 class CIRCNetworkJoinTimer;
 class CMessage;
 
-class CIRCNetwork {
+class CIRCNetwork : private CCoreTranslationMixin {
   public:
     static bool IsValidNetwork(const CString& sNetwork);
 

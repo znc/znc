@@ -635,7 +635,7 @@ void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 
                 if (!bSkipStatusMsg) {
                     m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() +
-                                            " :Buffer Playback...",
+                                            " :" + t_s("Buffer Playback..."),
                                         pUseClient);
                 }
 
@@ -673,7 +673,7 @@ void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
                                   &bSkipStatusMsg);
                 if (!bSkipStatusMsg) {
                     m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() +
-                                            " :Playback Complete.",
+                                            " :" + t_s("Playback Complete."),
                                         pUseClient);
                 }
 

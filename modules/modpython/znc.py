@@ -676,8 +676,9 @@ def make_inherit(cl, parent, attr):
         for x in parent.__dict__:
             if not x.startswith('_') and x not in cl.__dict__:
                 setattr(cl, x, make_caller(parent, x, attr))
-        if '_s' in parent.__dict__:
-            parent = parent._s
+        if parent.__bases__:
+            # Multiple inheritance is not supported (yet?)
+            parent = parent.__bases__[0]
         else:
             break
 

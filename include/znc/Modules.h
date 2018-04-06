@@ -335,7 +335,7 @@ CModule* TModLoad(ModHandle p, CUser* pUser, CIRCNetwork* pNetwork,
 }
 
 /** A helper class for handling commands in modules. */
-class CModCommand {
+class CModCommand : private CCoreTranslationMixin {
   public:
     /// Type for the callback function that handles the actual command.
     typedef void (CModule::*ModCmdFunc)(const CString& sLine);
@@ -1386,7 +1386,7 @@ class CModule {
     std::map<CString, CModCommand> m_mCommands;
 };
 
-class CModules : public std::vector<CModule*> {
+class CModules : public std::vector<CModule*>, private CCoreTranslationMixin {
   public:
     CModules();
     ~CModules();

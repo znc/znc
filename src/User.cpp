@@ -504,11 +504,11 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 CIRCNetwork* CUser::AddNetwork(const CString& sNetwork, CString& sErrorRet) {
     if (!CIRCNetwork::IsValidNetwork(sNetwork)) {
         sErrorRet =
-            "Invalid network name. It should be alphanumeric. Not to be "
-            "confused with server name";
+            t_s("Invalid network name. It should be alphanumeric. Not to be "
+                "confused with server name");
         return nullptr;
     } else if (FindNetwork(sNetwork)) {
-        sErrorRet = "Network [" + sNetwork.Token(0) + "] already exists";
+        sErrorRet = t_f("Network {1} already exists")(sNetwork);
         return nullptr;
     }
 
@@ -674,8 +674,8 @@ void CUser::UserConnected(CClient* pClient) {
         BounceAllClients();
     }
 
-    pClient->PutClient(":irc.znc.in 001 " + pClient->GetNick() +
-                       " :- Welcome to ZNC -");
+    pClient->PutClient(":irc.znc.in 001 " + pClient->GetNick() + " :" +
+                       t_s("Welcome to ZNC"));
 
     m_vClients.push_back(pClient);
 }
@@ -774,8 +774,8 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
     for (CClient* pSock : m_vClients) {
         if (!IsHostAllowed(pSock->GetRemoteIP())) {
             pSock->PutStatusNotice(
-                "You are being disconnected because your IP is no longer "
-                "allowed to connect to this user");
+                t_s("You are being disconnected because your IP is no longer "
+                    "allowed to connect to this user"));
             pSock->Close();
         }
     }
@@ -904,17 +904,17 @@ bool CUser::IsValid(CString& sErrMsg, bool bSkipPass) const {
     sErrMsg.clear();
 
     if (!bSkipPass && m_sPass.empty()) {
-        sErrMsg = "Pass is empty";
+        sErrMsg = t_s("Password is empty");
         return false;
     }
 
     if (m_sUserName.empty()) {
-        sErrMsg = "Username is empty";
+        sErrMsg = t_s("Username is empty");
         return false;
     }
 
     if (!CUser::IsValidUserName(m_sUserName)) {
-        sErrMsg = "Username is invalid";
+        sErrMsg = t_s("Username is invalid");
         return false;
     }
 
@@ -1185,7 +1185,7 @@ bool CUser::LoadModule(const CString& sModName, const CString& sArgs,
 
     CModInfo ModInfo;
     if (!CZNC::Get().GetModules().GetModInfo(ModInfo, sModName, sModRet)) {
-        sError = "Unable to find modinfo [" + sModName + "] [" + sModRet + "]";
+        sError = t_f("Unable to find modinfo {1}: {2}")(sModName, sModRet);
         return false;
     }
 

@@ -34,12 +34,6 @@ using std::list;
 using std::tuple;
 using std::make_tuple;
 
-static inline CString FormatBindError() {
-    CString sError = (errno == 0 ? CString("unknown error, check the host name")
-                                 : CString(strerror(errno)));
-    return "Unable to bind [" + sError + "]";
-}
-
 CZNC::CZNC()
     : m_TimeStarted(time(nullptr)),
       m_eConfigState(ECONFIG_NOTHING),
@@ -1566,7 +1560,7 @@ bool CZNC::DeleteUser(const CString& sUsername) {
 
 bool CZNC::AddUser(CUser* pUser, CString& sErrorRet, bool bStartup) {
     if (FindUser(pUser->GetUserName()) != nullptr) {
-        sErrorRet = "User already exists";
+        sErrorRet = t_s("User already exists");
         DEBUG("User [" << pUser->GetUserName() << "] - already exists");
         return false;
     }
@@ -1674,7 +1668,7 @@ bool CZNC::AddListener(unsigned short uPort, const CString& sBindHost,
 
 #ifndef HAVE_IPV6
     if (ADDR_IPV6ONLY == eAddr) {
-        sError = "IPV6 is not enabled";
+        sError = t_s("IPv6 is not enabled");
         CUtils::PrintStatus(false, sError);
         return false;
     }
@@ -1682,7 +1676,7 @@ bool CZNC::AddListener(unsigned short uPort, const CString& sBindHost,
 
 #ifndef HAVE_LIBSSL
     if (bSSL) {
-        sError = "SSL is not enabled";
+        sError = t_s("SSL is not enabled");
         CUtils::PrintStatus(false, sError);
         return false;
     }
@@ -1690,7 +1684,7 @@ bool CZNC::AddListener(unsigned short uPort, const CString& sBindHost,
     CString sPemFile = GetPemLocation();
 
     if (bSSL && !CFile::Exists(sPemFile)) {
-        sError = "Unable to locate pem file: [" + sPemFile + "]";
+        sError = t_f("Unable to locate pem file: {1}")(sPemFile);
         CUtils::PrintStatus(false, sError);
 
         // If stdin is e.g. /dev/null and we call GetBoolInput(),
@@ -1709,7 +1703,7 @@ bool CZNC::AddListener(unsigned short uPort, const CString& sBindHost,
     }
 #endif
     if (!uPort) {
-        sError = "Invalid port";
+        sError = t_s("Invalid port");
         CUtils::PrintStatus(false, sError);
         return false;
     }
@@ -1820,6 +1814,12 @@ bool CZNC::DelListener(CListener* pListener) {
     }
 
     return false;
+}
+
+CString CZNC::FormatBindError() {
+    CString sError = (errno == 0 ? t_s(("unknown error, check the host name"))
+                                 : CString(strerror(errno)));
+    return t_f("Unable to bind: {1}")(sError);
 }
 
 static CZNC* s_pZNC = nullptr;

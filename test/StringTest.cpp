@@ -17,11 +17,6 @@
 #include <gtest/gtest.h>
 #include <znc/ZNCString.h>
 
-// GTest uses this function to output objects
-static void PrintTo(const CString& s, std::ostream* o) {
-    *o << '"' << s.Escape_n(CString::EASCII, CString::EDEBUG) << '"';
-}
-
 class EscapeTest : public ::testing::Test {
   protected:
     void testEncode(const CString& in, const CString& expectedOut,

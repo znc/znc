@@ -24,7 +24,7 @@
 
 class CModule;
 
-class CZNCSock : public Csock, public CCoreTranslationMixin {
+class CZNCSock : public Csock, protected CCoreTranslationMixin {
   public:
     CZNCSock(int timeout = 60);
     CZNCSock(const CString& sHost, u_short port, int timeout = 60);
@@ -72,7 +72,8 @@ class CZNCSock : public Csock, public CCoreTranslationMixin {
 
 enum EAddrType { ADDR_IPV4ONLY, ADDR_IPV6ONLY, ADDR_ALL };
 
-class CSockManager : public TSocketManager<CZNCSock> {
+class CSockManager : public TSocketManager<CZNCSock>,
+                     private CCoreTranslationMixin {
   public:
     CSockManager();
     virtual ~CSockManager();

@@ -232,7 +232,7 @@ msgstr "Порт"
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:103
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:15
 msgid "SSL"
-msgstr ""
+msgstr "SSL"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:104
 msgid "Password"
@@ -658,7 +658,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:322
 msgid "Timeout before reconnect:"
-msgstr ""
+msgstr "Время ожидания до повторного подключения:"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:324
 msgid ""
@@ -837,19 +837,19 @@ msgstr "Хост"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:16
 msgid "IPv4"
-msgstr ""
+msgstr "IPv4"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:17
 msgid "IPv6"
-msgstr ""
+msgstr "IPv6"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:18
 msgid "IRC"
-msgstr ""
+msgstr "IRC"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:19
 msgid "HTTP"
-msgstr ""
+msgstr "HTTP"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:20
 msgid "URIPrefix"
@@ -941,7 +941,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:158
 msgid "MOTD:"
-msgstr ""
+msgstr "MOTD:"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:162
 msgid "“Message of the Day”, sent to all ZNC users on connect."
@@ -1054,7 +1054,7 @@ msgstr "Ошибка: пароли не совпадают"
 
 #: webadmin.cpp:323
 msgid "Timeout can't be less than 30 seconds!"
-msgstr ""
+msgstr "Время ожидания не может быть меньше 30 секунд!"
 
 #: webadmin.cpp:407 webadmin.cpp:435 webadmin.cpp:1189 webadmin.cpp:2064
 msgid "Unable to load module [{1}]: {2}"
