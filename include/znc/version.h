@@ -22,7 +22,7 @@ limitations under the License.
 #define VERSION_MINOR 7
 #define VERSION_PATCH 0
 // This one is for display purpose and to check ABI compatibility of modules
-#define VERSION_STR "1.7.0-alpha2"
+#define VERSION_STR "1.7.0-beta1"
 #endif
 
 // Don't use this one
