@@ -42,7 +42,7 @@ msgstr "Локальное"
 #: modules/po/../data/listsockets/tmpl/index.tmpl:12 listsockets.cpp:221
 #: listsockets.cpp:242
 msgid "Remote"
-msgstr "Удаленное"
+msgstr "Удалённое"
 
 #: modules/po/../data/listsockets/tmpl/index.tmpl:13
 msgid "Data In"
