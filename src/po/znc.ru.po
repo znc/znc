@@ -1208,7 +1208,7 @@ msgstr "Использование: DelPort <port> <ipv4|ipv6|all> [bindhost]"
 
 #: ClientCommand.cpp:1649
 msgid "Deleted Port"
-msgstr "Удален порт"
+msgstr "Удалён порт"
 
 #: ClientCommand.cpp:1651
 msgid "Unable to find a matching port"
