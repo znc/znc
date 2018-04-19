@@ -24,7 +24,7 @@ msgstr "Пользователь:"
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:15
 msgid "To change user, click to Network selector"
-msgstr "Чтобы изменить пользователя, щелкните на селектор сети"
+msgstr "Чтобы изменить пользователя, щёлкните на селектор сети"
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:19
 msgid "User/Network:"
