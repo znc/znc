@@ -1,3 +1,171 @@
+# ZNC 1.7.0 (2018-05-01)
+
+## New
+* Add CMake build. Minimum supported CMake version is 3.1. For now ZNC can be built with either CMake or autoconf. In future autoconf is going to be removed. 
+    * Currently `znc-buildmod` requires python if CMake was used; if that's a concern for you, please open a bug.
+* Increase minimum GCC version from 4.7 to 4.8. Minimum Clang version stays at 3.2.
+* Make ZNC UI translateable to different languages (only with CMake), add partial Russian and German translations.
+    * If you want to translate ZNC to your language, please join https://crowdin.com/project/znc-bouncer
+* Configs written before ZNC 0.206 can't be read anymore
+* Implement IRCv3.2 capabilities `away-notify`, `account-notify`, `extended-join`
+* Implement IRCv3.2 capabilities `echo-message`, `cap-notify` on the "client side"
+* Update capability names as they are named in IRCv3.2: `znc.in/server-time-iso`→`server-time`, `znc.in/batch`→`batch`. Old names will continue working for a while, then will be removed in some future version.
+* Make ZNC request `server-time` from server when available
+* Increase accepted line length from 1024 to 2048 to give some space to message tags
+* Separate buffer size settings for channels and queries
+* Support separate `SSLKeyFile` and `SSLDHParamFile` configuration in addition to existing `SSLCertFile`
+* Add "AuthOnlyViaModule" global/user setting
+* Added pyeval module
+* Added stripcontrols module
+* Add new substitutions to ExpandString: `%empty%` and `%network%`.
+* Stop defaulting real name to "Got ZNC?"
+* Make the user aware that debug mode is enabled.
+* Added `ClearAllBuffers` command
+* Don't require CSRF token for POSTs if the request uses HTTP Basic auth.
+* Set `HttpOnly` and `SameSite=strict` for session cookies
+* Add SNI SSL client support
+* Add support for CIDR notation in allowed hosts list and in trusted proxy list
+* Add network-specific config for cert validation in addition to user-supplied fingerprints: `TrustAllCerts`, defaults to false, and `TrustPKI`, defaults to true.
+* Add `/attach` command for symmetry with `/detach`. Unlike `/join` it allows wildcards.
+* Timestamp format now supports sub-second precision with `%f`. Used in awaystore, listsockets, log modules and buffer playback when client doesn't support server-time
+* Build on macOS using ICU, Python, and OpenSSL from Homebrew, if available
+* Remove `--with-openssl=/path` option from ./configure. SSL is still supported and is still configurable
+
+## Fixes
+* Revert tables to how they were in ZNC 1.4
+* Remove flawed Add/Del/ListBindHost(s). They didn't correctly do what they were intended for, but users often confused them with the SetBindHost option. SetBindHost still works.
+* Fix disconnection issues when being behind NAT by decreasing the interval how often PING is sent and making it configurable via a setting to change ping timeout time
+* Change default flood rates to match RFC1459, prevent excess flood problems
+* Match channel names and hostmasks case-insensitively in autoattach, autocycle, autoop, autovoice, log, watch modules
+* Fix crash in shell module which happens if client disconnects at a wrong time
+* Decrease CPU usage when joining channels during startup or reconnect, add config write delay setting
+* Always send the users name in NOTICE when logging in.
+* Don't try to quit multiple times
+* Don't send PART to client which sent QUIT
+* Send failed logins to NOTICE instead of PRIVMSG
+* Stop creating files with odd permissions on Solaris
+* Save channel key on JOIN even if user was not on the channel yet
+* Stop buffering and echoing CTCP requests and responses to other clients with self-message, except for /me
+* Support discovery of tcl 8.6 during `./configure`
+
+## Modules
+* adminlog:
+    * Make path configurable
+* alias:
+    * Add `Dump` command to copy your config between users
+* awaystore:
+    * Add `-chans` option which records channel highlights
+* blockmotd:
+    * Add `GetMotd` command
+* clearbufferonmsg:
+    * Add options which events trigger clearation of buffers.
+* controlpanel:
+    * Add the `DelServer` command.
+    * Add `$user` and `$network` aliases for `$me` and `$net` respectively
+    * Allow reseting channel-specific `AutoClearChanBuffer` and `BufferSize` settings by setting them to `-`
+    * Change type of values from "double" to "number", which is more obvious for non-programmers
+* crypt:
+    * Fix build with LibreSSL
+    * Cover notices, actions and topics
+    * Don't use the same or overlapping NickPrefix as StatusPrefix
+    * Add DH1080 key exchange
+    * Add Get/SetNickPrefix commands, hide the internal keyword from ListKeys
+* cyrusauth:
+    * Improve UI
+* fail2ban:
+    * Make timeout and attempts configurable, add BAN, UNBAN and LIST commands
+* flooddetach:
+    * Detach on nick floods
+* keepnick:
+    * Improve behaviour by listening to ircd-side numeric errors
+* log:
+    * Add `-timestamp` option
+    * Add options to hide joins, quits and nick changes.
+    * Stop forcing username and network name to be lower case in filenames
+    * Log user quit messages
+* missingmotd:
+    * Include nick in IRC numeric 422 command, reduce client confusion
+* modperl:
+    * Provide `operator ""` for `ZNC::String`
+    * Honor `PERL5LIB` env var
+    * Fix functions like `HasPerm()` which accept `char`
+    * When a broken module couldn't be loaded, it couldn't be loaded anymore even if it was fixed later.
+    * Force strings to UTF-8 in modperl to fix double encoding during concatenation/interpolation.
+* modpython:
+    * Require ZNC to be built with encodings support
+    * Disable legacy encoding mode when modpython is loaded.
+    * Support `CQuery` and `CServer`
+* nickserv:
+    * Use `/nickserv identify` by default instead of `/msg nickserv`.
+    * Support messages from X3 services
+* notify_connect:
+    * Show client identification
+* sasl:
+    * Add web interface
+    * Enable all known mechanisms by default
+    * Make the first requirement for SET actually mandatory, return information about settings if no input for SET
+* schat:
+    * Require explicit path to certificate.
+* simple_away:
+    * Use ExpandString for away reason, rename old `%s` to `%awaytime%`
+    * Add `MinClients` option
+* stickychan:
+    * Save registry on every stick/unstick action, auto-save if channel key changes
+    * Stop checking so often, increase delay to once every 3 minutes
+* webadmin:
+    * Make server editor and CTCP replies editor more fancy, when JS is enabled
+    * Make tables sortable. 
+    * Allow reseting chan buffer size by entering an empty value
+    * Show per-network traffic info
+    * Make the traffic info page visible for non-admins, non-admins can see only their traffic
+
+## Internal
+* Stop pretending that ZNC ABI is stable, when it's not. Make module version checks more strict and prevent crashes when loading a module which are built for the wrong ZNC version.
+* Add an integration test
+* Various HTML changes
+* Introduce a CMessage class and its subclasses
+* Add module callbacks which accept CMessage, deprecate old callbacks
+* Add `OnNumericMessage` module callback, which previously was possible only with `OnRaw`, which could give unexpected results if the message has IRCv3.2 tags.
+* Modernize code to use more C++11 features
+* Various code cleanups
+* Fix CSS of `_default_` skin for Fingerprints section
+* Add `OnUserQuitMessage()` module hook.
+* Add `OnPrivBufferStarting()` and `OnPrivBufferEnding()` hooks
+* `CString::WildCmp()`: add an optional case-sensitivity argument
+* Do not call `OnAddUser()` hook during ZNC startup
+* Allow modules to override CSRF protection.
+* Rehash now reloads only global settings
+* Remove `CAP CLEAR`
+* Add `CChan::GetNetwork()`
+* `CUser`: add API for removing and clearing allowed hosts
+* `CZNC`: add missing SSL-related getters and setters
+* Add a possibility (not an "option") to disable launch after --makeconf
+* Move Unix signal processing to a dedicated thread.
+* Add clang-format configuration, switch tabs to spaces.
+* `CString::StripControls()`: Strip background colors when we reset foreground
+* Make chan modes and permissions to be char instead of unsigned char.
+
+## Cosmetic
+* Alphabetically sort the modules we compile using autoconf/Makefile
+* Alphabetically sort output of `znc --help`
+* Change output during startup to be more compact
+* Show new server name when reconnecting to a different server with `/znc jump`
+* Hide passwords in listservers output
+* Filter out ZNC passwords in output of `znc -D`
+* Switch znc.in URLs to https
+
+
+
+# ZNC 1.6.6 (2018-03-05)
+
+* Fix use-after-free in `znc --makepem`. It was broken for a long time, but
+  started segfaulting only now. This is a useability fix, not a security fix,
+  because self-signed (or signed by a CA) certificates can be created
+  without using `--makepem`, and then combined into znc.pem.
+* Fix build on Cygwin.
+
+
+
 # ZNC 1.6.5 (2017-03-12)
 
 ## Fixes
