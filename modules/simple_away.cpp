@@ -211,7 +211,7 @@ class CSimpleAway : public CModule {
         if (sReason.empty()) sReason = SIMPLE_AWAY_DEFAULT_REASON;
 
         time_t iTime = time(nullptr);
-        CString sTime = CUtils::CTime(iTime, GetUser()->GetTimezone());
+        CString sTime = CUtils::CTime(iTime, "Etc/UTC") + " UTC";
         sReason.Replace("%awaytime%", sTime);
         sReason = ExpandString(sReason);
         sReason.Replace("%s", sTime);  // Backwards compatibility with previous
