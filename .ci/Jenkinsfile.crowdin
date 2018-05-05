@@ -16,7 +16,7 @@ timestamps {
   node {
     timeout(time: 30, unit: 'MINUTES') {
       stage('WsCleanup') {
-        cleanupWs()
+        step([$class: 'WsCleanup'])
       }
       def tasks = [:]
       def crowdin_cli = "java -jar ${tool 'crowdin-cli'}/crowdin-cli.jar --config .ci/crowdin.yml"
