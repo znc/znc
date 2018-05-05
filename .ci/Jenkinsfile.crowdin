@@ -26,19 +26,18 @@ timestamps {
         tasks[branch] = {
           stage(upstream_branch) {
             dir(upstream_branch) {
-              stage('Checkout') {
+              stage("Checkout ${upstream_branch}") {
                 checkout([$class: 'GitSCM', branches: [[name: "*/${upstream_branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'SubmoduleOption', recursiveSubmodules: true]], userRemoteConfigs: [[credentialsId: '6ef10f80-20dc-4661-af45-52a6e1e15749', name: 'upstream', url: "github.com:${upstream_user}/${upstream_repo}.git"]]])
               }
-              stage('Prepare strings') {
+              stage("Prepare strings for ${upstream_branch}") {
                 dir("build") {
-                  sh 'pwd'
                   sh "cmake .."
                   sh 'make translation'
                 }
                 sh 'rm -rf build/'
                 sh 'git status'
               }
-              stage('Crowdin') {
+              stage("Crowdin for ${upstream_branch}") {
                 withCredentials([string(credentialsId: '11c7e2b4-f990-4670-98a4-c89d2a5a2f43', variable: 'CROWDIN_API_KEY')]) {
                   withEnv(['CROWDIN_BASE_PATH='+pwd()]) {
                     sh "$crowdin_cli upload sources --branch ${upstream_branch}"
@@ -49,7 +48,7 @@ timestamps {
                 sh 'LANG=en_US.utf8 find . -name "*.po" -exec msgfilter -i "{}" -o "{}.replacement" .ci/cleanup-po.pl ";"'
                 sh 'find . -name "*.po" -exec mv "{}.replacement" "{}" ";"'
               }
-              stage('Push') {
+              stage("Push ${upstream_branch}") {
                 sh 'git config user.name "ZNC-Jenkins"'
                 sh 'git config user.email jenkins@znc.in'
                 sh 'git status'
@@ -75,7 +74,7 @@ timestamps {
                   def pulls = httpRequest consoleLogResponseBody: true, customHeaders: headers, url: "https://api.github.com/repos/${upstream_user}/${upstream_repo}/pulls?head=${my_user}:${my_branch}&base=${upstream_branch}"
                   pulls = new JsonSlurper().parseText(pulls.content)
                   if (!pulls) {
-                    httpRequest consoleLogResponseBody: true, customHeaders: headers, url: "https://api.github.com/repos/${upstream_user}/${upstream_repo}/pulls", httpMode: 'POST', requestBody: '{"head":"'+my_user+':'+my_branch+'","base":"'+upstream_branch+'","title":"Update translations","body":"From https://crowdin.com/project/znc-bouncer"}'
+                    httpRequest consoleLogResponseBody: true, customHeaders: headers, url: "https://api.github.com/repos/${upstream_user}/${upstream_repo}/pulls", httpMode: 'POST', requestBody: '{"head":"'+my_user+':'+my_branch+'","base":"'+upstream_branch+'","title":"Update translations in '+upstream_branch+'","body":"From https://crowdin.com/project/znc-bouncer"}'
                   }
                 }
               }
