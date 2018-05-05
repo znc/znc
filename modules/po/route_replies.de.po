@@ -12,48 +12,48 @@ msgstr ""
 "Language-Team: German\n"
 "Language: de_DE\n"
 
-#: route_replies.cpp:209
+#: route_replies.cpp:211
 msgid "[yes|no]"
 msgstr ""
 
-#: route_replies.cpp:210
+#: route_replies.cpp:212
 msgid "Decides whether to show the timeout messages or not"
 msgstr ""
 
-#: route_replies.cpp:350
+#: route_replies.cpp:352
 msgid "This module hit a timeout which is probably a connectivity issue."
 msgstr ""
 
-#: route_replies.cpp:353
+#: route_replies.cpp:355
 msgid ""
 "However, if you can provide steps to reproduce this issue, please do report "
 "a bug."
 msgstr ""
 
-#: route_replies.cpp:356
+#: route_replies.cpp:358
 msgid "To disable this message, do \"/msg {1} silent yes\""
 msgstr ""
 
-#: route_replies.cpp:358
+#: route_replies.cpp:360
 msgid "Last request: {1}"
 msgstr ""
 
-#: route_replies.cpp:359
+#: route_replies.cpp:361
 msgid "Expected replies:"
 msgstr ""
 
-#: route_replies.cpp:363
+#: route_replies.cpp:365
 msgid "{1} (last)"
 msgstr ""
 
-#: route_replies.cpp:435
+#: route_replies.cpp:437
 msgid "Timeout messages are disabled."
 msgstr ""
 
-#: route_replies.cpp:436
+#: route_replies.cpp:438
 msgid "Timeout messages are enabled."
 msgstr ""
 
-#: route_replies.cpp:457
+#: route_replies.cpp:459
 msgid "Send replies (e.g. to /who) to the right client only"
 msgstr ""
