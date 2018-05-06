@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 
+/*
+ * NOTE: This module's primary purpose is to provide a sample of the various
+ * things that modules can do. It is not written to be an actual module that
+ * you would enable on a sample installation, and serves more as a developer 
+ * "example" rather than an actual module that would be used.
+ */
+
 #include <znc/Client.h>
 #include <znc/Chan.h>
 #include <znc/Modules.h>
@@ -24,7 +31,7 @@ using std::vector;
 class CSampleJob : public CModuleJob {
   public:
     CSampleJob(CModule* pModule)
-        : CModuleJob(pModule, "sample", "Message the user after a delay") {}
+        : CModuleJob(pModule, "sample", "An example module that messages the user after a delay.") {}
 
     ~CSampleJob() override {
         if (wasCancelled()) {
@@ -91,16 +98,16 @@ class CSampleMod : public CModule {
     }
 
     void OnIRCConnected() override {
-        PutModule(t_s("You got connected BoyOh."));
+        PutModule(t_s("You have been connected."));
     }
 
     void OnIRCDisconnected() override {
-        PutModule(t_s("You got disconnected BoyOh."));
+        PutModule(t_s("You have been disconnected."));
     }
 
     EModRet OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent,
                               CString& sRealName) override {
-        sRealName += " - ZNC";
+        sRealName += " - Running on ZNC";
         return CONTINUE;
     }
 
