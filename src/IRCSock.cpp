@@ -730,7 +730,7 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
             CString sPort = Message.GetParam(2);
             CString sInfo = Message.GetParam(3);
             m_pNetwork->PutStatus(
-                t_f("Server {1} redirects us to {2}:{3} with reason: {3}")(
+                t_f("Server {1} redirects us to {2}:{3} with reason: {4}")(
                     m_pNetwork->GetCurrentServer()->GetString(false), sHost,
                     sPort, sInfo));
             m_pNetwork->PutStatus(
