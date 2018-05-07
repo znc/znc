@@ -45,7 +45,7 @@ timestamps {
                     sh "$crowdin_cli download --branch ${upstream_branch}"
                   }
                 }
-                sh 'LANG=C.utf8 find . -name "*.po" -exec msgfilter -i "{}" -o "{}.replacement" .ci/cleanup-po.pl ";"'
+                sh 'LANG=C.UTF-8 find . -name "*.po" -exec msgfilter -i "{}" -o "{}.replacement" .ci/cleanup-po.pl ";"'
                 sh 'find . -name "*.po" -exec mv "{}.replacement" "{}" ";"'
               }
               stage("Push ${upstream_branch}") {
