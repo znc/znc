@@ -4,3 +4,9 @@
 [submodule "third_party/googletest"]
 	path = third_party/googletest
 	url = https://github.com/google/googletest
+[submodule "third_party/QR-Code-generator"]
+	path = third_party/QR-Code-generator
+	url = https://github.com/nayuki/QR-Code-generator
+[submodule "third_party/cppcodec"]
+	path = third_party/cppcodec
+	url = https://github.com/tplgy/cppcodec

@@ -1,0 +1,17 @@
+<? I18N znc-otpauth ?>
+
+<? INC Header.tmpl ?>
+
+<div>
+	Add this code to your OTP device (e.g. Google Authenticator):
+	<? VAR otpurl ?>
+</div>
+<div>
+	From now on, append the 6-digit code to your password.
+	Later UI is expected to be improved.
+</div>
+<div style="height: 15em">
+	<? VAR qr ESC= ?>
+</div>
+
+<? INC Footer.tmpl ?>

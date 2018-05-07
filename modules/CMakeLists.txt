@@ -60,6 +60,13 @@ else()
 	set(moddisable_cyrusauth true)
 endif()
 
+if(OATH_FOUND)
+	set(modcompile_otpauth PRIVATE ${OATH_CFLAGS})
+	set(modlink_otpauth ${OATH_LDFLAGS})
+else()
+	set(moddisable_otpauth true)
+endif()
+
 if(PERLLIBS_FOUND)
 	add_subdirectory(modperl)
 else()
