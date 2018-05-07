@@ -1322,14 +1322,19 @@ bool CUser::SetStatusPrefix(const CString& s) {
 }
 
 bool CUser::SetLanguage(const CString& s) {
-    // They look like ru_RU
+    // They look like ru-RU
     for (char c : s) {
-        if (isalpha(c) || c == '_') {
+        if (isalpha(c) || c == '-' || c == '_') {
         } else {
             return false;
         }
     }
     m_sLanguage = s;
+    // 1.7.0 accidentally used _ instead of -, which made language
+    // non-selectable. But it's possible that someone put _ to znc.conf
+    // manually.
+    // TODO: cleanup _ some time later.
+    m_sLanguage.Replace("_", "-");
     return true;
 }
 // !Setters
