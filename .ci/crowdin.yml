@@ -5,8 +5,8 @@ base_path_env: CROWDIN_BASE_PATH
 
 files:
   - source: /src/po/znc.pot
-    translation: /src/po/znc.%two_letters_code%.po
+    translation: /src/po/znc.%locale%.po
     update_option: update_as_unapproved
   - source: "/modules/po/*.pot"
-    translation: /modules/po/%file_name%.%two_letters_code%.po
+    translation: /modules/po/%file_name%.%locale%.po
     update_option: update_as_unapproved
