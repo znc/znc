@@ -1,0 +1,110 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: pt-BR\n"
+"X-Crowdin-File: /1.7.x/modules/po/awaystore.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Portuguese, Brazilian\n"
+"Language: pt_BR\n"
+
+#: awaystore.cpp:67
+msgid "You have been marked as away"
+msgstr ""
+
+#: awaystore.cpp:78 awaystore.cpp:385 awaystore.cpp:388
+msgid "Welcome back!"
+msgstr ""
+
+#: awaystore.cpp:100
+msgid "Deleted {1} messages"
+msgstr ""
+
+#: awaystore.cpp:104
+msgid "USAGE: delete <num|all>"
+msgstr ""
+
+#: awaystore.cpp:109
+msgid "Illegal message # requested"
+msgstr ""
+
+#: awaystore.cpp:113
+msgid "Message erased"
+msgstr ""
+
+#: awaystore.cpp:122
+msgid "Messages saved to disk"
+msgstr ""
+
+#: awaystore.cpp:124
+msgid "There are no messages to save"
+msgstr ""
+
+#: awaystore.cpp:135
+msgid "Password updated to [{1}]"
+msgstr ""
+
+#: awaystore.cpp:147
+msgid "Corrupt message! [{1}]"
+msgstr ""
+
+#: awaystore.cpp:159
+msgid "Corrupt time stamp! [{1}]"
+msgstr ""
+
+#: awaystore.cpp:178
+msgid "#--- End of messages"
+msgstr ""
+
+#: awaystore.cpp:183
+msgid "Timer set to 300 seconds"
+msgstr ""
+
+#: awaystore.cpp:188 awaystore.cpp:197
+msgid "Timer disabled"
+msgstr ""
+
+#: awaystore.cpp:199
+msgid "Timer set to {1} seconds"
+msgstr ""
+
+#: awaystore.cpp:203
+msgid "Current timer setting: {1} seconds"
+msgstr ""
+
+#: awaystore.cpp:278
+msgid "This module needs as an argument a keyphrase used for encryption"
+msgstr ""
+
+#: awaystore.cpp:285
+msgid ""
+"Failed to decrypt your saved messages - Did you give the right encryption "
+"key as an argument to this module?"
+msgstr ""
+
+#: awaystore.cpp:386 awaystore.cpp:389
+msgid "You have {1} messages!"
+msgstr ""
+
+#: awaystore.cpp:456
+msgid "Unable to find buffer"
+msgstr ""
+
+#: awaystore.cpp:469
+msgid "Unable to decode encrypted messages"
+msgstr ""
+
+#: awaystore.cpp:516
+msgid ""
+"[ -notimer | -timer N ] [-chans]  passw0rd . N is number of seconds, 600 by "
+"default."
+msgstr ""
+
+#: awaystore.cpp:521
+msgid ""
+"Adds auto-away with logging, useful when you use ZNC from different locations"
+msgstr ""

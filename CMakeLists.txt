@@ -242,8 +242,20 @@ endif()
 file(GLOB csocket_files LIST_DIRECTORIES FALSE
 	"${PROJECT_SOURCE_DIR}/third_party/Csocket/Csocket.*")
 if(csocket_files STREQUAL "")
-	message(FATAL_ERROR " It looks like git submodules are not initialized.\n"
-		" Run: git submodule update --init --recursive")
+	execute_process(COMMAND git status
+		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+		RESULT_VARIABLE git_status_var
+		OUTPUT_QUIET
+		ERROR_QUIET)
+	if(git_status_var)
+		message(FATAL_ERROR
+			" It looks like git submodules are not initialized.\n"
+			" Either this is not a git clone, or you don't have git installed")
+	else()
+		message(FATAL_ERROR
+			" It looks like git submodules are not initialized.\n"
+			" Run: git submodule update --init --recursive")
+	endif()
 endif()
 
 install(DIRECTORY webskins

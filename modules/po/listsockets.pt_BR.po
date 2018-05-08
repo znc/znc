@@ -1,0 +1,113 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: pt-BR\n"
+"X-Crowdin-File: /1.7.x/modules/po/listsockets.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Portuguese, Brazilian\n"
+"Language: pt_BR\n"
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:7 listsockets.cpp:214
+#: listsockets.cpp:230
+msgid "Name"
+msgstr ""
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:8 listsockets.cpp:215
+#: listsockets.cpp:231
+msgid "Created"
+msgstr ""
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:9 listsockets.cpp:216
+#: listsockets.cpp:232
+msgid "State"
+msgstr ""
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:10 listsockets.cpp:218
+#: listsockets.cpp:235
+msgid "SSL"
+msgstr ""
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:11 listsockets.cpp:220
+#: listsockets.cpp:240
+msgid "Local"
+msgstr ""
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:12 listsockets.cpp:221
+#: listsockets.cpp:242
+msgid "Remote"
+msgstr ""
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:13
+msgid "Data In"
+msgstr ""
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:14
+msgid "Data Out"
+msgstr ""
+
+#: listsockets.cpp:62
+msgid "[-n]"
+msgstr ""
+
+#: listsockets.cpp:62
+msgid "Shows the list of active sockets. Pass -n to show IP addresses"
+msgstr ""
+
+#: listsockets.cpp:70
+msgid "You must be admin to use this module"
+msgstr ""
+
+#: listsockets.cpp:96
+msgid "List sockets"
+msgstr ""
+
+#: listsockets.cpp:116 listsockets.cpp:236
+msgctxt "ssl"
+msgid "Yes"
+msgstr ""
+
+#: listsockets.cpp:116 listsockets.cpp:237
+msgctxt "ssl"
+msgid "No"
+msgstr ""
+
+#: listsockets.cpp:142
+msgid "Listener"
+msgstr ""
+
+#: listsockets.cpp:144
+msgid "Inbound"
+msgstr ""
+
+#: listsockets.cpp:147
+msgid "Outbound"
+msgstr ""
+
+#: listsockets.cpp:149
+msgid "Connecting"
+msgstr ""
+
+#: listsockets.cpp:152
+msgid "UNKNOWN"
+msgstr ""
+
+#: listsockets.cpp:207
+msgid "You have no open sockets."
+msgstr ""
+
+#: listsockets.cpp:222 listsockets.cpp:244
+msgid "In"
+msgstr ""
+
+#: listsockets.cpp:223 listsockets.cpp:246
+msgid "Out"
+msgstr ""
+
+#: listsockets.cpp:262
+msgid "Lists active sockets"
+msgstr ""

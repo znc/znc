@@ -1,0 +1,92 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: pt-BR\n"
+"X-Crowdin-File: /1.7.x/modules/po/simple_away.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Portuguese, Brazilian\n"
+"Language: pt_BR\n"
+
+#: simple_away.cpp:56
+msgid "[<text>]"
+msgstr ""
+
+#: simple_away.cpp:57
+#, c-format
+msgid ""
+"Prints or sets the away reason (%awaytime% is replaced with the time you "
+"were set away, supports substitutions using ExpandString)"
+msgstr ""
+
+#: simple_away.cpp:63
+msgid "Prints the current time to wait before setting you away"
+msgstr ""
+
+#: simple_away.cpp:65
+msgid "<seconds>"
+msgstr ""
+
+#: simple_away.cpp:66
+msgid "Sets the time to wait before setting you away"
+msgstr ""
+
+#: simple_away.cpp:69
+msgid "Disables the wait time before setting you away"
+msgstr ""
+
+#: simple_away.cpp:73
+msgid "Get or set the minimum number of clients before going away"
+msgstr ""
+
+#: simple_away.cpp:136
+msgid "Away reason set"
+msgstr ""
+
+#: simple_away.cpp:138
+msgid "Away reason: {1}"
+msgstr ""
+
+#: simple_away.cpp:139
+msgid "Current away reason would be: {1}"
+msgstr ""
+
+#: simple_away.cpp:144
+msgid "Current timer setting: 1 second"
+msgid_plural "Current timer setting: {1} seconds"
+msgstr[0] ""
+msgstr[1] ""
+
+#: simple_away.cpp:153 simple_away.cpp:161
+msgid "Timer disabled"
+msgstr ""
+
+#: simple_away.cpp:155
+msgid "Timer set to 1 second"
+msgid_plural "Timer set to: {1} seconds"
+msgstr[0] ""
+msgstr[1] ""
+
+#: simple_away.cpp:166
+msgid "Current MinClients setting: {1}"
+msgstr ""
+
+#: simple_away.cpp:169
+msgid "MinClients set to {1}"
+msgstr ""
+
+#: simple_away.cpp:248
+msgid ""
+"You might enter up to 3 arguments, like -notimer awaymessage or -timer 5 "
+"awaymessage."
+msgstr ""
+
+#: simple_away.cpp:253
+msgid ""
+"This module will automatically set you away on IRC while you are "
+"disconnected from the bouncer."
+msgstr ""

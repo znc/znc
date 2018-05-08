@@ -1,0 +1,75 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: pt-BR\n"
+"X-Crowdin-File: /1.7.x/modules/po/nickserv.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Portuguese, Brazilian\n"
+"Language: pt_BR\n"
+
+#: nickserv.cpp:31
+msgid "Password set"
+msgstr ""
+
+#: nickserv.cpp:38
+msgid "NickServ name set"
+msgstr ""
+
+#: nickserv.cpp:54
+msgid "No such editable command. See ViewCommands for list."
+msgstr ""
+
+#: nickserv.cpp:57
+msgid "Ok"
+msgstr ""
+
+#: nickserv.cpp:62
+msgid "password"
+msgstr ""
+
+#: nickserv.cpp:62
+msgid "Set your nickserv password"
+msgstr ""
+
+#: nickserv.cpp:64
+msgid "Clear your nickserv password"
+msgstr ""
+
+#: nickserv.cpp:66
+msgid "nickname"
+msgstr ""
+
+#: nickserv.cpp:67
+msgid ""
+"Set NickServ name (Useful on networks like EpiKnet, where NickServ is named "
+"Themis"
+msgstr ""
+
+#: nickserv.cpp:71
+msgid "Reset NickServ name to default (NickServ)"
+msgstr ""
+
+#: nickserv.cpp:75
+msgid "Show patterns for lines, which are being sent to NickServ"
+msgstr ""
+
+#: nickserv.cpp:77
+msgid "cmd new-pattern"
+msgstr ""
+
+#: nickserv.cpp:78
+msgid "Set pattern for commands"
+msgstr ""
+
+#: nickserv.cpp:140
+msgid "Please enter your nickserv password."
+msgstr ""
+
+#: nickserv.cpp:144
+msgid "Auths you with NickServ (prefer SASL module instead)"
+msgstr ""

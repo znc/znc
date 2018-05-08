@@ -1,0 +1,79 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: de\n"
+"X-Crowdin-File: /1.7.x/modules/po/nickserv.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+
+#: nickserv.cpp:31
+msgid "Password set"
+msgstr "Passwort gesetzt"
+
+#: nickserv.cpp:38
+msgid "NickServ name set"
+msgstr "NickServe-Name gesetzt"
+
+#: nickserv.cpp:54
+msgid "No such editable command. See ViewCommands for list."
+msgstr ""
+"Kein solcher bearbeitbarer Befehl. Sieh dir ViewCommands für eine Liste an."
+
+#: nickserv.cpp:57
+msgid "Ok"
+msgstr "Ok"
+
+#: nickserv.cpp:62
+msgid "password"
+msgstr "Passwort"
+
+#: nickserv.cpp:62
+msgid "Set your nickserv password"
+msgstr "Setzt dein Nickserv-Passwort"
+
+#: nickserv.cpp:64
+msgid "Clear your nickserv password"
+msgstr "Löscht dein Nickserv-Passwort"
+
+#: nickserv.cpp:66
+msgid "nickname"
+msgstr "Nickname"
+
+#: nickserv.cpp:67
+msgid ""
+"Set NickServ name (Useful on networks like EpiKnet, where NickServ is named "
+"Themis"
+msgstr ""
+"Setzt den Nickserv-Namen (Nützlich für Netzwerke wie EpiKnet, wo Nickserv "
+"Themis heißt Themis"
+
+#: nickserv.cpp:71
+msgid "Reset NickServ name to default (NickServ)"
+msgstr "Setzt Nickserv-Name auf Standard zurück (NickServ)"
+
+#: nickserv.cpp:75
+msgid "Show patterns for lines, which are being sent to NickServ"
+msgstr "Zeige Muster für Linien, die an NickServ geschickt werden"
+
+#: nickserv.cpp:77
+msgid "cmd new-pattern"
+msgstr "Befehl neues-Muster"
+
+#: nickserv.cpp:78
+msgid "Set pattern for commands"
+msgstr "Setzt Muster für Befehle"
+
+#: nickserv.cpp:140
+msgid "Please enter your nickserv password."
+msgstr "Bitte gebe dein Nickserv-Passwort ein."
+
+#: nickserv.cpp:144
+msgid "Auths you with NickServ (prefer SASL module instead)"
+msgstr ""
+"Authentifiziert dich mit NickServ (präferiere statt dessen das SASL-Modul)"

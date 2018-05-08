@@ -2,6 +2,17 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 "
+"&& n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 "
+"&& n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: ru\n"
+"X-Crowdin-File: /master/src/po/znc.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
 
 #: webskins/_default_/tmpl/InfoBar.tmpl:6
 msgid "Logged in as: {1}"
@@ -13,27 +24,27 @@ msgstr ""
 
 #: webskins/_default_/tmpl/LoginBar.tmpl:3
 msgid "Logout"
-msgstr ""
+msgstr "Выйти"
 
 #: webskins/_default_/tmpl/Menu.tmpl:4
 msgid "Home"
-msgstr ""
+msgstr "Домой"
 
 #: webskins/_default_/tmpl/Menu.tmpl:7
 msgid "Global Modules"
-msgstr ""
+msgstr "Глобальные модули"
 
 #: webskins/_default_/tmpl/Menu.tmpl:20
 msgid "User Modules"
-msgstr ""
+msgstr "Пользовательские модули"
 
 #: webskins/_default_/tmpl/Menu.tmpl:35
 msgid "Network Modules ({1})"
-msgstr ""
+msgstr "Модули сети {1}"
 
 #: webskins/_default_/tmpl/index.tmpl:6
 msgid "Welcome to ZNC's web interface!"
-msgstr ""
+msgstr "Добро пожаловать в веб-интерфейс ZNC!"
 
 #: webskins/_default_/tmpl/index.tmpl:11
 msgid ""
@@ -41,6 +52,10 @@ msgid ""
 "*status help</code>” and “<code>/msg *status loadmod &lt;module&gt;</"
 "code>”). Once you have loaded some Web-enabled modules, the menu will expand."
 msgstr ""
+"Нет загруженных модулей с поддержкой веб-интерфейса. Вы можете загрузить их "
+"из IRC («<code>/msg *status help</code>» и «<code>/msg *status loadmod &lt;"
+"модуль&gt;</code>»). Когда такие модули будут загружены, они будут доступны "
+"в меню сбоку."
 
 #: znc.cpp:1563
 msgid "User already exists"
@@ -60,7 +75,7 @@ msgstr ""
 
 #: znc.cpp:1706
 msgid "Invalid port"
-msgstr ""
+msgstr "Некорректный порт"
 
 #: znc.cpp:1822 ClientCommand.cpp:1629
 msgid "Unable to bind: {1}"
@@ -245,12 +260,16 @@ msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: Client.cpp:1346 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: Client.cpp:1358
 msgid "Usage: /detach <#chans>"
@@ -261,6 +280,8 @@ msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: Chan.cpp:638
 msgid "Buffer Playback..."
@@ -395,11 +416,11 @@ msgstr ""
 
 #: ClientCommand.cpp:58
 msgid "Usage: ListNicks <#chan>"
-msgstr ""
+msgstr "Использование: ListNicks <#chan>"
 
 #: ClientCommand.cpp:65
 msgid "You are not on [{1}]"
-msgstr ""
+msgstr "Вы находитесь не на [{1}]"
 
 #: ClientCommand.cpp:70
 msgid "You are not on [{1}] (trying)"
@@ -411,23 +432,23 @@ msgstr ""
 
 #: ClientCommand.cpp:91 ClientCommand.cpp:106
 msgid "Nick"
-msgstr ""
+msgstr "Ник"
 
 #: ClientCommand.cpp:92 ClientCommand.cpp:107
 msgid "Ident"
-msgstr ""
+msgstr "Идент"
 
 #: ClientCommand.cpp:93 ClientCommand.cpp:108
 msgid "Host"
-msgstr ""
+msgstr "Хост"
 
 #: ClientCommand.cpp:122
 msgid "Usage: Attach <#chans>"
-msgstr ""
+msgstr "Использование: Attach <#chans>"
 
 #: ClientCommand.cpp:144
 msgid "Usage: Detach <#chans>"
-msgstr ""
+msgstr "Использование: Dettach <#chans>"
 
 #: ClientCommand.cpp:161
 msgid "There is no MOTD set."
@@ -488,7 +509,7 @@ msgstr ""
 #: ClientCommand.cpp:488 ClientCommand.cpp:516
 msgctxt "listchans"
 msgid "Clear"
-msgstr ""
+msgstr "Очистить"
 
 #: ClientCommand.cpp:489 ClientCommand.cpp:521
 msgctxt "listchans"
@@ -498,7 +519,7 @@ msgstr ""
 #: ClientCommand.cpp:490 ClientCommand.cpp:522
 msgctxt "listchans"
 msgid "Users"
-msgstr ""
+msgstr "Пользователи"
 
 #: ClientCommand.cpp:505
 msgctxt "listchans"
@@ -523,7 +544,7 @@ msgstr ""
 #: ClientCommand.cpp:511 ClientCommand.cpp:519
 msgctxt "listchans"
 msgid "yes"
-msgstr ""
+msgstr "да"
 
 #: ClientCommand.cpp:536
 msgid "Total: {1}, Joined: {2}, Detached: {3}, Disabled: {4}"
@@ -537,7 +558,7 @@ msgstr ""
 
 #: ClientCommand.cpp:550
 msgid "Usage: AddNetwork <name>"
-msgstr ""
+msgstr "Использование: AddNetwork <name>"
 
 #: ClientCommand.cpp:554
 msgid "Network name should be alphanumeric"
@@ -559,7 +580,7 @@ msgstr ""
 
 #: ClientCommand.cpp:582
 msgid "Network deleted"
-msgstr ""
+msgstr "Сеть удалена"
 
 #: ClientCommand.cpp:585
 msgid "Failed to delete network, perhaps this network doesn't exist"
@@ -567,12 +588,12 @@ msgstr ""
 
 #: ClientCommand.cpp:595
 msgid "User {1} not found"
-msgstr ""
+msgstr "Пользователь {1} не найден"
 
 #: ClientCommand.cpp:603 ClientCommand.cpp:611
 msgctxt "listnetworks"
 msgid "Network"
-msgstr ""
+msgstr "Сеть"
 
 #: ClientCommand.cpp:604 ClientCommand.cpp:613 ClientCommand.cpp:622
 msgctxt "listnetworks"
@@ -1001,6 +1022,8 @@ msgid "{1} buffer matching {2} has been cleared"
 msgid_plural "{1} buffers matching {2} have been cleared"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: ClientCommand.cpp:1408
 msgid "All channel buffers have been cleared"
@@ -1023,18 +1046,24 @@ msgid "Setting buffer size failed for {1} buffer"
 msgid_plural "Setting buffer size failed for {1} buffers"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: ClientCommand.cpp:1464
 msgid "Maximum buffer size is {1} line"
 msgid_plural "Maximum buffer size is {1} lines"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: ClientCommand.cpp:1469
 msgid "Size of every buffer was set to {1} line"
 msgid_plural "Size of every buffer was set to {1} lines"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: ClientCommand.cpp:1479 ClientCommand.cpp:1486 ClientCommand.cpp:1497
 #: ClientCommand.cpp:1506 ClientCommand.cpp:1514
@@ -1081,103 +1110,105 @@ msgstr ""
 
 #: ClientCommand.cpp:1530
 msgid "Unknown command, try 'Help'"
-msgstr ""
+msgstr "Неизвестная команда, попробуйте 'Help'"
 
 #: ClientCommand.cpp:1539 ClientCommand.cpp:1550
 msgctxt "listports"
 msgid "Port"
-msgstr ""
+msgstr "Порт"
 
 #: ClientCommand.cpp:1540 ClientCommand.cpp:1551
 msgctxt "listports"
 msgid "BindHost"
-msgstr ""
+msgstr "BindHost"
 
 #: ClientCommand.cpp:1541 ClientCommand.cpp:1554
 msgctxt "listports"
 msgid "SSL"
-msgstr ""
+msgstr "SSL"
 
 #: ClientCommand.cpp:1542 ClientCommand.cpp:1559
 msgctxt "listports"
 msgid "Protocol"
-msgstr ""
+msgstr "Протокол"
 
 #: ClientCommand.cpp:1543 ClientCommand.cpp:1566
 msgctxt "listports"
 msgid "IRC"
-msgstr ""
+msgstr "IRC"
 
 #: ClientCommand.cpp:1544 ClientCommand.cpp:1571
 msgctxt "listports"
 msgid "Web"
-msgstr ""
+msgstr "Веб"
 
 #: ClientCommand.cpp:1555
 msgctxt "listports|ssl"
 msgid "yes"
-msgstr ""
+msgstr "да"
 
 #: ClientCommand.cpp:1556
 msgctxt "listports|ssl"
 msgid "no"
-msgstr ""
+msgstr "нет"
 
 #: ClientCommand.cpp:1560
 msgctxt "listports"
 msgid "IPv4 and IPv6"
-msgstr ""
+msgstr "IPv4 и IPv6"
 
 #: ClientCommand.cpp:1562
 msgctxt "listports"
 msgid "IPv4"
-msgstr ""
+msgstr "IPv4"
 
 #: ClientCommand.cpp:1563
 msgctxt "listports"
 msgid "IPv6"
-msgstr ""
+msgstr "IPv6"
 
 #: ClientCommand.cpp:1569
 msgctxt "listports|irc"
 msgid "yes"
-msgstr ""
+msgstr "да"
 
 #: ClientCommand.cpp:1570
 msgctxt "listports|irc"
 msgid "no"
-msgstr ""
+msgstr "нет"
 
 #: ClientCommand.cpp:1574
 msgctxt "listports|irc"
 msgid "yes, on {1}"
-msgstr ""
+msgstr "да, на {1}"
 
 #: ClientCommand.cpp:1576
 msgctxt "listports|web"
 msgid "no"
-msgstr ""
+msgstr "нет"
 
 #: ClientCommand.cpp:1616
 msgid ""
 "Usage: AddPort <[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost [uriprefix]]"
 msgstr ""
+"Использование: AddPort <[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost "
+"[uriprefix]]"
 
 #: ClientCommand.cpp:1632
 msgid "Port added"
-msgstr ""
+msgstr "Порт добавлен"
 
 #: ClientCommand.cpp:1634
 msgid "Couldn't add port"
-msgstr ""
+msgstr "Невозможно добавить порт"
 
 #: ClientCommand.cpp:1640
 msgid "Usage: DelPort <port> <ipv4|ipv6|all> [bindhost]"
-msgstr ""
+msgstr "Использование: DelPort <port> <ipv4|ipv6|all> [bindhost]"
 
 #: ClientCommand.cpp:1649
 msgid "Deleted Port"
-msgstr ""
+msgstr "Удалён порт"
 
 #: ClientCommand.cpp:1651
 msgid "Unable to find a matching port"
@@ -1186,12 +1217,12 @@ msgstr ""
 #: ClientCommand.cpp:1659 ClientCommand.cpp:1673
 msgctxt "helpcmd"
 msgid "Command"
-msgstr ""
+msgstr "Команда"
 
 #: ClientCommand.cpp:1660 ClientCommand.cpp:1674
 msgctxt "helpcmd"
 msgid "Description"
-msgstr ""
+msgstr "Описание"
 
 #: ClientCommand.cpp:1664
 msgid ""

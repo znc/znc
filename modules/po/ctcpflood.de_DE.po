@@ -1,0 +1,73 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: de\n"
+"X-Crowdin-File: /1.7.x/modules/po/ctcpflood.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+
+#: ctcpflood.cpp:25 ctcpflood.cpp:27
+msgid "<limit>"
+msgstr "<Limit>"
+
+#: ctcpflood.cpp:25
+msgid "Set seconds limit"
+msgstr "Setzt das Sekundenlimit"
+
+#: ctcpflood.cpp:27
+msgid "Set lines limit"
+msgstr "Setzt das Zeilenlimit"
+
+#: ctcpflood.cpp:29
+msgid "Show the current limits"
+msgstr "Zeige aktuelle Limits"
+
+#: ctcpflood.cpp:76
+msgid "Limit reached by {1}, blocking all CTCP"
+msgstr "Limit von {1} erreicht, blockiere alle CTCP"
+
+#: ctcpflood.cpp:98
+msgid "Usage: Secs <limit>"
+msgstr "Verwendung: Secs <Limit>"
+
+#: ctcpflood.cpp:113
+msgid "Usage: Lines <limit>"
+msgstr "Verwendung: Lines <Limit>"
+
+#: ctcpflood.cpp:125
+msgid "1 CTCP message"
+msgid_plural "{1} CTCP messages"
+msgstr[0] "1 CTCP-Nachricht"
+msgstr[1] "{1} CTCP-Nachrichten"
+
+#: ctcpflood.cpp:127
+msgid "every second"
+msgid_plural "every {1} seconds"
+msgstr[0] "jede Sekunde"
+msgstr[1] "alle {1} Sekunden"
+
+#: ctcpflood.cpp:129
+msgid "Current limit is {1} {2}"
+msgstr "Aktuelles Limit ist {1} {2}"
+
+#: ctcpflood.cpp:145
+msgid ""
+"This user module takes none to two arguments. The first argument is the "
+"number of lines after which the flood-protection is triggered. The second "
+"argument is the time (sec) to in which the number of lines is reached. The "
+"default setting is 4 CTCPs in 2 seconds"
+msgstr ""
+"Dieses Modul bekommt kein oder zwei Argumente. Das erste Argument ist die "
+"Anzahl an Zeilen, die den Flood-Schutz auslösen. Das zweite Argument ist die "
+"Zeit (Sek) in der das Zeilenlimit erreicht werden muss. Die "
+"Standardeinstellung ist 4 CTCPs in 2 Sekunden"
+
+#: ctcpflood.cpp:151
+msgid "Don't forward CTCP floods to clients"
+msgstr "Leite CTCP-Floods nicht an Klienten weiter"

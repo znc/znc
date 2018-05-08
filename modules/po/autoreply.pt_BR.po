@@ -1,0 +1,43 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: pt-BR\n"
+"X-Crowdin-File: /1.7.x/modules/po/autoreply.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Portuguese, Brazilian\n"
+"Language: pt_BR\n"
+
+#: autoreply.cpp:25
+msgid "<reply>"
+msgstr ""
+
+#: autoreply.cpp:25
+msgid "Sets a new reply"
+msgstr ""
+
+#: autoreply.cpp:27
+msgid "Displays the current query reply"
+msgstr ""
+
+#: autoreply.cpp:75
+msgid "Current reply is: {1} ({2})"
+msgstr ""
+
+#: autoreply.cpp:81
+msgid "New reply set to: {1} ({2})"
+msgstr ""
+
+#: autoreply.cpp:94
+msgid ""
+"You might specify a reply text. It is used when automatically answering "
+"queries, if you are not connected to ZNC."
+msgstr ""
+
+#: autoreply.cpp:98
+msgid "Reply to queries when you are away"
+msgstr ""

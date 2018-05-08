@@ -1,0 +1,148 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: pt-BR\n"
+"X-Crowdin-File: /1.7.x/modules/po/log.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Portuguese, Brazilian\n"
+"Language: pt_BR\n"
+
+#: log.cpp:59
+msgid "<rules>"
+msgstr ""
+
+#: log.cpp:60
+msgid "Set logging rules, use !#chan or !query to negate and * "
+msgstr ""
+
+#: log.cpp:62
+msgid "Clear all logging rules"
+msgstr ""
+
+#: log.cpp:64
+msgid "List all logging rules"
+msgstr ""
+
+#: log.cpp:67
+msgid "<var> true|false"
+msgstr ""
+
+#: log.cpp:68
+msgid "Set one of the following options: joins, quits, nickchanges"
+msgstr ""
+
+#: log.cpp:71
+msgid "Show current settings set by Set command"
+msgstr ""
+
+#: log.cpp:143
+msgid "Usage: SetRules <rules>"
+msgstr ""
+
+#: log.cpp:144
+msgid "Wildcards are allowed"
+msgstr ""
+
+#: log.cpp:156 log.cpp:178
+msgid "No logging rules. Everything is logged."
+msgstr ""
+
+#: log.cpp:161
+msgid "1 rule removed: {2}"
+msgid_plural "{1} rules removed: {2}"
+msgstr[0] ""
+msgstr[1] ""
+
+#: log.cpp:168 log.cpp:173
+msgctxt "listrules"
+msgid "Rule"
+msgstr ""
+
+#: log.cpp:169 log.cpp:174
+msgctxt "listrules"
+msgid "Logging enabled"
+msgstr ""
+
+#: log.cpp:189
+msgid ""
+"Usage: Set <var> true|false, where <var> is one of: joins, quits, nickchanges"
+msgstr ""
+
+#: log.cpp:196
+msgid "Will log joins"
+msgstr ""
+
+#: log.cpp:196
+msgid "Will not log joins"
+msgstr ""
+
+#: log.cpp:197
+msgid "Will log quits"
+msgstr ""
+
+#: log.cpp:197
+msgid "Will not log quits"
+msgstr ""
+
+#: log.cpp:199
+msgid "Will log nick changes"
+msgstr ""
+
+#: log.cpp:199
+msgid "Will not log nick changes"
+msgstr ""
+
+#: log.cpp:203
+msgid "Unknown variable. Known variables: joins, quits, nickchanges"
+msgstr ""
+
+#: log.cpp:211
+msgid "Logging joins"
+msgstr ""
+
+#: log.cpp:211
+msgid "Not logging joins"
+msgstr ""
+
+#: log.cpp:212
+msgid "Logging quits"
+msgstr ""
+
+#: log.cpp:212
+msgid "Not logging quits"
+msgstr ""
+
+#: log.cpp:213
+msgid "Logging nick changes"
+msgstr ""
+
+#: log.cpp:214
+msgid "Not logging nick changes"
+msgstr ""
+
+#: log.cpp:351
+msgid ""
+"Invalid args [{1}]. Only one log path allowed.  Check that there are no "
+"spaces in the path."
+msgstr ""
+
+#: log.cpp:401
+msgid "Invalid log path [{1}]"
+msgstr ""
+
+#: log.cpp:404
+msgid "Logging to [{1}]. Using timestamp format '{2}'"
+msgstr ""
+
+#: log.cpp:559
+msgid "[-sanitize] Optional path where to store logs."
+msgstr ""
+
+#: log.cpp:563
+msgid "Writes IRC logs."
+msgstr ""

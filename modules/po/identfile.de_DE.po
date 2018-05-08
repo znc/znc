@@ -1,0 +1,87 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: de\n"
+"X-Crowdin-File: /1.7.x/modules/po/identfile.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+
+#: identfile.cpp:30
+msgid "Show file name"
+msgstr "Zeige Dateinamen"
+
+#: identfile.cpp:32
+msgid "<file>"
+msgstr "<Datei>"
+
+#: identfile.cpp:32
+msgid "Set file name"
+msgstr "Setze Dateinamen"
+
+#: identfile.cpp:34
+msgid "Show file format"
+msgstr "Zeige Dateiformat"
+
+#: identfile.cpp:36
+msgid "<format>"
+msgstr "<Format>"
+
+#: identfile.cpp:36
+msgid "Set file format"
+msgstr "Setzt das Dateiformat"
+
+#: identfile.cpp:38
+msgid "Show current state"
+msgstr "Zeige aktuellen Zustand"
+
+#: identfile.cpp:48
+msgid "File is set to: {1}"
+msgstr "Datei ist gesetzt auf: {1}"
+
+#: identfile.cpp:53
+msgid "File has been set to: {1}"
+msgstr "Datei wurde gesetzt auf: {1}"
+
+#: identfile.cpp:58
+msgid "Format has been set to: {1}"
+msgstr "Format wurde gesetzt auf: {1}"
+
+#: identfile.cpp:59 identfile.cpp:65
+msgid "Format would be expanded to: {1}"
+msgstr "Format würde expandiert zu: {1}"
+
+#: identfile.cpp:64
+msgid "Format is set to: {1}"
+msgstr "Format ist gesetzt auf: {1}"
+
+#: identfile.cpp:78
+msgid "identfile is free"
+msgstr "Ident-Datei ist frei"
+
+#: identfile.cpp:86
+msgid "Access denied"
+msgstr "Zugriff verweigert"
+
+#: identfile.cpp:181
+msgid ""
+"Aborting connection, another user or network is currently connecting and "
+"using the ident spoof file"
+msgstr ""
+"Breche Verbindung ab, ein anderer Benutzer oder ein anderes Netzwerk "
+"verbindet sich aktuell und verwendet die Ident-Spoof-Datei"
+
+#: identfile.cpp:189
+msgid "[{1}] could not be written, retrying..."
+msgstr "[{1}] konnte nicht geschrieben werden, versuche erneut..."
+
+#: identfile.cpp:223
+msgid "Write the ident of a user to a file when they are trying to connect."
+msgstr ""
+"Schreibe den Ident eines Benutzers in eine Datei wenn er versucht sich zu "
+"verbinden."

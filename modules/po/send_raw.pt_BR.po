@@ -1,0 +1,109 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: pt-BR\n"
+"X-Crowdin-File: /1.7.x/modules/po/send_raw.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Portuguese, Brazilian\n"
+"Language: pt_BR\n"
+
+#: modules/po/../data/send_raw/tmpl/index.tmpl:9
+msgid "Send a raw IRC line"
+msgstr ""
+
+#: modules/po/../data/send_raw/tmpl/index.tmpl:14
+msgid "User:"
+msgstr ""
+
+#: modules/po/../data/send_raw/tmpl/index.tmpl:15
+msgid "To change user, click to Network selector"
+msgstr ""
+
+#: modules/po/../data/send_raw/tmpl/index.tmpl:19
+msgid "User/Network:"
+msgstr ""
+
+#: modules/po/../data/send_raw/tmpl/index.tmpl:32
+msgid "Send to:"
+msgstr ""
+
+#: modules/po/../data/send_raw/tmpl/index.tmpl:34
+msgid "Client"
+msgstr ""
+
+#: modules/po/../data/send_raw/tmpl/index.tmpl:35
+msgid "Server"
+msgstr ""
+
+#: modules/po/../data/send_raw/tmpl/index.tmpl:40
+msgid "Line:"
+msgstr ""
+
+#: modules/po/../data/send_raw/tmpl/index.tmpl:45
+msgid "Send"
+msgstr ""
+
+#: send_raw.cpp:32
+msgid "Sent [{1}] to {2}/{3}"
+msgstr ""
+
+#: send_raw.cpp:36 send_raw.cpp:56
+msgid "Network {1} not found for user {2}"
+msgstr ""
+
+#: send_raw.cpp:40 send_raw.cpp:60
+msgid "User {1} not found"
+msgstr ""
+
+#: send_raw.cpp:52
+msgid "Sent [{1}] to IRC server of {2}/{3}"
+msgstr ""
+
+#: send_raw.cpp:75
+msgid "You must have admin privileges to load this module"
+msgstr ""
+
+#: send_raw.cpp:82
+msgid "Send Raw"
+msgstr ""
+
+#: send_raw.cpp:92
+msgid "User not found"
+msgstr ""
+
+#: send_raw.cpp:99
+msgid "Network not found"
+msgstr ""
+
+#: send_raw.cpp:116
+msgid "Line sent"
+msgstr ""
+
+#: send_raw.cpp:140 send_raw.cpp:143
+msgid "[user] [network] [data to send]"
+msgstr ""
+
+#: send_raw.cpp:141
+msgid "The data will be sent to the user's IRC client(s)"
+msgstr ""
+
+#: send_raw.cpp:144
+msgid "The data will be sent to the IRC server the user is connected to"
+msgstr ""
+
+#: send_raw.cpp:147
+msgid "[data to send]"
+msgstr ""
+
+#: send_raw.cpp:148
+msgid "The data will be sent to your current client"
+msgstr ""
+
+#: send_raw.cpp:159
+msgid "Lets you send some raw IRC lines as/to someone else"
+msgstr ""

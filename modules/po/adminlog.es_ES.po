@@ -1,0 +1,69 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-File: /1.7.x/modules/po/adminlog.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Spanish\n"
+"Language: es_ES\n"
+
+#: adminlog.cpp:29
+msgid "Show the logging target"
+msgstr "Muestra el objeto de registro"
+
+#: adminlog.cpp:31
+msgid "<file|syslog|both> [path]"
+msgstr "<fichero|syslog|ambos> [ruta]"
+
+#: adminlog.cpp:32
+msgid "Set the logging target"
+msgstr "Configura el objeto a registrar"
+
+#: adminlog.cpp:142
+msgid "Access denied"
+msgstr "Acceso denegado"
+
+#: adminlog.cpp:156
+msgid "Now logging to file"
+msgstr "Registrando en fichero"
+
+#: adminlog.cpp:160
+msgid "Now only logging to syslog"
+msgstr "Registrando solo en syslog"
+
+#: adminlog.cpp:164
+msgid "Now logging to syslog and file"
+msgstr "Registrando en syslog y fichero"
+
+#: adminlog.cpp:168
+msgid "Usage: Target <file|syslog|both> [path]"
+msgstr "Uso: Target <fichero|syslog|ambos> [ruta]"
+
+#: adminlog.cpp:170
+msgid "Unknown target"
+msgstr "Objeto desconocido"
+
+#: adminlog.cpp:192
+msgid "Logging is enabled for file"
+msgstr "Activado registro a fichero"
+
+#: adminlog.cpp:195
+msgid "Logging is enabled for syslog"
+msgstr "Activado registro a syslog"
+
+#: adminlog.cpp:198
+msgid "Logging is enabled for both, file and syslog"
+msgstr "Activado registro a fichero y syslog"
+
+#: adminlog.cpp:204
+msgid "Log file will be written to {1}"
+msgstr "El fichero de registro será escrito en {1}"
+
+#: adminlog.cpp:222
+msgid "Log ZNC events to file and/or syslog."
+msgstr "Registrar eventos de ZNC a fichero y/o syslog"

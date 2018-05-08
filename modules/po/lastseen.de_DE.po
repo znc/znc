@@ -1,0 +1,68 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: de\n"
+"X-Crowdin-File: /1.7.x/modules/po/lastseen.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+
+#: modules/po/../data/lastseen/tmpl/index.tmpl:8
+msgid "User"
+msgstr "Benutzer"
+
+#: modules/po/../data/lastseen/tmpl/index.tmpl:9 lastseen.cpp:98
+msgid "Last Seen"
+msgstr "Zuletzt gesehen"
+
+#: modules/po/../data/lastseen/tmpl/index.tmpl:10
+msgid "Info"
+msgstr "Info"
+
+#: modules/po/../data/lastseen/tmpl/index.tmpl:11
+msgid "Action"
+msgstr "Aktion"
+
+#: modules/po/../data/lastseen/tmpl/index.tmpl:21
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: modules/po/../data/lastseen/tmpl/index.tmpl:22
+msgid "Delete"
+msgstr "Löschen"
+
+#: modules/po/../data/lastseen/tmpl/lastseen_WebadminUser.tmpl:6
+msgid "Last login time:"
+msgstr "Zeit der letzten Anmeldung:"
+
+#: lastseen.cpp:53
+msgid "Access denied"
+msgstr "Zugriff verweigert"
+
+#: lastseen.cpp:61 lastseen.cpp:66
+msgctxt "show"
+msgid "User"
+msgstr "Benutzer"
+
+#: lastseen.cpp:62 lastseen.cpp:67
+msgctxt "show"
+msgid "Last Seen"
+msgstr "Zuletzt gesehen"
+
+#: lastseen.cpp:68 lastseen.cpp:124
+msgid "never"
+msgstr "nie"
+
+#: lastseen.cpp:78
+msgid "Shows list of users and when they last logged in"
+msgstr ""
+"Zeigt eine Liste von Benutzern und wann sie sich zuletzt angemeldet haben an"
+
+#: lastseen.cpp:153
+msgid "Collects data about when a user last logged in."
+msgstr "Sammelt Daten darüber, wann ein Benutzer sich zuletzt angemeldet hat."
