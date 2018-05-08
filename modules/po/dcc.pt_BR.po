@@ -1,0 +1,227 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: pt-BR\n"
+"X-Crowdin-File: /1.7.x/modules/po/dcc.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Portuguese, Brazilian\n"
+"Language: pt_BR\n"
+
+#: dcc.cpp:88
+msgid "<nick> <file>"
+msgstr ""
+
+#: dcc.cpp:89
+msgid "Send a file from ZNC to someone"
+msgstr ""
+
+#: dcc.cpp:91
+msgid "<file>"
+msgstr ""
+
+#: dcc.cpp:92
+msgid "Send a file from ZNC to your client"
+msgstr ""
+
+#: dcc.cpp:94
+msgid "List current transfers"
+msgstr ""
+
+#: dcc.cpp:103
+msgid "You must be admin to use the DCC module"
+msgstr ""
+
+#: dcc.cpp:140
+msgid "Attempting to send [{1}] to [{2}]."
+msgstr ""
+
+#: dcc.cpp:149 dcc.cpp:554
+msgid "Receiving [{1}] from [{2}]: File already exists."
+msgstr ""
+
+#: dcc.cpp:167
+msgid ""
+"Attempting to connect to [{1} {2}] in order to download [{3}] from [{4}]."
+msgstr ""
+
+#: dcc.cpp:179
+msgid "Usage: Send <nick> <file>"
+msgstr ""
+
+#: dcc.cpp:186 dcc.cpp:206
+msgid "Illegal path."
+msgstr ""
+
+#: dcc.cpp:199
+msgid "Usage: Get <file>"
+msgstr ""
+
+#: dcc.cpp:215 dcc.cpp:232 dcc.cpp:234
+msgctxt "list"
+msgid "Type"
+msgstr ""
+
+#: dcc.cpp:216 dcc.cpp:238 dcc.cpp:241
+msgctxt "list"
+msgid "State"
+msgstr ""
+
+#: dcc.cpp:217 dcc.cpp:243
+msgctxt "list"
+msgid "Speed"
+msgstr ""
+
+#: dcc.cpp:218 dcc.cpp:227
+msgctxt "list"
+msgid "Nick"
+msgstr ""
+
+#: dcc.cpp:219 dcc.cpp:228
+msgctxt "list"
+msgid "IP"
+msgstr ""
+
+#: dcc.cpp:220 dcc.cpp:229
+msgctxt "list"
+msgid "File"
+msgstr ""
+
+#: dcc.cpp:232
+msgctxt "list-type"
+msgid "Sending"
+msgstr ""
+
+#: dcc.cpp:234
+msgctxt "list-type"
+msgid "Getting"
+msgstr ""
+
+#: dcc.cpp:239
+msgctxt "list-state"
+msgid "Waiting"
+msgstr ""
+
+#: dcc.cpp:244
+msgid "{1} KiB/s"
+msgstr ""
+
+#: dcc.cpp:250
+msgid "You have no active DCC transfers."
+msgstr ""
+
+#: dcc.cpp:267
+msgid "Attempting to resume send from position {1} of file [{2}] for [{3}]"
+msgstr ""
+
+#: dcc.cpp:277
+msgid "Couldn't resume file [{1}] for [{2}]: not sending anything."
+msgstr ""
+
+#: dcc.cpp:286
+msgid "Bad DCC file: {1}"
+msgstr ""
+
+#: dcc.cpp:341
+msgid "Sending [{1}] to [{2}]: File not open!"
+msgstr ""
+
+#: dcc.cpp:345
+msgid "Receiving [{1}] from [{2}]: File not open!"
+msgstr ""
+
+#: dcc.cpp:385
+msgid "Sending [{1}] to [{2}]: Connection refused."
+msgstr ""
+
+#: dcc.cpp:389
+msgid "Receiving [{1}] from [{2}]: Connection refused."
+msgstr ""
+
+#: dcc.cpp:397
+msgid "Sending [{1}] to [{2}]: Timeout."
+msgstr ""
+
+#: dcc.cpp:401
+msgid "Receiving [{1}] from [{2}]: Timeout."
+msgstr ""
+
+#: dcc.cpp:411
+msgid "Sending [{1}] to [{2}]: Socket error {3}: {4}"
+msgstr ""
+
+#: dcc.cpp:415
+msgid "Receiving [{1}] from [{2}]: Socket error {3}: {4}"
+msgstr ""
+
+#: dcc.cpp:423
+msgid "Sending [{1}] to [{2}]: Transfer started."
+msgstr ""
+
+#: dcc.cpp:427
+msgid "Receiving [{1}] from [{2}]: Transfer started."
+msgstr ""
+
+#: dcc.cpp:446
+msgid "Sending [{1}] to [{2}]: Too much data!"
+msgstr ""
+
+#: dcc.cpp:450
+msgid "Receiving [{1}] from [{2}]: Too much data!"
+msgstr ""
+
+#: dcc.cpp:456
+msgid "Sending [{1}] to [{2}] completed at {3} KiB/s"
+msgstr ""
+
+#: dcc.cpp:461
+msgid "Receiving [{1}] from [{2}] completed at {3} KiB/s"
+msgstr ""
+
+#: dcc.cpp:474
+msgid "Sending [{1}] to [{2}]: File closed prematurely."
+msgstr ""
+
+#: dcc.cpp:478
+msgid "Receiving [{1}] from [{2}]: File closed prematurely."
+msgstr ""
+
+#: dcc.cpp:501
+msgid "Sending [{1}] to [{2}]: Error reading from file."
+msgstr ""
+
+#: dcc.cpp:505
+msgid "Receiving [{1}] from [{2}]: Error reading from file."
+msgstr ""
+
+#: dcc.cpp:537
+msgid "Sending [{1}] to [{2}]: Unable to open file."
+msgstr ""
+
+#: dcc.cpp:541
+msgid "Receiving [{1}] from [{2}]: Unable to open file."
+msgstr ""
+
+#: dcc.cpp:563
+msgid "Receiving [{1}] from [{2}]: Could not open file."
+msgstr ""
+
+#: dcc.cpp:572
+msgid "Sending [{1}] to [{2}]: Not a file."
+msgstr ""
+
+#: dcc.cpp:581
+msgid "Sending [{1}] to [{2}]: Could not open file."
+msgstr ""
+
+#: dcc.cpp:593
+msgid "Sending [{1}] to [{2}]: File too large (>4 GiB)."
+msgstr ""
+
+#: dcc.cpp:623
+msgid "This module allows you to transfer files to and from ZNC"
+msgstr ""

@@ -2,38 +2,47 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: pt-BR\n"
+"X-Crowdin-File: /1.7.x/src/po/znc.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Portuguese, Brazilian\n"
+"Language: pt_BR\n"
 
 #: webskins/_default_/tmpl/InfoBar.tmpl:6
 msgid "Logged in as: {1}"
-msgstr ""
+msgstr "Sessão iniciada como: {1}"
 
 #: webskins/_default_/tmpl/InfoBar.tmpl:8
 msgid "Not logged in"
-msgstr ""
+msgstr "Sessão não iniciada"
 
 #: webskins/_default_/tmpl/LoginBar.tmpl:3
 msgid "Logout"
-msgstr ""
+msgstr "Finalizar sessão"
 
 #: webskins/_default_/tmpl/Menu.tmpl:4
 msgid "Home"
-msgstr ""
+msgstr "Página inicial"
 
 #: webskins/_default_/tmpl/Menu.tmpl:7
 msgid "Global Modules"
-msgstr ""
+msgstr "Módulos globais"
 
 #: webskins/_default_/tmpl/Menu.tmpl:20
 msgid "User Modules"
-msgstr ""
+msgstr "Módulos do usuário"
 
 #: webskins/_default_/tmpl/Menu.tmpl:35
 msgid "Network Modules ({1})"
-msgstr ""
+msgstr "Módulos da rede ({1})"
 
 #: webskins/_default_/tmpl/index.tmpl:6
 msgid "Welcome to ZNC's web interface!"
-msgstr ""
+msgstr "Seja bem-vindo(a) à interface web do ZNC!"
 
 #: webskins/_default_/tmpl/index.tmpl:11
 msgid ""
@@ -44,23 +53,23 @@ msgstr ""
 
 #: znc.cpp:1563
 msgid "User already exists"
-msgstr ""
+msgstr "O usuário já existe"
 
 #: znc.cpp:1671
 msgid "IPv6 is not enabled"
-msgstr ""
+msgstr "O IPv6 não está habilitado"
 
 #: znc.cpp:1679
 msgid "SSL is not enabled"
-msgstr ""
+msgstr "O SSL não está habilitado"
 
 #: znc.cpp:1687
 msgid "Unable to locate pem file: {1}"
-msgstr ""
+msgstr "Falha ao localizar o arquivo PEM: {1}"
 
 #: znc.cpp:1706
 msgid "Invalid port"
-msgstr ""
+msgstr "Porta inválida"
 
 #: znc.cpp:1822 ClientCommand.cpp:1629
 msgid "Unable to bind: {1}"
@@ -72,7 +81,7 @@ msgstr ""
 
 #: IRCNetwork.cpp:641 User.cpp:678
 msgid "Welcome to ZNC"
-msgstr ""
+msgstr "Bem-vindo(a) ao ZNC"
 
 #: IRCNetwork.cpp:729
 msgid "You are currently disconnected from IRC. Use 'connect' to reconnect."
@@ -90,7 +99,7 @@ msgstr ""
 
 #: IRCNetwork.cpp:994
 msgid "The channel {1} could not be joined, disabling it."
-msgstr ""
+msgstr "Não foi possível entrar no canal {1}. Desabilitando-o."
 
 #: IRCNetwork.cpp:1123
 msgid "Your current server was removed, jumping..."
@@ -102,11 +111,11 @@ msgstr ""
 
 #: IRCNetwork.cpp:1307
 msgid "Some module aborted the connection attempt"
-msgstr ""
+msgstr "Algum módulo cancelou a tentativa de conexão"
 
 #: IRCSock.cpp:484
 msgid "Error from server: {1}"
-msgstr ""
+msgstr "Erro do servidor: {1}"
 
 #: IRCSock.cpp:686
 msgid "ZNC seems to be connected to itself, disconnecting..."
@@ -130,19 +139,19 @@ msgstr ""
 
 #: IRCSock.cpp:1032
 msgid "You quit: {1}"
-msgstr ""
+msgstr "Você saiu: {1}"
 
 #: IRCSock.cpp:1238
 msgid "Disconnected from IRC. Reconnecting..."
-msgstr ""
+msgstr "Desconectado. Reconectando..."
 
 #: IRCSock.cpp:1269
 msgid "Cannot connect to IRC ({1}). Retrying..."
-msgstr ""
+msgstr "Não foi possível conectar-se ao IRC ({1}). Tentando novamente..."
 
 #: IRCSock.cpp:1272
 msgid "Disconnected from IRC ({1}). Reconnecting..."
-msgstr ""
+msgstr "Desconectado do IRC ({1}). Reconectando..."
 
 #: IRCSock.cpp:1302
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
@@ -154,7 +163,7 @@ msgstr ""
 
 #: IRCSock.cpp:1331
 msgid "Connection Refused.  Reconnecting..."
-msgstr ""
+msgstr "Conexão rejeitada. Reconectando..."
 
 #: IRCSock.cpp:1339
 msgid "Received a too long line from the IRC server!"
@@ -170,7 +179,7 @@ msgstr ""
 
 #: Client.cpp:75
 msgid "No such module {1}"
-msgstr ""
+msgstr "O módulo {1} não existe"
 
 #: Client.cpp:365
 msgid "A client from {1} attempted to login as you, but was rejected: {2}"
@@ -178,19 +187,23 @@ msgstr ""
 
 #: Client.cpp:400
 msgid "Network {1} doesn't exist."
-msgstr ""
+msgstr "A rede {1} não existe."
 
 #: Client.cpp:414
 msgid ""
 "You have several networks configured, but no network was specified for the "
 "connection."
 msgstr ""
+"Você possui várias redes configuradas mas nenhuma delas foi especificada "
+"para conectar."
 
 #: Client.cpp:417
 msgid ""
 "Selecting network {1}. To see list of all configured networks, use /znc "
 "ListNetworks"
 msgstr ""
+"Selecionando a rede {1}. Para ver a lista das redes configuradas, digite /"
+"znc ListNetworks"
 
 #: Client.cpp:420
 msgid ""
@@ -202,6 +215,8 @@ msgstr ""
 msgid ""
 "You have no networks configured. Use /znc AddNetwork <network> to add one."
 msgstr ""
+"Você não possui redes configuradas. Digite /znc AddNetwork <rede> para "
+"adicionar uma rede."
 
 #: Client.cpp:437
 msgid "Closing link: Timeout"
@@ -286,19 +301,19 @@ msgstr ""
 
 #: Modules.cpp:691
 msgid "This module doesn't implement any commands."
-msgstr ""
+msgstr "Este módulo não implementa comando algum."
 
 #: Modules.cpp:693
 msgid "Unknown command!"
-msgstr ""
+msgstr "Comando desconhecido!"
 
 #: Modules.cpp:1633
 msgid "Module {1} already loaded."
-msgstr ""
+msgstr "O módulo {1} já está carregado."
 
 #: Modules.cpp:1647
 msgid "Unable to find module {1}"
-msgstr ""
+msgstr "Não foi possível encontrar o módulo {1}"
 
 #: Modules.cpp:1659
 msgid "Module {1} does not support module type {1}."
@@ -306,11 +321,11 @@ msgstr ""
 
 #: Modules.cpp:1666
 msgid "Module {1} requires a user."
-msgstr ""
+msgstr "O módulo {1} requer um usuário."
 
 #: Modules.cpp:1672
 msgid "Module {1} requires a network."
-msgstr ""
+msgstr "O módulo {1} requer uma rede."
 
 #: Modules.cpp:1688
 msgid "Caught an exception"
@@ -326,7 +341,7 @@ msgstr ""
 
 #: Modules.cpp:1720 Modules.cpp:1762
 msgid "Module [{1}] not loaded."
-msgstr ""
+msgstr "O módulo [{1}] não foi carregado."
 
 #: Modules.cpp:1744
 msgid "Module {1} unloaded."

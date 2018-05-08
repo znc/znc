@@ -1,0 +1,49 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: de\n"
+"X-Crowdin-File: /1.7.x/modules/po/buffextras.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+
+#: buffextras.cpp:45
+msgid "Server"
+msgstr "Server"
+
+#: buffextras.cpp:47
+msgid "{1} set mode: {2} {3}"
+msgstr "{1} hat Modus gesetzt: {2} {3}"
+
+#: buffextras.cpp:55
+msgid "{1} kicked {2} with reason: {3}"
+msgstr "{1} hat {2} mit folgendem Grund gekickt: {3}"
+
+#: buffextras.cpp:64
+msgid "{1} quit: {2}"
+msgstr "{1} hat sich getrennt: {2}"
+
+#: buffextras.cpp:73
+msgid "{1} joined"
+msgstr "{1} ist beigetreten"
+
+#: buffextras.cpp:81
+msgid "{1} parted: {2}"
+msgstr "{1} hat verlassen: {2}"
+
+#: buffextras.cpp:90
+msgid "{1} is now known as {2}"
+msgstr "{1} ist jetzt als {2} bekannt"
+
+#: buffextras.cpp:100
+msgid "{1} changed the topic to: {2}"
+msgstr "{1} änderte das Thema zu: {2}"
+
+#: buffextras.cpp:115
+msgid "Adds joins, parts etc. to the playback buffer"
+msgstr "Fügt Joins, Parts, usw. zum Playback-Puffer hinzu"

@@ -1,0 +1,59 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: pt-BR\n"
+"X-Crowdin-File: /1.7.x/modules/po/route_replies.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Portuguese, Brazilian\n"
+"Language: pt_BR\n"
+
+#: route_replies.cpp:209
+msgid "[yes|no]"
+msgstr ""
+
+#: route_replies.cpp:210
+msgid "Decides whether to show the timeout messages or not"
+msgstr ""
+
+#: route_replies.cpp:350
+msgid "This module hit a timeout which is probably a connectivity issue."
+msgstr ""
+
+#: route_replies.cpp:353
+msgid ""
+"However, if you can provide steps to reproduce this issue, please do report "
+"a bug."
+msgstr ""
+
+#: route_replies.cpp:356
+msgid "To disable this message, do \"/msg {1} silent yes\""
+msgstr ""
+
+#: route_replies.cpp:358
+msgid "Last request: {1}"
+msgstr ""
+
+#: route_replies.cpp:359
+msgid "Expected replies:"
+msgstr ""
+
+#: route_replies.cpp:363
+msgid "{1} (last)"
+msgstr ""
+
+#: route_replies.cpp:435
+msgid "Timeout messages are disabled."
+msgstr ""
+
+#: route_replies.cpp:436
+msgid "Timeout messages are enabled."
+msgstr ""
+
+#: route_replies.cpp:457
+msgid "Send replies (e.g. to /who) to the right client only"
+msgstr ""

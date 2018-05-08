@@ -1,0 +1,83 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: pt-BR\n"
+"X-Crowdin-File: /1.7.x/modules/po/identfile.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Portuguese, Brazilian\n"
+"Language: pt_BR\n"
+
+#: identfile.cpp:30
+msgid "Show file name"
+msgstr ""
+
+#: identfile.cpp:32
+msgid "<file>"
+msgstr ""
+
+#: identfile.cpp:32
+msgid "Set file name"
+msgstr ""
+
+#: identfile.cpp:34
+msgid "Show file format"
+msgstr ""
+
+#: identfile.cpp:36
+msgid "<format>"
+msgstr ""
+
+#: identfile.cpp:36
+msgid "Set file format"
+msgstr ""
+
+#: identfile.cpp:38
+msgid "Show current state"
+msgstr ""
+
+#: identfile.cpp:48
+msgid "File is set to: {1}"
+msgstr ""
+
+#: identfile.cpp:53
+msgid "File has been set to: {1}"
+msgstr ""
+
+#: identfile.cpp:58
+msgid "Format has been set to: {1}"
+msgstr ""
+
+#: identfile.cpp:59 identfile.cpp:65
+msgid "Format would be expanded to: {1}"
+msgstr ""
+
+#: identfile.cpp:64
+msgid "Format is set to: {1}"
+msgstr ""
+
+#: identfile.cpp:78
+msgid "identfile is free"
+msgstr ""
+
+#: identfile.cpp:86
+msgid "Access denied"
+msgstr ""
+
+#: identfile.cpp:181
+msgid ""
+"Aborting connection, another user or network is currently connecting and "
+"using the ident spoof file"
+msgstr ""
+
+#: identfile.cpp:189
+msgid "[{1}] could not be written, retrying..."
+msgstr ""
+
+#: identfile.cpp:223
+msgid "Write the ident of a user to a file when they are trying to connect."
+msgstr ""

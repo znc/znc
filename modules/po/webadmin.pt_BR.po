@@ -1,0 +1,1209 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: pt-BR\n"
+"X-Crowdin-File: /1.7.x/modules/po/webadmin.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Portuguese, Brazilian\n"
+"Language: pt_BR\n"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:12
+msgid "Channel Info"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:17
+msgid "Channel Name:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:19
+msgid "The channel name."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:24
+msgid "Key:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:26
+msgid "The password of the channel, if there is one."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:30
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:241
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:260
+msgid "Buffer Size:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:32
+msgid "The buffer count."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:36
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:235
+msgid "Default Modes:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:38
+msgid "The default modes of the channel."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:46
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:270
+msgid "Flags"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:51
+msgid "Save to config"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:67
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:282
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:410
+msgid "Module {1}"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:75
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:290
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:419
+msgid "Save and return"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:76
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:291
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:420
+msgid "Save and continue"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:78
+msgid "Add Channel and return"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:79
+msgid "Add Channel and continue"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:8
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:11
+msgid "&lt;password&gt;"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:11
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:12
+msgid "&lt;network&gt;"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:14
+msgid ""
+"To connect to this network from your IRC client, you can set the server "
+"password field as <code>{1}</code> or username field as <code>{2}</code>"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:24
+msgid "Network Info"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:25
+msgid ""
+"Nick, AltNick, Ident, RealName, BindHost can be left empty to use the value "
+"from the user."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:29
+msgid "Network Name:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:31
+msgid "The name of the IRC network."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:35
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:69
+msgid "Nickname:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:37
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:71
+msgid "Your nickname on IRC."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:40
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:74
+msgid "Alt. Nickname:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:42
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:76
+msgid "Your secondary nickname, if the first is not available on IRC."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:46
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:80
+msgid "Ident:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:48
+msgid "Your ident."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:51
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:91
+msgid "Realname:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:53
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:93
+msgid "Your real name."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:58
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:99
+msgid "BindHost:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:65
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:112
+msgid "Quit Message:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:67
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:114
+msgid "You may define a Message shown, when you quit IRC."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:71
+msgid "Active:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:73
+msgid "Connect to IRC &amp; automatically re-connect"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:77
+msgid "Trust all certs:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:79
+msgid ""
+"Disable certificate validation (takes precedence over TrustPKI). INSECURE!"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:83
+msgid "Trust the PKI:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:85
+msgid ""
+"Setting this to false will trust only certificates you added fingerprints "
+"for."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:89
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:96
+msgid "Servers of this IRC network:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:93
+msgid "One server per line, “host [[+]port] [password]”, + means SSL"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:101
+msgid "Hostname"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:102
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:13
+msgid "Port"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:103
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:15
+msgid "SSL"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:104
+msgid "Password"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:116
+msgid "SHA-256 fingerprints of trusted SSL certificates of this IRC network:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:120
+msgid ""
+"When these certificates are encountered, checks for hostname, expiration "
+"date, CA are skipped"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:124
+msgid "Flood protection:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:127
+msgid ""
+"You might enable the flood protection. This prevents “excess flood” errors, "
+"which occur, when your IRC bot is command flooded or spammed. After changing "
+"this, reconnect ZNC to server."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:130
+msgctxt "Flood Protection"
+msgid "Enabled"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:134
+msgid "Flood protection rate:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:137
+msgid ""
+"The number of seconds per line. After changing this, reconnect ZNC to server."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:140
+msgid "{1} seconds per line"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:144
+msgid "Flood protection burst:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:147
+msgid ""
+"Defines the number of lines, which can be sent immediately. After changing "
+"this, reconnect ZNC to server."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:150
+msgid "{1} lines can be sent immediately"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:154
+msgid "Channel join delay:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:157
+msgid ""
+"Defines the delay in seconds, until channels are joined after getting "
+"connected."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:160
+msgid "{1} seconds"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:165
+msgid "Character encoding used between ZNC and IRC server."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:166
+msgid "Server encoding:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:176
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:231
+msgid "Channels"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:178
+msgid ""
+"You will be able to add + modify channels here after you created the network."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:185
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:129
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:354
+#: modules/po/../data/webadmin/tmpl/listusers.tmpl:15
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:72
+msgid "Add"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:187
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:430
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:237
+msgid "Save"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:188
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:228
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:131
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:174
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:176
+msgid "Name"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:189
+msgid "CurModes"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:190
+msgid "DefModes"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:191
+msgid "BufferSize"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:192
+msgid "Options"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:194
+msgid "← Add a channel (opens in same page)"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:204
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:146
+#: modules/po/../data/webadmin/tmpl/listusers.tmpl:27
+msgid "Edit"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:204
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:146
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:53
+msgid "Del"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:222
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:168
+msgid "Modules"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:229
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:175
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:177
+msgid "Arguments"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:230
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:176
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:178
+msgid "Description"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:231
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:177
+msgid "Loaded globally"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:232
+msgid "Loaded by user"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:293
+msgid "Add Network and return"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:294
+msgid "Add Network and continue"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:15
+msgid "Authentication"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:19
+msgid "Username:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:29
+msgid "Please enter a username."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:34
+msgid "Password:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:36
+msgid "Please enter a password."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:39
+msgid "Confirm password:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:41
+msgid "Please re-type the above password."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:44
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:151
+msgid "Auth Only Via Module:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:46
+msgid ""
+"Allow user authentication by external modules only, disabling built-in "
+"password authentication."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:50
+msgid "Allowed IPs:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:54
+msgid ""
+"Leave empty to allow connections from all IPs.<br/>Otherwise, one entry per "
+"line, wildcards * and ? are available."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:62
+msgid "IRC Information"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:64
+msgid ""
+"Nick, AltNick, Ident, RealName and QuitMsg can be left empty to use default "
+"values."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:82
+msgid "The Ident is sent to server as username."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:85
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:102
+msgid "Status Prefix:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:87
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:104
+msgid "The prefix for the status and module queries."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:105
+msgid "DCCBindHost:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:122
+#: modules/po/../data/webadmin/tmpl/listusers.tmpl:17
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:39
+msgid "Networks"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:132
+#: modules/po/../data/webadmin/tmpl/listusers.tmpl:18
+msgid "Clients"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:133
+msgid "Current Server"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:134
+msgid "Nick"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:136
+msgid "← Add a network (opens in same page)"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:160
+msgid ""
+"You will be able to add + modify networks here after you have cloned the "
+"user."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:162
+msgid ""
+"You will be able to add + modify networks here after you have created the "
+"user."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:178
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:179
+msgid "Loaded by networks"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:237
+msgid ""
+"These are the default modes ZNC will set when you join an empty channel."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:238
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:244
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:263
+msgid "Empty = use standard value"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:243
+msgid ""
+"This is the amount of lines that the playback buffer will store for channels "
+"before dropping off the oldest line. The buffers are stored in the memory by "
+"default."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:251
+msgid "Queries"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:255
+msgid "Max Buffers:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:257
+msgid "Maximum number of query buffers. 0 is unlimited."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:262
+msgid ""
+"This is the amount of lines that the playback buffer will store for queries "
+"before dropping off the oldest line. The buffers are stored in the memory by "
+"default."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:285
+msgid "ZNC Behavior"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:286
+msgid ""
+"Any of the following text boxes can be left empty to use their default value."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:290
+msgid "Timestamp Format:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:292
+msgid ""
+"The format for the timestamps used in buffers, for example [%H:%M:%S]. This "
+"setting is ignored in new IRC clients, which use server-time. If your client "
+"supports server-time, change timestamp format in client settings instead."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:295
+msgid "Timezone:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:298
+msgid "E.g. <code>Europe/Berlin</code>, or <code>GMT-6</code>"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:306
+msgid "Character encoding used between IRC client and ZNC."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:307
+msgid "Client encoding:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:312
+msgid "Join Tries:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:314
+msgid ""
+"This defines how many times ZNC tries to join a channel, if the first join "
+"failed, e.g. due to channel mode +i/+k or if you are banned."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:317
+msgid "Join speed:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:319
+msgid ""
+"How many channels are joined in one JOIN command. 0 is unlimited (default). "
+"Set to small positive value if you get disconnected with “Max SendQ Exceeded”"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:322
+msgid "Timeout before reconnect:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:324
+msgid ""
+"How much time ZNC waits (in seconds) until it receives something from "
+"network or declares the connection timeout. This happens after attempts to "
+"ping the peer."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:327
+msgid "Max IRC Networks Number:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:329
+msgid "Maximum number of IRC networks allowed for this user."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:332
+msgid "Substitutions"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:334
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:342
+msgid "CTCP Replies:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:338
+msgid "One reply per line. Example: <code>TIME Buy a watch!</code>"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:339
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:355
+msgid "{1} are available"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:341
+msgid "Empty value means this CTCP request will be ignored"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:347
+msgid "Request"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:348
+msgid "Response"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:373
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:90
+msgid "Skin:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:377
+msgid "- Global -"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:379
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:94
+msgid "Default"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:383
+msgid "No other skins found"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:389
+msgid "Language:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:422
+msgid "Clone and return"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:423
+msgid "Clone and continue"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:425
+msgid "Create and return"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:426
+msgid "Create and continue"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:432
+#: modules/po/../data/webadmin/tmpl/listusers.tmpl:28
+msgid "Clone"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:434
+msgid "Create"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/del_network.tmpl:5
+msgid "Confirm Network Deletion"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/del_network.tmpl:9
+msgid "Are you sure you want to delete network “{2}” of user “{1}”?"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/del_network.tmpl:14
+#: modules/po/../data/webadmin/tmpl/del_user.tmpl:14
+msgid "Yes"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/del_network.tmpl:17
+#: modules/po/../data/webadmin/tmpl/del_user.tmpl:17
+msgid "No"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/del_user.tmpl:5
+msgid "Confirm User Deletion"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/del_user.tmpl:9
+msgid "Are you sure you want to delete user “{1}”?"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:6
+msgid "ZNC is compiled without encodings support. {1} is required for it."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:11
+msgid "Legacy mode is disabled by modpython."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:18
+msgid "Don't ensure any encoding at all (legacy mode, not recommended)"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:22
+msgid "Try to parse as UTF-8 and as {1}, send as UTF-8 (recommended)"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:26
+msgid "Try to parse as UTF-8 and as {1}, send as {1}"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:30
+msgid "Parse and send as {1} only"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:36
+msgid "E.g. <code>UTF-8</code>, or <code>ISO-8859-15</code>"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/index.tmpl:5
+msgid "Welcome to the ZNC webadmin module."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/index.tmpl:6
+msgid ""
+"All changes you make will be in effect immediately after you submitted them."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/listusers.tmpl:16
+msgid "Username"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/listusers.tmpl:29
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:21
+msgid "Delete"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:6
+msgid "Listen Port(s)"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:14
+msgid "BindHost"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:16
+msgid "IPv4"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:17
+msgid "IPv6"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:18
+msgid "IRC"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:19
+msgid "HTTP"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:20
+msgid "URIPrefix"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:56
+msgid ""
+"To delete port which you use to access webadmin itself, either connect to "
+"webadmin via another port, or do it in IRC (/znc DelPort)"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:56
+msgid "Current"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:86
+msgid "Settings"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:105
+msgid "Default for new users only."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:110
+msgid "Maximum Buffer Size:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:112
+msgid "Sets the global Max Buffer Size a user can have."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:117
+msgid "Connect Delay:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:119
+msgid ""
+"The time between connection attempts to IRC servers, in seconds. This "
+"affects the connection between ZNC and the IRC server; not the connection "
+"between your IRC client and ZNC."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:124
+msgid "Server Throttle:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:126
+msgid ""
+"The minimal time between two connect attempts to the same hostname, in "
+"seconds. Some servers refuse your connection if you reconnect too fast."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:131
+msgid "Anonymous Connection Limit per IP:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:133
+msgid "Limits the number of unidentified connections per IP."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:138
+msgid "Protect Web Sessions:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:140
+msgid "Disallow IP changing during each web session"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:145
+msgid "Hide ZNC Version:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:147
+msgid "Hide version number from non-ZNC users"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:153
+msgid "Allow user authentication by external modules only"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:158
+msgid "MOTD:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:162
+msgid "“Message of the Day”, sent to all ZNC users on connect."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:170
+msgid "Global Modules"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:180
+msgid "Loaded by users"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:7
+msgid "Information"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:13
+msgid "Uptime"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:18
+msgid "Total Users"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:22
+msgid "Total Networks"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:26
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:43
+msgid "Attached Networks"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:30
+msgid "Total Client Connections"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:34
+msgid "Total IRC Connections"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:47
+msgid "Client Connections"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:51
+msgid "IRC Connections"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:63
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:72
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:89
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:117
+msgid "Total"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:70
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:115
+msgctxt "Traffic"
+msgid "In"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:71
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:116
+msgctxt "Traffic"
+msgid "Out"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:77
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:104
+msgid "Users"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:106
+msgid "Traffic"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:113
+msgid "User"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:114
+msgid "Network"
+msgstr ""
+
+#: webadmin.cpp:91 webadmin.cpp:1879
+msgid "Global Settings"
+msgstr ""
+
+#: webadmin.cpp:93
+msgid "Your Settings"
+msgstr ""
+
+#: webadmin.cpp:94 webadmin.cpp:1691
+msgid "Traffic Info"
+msgstr ""
+
+#: webadmin.cpp:97 webadmin.cpp:1670
+msgid "Manage Users"
+msgstr ""
+
+#: webadmin.cpp:188
+msgid "Invalid Submission [Username is required]"
+msgstr ""
+
+#: webadmin.cpp:201
+msgid "Invalid Submission [Passwords do not match]"
+msgstr ""
+
+#: webadmin.cpp:323
+msgid "Timeout can't be less than 30 seconds!"
+msgstr ""
+
+#: webadmin.cpp:407 webadmin.cpp:435 webadmin.cpp:1189 webadmin.cpp:2064
+msgid "Unable to load module [{1}]: {2}"
+msgstr ""
+
+#: webadmin.cpp:412 webadmin.cpp:440
+msgid "Unable to load module [{1}] with arguments [{2}]"
+msgstr ""
+
+#: webadmin.cpp:521 webadmin.cpp:625 webadmin.cpp:650 webadmin.cpp:672
+#: webadmin.cpp:706 webadmin.cpp:1256
+msgid "No such user"
+msgstr ""
+
+#: webadmin.cpp:534 webadmin.cpp:566 webadmin.cpp:595 webadmin.cpp:611
+msgid "No such user or network"
+msgstr ""
+
+#: webadmin.cpp:576
+msgid "No such channel"
+msgstr ""
+
+#: webadmin.cpp:642
+msgid "Please don't delete yourself, suicide is not the answer!"
+msgstr ""
+
+#: webadmin.cpp:715 webadmin.cpp:971 webadmin.cpp:1321
+msgid "Edit User [{1}]"
+msgstr ""
+
+#: webadmin.cpp:719 webadmin.cpp:897
+msgid "Edit Network [{1}]"
+msgstr ""
+
+#: webadmin.cpp:729
+msgid "Edit Channel [{1}] of Network [{2}] of User [{3}]"
+msgstr ""
+
+#: webadmin.cpp:736
+msgid "Edit Channel [{1}]"
+msgstr ""
+
+#: webadmin.cpp:744
+msgid "Add Channel to Network [{1}] of User [{2}]"
+msgstr ""
+
+#: webadmin.cpp:749
+msgid "Add Channel"
+msgstr ""
+
+#: webadmin.cpp:756 webadmin.cpp:1517
+msgid "Auto Clear Chan Buffer"
+msgstr ""
+
+#: webadmin.cpp:758
+msgid "Automatically Clear Channel Buffer After Playback"
+msgstr ""
+
+#: webadmin.cpp:766
+msgid "Detached"
+msgstr ""
+
+#: webadmin.cpp:773
+msgid "Enabled"
+msgstr ""
+
+#: webadmin.cpp:797
+msgid "Channel name is a required argument"
+msgstr ""
+
+#: webadmin.cpp:806
+msgid "Channel [{1}] already exists"
+msgstr ""
+
+#: webadmin.cpp:813
+msgid "Could not add channel [{1}]"
+msgstr ""
+
+#: webadmin.cpp:861
+msgid "Channel was added/modified, but config file was not written"
+msgstr ""
+
+#: webadmin.cpp:894
+msgid "Edit Network [{1}] of User [{2}]"
+msgstr ""
+
+#: webadmin.cpp:901 webadmin.cpp:1078
+msgid ""
+"Network number limit reached. Ask an admin to increase the limit for you, or "
+"delete unneeded networks from Your Settings."
+msgstr ""
+
+#: webadmin.cpp:909
+msgid "Add Network for User [{1}]"
+msgstr ""
+
+#: webadmin.cpp:910
+msgid "Add Network"
+msgstr ""
+
+#: webadmin.cpp:1072
+msgid "Network name is a required argument"
+msgstr ""
+
+#: webadmin.cpp:1196 webadmin.cpp:2071
+msgid "Unable to reload module [{1}]: {2}"
+msgstr ""
+
+#: webadmin.cpp:1233
+msgid "Network was added/modified, but config file was not written"
+msgstr ""
+
+#: webadmin.cpp:1262
+msgid "That network doesn't exist for this user"
+msgstr ""
+
+#: webadmin.cpp:1279
+msgid "Network was deleted, but config file was not written"
+msgstr ""
+
+#: webadmin.cpp:1293
+msgid "That channel doesn't exist for this network"
+msgstr ""
+
+#: webadmin.cpp:1302
+msgid "Channel was deleted, but config file was not written"
+msgstr ""
+
+#: webadmin.cpp:1330
+msgid "Clone User [{1}]"
+msgstr ""
+
+#: webadmin.cpp:1519
+msgid ""
+"Automatically Clear Channel Buffer After Playback (the default value for new "
+"channels)"
+msgstr ""
+
+#: webadmin.cpp:1529
+msgid "Multi Clients"
+msgstr ""
+
+#: webadmin.cpp:1536
+msgid "Append Timestamps"
+msgstr ""
+
+#: webadmin.cpp:1543
+msgid "Prepend Timestamps"
+msgstr ""
+
+#: webadmin.cpp:1551
+msgid "Deny LoadMod"
+msgstr ""
+
+#: webadmin.cpp:1558
+msgid "Admin"
+msgstr ""
+
+#: webadmin.cpp:1568
+msgid "Deny SetBindHost"
+msgstr ""
+
+#: webadmin.cpp:1576
+msgid "Auto Clear Query Buffer"
+msgstr ""
+
+#: webadmin.cpp:1578
+msgid "Automatically Clear Query Buffer After Playback"
+msgstr ""
+
+#: webadmin.cpp:1602
+msgid "Invalid Submission: User {1} already exists"
+msgstr ""
+
+#: webadmin.cpp:1624 webadmin.cpp:1635
+msgid "Invalid submission: {1}"
+msgstr ""
+
+#: webadmin.cpp:1630
+msgid "User was added, but config file was not written"
+msgstr ""
+
+#: webadmin.cpp:1641
+msgid "User was edited, but config file was not written"
+msgstr ""
+
+#: webadmin.cpp:1799
+msgid "Choose either IPv4 or IPv6 or both."
+msgstr ""
+
+#: webadmin.cpp:1816
+msgid "Choose either IRC or HTTP or both."
+msgstr ""
+
+#: webadmin.cpp:1829 webadmin.cpp:1865
+msgid "Port was changed, but config file was not written"
+msgstr ""
+
+#: webadmin.cpp:1855
+msgid "Invalid request."
+msgstr ""
+
+#: webadmin.cpp:1869
+msgid "The specified listener was not found."
+msgstr ""
+
+#: webadmin.cpp:2100
+msgid "Settings were changed, but config file was not written"
+msgstr ""

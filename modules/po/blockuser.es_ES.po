@@ -1,0 +1,97 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-File: /1.7.x/modules/po/blockuser.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Spanish\n"
+"Language: es_ES\n"
+
+#: modules/po/../data/blockuser/tmpl/blockuser_WebadminUser.tmpl:9
+msgid "Account is blocked"
+msgstr "Cuenta bloqueada"
+
+#: blockuser.cpp:23
+msgid "Your account has been disabled. Contact your administrator."
+msgstr "Tu cuenta ha sido desactivada. Contacta con tu administrador."
+
+#: blockuser.cpp:29
+msgid "List blocked users"
+msgstr "Muestra los usuarios bloqueados"
+
+#: blockuser.cpp:31 blockuser.cpp:33
+msgid "<user>"
+msgstr "<usuario>"
+
+#: blockuser.cpp:31
+msgid "Block a user"
+msgstr "Bloquea un usuario"
+
+#: blockuser.cpp:33
+msgid "Unblock a user"
+msgstr "Desbloquea un usuario"
+
+#: blockuser.cpp:55
+msgid "Could not block {1}"
+msgstr "No se pudo bloquear a {1}"
+
+#: blockuser.cpp:76
+msgid "Access denied"
+msgstr "Acceso denegado"
+
+#: blockuser.cpp:85
+msgid "No users are blocked"
+msgstr "No hay usuarios bloqueados"
+
+#: blockuser.cpp:88
+msgid "Blocked users:"
+msgstr "Usuarios bloqueados:"
+
+#: blockuser.cpp:100
+msgid "Usage: Block <user>"
+msgstr "Uso: Block <usuario>"
+
+#: blockuser.cpp:105 blockuser.cpp:147
+msgid "You can't block yourself"
+msgstr "No puedes bloquearte a ti mismo"
+
+#: blockuser.cpp:110 blockuser.cpp:152
+msgid "Blocked {1}"
+msgstr "{1} bloqueado"
+
+#: blockuser.cpp:112
+msgid "Could not block {1} (misspelled?)"
+msgstr "No se pudo bloquear a {1} (¿mal escrito?)"
+
+#: blockuser.cpp:120
+msgid "Usage: Unblock <user>"
+msgstr "Uso: Unblock <usuario>"
+
+#: blockuser.cpp:125 blockuser.cpp:161
+msgid "Unblocked {1}"
+msgstr "{1} desbloqueado"
+
+#: blockuser.cpp:127
+msgid "This user is not blocked"
+msgstr "Este usuario no está bloqueado"
+
+#: blockuser.cpp:155
+msgid "Couldn't block {1}"
+msgstr "No se ha podido bloquear a {1}"
+
+#: blockuser.cpp:164
+msgid "User {1} is not blocked"
+msgstr "El usuario {1} no está bloqueado"
+
+#: blockuser.cpp:216
+msgid "Enter one or more user names. Separate them by spaces."
+msgstr "Introduce uno o varios nombres de usuario. Separalos con espacios."
+
+#: blockuser.cpp:219
+msgid "Block certain users from logging in."
+msgstr "Bloquea ciertos usuarios para conectarse."

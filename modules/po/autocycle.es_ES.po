@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-File: /1.7.x/modules/po/autocycle.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Spanish\n"
+"Language: es_ES\n"
+
+#: autocycle.cpp:27 autocycle.cpp:30
+msgid "[!]<#chan>"
+msgstr "[!]<#canal>"
+
+#: autocycle.cpp:28
+msgid "Add an entry, use !#chan to negate and * for wildcards"
+msgstr "Añadir una entrada, usa !#canal para negarla y * para usar comodín"
+
+#: autocycle.cpp:31
+msgid "Remove an entry, needs to be an exact match"
+msgstr "Borrar una entrada, necesita coincidir exactamente"
+
+#: autocycle.cpp:33
+msgid "List all entries"
+msgstr "Mostrar todas las entradas"
+
+#: autocycle.cpp:46
+msgid "Unable to add {1}"
+msgstr "Imposible de añadir {1}"
+
+#: autocycle.cpp:66
+msgid "{1} is already added"
+msgstr "{1} ya está añadido"
+
+#: autocycle.cpp:68
+msgid "Added {1} to list"
+msgstr "Añadido {1} a la lista"
+
+#: autocycle.cpp:70
+msgid "Usage: Add [!]<#chan>"
+msgstr "Uso: Add [!]<#canal>"
+
+#: autocycle.cpp:78
+msgid "Removed {1} from list"
+msgstr "Borrado {1} de la lista"
+
+#: autocycle.cpp:80
+msgid "Usage: Del [!]<#chan>"
+msgstr "Uso: Del [!]<#canal>"
+
+#: autocycle.cpp:85 autocycle.cpp:89 autocycle.cpp:94
+msgid "Channel"
+msgstr "Canal"
+
+#: autocycle.cpp:100
+msgid "You have no entries."
+msgstr "No tienes entradas."
+
+#: autocycle.cpp:229
+msgid "List of channel masks and channel masks with ! before them."
+msgstr "Lista de máscaras de canales y máscaras de canales con ! delante."
+
+#: autocycle.cpp:234
+msgid "Rejoins channels to gain Op if you're the only user left"
+msgstr ""
+"Re-entra a los canales para obtener Op si eres el único usuario del canal"

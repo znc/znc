@@ -1,0 +1,112 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: de\n"
+"X-Crowdin-File: /1.7.x/modules/po/certauth.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+
+#: modules/po/../data/certauth/tmpl/index.tmpl:7
+msgid "Add a key"
+msgstr "Einen Schlüssel hinzufügen"
+
+#: modules/po/../data/certauth/tmpl/index.tmpl:11
+msgid "Key:"
+msgstr "Schlüssel:"
+
+#: modules/po/../data/certauth/tmpl/index.tmpl:15
+msgid "Add Key"
+msgstr "Schlüssel hinzufügen"
+
+#: modules/po/../data/certauth/tmpl/index.tmpl:23
+msgid "You have no keys."
+msgstr "Du hast keine Schlüssel."
+
+#: modules/po/../data/certauth/tmpl/index.tmpl:30
+msgctxt "web"
+msgid "Key"
+msgstr "Schlüssel"
+
+#: modules/po/../data/certauth/tmpl/index.tmpl:36
+msgid "del"
+msgstr "lösch"
+
+#: certauth.cpp:31
+msgid "[pubkey]"
+msgstr "[öffentlicher Schlüssel]"
+
+#: certauth.cpp:32
+msgid "Add a public key. If key is not provided will use the current key"
+msgstr ""
+"Einen öffentlichen Schlüssel hinzufügen. Falls kein Schlüssel angegeben "
+"wird, dann wird der aktuelle Schlüsse verwunden"
+
+#: certauth.cpp:35
+msgid "id"
+msgstr "id"
+
+#: certauth.cpp:35
+msgid "Delete a key by its number in List"
+msgstr "Lösche einen Schlüssels durch seine Nummer in der Liste"
+
+#: certauth.cpp:37
+msgid "List your public keys"
+msgstr "Öffentliche Schlüssel auflisten"
+
+#: certauth.cpp:39
+msgid "Print your current key"
+msgstr "Aktuellen Schlüssel ausgeben"
+
+#: certauth.cpp:142
+msgid "You are not connected with any valid public key"
+msgstr "Du bist nicht mit einem gültigen öffentlichen Schlüssel verbunden"
+
+#: certauth.cpp:144
+msgid "Your current public key is: {1}"
+msgstr "Dein aktuelle öffentlicher Schlüssel ist: {1}"
+
+#: certauth.cpp:157
+msgid "You did not supply a public key or connect with one."
+msgstr ""
+"Es wurde kein öffentlicher Schlüssel angegeben oder zum Verbinden verwendet."
+
+#: certauth.cpp:160
+msgid "Key '{1}' added."
+msgstr "Schlüssel '{1}' hinzugefügt."
+
+#: certauth.cpp:162
+msgid "The key '{1}' is already added."
+msgstr "Der Schlüssel '{1}' wurde bereits hinzugefügt."
+
+#: certauth.cpp:170 certauth.cpp:182
+msgctxt "list"
+msgid "Id"
+msgstr "Id"
+
+#: certauth.cpp:171 certauth.cpp:183
+msgctxt "list"
+msgid "Key"
+msgstr "Schlüssel"
+
+#: certauth.cpp:175 certauth.cpp:189 certauth.cpp:198
+msgid "No keys set for your user"
+msgstr "Keine Schlüssel für deinen Benutzer gesetzt"
+
+#: certauth.cpp:203
+msgid "Invalid #, check \"list\""
+msgstr "Ungültige #, prüfe \"list\""
+
+#: certauth.cpp:215
+msgid "Removed"
+msgstr "Entfernt"
+
+#: certauth.cpp:290
+msgid "Allows users to authenticate via SSL client certificates."
+msgstr ""
+"Ermöglicht es Benutzern sich über SSL-Client-Zertifikate zu authentifizieren."
