@@ -16,7 +16,7 @@ msgstr ""
 
 #: webskins/_default_/tmpl/InfoBar.tmpl:6
 msgid "Logged in as: {1}"
-msgstr ""
+msgstr "Вы вошли как: {1}"
 
 #: webskins/_default_/tmpl/InfoBar.tmpl:8
 msgid "Not logged in"
@@ -59,15 +59,15 @@ msgstr ""
 
 #: znc.cpp:1563
 msgid "User already exists"
-msgstr ""
+msgstr "Такой пользователь уже есть"
 
 #: znc.cpp:1671
 msgid "IPv6 is not enabled"
-msgstr ""
+msgstr "IPv6 не включён"
 
 #: znc.cpp:1679
 msgid "SSL is not enabled"
-msgstr ""
+msgstr "SSL не включён"
 
 #: znc.cpp:1687
 msgid "Unable to locate pem file: {1}"
@@ -87,7 +87,7 @@ msgstr ""
 
 #: IRCNetwork.cpp:641 User.cpp:678
 msgid "Welcome to ZNC"
-msgstr ""
+msgstr "Добро пожаловать в ZNC"
 
 #: IRCNetwork.cpp:729
 msgid "You are currently disconnected from IRC. Use 'connect' to reconnect."
@@ -185,7 +185,7 @@ msgstr ""
 
 #: Client.cpp:75
 msgid "No such module {1}"
-msgstr ""
+msgstr "Нет модуля {1}"
 
 #: Client.cpp:365
 msgid "A client from {1} attempted to login as you, but was rejected: {2}"
@@ -249,7 +249,7 @@ msgstr ""
 
 #: Client.cpp:1316 Client.cpp:1322
 msgid "Hello. How may I help you?"
-msgstr ""
+msgstr "Привет, чем могу быть вам полезен?"
 
 #: Client.cpp:1336
 msgid "Usage: /attach <#chans>"
