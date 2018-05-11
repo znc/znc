@@ -90,7 +90,7 @@ matrix:
             - sudo apt-get update
             - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
           install:
-            - if [[ "$TRAVIS_REPO_SLUG" == "znc/znc" && "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_BRANCH" == "docker-test" ]]; then ATTEMPT_DEPLOY=yes; else ATTEMPT_DEPLOY=no; fi
+            - if [[ "$TRAVIS_REPO_SLUG" == "znc/znc" && "$TRAVIS_PULL_REQUEST" == "false" ]]; then ATTEMPT_DEPLOY=yes; else ATTEMPT_DEPLOY=no; fi
             - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; fi
             - export SECRET_KEY=no DOCKER_PASSWORD=no DOCKER_USERNAME=no
           script:
