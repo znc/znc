@@ -1,8 +1,10 @@
 FROM alpine:3.7
 
+ARG VERSION_EXTRA=""
+
 # musl silently doesn't support AI_ADDRCONFIG yet, and ZNC doesn't support Happy Eyeballs yet.
 # Together they cause very slow connection. So for now IPv6 is disabled here.
-ARG CMAKEFLAGS="-DCMAKE_INSTALL_PREFIX=/opt/znc -DWANT_CYRUS=YES -DWANT_PERL=YES -DWANT_PYTHON=YES -DWANT_IPV6=NO"
+ARG CMAKEFLAGS="-DVERSION_EXTRA=${VERSION_EXTRA} -DCMAKE_INSTALL_PREFIX=/opt/znc -DWANT_CYRUS=YES -DWANT_PERL=YES -DWANT_PYTHON=YES -DWANT_IPV6=NO"
 ARG MAKEFLAGS=""
 
 ARG BUILD_DATE
