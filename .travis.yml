@@ -38,23 +38,15 @@ matrix:
           compiler: clang
           env: BUILD_TYPE=normal BUILD_WITH=cmake COVERAGE=llvm
         - os: osx
-          osx_image: xcode7.3 # OS X 10.11
-          compiler: clang
-          env: BUILD_TYPE=normal BUILD_WITH=autoconf COVERAGE=llvm
-        - os: osx
           osx_image: xcode8.3 # macOS 10.12
           compiler: clang
           env: BUILD_TYPE=normal BUILD_WITH=cmake COVERAGE=llvm
         - os: osx
-          osx_image: xcode8.3 # macOS 10.12
-          compiler: clang
-          env: BUILD_TYPE=normal BUILD_WITH=autoconf COVERAGE=llvm
-        - os: osx
-          osx_image: xcode9.1 # macOS 10.12
+          osx_image: xcode9.3 # macOS 10.13
           compiler: clang
           env: BUILD_TYPE=normal BUILD_WITH=cmake COVERAGE=llvm
         - os: osx
-          osx_image: xcode9.1 # macOS 10.12
+          osx_image: xcode9.3 # macOS 10.13
           compiler: clang
           env: BUILD_TYPE=normal BUILD_WITH=autoconf COVERAGE=llvm
         - os: linux
@@ -94,7 +86,8 @@ matrix:
             - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; fi
             - export SECRET_KEY=no DOCKER_PASSWORD=no DOCKER_USERNAME=no
           script:
-            - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then docker build --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` --build-arg VCS_REF=`git rev-parse HEAD` -t "zncbouncer/znc-git:$TRAVIS_BRANCH" -t "zncbouncer/znc-git:$TRAVIS_BRANCH-$(git describe)" .; fi
+            - echo "$TRAVIS_BRANCH-$(git-describe)" > .nightly
+            - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then docker build --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` --build-arg VCS_REF=`git rev-parse HEAD` --build-arg VERSION_EXTRA=+docker-git- -t "zncbouncer/znc-git:$TRAVIS_BRANCH" -t "zncbouncer/znc-git:$TRAVIS_BRANCH-$(git describe)" .; fi
             - if [[ "$ATTEMPT_DEPLOY" == "yes" && "$TRAVIS_BRANCH" == "master" ]]; then docker tag "zncbouncer/znc-git:$TRAVIS_BRANCH" zncbouncer/znc-git:latest; fi
             - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then docker push zncbouncer/znc-git; fi
           after_success:
