@@ -68,3 +68,5 @@ msgstr "Liste an Kanalmasken und Kanalmasken mit führendem !."
 #: autocycle.cpp:234
 msgid "Rejoins channels to gain Op if you're the only user left"
 msgstr ""
+"Betritt den Channel erneut, um OP zu bekommen, falls du der letzt User im "
+"Channel bist"
