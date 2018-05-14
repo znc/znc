@@ -134,7 +134,7 @@ msgstr "ZNC scheint zu sich selbst verbunden zu sein, trenne die Verbindung..."
 
 #: IRCSock.cpp:733
 msgid "Server {1} redirects us to {2}:{3} with reason: {4}"
-msgstr ""
+msgstr "Der Server {1} hat uns zu {2}:{3} umgeleitet mit der Begründung: {4}"
 
 #: IRCSock.cpp:737
 msgid "Perhaps you want to add it as a new server."
