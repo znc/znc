@@ -98,7 +98,7 @@ msgstr "Verwendung: Set <Variable> <Benutzername> <Wert>"
 
 #: controlpanel.cpp:330 controlpanel.cpp:618
 msgid "This bind host is already set!"
-msgstr ""
+msgstr "Dieser Bind Host ist bereits gesetzt!"
 
 #: controlpanel.cpp:337 controlpanel.cpp:349 controlpanel.cpp:357
 #: controlpanel.cpp:420 controlpanel.cpp:439 controlpanel.cpp:455
@@ -223,12 +223,12 @@ msgstr "AltNick"
 #: controlpanel.cpp:889 controlpanel.cpp:903
 msgctxt "listusers"
 msgid "Ident"
-msgstr ""
+msgstr "Ident"
 
 #: controlpanel.cpp:890 controlpanel.cpp:904
 msgctxt "listusers"
 msgid "BindHost"
-msgstr ""
+msgstr "BindHost"
 
 #: controlpanel.cpp:898 controlpanel.cpp:1138
 msgid "No"
@@ -336,7 +336,7 @@ msgstr "Netzwerk"
 #: controlpanel.cpp:1121 controlpanel.cpp:1130 controlpanel.cpp:1138
 msgctxt "listnetworks"
 msgid "OnIRC"
-msgstr ""
+msgstr "OnIRC"
 
 #: controlpanel.cpp:1122 controlpanel.cpp:1131
 msgctxt "listnetworks"
@@ -346,7 +346,7 @@ msgstr "IRC-Server"
 #: controlpanel.cpp:1123 controlpanel.cpp:1133
 msgctxt "listnetworks"
 msgid "IRC User"
-msgstr ""
+msgstr "IRC-Benutzer"
 
 #: controlpanel.cpp:1124 controlpanel.cpp:1135
 msgctxt "listnetworks"
@@ -532,7 +532,7 @@ msgstr "Für Benutzer {1} geladene Module:"
 
 #: controlpanel.cpp:1543
 msgid "Network {1} of user {2} has no modules loaded."
-msgstr ""
+msgstr "Netzwerk {1} des Benutzers {2} hat keine Module geladen."
 
 #: controlpanel.cpp:1547
 msgid "Modules loaded for network {1} of user {2}:"
@@ -682,23 +682,23 @@ msgstr "Zeigt eine Liste der Module eines Benutzers"
 
 #: controlpanel.cpp:1615
 msgid "<username> <network> <modulename> [args]"
-msgstr ""
+msgstr "<username> <network> <modulename> [args]"
 
 #: controlpanel.cpp:1616
 msgid "Loads a Module for a network"
-msgstr ""
+msgstr "Lädt ein Modul für ein Netzwerk"
 
 #: controlpanel.cpp:1619
 msgid "<username> <network> <modulename>"
-msgstr ""
+msgstr "<username> <network> <modulename>"
 
 #: controlpanel.cpp:1620
 msgid "Removes a Module of a network"
-msgstr ""
+msgstr "Entfernt ein Modul von einem Netzwerk"
 
 #: controlpanel.cpp:1623
 msgid "Get the list of modules for a network"
-msgstr ""
+msgstr "Zeigt eine Liste der Module eines Netzwerks"
 
 #: controlpanel.cpp:1626
 msgid "List the configured CTCP replies"

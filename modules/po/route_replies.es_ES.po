@@ -14,46 +14,50 @@ msgstr ""
 
 #: route_replies.cpp:209
 msgid "[yes|no]"
-msgstr ""
+msgstr "[yes | no]"
 
 #: route_replies.cpp:210
 msgid "Decides whether to show the timeout messages or not"
-msgstr ""
+msgstr "Indica si mostrar los mensajes de tiempo de espera agotado o no"
 
 #: route_replies.cpp:350
 msgid "This module hit a timeout which is probably a connectivity issue."
 msgstr ""
+"Este módulo ha agotado el tiempo de espera, lo que puede ser un problema de "
+"conectividad."
 
 #: route_replies.cpp:353
 msgid ""
 "However, if you can provide steps to reproduce this issue, please do report "
 "a bug."
 msgstr ""
+"Sin embargo, si puedes proporcionar los pasos a seguir para reproducir este "
+"problema, por favor informa del fallo."
 
 #: route_replies.cpp:356
 msgid "To disable this message, do \"/msg {1} silent yes\""
-msgstr ""
+msgstr "Para desactivar este mensaje escribe \"/msg {1} silent yes\""
 
 #: route_replies.cpp:358
 msgid "Last request: {1}"
-msgstr ""
+msgstr "Ultima petición: {1}"
 
 #: route_replies.cpp:359
 msgid "Expected replies:"
-msgstr ""
+msgstr "Respuesta esperada:"
 
 #: route_replies.cpp:363
 msgid "{1} (last)"
-msgstr ""
+msgstr "{1} (última)"
 
 #: route_replies.cpp:435
 msgid "Timeout messages are disabled."
-msgstr ""
+msgstr "Los mensajes de tiempo de espera agotado están desactivados."
 
 #: route_replies.cpp:436
 msgid "Timeout messages are enabled."
-msgstr ""
+msgstr "Los mensajes de tiempo de espera agotado están activados."
 
 #: route_replies.cpp:457
 msgid "Send replies (e.g. to /who) to the right client only"
-msgstr ""
+msgstr "Envía respuestas (por ej. /who) solo al cliente correcto"
