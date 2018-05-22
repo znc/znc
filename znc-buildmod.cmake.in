@@ -78,14 +78,7 @@ with tempfile.TemporaryDirectory() as cmdir:
             print(cm.read())
 
     with tempfile.TemporaryDirectory() as build:
-        command = ['cmake', '-G@CMAKE_GENERATOR@',
-            '-DCMAKE_C_COMPILER=@CMAKE_C_COMPILER@',
-            '-DCMAKE_CXX_COMPILER=@CMAKE_CXX_COMPILER@',
-            '-DCMAKE_CXX_FLAGS={} @CMAKE_CXX_FLAGS@'.format(
-                os.environ.get('CXXFLAGS', '')),
-            '-DCMAKE_MODULE_LINKER_FLAGS={} @CMAKE_MODULE_LINKER_FLAGS@'.format(
-                os.environ.get('LDFLAGS', '')),
-            cmdir]
+        command = ['cmake', cmdir]
         if args.verbose > 1:
             cmd.append('--debug-output')
         if args.verbose > 2:
