@@ -331,8 +331,8 @@
 
 				<? SETBLOCK Substitutions_Link ?><a href="https://wiki.znc.in/ExpandString" target="_blank" class="external"><? FORMAT "Substitutions" ?></a><? ENDSETBLOCK ?>
 				<div class="subsection half" id="ctcpreplies_plain">
-					<div class="inputlabel"><label for="ctcpreplies"><? FORMAT "CTCP Replies:" ?></label></div>
-					<div><textarea id="ctcpreplies" name="ctcpreplies" cols="70" rows="3" id="ctcpreplies_text"><? LOOP CTCPLoop ?><? VAR CTCP ?>
+					<div class="inputlabel"><label for="ctcpreplies_text"><? FORMAT "CTCP Replies:" ?></label></div>
+					<div><textarea name="ctcpreplies" cols="70" rows="3" id="ctcpreplies_text"><? LOOP CTCPLoop ?><? VAR CTCP ?>
 <? ENDLOOP ?>
 </textarea></div>
 					<br /><span class="info"><? FORMAT "One reply per line. Example: <code>TIME Buy a watch!</code>" ?></span>

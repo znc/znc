@@ -1656,7 +1656,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs,
 
     if (!Info.SupportsType(eType)) {
         dlclose(p);
-        sRetMsg = t_f("Module {1} does not support module type {1}.")(
+        sRetMsg = t_f("Module {1} does not support module type {2}.")(
             sModule, CModInfo::ModuleTypeToString(eType));
         return false;
     }
