@@ -1,0 +1,131 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: id\n"
+"X-Crowdin-File: /1.7.x/modules/po/bouncedcc.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Indonesian\n"
+"Language: id_ID\n"
+
+#: bouncedcc.cpp:101 bouncedcc.cpp:119 bouncedcc.cpp:121
+msgctxt "list"
+msgid "Type"
+msgstr ""
+
+#: bouncedcc.cpp:102 bouncedcc.cpp:132
+msgctxt "list"
+msgid "State"
+msgstr ""
+
+#: bouncedcc.cpp:103
+msgctxt "list"
+msgid "Speed"
+msgstr ""
+
+#: bouncedcc.cpp:104 bouncedcc.cpp:115
+msgctxt "list"
+msgid "Nick"
+msgstr ""
+
+#: bouncedcc.cpp:105 bouncedcc.cpp:116
+msgctxt "list"
+msgid "IP"
+msgstr ""
+
+#: bouncedcc.cpp:106 bouncedcc.cpp:122
+msgctxt "list"
+msgid "File"
+msgstr ""
+
+#: bouncedcc.cpp:119
+msgctxt "list"
+msgid "Chat"
+msgstr ""
+
+#: bouncedcc.cpp:121
+msgctxt "list"
+msgid "Xfer"
+msgstr ""
+
+#: bouncedcc.cpp:125
+msgid "Waiting"
+msgstr ""
+
+#: bouncedcc.cpp:127
+msgid "Halfway"
+msgstr ""
+
+#: bouncedcc.cpp:129
+msgid "Connected"
+msgstr ""
+
+#: bouncedcc.cpp:137
+msgid "You have no active DCCs."
+msgstr ""
+
+#: bouncedcc.cpp:148
+msgid "Use client IP: {1}"
+msgstr ""
+
+#: bouncedcc.cpp:153
+msgid "List all active DCCs"
+msgstr ""
+
+#: bouncedcc.cpp:156
+msgid "Change the option to use IP of client"
+msgstr ""
+
+#: bouncedcc.cpp:383 bouncedcc.cpp:412 bouncedcc.cpp:436 bouncedcc.cpp:451
+msgctxt "type"
+msgid "Chat"
+msgstr ""
+
+#: bouncedcc.cpp:383 bouncedcc.cpp:412 bouncedcc.cpp:436 bouncedcc.cpp:451
+msgctxt "type"
+msgid "Xfer"
+msgstr ""
+
+#: bouncedcc.cpp:385
+msgid "DCC {1} Bounce ({2}): Too long line received"
+msgstr ""
+
+#: bouncedcc.cpp:418
+msgid "DCC {1} Bounce ({2}): Timeout while connecting to {3} {4}"
+msgstr ""
+
+#: bouncedcc.cpp:422
+msgid "DCC {1} Bounce ({2}): Timeout while connecting."
+msgstr ""
+
+#: bouncedcc.cpp:427
+msgid ""
+"DCC {1} Bounce ({2}): Timeout while waiting for incoming connection on {3} "
+"{4}"
+msgstr ""
+
+#: bouncedcc.cpp:440
+msgid "DCC {1} Bounce ({2}): Connection refused while connecting to {3} {4}"
+msgstr ""
+
+#: bouncedcc.cpp:444
+msgid "DCC {1} Bounce ({2}): Connection refused while connecting."
+msgstr ""
+
+#: bouncedcc.cpp:457 bouncedcc.cpp:465
+msgid "DCC {1} Bounce ({2}): Socket error on {3} {4}: {5}"
+msgstr ""
+
+#: bouncedcc.cpp:460
+msgid "DCC {1} Bounce ({2}): Socket error: {3}"
+msgstr ""
+
+#: bouncedcc.cpp:547
+msgid ""
+"Bounces DCC transfers through ZNC instead of sending them directly to the "
+"user. "
+msgstr ""

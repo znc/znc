@@ -340,8 +340,8 @@ msgid "Unable to find module {1}"
 msgstr "Kann Modul {1} nicht finden"
 
 #: Modules.cpp:1659
-msgid "Module {1} does not support module type {1}."
-msgstr "Modul {1} unterstützt den Modultyp {1} nicht."
+msgid "Module {1} does not support module type {2}."
+msgstr "Modul {1} unterstützt den Modultyp {2} nicht."
 
 #: Modules.cpp:1666
 msgid "Module {1} requires a user."
@@ -770,17 +770,17 @@ msgstr "Port"
 #: ClientCommand.cpp:804 ClientCommand.cpp:814
 msgctxt "listservers"
 msgid "SSL"
-msgstr ""
+msgstr "SSL"
 
 #: ClientCommand.cpp:805 ClientCommand.cpp:816
 msgctxt "listservers"
 msgid "Password"
-msgstr ""
+msgstr "Passwort"
 
 #: ClientCommand.cpp:815
 msgctxt "listservers|cell"
 msgid "SSL"
-msgstr ""
+msgstr "SSL"
 
 #: ClientCommand.cpp:832
 msgid "Usage: AddTrustedServerFingerprint <fi:ng:er>"
@@ -788,7 +788,7 @@ msgstr ""
 
 #: ClientCommand.cpp:836 ClientCommand.cpp:849
 msgid "Done."
-msgstr ""
+msgstr "Erledigt."
 
 #: ClientCommand.cpp:845
 msgid "Usage: DelTrustedServerFingerprint <fi:ng:er>"
@@ -975,6 +975,8 @@ msgid ""
 "You must be connected with a network to use this command. Try "
 "SetUserBindHost instead"
 msgstr ""
+"Du musst mit einem Netzwerk verbunden sein um diesen Befehl zu verwenden. "
+"Versuche SetUserBindHost statt dessen"
 
 #: ClientCommand.cpp:1260
 msgid "Usage: SetBindHost <host>"
@@ -1225,11 +1227,11 @@ msgstr ""
 
 #: ClientCommand.cpp:1632
 msgid "Port added"
-msgstr ""
+msgstr "Port hinzugefügt"
 
 #: ClientCommand.cpp:1634
 msgid "Couldn't add port"
-msgstr ""
+msgstr "Konnte Port nicht hinzufügen"
 
 #: ClientCommand.cpp:1640
 msgid "Usage: DelPort <port> <ipv4|ipv6|all> [bindhost]"
@@ -1237,7 +1239,7 @@ msgstr ""
 
 #: ClientCommand.cpp:1649
 msgid "Deleted Port"
-msgstr ""
+msgstr "Port gelöscht"
 
 #: ClientCommand.cpp:1651
 msgid "Unable to find a matching port"
@@ -1246,12 +1248,12 @@ msgstr ""
 #: ClientCommand.cpp:1659 ClientCommand.cpp:1673
 msgctxt "helpcmd"
 msgid "Command"
-msgstr ""
+msgstr "Befehl"
 
 #: ClientCommand.cpp:1660 ClientCommand.cpp:1674
 msgctxt "helpcmd"
 msgid "Description"
-msgstr ""
+msgstr "Beschreibung"
 
 #: ClientCommand.cpp:1664
 msgid ""
@@ -1372,7 +1374,7 @@ msgstr ""
 #: ClientCommand.cpp:1738
 msgctxt "helpcmd|AddTrustedServerFingerprint|args"
 msgid "<fi:ng:er>"
-msgstr ""
+msgstr "<fi:ng:er>"
 
 #: ClientCommand.cpp:1739
 msgctxt "helpcmd|AddTrustedServerFingerprint|desc"
@@ -1384,7 +1386,7 @@ msgstr ""
 #: ClientCommand.cpp:1744
 msgctxt "helpcmd|DelTrustedServerFingerprint|args"
 msgid "<fi:ng:er>"
-msgstr ""
+msgstr "<fi:ng:er>"
 
 #: ClientCommand.cpp:1745
 msgctxt "helpcmd|DelTrustedServerFingerprint|desc"
@@ -1758,7 +1760,7 @@ msgstr ""
 
 #: User.cpp:511
 msgid "Network {1} already exists"
-msgstr ""
+msgstr "Netzwerk {1} existiert bereits"
 
 #: User.cpp:777
 msgid ""
@@ -1768,15 +1770,15 @@ msgstr ""
 
 #: User.cpp:907
 msgid "Password is empty"
-msgstr ""
+msgstr "Passwort ist leer"
 
 #: User.cpp:912
 msgid "Username is empty"
-msgstr ""
+msgstr "Benutzername ist leer"
 
 #: User.cpp:917
 msgid "Username is invalid"
-msgstr ""
+msgstr "Benutzername ist ungültig"
 
 #: User.cpp:1188
 msgid "Unable to find modinfo {1}: {2}"
