@@ -1,0 +1,62 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: id\n"
+"X-Crowdin-File: /1.7.x/modules/po/savebuff.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Indonesian\n"
+"Language: id_ID\n"
+
+#: savebuff.cpp:65
+msgid "<password>"
+msgstr ""
+
+#: savebuff.cpp:65
+msgid "Sets the password"
+msgstr ""
+
+#: savebuff.cpp:67
+msgid "<buffer>"
+msgstr ""
+
+#: savebuff.cpp:67
+msgid "Replays the buffer"
+msgstr ""
+
+#: savebuff.cpp:69
+msgid "Saves all buffers"
+msgstr ""
+
+#: savebuff.cpp:221
+msgid ""
+"Password is unset usually meaning the decryption failed. You can setpass to "
+"the appropriate pass and things should start working, or setpass to a new "
+"pass and save to reinstantiate"
+msgstr ""
+
+#: savebuff.cpp:232
+msgid "Password set to [{1}]"
+msgstr ""
+
+#: savebuff.cpp:262
+msgid "Replayed {1}"
+msgstr ""
+
+#: savebuff.cpp:341
+msgid "Unable to decode Encrypted file {1}"
+msgstr ""
+
+#: savebuff.cpp:358
+msgid ""
+"This user module takes up to one arguments. Either --ask-pass or the "
+"password itself (which may contain spaces) or nothing"
+msgstr ""
+
+#: savebuff.cpp:363
+msgid "Stores channel and query buffers to disk, encrypted"
+msgstr ""

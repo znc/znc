@@ -1,0 +1,118 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: id\n"
+"X-Crowdin-File: /1.7.x/modules/po/sample.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Indonesian\n"
+"Language: id_ID\n"
+
+#: sample.cpp:31
+msgid "Sample job cancelled"
+msgstr ""
+
+#: sample.cpp:33
+msgid "Sample job destroyed"
+msgstr ""
+
+#: sample.cpp:50
+msgid "Sample job done"
+msgstr ""
+
+#: sample.cpp:65
+msgid "TEST!!!!"
+msgstr ""
+
+#: sample.cpp:74
+msgid "I'm being loaded with the arguments: {1}"
+msgstr ""
+
+#: sample.cpp:85
+msgid "I'm being unloaded!"
+msgstr ""
+
+#: sample.cpp:94
+msgid "You got connected BoyOh."
+msgstr ""
+
+#: sample.cpp:98
+msgid "You got disconnected BoyOh."
+msgstr ""
+
+#: sample.cpp:116
+msgid "{1} {2} set mode on {3} {4}{5} {6}"
+msgstr ""
+
+#: sample.cpp:123
+msgid "{1} {2} opped {3} on {4}"
+msgstr ""
+
+#: sample.cpp:129
+msgid "{1} {2} deopped {3} on {4}"
+msgstr ""
+
+#: sample.cpp:135
+msgid "{1} {2} voiced {3} on {4}"
+msgstr ""
+
+#: sample.cpp:141
+msgid "{1} {2} devoiced {3} on {4}"
+msgstr ""
+
+#: sample.cpp:147
+msgid "* {1} sets mode: {2} {3} on {4}"
+msgstr ""
+
+#: sample.cpp:163
+msgid "{1} kicked {2} from {3} with the msg {4}"
+msgstr ""
+
+#: sample.cpp:169
+msgid "* {1} ({2}@{3}) quits ({4}) from channel: {6}"
+msgid_plural "* {1} ({2}@{3}) quits ({4}) from {5} channels: {6}"
+msgstr[0] ""
+
+#: sample.cpp:177
+msgid "Attempting to join {1}"
+msgstr ""
+
+#: sample.cpp:182
+msgid "* {1} ({2}@{3}) joins {4}"
+msgstr ""
+
+#: sample.cpp:189
+msgid "* {1} ({2}@{3}) parts {4}"
+msgstr ""
+
+#: sample.cpp:196
+msgid "{1} invited us to {2}, ignoring invites to {2}"
+msgstr ""
+
+#: sample.cpp:201
+msgid "{1} invited us to {2}"
+msgstr ""
+
+#: sample.cpp:207
+msgid "{1} is now known as {2}"
+msgstr ""
+
+#: sample.cpp:269 sample.cpp:276
+msgid "{1} changes topic on {2} to {3}"
+msgstr ""
+
+#: sample.cpp:317
+msgid "Hi, I'm your friendly sample module."
+msgstr ""
+
+#: sample.cpp:330
+msgid "Description of module arguments goes here."
+msgstr ""
+
+#: sample.cpp:333
+msgid "To be used as a sample for writing modules"
+msgstr ""

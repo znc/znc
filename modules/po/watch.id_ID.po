@@ -1,0 +1,249 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: id\n"
+"X-Crowdin-File: /1.7.x/modules/po/watch.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Indonesian\n"
+"Language: id_ID\n"
+
+#: watch.cpp:334
+msgid "All entries cleared."
+msgstr ""
+
+#: watch.cpp:344
+msgid "Buffer count is set to {1}"
+msgstr ""
+
+#: watch.cpp:348
+msgid "Unknown command: {1}"
+msgstr ""
+
+#: watch.cpp:397
+msgid "Disabled all entries."
+msgstr ""
+
+#: watch.cpp:398
+msgid "Enabled all entries."
+msgstr ""
+
+#: watch.cpp:405 watch.cpp:437 watch.cpp:470 watch.cpp:570 watch.cpp:585
+msgid "Invalid Id"
+msgstr ""
+
+#: watch.cpp:414
+msgid "Id {1} disabled"
+msgstr ""
+
+#: watch.cpp:416
+msgid "Id {1} enabled"
+msgstr ""
+
+#: watch.cpp:428
+msgid "Set DetachedClientOnly for all entries to Yes"
+msgstr ""
+
+#: watch.cpp:430
+msgid "Set DetachedClientOnly for all entries to No"
+msgstr ""
+
+#: watch.cpp:446 watch.cpp:479
+msgid "Id {1} set to Yes"
+msgstr ""
+
+#: watch.cpp:448 watch.cpp:481
+msgid "Id {1} set to No"
+msgstr ""
+
+#: watch.cpp:461
+msgid "Set DetachedChannelOnly for all entries to Yes"
+msgstr ""
+
+#: watch.cpp:463
+msgid "Set DetachedChannelOnly for all entries to No"
+msgstr ""
+
+#: watch.cpp:487 watch.cpp:503
+msgid "Id"
+msgstr ""
+
+#: watch.cpp:488 watch.cpp:504
+msgid "HostMask"
+msgstr ""
+
+#: watch.cpp:489 watch.cpp:505
+msgid "Target"
+msgstr ""
+
+#: watch.cpp:490 watch.cpp:506
+msgid "Pattern"
+msgstr ""
+
+#: watch.cpp:491 watch.cpp:507
+msgid "Sources"
+msgstr ""
+
+#: watch.cpp:492 watch.cpp:508 watch.cpp:509
+msgid "Off"
+msgstr ""
+
+#: watch.cpp:493 watch.cpp:511
+msgid "DetachedClientOnly"
+msgstr ""
+
+#: watch.cpp:494 watch.cpp:514
+msgid "DetachedChannelOnly"
+msgstr ""
+
+#: watch.cpp:512 watch.cpp:515
+msgid "Yes"
+msgstr ""
+
+#: watch.cpp:512 watch.cpp:515
+msgid "No"
+msgstr ""
+
+#: watch.cpp:521 watch.cpp:527
+msgid "You have no entries."
+msgstr ""
+
+#: watch.cpp:578
+msgid "Sources set for Id {1}."
+msgstr ""
+
+#: watch.cpp:593
+msgid "Id {1} removed."
+msgstr ""
+
+#: watch.cpp:600 watch.cpp:604 watch.cpp:609 watch.cpp:614 watch.cpp:620
+#: watch.cpp:625 watch.cpp:629 watch.cpp:633 watch.cpp:638 watch.cpp:645
+#: watch.cpp:652 watch.cpp:658 watch.cpp:664
+msgid "Command"
+msgstr ""
+
+#: watch.cpp:601 watch.cpp:605 watch.cpp:610 watch.cpp:616 watch.cpp:621
+#: watch.cpp:626 watch.cpp:630 watch.cpp:634 watch.cpp:641 watch.cpp:648
+#: watch.cpp:654 watch.cpp:660 watch.cpp:665
+msgid "Description"
+msgstr ""
+
+#: watch.cpp:604
+msgid "Add <HostMask> [Target] [Pattern]"
+msgstr ""
+
+#: watch.cpp:606
+msgid "Used to add an entry to watch for."
+msgstr ""
+
+#: watch.cpp:609
+msgid "List"
+msgstr ""
+
+#: watch.cpp:611
+msgid "List all entries being watched."
+msgstr ""
+
+#: watch.cpp:614
+msgid "Dump"
+msgstr ""
+
+#: watch.cpp:617
+msgid "Dump a list of all current entries to be used later."
+msgstr ""
+
+#: watch.cpp:620
+msgid "Del <Id>"
+msgstr ""
+
+#: watch.cpp:622
+msgid "Deletes Id from the list of watched entries."
+msgstr ""
+
+#: watch.cpp:625
+msgid "Clear"
+msgstr ""
+
+#: watch.cpp:626
+msgid "Delete all entries."
+msgstr ""
+
+#: watch.cpp:629
+msgid "Enable <Id | *>"
+msgstr ""
+
+#: watch.cpp:630
+msgid "Enable a disabled entry."
+msgstr ""
+
+#: watch.cpp:633
+msgid "Disable <Id | *>"
+msgstr ""
+
+#: watch.cpp:635
+msgid "Disable (but don't delete) an entry."
+msgstr ""
+
+#: watch.cpp:639
+msgid "SetDetachedClientOnly <Id | *> <True | False>"
+msgstr ""
+
+#: watch.cpp:642
+msgid "Enable or disable detached client only for an entry."
+msgstr ""
+
+#: watch.cpp:646
+msgid "SetDetachedChannelOnly <Id | *> <True | False>"
+msgstr ""
+
+#: watch.cpp:649
+msgid "Enable or disable detached channel only for an entry."
+msgstr ""
+
+#: watch.cpp:652
+msgid "Buffer [Count]"
+msgstr ""
+
+#: watch.cpp:655
+msgid "Show/Set the amount of buffered lines while detached."
+msgstr ""
+
+#: watch.cpp:659
+msgid "SetSources <Id> [#chan priv #foo* !#bar]"
+msgstr ""
+
+#: watch.cpp:661
+msgid "Set the source channels that you care about."
+msgstr ""
+
+#: watch.cpp:664
+msgid "Help"
+msgstr ""
+
+#: watch.cpp:665
+msgid "This help."
+msgstr ""
+
+#: watch.cpp:681
+msgid "Entry for {1} already exists."
+msgstr ""
+
+#: watch.cpp:689
+msgid "Adding entry: {1} watching for [{2}] -> {3}"
+msgstr ""
+
+#: watch.cpp:695
+msgid "Watch: Not enough arguments.  Try Help"
+msgstr ""
+
+#: watch.cpp:764
+msgid "WARNING: malformed entry found while loading"
+msgstr ""
+
+#: watch.cpp:778
+msgid "Copy activity from a specific user into a separate window"
+msgstr ""
