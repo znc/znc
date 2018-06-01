@@ -316,7 +316,7 @@ msgid "Unable to find module {1}"
 msgstr "Não foi possível encontrar o módulo {1}"
 
 #: Modules.cpp:1659
-msgid "Module {1} does not support module type {1}."
+msgid "Module {1} does not support module type {2}."
 msgstr ""
 
 #: Modules.cpp:1666

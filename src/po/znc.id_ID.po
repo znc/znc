@@ -2,6 +2,15 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: id\n"
+"X-Crowdin-File: /1.7.x/src/po/znc.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Indonesian\n"
+"Language: id_ID\n"
 
 #: webskins/_default_/tmpl/InfoBar.tmpl:6
 msgid "Logged in as: {1}"
@@ -244,13 +253,11 @@ msgstr ""
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
 msgstr[0] ""
-msgstr[1] ""
 
 #: Client.cpp:1346 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] ""
-msgstr[1] ""
 
 #: Client.cpp:1358
 msgid "Usage: /detach <#chans>"
@@ -260,7 +267,6 @@ msgstr ""
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] ""
-msgstr[1] ""
 
 #: Chan.cpp:638
 msgid "Buffer Playback..."
@@ -1000,7 +1006,6 @@ msgstr ""
 msgid "{1} buffer matching {2} has been cleared"
 msgid_plural "{1} buffers matching {2} have been cleared"
 msgstr[0] ""
-msgstr[1] ""
 
 #: ClientCommand.cpp:1408
 msgid "All channel buffers have been cleared"
@@ -1022,19 +1027,16 @@ msgstr ""
 msgid "Setting buffer size failed for {1} buffer"
 msgid_plural "Setting buffer size failed for {1} buffers"
 msgstr[0] ""
-msgstr[1] ""
 
 #: ClientCommand.cpp:1464
 msgid "Maximum buffer size is {1} line"
 msgid_plural "Maximum buffer size is {1} lines"
 msgstr[0] ""
-msgstr[1] ""
 
 #: ClientCommand.cpp:1469
 msgid "Size of every buffer was set to {1} line"
 msgid_plural "Size of every buffer was set to {1} lines"
 msgstr[0] ""
-msgstr[1] ""
 
 #: ClientCommand.cpp:1479 ClientCommand.cpp:1486 ClientCommand.cpp:1497
 #: ClientCommand.cpp:1506 ClientCommand.cpp:1514
@@ -1678,15 +1680,15 @@ msgstr ""
 msgid "Some socket reached its max buffer limit and was closed!"
 msgstr ""
 
-#: SSLVerifyHost.cpp:481
+#: SSLVerifyHost.cpp:448
 msgid "hostname doesn't match"
 msgstr ""
 
-#: SSLVerifyHost.cpp:485
+#: SSLVerifyHost.cpp:452
 msgid "malformed hostname in certificate"
 msgstr ""
 
-#: SSLVerifyHost.cpp:489
+#: SSLVerifyHost.cpp:456
 msgid "hostname verification error"
 msgstr ""
 

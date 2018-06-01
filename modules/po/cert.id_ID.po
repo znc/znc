@@ -1,0 +1,75 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: id\n"
+"X-Crowdin-File: /1.7.x/modules/po/cert.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Indonesian\n"
+"Language: id_ID\n"
+
+#  this text is inserted into `click here` in the other string
+#: modules/po/../data/cert/tmpl/index.tmpl:5
+msgid "here"
+msgstr ""
+
+#  {1} is `here`, translateable in the other string
+#: modules/po/../data/cert/tmpl/index.tmpl:6
+msgid ""
+"You already have a certificate set, use the form below to overwrite the "
+"current certificate. Alternatively click {1} to delete your certificate."
+msgstr ""
+
+#: modules/po/../data/cert/tmpl/index.tmpl:8
+msgid "You do not have a certificate yet."
+msgstr ""
+
+#: modules/po/../data/cert/tmpl/index.tmpl:14 cert.cpp:72
+msgid "Certificate"
+msgstr ""
+
+#: modules/po/../data/cert/tmpl/index.tmpl:18
+msgid "PEM File:"
+msgstr ""
+
+#: modules/po/../data/cert/tmpl/index.tmpl:22
+msgid "Update"
+msgstr ""
+
+#: cert.cpp:28
+msgid "Pem file deleted"
+msgstr ""
+
+#: cert.cpp:31
+msgid "The pem file doesn't exist or there was a error deleting the pem file."
+msgstr ""
+
+#: cert.cpp:38
+msgid "You have a certificate in {1}"
+msgstr ""
+
+#: cert.cpp:41
+msgid ""
+"You do not have a certificate. Please use the web interface to add a "
+"certificate"
+msgstr ""
+
+#: cert.cpp:44
+msgid "Alternatively you can either place one at {1}"
+msgstr ""
+
+#: cert.cpp:52
+msgid "Delete the current certificate"
+msgstr ""
+
+#: cert.cpp:54
+msgid "Show the current certificate"
+msgstr ""
+
+#: cert.cpp:105
+msgid "Use a ssl certificate to connect to a server"
+msgstr ""

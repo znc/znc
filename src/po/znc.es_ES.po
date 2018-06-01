@@ -328,8 +328,8 @@ msgid "Unable to find module {1}"
 msgstr "No se ha encontrado el módulo {1}"
 
 #: Modules.cpp:1659
-msgid "Module {1} does not support module type {1}."
-msgstr "El módulo {1} no soporta el tipo de módulo {1}."
+msgid "Module {1} does not support module type {2}."
+msgstr ""
 
 #: Modules.cpp:1666
 msgid "Module {1} requires a user."

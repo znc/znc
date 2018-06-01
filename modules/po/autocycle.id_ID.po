@@ -1,0 +1,69 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: id\n"
+"X-Crowdin-File: /1.7.x/modules/po/autocycle.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Indonesian\n"
+"Language: id_ID\n"
+
+#: autocycle.cpp:27 autocycle.cpp:30
+msgid "[!]<#chan>"
+msgstr ""
+
+#: autocycle.cpp:28
+msgid "Add an entry, use !#chan to negate and * for wildcards"
+msgstr ""
+
+#: autocycle.cpp:31
+msgid "Remove an entry, needs to be an exact match"
+msgstr ""
+
+#: autocycle.cpp:33
+msgid "List all entries"
+msgstr ""
+
+#: autocycle.cpp:46
+msgid "Unable to add {1}"
+msgstr ""
+
+#: autocycle.cpp:66
+msgid "{1} is already added"
+msgstr ""
+
+#: autocycle.cpp:68
+msgid "Added {1} to list"
+msgstr ""
+
+#: autocycle.cpp:70
+msgid "Usage: Add [!]<#chan>"
+msgstr ""
+
+#: autocycle.cpp:78
+msgid "Removed {1} from list"
+msgstr ""
+
+#: autocycle.cpp:80
+msgid "Usage: Del [!]<#chan>"
+msgstr ""
+
+#: autocycle.cpp:85 autocycle.cpp:89 autocycle.cpp:94
+msgid "Channel"
+msgstr ""
+
+#: autocycle.cpp:100
+msgid "You have no entries."
+msgstr ""
+
+#: autocycle.cpp:229
+msgid "List of channel masks and channel masks with ! before them."
+msgstr ""
+
+#: autocycle.cpp:234
+msgid "Rejoins channels to gain Op if you're the only user left"
+msgstr ""
