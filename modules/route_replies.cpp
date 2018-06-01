@@ -302,7 +302,7 @@ class CRouteRepliesMod : public CModule {
 
             // If there are arguments to a mode change,
             // we must not route it.
-            if (!Message.GetParams(2).empty()) return CONTINUE;
+            if (!Message.GetParamsColon(2).empty()) return CONTINUE;
 
             // Grab the mode change parameter
             CString sMode = Message.GetParam(1);

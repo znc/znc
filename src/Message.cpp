@@ -151,7 +151,7 @@ CString CMessage::ToString(unsigned int uFlags) const {
         if (!sMessage.empty()) {
             sMessage += " ";
         }
-        sMessage += GetParams(0);
+        sMessage += GetParamsColon(0);
     }
 
     return sMessage;

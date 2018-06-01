@@ -259,7 +259,7 @@ REGISTER_ZNC_MESSAGE(CJoinMessage);
 
 class CModeMessage : public CTargetMessage {
   public:
-    CString GetModes() const { return GetParams(1).TrimPrefix_n(":"); }
+    CString GetModes() const { return GetParamsColon(1).TrimPrefix_n(":"); }
 };
 REGISTER_ZNC_MESSAGE(CModeMessage);
 
