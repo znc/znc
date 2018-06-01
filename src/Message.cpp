@@ -48,7 +48,7 @@ void CMessage::SetCommand(const CString& sCommand) {
     InitType();
 }
 
-CString CMessage::GetParams(unsigned int uIdx, unsigned int uLen) const {
+CString CMessage::GetParamsColon(unsigned int uIdx, unsigned int uLen) const {
     if (m_vsParams.empty() || uLen == 0) {
         return "";
     }
