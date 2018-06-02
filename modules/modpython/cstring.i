@@ -7,6 +7,7 @@
    Remove unrelated stuff from top of file which is included by default
    s/std::string/CString/g
    s/std_string/CString/g
+   Add "%traits_ptypen(CString);"
 */
 
 //
@@ -17,6 +18,7 @@
 
 %feature("naturalvar") CString;
 class CString;
+%traits_ptypen(CString);
 
 /*@SWIG:/swig/3.0.8/typemaps/CStrings.swg,70,%typemaps_CString@*/
 
@@ -79,15 +81,6 @@ SWIGINTERNINLINE PyObject *
 SWIG_From_CString  (const CString& s)
 {
   return SWIG_FromCharPtrAndSize(s.data(), s.size());
-}
-
-namespace swig {
-    template<>
-        struct traits_from<CString> {
-            static PyObject* from(const CString& s) {
-                return SWIG_From_CString(s);
-            }
-        };
 }
 }
 /*@SWIG@*/
