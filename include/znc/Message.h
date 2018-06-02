@@ -31,11 +31,9 @@
 #endif
 
 #ifdef SWIG
-#define ZNC_MSG_DEPRECATED(msg, repl)
-#elif defined(__clang__)
-#define ZNC_MSG_DEPRECATED(msg, repl) __attribute__((deprecated(msg, repl)))
+#define ZNC_MSG_DEPRECATED(msg)
 #else
-#define ZNC_MSG_DEPRECATED(msg, repl) __attribute__((deprecated(msg)))
+#define ZNC_MSG_DEPRECATED(msg) __attribute__((deprecated(msg)))
 #endif
 
 #include <znc/zncconfig.h>
@@ -127,7 +125,7 @@ class CMessage {
 
     /// @deprecated use GetParamsColon() instead.
     CString GetParams(unsigned int uIdx, unsigned int uLen = -1) const
-        ZNC_MSG_DEPRECATED("Use GetParamsColon() instead", "GetParamsColon") {
+        ZNC_MSG_DEPRECATED("Use GetParamsColon() instead") {
         return GetParamsColon(uIdx, uLen);
     }
     CString GetParamsColon(unsigned int uIdx, unsigned int uLen = -1) const;
