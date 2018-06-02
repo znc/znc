@@ -74,11 +74,20 @@ SWIG_AsVal_CString (PyObject * obj, CString *val)
 }
 /*@SWIG@*/
 /*@SWIG:/swig/3.0.8/typemaps/CStrings.swg,38,%CString_from@*/
-%fragment("SWIG_" "From" "_" {CString},"header",fragment="SWIG_FromCharPtrAndSize") {
+%fragment("SWIG_" "From" "_" {CString},"header",fragment="SWIG_FromCharPtrAndSize", fragment="StdTraits") {
 SWIGINTERNINLINE PyObject *
 SWIG_From_CString  (const CString& s)
 {
   return SWIG_FromCharPtrAndSize(s.data(), s.size());
+}
+
+namespace swig {
+    template<>
+        struct traits_from<CString> {
+            static PyObject* from(const CString& s) {
+                return SWIG_From_CString(s);
+            }
+        };
 }
 }
 /*@SWIG@*/
