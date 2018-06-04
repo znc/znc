@@ -152,5 +152,89 @@ TEST_F(ZNCTest, ModperlSocket) {
     client.ReadUntil("received 4 bytes");
 }
 
+TEST_F(ZNCTest, ModpythonVCString) {
+    if (QProcessEnvironment::systemEnvironment().value(
+            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
+        return;
+    }
+    auto znc = Run();
+    znc->CanLeak();
+
+    InstallModule("test.py", R"(
+        import znc
+
+        class test(znc.Module):
+            def OnUserRawMessage(self, msg):
+                self.PutModule(str(msg.GetParams()))
+                return znc.CONTINUE
+    )");
+
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod modpython");
+    client.Write("znc loadmod test");
+    client.Write("PRIVMSG *test :foo");
+    client.ReadUntil("'*test', 'foo'");
+}
+
+TEST_F(ZNCTest, ModperlVCString) {
+    if (QProcessEnvironment::systemEnvironment().value(
+            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
+        return;
+    }
+    auto znc = Run();
+    znc->CanLeak();
+
+    InstallModule("test.pm", R"(
+        package test;
+        use base 'ZNC::Module';
+        sub OnUserRawMessage {
+            my ($self, $msg) = @_;
+            my @params = $msg->GetParams;
+            $self->PutModule("@params");
+            return $ZNC::CONTINUE;
+        }
+
+        1;
+    )");
+
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod modperl");
+    client.Write("znc loadmod test");
+    client.Write("PRIVMSG *test :foo");
+    client.ReadUntil(":*test foo");
+}
+
+TEST_F(ZNCTest, ModperlNV) {
+    if (QProcessEnvironment::systemEnvironment().value(
+            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
+        return;
+    }
+    auto znc = Run();
+    znc->CanLeak();
+
+    InstallModule("test.pm", R"(
+        package test;
+        use base 'ZNC::Module';
+        sub OnLoad {
+            my $self = shift;
+            $self->SetNV('a', 'X');
+            $self->NV->{b} = 'Y';
+            my @k = keys %{$self->NV};
+            $self->PutModule("@k");
+            return $ZNC::CONTINUE;
+        }
+
+        1;
+    )");
+
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod modperl");
+    client.Write("znc loadmod test");
+    client.ReadUntil(":a b");
+}
+
 }  // namespace
 }  // namespace znc_inttest

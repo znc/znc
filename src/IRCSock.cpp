@@ -761,7 +761,7 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
             CChan* pChan = m_pNetwork->FindChan(Message.GetParam(1));
 
             if (pChan) {
-                pChan->SetModes(Message.GetParams(2));
+                pChan->SetModes(Message.GetParamsColon(2));
 
                 // We don't SetModeKnown(true) here,
                 // because a 329 will follow

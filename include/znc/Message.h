@@ -30,6 +30,12 @@
 #define ZNC_LVREFQUAL
 #endif
 
+#ifdef SWIG
+#define ZNC_MSG_DEPRECATED(msg)
+#else
+#define ZNC_MSG_DEPRECATED(msg) __attribute__((deprecated(msg)))
+#endif
+
 #include <znc/zncconfig.h>
 #include <znc/ZNCString.h>
 #include <znc/Nick.h>
@@ -55,7 +61,8 @@ class CIRCNetwork;
  * - `nick` is the sender, which can be obtained with GetNick()
  * - `cmd` is command, which is obtained via GetCommand()
  * - `0`, `1`, ... are parameters, available via GetParam(n), which removes the
- *   leading colon (:). If you don't want to remove the colon, use GetParams().
+ *   leading colon (:). If you don't want to remove the colon, use
+ *   GetParamsColon().
  *
  * For certain events, like a PRIVMSG, convienience commands like GetChan() and
  * GetNick() are available, this is not true for all CMessage extensions.
@@ -114,8 +121,14 @@ class CMessage {
     void SetCommand(const CString& sCommand);
 
     const VCString& GetParams() const { return m_vsParams; }
-    CString GetParams(unsigned int uIdx, unsigned int uLen = -1) const;
     void SetParams(const VCString& vsParams);
+
+    /// @deprecated use GetParamsColon() instead.
+    CString GetParams(unsigned int uIdx, unsigned int uLen = -1) const
+        ZNC_MSG_DEPRECATED("Use GetParamsColon() instead") {
+        return GetParamsColon(uIdx, uLen);
+    }
+    CString GetParamsColon(unsigned int uIdx, unsigned int uLen = -1) const;
 
     CString GetParam(unsigned int uIdx) const;
     void SetParam(unsigned int uIdx, const CString& sParam);
@@ -244,7 +257,7 @@ REGISTER_ZNC_MESSAGE(CJoinMessage);
 
 class CModeMessage : public CTargetMessage {
   public:
-    CString GetModes() const { return GetParams(1).TrimPrefix_n(":"); }
+    CString GetModes() const { return GetParamsColon(1).TrimPrefix_n(":"); }
 };
 REGISTER_ZNC_MESSAGE(CModeMessage);
 
