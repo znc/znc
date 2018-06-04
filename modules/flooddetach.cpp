@@ -32,9 +32,12 @@ class CFloodDetachMod : public CModule {
         AddCommand("Secs", t_d("[<limit>]"),
                    t_d("Show or set number of seconds in the time interval"),
                    [=](const CString& sLine) { SecsCommand(sLine); });
-        AddCommand("Lines", t_d("[<limit>]"), t_d("blahblah: description"),
+        AddCommand("Lines", t_d("[<limit>]"),
+                   t_d("Show or set number of lines in the time interval"),
                    [=](const CString& sLine) { LinesCommand(sLine); });
-        AddCommand("Silent", t_d("[yes|no]"), t_d("blahblah: description"),
+        AddCommand("Silent", "[yes|no]",
+                   t_d("Show or set whether to notify you about detaching and "
+                       "attaching back"),
                    [=](const CString& sLine) { SilentCommand(sLine); });
     }
 
