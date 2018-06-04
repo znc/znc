@@ -79,7 +79,7 @@ msgstr "Nein"
 
 #: listsockets.cpp:142
 msgid "Listener"
-msgstr ""
+msgstr "Listener"
 
 #: listsockets.cpp:144
 msgid "Inbound"

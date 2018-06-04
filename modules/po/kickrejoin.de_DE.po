@@ -14,7 +14,7 @@ msgstr ""
 
 #: kickrejoin.cpp:56
 msgid "<secs>"
-msgstr ""
+msgstr "<Sekunden>"
 
 #: kickrejoin.cpp:56
 msgid "Set the rejoin delay"

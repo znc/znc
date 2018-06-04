@@ -38,6 +38,10 @@ msgid ""
 "the appropriate pass and things should start working, or setpass to a new "
 "pass and save to reinstantiate"
 msgstr ""
+"Passwort ist nicht gesagt, was üblicherweise bedeutet, dass die "
+"Entschlüsselung fehlgeschlagen ist. Du kannst setpass benutzen um das "
+"richtige Passwort zu setzen und alles sollte funktionieren, oder setpass ein "
+"neues Passwort und save für einen Neubeginn"
 
 #: savebuff.cpp:232
 msgid "Password set to [{1}]"

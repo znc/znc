@@ -604,7 +604,7 @@ msgstr "Сеть удалена"
 
 #: ClientCommand.cpp:585
 msgid "Failed to delete network, perhaps this network doesn't exist"
-msgstr ""
+msgstr "Не могу удалить сеть, возможно, она не существует"
 
 #: ClientCommand.cpp:595
 msgid "User {1} not found"
@@ -618,22 +618,22 @@ msgstr "Сеть"
 #: ClientCommand.cpp:604 ClientCommand.cpp:613 ClientCommand.cpp:622
 msgctxt "listnetworks"
 msgid "On IRC"
-msgstr ""
+msgstr "В сети"
 
 #: ClientCommand.cpp:605 ClientCommand.cpp:615
 msgctxt "listnetworks"
 msgid "IRC Server"
-msgstr ""
+msgstr "IRC-сервер"
 
 #: ClientCommand.cpp:606 ClientCommand.cpp:617
 msgctxt "listnetworks"
 msgid "IRC User"
-msgstr ""
+msgstr "Пользователь в IRC"
 
 #: ClientCommand.cpp:607 ClientCommand.cpp:619
 msgctxt "listnetworks"
 msgid "Channels"
-msgstr "Каналы"
+msgstr "Каналов"
 
 #: ClientCommand.cpp:614
 msgctxt "listnetworks"
@@ -648,7 +648,7 @@ msgstr "Нет"
 #: ClientCommand.cpp:628
 msgctxt "listnetworks"
 msgid "No networks"
-msgstr ""
+msgstr "Нет сетей"
 
 #: ClientCommand.cpp:632 ClientCommand.cpp:932
 msgid "Access denied."
@@ -657,34 +657,37 @@ msgstr "Доступ запрещён."
 #: ClientCommand.cpp:643
 msgid "Usage: MoveNetwork <old user> <old network> <new user> [new network]"
 msgstr ""
+"Использование: MoveNetwork <старый пользователь> <старая сеть> <новый "
+"пользователь> [новая сеть]"
 
 #: ClientCommand.cpp:653
 msgid "Old user {1} not found."
-msgstr ""
+msgstr "Старый пользователь {1} не найден."
 
 #: ClientCommand.cpp:659
 msgid "Old network {1} not found."
-msgstr ""
+msgstr "Старая сеть {1} не найдена."
 
 #: ClientCommand.cpp:665
 msgid "New user {1} not found."
-msgstr ""
+msgstr "Новый пользователь {1} не найден."
 
 #: ClientCommand.cpp:670
 msgid "User {1} already has network {2}."
-msgstr ""
+msgstr "У пользователя {1} уже есть сеть {2}."
 
 #: ClientCommand.cpp:676
 msgid "Invalid network name [{1}]"
-msgstr ""
+msgstr "Некорректное имя сети [{1}]"
 
 #: ClientCommand.cpp:692
 msgid "Some files seem to be in {1}. You might want to move them to {2}"
 msgstr ""
+"В {1} остались какие-то файлы. Возможно, вам нужно переместить их в {2}"
 
 #: ClientCommand.cpp:706
 msgid "Error adding network: {1}"
-msgstr ""
+msgstr "Ошибка при добавлении сети: {1}"
 
 #: ClientCommand.cpp:718
 msgid "Success."
@@ -692,31 +695,31 @@ msgstr "Успех."
 
 #: ClientCommand.cpp:721
 msgid "Copied the network to new user, but failed to delete old network"
-msgstr ""
+msgstr "Сеть скопирована успешно, но не могу удалить старую сеть"
 
 #: ClientCommand.cpp:728
 msgid "No network supplied."
-msgstr ""
+msgstr "Сеть не указана."
 
 #: ClientCommand.cpp:733
 msgid "You are already connected with this network."
-msgstr ""
+msgstr "Вы уже подключены к этой сети."
 
 #: ClientCommand.cpp:739
 msgid "Switched to {1}"
-msgstr ""
+msgstr "Переключаю на {1}"
 
 #: ClientCommand.cpp:742
 msgid "You don't have a network named {1}"
-msgstr ""
+msgstr "У вас нет сети с названием {1}"
 
 #: ClientCommand.cpp:754
 msgid "Usage: AddServer <host> [[+]port] [pass]"
-msgstr ""
+msgstr "Использование: AddServer <хост> [[+]порт] [пароль]"
 
 #: ClientCommand.cpp:759
 msgid "Server added"
-msgstr ""
+msgstr "Сервер добавлен"
 
 #: ClientCommand.cpp:762
 msgid ""
@@ -726,7 +729,7 @@ msgstr ""
 
 #: ClientCommand.cpp:777
 msgid "Usage: DelServer <host> [port] [pass]"
-msgstr ""
+msgstr "Использование: DelServer <хост> [порт] [пароль]"
 
 #: ClientCommand.cpp:782 ClientCommand.cpp:822
 msgid "You don't have any servers added."
