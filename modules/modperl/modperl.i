@@ -73,21 +73,24 @@ namespace std {
 	};
 }
 %include "modperl/CString.i"
-%template(_stringlist) std::list<CString>;
-%typemap(out) std::list<CString> {
-	std::list<CString>::const_iterator i;
-	unsigned int j;
-	int len = $1.size();
-	SV **svs = new SV*[len];
-	for (i=$1.begin(), j=0; i!=$1.end(); i++, j++) {
-		svs[j] = sv_newmortal();
-		SwigSvFromString(svs[j], *i);
-	}
-	AV *myav = av_make(len, svs);
-	delete[] svs;
-	$result = newRV_noinc((SV*) myav);
-	sv_2mortal($result);
-	argvi++;
+
+%typemap(out) VCString {
+    EXTEND(sp, $1.size());
+    for (int i = 0; i < $1.size(); ++i) {
+        SV* x = newSV(0);
+        SwigSvFromString(x, $1[i]);
+        $result = sv_2mortal(x);
+        argvi++;
+    }
+}
+%typemap(out) const VCString& {
+    EXTEND(sp, $1->size());
+    for (int i = 0; i < $1->size(); ++i) {
+        SV* x = newSV(0);
+        SwigSvFromString(x, (*$1)[i]);
+        $result = sv_2mortal(x);
+        argvi++;
+    }
 }
 
 %template(VIRCNetworks) std::vector<CIRCNetwork*>;
@@ -176,25 +179,17 @@ class MCString : public std::map<CString, CString> {};
 %}
 
 %extend CModule {
-	std::list<CString> _GetNVKeys() {
-		std::list<CString> res;
-		for (MCString::iterator i = $self->BeginNV(); i != $self->EndNV(); ++i) {
-			res.push_back(i->first);
-		}
-		return res;
-	}
+    VCString GetNVKeys() {
+        VCString result;
+        for (auto i = $self->BeginNV(); i != $self->EndNV(); ++i) {
+            result.push_back(i->first);
+        }
+        return result;
+    }
 	bool ExistsNV(const CString& sName) {
 		return $self->EndNV() != $self->FindNV(sName);
 	}
 }
-
-%perlcode %{
-	package ZNC::CModule;
-	sub GetNVKeys {
-		my $result = _GetNVKeys(@_);
-		return @$result;
-	}
-%}
 
 %extend CModules {
 	void push_back(CModule* p) {
