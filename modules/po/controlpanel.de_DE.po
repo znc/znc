@@ -36,7 +36,7 @@ msgstr "Ganzzahl"
 
 #: controlpanel.cpp:80
 msgid "Number"
-msgstr ""
+msgstr "Nummer"
 
 #: controlpanel.cpp:123
 msgid "The following variables are available when using the Set/Get commands:"
@@ -654,7 +654,7 @@ msgstr "<Benutzername> <Netzwerk>"
 
 #: controlpanel.cpp:1600
 msgid "Cycles the user's IRC server connection"
-msgstr ""
+msgstr "Erneuert die IRC-Verbindung des Benutzers"
 
 #: controlpanel.cpp:1603
 msgid "Disconnects the user from their IRC server"
@@ -702,46 +702,48 @@ msgstr "Zeigt eine Liste der Module eines Netzwerks"
 
 #: controlpanel.cpp:1626
 msgid "List the configured CTCP replies"
-msgstr ""
+msgstr "Liste die konfigurierten CTCP-Antworten auf"
 
 #: controlpanel.cpp:1628
 msgid "<username> <ctcp> [reply]"
-msgstr ""
+msgstr "<Benutzername> <ctcp> [Antwort]"
 
 #: controlpanel.cpp:1629
 msgid "Configure a new CTCP reply"
-msgstr ""
+msgstr "Konfiguriere eine neue CTCP-Antwort"
 
 #: controlpanel.cpp:1631
 msgid "<username> <ctcp>"
-msgstr ""
+msgstr "<Benutzername> <ctcp>"
 
 #: controlpanel.cpp:1632
 msgid "Remove a CTCP reply"
-msgstr ""
+msgstr "Entfernt eine CTCP-Antwort"
 
 #: controlpanel.cpp:1636 controlpanel.cpp:1639
 msgid "[username] <network>"
-msgstr ""
+msgstr "[Benutzername] <Netzwerk>"
 
 #: controlpanel.cpp:1637
 msgid "Add a network for a user"
-msgstr ""
+msgstr "Füge ein Netzwerk für einen Benutzer hinzu"
 
 #: controlpanel.cpp:1640
 msgid "Delete a network for a user"
-msgstr ""
+msgstr "Lösche ein Netzwerk für einen Benutzer"
 
 #: controlpanel.cpp:1642
 msgid "[username]"
-msgstr ""
+msgstr "[Benutzername]"
 
 #: controlpanel.cpp:1643
 msgid "List all networks for a user"
-msgstr ""
+msgstr "Listet alle Netzwerke für einen Benutzer auf"
 
 #: controlpanel.cpp:1656
 msgid ""
 "Dynamic configuration through IRC. Allows editing only yourself if you're "
 "not ZNC admin."
 msgstr ""
+"Dynamische Konfiguration durch IRC. Erlaubt es nur dich selbst zu bearbeiten "
+"falls du kein ZNC-Administrator bist."

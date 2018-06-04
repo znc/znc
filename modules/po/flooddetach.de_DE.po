@@ -14,19 +14,19 @@ msgstr ""
 
 #: flooddetach.cpp:30
 msgid "Show current limits"
-msgstr ""
+msgstr "Zeige die aktuellen Limits"
 
 #: flooddetach.cpp:32 flooddetach.cpp:35
 msgid "[<limit>]"
-msgstr ""
+msgstr "[<Limit>]"
 
 #: flooddetach.cpp:33
 msgid "Show or set number of seconds in the time interval"
-msgstr ""
+msgstr "Zeige oder Setze die Anzahl an Sekunden im Zeitinterval"
 
 #: flooddetach.cpp:35 flooddetach.cpp:37
 msgid "blahblah: description"
-msgstr ""
+msgstr "blahblah: Beschreibung"
 
 #: flooddetach.cpp:37
 msgid "[yes|no]"
@@ -34,58 +34,60 @@ msgstr ""
 
 #: flooddetach.cpp:90
 msgid "Flood in {1} is over, reattaching..."
-msgstr ""
+msgstr "Flut in {1} ist vorbei, verbinde..."
 
 #: flooddetach.cpp:147
 msgid "Channel {1} was flooded, you've been detached"
-msgstr ""
+msgstr "Kanal {1} wurde mit Nachrichten geflutet, sie wurden getrennt"
 
 #: flooddetach.cpp:184
 msgid "1 line"
 msgid_plural "{1} lines"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Eine Zeile"
+msgstr[1] "{1} Zeilen"
 
 #: flooddetach.cpp:185
 msgid "every second"
 msgid_plural "every {1} seconds"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "jede Sekunde"
+msgstr[1] "alle {1} Sekunden"
 
 #: flooddetach.cpp:187
 msgid "Current limit is {1} {2}"
-msgstr ""
+msgstr "Aktuelles Limit ist {1} {2}"
 
 #: flooddetach.cpp:194
 msgid "Seconds limit is {1}"
-msgstr ""
+msgstr "Sekunden-Grenze ist {1}"
 
 #: flooddetach.cpp:199
 msgid "Set seconds limit to {1}"
-msgstr ""
+msgstr "Sekunden-Grenze auf {1} gesetzt"
 
 #: flooddetach.cpp:208
 msgid "Lines limit is {1}"
-msgstr ""
+msgstr "Zeilen-Grenze ist {1}"
 
 #: flooddetach.cpp:213
 msgid "Set lines limit to {1}"
-msgstr ""
+msgstr "Zeilen-Grenze auf {1} gesetzt"
 
 #: flooddetach.cpp:226
 msgid "Module messages are disabled"
-msgstr ""
+msgstr "Modul-Nachrichten sind deaktiviert"
 
 #: flooddetach.cpp:228
 msgid "Module messages are enabled"
-msgstr ""
+msgstr "Modul-Nachrichten sind aktiviert"
 
 #: flooddetach.cpp:244
 msgid ""
 "This user module takes up to two arguments. Arguments are numbers of "
 "messages and seconds."
 msgstr ""
+"Dieses Benutzer-Modul erhält bis zu zwei Argumente. Argumente sind Anzahl an "
+"Nachrichten und Sekunden."
 
 #: flooddetach.cpp:248
 msgid "Detach channels when flooded"
-msgstr ""
+msgstr "Trenne Kanäle bei Nachrichten-Flut"
