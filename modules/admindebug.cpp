@@ -21,6 +21,9 @@
 #include <znc/ZNCDebug.h>
 
 class CAdminDebugMod : public CModule {
+  private:
+      CString m_sEnabledBy;
+
   public:
     MODCONSTRUCTOR(CAdminDebugMod) {
         AddHelpCommand();
@@ -47,7 +50,7 @@ class CAdminDebugMod : public CModule {
             return;
         }
 
-        ToggleDebug(false, GetNV("enabled_by"));
+        ToggleDebug(false, m_sEnabledBy);
     }
 
     bool ToggleDebug(bool bEnable, CString sEnabledBy) {
@@ -72,9 +75,9 @@ class CAdminDebugMod : public CModule {
                 CString("Messages, credentials, and other sensitive data may"
                 " become exposed to the host during this period.")
             );
-            SetNV("enabled_by", sEnabledBy);
+            m_sEnabledBy = sEnabledBy;
         } else {
-            DelNV("enabled_by");
+            m_sEnabledBy = nullptr;
         }
 
         return true;
