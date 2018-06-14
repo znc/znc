@@ -76,7 +76,7 @@ class CAdminLogMod : public CModule {
             Log("[" + GetUser()->GetUserName() + "/" + GetNetwork()->GetName() +
                     "] disconnected from IRC: " +
                     GetNetwork()->GetCurrentServer()->GetName() + " [" +
-                    Message.GetParamsColon(1) + "]",
+                    Message.GetParamsColon(0) + "]",
                 LOG_NOTICE);
         }
         return CONTINUE;
