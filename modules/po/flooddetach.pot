@@ -15,68 +15,68 @@ msgstr ""
 msgid "Show or set number of seconds in the time interval"
 msgstr ""
 
-#: flooddetach.cpp:35 flooddetach.cpp:37
-msgid "blahblah: description"
+#: flooddetach.cpp:36
+msgid "Show or set number of lines in the time interval"
 msgstr ""
 
-#: flooddetach.cpp:37
-msgid "[yes|no]"
+#: flooddetach.cpp:39
+msgid "Show or set whether to notify you about detaching and attaching back"
 msgstr ""
 
-#: flooddetach.cpp:90
+#: flooddetach.cpp:93
 msgid "Flood in {1} is over, reattaching..."
 msgstr ""
 
-#: flooddetach.cpp:147
+#: flooddetach.cpp:150
 msgid "Channel {1} was flooded, you've been detached"
 msgstr ""
 
-#: flooddetach.cpp:184
+#: flooddetach.cpp:187
 msgid "1 line"
 msgid_plural "{1} lines"
 msgstr[0] ""
 msgstr[1] ""
 
-#: flooddetach.cpp:185
+#: flooddetach.cpp:188
 msgid "every second"
 msgid_plural "every {1} seconds"
 msgstr[0] ""
 msgstr[1] ""
 
-#: flooddetach.cpp:187
+#: flooddetach.cpp:190
 msgid "Current limit is {1} {2}"
 msgstr ""
 
-#: flooddetach.cpp:194
+#: flooddetach.cpp:197
 msgid "Seconds limit is {1}"
 msgstr ""
 
-#: flooddetach.cpp:199
+#: flooddetach.cpp:202
 msgid "Set seconds limit to {1}"
 msgstr ""
 
-#: flooddetach.cpp:208
+#: flooddetach.cpp:211
 msgid "Lines limit is {1}"
 msgstr ""
 
-#: flooddetach.cpp:213
+#: flooddetach.cpp:216
 msgid "Set lines limit to {1}"
 msgstr ""
 
-#: flooddetach.cpp:226
+#: flooddetach.cpp:229
 msgid "Module messages are disabled"
 msgstr ""
 
-#: flooddetach.cpp:228
+#: flooddetach.cpp:231
 msgid "Module messages are enabled"
 msgstr ""
 
-#: flooddetach.cpp:244
+#: flooddetach.cpp:247
 msgid ""
 "This user module takes up to two arguments. Arguments are numbers of "
 "messages and seconds."
 msgstr ""
 
-#: flooddetach.cpp:248
+#: flooddetach.cpp:251
 msgid "Detach channels when flooded"
 msgstr ""
