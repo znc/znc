@@ -2,19 +2,19 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: znc-bouncer\n"
-"X-Crowdin-Language: id\n"
-"X-Crowdin-File: /master/modules/po/simple_away.pot\n"
+"X-Crowdin-Language: nl\n"
+"X-Crowdin-File: /1.7.x/modules/po/simple_away.pot\n"
 "Project-Id-Version: znc-bouncer\n"
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
-"Language-Team: Indonesian\n"
-"Language: id_ID\n"
+"Language-Team: Dutch\n"
+"Language: nl_NL\n"
 
 #: simple_away.cpp:56
 msgid "[<text>]"
-msgstr "[<text>]"
+msgstr ""
 
 #: simple_away.cpp:57
 #, c-format
@@ -22,16 +22,14 @@ msgid ""
 "Prints or sets the away reason (%awaytime% is replaced with the time you "
 "were set away, supports substitutions using ExpandString)"
 msgstr ""
-"Mencetak atau mengatur alasan away (%awaytime% diganti dengan waktu yang "
-"anda tentukan, mendukung substitusi menggunakan ExpandString)"
 
 #: simple_away.cpp:63
 msgid "Prints the current time to wait before setting you away"
-msgstr "Mencetak waktu saat ini untuk menunggu sebelum membuat anda pergi"
+msgstr ""
 
 #: simple_away.cpp:65
 msgid "<seconds>"
-msgstr "<seconds>"
+msgstr ""
 
 #: simple_away.cpp:66
 msgid "Sets the time to wait before setting you away"
@@ -47,11 +45,11 @@ msgstr ""
 
 #: simple_away.cpp:136
 msgid "Away reason set"
-msgstr "Alasan away disetel"
+msgstr ""
 
 #: simple_away.cpp:138
 msgid "Away reason: {1}"
-msgstr "Alasan away: {1}"
+msgstr ""
 
 #: simple_away.cpp:139
 msgid "Current away reason would be: {1}"
@@ -61,6 +59,7 @@ msgstr ""
 msgid "Current timer setting: 1 second"
 msgid_plural "Current timer setting: {1} seconds"
 msgstr[0] ""
+msgstr[1] ""
 
 #: simple_away.cpp:153 simple_away.cpp:161
 msgid "Timer disabled"
@@ -70,6 +69,7 @@ msgstr ""
 msgid "Timer set to 1 second"
 msgid_plural "Timer set to: {1} seconds"
 msgstr[0] ""
+msgstr[1] ""
 
 #: simple_away.cpp:166
 msgid "Current MinClients setting: {1}"
