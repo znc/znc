@@ -60,7 +60,7 @@ timestamps {
                 )
                 sh 'git add .'
                 try {
-                  sh 'git commit -m "Update translations from Crowdin"'
+                  sh 'git commit -m "Update translations from Crowdin for ' + modifiedLocales + '"'
                 } catch(e) {
                   echo 'No changes found'
                   return
