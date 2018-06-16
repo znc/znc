@@ -77,7 +77,7 @@ timestamps {
                   def pulls = httpRequest consoleLogResponseBody: true, customHeaders: headers, url: "https://api.github.com/repos/${upstream_user}/${upstream_repo}/pulls?head=${my_user}:${my_branch}&base=${upstream_branch}"
                   pulls = new JsonSlurper().parseText(pulls.content)
                   if (!pulls) {
-                    def bodyContents = 'Crowdin: https://crowdin.com/project/znc-bouncer\nJenkins Build: ' + build.environment.get('BUILD_URL')
+                    def bodyContents = 'Crowdin: https://crowdin.com/project/znc-bouncer\nJenkins Build: ' + env.BUILD_URL
                     bodyContents += "\n\nModified locales:\n" + modifiedLocales
                     bodyContents += "\n\n<details><summary>Modified files</summary>" + gitStatusShort + '</details>'
 
