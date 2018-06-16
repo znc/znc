@@ -6,7 +6,7 @@ msgstr ""
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: nl\n"
-"X-Crowdin-File: /1.7.x/modules/po/fail2ban.pot\n"
+"X-Crowdin-File: /master/modules/po/fail2ban.pot\n"
 "Project-Id-Version: znc-bouncer\n"
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: Dutch\n"
@@ -14,104 +14,112 @@ msgstr ""
 
 #: fail2ban.cpp:25
 msgid "[minutes]"
-msgstr ""
+msgstr "[minuten]"
 
 #: fail2ban.cpp:26
 msgid "The number of minutes IPs are blocked after a failed login."
 msgstr ""
+"Het aantal minuten dat IP-adressen geblokkeerd worden na een mislukte "
+"inlogpoging."
 
 #: fail2ban.cpp:28
 msgid "[count]"
-msgstr ""
+msgstr "[aantal]"
 
 #: fail2ban.cpp:29
 msgid "The number of allowed failed login attempts."
-msgstr ""
+msgstr "Het aantal toegestane mislukte inlogpogingen."
 
 #: fail2ban.cpp:31 fail2ban.cpp:33
 msgid "<hosts>"
-msgstr ""
+msgstr "<hosts>"
 
 #: fail2ban.cpp:31
 msgid "Ban the specified hosts."
-msgstr ""
+msgstr "Verban de ingevoerde hosts."
 
 #: fail2ban.cpp:33
 msgid "Unban the specified hosts."
-msgstr ""
+msgstr "Verbanning van ingevoerde hosts weghalen."
 
 #: fail2ban.cpp:35
 msgid "List banned hosts."
-msgstr ""
+msgstr "Lijst van verbannen hosts."
 
 #: fail2ban.cpp:55
 msgid ""
 "Invalid argument, must be the number of minutes IPs are blocked after a "
 "failed login and can be followed by number of allowed failed login attempts"
 msgstr ""
+"Ongeldig argument, dit moet het aantal minuten zijn dat de IP-adressen "
+"geblokkeerd worden na een mislukte inlogpoging, gevolgd door het nummer van "
+"toegestane mislukte inlogpogingen"
 
 #: fail2ban.cpp:77 fail2ban.cpp:100 fail2ban.cpp:123 fail2ban.cpp:146
 #: fail2ban.cpp:172
 msgid "Access denied"
-msgstr ""
+msgstr "Toegang geweigerd"
 
 #: fail2ban.cpp:86
 msgid "Usage: Timeout [minutes]"
-msgstr ""
+msgstr "Gebruik: Timeout [minuten]"
 
 #: fail2ban.cpp:91 fail2ban.cpp:94
 msgid "Timeout: {1} min"
-msgstr ""
+msgstr "Time-out: {1} minuten"
 
 #: fail2ban.cpp:109
 msgid "Usage: Attempts [count]"
-msgstr ""
+msgstr "Gebruik: Attempts [aantal]"
 
 #: fail2ban.cpp:114 fail2ban.cpp:117
 msgid "Attempts: {1}"
-msgstr ""
+msgstr "Pogingen: {1}"
 
 #: fail2ban.cpp:130
 msgid "Usage: Ban <hosts>"
-msgstr ""
+msgstr "Gebruik: Ban <hosts>"
 
 #: fail2ban.cpp:140
 msgid "Banned: {1}"
-msgstr ""
+msgstr "Verbannen: {1}"
 
 #: fail2ban.cpp:153
 msgid "Usage: Unban <hosts>"
-msgstr ""
+msgstr "Gebruik: Unban <hosts>"
 
 #: fail2ban.cpp:163
 msgid "Unbanned: {1}"
-msgstr ""
+msgstr "Verbanning verwijderd: {1}"
 
 #: fail2ban.cpp:165
 msgid "Ignored: {1}"
-msgstr ""
+msgstr "Genegeerd: {1}"
 
 #: fail2ban.cpp:177 fail2ban.cpp:182
 msgctxt "list"
 msgid "Host"
-msgstr ""
+msgstr "Host"
 
 #: fail2ban.cpp:178 fail2ban.cpp:183
 msgctxt "list"
 msgid "Attempts"
-msgstr ""
+msgstr "Pogingen"
 
 #: fail2ban.cpp:187
 msgctxt "list"
 msgid "No bans"
-msgstr ""
+msgstr "Geen verbanningen"
 
 #: fail2ban.cpp:244
 msgid ""
 "You might enter the time in minutes for the IP banning and the number of "
 "failed logins before any action is taken."
 msgstr ""
+"Je mag de tijd in minuten invoeren voor de IP verbannen en het nummer van "
+"mislukte inlogpoging voordat actie ondernomen wordt."
 
 #: fail2ban.cpp:249
 msgid "Block IPs for some time after a failed login."
 msgstr ""
+"Blokkeer IP-addressen voor een bepaalde tijd na een mislukte inlogpoging."

@@ -6,7 +6,7 @@ msgstr ""
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: nl\n"
-"X-Crowdin-File: /1.7.x/modules/po/certauth.pot\n"
+"X-Crowdin-File: /master/modules/po/certauth.pot\n"
 "Project-Id-Version: znc-bouncer\n"
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: Dutch\n"
@@ -14,95 +14,98 @@ msgstr ""
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:7
 msgid "Add a key"
-msgstr ""
+msgstr "Voeg een sleutel toe"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:11
 msgid "Key:"
-msgstr ""
+msgstr "Sleutel:"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:15
 msgid "Add Key"
-msgstr ""
+msgstr "Voeg sleutel toe"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:23
 msgid "You have no keys."
-msgstr ""
+msgstr "Je hebt geen sleutels."
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:30
 msgctxt "web"
 msgid "Key"
-msgstr ""
+msgstr "Sleutel"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:36
 msgid "del"
-msgstr ""
+msgstr "Verwijder"
 
 #: certauth.cpp:31
 msgid "[pubkey]"
-msgstr ""
+msgstr "[publieke sleutel]"
 
 #: certauth.cpp:32
 msgid "Add a public key. If key is not provided will use the current key"
 msgstr ""
+"Voeg een publieke sleutel toe. Als deze niet ingevoerd word zal de huidige "
+"sleutel gebruikt worden"
 
 #: certauth.cpp:35
 msgid "id"
-msgstr ""
+msgstr "id"
 
 #: certauth.cpp:35
 msgid "Delete a key by its number in List"
-msgstr ""
+msgstr "Verwijder een sleutel naar aanleiding van het nummer in de lijst"
 
 #: certauth.cpp:37
 msgid "List your public keys"
-msgstr ""
+msgstr "Laat je publieke sleutels zien"
 
 #: certauth.cpp:39
 msgid "Print your current key"
-msgstr ""
+msgstr "Laat je huidige sleutel zien"
 
 #: certauth.cpp:142
 msgid "You are not connected with any valid public key"
-msgstr ""
+msgstr "Je bent niet verbonden met een geldige publieke sleutel"
 
 #: certauth.cpp:144
 msgid "Your current public key is: {1}"
-msgstr ""
+msgstr "Je huidige publieke slutel is: {1}"
 
 #: certauth.cpp:157
 msgid "You did not supply a public key or connect with one."
-msgstr ""
+msgstr "Je hebt geen publieke sleutel ingevoerd of verbonden hiermee."
 
 #: certauth.cpp:160
 msgid "Key '{1}' added."
-msgstr ""
+msgstr "Sleutel '{1}' toegevoegd."
 
 #: certauth.cpp:162
 msgid "The key '{1}' is already added."
-msgstr ""
+msgstr "De sleutel '{1}' is al toegevoegd."
 
 #: certauth.cpp:170 certauth.cpp:182
 msgctxt "list"
 msgid "Id"
-msgstr ""
+msgstr "Id"
 
 #: certauth.cpp:171 certauth.cpp:183
 msgctxt "list"
 msgid "Key"
-msgstr ""
+msgstr "Sleutel"
 
 #: certauth.cpp:175 certauth.cpp:189 certauth.cpp:198
 msgid "No keys set for your user"
-msgstr ""
+msgstr "Geen sleutels ingesteld voor gebruiker"
 
 #: certauth.cpp:203
 msgid "Invalid #, check \"list\""
-msgstr ""
+msgstr "Ongeldig #, controleer \"list\""
 
 #: certauth.cpp:215
 msgid "Removed"
-msgstr ""
+msgstr "Verwijderd"
 
 #: certauth.cpp:290
 msgid "Allows users to authenticate via SSL client certificates."
 msgstr ""
+"Staat gebruikers toe zich te identificeren via SSL client certificaten."

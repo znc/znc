@@ -6,7 +6,7 @@ msgstr ""
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: nl\n"
-"X-Crowdin-File: /1.7.x/modules/po/blockuser.pot\n"
+"X-Crowdin-File: /master/modules/po/blockuser.pot\n"
 "Project-Id-Version: znc-bouncer\n"
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: Dutch\n"
@@ -14,84 +14,84 @@ msgstr ""
 
 #: modules/po/../data/blockuser/tmpl/blockuser_WebadminUser.tmpl:9
 msgid "Account is blocked"
-msgstr ""
+msgstr "Account is geblokkeerd"
 
 #: blockuser.cpp:23
 msgid "Your account has been disabled. Contact your administrator."
-msgstr ""
+msgstr "Je account is uitgeschakeld. Neem contact op met de beheerder."
 
 #: blockuser.cpp:29
 msgid "List blocked users"
-msgstr ""
+msgstr "Laat geblokkeerde gebruikers zien"
 
 #: blockuser.cpp:31 blockuser.cpp:33
 msgid "<user>"
-msgstr ""
+msgstr "<gebruiker>"
 
 #: blockuser.cpp:31
 msgid "Block a user"
-msgstr ""
+msgstr "Gebruiker blokkeren"
 
 #: blockuser.cpp:33
 msgid "Unblock a user"
-msgstr ""
+msgstr "Gebruiker deblokkeren"
 
 #: blockuser.cpp:55
 msgid "Could not block {1}"
-msgstr ""
+msgstr "Kon {1} niet blokkeren"
 
 #: blockuser.cpp:76
 msgid "Access denied"
-msgstr ""
+msgstr "Toegang geweigerd"
 
 #: blockuser.cpp:85
 msgid "No users are blocked"
-msgstr ""
+msgstr "Geen gebruikers zijn geblokkeerd"
 
 #: blockuser.cpp:88
 msgid "Blocked users:"
-msgstr ""
+msgstr "Geblokkeerde gebruikers:"
 
 #: blockuser.cpp:100
 msgid "Usage: Block <user>"
-msgstr ""
+msgstr "Gebruik: Block <gebruiker>"
 
 #: blockuser.cpp:105 blockuser.cpp:147
 msgid "You can't block yourself"
-msgstr ""
+msgstr "Je kan jezelf niet blokkeren"
 
 #: blockuser.cpp:110 blockuser.cpp:152
 msgid "Blocked {1}"
-msgstr ""
+msgstr "{1} geblokkeerd"
 
 #: blockuser.cpp:112
 msgid "Could not block {1} (misspelled?)"
-msgstr ""
+msgstr "Kon {1} niet blokkeren (onjuist gespeld?)"
 
 #: blockuser.cpp:120
 msgid "Usage: Unblock <user>"
-msgstr ""
+msgstr "Gebruik: Unblock <gebruiker>"
 
 #: blockuser.cpp:125 blockuser.cpp:161
 msgid "Unblocked {1}"
-msgstr ""
+msgstr "{1} gedeblokkeerd"
 
 #: blockuser.cpp:127
 msgid "This user is not blocked"
-msgstr ""
+msgstr "Deze gebruiker is niet geblokkeerd"
 
 #: blockuser.cpp:155
 msgid "Couldn't block {1}"
-msgstr ""
+msgstr "Kon {1} niet blokkeren"
 
 #: blockuser.cpp:164
 msgid "User {1} is not blocked"
-msgstr ""
+msgstr "Gebruiker {1} is niet geblokkeerd"
 
 #: blockuser.cpp:216
 msgid "Enter one or more user names. Separate them by spaces."
-msgstr ""
+msgstr "Voer één of meer namen in. Scheid deze met spaties."
 
 #: blockuser.cpp:219
 msgid "Block certain users from logging in."
-msgstr ""
+msgstr "Blokkeer inloggen door bepaalde gebruikers."

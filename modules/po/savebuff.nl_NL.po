@@ -6,7 +6,7 @@ msgstr ""
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: nl\n"
-"X-Crowdin-File: /1.7.x/modules/po/savebuff.pot\n"
+"X-Crowdin-File: /master/modules/po/savebuff.pot\n"
 "Project-Id-Version: znc-bouncer\n"
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: Dutch\n"
@@ -14,23 +14,23 @@ msgstr ""
 
 #: savebuff.cpp:65
 msgid "<password>"
-msgstr ""
+msgstr "<wachtwoord>"
 
 #: savebuff.cpp:65
 msgid "Sets the password"
-msgstr ""
+msgstr "Stelt het wachtwoord in"
 
 #: savebuff.cpp:67
 msgid "<buffer>"
-msgstr ""
+msgstr "<buffer>"
 
 #: savebuff.cpp:67
 msgid "Replays the buffer"
-msgstr ""
+msgstr "Speelt de buffer opnieuw af"
 
 #: savebuff.cpp:69
 msgid "Saves all buffers"
-msgstr ""
+msgstr "Slaat alle buffers op"
 
 #: savebuff.cpp:221
 msgid ""
@@ -38,25 +38,32 @@ msgid ""
 "the appropriate pass and things should start working, or setpass to a new "
 "pass and save to reinstantiate"
 msgstr ""
+"Wachtwoord die geleegd is betekent meestal dat de ontsleuteling gefaalt "
+"heeft. Je kan setpass gebruiken om het juiste wachtwoord in te stellen en "
+"dan zou het moeten werken. Of setpass naar een nieuw wachtwoord en opslaan "
+"om opnieuw te starten"
 
 #: savebuff.cpp:232
 msgid "Password set to [{1}]"
-msgstr ""
+msgstr "Wachtwoord ingesteld naar [{1}]"
 
 #: savebuff.cpp:262
 msgid "Replayed {1}"
-msgstr ""
+msgstr "{1} afgespeeld"
 
 #: savebuff.cpp:341
 msgid "Unable to decode Encrypted file {1}"
-msgstr ""
+msgstr "Niet mogelijk om versleuteld bestand te ontsleutelen: {1}"
 
 #: savebuff.cpp:358
 msgid ""
 "This user module takes up to one arguments. Either --ask-pass or the "
 "password itself (which may contain spaces) or nothing"
 msgstr ""
+"Deze gebruikersmodule accepteert maximaal één argument. --ask-pass of het "
+"wachtwoord zelf (welke spaties mag bevatten) of niks"
 
 #: savebuff.cpp:363
 msgid "Stores channel and query buffers to disk, encrypted"
 msgstr ""
+"Slaat kanaal en privé berichten buffers op de harde schijf op, versleuteld"
