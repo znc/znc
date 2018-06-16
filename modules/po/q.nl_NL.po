@@ -14,27 +14,27 @@ msgstr ""
 
 #: modules/po/../data/q/tmpl/index.tmpl:11
 msgid "Username:"
-msgstr ""
+msgstr "Gebruikersnaam:"
 
 #: modules/po/../data/q/tmpl/index.tmpl:13
 msgid "Please enter a username."
-msgstr ""
+msgstr "Voer alsjeblieft een gebruikersnaam in."
 
 #: modules/po/../data/q/tmpl/index.tmpl:16
 msgid "Password:"
-msgstr ""
+msgstr "Wachtwoord:"
 
 #: modules/po/../data/q/tmpl/index.tmpl:18
 msgid "Please enter a password."
-msgstr ""
+msgstr "Voer alsjeblieft een wachtwoord in."
 
 #: modules/po/../data/q/tmpl/index.tmpl:26
 msgid "Options"
-msgstr ""
+msgstr "Opties"
 
 #: modules/po/../data/q/tmpl/index.tmpl:42
 msgid "Save"
-msgstr ""
+msgstr "Opslaan"
 
 #: q.cpp:74
 msgid ""
@@ -42,255 +42,272 @@ msgid ""
 "want to cloak your host now, /msg *q Cloak. You can set your preference "
 "with /msg *q Set UseCloakedHost true/false."
 msgstr ""
+"Melding: Je host zal omhuld worden de volgende keer dat je met IRC verbind. "
+"Als je dit nu wilt doen, doe dan: /msg *q Cloak. Je kan je voorkeur "
+"instellen met /msg *q Set UseCloakedHost true/false."
 
 #: q.cpp:111
 msgid "The following commands are available:"
-msgstr ""
+msgstr "De volgende commando's zijn beschikbaar:"
 
 #: q.cpp:113 q.cpp:116 q.cpp:121 q.cpp:126 q.cpp:130 q.cpp:135 q.cpp:140
 msgid "Command"
-msgstr ""
+msgstr "Commando"
 
 #: q.cpp:114 q.cpp:117 q.cpp:123 q.cpp:127 q.cpp:132 q.cpp:136 q.cpp:141
 #: q.cpp:150 q.cpp:154 q.cpp:158 q.cpp:162 q.cpp:168 q.cpp:174 q.cpp:180
 #: q.cpp:186
 msgid "Description"
-msgstr ""
+msgstr "Beschrijving"
 
 #: q.cpp:116
 msgid "Auth [<username> <password>]"
-msgstr ""
+msgstr "Auth [<gebruikersnaam> <wachtwoord>]"
 
 #: q.cpp:118
 msgid "Tries to authenticate you with Q. Both parameters are optional."
-msgstr ""
+msgstr "Probeert je te authenticeren met Q, beide parameters zijn optioneel."
 
 #: q.cpp:124
 msgid "Tries to set usermode +x to hide your real hostname."
 msgstr ""
+"Probeert gebruikersmodus +x in te stellen om je echte hostname te verbergen."
 
 #: q.cpp:128
 msgid "Prints the current status of the module."
-msgstr ""
+msgstr "Toont de huidige status van de module."
 
 #: q.cpp:133
 msgid "Re-requests the current user information from Q."
-msgstr ""
+msgstr "Vraagt de huidige gebruikersinformatie opnieuw aan bij Q."
 
 #: q.cpp:135
 msgid "Set <setting> <value>"
-msgstr ""
+msgstr "Set <instelling> <waarde>"
 
 #: q.cpp:137
 msgid "Changes the value of the given setting. See the list of settings below."
 msgstr ""
+"Past de waarde aan van de gegeven instelling. Zie de lijst van instellingen "
+"hier onder."
 
 #: q.cpp:142
 msgid "Prints out the current configuration. See the list of settings below."
 msgstr ""
+"Toont de huidige configuratie. Zie de onderstaande lijst van instellingen."
 
 #: q.cpp:146
 msgid "The following settings are available:"
-msgstr ""
+msgstr "De volgende instellingen zijn beschikbaar:"
 
 #: q.cpp:148 q.cpp:152 q.cpp:156 q.cpp:160 q.cpp:166 q.cpp:172 q.cpp:178
 #: q.cpp:183 q.cpp:227 q.cpp:230 q.cpp:233 q.cpp:236 q.cpp:239 q.cpp:242
 #: q.cpp:245 q.cpp:248
 msgid "Setting"
-msgstr ""
+msgstr "Instelling"
 
 #: q.cpp:149 q.cpp:153 q.cpp:157 q.cpp:161 q.cpp:167 q.cpp:173 q.cpp:179
 #: q.cpp:184
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 #: q.cpp:153 q.cpp:157
 msgid "String"
-msgstr ""
+msgstr "Tekenreeks"
 
 #: q.cpp:154
 msgid "Your Q username."
-msgstr ""
+msgstr "Jouw Q gebruikersnaam."
 
 #: q.cpp:158
 msgid "Your Q password."
-msgstr ""
+msgstr "Jouw Q wachtwoord."
 
 #: q.cpp:161 q.cpp:167 q.cpp:173 q.cpp:179 q.cpp:184
 msgid "Boolean"
-msgstr ""
+msgstr "Boolen (waar/onwaar)"
 
 #: q.cpp:163 q.cpp:373
 msgid "Whether to cloak your hostname (+x) automatically on connect."
-msgstr ""
+msgstr "Je hostname automatisch omhullen (+x) wanneer er verbonden is."
 
 #: q.cpp:169 q.cpp:381
 msgid ""
 "Whether to use the CHALLENGEAUTH mechanism to avoid sending passwords in "
 "cleartext."
 msgstr ""
+"Of CHALLENGEAUTH mechanisme gebruikt moet worden om te voorkomen dat je "
+"wachtwoord onversleuteld verstuurd word."
 
 #: q.cpp:175 q.cpp:389
 msgid "Whether to request voice/op from Q on join/devoice/deop."
 msgstr ""
+"Of je automatisch stem/beheerdersrechten van Q wilt aanvragen als je "
+"toetreed/stem kwijt raakt/beheerdersrechten kwijt raakt."
 
 #: q.cpp:181 q.cpp:395
 msgid "Whether to join channels when Q invites you."
-msgstr ""
+msgstr "Automatisch kanalen toetreden waar Q je voor uitnodigd."
 
 #: q.cpp:187 q.cpp:402
 msgid "Whether to delay joining channels until after you are cloaked."
-msgstr ""
+msgstr "Wachten met het toetreden van kanalen totdat je host omhuld is."
 
 #: q.cpp:192
 msgid "This module takes 2 optional parameters: <username> <password>"
 msgstr ""
+"Deze module accepteerd twee optionele parameters: <gebruikersnaam> "
+"<wachtwoord>"
 
 #: q.cpp:194
 msgid "Module settings are stored between restarts."
-msgstr ""
+msgstr "Module instellingen worden opgeslagen tussen herstarts."
 
 #: q.cpp:200
 msgid "Syntax: Set <setting> <value>"
-msgstr ""
+msgstr "Syntax: Set <instelling> <waarde>"
 
 #: q.cpp:203
 msgid "Username set"
-msgstr ""
+msgstr "Gebruikersnaam ingesteld"
 
 #: q.cpp:206
 msgid "Password set"
-msgstr ""
+msgstr "Wachtwoord ingesteld"
 
 #: q.cpp:209
 msgid "UseCloakedHost set"
-msgstr ""
+msgstr "UseCloakedHost ingesteld"
 
 #: q.cpp:212
 msgid "UseChallenge set"
-msgstr ""
+msgstr "UseChallenge ingesteld"
 
 #: q.cpp:215
 msgid "RequestPerms set"
-msgstr ""
+msgstr "RequestPerms ingesteld"
 
 #: q.cpp:218
 msgid "JoinOnInvite set"
-msgstr ""
+msgstr "JoinOnInvite ingesteld"
 
 #: q.cpp:221
 msgid "JoinAfterCloaked set"
-msgstr ""
+msgstr "JoinAfterCloaked ingesteld"
 
 #: q.cpp:223
 msgid "Unknown setting: {1}"
-msgstr ""
+msgstr "Onbekende instelling: {1}"
 
 #: q.cpp:228 q.cpp:231 q.cpp:234 q.cpp:237 q.cpp:240 q.cpp:243 q.cpp:246
 #: q.cpp:249
 msgid "Value"
-msgstr ""
+msgstr "Waarde"
 
 #: q.cpp:253
 msgid "Connected: yes"
-msgstr ""
+msgstr "Verbonden: ja"
 
 #: q.cpp:254
 msgid "Connected: no"
-msgstr ""
+msgstr "Verbonden: nee"
 
 #: q.cpp:255
 msgid "Cloacked: yes"
-msgstr ""
+msgstr "Host omhuld: ja"
 
 #: q.cpp:255
 msgid "Cloacked: no"
-msgstr ""
+msgstr "Host omhuld: nee"
 
 #: q.cpp:256
 msgid "Authenticated: yes"
-msgstr ""
+msgstr "Geauthenticeerd: ja"
 
 #: q.cpp:257
 msgid "Authenticated: no"
-msgstr ""
+msgstr "Geauthenticeerd: nee"
 
 #: q.cpp:262
 msgid "Error: You are not connected to IRC."
-msgstr ""
+msgstr "Fout: Je bent niet verbonden met IRC."
 
 #: q.cpp:270
 msgid "Error: You are already cloaked!"
-msgstr ""
+msgstr "Fout: Je bent al omhuld!"
 
 #: q.cpp:276
 msgid "Error: You are already authed!"
-msgstr ""
+msgstr "Fout: Je bent al geauthenticeerd!"
 
 #: q.cpp:280
 msgid "Update requested."
-msgstr ""
+msgstr "Update aangevraagd."
 
 #: q.cpp:283
 msgid "Unknown command. Try 'help'."
-msgstr ""
+msgstr "Onbekend commando. Probeer 'help'."
 
 #: q.cpp:293
 msgid "Cloak successful: Your hostname is now cloaked."
-msgstr ""
+msgstr "Omhulling succesvol: Je host is nu omhuld."
 
 #: q.cpp:408
 msgid "Changes have been saved!"
-msgstr ""
+msgstr "Wijzigingen zijn opgeslagen!"
 
 #: q.cpp:435
 msgid "Cloak: Trying to cloak your hostname, setting +x..."
-msgstr ""
+msgstr "Omhulling: Proberen je host te omhullen, +x aan het instellen..."
 
 #: q.cpp:452
 msgid ""
 "You have to set a username and password to use this module! See 'help' for "
 "details."
 msgstr ""
+"Je moet een gebruikersnaam en wachtwoord instellen om deze module te "
+"gebruiken! Zie 'help' voor details."
 
 #: q.cpp:458
 msgid "Auth: Requesting CHALLENGE..."
-msgstr ""
+msgstr "Auth: CHALLENGE aanvragen..."
 
 #: q.cpp:462
 msgid "Auth: Sending AUTH request..."
-msgstr ""
+msgstr "Auth: AUTH aanvraag aan het versturen..."
 
 #: q.cpp:479
 msgid "Auth: Received challenge, sending CHALLENGEAUTH request..."
-msgstr ""
+msgstr "Auth: Uitdaging ontvangen, nu CHALLENGEAUTH aanvraag sturen..."
 
 #: q.cpp:521
 msgid "Authentication failed: {1}"
-msgstr ""
+msgstr "Authenticatie mislukt: {1}"
 
 #: q.cpp:525
 msgid "Authentication successful: {1}"
-msgstr ""
+msgstr "Authenticatie gelukt: {1}"
 
 #: q.cpp:539
 msgid ""
 "Auth failed: Q does not support HMAC-SHA-256 for CHALLENGEAUTH, falling back "
 "to standard AUTH."
 msgstr ""
+"Auth mislukt: Q ondersteund geen HMAC-SHA-256 voor CHALLENGEAUTH, "
+"terugvallen naar standaard AUTH."
 
 #: q.cpp:566
 msgid "RequestPerms: Requesting op on {1}"
-msgstr ""
+msgstr "RequestPerms: Beheerdersrechten aanvragen in {1}"
 
 #: q.cpp:579
 msgid "RequestPerms: Requesting voice on {1}"
-msgstr ""
+msgstr "RequestPerms: Stem aanvragen in {1}"
 
 #: q.cpp:686
 msgid "Please provide your username and password for Q."
-msgstr ""
+msgstr "Voer alsjeblieft je gebruikersnaam en wachtwoord in voor Q."
 
 #: q.cpp:689
 msgid "Auths you with QuakeNet's Q bot."
-msgstr ""
+msgstr "Authenticeert je met QuakeNet's Q bot."

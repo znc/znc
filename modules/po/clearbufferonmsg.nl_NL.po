@@ -15,3 +15,4 @@ msgstr ""
 #: clearbufferonmsg.cpp:160
 msgid "Clears all channel and query buffers whenever the user does something"
 msgstr ""
+"Schoont alle kanaal en privébericht buffers op wanneer de gebruiker iets doet"

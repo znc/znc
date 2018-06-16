@@ -14,97 +14,104 @@ msgstr ""
 
 #: awaystore.cpp:67
 msgid "You have been marked as away"
-msgstr ""
+msgstr "Je bent gemarkeerd als afwezig"
 
 #: awaystore.cpp:78 awaystore.cpp:385 awaystore.cpp:388
 msgid "Welcome back!"
-msgstr ""
+msgstr "Welkom terug!"
 
 #: awaystore.cpp:100
 msgid "Deleted {1} messages"
-msgstr ""
+msgstr "{1} bericht(en) verwijderd"
 
 #: awaystore.cpp:104
 msgid "USAGE: delete <num|all>"
-msgstr ""
+msgstr "Gebruik: delete <nummer|all>"
 
 #: awaystore.cpp:109
 msgid "Illegal message # requested"
-msgstr ""
+msgstr "Onjuist berichtnummer aangevraagd"
 
 #: awaystore.cpp:113
 msgid "Message erased"
-msgstr ""
+msgstr "Bericht verwijderd"
 
 #: awaystore.cpp:122
 msgid "Messages saved to disk"
-msgstr ""
+msgstr "Bericht opgeslagen naar schijf"
 
 #: awaystore.cpp:124
 msgid "There are no messages to save"
-msgstr ""
+msgstr "Er zijn geen berichten om op te slaan"
 
 #: awaystore.cpp:135
 msgid "Password updated to [{1}]"
-msgstr ""
+msgstr "Wachtwoord bijgewerkt naar [{1}]"
 
 #: awaystore.cpp:147
 msgid "Corrupt message! [{1}]"
-msgstr ""
+msgstr "Corrupt bericht! [{1}]"
 
 #: awaystore.cpp:159
 msgid "Corrupt time stamp! [{1}]"
-msgstr ""
+msgstr "Corrupte tijdstempel! [{1}]"
 
 #: awaystore.cpp:178
 msgid "#--- End of messages"
-msgstr ""
+msgstr "#--- Eind van berichten"
 
 #: awaystore.cpp:183
 msgid "Timer set to 300 seconds"
-msgstr ""
+msgstr "Timer ingesteld op 300 seconden"
 
 #: awaystore.cpp:188 awaystore.cpp:197
 msgid "Timer disabled"
-msgstr ""
+msgstr "Timer uitgeschakeld"
 
 #: awaystore.cpp:199
 msgid "Timer set to {1} seconds"
-msgstr ""
+msgstr "Timer ingesteld op {1} second(en)"
 
 #: awaystore.cpp:203
 msgid "Current timer setting: {1} seconds"
-msgstr ""
+msgstr "Huidige timer instelling: {1} second(en)"
 
 #: awaystore.cpp:278
 msgid "This module needs as an argument a keyphrase used for encryption"
 msgstr ""
+"These module heeft een wachtwoord als argument nodig voor versleuteling"
 
 #: awaystore.cpp:285
 msgid ""
 "Failed to decrypt your saved messages - Did you give the right encryption "
 "key as an argument to this module?"
 msgstr ""
+"Ontsleutelen van opgeslagen berichten mislukt - Heb je wel het juiste "
+"wachtwoord als argument voor deze module ingevoerd?"
 
 #: awaystore.cpp:386 awaystore.cpp:389
 msgid "You have {1} messages!"
-msgstr ""
+msgstr "Je hebt {1} bericht(en)!"
 
 #: awaystore.cpp:456
 msgid "Unable to find buffer"
-msgstr ""
+msgstr "Buffer niet gevonden"
 
 #: awaystore.cpp:469
 msgid "Unable to decode encrypted messages"
-msgstr ""
+msgstr "Niet mogelijk om versleutelde bericht(en) te ontsleutelen"
 
 #: awaystore.cpp:516
 msgid ""
 "[ -notimer | -timer N ] [-chans]  passw0rd . N is number of seconds, 600 by "
 "default."
 msgstr ""
+"[ -notimer | -timer N ] [-kanalen] wachtw00rd . N is het aantal seconden, "
+"standaard is dit 600."
 
 #: awaystore.cpp:521
 msgid ""
 "Adds auto-away with logging, useful when you use ZNC from different locations"
 msgstr ""
+"Voegt automatisch afwezig met bijhouden van logboek, Handig wanneer je ZNC "
+"van meerdere locaties gebruikt"

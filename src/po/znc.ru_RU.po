@@ -1006,23 +1006,23 @@ msgstr "Исходящий хост для вашего пользователя
 
 #: ClientCommand.cpp:1305
 msgid "This user's default bind host not set"
-msgstr "Для вашего пользователя исходящий хост по умолчанию не установлен"
+msgstr "Исходящий хост по умолчанию для вашего пользователя не установлен"
 
 #: ClientCommand.cpp:1307
 msgid "This user's default bind host is {1}"
-msgstr "Для вашего пользователя исходящий хост по умолчанию: {1}"
+msgstr "Исходящий хост по умолчанию для вашего пользователя: {1}"
 
 #: ClientCommand.cpp:1312
 msgid "This network's bind host not set"
-msgstr ""
+msgstr "Исходящий хост для этой сети не установлен"
 
 #: ClientCommand.cpp:1314
 msgid "This network's default bind host is {1}"
-msgstr ""
+msgstr "Исходящий хост по умолчанию для этой сети: {1}"
 
 #: ClientCommand.cpp:1328
 msgid "Usage: PlayBuffer <#chan|query>"
-msgstr ""
+msgstr "Использование: PlayBuffer <#канал|собеседник>"
 
 #: ClientCommand.cpp:1336
 msgid "You are not on {1}"
@@ -1034,91 +1034,91 @@ msgstr "Вы не на {1} (пытаюсь войти)"
 
 #: ClientCommand.cpp:1346
 msgid "The buffer for channel {1} is empty"
-msgstr ""
+msgstr "Буфер канала {1} пуст"
 
 #: ClientCommand.cpp:1355
 msgid "No active query with {1}"
-msgstr ""
+msgstr "Нет активной беседы с {1}"
 
 #: ClientCommand.cpp:1360
 msgid "The buffer for {1} is empty"
-msgstr ""
+msgstr "Буфер для {1} пуст"
 
 #: ClientCommand.cpp:1376
 msgid "Usage: ClearBuffer <#chan|query>"
-msgstr ""
+msgstr "Использование: ClearBuffer <#канал|собеседник>"
 
 #: ClientCommand.cpp:1395
 msgid "{1} buffer matching {2} has been cleared"
 msgid_plural "{1} buffers matching {2} have been cleared"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "{1} буфер, подходящий под {2}, очищен"
+msgstr[1] "{1} буфера, подходящий под {2}, очищены"
+msgstr[2] "{1} буферов, подходящий под {2}, очищены"
+msgstr[3] "{1} буферов, подходящий под {2}, очищены"
 
 #: ClientCommand.cpp:1408
 msgid "All channel buffers have been cleared"
-msgstr ""
+msgstr "Буферы всех каналов очищены"
 
 #: ClientCommand.cpp:1417
 msgid "All query buffers have been cleared"
-msgstr ""
+msgstr "Буферы всех бесед очищены"
 
 #: ClientCommand.cpp:1429
 msgid "All buffers have been cleared"
-msgstr ""
+msgstr "Все буферы очищены"
 
 #: ClientCommand.cpp:1440
 msgid "Usage: SetBuffer <#chan|query> [linecount]"
-msgstr ""
+msgstr "Использование: SetBuffer <#канал|собеседник> [число_строк]"
 
 #: ClientCommand.cpp:1461
 msgid "Setting buffer size failed for {1} buffer"
 msgid_plural "Setting buffer size failed for {1} buffers"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Не удалось установить размер буфера для {1} канала"
+msgstr[1] "Не удалось установить размер буфера для {1} каналов"
+msgstr[2] "Не удалось установить размер буфера для {1} каналов"
+msgstr[3] "Не удалось установить размер буфера для {1} каналов"
 
 #: ClientCommand.cpp:1464
 msgid "Maximum buffer size is {1} line"
 msgid_plural "Maximum buffer size is {1} lines"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Размер буфера не должен превышать {1} строку"
+msgstr[1] "Размер буфера не должен превышать {1} строки"
+msgstr[2] "Размер буфера не должен превышать {1} строк"
+msgstr[3] "Размер буфера не должен превышать {1} строк"
 
 #: ClientCommand.cpp:1469
 msgid "Size of every buffer was set to {1} line"
 msgid_plural "Size of every buffer was set to {1} lines"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Размер каждого буфера установлен в {1} строку"
+msgstr[1] "Размер каждого буфера установлен в {1} строки"
+msgstr[2] "Размер каждого буфера установлен в {1} строк"
+msgstr[3] "Размер каждого буфера установлен в {1} строк"
 
 #: ClientCommand.cpp:1479 ClientCommand.cpp:1486 ClientCommand.cpp:1497
 #: ClientCommand.cpp:1506 ClientCommand.cpp:1514
 msgctxt "trafficcmd"
 msgid "Username"
-msgstr ""
+msgstr "Имя пользователя"
 
 #: ClientCommand.cpp:1480 ClientCommand.cpp:1487 ClientCommand.cpp:1499
 #: ClientCommand.cpp:1508 ClientCommand.cpp:1516
 msgctxt "trafficcmd"
 msgid "In"
-msgstr ""
+msgstr "Пришло"
 
 #: ClientCommand.cpp:1481 ClientCommand.cpp:1489 ClientCommand.cpp:1500
 #: ClientCommand.cpp:1509 ClientCommand.cpp:1517
 msgctxt "trafficcmd"
 msgid "Out"
-msgstr ""
+msgstr "Ушло"
 
 #: ClientCommand.cpp:1482 ClientCommand.cpp:1492 ClientCommand.cpp:1502
 #: ClientCommand.cpp:1510 ClientCommand.cpp:1519
 msgctxt "trafficcmd"
 msgid "Total"
-msgstr ""
+msgstr "Всего"
 
 #: ClientCommand.cpp:1498
 msgctxt "trafficcmd"

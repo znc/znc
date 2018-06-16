@@ -14,70 +14,74 @@ msgstr ""
 
 #: identfile.cpp:30
 msgid "Show file name"
-msgstr ""
+msgstr "Laat bestandsnaam zien"
 
 #: identfile.cpp:32
 msgid "<file>"
-msgstr ""
+msgstr "<bestand>"
 
 #: identfile.cpp:32
 msgid "Set file name"
-msgstr ""
+msgstr "Stel bestandsnaam in"
 
 #: identfile.cpp:34
 msgid "Show file format"
-msgstr ""
+msgstr "Laat bestandsindeling zien"
 
 #: identfile.cpp:36
 msgid "<format>"
-msgstr ""
+msgstr "<bestandsindeling>"
 
 #: identfile.cpp:36
 msgid "Set file format"
-msgstr ""
+msgstr "Stel bestandsindeling in"
 
 #: identfile.cpp:38
 msgid "Show current state"
-msgstr ""
+msgstr "Laat huidige status zien"
 
 #: identfile.cpp:48
 msgid "File is set to: {1}"
-msgstr ""
+msgstr "Bestand is ingesteld naar: {1}"
 
 #: identfile.cpp:53
 msgid "File has been set to: {1}"
-msgstr ""
+msgstr "Bestand is ingesteld naar: {1}"
 
 #: identfile.cpp:58
 msgid "Format has been set to: {1}"
-msgstr ""
+msgstr "Bestandsindeling is ingesteld op: {1}"
 
 #: identfile.cpp:59 identfile.cpp:65
 msgid "Format would be expanded to: {1}"
-msgstr ""
+msgstr "Bestandsindeling zou uitgebreid worden naar: {1}"
 
 #: identfile.cpp:64
 msgid "Format is set to: {1}"
-msgstr ""
+msgstr "Bestandsindeling is ingesteld op: {1}"
 
 #: identfile.cpp:78
 msgid "identfile is free"
-msgstr ""
+msgstr "identiteitbestand is vrij"
 
 #: identfile.cpp:86
 msgid "Access denied"
-msgstr ""
+msgstr "Toegang geweigerd"
 
 #: identfile.cpp:181
 msgid ""
 "Aborting connection, another user or network is currently connecting and "
 "using the ident spoof file"
 msgstr ""
+"Verbinding afbreken, een andere gebruiker of netwerk is momenteel aan het "
+"verbinden en gebruikt het identiteitsbestand"
 
 #: identfile.cpp:189
 msgid "[{1}] could not be written, retrying..."
-msgstr ""
+msgstr "Kon niet schrijven naar [{1}], opnieuw aan het proberen..."
 
 #: identfile.cpp:223
 msgid "Write the ident of a user to a file when they are trying to connect."
 msgstr ""
+"Schrijf de identiteit van een gebruiker naar een bestand wanneer zij "
+"proberen te verbinden."
