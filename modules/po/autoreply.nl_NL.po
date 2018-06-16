@@ -6,7 +6,7 @@ msgstr ""
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: nl\n"
-"X-Crowdin-File: /1.7.x/modules/po/autoreply.pot\n"
+"X-Crowdin-File: /master/modules/po/autoreply.pot\n"
 "Project-Id-Version: znc-bouncer\n"
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: Dutch\n"
@@ -14,30 +14,32 @@ msgstr ""
 
 #: autoreply.cpp:25
 msgid "<reply>"
-msgstr ""
+msgstr "<antwoord>"
 
 #: autoreply.cpp:25
 msgid "Sets a new reply"
-msgstr ""
+msgstr "Stelt een nieuw antwoord in"
 
 #: autoreply.cpp:27
 msgid "Displays the current query reply"
-msgstr ""
+msgstr "Laat het huidige antwoord zien"
 
 #: autoreply.cpp:75
 msgid "Current reply is: {1} ({2})"
-msgstr ""
+msgstr "Huidige antwoord is: {1} ({2})"
 
 #: autoreply.cpp:81
 msgid "New reply set to: {1} ({2})"
-msgstr ""
+msgstr "Nieuw antwoord is ingesteld op: {1} ({2})"
 
 #: autoreply.cpp:94
 msgid ""
 "You might specify a reply text. It is used when automatically answering "
 "queries, if you are not connected to ZNC."
 msgstr ""
+"Je kan een automatisch antwoord instellen die gebruikt wordt als je niet "
+"verbonden bent met ZNC."
 
 #: autoreply.cpp:98
 msgid "Reply to queries when you are away"
-msgstr ""
+msgstr "Antwoord op privé berichten wanneer je afwezig bent"

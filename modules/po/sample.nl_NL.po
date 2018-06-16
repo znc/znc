@@ -6,7 +6,7 @@ msgstr ""
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: nl\n"
-"X-Crowdin-File: /1.7.x/modules/po/sample.pot\n"
+"X-Crowdin-File: /master/modules/po/sample.pot\n"
 "Project-Id-Version: znc-bouncer\n"
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: Dutch\n"
@@ -14,106 +14,106 @@ msgstr ""
 
 #: sample.cpp:31
 msgid "Sample job cancelled"
-msgstr ""
+msgstr "Voorbeeld taak geannuleerd"
 
 #: sample.cpp:33
 msgid "Sample job destroyed"
-msgstr ""
+msgstr "Voorbeeld taak vernietigd"
 
 #: sample.cpp:50
 msgid "Sample job done"
-msgstr ""
+msgstr "Voorbeeld taak gereed"
 
 #: sample.cpp:65
 msgid "TEST!!!!"
-msgstr ""
+msgstr "KOEKJES!!!!"
 
 #: sample.cpp:74
 msgid "I'm being loaded with the arguments: {1}"
-msgstr ""
+msgstr "Ik wordt geladen met de volgende argumenten: {1}"
 
 #: sample.cpp:85
 msgid "I'm being unloaded!"
-msgstr ""
+msgstr "Ik wordt gestopt!"
 
 #: sample.cpp:94
 msgid "You got connected BoyOh."
-msgstr ""
+msgstr "Je bent verbonden BoyOh."
 
 #: sample.cpp:98
 msgid "You got disconnected BoyOh."
-msgstr ""
+msgstr "Je bent losgekoppeld BoyOh."
 
 #: sample.cpp:116
 msgid "{1} {2} set mode on {3} {4}{5} {6}"
-msgstr ""
+msgstr "{1} {2} stelt modus in {3} {4}{5} {6}"
 
 #: sample.cpp:123
 msgid "{1} {2} opped {3} on {4}"
-msgstr ""
+msgstr "{1} {2} geeft beheerdersrechten aan {3} op {4}"
 
 #: sample.cpp:129
 msgid "{1} {2} deopped {3} on {4}"
-msgstr ""
+msgstr "{1} {2} neemt beheerdersrechten van {3} op {4}"
 
 #: sample.cpp:135
 msgid "{1} {2} voiced {3} on {4}"
-msgstr ""
+msgstr "{1} {2} geeft stem aan {3} op {4}"
 
 #: sample.cpp:141
 msgid "{1} {2} devoiced {3} on {4}"
-msgstr ""
+msgstr "{1} {2} neemt stem van {3} op {4}"
 
 #: sample.cpp:147
 msgid "* {1} sets mode: {2} {3} on {4}"
-msgstr ""
+msgstr "* {1} stelt modus in: {2} {3} op {4}"
 
 #: sample.cpp:163
 msgid "{1} kicked {2} from {3} with the msg {4}"
-msgstr ""
+msgstr "{1} geschopt {2} van {3} met het bericht {4}"
 
 #: sample.cpp:169
 msgid "* {1} ({2}@{3}) quits ({4}) from channel: {6}"
 msgid_plural "* {1} ({2}@{3}) quits ({4}) from {5} channels: {6}"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "* {1} ({2}@{3}) verlaat ({4}) van kanaal: {6}"
+msgstr[1] "* {1} ({2}@{3}) verlaat ({4}) van {5} kanalen: {6}"
 
 #: sample.cpp:177
 msgid "Attempting to join {1}"
-msgstr ""
+msgstr "Proberen toe te treden tot {1}"
 
 #: sample.cpp:182
 msgid "* {1} ({2}@{3}) joins {4}"
-msgstr ""
+msgstr "* {1} ({2}@{3}) treed toe in {4}"
 
 #: sample.cpp:189
 msgid "* {1} ({2}@{3}) parts {4}"
-msgstr ""
+msgstr "* {1} ({2}@{3}) verlaat {4}"
 
 #: sample.cpp:196
 msgid "{1} invited us to {2}, ignoring invites to {2}"
-msgstr ""
+msgstr "{1} nodigt ons uit in {2}, negeer uitnodigingen naar {2}"
 
 #: sample.cpp:201
 msgid "{1} invited us to {2}"
-msgstr ""
+msgstr "{1} nodigt ons uit in {2}"
 
 #: sample.cpp:207
 msgid "{1} is now known as {2}"
-msgstr ""
+msgstr "{1} staat nu bekend als {2}"
 
 #: sample.cpp:269 sample.cpp:276
 msgid "{1} changes topic on {2} to {3}"
-msgstr ""
+msgstr "{1} veranderd onderwerp in {2} naar {3}"
 
 #: sample.cpp:317
 msgid "Hi, I'm your friendly sample module."
-msgstr ""
+msgstr "Hey, ik ben je vriendelijke voorbeeldmodule."
 
 #: sample.cpp:330
 msgid "Description of module arguments goes here."
-msgstr ""
+msgstr "Beschrijving van module argumenten komen hier."
 
 #: sample.cpp:333
 msgid "To be used as a sample for writing modules"
-msgstr ""
+msgstr "Om gebruikt te worden als voorbeeld voor het schrijven van modulen"

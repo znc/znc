@@ -6,54 +6,58 @@ msgstr ""
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: nl\n"
-"X-Crowdin-File: /1.7.x/modules/po/route_replies.pot\n"
+"X-Crowdin-File: /master/modules/po/route_replies.pot\n"
 "Project-Id-Version: znc-bouncer\n"
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
 
-#: route_replies.cpp:209
+#: route_replies.cpp:211
 msgid "[yes|no]"
-msgstr ""
+msgstr "[yes|no]"
 
-#: route_replies.cpp:210
+#: route_replies.cpp:212
 msgid "Decides whether to show the timeout messages or not"
-msgstr ""
+msgstr "Beslist of time-out berichten laten zien worden of niet"
 
-#: route_replies.cpp:350
+#: route_replies.cpp:352
 msgid "This module hit a timeout which is probably a connectivity issue."
 msgstr ""
+"Deze module heeft een time-out geraakt, dit is waarschijnlijk een "
+"connectiviteitsprobleem."
 
-#: route_replies.cpp:353
+#: route_replies.cpp:355
 msgid ""
 "However, if you can provide steps to reproduce this issue, please do report "
 "a bug."
 msgstr ""
-
-#: route_replies.cpp:356
-msgid "To disable this message, do \"/msg {1} silent yes\""
-msgstr ""
+"Maar, als je de stappen kan herproduceren, stuur alsjeblieft een bugrapport "
+"hier mee."
 
 #: route_replies.cpp:358
+msgid "To disable this message, do \"/msg {1} silent yes\""
+msgstr "Om dit bericht uit te zetten, doe \"/msg {1} silent yes\""
+
+#: route_replies.cpp:360
 msgid "Last request: {1}"
-msgstr ""
+msgstr "Laatste aanvraag: {1}"
 
-#: route_replies.cpp:359
+#: route_replies.cpp:361
 msgid "Expected replies:"
-msgstr ""
+msgstr "Verwachte antwoorden:"
 
-#: route_replies.cpp:363
+#: route_replies.cpp:365
 msgid "{1} (last)"
-msgstr ""
+msgstr "{1} (laatste)"
 
-#: route_replies.cpp:435
+#: route_replies.cpp:437
 msgid "Timeout messages are disabled."
-msgstr ""
+msgstr "Time-out berichten uitgeschakeld."
 
-#: route_replies.cpp:436
+#: route_replies.cpp:438
 msgid "Timeout messages are enabled."
-msgstr ""
+msgstr "Time-out berichten ingeschakeld."
 
-#: route_replies.cpp:457
+#: route_replies.cpp:459
 msgid "Send replies (e.g. to /who) to the right client only"
-msgstr ""
+msgstr "Stuur antwoorden (zoals /who) alleen naar de juiste clients"
