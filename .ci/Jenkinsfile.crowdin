@@ -5,6 +5,7 @@
 // * create a pull request with results to ZNC repo
 
 import groovy.json.JsonSlurper;
+import groovy.json.JsonOutput;
 
 def upstream_user = 'znc'
 def upstream_repo = 'znc'
@@ -52,6 +53,8 @@ timestamps {
                 sh 'git config user.name "ZNC-Jenkins"'
                 sh 'git config user.email jenkins@znc.in'
                 sh 'git status'
+                def gitStatusShort = sh 'git status --short'
+                def modifiedLocales = sh 'git status --short | grep -o -E "[^ ]+\.po$" | sed "s/.po//g" | grep -o -E "[a-z]{2}_[A-Z]{2}$" | sort -u | tr "\n" " " | sed -E "s/ $//"'
                 sh 'git add .'
                 try {
                   sh 'git commit -m "Update translations from Crowdin"'
@@ -74,7 +77,22 @@ timestamps {
                   def pulls = httpRequest consoleLogResponseBody: true, customHeaders: headers, url: "https://api.github.com/repos/${upstream_user}/${upstream_repo}/pulls?head=${my_user}:${my_branch}&base=${upstream_branch}"
                   pulls = new JsonSlurper().parseText(pulls.content)
                   if (!pulls) {
-                    httpRequest consoleLogResponseBody: true, customHeaders: headers, url: "https://api.github.com/repos/${upstream_user}/${upstream_repo}/pulls", httpMode: 'POST', requestBody: '{"head":"'+my_user+':'+my_branch+'","base":"'+upstream_branch+'","title":"Update translations in '+upstream_branch+'","body":"From https://crowdin.com/project/znc-bouncer"}'
+                    def bodyContents = 'Crowdin: https://crowdin.com/project/znc-bouncer\nJenkins Build: ' + build.environment.get('BUILD_URL')
+                    bodyContents += "\n\nModified locales:\n" + modifiedLocales
+                    bodyContents += "\n\n<details><summary>Modified files</summary>" + gitStatusShort + '</details>'
+
+                    httpRequest consoleLogResponseBody: true,
+                      customHeaders: headers,
+                      url: "https://api.github.com/repos/${upstream_user}/${upstream_repo}/pulls",
+                      httpMode: 'POST',
+                      requestBody: JsonOutput.toJson(
+                        [
+                          head: my_user + ':' + my_branch,
+                          base: upstream_branch,
+                          title: 'Update translations in ' + upstream_branch + ' (' + modifiedLocales + ')',
+                          body: bodyContents
+                        ]
+                      )
                   }
                 }
               }
