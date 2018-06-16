@@ -14,106 +14,111 @@ msgstr ""
 
 #: modules/po/../data/notes/tmpl/index.tmpl:7
 msgid "Add A Note"
-msgstr ""
+msgstr "Voeg een notitie toe"
 
 #: modules/po/../data/notes/tmpl/index.tmpl:11
 msgid "Key:"
-msgstr ""
+msgstr "Sleutel:"
 
 #: modules/po/../data/notes/tmpl/index.tmpl:15
 msgid "Note:"
-msgstr ""
+msgstr "Notitie:"
 
 #: modules/po/../data/notes/tmpl/index.tmpl:19
 msgid "Add Note"
-msgstr ""
+msgstr "Voeg notitie toe"
 
 #: modules/po/../data/notes/tmpl/index.tmpl:27
 msgid "You have no notes to display."
-msgstr ""
+msgstr "Je hebt geen notities om weer te geven."
 
 #: modules/po/../data/notes/tmpl/index.tmpl:34 notes.cpp:164 notes.cpp:169
 msgid "Key"
-msgstr ""
+msgstr "Sleutel"
 
 #: modules/po/../data/notes/tmpl/index.tmpl:35 notes.cpp:165 notes.cpp:170
 msgid "Note"
-msgstr ""
+msgstr "Notitie"
 
 #: modules/po/../data/notes/tmpl/index.tmpl:41
 msgid "[del]"
-msgstr ""
+msgstr "[delete]"
 
 #: notes.cpp:32
 msgid "That note already exists.  Use MOD <key> <note> to overwrite."
 msgstr ""
+"Die notitie bestaat al. Gebruik MOD <sleutel> <notitie> om te overschrijven."
 
 #: notes.cpp:35 notes.cpp:137
 msgid "Added note {1}"
-msgstr ""
+msgstr "Notitie toegevoegd: {1}"
 
 #: notes.cpp:37 notes.cpp:48 notes.cpp:142
 msgid "Unable to add note {1}"
-msgstr ""
+msgstr "Niet mogelijk om notitie toe te voegen: {1}"
 
 #: notes.cpp:46 notes.cpp:139
 msgid "Set note for {1}"
-msgstr ""
+msgstr "Notitie ingesteld voor {1}"
 
 #: notes.cpp:56
 msgid "This note doesn't exist."
-msgstr ""
+msgstr "Deze notitie bestaat niet."
 
 #: notes.cpp:66 notes.cpp:116
 msgid "Deleted note {1}"
-msgstr ""
+msgstr "Notitie verwijderd: {1}"
 
 #: notes.cpp:68 notes.cpp:118
 msgid "Unable to delete note {1}"
-msgstr ""
+msgstr "Kon notitie niet verwijderen: {1}"
 
 #: notes.cpp:75
 msgid "List notes"
-msgstr ""
+msgstr "Lijst van notities"
 
 #: notes.cpp:77 notes.cpp:81
 msgid "<key> <note>"
-msgstr ""
+msgstr "<sleutel> <notitie>"
 
 #: notes.cpp:77
 msgid "Add a note"
-msgstr ""
+msgstr "Voeg een notitie toe"
 
 #: notes.cpp:79 notes.cpp:83
 msgid "<key>"
-msgstr ""
+msgstr "<sleutel>"
 
 #: notes.cpp:79
 msgid "Delete a note"
-msgstr ""
+msgstr "Verwijder een notitie"
 
 #: notes.cpp:81
 msgid "Modify a note"
-msgstr ""
+msgstr "Pas een notitie aan"
 
 #: notes.cpp:94
 msgid "Notes"
-msgstr ""
+msgstr "Notities"
 
 #: notes.cpp:133
 msgid "That note already exists.  Use /#+<key> <note> to overwrite."
 msgstr ""
+"Die notitie bestaat al. Gebruik /#+<sleutel> <notitie> om te overschrijven."
 
 #: notes.cpp:185 notes.cpp:187
 msgid "You have no entries."
-msgstr ""
+msgstr "Je hebt geen notities."
 
 #: notes.cpp:223
 msgid ""
 "This user module takes up to one arguments. It can be -disableNotesOnLogin "
 "not to show notes upon client login"
 msgstr ""
+"Deze gebruikersmodule accepteert maximaal 1 argument. Dit kan -"
+"disableNotesOnLogin zodat notities niet worden laten zien wanneer een "
+"gebruiker inlogd"
 
 #: notes.cpp:227
 msgid "Keep and replay notes"
-msgstr ""
+msgstr "Hou en speel notities opnieuw af"

@@ -14,8 +14,8 @@ msgstr ""
 
 #: pyeval.py:49
 msgid "You must have admin privileges to load this module."
-msgstr ""
+msgstr "Alleen beheerders kunnen deze module laden."
 
 #: pyeval.py:82
 msgid "Evaluates python code"
-msgstr ""
+msgstr "Evalueert python code"

@@ -14,54 +14,55 @@ msgstr ""
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:8
 msgid "User"
-msgstr ""
+msgstr "Gebruiker"
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:9 lastseen.cpp:98
 msgid "Last Seen"
-msgstr ""
+msgstr "Laatst gezien"
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:10
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:11
 msgid "Action"
-msgstr ""
+msgstr "Actie"
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:21
 msgid "Edit"
-msgstr ""
+msgstr "Bewerk"
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:22
 msgid "Delete"
-msgstr ""
+msgstr "Verwijderen"
 
 #: modules/po/../data/lastseen/tmpl/lastseen_WebadminUser.tmpl:6
 msgid "Last login time:"
-msgstr ""
+msgstr "Laatst ingelogd:"
 
 #: lastseen.cpp:53
 msgid "Access denied"
-msgstr ""
+msgstr "Toegang geweigerd"
 
 #: lastseen.cpp:61 lastseen.cpp:66
 msgctxt "show"
 msgid "User"
-msgstr ""
+msgstr "Gebruiker"
 
 #: lastseen.cpp:62 lastseen.cpp:67
 msgctxt "show"
 msgid "Last Seen"
-msgstr ""
+msgstr "Laatst gezien"
 
 #: lastseen.cpp:68 lastseen.cpp:124
 msgid "never"
-msgstr ""
+msgstr "nooit"
 
 #: lastseen.cpp:78
 msgid "Shows list of users and when they last logged in"
 msgstr ""
+"Laat lijst van gebruikers zien en wanneer deze voor het laatst ingelogd zijn"
 
 #: lastseen.cpp:153
 msgid "Collects data about when a user last logged in."
-msgstr ""
+msgstr "Houd bij wanneer gebruikers voor het laatst ingelogd zijn."
