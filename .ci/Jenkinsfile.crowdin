@@ -54,7 +54,7 @@ timestamps {
                 sh 'git config user.email jenkins@znc.in'
                 sh 'git status'
                 def gitStatusShort = sh 'git status --short'
-                def modifiedLocales = sh 'git status --short | grep -o -E "[^ ]+\.po$" | sed "s/.po//g" | grep -o -E "[a-z]{2}_[A-Z]{2}$" | sort -u | tr "\n" " " | sed -E "s/ $//"'
+                def modifiedLocales = sh 'git status --short | grep -o -E "[^ ]+\\.po$" | sed "s/.po//g" | grep -o -E "[a-z]{2}_[A-Z]{2}$" | sort -u | tr "\\n" " " | sed -E "s/ $//"'
                 sh 'git add .'
                 try {
                   sh 'git commit -m "Update translations from Crowdin"'
