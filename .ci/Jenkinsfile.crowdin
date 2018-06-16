@@ -53,11 +53,14 @@ timestamps {
                 sh 'git config user.name "ZNC-Jenkins"'
                 sh 'git config user.email jenkins@znc.in'
                 sh 'git status'
-                def gitStatusShort = sh 'git status --short'
-                def modifiedLocales = sh 'git status --short | grep -o -E "[^ ]+\\.po$" | sed "s/.po//g" | grep -o -E "[a-z]{2}_[A-Z]{2}$" | sort -u | tr "\\n" " " | sed -E "s/ $//"'
+                def gitStatusShort = sh (script: 'git status --short', returnStdout: true)
+                def modifiedLocales = sh (
+                  script: 'git status --short | grep -o -E "[^ ]+\\.po$" | sed "s/.po//g" | grep -o -E "[a-z]{2}_[A-Z]{2}$" | sort -u | tr "\\n" " " | sed -E "s/ $//"',
+                  returnStdout: true
+                )
                 sh 'git add .'
                 try {
-                  sh 'git commit -m "Update translations from Crowdin"'
+                  sh 'git commit -m "Update translations from Crowdin for ' + modifiedLocales + '"'
                 } catch(e) {
                   echo 'No changes found'
                   return
