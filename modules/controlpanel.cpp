@@ -21,6 +21,7 @@
 #include <znc/IRCNetwork.h>
 #include <znc/Chan.h>
 #include <znc/IRCSock.h>
+#include <znc/ZNCDebug.h>
 
 using std::map;
 using std::vector;
@@ -91,6 +92,7 @@ class CAdminMod : public CModule {
                 {"RealName", str},
                 {"BindHost", str},
                 {"MultiClients", boolean},
+                {"DebugMode", boolean},
                 {"DenyLoadMod", boolean},
                 {"DenySetBindHost", boolean},
                 {"DefaultChanModes", str},
@@ -230,6 +232,8 @@ class CAdminMod : public CModule {
             PutModule("BindHost = " + pUser->GetBindHost());
         else if (sVar == "multiclients")
             PutModule("MultiClients = " + CString(pUser->MultiClients()));
+        else if (sVar == "debugmode")
+            PutModule("Debug Mode = " + CString(CDebug::Debug()));
         else if (sVar == "denyloadmod")
             PutModule("DenyLoadMod = " + CString(pUser->DenyLoadMod()));
         else if (sVar == "denysetbindhost")
@@ -309,7 +313,13 @@ class CAdminMod : public CModule {
             return;
         }
 
-        CUser* pUser = FindUser(sUserName);
+        CUser* pUser;
+        // Workaround for non-username-taking arguments. Permits "Set DebugMode * true"
+        if (sVar == "debugmode") {
+            pUser = GetClient()->GetUser();
+        } else {
+            pUser = FindUser(sUserName);
+        }
         if (!pUser) return;
 
         if (sVar == "nick") {
@@ -355,6 +365,27 @@ class CAdminMod : public CModule {
                 PutModule("DenySetBindHost = " + CString(b));
             } else {
                 PutModule(t_s("Access denied!"));
+            }
+        // Presently ZNC (*controlpanel) doesn't support lone variables;
+        // So the useless "username" argument is annoying.
+        } else if (sVar == "debugmode") {
+            if (!pUser->IsAdmin()) {
+                PutModule(t_s("Access denied!"));
+                return;
+            }
+
+            bool bValue = sValue == "true" || sValue == "on";
+            CDebug::SetDebug(bValue);
+            CZNC::Get().Broadcast(
+                CString("An administrator (" + GetClient()->GetNick() + ")" +
+                " has just turned Debug Mode \02" + (bValue ? "on" : "off") + 
+                "\02.")
+            );
+            if (bValue) {
+                CZNC::Get().Broadcast(
+                    CString("Messages, credentials, and other sensitive data may"
+                    " become exposed to the host during this period.")
+                );
             }
         } else if (sVar == "defaultchanmodes") {
             pUser->SetDefaultChanModes(sValue);
