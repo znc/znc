@@ -162,6 +162,7 @@ class CSockManager : public TSocketManager<CZNCSock>,
     void FinishConnect(const CString& sHostname, u_short iPort,
                        const CString& sSockName, int iTimeout, bool bSSL,
                        const CString& sBindHost, CZNCSock* pcSock);
+    friend class CHappyEyeballs;
 
     std::map<Csock*, bool /* deleted */> m_InFlightDnsSockets;
 

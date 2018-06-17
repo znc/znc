@@ -246,31 +246,209 @@ void CSockManager::StartTDNSThread(TDNSTask* task, bool bBind) {
     CThreadPool::Get().addJob(arg);
 }
 
+class CHappyEyeballs {
+    class CConnectionAttempt;
+
+  public:
+    struct CAttempt {
+        CString sHostname;
+        CString sBindhost;
+        CConnectionAttempt* pcSock = nullptr;
+    };
+
+    CHappyEyeballs(std::vector<CAttempt> vAttempts, int iPort, bool bSSL,
+                   CString sSockName, int iTimeout, CZNCSock* pcSock,
+                   CSockManager* pManager)
+        : m_vAttempts(std::move(vAttempts)),
+          m_iPort(iPort),
+          m_bSSL(bSSL),
+          m_sSockName(std::move(sSockName)),
+          m_iTimeout(iTimeout),
+          m_pcSock(pcSock),
+          m_pManager(pManager),
+          m_pTimer(new CConnectionAttemptor(this)),
+          m_pShutdownWatcher(new CShutdownWatcher(this)) {
+        pManager->AddCron(m_pTimer);
+        pManager->AddCron(m_pShutdownWatcher);
+    }
+
+    ~CHappyEyeballs() {
+        if (m_pTimer) {
+            m_pTimer->Stop();
+        }
+        m_pShutdownWatcher->Stop();
+        for (const CAttempt& at : m_vAttempts) {
+            if (at.pcSock) {
+                at.pcSock->Detach();
+                at.pcSock->Close();
+            }
+        }
+    }
+
+  private:
+    class CConnectionAttemptor : public CCron {
+      public:
+        explicit CConnectionAttemptor(CHappyEyeballs* pEye) : m_pEye(pEye) {
+            SetName("HappyEyeballsAttemptor::" + pEye->m_sSockName);
+            RunJob();
+            StartMaxCycles(1 /* seconds */, pEye->m_vAttempts.size() - 1);
+        }
+
+        ~CConnectionAttemptor() {
+            if (m_pEye) {
+                m_pEye->m_pTimer = nullptr;
+            }
+        }
+
+        void Stop() {
+            m_pEye = nullptr;
+            CCron::Stop();
+        }
+
+      protected:
+        void RunJob() override {
+            if (m_pEye) {
+                m_pEye->NewAttempt();
+            }
+        }
+
+      private:
+        CHappyEyeballs* m_pEye;
+    };
+
+    class CShutdownWatcher : public CCron {
+        // Not really a cron, but allows to intercept CSockManager::Cleanup
+      public:
+        explicit CShutdownWatcher(CHappyEyeballs* pEye) : m_pEye(pEye) {
+            SetName("HappyEyeballsShutdown::" + pEye->m_sSockName);
+            Start(10000);
+        }
+        ~CShutdownWatcher() {
+            if (m_pEye) {
+                m_pEye->Shutdown();
+            }
+        }
+        void Stop() {
+            m_pEye = nullptr;
+            CCron::Stop();
+        }
+
+      protected:
+        void RunJob() override {}
+
+      private:
+        CHappyEyeballs* m_pEye;
+    };
+
+    class CConnectionAttempt : public CZNCSock {
+      public:
+        CConnectionAttempt(CHappyEyeballs* pEye, int iCurrentAttempt)
+            : m_pEye(pEye), m_iCurrentAttempt(iCurrentAttempt) {}
+
+        ~CConnectionAttempt() {
+            if (m_pEye) {
+                m_pEye->m_vAttempts[m_iCurrentAttempt].pcSock = nullptr;
+            }
+        }
+
+        void Detach() { m_pEye = nullptr; }
+
+      private:
+        void Connected() override {
+            if (m_pEye) {
+                m_pEye->Success(m_iCurrentAttempt);
+            }
+        }
+
+        void Timeout() override {
+            if (m_pEye) {
+                m_pEye->Error(m_iCurrentAttempt, -1, t_s("Connection timeout"));
+            }
+        }
+        void SockError(int iErrno, const CString& sDescription) override {
+            if (m_pEye) {
+                m_pEye->Error(m_iCurrentAttempt, iErrno, sDescription);
+            }
+        }
+        void ConnectionRefused() override {
+            if (m_pEye) {
+                m_pEye->Error(m_iCurrentAttempt, -1, t_s("Connection refused"));
+            }
+        }
+
+        CHappyEyeballs* m_pEye;
+        int m_iCurrentAttempt;
+    };
+
+    void NewAttempt() {
+        CAttempt& at = m_vAttempts[m_iCurrentAttempt];
+        at.pcSock = new CConnectionAttempt(this, m_iCurrentAttempt);
+        CSConnection C(at.sHostname, m_iPort, m_iTimeout);
+        C.SetSockName(m_sSockName + "::" + CString(m_iCurrentAttempt));
+        C.SetIsSSL(false);
+        C.SetBindHost(at.sBindhost);
+        m_pManager->TSocketManager<CZNCSock>::Connect(C, at.pcSock);
+        DEBUG("Connection attempt " << C.GetSockName() << " to "
+                                    << at.sHostname);
+
+        m_iCurrentAttempt++;
+    }
+
+    void Success(int iAttempt) {
+        auto*& pGoodSocket = m_vAttempts[iAttempt].pcSock;
+        DEBUG("Connection attempt " << pGoodSocket->GetSockName()
+                                    << " succeeded.");
+        m_pcSock->SetSock(pGoodSocket->GetSock());
+        pGoodSocket->Detach();
+        pGoodSocket->Dereference();
+        pGoodSocket = nullptr;
+        m_pcSock->SetSkipConnect(true);
+        m_pManager->FinishConnect(m_vAttempts[iAttempt].sHostname, m_iPort,
+                                  m_sSockName, m_iTimeout, m_bSSL,
+                                  m_vAttempts[iAttempt].sBindhost, m_pcSock);
+        delete this;
+    }
+
+    void Error(int iAttempt, int iErrno, const CString& sDescription) {
+        DEBUG("Connection attempt "
+              << m_vAttempts[iAttempt].pcSock->GetSockName() << " failed "
+              << iErrno << " " << sDescription);
+        m_siFailedAttempts.insert(iAttempt);
+        // TODO aggregate errors from other attempts
+        if (m_siFailedAttempts.size() == m_vAttempts.size()) {
+            m_pcSock->SetSockName(m_sSockName);
+            m_pcSock->SockError(iErrno, sDescription);
+            delete m_pcSock;
+            delete this;
+        }
+    }
+
+    void Shutdown() {
+        m_pcSock->SetSockName(m_sSockName);
+        m_pcSock->SockError(-1, "Shutdown");
+        delete m_pcSock;
+        delete this;
+    }
+
+    std::vector<CAttempt> m_vAttempts;
+    int m_iCurrentAttempt = 0;
+    int m_iPort;
+    bool m_bSSL;
+    CString m_sSockName;
+    int m_iTimeout;
+    CZNCSock* m_pcSock;
+    CSockManager* m_pManager;
+    CConnectionAttemptor* m_pTimer;
+    CShutdownWatcher* m_pShutdownWatcher;
+    std::set<int> m_siFailedAttempts;
+};
+
 static CString RandomFromSet(const SCString& sSet,
                              std::default_random_engine& gen) {
     std::uniform_int_distribution<> distr(0, sSet.size() - 1);
     auto it = sSet.cbegin();
     std::advance(it, distr(gen));
     return *it;
-}
-
-static std::tuple<CString, bool> RandomFrom2SetsWithBias(
-    const SCString& ss4, const SCString& ss6, std::default_random_engine& gen) {
-    // It's not quite what RFC says how to choose between IPv4 and IPv6, but
-    // proper way is harder to implement.
-    // It would require to maintain some state between Csock objects.
-    bool bUseIPv6;
-    if (ss4.empty()) {
-        bUseIPv6 = true;
-    } else if (ss6.empty()) {
-        bUseIPv6 = false;
-    } else {
-        // Let's prefer IPv6 :)
-        std::discrete_distribution<> d({2, 3});
-        bUseIPv6 = d(gen);
-    }
-    const SCString& sSet = bUseIPv6 ? ss6 : ss4;
-    return std::make_tuple(RandomFromSet(sSet, gen), bUseIPv6);
 }
 
 void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind,
@@ -289,19 +467,19 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind,
     }
 
     // All needed DNS is done, now collect the results
-    SCString ssTargets4;
-    SCString ssTargets6;
+    VCString vsTargets4;
+    VCString vsTargets6;
     for (addrinfo* ai = task->aiTarget; ai; ai = ai->ai_next) {
         char s[INET6_ADDRSTRLEN] = {};
         getnameinfo(ai->ai_addr, ai->ai_addrlen, s, sizeof(s), nullptr, 0,
                     NI_NUMERICHOST);
         switch (ai->ai_family) {
             case AF_INET:
-                ssTargets4.insert(s);
+                vsTargets4.push_back(s);
                 break;
 #ifdef HAVE_IPV6
             case AF_INET6:
-                ssTargets6.insert(s);
+                vsTargets6.push_back(s);
                 break;
 #endif
         }
@@ -326,61 +504,99 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind,
     if (task->aiTarget) freeaddrinfo(task->aiTarget);
     if (task->aiBind) freeaddrinfo(task->aiBind);
 
-    CString sBindhost;
-    CString sTargetHost;
+    std::vector<CHappyEyeballs::CAttempt> vAttempts;
+    vAttempts.reserve(vsTargets4.size() + vsTargets6.size());
     std::random_device rd;
     std::default_random_engine gen(rd());
 
     try {
-        if (ssTargets4.empty() && ssTargets6.empty()) {
+        if (vsTargets4.empty() && vsTargets6.empty()) {
             throw t_s("Can't resolve server hostname");
         } else if (task->sBindhost.empty()) {
-            // Choose random target
-            std::tie(sTargetHost, std::ignore) =
-                RandomFrom2SetsWithBias(ssTargets4, ssTargets6, gen);
+            int i = 0;
+            for (; i < std::min(vsTargets4.size(), vsTargets6.size()); ++i) {
+                CHappyEyeballs::CAttempt at6;
+                at6.sHostname = vsTargets6[i];
+                vAttempts.push_back(at6);
+                CHappyEyeballs::CAttempt at4;
+                at4.sHostname = vsTargets4[i];
+                vAttempts.push_back(at4);
+            }
+            VCString& vsRest =
+                vsTargets4.size() < vsTargets6.size() ? vsTargets6 : vsTargets4;
+            for (; i < vsRest.size(); ++i) {
+                CHappyEyeballs::CAttempt at;
+                at.sHostname = vsRest[i];
+                vAttempts.push_back(at);
+            }
         } else if (ssBinds4.empty() && ssBinds6.empty()) {
             throw t_s(
                 "Can't resolve bind hostname. Try /znc ClearBindHost and /znc "
                 "ClearUserBindHost");
         } else if (ssBinds4.empty()) {
-            if (ssTargets6.empty()) {
+            if (vsTargets6.empty()) {
                 throw t_s(
                     "Server address is IPv4-only, but bindhost is IPv6-only");
             } else {
-                // Choose random target and bindhost from IPv6-only sets
-                sTargetHost = RandomFromSet(ssTargets6, gen);
-                sBindhost = RandomFromSet(ssBinds6, gen);
+                for (const CString& sTarget : vsTargets6) {
+                    CHappyEyeballs::CAttempt at;
+                    at.sHostname = sTarget;
+                    at.sBindhost = RandomFromSet(ssBinds6, gen);
+                    vAttempts.push_back(at);
+                }
             }
         } else if (ssBinds6.empty()) {
-            if (ssTargets4.empty()) {
+            if (vsTargets4.empty()) {
                 throw t_s(
                     "Server address is IPv6-only, but bindhost is IPv4-only");
             } else {
-                // Choose random target and bindhost from IPv4-only sets
-                sTargetHost = RandomFromSet(ssTargets4, gen);
-                sBindhost = RandomFromSet(ssBinds4, gen);
+                for (const CString& sTarget : vsTargets4) {
+                    CHappyEyeballs::CAttempt at;
+                    at.sHostname = sTarget;
+                    at.sBindhost = RandomFromSet(ssBinds4, gen);
+                    vAttempts.push_back(at);
+                }
             }
         } else {
-            // Choose random target
-            bool bUseIPv6;
-            std::tie(sTargetHost, bUseIPv6) =
-                RandomFrom2SetsWithBias(ssTargets4, ssTargets6, gen);
-            // Choose random bindhost matching chosen target
-            const SCString& ssBinds = bUseIPv6 ? ssBinds6 : ssBinds4;
-            sBindhost = RandomFromSet(ssBinds, gen);
+            int i = 0;
+            for (; i < std::min(vsTargets4.size(), vsTargets6.size()); ++i) {
+                CHappyEyeballs::CAttempt at6;
+                at6.sHostname = vsTargets6[i];
+                at6.sBindhost = RandomFromSet(ssBinds6, gen);
+                vAttempts.push_back(at6);
+                CHappyEyeballs::CAttempt at4;
+                at4.sHostname = vsTargets4[i];
+                at4.sBindhost = RandomFromSet(ssBinds4, gen);
+                vAttempts.push_back(at4);
+            }
+            VCString& vsRest =
+                vsTargets4.size() < vsTargets6.size() ? vsTargets6 : vsTargets4;
+            SCString& ssRestBinds =
+                vsTargets4.size() < vsTargets6.size() ? ssBinds6 : ssBinds4;
+            for (; i < vsRest.size(); ++i) {
+                CHappyEyeballs::CAttempt at;
+                at.sHostname = vsRest[i];
+                at.sBindhost = RandomFromSet(ssRestBinds, gen);
+                vAttempts.push_back(at);
+            }
         }
-
-        DEBUG("TDNS: " << task->sSockName << ", connecting to [" << sTargetHost
-                       << "] using bindhost [" << sBindhost << "]");
-        FinishConnect(sTargetHost, task->iPort, task->sSockName, task->iTimeout,
-                      task->bSSL, sBindhost, task->pcSock);
     } catch (const CString& s) {
         DEBUG(task->sSockName << ", dns resolving error: " << s);
         task->pcSock->SetSockName(task->sSockName);
         task->pcSock->SockError(-1, s);
         delete task->pcSock;
+        delete task;
+        return;
     }
 
+    std::stringstream ss;
+    for (const auto& at : vAttempts) {
+        ss << " (" << at.sHostname << " from " << at.sBindhost << ")";
+    }
+    DEBUG("Resolved DNS for " << task->sSockName << ":" << ss.str());
+
+    new CHappyEyeballs(std::move(vAttempts), task->iPort, task->bSSL,
+                       task->sSockName, task->iTimeout, task->pcSock, this);
     delete task;
 }
 #endif /* HAVE_THREADED_DNS */
@@ -401,8 +617,8 @@ void CSockManager::Connect(const CString& sHostname, u_short iPort,
         pcSock->SetHostToVerifySSL(sHostname);
     }
 #ifdef HAVE_THREADED_DNS
-    DEBUG("TDNS: initiating resolving of [" << sHostname << "] and bindhost ["
-                                            << sBindHost << "]");
+    DEBUG("Initiating DNS resolving of [" << sHostname << "] and bindhost ["
+                                          << sBindHost << "]");
     TDNSTask* task = new TDNSTask;
     task->sHostname = sHostname;
     task->iPort = iPort;
@@ -411,6 +627,7 @@ void CSockManager::Connect(const CString& sHostname, u_short iPort,
     task->bSSL = bSSL;
     task->sBindhost = sBindHost;
     task->pcSock = pcSock;
+    // TODO asynchronously lookup A and AAAA like RFC 8305 advises.
     if (sBindHost.empty()) {
         task->bDoneBind = true;
     } else {
