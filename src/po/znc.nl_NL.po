@@ -6,7 +6,7 @@ msgstr ""
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: nl\n"
-"X-Crowdin-File: /1.7.x/src/po/znc.pot\n"
+"X-Crowdin-File: /master/src/po/znc.pot\n"
 "Project-Id-Version: znc-bouncer\n"
 "Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
 "Language-Team: Dutch\n"
@@ -1764,15 +1764,15 @@ msgstr ""
 "Een of andere socket heeft de maximale buffer limiet bereikt en was "
 "afgesloten!"
 
-#: SSLVerifyHost.cpp:448
+#: SSLVerifyHost.cpp:481
 msgid "hostname doesn't match"
 msgstr "Hostnaam komt niet overeen"
 
-#: SSLVerifyHost.cpp:452
+#: SSLVerifyHost.cpp:485
 msgid "malformed hostname in certificate"
 msgstr "misvormde hostnaam in certificaat"
 
-#: SSLVerifyHost.cpp:456
+#: SSLVerifyHost.cpp:489
 msgid "hostname verification error"
 msgstr "hostnaam verificatiefout"
 
