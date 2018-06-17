@@ -14,40 +14,40 @@ msgstr ""
 
 #: keepnick.cpp:39
 msgid "Try to get your primary nick"
-msgstr ""
+msgstr "Probeer je primaire naam te krijgen"
 
 #: keepnick.cpp:42 keepnick.cpp:196
 msgid "No longer trying to get your primary nick"
-msgstr ""
+msgstr "Probeer niet langer je primaire naam te krijgen"
 
 #: keepnick.cpp:44
 msgid "Show the current state"
-msgstr ""
+msgstr "Laat huidige status zien"
 
 #: keepnick.cpp:158
 msgid "ZNC is already trying to get this nickname"
-msgstr ""
+msgstr "ZNC probeert deze naam al ge krijgen"
 
 #: keepnick.cpp:173
 msgid "Unable to obtain nick {1}: {2}, {3}"
-msgstr ""
+msgstr "Niet mogelijk om naam {1} te krijgen: {2}, {3}"
 
 #: keepnick.cpp:181
 msgid "Unable to obtain nick {1}"
-msgstr ""
+msgstr "Niet mogelijk om naam {1} te krijgen"
 
 #: keepnick.cpp:191
 msgid "Trying to get your primary nick"
-msgstr ""
+msgstr "Proberen je primaire naam te krijgen"
 
 #: keepnick.cpp:201
 msgid "Currently trying to get your primary nick"
-msgstr ""
+msgstr "Momenteel proberen je primaire naam te krijgen"
 
 #: keepnick.cpp:203
 msgid "Currently disabled, try 'enable'"
-msgstr ""
+msgstr "Op dit moment uitgeschakeld, probeer 'enable'"
 
 #: keepnick.cpp:224
 msgid "Keeps trying for your primary nick"
-msgstr ""
+msgstr "Blijft proberen je primaire naam te krijgen"

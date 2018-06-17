@@ -14,10 +14,11 @@ msgstr ""
 
 #: disconkick.cpp:32
 msgid "You have been disconnected from the IRC server"
-msgstr ""
+msgstr "Je bent losgekoppeld van de server"
 
 #: disconkick.cpp:45
 msgid ""
 "Kicks the client from all channels when the connection to the IRC server is "
 "lost"
 msgstr ""
+"Verlaat alle kanalen wanneer de verbinding met de IRC server verloren is"

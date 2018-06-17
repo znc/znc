@@ -23,7 +23,6 @@
 #include <znc/Chan.h>
 #include <znc/Query.h>
 #include <znc/Message.h>
-#include <znc/ZNCDebug.h>
 #include <algorithm>
 #include <memory>
 
@@ -728,12 +727,6 @@ void CIRCNetwork::ClientConnected(CClient* pClient) {
         pClient->PutStatus(
             t_s("You are currently disconnected from IRC. Use 'connect' to "
                 "reconnect."));
-
-    if (CDebug::Debug()) {
-        pClient->PutStatus(
-            t_s("ZNC is presently running in DEBUG mode. Sensitive data during "
-                "your current session may be exposed to the host."));
-    }
 }
 
 void CIRCNetwork::ClientDisconnected(CClient* pClient) {

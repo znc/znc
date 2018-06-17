@@ -14,16 +14,16 @@ msgstr ""
 
 #: shell.cpp:37
 msgid "Failed to execute: {1}"
-msgstr ""
+msgstr "Mislukt om uit te voeren: {1}"
 
 #: shell.cpp:75
 msgid "You must be admin to use the shell module"
-msgstr ""
+msgstr "Je moet een beheerder zijn om de shell module te gebruiken"
 
 #: shell.cpp:169
 msgid "Gives shell access"
-msgstr ""
+msgstr "Geeft toegang tot de shell"
 
 #: shell.cpp:172
 msgid "Gives shell access. Only ZNC admins can use it."
-msgstr ""
+msgstr "Geeft toegang tot de shell. Alleen ZNC beheerder kunnen het gebruiken."
