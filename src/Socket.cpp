@@ -589,6 +589,10 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind,
         return;
     }
 
+    if (vAttempts.size() > 5) {
+        vAttempts.resize(5);
+    }
+
     std::stringstream ss;
     for (const auto& at : vAttempts) {
         ss << " (" << at.sHostname << " from " << at.sBindhost << ")";
