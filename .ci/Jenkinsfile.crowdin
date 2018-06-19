@@ -53,14 +53,14 @@ timestamps {
                 sh 'git config user.name "ZNC-Jenkins"'
                 sh 'git config user.email jenkins@znc.in'
                 sh 'git status'
-                def gitStatusShort = sh (script: 'git status --short', returnStdout: true)
-                def modifiedLocales = sh (
+                def git_status_short = sh (script: 'git status --short', returnStdout: true)
+                def modified_locales = sh (
                   script: 'git status --short | grep -o -E "[^ ]+\\.po$" | sed "s/.po//g" | grep -o -E "[a-z]{2}_[A-Z]{2}$" | sort -u | tr "\\n" " " | sed -E "s/ $//"',
                   returnStdout: true
                 )
                 sh 'git add .'
                 try {
-                  sh 'git commit -m "Update translations from Crowdin for ' + modifiedLocales + '"'
+                  sh "git commit -m Update translations from Crowdin for ${modified_locales}"
                 } catch(e) {
                   echo 'No changes found'
                   return
@@ -80,9 +80,9 @@ timestamps {
                   def pulls = httpRequest consoleLogResponseBody: true, customHeaders: headers, url: "https://api.github.com/repos/${upstream_user}/${upstream_repo}/pulls?head=${my_user}:${my_branch}&base=${upstream_branch}"
                   pulls = new JsonSlurper().parseText(pulls.content)
                   if (!pulls) {
-                    def bodyContents = 'Crowdin: https://crowdin.com/project/znc-bouncer\nJenkins Build: ' + env.BUILD_URL
-                    bodyContents += "\n\nModified locales:\n" + modifiedLocales
-                    bodyContents += "\n\n<details><summary>Modified files</summary>" + gitStatusShort + '</details>'
+                    def bodyContents = "Crowdin: https://crowdin.com/project/znc-bouncer\nJenkins Build: ${env.BUILD_URL}"
+                    bodyContents += "\n\nModified locales:\n${modified_locales}"
+                    bodyContents += "\n\n<details><summary>Modified files</summary>${git_status_short}</details>"
 
                     httpRequest consoleLogResponseBody: true,
                       customHeaders: headers,
@@ -92,7 +92,7 @@ timestamps {
                         [
                           head: my_user + ':' + my_branch,
                           base: upstream_branch,
-                          title: 'Update translations in ' + upstream_branch + ' (' + modifiedLocales + ')',
+                          title: "Update translations in ${upstream_branch} (${modified_locales})",
                           body: bodyContents
                         ]
                       )
