@@ -14,4 +14,4 @@ msgstr ""
 
 #: modules_online.cpp:117
 msgid "Makes ZNC's *modules to be \"online\"."
-msgstr ""
+msgstr "Hace que los *módulos de ZNC aparezcan 'conectados'."

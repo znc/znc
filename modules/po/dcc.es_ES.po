@@ -228,4 +228,4 @@ msgstr "Enviando [{1}] a [{2}]: archivo demasiado grande (>4 GiB)."
 
 #: dcc.cpp:623
 msgid "This module allows you to transfer files to and from ZNC"
-msgstr ""
+msgstr "Este módulo permite transferir archivos a y desde ZNC"

@@ -14,8 +14,8 @@ msgstr ""
 
 #: pyeval.py:49
 msgid "You must have admin privileges to load this module."
-msgstr ""
+msgstr "Debes tener permisos de administrador para cargar este módulo."
 
 #: pyeval.py:82
 msgid "Evaluates python code"
-msgstr ""
+msgstr "Evalua código python"

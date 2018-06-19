@@ -14,4 +14,4 @@ msgstr ""
 
 #: modpython.cpp:512
 msgid "Loads python scripts as ZNC modules"
-msgstr ""
+msgstr "Carga scripts de python como módulos de ZNC"

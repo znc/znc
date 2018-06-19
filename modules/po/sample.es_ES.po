@@ -14,35 +14,35 @@ msgstr ""
 
 #: sample.cpp:31
 msgid "Sample job cancelled"
-msgstr ""
+msgstr "Tarea cancelada"
 
 #: sample.cpp:33
 msgid "Sample job destroyed"
-msgstr ""
+msgstr "Tarea destruída"
 
 #: sample.cpp:50
 msgid "Sample job done"
-msgstr ""
+msgstr "Tarea hecha"
 
 #: sample.cpp:65
 msgid "TEST!!!!"
-msgstr ""
+msgstr "PRUEBA!!!!"
 
 #: sample.cpp:74
 msgid "I'm being loaded with the arguments: {1}"
-msgstr ""
+msgstr "Voy a ser cargado con los argumentos: {1}"
 
 #: sample.cpp:85
 msgid "I'm being unloaded!"
-msgstr ""
+msgstr "Estoy siendo descargado!"
 
 #: sample.cpp:94
 msgid "You got connected BoyOh."
-msgstr ""
+msgstr "Has sido conectado."
 
 #: sample.cpp:98
 msgid "You got disconnected BoyOh."
-msgstr ""
+msgstr "Has sido desconectado."
 
 #: sample.cpp:116
 msgid "{1} {2} set mode on {3} {4}{5} {6}"
