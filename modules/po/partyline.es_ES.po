@@ -14,26 +14,28 @@ msgstr ""
 
 #: partyline.cpp:60
 msgid "There are no open channels."
-msgstr ""
+msgstr "No hay canales abiertos."
 
 #: partyline.cpp:66 partyline.cpp:73
 msgid "Channel"
-msgstr ""
+msgstr "Canal"
 
 #: partyline.cpp:67 partyline.cpp:74
 msgid "Users"
-msgstr ""
+msgstr "Usuarios"
 
 #: partyline.cpp:82
 msgid "List all open channels"
-msgstr ""
+msgstr "Mostrar canales abiertos"
 
 #: partyline.cpp:733
 msgid ""
 "You may enter a list of channels the user joins, when entering the internal "
 "partyline."
 msgstr ""
+"Puedes añadir una lista de canales a los que el usuario se meterá cuando se "
+"conecte a la partyline."
 
 #: partyline.cpp:739
 msgid "Internal channels and queries for users connected to ZNC"
-msgstr ""
+msgstr "Privados y canales internos para usuarios conectados a ZNC"
