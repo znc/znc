@@ -13,6 +13,8 @@ def my_user = 'znc-jenkins'
 def my_repo = 'znc'
 def branches = ['master', '1.7.x']
 
+def pr_mode = false
+
 timestamps {
   node {
     timeout(time: 30, unit: 'MINUTES') {
@@ -71,6 +73,10 @@ timestamps {
                   sh 'echo ssh -i $GITHUB_KEY -l git -o StrictHostKeyChecking=no \\"\\$@\\" > run_ssh.sh'
                   sh 'chmod +x run_ssh.sh'
                   withEnv(['GIT_SSH=run_ssh.sh']) {
+                    if (!pr_mode) {
+                      sh "git push upstream HEAD:refs/heads/${upstream_branch}"
+                      return
+                    }
                     sh "git push my HEAD:refs/heads/${my_branch} -f"
                   }
                 }
