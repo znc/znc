@@ -78,46 +78,38 @@ msgstr "Port tidak valid"
 msgid "Unable to bind: {1}"
 msgstr "Tidak dapat mengikat: {1}"
 
-#: IRCNetwork.cpp:236
+#: IRCNetwork.cpp:235
 msgid "Jumping servers because this server is no longer in the list"
 msgstr "Melompati server karena server ini tidak lagi dalam daftar"
 
-#: IRCNetwork.cpp:641 User.cpp:678
+#: IRCNetwork.cpp:640 User.cpp:678
 msgid "Welcome to ZNC"
 msgstr "Selamat datang di ZNC"
 
-#: IRCNetwork.cpp:729
+#: IRCNetwork.cpp:728
 msgid "You are currently disconnected from IRC. Use 'connect' to reconnect."
 msgstr ""
 "Anda saat ini terputus dari IRC. Gunakan 'connect' untuk terhubung kembali."
 
-#: IRCNetwork.cpp:734
-msgid ""
-"ZNC is presently running in DEBUG mode. Sensitive data during your current "
-"session may be exposed to the host."
-msgstr ""
-"ZNC saat ini berjalan dalam mode DEBUG. Data sensitif selama sesi anda saat "
-"ini mungkin tidak tersembunyi dari host."
-
-#: IRCNetwork.cpp:765
+#: IRCNetwork.cpp:758
 msgid "This network is being deleted or moved to another user."
 msgstr "Jaringan ini sedang dihapus atau dipindahkan ke pengguna lain."
 
-#: IRCNetwork.cpp:994
+#: IRCNetwork.cpp:987
 msgid "The channel {1} could not be joined, disabling it."
 msgstr "Tidak dapat join ke channel {1}. menonaktifkan."
 
-#: IRCNetwork.cpp:1123
+#: IRCNetwork.cpp:1116
 msgid "Your current server was removed, jumping..."
 msgstr "Server anda saat ini dihapus, melompati..."
 
-#: IRCNetwork.cpp:1286
+#: IRCNetwork.cpp:1279
 msgid "Cannot connect to {1}, because ZNC is not compiled with SSL support."
 msgstr ""
 "Tidak dapat terhubung ke {1}, karena ZNC tidak dikompilasi dengan dukungan "
 "SSL."
 
-#: IRCNetwork.cpp:1307
+#: IRCNetwork.cpp:1300
 msgid "Some module aborted the connection attempt"
 msgstr "Beberapa modul membatalkan upaya koneksi"
 
@@ -187,19 +179,19 @@ msgstr "Tidak ada nick tersedia"
 msgid "No free nick found"
 msgstr "Tidak ada nick ditemukan"
 
-#: Client.cpp:75
+#: Client.cpp:74
 msgid "No such module {1}"
 msgstr "Modul tidak ada {1}"
 
-#: Client.cpp:365
+#: Client.cpp:358
 msgid "A client from {1} attempted to login as you, but was rejected: {2}"
 msgstr "Klien dari {1} berusaha masuk seperti anda, namun ditolak: {2}"
 
-#: Client.cpp:400
+#: Client.cpp:393
 msgid "Network {1} doesn't exist."
 msgstr "Jaringan {1} tidak ada."
 
-#: Client.cpp:414
+#: Client.cpp:407
 msgid ""
 "You have several networks configured, but no network was specified for the "
 "connection."
@@ -207,7 +199,7 @@ msgstr ""
 "Anda memiliki beberapa jaringan terkonfigurasi, tetapi tidak ada jaringan "
 "ditentukan untuk sambungan."
 
-#: Client.cpp:417
+#: Client.cpp:410
 msgid ""
 "Selecting network {1}. To see list of all configured networks, use /znc "
 "ListNetworks"
@@ -215,7 +207,7 @@ msgstr ""
 "Memilih jaringan {1}. Untuk melihat daftar semua jaringan terkonfigurasi, "
 "gunakan /znc ListNetworks"
 
-#: Client.cpp:420
+#: Client.cpp:413
 msgid ""
 "If you want to choose another network, use /znc JumpNetwork <network>, or "
 "connect to ZNC with username {1}/<network> (instead of just {1})"
@@ -223,65 +215,65 @@ msgstr ""
 "Jika anda ingin memilih jaringan lain, gunakan /znc JumpNetwork <network>, "
 "atau hubungkan ke ZNC dengan nama pengguna {1}/<network> (bukan hanya {1})"
 
-#: Client.cpp:426
+#: Client.cpp:419
 msgid ""
 "You have no networks configured. Use /znc AddNetwork <network> to add one."
 msgstr ""
 "Anda tidak memiliki jaringan terkonfigurasi. Gunakan /znc AddNetwork "
 "<network> untuk menambahkannya."
 
-#: Client.cpp:437
+#: Client.cpp:430
 msgid "Closing link: Timeout"
 msgstr "Menutup link: Waktu habis"
 
-#: Client.cpp:459
+#: Client.cpp:452
 msgid "Closing link: Too long raw line"
 msgstr "Menutup link: Baris raw terlalu panjang"
 
-#: Client.cpp:466
+#: Client.cpp:459
 msgid ""
 "You are being disconnected because another user just authenticated as you."
 msgstr "Anda terputus karena pengguna lain hanya diautentikasi sebagai anda."
 
-#: Client.cpp:1021
+#: Client.cpp:1014
 msgid "Your CTCP to {1} got lost, you are not connected to IRC!"
 msgstr "CTCP anda untuk {1} tersesat, anda tidak terhubung ke IRC!"
 
-#: Client.cpp:1148
+#: Client.cpp:1141
 msgid "Your notice to {1} got lost, you are not connected to IRC!"
 msgstr "Notice anda untuk {1} tersesat, anda tidak terhubung ke IRC!"
 
-#: Client.cpp:1187
+#: Client.cpp:1180
 msgid "Removing channel {1}"
 msgstr "Menghapus channel {1}"
 
-#: Client.cpp:1263
+#: Client.cpp:1256
 msgid "Your message to {1} got lost, you are not connected to IRC!"
 msgstr "Pesan anda untuk {1} tersesat, anda tidak terhubung ke IRC!"
 
-#: Client.cpp:1316 Client.cpp:1322
+#: Client.cpp:1309 Client.cpp:1315
 msgid "Hello. How may I help you?"
 msgstr "Halo. Bagaimana saya bisa membantu anda?"
 
-#: Client.cpp:1336
+#: Client.cpp:1329
 msgid "Usage: /attach <#chans>"
 msgstr "Gunakan: /attach <#chan>"
 
-#: Client.cpp:1343 Client.cpp:1365 ClientCommand.cpp:129 ClientCommand.cpp:151
+#: Client.cpp:1336 Client.cpp:1358 ClientCommand.cpp:129 ClientCommand.cpp:151
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
 msgstr[0] "Ada {1} pencocokan saluran [{2}]"
 
-#: Client.cpp:1346 ClientCommand.cpp:132
+#: Client.cpp:1339 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] ""
 
-#: Client.cpp:1358
+#: Client.cpp:1351
 msgid "Usage: /detach <#chans>"
 msgstr ""
 
-#: Client.cpp:1368 ClientCommand.cpp:154
+#: Client.cpp:1361 ClientCommand.cpp:154
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] ""

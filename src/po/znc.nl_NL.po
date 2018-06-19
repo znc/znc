@@ -78,52 +78,44 @@ msgstr "Ongeldige poort"
 msgid "Unable to bind: {1}"
 msgstr "Kan niet binden: {1}"
 
-#: IRCNetwork.cpp:236
+#: IRCNetwork.cpp:235
 msgid "Jumping servers because this server is no longer in the list"
 msgstr ""
 "We schakelen over naar een andere server omdat deze server niet langer in de "
 "lijst staat"
 
-#: IRCNetwork.cpp:641 User.cpp:678
+#: IRCNetwork.cpp:640 User.cpp:678
 msgid "Welcome to ZNC"
 msgstr "Welkom bij ZNC"
 
-#: IRCNetwork.cpp:729
+#: IRCNetwork.cpp:728
 msgid "You are currently disconnected from IRC. Use 'connect' to reconnect."
 msgstr ""
 "Op dit moment ben je niet verbonden met IRC. Gebruik 'connect' om opnieuw "
 "verbinding te maken."
 
-#: IRCNetwork.cpp:734
-msgid ""
-"ZNC is presently running in DEBUG mode. Sensitive data during your current "
-"session may be exposed to the host."
-msgstr ""
-"ZNC draait op dit moment in DEBUG modus. Sensitieve data kan tijdens deze "
-"sessie blootgesteld worden aan de host."
-
-#: IRCNetwork.cpp:765
+#: IRCNetwork.cpp:758
 msgid "This network is being deleted or moved to another user."
 msgstr ""
 "Dit netwerk wordt op dit moment verwijderd of verplaatst door een andere "
 "gebruiker."
 
-#: IRCNetwork.cpp:994
+#: IRCNetwork.cpp:987
 msgid "The channel {1} could not be joined, disabling it."
 msgstr "Het kanaal {1} kan niet toegetreden worden, deze wordt uitgeschakeld."
 
-#: IRCNetwork.cpp:1123
+#: IRCNetwork.cpp:1116
 msgid "Your current server was removed, jumping..."
 msgstr ""
 "Je huidige server was verwijderd, we schakelen over naar een andere server..."
 
-#: IRCNetwork.cpp:1286
+#: IRCNetwork.cpp:1279
 msgid "Cannot connect to {1}, because ZNC is not compiled with SSL support."
 msgstr ""
 "Kan niet verbinden naar {1} omdat ZNC niet gecompileerd is met SSL "
 "ondersteuning."
 
-#: IRCNetwork.cpp:1307
+#: IRCNetwork.cpp:1300
 msgid "Some module aborted the connection attempt"
 msgstr "Een module heeft de verbindingspoging afgebroken"
 
@@ -196,21 +188,21 @@ msgstr "Geen beschikbare bijnaam"
 msgid "No free nick found"
 msgstr "Geen beschikbare bijnaam gevonden"
 
-#: Client.cpp:75
+#: Client.cpp:74
 msgid "No such module {1}"
 msgstr "Geen dergelijke module {1}"
 
-#: Client.cpp:365
+#: Client.cpp:358
 msgid "A client from {1} attempted to login as you, but was rejected: {2}"
 msgstr ""
 "Een client van {1} heeft geprobeerd als jou in te loggen maar werd "
 "geweigerd: {2}"
 
-#: Client.cpp:400
+#: Client.cpp:393
 msgid "Network {1} doesn't exist."
 msgstr "Netwerk {1} bestaat niet."
 
-#: Client.cpp:414
+#: Client.cpp:407
 msgid ""
 "You have several networks configured, but no network was specified for the "
 "connection."
@@ -218,7 +210,7 @@ msgstr ""
 "Je hebt meerdere netwerken geconfigureerd maar je hebt er geen gekozen om "
 "verbinding mee te maken."
 
-#: Client.cpp:417
+#: Client.cpp:410
 msgid ""
 "Selecting network {1}. To see list of all configured networks, use /znc "
 "ListNetworks"
@@ -226,7 +218,7 @@ msgstr ""
 "Netwerk {1} geselecteerd. Om een lijst te tonen van alle geconfigureerde "
 "netwerken, gebruik /znc ListNetworks"
 
-#: Client.cpp:420
+#: Client.cpp:413
 msgid ""
 "If you want to choose another network, use /znc JumpNetwork <network>, or "
 "connect to ZNC with username {1}/<network> (instead of just {1})"
@@ -234,71 +226,71 @@ msgstr ""
 "Als je een ander netwerk wilt kiezen, gebruik /znc JumpNetwork <netwerk>, of "
 "verbind naar ZNC met gebruikersnaam {1}/<netwerk> (in plaats van alleen {1})"
 
-#: Client.cpp:426
+#: Client.cpp:419
 msgid ""
 "You have no networks configured. Use /znc AddNetwork <network> to add one."
 msgstr ""
 "Je hebt geen netwerken geconfigureerd. Gebruiker /znc AddNetwork <netwerk> "
 "om er een toe te voegen."
 
-#: Client.cpp:437
+#: Client.cpp:430
 msgid "Closing link: Timeout"
 msgstr "Verbinding verbroken: Time-out"
 
-#: Client.cpp:459
+#: Client.cpp:452
 msgid "Closing link: Too long raw line"
 msgstr "Verbinding verbroken: Te lange onbewerkte regel"
 
-#: Client.cpp:466
+#: Client.cpp:459
 msgid ""
 "You are being disconnected because another user just authenticated as you."
 msgstr ""
 "Je verbinding wordt verbroken omdat een andere gebruiker zich net aangemeld "
 "heeft als jou."
 
-#: Client.cpp:1021
+#: Client.cpp:1014
 msgid "Your CTCP to {1} got lost, you are not connected to IRC!"
 msgstr "Je CTCP naar {1} is verloren geraakt, je bent niet verbonden met IRC!"
 
-#: Client.cpp:1148
+#: Client.cpp:1141
 msgid "Your notice to {1} got lost, you are not connected to IRC!"
 msgstr ""
 "Je notice naar {1} is verloren geraakt, je bent niet verbonden met IRC!"
 
-#: Client.cpp:1187
+#: Client.cpp:1180
 msgid "Removing channel {1}"
 msgstr "Kanaal verwijderen: {1}"
 
-#: Client.cpp:1263
+#: Client.cpp:1256
 msgid "Your message to {1} got lost, you are not connected to IRC!"
 msgstr ""
 "Je bericht naar {1} is verloren geraakt, je bent niet verbonden met IRC!"
 
-#: Client.cpp:1316 Client.cpp:1322
+#: Client.cpp:1309 Client.cpp:1315
 msgid "Hello. How may I help you?"
 msgstr "Hallo. Hoe kan ik je helpen?"
 
-#: Client.cpp:1336
+#: Client.cpp:1329
 msgid "Usage: /attach <#chans>"
 msgstr "Gebruik: /attach <#kanalen>"
 
-#: Client.cpp:1343 Client.cpp:1365 ClientCommand.cpp:129 ClientCommand.cpp:151
+#: Client.cpp:1336 Client.cpp:1358 ClientCommand.cpp:129 ClientCommand.cpp:151
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
 msgstr[0] "Er was {1} kanaal overeenkomend met [{2}]"
 msgstr[1] "Er waren {1} kanalen overeenkomend met [{2}]"
 
-#: Client.cpp:1346 ClientCommand.cpp:132
+#: Client.cpp:1339 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] "Gekoppeld aan {1} kanaal"
 msgstr[1] "Gekoppeld aan {1} kanalen"
 
-#: Client.cpp:1358
+#: Client.cpp:1351
 msgid "Usage: /detach <#chans>"
 msgstr "Gebruik: /detach <#kanalen>"
 
-#: Client.cpp:1368 ClientCommand.cpp:154
+#: Client.cpp:1361 ClientCommand.cpp:154
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] "Losgekoppeld van {1} kanaal"

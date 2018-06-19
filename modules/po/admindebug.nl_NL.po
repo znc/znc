@@ -1,0 +1,53 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: nl\n"
+"X-Crowdin-File: /1.7.x/modules/po/admindebug.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: Dutch\n"
+"Language: nl_NL\n"
+
+#: admindebug.cpp:30
+msgid "Enable Debug Mode"
+msgstr "Debug-modus inschakelen"
+
+#: admindebug.cpp:32
+msgid "Disable Debug Mode"
+msgstr "Debug-modus uitschakelen"
+
+#: admindebug.cpp:34
+msgid "Show the Debug Mode status"
+msgstr "Laat de status van de debug-modus zien"
+
+#: admindebug.cpp:40 admindebug.cpp:49
+msgid "Access denied!"
+msgstr "Toegang geweigerd!"
+
+#: admindebug.cpp:61
+msgid "Already enabled."
+msgstr "Al ingeschakeld."
+
+#: admindebug.cpp:63
+msgid "Already disabled."
+msgstr "Al uitgeschakeld."
+
+#: admindebug.cpp:88
+msgid "Debugging mode is on."
+msgstr "Debugging modus is aan."
+
+#: admindebug.cpp:90
+msgid "Debugging mode is off."
+msgstr "Debugging modus is uit."
+
+#: admindebug.cpp:92
+msgid "Logging to: stdout."
+msgstr "Logboek bijhouden naar: stdout."
+
+#: admindebug.cpp:101
+msgid "Enable Debug mode dynamically."
+msgstr "Debug-modus dynamisch inschakelen."

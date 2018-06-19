@@ -26,7 +26,7 @@ msgstr ""
 
 #: adminlog.cpp:142
 msgid "Access denied"
-msgstr ""
+msgstr "Acesso negado"
 
 #: adminlog.cpp:156
 msgid "Now logging to file"
@@ -46,7 +46,7 @@ msgstr ""
 
 #: adminlog.cpp:170
 msgid "Unknown target"
-msgstr ""
+msgstr "Alvo desconhecido"
 
 #: adminlog.cpp:192
 msgid "Logging is enabled for file"
