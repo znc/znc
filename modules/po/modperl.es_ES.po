@@ -14,4 +14,4 @@ msgstr ""
 
 #: modperl.cpp:382
 msgid "Loads perl scripts as ZNC modules"
-msgstr ""
+msgstr "Carga scripts perl como módulos de ZNC"

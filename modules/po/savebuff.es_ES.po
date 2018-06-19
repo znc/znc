@@ -14,23 +14,23 @@ msgstr ""
 
 #: savebuff.cpp:65
 msgid "<password>"
-msgstr ""
+msgstr "<contraseña>"
 
 #: savebuff.cpp:65
 msgid "Sets the password"
-msgstr ""
+msgstr "Establecer contraseña"
 
 #: savebuff.cpp:67
 msgid "<buffer>"
-msgstr ""
+msgstr "<búfer>"
 
 #: savebuff.cpp:67
 msgid "Replays the buffer"
-msgstr ""
+msgstr "Reproduce el búfer"
 
 #: savebuff.cpp:69
 msgid "Saves all buffers"
-msgstr ""
+msgstr "Guardar todos los búfers"
 
 #: savebuff.cpp:221
 msgid ""
@@ -38,25 +38,31 @@ msgid ""
 "the appropriate pass and things should start working, or setpass to a new "
 "pass and save to reinstantiate"
 msgstr ""
+"Tener la contraseña sin establecer suele significar que el descifrado a "
+"fallado. Puedes establecer la contraseña apropiada para que las cosas "
+"comiencen a funcionar, o establecer una nueva contraseña y guardar para "
+"reinicializarlo"
 
 #: savebuff.cpp:232
 msgid "Password set to [{1}]"
-msgstr ""
+msgstr "Contraseña establecida a [{1}]"
 
 #: savebuff.cpp:262
 msgid "Replayed {1}"
-msgstr ""
+msgstr "Reproducido {1}"
 
 #: savebuff.cpp:341
 msgid "Unable to decode Encrypted file {1}"
-msgstr ""
+msgstr "No se ha podido descifrar el archivo {1}"
 
 #: savebuff.cpp:358
 msgid ""
 "This user module takes up to one arguments. Either --ask-pass or the "
 "password itself (which may contain spaces) or nothing"
 msgstr ""
+"Este módulo de usuario tiene hasta un argumento. Introduce --ask-pass o la "
+"contraseña misma (la cual puede contener espacios) o nada"
 
 #: savebuff.cpp:363
 msgid "Stores channel and query buffers to disk, encrypted"
-msgstr ""
+msgstr "Almacena búfers de privados y canales en el disco, cifrados"

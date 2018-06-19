@@ -14,54 +14,54 @@ msgstr ""
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:8
 msgid "User"
-msgstr ""
+msgstr "Usuario"
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:9 lastseen.cpp:98
 msgid "Last Seen"
-msgstr ""
+msgstr "Última conexión"
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:10
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:11
 msgid "Action"
-msgstr ""
+msgstr "Acción"
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:21
 msgid "Edit"
-msgstr ""
+msgstr "Editar"
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:22
 msgid "Delete"
-msgstr ""
+msgstr "Borrar"
 
 #: modules/po/../data/lastseen/tmpl/lastseen_WebadminUser.tmpl:6
 msgid "Last login time:"
-msgstr ""
+msgstr "Última conexión:"
 
 #: lastseen.cpp:53
 msgid "Access denied"
-msgstr ""
+msgstr "Acceso denegado"
 
 #: lastseen.cpp:61 lastseen.cpp:66
 msgctxt "show"
 msgid "User"
-msgstr ""
+msgstr "Usuario"
 
 #: lastseen.cpp:62 lastseen.cpp:67
 msgctxt "show"
 msgid "Last Seen"
-msgstr ""
+msgstr "Última conexión"
 
 #: lastseen.cpp:68 lastseen.cpp:124
 msgid "never"
-msgstr ""
+msgstr "nunca"
 
 #: lastseen.cpp:78
 msgid "Shows list of users and when they last logged in"
-msgstr ""
+msgstr "Muestra una lista de usuarios y cuando conectaron por última vez"
 
 #: lastseen.cpp:153
 msgid "Collects data about when a user last logged in."
-msgstr ""
+msgstr "Recopila datos sobre la última conexión de un usuario."

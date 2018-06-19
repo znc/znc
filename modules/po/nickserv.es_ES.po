@@ -14,62 +14,64 @@ msgstr ""
 
 #: nickserv.cpp:31
 msgid "Password set"
-msgstr ""
+msgstr "Contraseña establecida"
 
 #: nickserv.cpp:38
 msgid "NickServ name set"
-msgstr ""
+msgstr "Nombre de NickServ establecido"
 
 #: nickserv.cpp:54
 msgid "No such editable command. See ViewCommands for list."
-msgstr ""
+msgstr "Comando no encontrado. Utiliza ViewCommands para ver una lista."
 
 #: nickserv.cpp:57
 msgid "Ok"
-msgstr ""
+msgstr "OK"
 
 #: nickserv.cpp:62
 msgid "password"
-msgstr ""
+msgstr "Contraseña"
 
 #: nickserv.cpp:62
 msgid "Set your nickserv password"
-msgstr ""
+msgstr "Establece tu contraseña de NickServ"
 
 #: nickserv.cpp:64
 msgid "Clear your nickserv password"
-msgstr ""
+msgstr "Borra tu contraseña de NickServ"
 
 #: nickserv.cpp:66
 msgid "nickname"
-msgstr ""
+msgstr "Nick"
 
 #: nickserv.cpp:67
 msgid ""
 "Set NickServ name (Useful on networks like EpiKnet, where NickServ is named "
 "Themis"
 msgstr ""
+"Establece el nombre de NickServ (util en redes donde NickServ se llama de "
+"otra manera)"
 
 #: nickserv.cpp:71
 msgid "Reset NickServ name to default (NickServ)"
-msgstr ""
+msgstr "Restablece el nombre de NickServ al predeterminado"
 
 #: nickserv.cpp:75
 msgid "Show patterns for lines, which are being sent to NickServ"
-msgstr ""
+msgstr "Mostrar patrones de líneas que son enviados a NickServ"
 
 #: nickserv.cpp:77
 msgid "cmd new-pattern"
-msgstr ""
+msgstr "cmd nuevo-patrón"
 
 #: nickserv.cpp:78
 msgid "Set pattern for commands"
-msgstr ""
+msgstr "Establece patrones para comandos"
 
 #: nickserv.cpp:140
 msgid "Please enter your nickserv password."
-msgstr ""
+msgstr "Por favor, introduce tu contraseña de NickServ."
 
 #: nickserv.cpp:144
 msgid "Auths you with NickServ (prefer SASL module instead)"
-msgstr ""
+msgstr "Te autentica con NickServ (es preferible usar el módulo de SASL)"

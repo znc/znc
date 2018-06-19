@@ -14,48 +14,48 @@ msgstr ""
 
 #: kickrejoin.cpp:56
 msgid "<secs>"
-msgstr ""
+msgstr "<segs>"
 
 #: kickrejoin.cpp:56
 msgid "Set the rejoin delay"
-msgstr ""
+msgstr "Establece el tiempo de espera de rejoin"
 
 #: kickrejoin.cpp:58
 msgid "Show the rejoin delay"
-msgstr ""
+msgstr "Muestra el tiempo de espera de rejoin"
 
 #: kickrejoin.cpp:77
 msgid "Illegal argument, must be a positive number or 0"
-msgstr ""
+msgstr "Argumento no válido, debe ser un número positivo o cero"
 
 #: kickrejoin.cpp:90
 msgid "Negative delays don't make any sense!"
-msgstr ""
+msgstr "Tiempos de espera en negativo no tienen sentido!"
 
 #: kickrejoin.cpp:98
 msgid "Rejoin delay set to 1 second"
 msgid_plural "Rejoin delay set to {1} seconds"
 msgstr[0] ""
-msgstr[1] ""
+msgstr[1] "Tiempo de espera de rejoin establecido a {1} segundos"
 
 #: kickrejoin.cpp:101
 msgid "Rejoin delay disabled"
-msgstr ""
+msgstr "Tiempo de espera de rejoin desactivado"
 
 #: kickrejoin.cpp:106
 msgid "Rejoin delay is set to 1 second"
 msgid_plural "Rejoin delay is set to {1} seconds"
 msgstr[0] ""
-msgstr[1] ""
+msgstr[1] "Tiempo de espera de rejoin establecido a {1} segundos"
 
 #: kickrejoin.cpp:109
 msgid "Rejoin delay is disabled"
-msgstr ""
+msgstr "Tiempo de espera de rejoin desactivado"
 
 #: kickrejoin.cpp:131
 msgid "You might enter the number of seconds to wait before rejoining."
-msgstr ""
+msgstr "Introduce el número de segundos a esperar antes de reentrar."
 
 #: kickrejoin.cpp:134
 msgid "Autorejoins on kick"
-msgstr ""
+msgstr "Reentra a un canal tras un kick"

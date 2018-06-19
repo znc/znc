@@ -81,43 +81,35 @@ msgstr "Некорректный порт"
 msgid "Unable to bind: {1}"
 msgstr "Не получилось слушать: {1}"
 
-#: IRCNetwork.cpp:236
+#: IRCNetwork.cpp:235
 msgid "Jumping servers because this server is no longer in the list"
 msgstr "Текущий сервер больше не в списке, переподключаюсь"
 
-#: IRCNetwork.cpp:641 User.cpp:678
+#: IRCNetwork.cpp:640 User.cpp:678
 msgid "Welcome to ZNC"
 msgstr "Добро пожаловать в ZNC"
 
-#: IRCNetwork.cpp:729
+#: IRCNetwork.cpp:728
 msgid "You are currently disconnected from IRC. Use 'connect' to reconnect."
 msgstr "Вы отключены от IRC. Введите «connect» для подключения."
 
-#: IRCNetwork.cpp:734
-msgid ""
-"ZNC is presently running in DEBUG mode. Sensitive data during your current "
-"session may be exposed to the host."
-msgstr ""
-"ZNC запущен в отладочном режиме. Деликатная информация, проходящая через "
-"ZNC, может быть видна администратору."
-
-#: IRCNetwork.cpp:765
+#: IRCNetwork.cpp:758
 msgid "This network is being deleted or moved to another user."
 msgstr "Эта сеть будет удалена или перемещена к другому пользователю."
 
-#: IRCNetwork.cpp:994
+#: IRCNetwork.cpp:987
 msgid "The channel {1} could not be joined, disabling it."
 msgstr "Не могу зайти на канал {1}, выключаю его."
 
-#: IRCNetwork.cpp:1123
+#: IRCNetwork.cpp:1116
 msgid "Your current server was removed, jumping..."
 msgstr "Текущий сервер был удалён, переподключаюсь..."
 
-#: IRCNetwork.cpp:1286
+#: IRCNetwork.cpp:1279
 msgid "Cannot connect to {1}, because ZNC is not compiled with SSL support."
 msgstr "Не могу подключиться к {1}, т. к. ZNC собран без поддержки SSL."
 
-#: IRCNetwork.cpp:1307
+#: IRCNetwork.cpp:1300
 msgid "Some module aborted the connection attempt"
 msgstr "Какой-то модуль оборвал попытку соединения"
 
@@ -187,26 +179,26 @@ msgstr "Не могу найти свободный ник"
 msgid "No free nick found"
 msgstr "Не могу найти свободный ник"
 
-#: Client.cpp:75
+#: Client.cpp:74
 msgid "No such module {1}"
 msgstr "Нет модуля {1}"
 
-#: Client.cpp:365
+#: Client.cpp:358
 msgid "A client from {1} attempted to login as you, but was rejected: {2}"
 msgstr "Клиент с {1} попытался зайти под вашим именем, но был отвергнут: {2}"
 
-#: Client.cpp:400
+#: Client.cpp:393
 msgid "Network {1} doesn't exist."
 msgstr "Сеть {1} не существует."
 
-#: Client.cpp:414
+#: Client.cpp:407
 msgid ""
 "You have several networks configured, but no network was specified for the "
 "connection."
 msgstr ""
 "У вас настроены несколько сетей, но для этого соединения ни одна не указана."
 
-#: Client.cpp:417
+#: Client.cpp:410
 msgid ""
 "Selecting network {1}. To see list of all configured networks, use /znc "
 "ListNetworks"
@@ -214,7 +206,7 @@ msgstr ""
 "Выбираю сеть {1}. Чтобы увидеть весь список, введите команду /znc "
 "ListNetworks"
 
-#: Client.cpp:420
+#: Client.cpp:413
 msgid ""
 "If you want to choose another network, use /znc JumpNetwork <network>, or "
 "connect to ZNC with username {1}/<network> (instead of just {1})"
@@ -222,51 +214,51 @@ msgstr ""
 "Чтобы выбрать другую сеть, введите /znc JumpNetwork <сеть> либо "
 "подключайтесь к ZNC с именем пользователя {1}/<сеть> вместо {1}"
 
-#: Client.cpp:426
+#: Client.cpp:419
 msgid ""
 "You have no networks configured. Use /znc AddNetwork <network> to add one."
 msgstr ""
 "Вы не настроили ни одну сеть. Введите команду /znc AddNetwork <сеть> чтобы "
 "добавить сеть."
 
-#: Client.cpp:437
+#: Client.cpp:430
 msgid "Closing link: Timeout"
 msgstr "Завершаю связь по тайм-ауту"
 
-#: Client.cpp:459
+#: Client.cpp:452
 msgid "Closing link: Too long raw line"
 msgstr "Завершаю связь: получена слишком длинная строка"
 
-#: Client.cpp:466
+#: Client.cpp:459
 msgid ""
 "You are being disconnected because another user just authenticated as you."
 msgstr "Другой пользователь зашёл под вашим именем, отключаем."
 
-#: Client.cpp:1021
+#: Client.cpp:1014
 msgid "Your CTCP to {1} got lost, you are not connected to IRC!"
 msgstr "Вы не подключены к IRC, ваш CTCP-запрос к {1} утерян!"
 
-#: Client.cpp:1148
+#: Client.cpp:1141
 msgid "Your notice to {1} got lost, you are not connected to IRC!"
 msgstr "Вы не подключены к IRC, ваше сообщение к {1} утеряно!"
 
-#: Client.cpp:1187
+#: Client.cpp:1180
 msgid "Removing channel {1}"
 msgstr "Убираю канал {1}"
 
-#: Client.cpp:1263
+#: Client.cpp:1256
 msgid "Your message to {1} got lost, you are not connected to IRC!"
 msgstr "Вы не подключены к IRC, ваше сообщение к {1} утеряно!"
 
-#: Client.cpp:1316 Client.cpp:1322
+#: Client.cpp:1309 Client.cpp:1315
 msgid "Hello. How may I help you?"
 msgstr "Привет, чем могу быть вам полезен?"
 
-#: Client.cpp:1336
+#: Client.cpp:1329
 msgid "Usage: /attach <#chans>"
 msgstr "Использование: /attach <#каналы>"
 
-#: Client.cpp:1343 Client.cpp:1365 ClientCommand.cpp:129 ClientCommand.cpp:151
+#: Client.cpp:1336 Client.cpp:1358 ClientCommand.cpp:129 ClientCommand.cpp:151
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
 msgstr[0] "{1} канал подходит под маску [{2}]"
@@ -274,7 +266,7 @@ msgstr[1] "{1} канала подходят под маску [{2}]"
 msgstr[2] "{1} каналов подходят под маску [{2}]"
 msgstr[3] "{1} каналов подходят под маску [{2}]"
 
-#: Client.cpp:1346 ClientCommand.cpp:132
+#: Client.cpp:1339 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] "Прицепляю {1} канал"
@@ -282,11 +274,11 @@ msgstr[1] "Прицепляю {1} канала"
 msgstr[2] "Прицепляю {1} каналов"
 msgstr[3] "Прицепляю {1} каналов"
 
-#: Client.cpp:1358
+#: Client.cpp:1351
 msgid "Usage: /detach <#chans>"
 msgstr "Использование: /detach <#каналы>"
 
-#: Client.cpp:1368 ClientCommand.cpp:154
+#: Client.cpp:1361 ClientCommand.cpp:154
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] "Отцепляю {1} канал"
@@ -1123,21 +1115,21 @@ msgstr "Всего"
 #: ClientCommand.cpp:1498
 msgctxt "trafficcmd"
 msgid "<Users>"
-msgstr ""
+msgstr "<Пользователи>"
 
 #: ClientCommand.cpp:1507
 msgctxt "trafficcmd"
 msgid "<ZNC>"
-msgstr ""
+msgstr "<ZNC>"
 
 #: ClientCommand.cpp:1515
 msgctxt "trafficcmd"
 msgid "<Total>"
-msgstr ""
+msgstr "<Всего>"
 
 #: ClientCommand.cpp:1524
 msgid "Running for {1}"
-msgstr ""
+msgstr "Запущен {1}"
 
 #: ClientCommand.cpp:1530
 msgid "Unknown command, try 'Help'"
