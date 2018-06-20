@@ -45,17 +45,17 @@ Process::Process(QString cmd, QStringList args,
 
 Process::~Process() {
     if (m_kill) m_proc.terminate();
-    [this]() {
-        ASSERT_TRUE(m_proc.waitForFinished());
-        if (!m_allowDie) {
-            ASSERT_EQ(QProcess::NormalExit, m_proc.exitStatus());
-            if (m_allowLeak) {
-                ASSERT_THAT(m_proc.exitStatus(), AnyOf(Eq(23), Eq(m_exit)));
-            } else {
-                ASSERT_EQ(m_exit, m_proc.exitCode());
-            }
+    bool bFinished = m_proc.waitForFinished();
+    EXPECT_TRUE(bFinished);
+    if (!bFinished) return;
+    if (!m_allowDie) {
+        EXPECT_EQ(m_proc.exitStatus(), QProcess::NormalExit);
+        if (m_allowLeak) {
+            EXPECT_THAT(m_proc.exitStatus(), AnyOf(Eq(23), Eq(m_exit)));
+        } else {
+            EXPECT_EQ(m_proc.exitCode(), m_exit);
         }
-    }();
+    }
 }
 
 }  // namespace znc_inttest
