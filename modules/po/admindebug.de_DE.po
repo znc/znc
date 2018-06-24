@@ -14,35 +14,35 @@ msgstr ""
 
 #: admindebug.cpp:30
 msgid "Enable Debug Mode"
-msgstr ""
+msgstr "Debugmodus aktivieren"
 
 #: admindebug.cpp:32
 msgid "Disable Debug Mode"
-msgstr ""
+msgstr "Debugmodus deaktivieren"
 
 #: admindebug.cpp:34
 msgid "Show the Debug Mode status"
-msgstr ""
+msgstr "Zeige den Debugstatus an"
 
 #: admindebug.cpp:40 admindebug.cpp:49
 msgid "Access denied!"
-msgstr ""
+msgstr "Zugriff verweigert!"
 
 #: admindebug.cpp:61
 msgid "Already enabled."
-msgstr ""
+msgstr "Bereits aktiviert."
 
 #: admindebug.cpp:63
 msgid "Already disabled."
-msgstr ""
+msgstr "Bereits deaktiviert."
 
 #: admindebug.cpp:88
 msgid "Debugging mode is on."
-msgstr ""
+msgstr "Debuggingmodus ist an."
 
 #: admindebug.cpp:90
 msgid "Debugging mode is off."
-msgstr ""
+msgstr "Debuggingmodus ist aus."
 
 #: admindebug.cpp:92
 msgid "Logging to: stdout."
@@ -50,4 +50,4 @@ msgstr ""
 
 #: admindebug.cpp:101
 msgid "Enable Debug mode dynamically."
-msgstr ""
+msgstr "Aktiviere den Debugmodus dynamisch."
