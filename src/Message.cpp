@@ -244,6 +244,7 @@ void CMessage::InitType() {
     } else {
         std::map<CString, Type> mTypes = {
             {"ACCOUNT", Type::Account},
+            {"AUTHENTICATE", Type::Authenticate},
             {"AWAY", Type::Away},
             {"CAP", Type::Capability},
             {"ERROR", Type::Error},
