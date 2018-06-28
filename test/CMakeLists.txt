@@ -85,5 +85,10 @@ externalproject_add(inttest_bin
 	"-DZNC_BIN_DIR:path=${CMAKE_INSTALL_FULL_BINDIR}"
 	"-DQt5_HINTS:path=${brew_qt5}")
 add_custom_target(inttest COMMAND
+	# Prevent a warning from test of znc-buildmod, when inner make
+	# discovers that there is an outer make and tries to use it:
+	# gmake[4]: warning: jobserver unavailable: using -j1.  Add '+' to parent make rule.
+	# This option doesn't affect ninja, which doesn't show that warning anyway.
+	${CMAKE_COMMAND} -E env MAKEFLAGS=
 	"${CMAKE_CURRENT_BINARY_DIR}/integration/inttest")
 add_dependencies(inttest inttest_bin)
