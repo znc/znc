@@ -35,8 +35,8 @@ msgstr "Tiempos de espera en negativo no tienen sentido!"
 #: kickrejoin.cpp:98
 msgid "Rejoin delay set to 1 second"
 msgid_plural "Rejoin delay set to {1} seconds"
-msgstr[0] ""
-msgstr[1] "Tiempo de espera de rejoin establecido a {1} segundos"
+msgstr[0] "Tiempo de espera de reentrada establecido a 1 segundo"
+msgstr[1] "Tiempo de espera de reentrada establecido a {1} segundos"
 
 #: kickrejoin.cpp:101
 msgid "Rejoin delay disabled"
@@ -45,7 +45,7 @@ msgstr "Tiempo de espera de rejoin desactivado"
 #: kickrejoin.cpp:106
 msgid "Rejoin delay is set to 1 second"
 msgid_plural "Rejoin delay is set to {1} seconds"
-msgstr[0] ""
+msgstr[0] "Tiempo de espera de reentrada establecido a 1 segundo"
 msgstr[1] "Tiempo de espera de rejoin establecido a {1} segundos"
 
 #: kickrejoin.cpp:109

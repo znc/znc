@@ -55,7 +55,7 @@ msgstr "No hay reglas de logueo. Se registra todo."
 #: log.cpp:161
 msgid "1 rule removed: {2}"
 msgid_plural "{1} rules removed: {2}"
-msgstr[0] ""
+msgstr[0] "Borrada regla: {2}"
 msgstr[1] "Borradas {1} reglas: {2}"
 
 #: log.cpp:168 log.cpp:173

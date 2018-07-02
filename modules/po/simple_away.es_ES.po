@@ -60,7 +60,7 @@ msgstr "El motivo de ausencia quedaría como: {1}"
 #: simple_away.cpp:144
 msgid "Current timer setting: 1 second"
 msgid_plural "Current timer setting: {1} seconds"
-msgstr[0] ""
+msgstr[0] "Tiempo establecido: 1 segundo"
 msgstr[1] "Tiempo establecido: {1} segundos"
 
 #: simple_away.cpp:153 simple_away.cpp:161
@@ -70,7 +70,7 @@ msgstr "Temporizador deshabilitado"
 #: simple_away.cpp:155
 msgid "Timer set to 1 second"
 msgid_plural "Timer set to: {1} seconds"
-msgstr[0] ""
+msgstr[0] "Temporizador establecido a 1 segundo"
 msgstr[1] "Temporizador establecido a {1} segundos"
 
 #: simple_away.cpp:166

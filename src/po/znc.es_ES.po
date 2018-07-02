@@ -262,13 +262,13 @@ msgstr "Uso: /attach <#canales>"
 #: Client.cpp:1336 Client.cpp:1358 ClientCommand.cpp:129 ClientCommand.cpp:151
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
-msgstr[0] ""
+msgstr[0] "Hay {1} canal que coincide con [{2}]"
 msgstr[1] "Hay {1} canales que coinciden con [{2}]"
 
 #: Client.cpp:1339 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
-msgstr[0] ""
+msgstr[0] "Vinculado a {1} canal"
 msgstr[1] "Unido a {1} canales"
 
 #: Client.cpp:1351
@@ -278,7 +278,7 @@ msgstr "Uso: /detach <#canales>"
 #: Client.cpp:1361 ClientCommand.cpp:154
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
-msgstr[0] ""
+msgstr[0] "Desvinculado {1} canal"
 msgstr[1] "Separados {1} canales"
 
 #: Chan.cpp:638
@@ -321,7 +321,7 @@ msgstr "No se ha encontrado el módulo {1}"
 
 #: Modules.cpp:1659
 msgid "Module {1} does not support module type {2}."
-msgstr ""
+msgstr "El módulo {1} no soporta el tipo de módulo {2}."
 
 #: Modules.cpp:1666
 msgid "Module {1} requires a user."
@@ -1045,7 +1045,7 @@ msgstr "Uso: ClearBuffer <#canal|privado>"
 #: ClientCommand.cpp:1395
 msgid "{1} buffer matching {2} has been cleared"
 msgid_plural "{1} buffers matching {2} have been cleared"
-msgstr[0] ""
+msgstr[0] "{1} búfer coincidente con {2} ha sido borrado"
 msgstr[1] "{1} búfers coincidentes con {2} han sido borrados"
 
 #: ClientCommand.cpp:1408

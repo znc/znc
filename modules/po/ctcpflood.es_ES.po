@@ -43,13 +43,13 @@ msgstr "Uso: Lines <límite>"
 #: ctcpflood.cpp:125
 msgid "1 CTCP message"
 msgid_plural "{1} CTCP messages"
-msgstr[0] ""
+msgstr[0] "1 mensaje CTCP"
 msgstr[1] "{1} mensajes CTCP"
 
 #: ctcpflood.cpp:127
 msgid "every second"
 msgid_plural "every {1} seconds"
-msgstr[0] ""
+msgstr[0] "cada segundo"
 msgstr[1] "cada {1} segundos"
 
 #: ctcpflood.cpp:129
