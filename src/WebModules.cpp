@@ -557,13 +557,15 @@ CWebSock::EPageReqResult CWebSock::PrintTemplate(const CString& sPageName,
 }
 
 CString CWebSock::GetSkinPath(const CString& sSkinName) {
-    CString sRet = CZNC::Get().GetZNCPath() + "/webskins/" + sSkinName;
+    const CString sSkin = sSkinName.Replace_n("/", "_").Replace_n(".", "_");
+
+    CString sRet = CZNC::Get().GetZNCPath() + "/webskins/" + sSkin;
 
     if (!CFile::IsDir(sRet)) {
-        sRet = CZNC::Get().GetCurPath() + "/webskins/" + sSkinName;
+        sRet = CZNC::Get().GetCurPath() + "/webskins/" + sSkin;
 
         if (!CFile::IsDir(sRet)) {
-            sRet = CString(_SKINDIR_) + "/" + sSkinName;
+            sRet = CString(_SKINDIR_) + "/" + sSkin;
         }
     }
 
