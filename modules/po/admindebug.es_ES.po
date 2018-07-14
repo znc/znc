@@ -14,40 +14,40 @@ msgstr ""
 
 #: admindebug.cpp:30
 msgid "Enable Debug Mode"
-msgstr ""
+msgstr "Habilitar modo de depuración"
 
 #: admindebug.cpp:32
 msgid "Disable Debug Mode"
-msgstr ""
+msgstr "Desactivar modo de depuración"
 
 #: admindebug.cpp:34
 msgid "Show the Debug Mode status"
-msgstr ""
+msgstr "Muestra el estado del modo de depuración"
 
 #: admindebug.cpp:40 admindebug.cpp:49
 msgid "Access denied!"
-msgstr ""
+msgstr "¡Acceso denegado!"
 
 #: admindebug.cpp:61
 msgid "Already enabled."
-msgstr ""
+msgstr "Ya está habilitado."
 
 #: admindebug.cpp:63
 msgid "Already disabled."
-msgstr ""
+msgstr "Ya está deshabilitado."
 
 #: admindebug.cpp:88
 msgid "Debugging mode is on."
-msgstr ""
+msgstr "Modo depuración activado."
 
 #: admindebug.cpp:90
 msgid "Debugging mode is off."
-msgstr ""
+msgstr "Modo depuración desactivado."
 
 #: admindebug.cpp:92
 msgid "Logging to: stdout."
-msgstr ""
+msgstr "Registrando a: stdout."
 
 #: admindebug.cpp:101
 msgid "Enable Debug mode dynamically."
-msgstr ""
+msgstr "Habilita el modo de depuración dinámicamente."

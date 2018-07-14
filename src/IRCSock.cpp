@@ -156,7 +156,8 @@ void CIRCSock::Quit(const CString& sQuitMsg) {
 void CIRCSock::ReadLine(const CString& sData) {
     CString sLine = sData;
 
-    sLine.TrimRight("\n\r");
+    sLine.Replace("\n", "");
+    sLine.Replace("\r", "");
 
     DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/"
               << m_pNetwork->GetName() << ") IRC -> ZNC [" << sLine << "]");

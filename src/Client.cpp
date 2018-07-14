@@ -103,7 +103,8 @@ void CClient::ReadLine(const CString& sData) {
     CLanguageScope user_lang(GetUser() ? GetUser()->GetLanguage() : "");
     CString sLine = sData;
 
-    sLine.TrimRight("\n\r");
+    sLine.Replace("\n", "");
+    sLine.Replace("\r", "");
 
     DEBUG("(" << GetFullName() << ") CLI -> ZNC ["
         << CDebug::Filter(sLine) << "]");
