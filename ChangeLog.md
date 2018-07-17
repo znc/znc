@@ -1,3 +1,35 @@
+# ZNC 1.7.1 (2018-07-17)
+
+## Security critical fixes
+* CVE-2018-14055: non-admin user could gain admin privileges and shell access by injecting values into znc.conf.
+* CVE-2018-14056: path traversal in HTTP handler via ../ in a web skin name.
+
+## Core
+* Fix znc-buildmod to not hardcode the compiler used to build ZNC anymore in CMake build
+* Fix language selector. Russian and German were both not selectable.
+* Fix build without SSL support
+* Fix several broken strings
+* Stop spamming users about debug mode. This feature was added in 1.7.0, now reverted.
+
+## New
+* Add partial Spanish, Indonesian, and Dutch translations
+
+## Modules
+* adminlog: Log the error message again (regression of 1.7.0)
+* admindebug: New module, which allows admins to turn on/off --debug in runtime
+* flooddetach: Fix description of commands
+* modperl: Fix memory leak in NV handling
+* modperl: Fix functions which return VCString
+* modpython: Fix functions which return VCString
+* webadmin: Fix fancy CTCP replies editor for Firefox. It was showing the plain version even when JS is enabled
+
+## Internal
+* Deprecate one of the overloads of CMessage::GetParams(), rename it to CMessage::GetParamsColon()
+* Don't throw from destructor in the integration test
+* Fix a warning with integration test / gmake / znc-buildmod interaction.
+
+
+
 # ZNC 1.7.0 (2018-05-01)
 
 ## New
