@@ -111,68 +111,68 @@ msgstr ""
 msgid "Some module aborted the connection attempt"
 msgstr "Algún módulo ha abortado el intento de conexión"
 
-#: IRCSock.cpp:484
+#: IRCSock.cpp:485
 msgid "Error from server: {1}"
 msgstr "Error del servidor: {1}"
 
-#: IRCSock.cpp:686
+#: IRCSock.cpp:687
 msgid "ZNC seems to be connected to itself, disconnecting..."
 msgstr "ZNC parece que se ha conectado a si mismo, desconectando..."
 
-#: IRCSock.cpp:733
+#: IRCSock.cpp:734
 msgid "Server {1} redirects us to {2}:{3} with reason: {4}"
 msgstr "Servidor {1} nos redirige a {2}:{3} por: {4}"
 
-#: IRCSock.cpp:737
+#: IRCSock.cpp:738
 msgid "Perhaps you want to add it as a new server."
 msgstr "Puede que quieras añadirlo como nuevo servidor."
 
-#: IRCSock.cpp:967
+#: IRCSock.cpp:968
 msgid "Channel {1} is linked to another channel and was thus disabled."
 msgstr "El canal {1} está enlazado a otro canal y por eso está deshabilitado."
 
-#: IRCSock.cpp:979
+#: IRCSock.cpp:980
 msgid "Switched to SSL (STARTTLS)"
 msgstr "Cambiado a SSL (STARTTLS)"
 
-#: IRCSock.cpp:1032
+#: IRCSock.cpp:1033
 msgid "You quit: {1}"
 msgstr "Has salido: {1}"
 
-#: IRCSock.cpp:1238
+#: IRCSock.cpp:1239
 msgid "Disconnected from IRC. Reconnecting..."
 msgstr "Desconectado del IRC. Volviendo a conectar..."
 
-#: IRCSock.cpp:1269
+#: IRCSock.cpp:1270
 msgid "Cannot connect to IRC ({1}). Retrying..."
 msgstr "No se puede conectar al IRC ({1}). Reintentándolo..."
 
-#: IRCSock.cpp:1272
+#: IRCSock.cpp:1273
 msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr "Desconectado del IRC ({1}). Volviendo a conectar..."
 
-#: IRCSock.cpp:1302
+#: IRCSock.cpp:1303
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 "Si confías en este certificado, ejecuta /znc AddTrustedServerFingerprint {1}"
 
-#: IRCSock.cpp:1319
+#: IRCSock.cpp:1320
 msgid "IRC connection timed out.  Reconnecting..."
 msgstr "Tiempo de espera agotado en la conexión al IRC. Reconectando..."
 
-#: IRCSock.cpp:1331
+#: IRCSock.cpp:1332
 msgid "Connection Refused.  Reconnecting..."
 msgstr "Conexión rechazada. Reconectando..."
 
-#: IRCSock.cpp:1339
+#: IRCSock.cpp:1340
 msgid "Received a too long line from the IRC server!"
 msgstr "¡Recibida línea demasiado larga desde el servidor de IRC!"
 
-#: IRCSock.cpp:1443
+#: IRCSock.cpp:1444
 msgid "No free nick available"
 msgstr "No hay ningún nick disponible"
 
-#: IRCSock.cpp:1451
+#: IRCSock.cpp:1452
 msgid "No free nick found"
 msgstr "No se ha encontrado ningún nick disponible"
 
@@ -180,17 +180,17 @@ msgstr "No se ha encontrado ningún nick disponible"
 msgid "No such module {1}"
 msgstr "No existe el módulo {1}"
 
-#: Client.cpp:358
+#: Client.cpp:359
 msgid "A client from {1} attempted to login as you, but was rejected: {2}"
 msgstr ""
 "Un cliente desde {1} ha intentado conectarse por ti, pero ha sido rechazado "
 "{2}"
 
-#: Client.cpp:393
+#: Client.cpp:394
 msgid "Network {1} doesn't exist."
 msgstr "La red {1} no existe."
 
-#: Client.cpp:407
+#: Client.cpp:408
 msgid ""
 "You have several networks configured, but no network was specified for the "
 "connection."
@@ -198,7 +198,7 @@ msgstr ""
 "Tienes varias redes configuradas, pero ninguna ha sido especificada para la "
 "conexión."
 
-#: Client.cpp:410
+#: Client.cpp:411
 msgid ""
 "Selecting network {1}. To see list of all configured networks, use /znc "
 "ListNetworks"
@@ -206,7 +206,7 @@ msgstr ""
 "Seleccionando la red {1}. Para ver una lista de todas las redes "
 "configuradas, ejecuta /znc ListNetworks"
 
-#: Client.cpp:413
+#: Client.cpp:414
 msgid ""
 "If you want to choose another network, use /znc JumpNetwork <network>, or "
 "connect to ZNC with username {1}/<network> (instead of just {1})"
@@ -214,68 +214,68 @@ msgstr ""
 "Si quieres escoger otra red, utiliza /znc JumpNetwork <network>, o conecta a "
 "ZNC mediante usuario {1}/<network> (en vez de solo {1})"
 
-#: Client.cpp:419
+#: Client.cpp:420
 msgid ""
 "You have no networks configured. Use /znc AddNetwork <network> to add one."
 msgstr ""
 "No tienes redes configuradas. Ejecuta /znc AddNetwork <network> para añadir "
 "una."
 
-#: Client.cpp:430
+#: Client.cpp:431
 msgid "Closing link: Timeout"
 msgstr "Cerrando conexión: tiempo de espera agotado"
 
-#: Client.cpp:452
+#: Client.cpp:453
 msgid "Closing link: Too long raw line"
 msgstr "Cerrando conexión: linea raw demasiado larga"
 
-#: Client.cpp:459
+#: Client.cpp:460
 msgid ""
 "You are being disconnected because another user just authenticated as you."
 msgstr ""
 "Estás siendo desconectado porque otro usuario se ha autenticado por ti."
 
-#: Client.cpp:1014
+#: Client.cpp:1015
 msgid "Your CTCP to {1} got lost, you are not connected to IRC!"
 msgstr "Tu CTCP a {1} se ha perdido, ¡no estás conectado al IRC!"
 
-#: Client.cpp:1141
+#: Client.cpp:1142
 msgid "Your notice to {1} got lost, you are not connected to IRC!"
 msgstr "Tu notice a {1} se ha perdido, ¡no estás conectado al IRC!"
 
-#: Client.cpp:1180
+#: Client.cpp:1181
 msgid "Removing channel {1}"
 msgstr "Eliminando canal {1}"
 
-#: Client.cpp:1256
+#: Client.cpp:1257
 msgid "Your message to {1} got lost, you are not connected to IRC!"
 msgstr "Tu mensaje a {1} se ha perdido, ¡no estás conectado al IRC!"
 
-#: Client.cpp:1309 Client.cpp:1315
+#: Client.cpp:1310 Client.cpp:1316
 msgid "Hello. How may I help you?"
 msgstr "Hola. ¿En qué te puedo ayudar?"
 
-#: Client.cpp:1329
+#: Client.cpp:1330
 msgid "Usage: /attach <#chans>"
 msgstr "Uso: /attach <#canales>"
 
-#: Client.cpp:1336 Client.cpp:1358 ClientCommand.cpp:129 ClientCommand.cpp:151
+#: Client.cpp:1337 Client.cpp:1359 ClientCommand.cpp:129 ClientCommand.cpp:151
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
 msgstr[0] "Hay {1} canal que coincide con [{2}]"
 msgstr[1] "Hay {1} canales que coinciden con [{2}]"
 
-#: Client.cpp:1339 ClientCommand.cpp:132
+#: Client.cpp:1340 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] "Vinculado a {1} canal"
 msgstr[1] "Unido a {1} canales"
 
-#: Client.cpp:1351
+#: Client.cpp:1352
 msgid "Usage: /detach <#chans>"
 msgstr "Uso: /detach <#canales>"
 
-#: Client.cpp:1361 ClientCommand.cpp:154
+#: Client.cpp:1362 ClientCommand.cpp:154
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] "Desvinculado {1} canal"
