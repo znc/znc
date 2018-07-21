@@ -466,17 +466,6 @@ bool CZNC::WriteConfig() {
         return false;
     }
 
-    // We have to "transfer" our lock on the config to the new file.
-    // The old file (= inode) is going away and thus a lock on it would be
-    // useless. These lock should always succeed (races, anyone?).
-    if (!pFile->TryExLock()) {
-        DEBUG("Error while locking the new config file, errno says: " +
-              CString(strerror(errno)));
-        pFile->Delete();
-        delete pFile;
-        return false;
-    }
-
     pFile->Write(MakeConfigHeader() + "\n");
 
     CConfig config;
@@ -604,9 +593,7 @@ bool CZNC::WriteConfig() {
     // Everything went fine, just need to update the saved path.
     pFile->SetFileName(GetConfigFile());
 
-    // Make sure the lock is kept alive as long as we need it.
-    delete m_pLockFile;
-    m_pLockFile = pFile;
+    delete pFile;
 
     return true;
 }
@@ -859,7 +846,8 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 
         bFileOK = true;
         if (CFile::Exists(m_sConfigFile)) {
-            if (!File.TryExLock(m_sConfigFile)) {
+            CString sError;
+            if (!AcquireLock(sError)) {
                 CUtils::PrintStatus(false,
                                     "ZNC is currently running on this config.");
                 bFileOK = false;
@@ -960,8 +948,6 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
         sProtocol + "://<znc_server_ip>:" + CString(uListenPort) + "/", true);
     CUtils::PrintMessage("");
 
-    File.UnLock();
-
     bool bWantLaunch = bFileOpen;
     if (bWantLaunch) {
         // "export ZNC_NO_LAUNCH_AFTER_MAKECONF=1" would cause znc --makeconf to
@@ -994,8 +980,36 @@ void CZNC::BackupConfigOnce(const CString& sSuffix) {
         CUtils::PrintStatus(false, strerror(errno));
 }
 
+bool CZNC::AcquireLock(CString& sError) {
+    // If we already have the lock file, do nothing
+    // FIXME: check if we actually hold the fcntl lock
+    if (m_pLockFile) return true;
+
+    CFile* pLock = new CFile(m_sConfigFile + ".lock");
+    // need to open the lock file Read/Write for fcntl()
+    // exclusive locking to work properly!
+    if (!pLock->Open(O_RDWR|O_CREAT, 0600)) {
+        sError = "Can not open lock file";
+        CUtils::PrintStatus(false, sError);
+        delete pLock;
+        return false;
+    }
+
+    if (!pLock->TryExLock()) {
+        sError = "ZNC is already running on this config.";
+        CUtils::PrintStatus(false, sError);
+        delete pLock;
+        return false;
+    }
+
+    m_pLockFile = pLock;
+    return true;
+}
+
 bool CZNC::ParseConfig(const CString& sConfig, CString& sError) {
     m_sConfigFile = ExpandConfigPath(sConfig, false);
+
+    if (!AcquireLock(sError)) return false;
 
     CConfig config;
     if (!ReadConfig(config, sError)) return false;
@@ -1027,28 +1041,13 @@ bool CZNC::ReadConfig(CConfig& config, CString& sError) {
         return false;
     }
 
-    CFile* pFile = new CFile(m_sConfigFile);
+    CFile File(m_sConfigFile);
 
-    // need to open the config file Read/Write for fcntl()
-    // exclusive locking to work properly!
-    if (!pFile->Open(m_sConfigFile, O_RDWR)) {
+    if (!File.Open(m_sConfigFile, O_RDWR)) {
         sError = "Can not open config file";
         CUtils::PrintStatus(false, sError);
-        delete pFile;
         return false;
     }
-
-    if (!pFile->TryExLock()) {
-        sError = "ZNC is already running on this config.";
-        CUtils::PrintStatus(false, sError);
-        delete pFile;
-        return false;
-    }
-
-    // (re)open the config file
-    delete m_pLockFile;
-    m_pLockFile = pFile;
-    CFile& File = *pFile;
 
     if (!config.Parse(File, sError)) {
         CUtils::PrintStatus(false, sError);
