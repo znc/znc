@@ -54,6 +54,11 @@ class CAdminDebugMod : public CModule {
     }
 
     bool ToggleDebug(bool bEnable, CString sEnabledBy) {
+        if (!CDebug::StdoutIsTTY()) {
+            PutModule(t_s("Failure. We need to be running with a TTY. (is ZNC running with --foreground?)"));
+            return false;
+        }
+
         bool bValue = CDebug::Debug();
 
         if (bEnable == bValue) {
@@ -77,7 +82,7 @@ class CAdminDebugMod : public CModule {
             );
             m_sEnabledBy = sEnabledBy;
         } else {
-            m_sEnabledBy = nullptr;
+            m_sEnabledBy = "";
         }
 
         return true;
