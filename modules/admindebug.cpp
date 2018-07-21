@@ -33,6 +33,8 @@ class CAdminDebugMod : public CModule {
                    [=](const CString& sLine) { CommandDisable(sLine); });
         AddCommand("Status", "", t_d("Show the Debug Mode status"),
                    [=](const CString& sLine) { CommandStatus(sLine); });
+
+        m_sEnabledBy = CString("unknown");
     }
 
     void CommandEnable(const CString& sCommand) {
@@ -54,6 +56,11 @@ class CAdminDebugMod : public CModule {
     }
 
     bool ToggleDebug(bool bEnable, CString sEnabledBy) {
+        if (!CDebug::StdoutIsTTY()) {
+            PutModule(t_s("Failure. We need to be running with a TTY. (is znc running with --foreground?)"));
+            return false;
+        }
+
         bool bValue = CDebug::Debug();
 
         if (bEnable == bValue) {
@@ -77,7 +84,7 @@ class CAdminDebugMod : public CModule {
             );
             m_sEnabledBy = sEnabledBy;
         } else {
-            m_sEnabledBy = nullptr;
+            m_sEnabledBy = CString("unknown");
         }
 
         return true;
