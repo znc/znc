@@ -456,6 +456,11 @@ bool CZNC::WriteConfig() {
         return false;
     }
 
+    if (GetReadonlyConfig()) {
+        DEBUG("Running in read-only mode, not trying to write config.");
+        return false;
+    }
+
     // We first write to a temporary file and then move it to the right place
     CFile* pFile = new CFile(GetConfigFile() + "~");
 
@@ -1006,8 +1011,15 @@ bool CZNC::AcquireLock(CString& sError) {
     return true;
 }
 
-bool CZNC::ParseConfig(const CString& sConfig, CString& sError) {
+bool CZNC::ParseConfig(const CString& sConfig, bool bReadonlyConfig, CString& sError) {
     m_sConfigFile = ExpandConfigPath(sConfig, false);
+    m_bReadonlyConfig = bReadonlyConfig;
+
+    if (m_bReadonlyConfig) {
+        CUtils::PrintError("Running in read-only mode. Any changes to the settings, users,");
+        CUtils::PrintError("networks, etc. WILL NOT be saved to config ");
+        CUtils::PrintError("and WILL DISAPPEAR after ZNC restart.");
+    }
 
     if (!AcquireLock(sError)) return false;
 
@@ -1043,7 +1055,8 @@ bool CZNC::ReadConfig(CConfig& config, CString& sError) {
 
     CFile File(m_sConfigFile);
 
-    if (!File.Open(m_sConfigFile, O_RDWR)) {
+    int iMode = m_bReadonlyConfig ? O_RDONLY : O_RDWR;
+    if (!File.Open(iMode)) {
         sError = "Can not open config file";
         CUtils::PrintStatus(false, sError);
         return false;

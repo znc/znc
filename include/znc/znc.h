@@ -67,7 +67,7 @@ class CZNC : private CCoreTranslationMixin {
                              bool bAllowMkDir = true);
     bool WriteNewConfig(const CString& sConfigFile);
     bool WriteConfig();
-    bool ParseConfig(const CString& sConfig, CString& sError);
+    bool ParseConfig(const CString& sConfig, bool bReadonlyConfig, CString& sError);
     bool RehashConfig(CString& sError);
     void BackupConfigOnce(const CString& sSuffix);
     static CString GetVersion();
@@ -176,6 +176,7 @@ class CZNC : private CCoreTranslationMixin {
     CString GetSSLCertFile() const { return m_sSSLCertFile; }
     static VCString GetAvailableSSLProtocols();
     unsigned int GetConfigWriteDelay() const { return m_uiConfigWriteDelay; }
+    bool GetReadonlyConfig() const { return m_bReadonlyConfig; }
     // !Getters
 
     // Static allocator
@@ -314,6 +315,7 @@ class CZNC : private CCoreTranslationMixin {
     CTranslationDomainRefHolder m_Translation;
     unsigned int m_uiConfigWriteDelay;
     CConfigWriteTimer* m_pConfigTimer;
+    bool m_bReadonlyConfig;
 };
 
 #endif  // !ZNC_H

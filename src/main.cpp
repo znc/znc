@@ -122,6 +122,7 @@ static const struct option g_LongOpts[] = {
     {"foreground", no_argument, nullptr, 'f'},
     {"no-color", no_argument, nullptr, 'n'},
     {"allow-root", no_argument, nullptr, 'r'},
+    {"readonly", no_argument, nullptr, 'R'},
     {"makeconf", no_argument, nullptr, 'c'},
     {"makepass", no_argument, nullptr, 's'},
     {"makepem", no_argument, nullptr, 'p'},
@@ -151,6 +152,8 @@ static void GenerateHelp(const char* appname) {
 #endif /* HAVE_LIBSSL */
     CUtils::PrintMessage(
         "\t-r, --allow-root   Don't complain if ZNC is run as root");
+    CUtils::PrintMessage(
+        "\t-R, --readonly     Run with read-only config. Changes made at runtime won't be saved.");
     CUtils::PrintMessage(
         "\t-s, --makepass     Generates a password for use in config");
 }
@@ -294,6 +297,7 @@ int main(int argc, char** argv) {
     bool bMakeConf = false;
     bool bMakePass = false;
     bool bAllowRoot = false;
+    bool bReadonly = false;
     bool bForeground = false;
 #ifdef ALWAYS_RUN_IN_FOREGROUND
     bForeground = true;
@@ -303,7 +307,7 @@ int main(int argc, char** argv) {
 #endif
     CZNC::CreateInstance();
 
-    while ((iArg = getopt_long(argc, argv, "hvnrcspd:Df", g_LongOpts,
+    while ((iArg = getopt_long(argc, argv, "hvnrRcspd:Df", g_LongOpts,
                                &iOptIndex)) != -1) {
         switch (iArg) {
             case 'h':
@@ -318,6 +322,9 @@ int main(int argc, char** argv) {
                 break;
             case 'r':
                 bAllowRoot = true;
+                break;
+            case 'R':
+                bReadonly = true;
                 break;
             case 'c':
                 bMakeConf = true;
@@ -448,7 +455,7 @@ int main(int argc, char** argv) {
     }
 
     CString sConfigError;
-    if (!pZNC->ParseConfig(sConfig, sConfigError)) {
+    if (!pZNC->ParseConfig(sConfig, bReadonly, sConfigError)) {
         CUtils::PrintError("Unrecoverable config error.");
         CZNC::DestroyInstance();
         return 1;
@@ -534,7 +541,7 @@ int main(int argc, char** argv) {
                     strdup(argv[0]),                    strdup("--datadir"),
                     strdup(pZNC->GetZNCPath().c_str()), nullptr,
                     nullptr,                            nullptr,
-                    nullptr};
+                    nullptr,                            nullptr};
                 int pos = 3;
                 if (CDebug::Debug())
                     args[pos++] = strdup("--debug");
@@ -542,7 +549,8 @@ int main(int argc, char** argv) {
                     args[pos++] = strdup("--foreground");
                 if (!CDebug::StdoutIsTTY()) args[pos++] = strdup("--no-color");
                 if (bAllowRoot) args[pos++] = strdup("--allow-root");
-                // The above code adds 3 entries to args tops
+                if (bReadonly) args[pos++] = strdup("--readonly");
+                // The above code adds 4 entries to args tops
                 // which means the array should be big enough
 
                 SignalHandler.reset();
