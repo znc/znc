@@ -229,6 +229,15 @@ void CZNC::Loop() {
                 // stop pending configuration timer
                 DisableConfigTimer();
 
+                if (GetReadonlyConfig()) {
+                    if (eState == ECONFIG_NEED_VERBOSE_WRITE) {
+                        Broadcast("Writing the config skipped because "
+                            "ZNC is running in read-only mode.", true);
+                    }
+                    // Skip writing the config
+                    break;
+                }
+
                 if (!WriteConfig()) {
                     Broadcast("Writing the config file failed", true);
                 } else if (eState == ECONFIG_NEED_VERBOSE_WRITE) {

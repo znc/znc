@@ -169,7 +169,9 @@ void CClient::UserCommand(CString& sLine) {
             PutStatus(t_f("Rehashing failed: {1}")(sRet));
         }
     } else if (m_pUser->IsAdmin() && sCommand.Equals("SaveConfig")) {
-        if (CZNC::Get().WriteConfig()) {
+        if (CZNC::Get().GetReadonlyConfig()) {
+            PutStatus(t_s("Running in read-only mode - writting the config skipped."));
+        } else if (CZNC::Get().WriteConfig()) {
             PutStatus(t_f("Wrote config to {1}")(CZNC::Get().GetConfigFile()));
         } else {
             PutStatus(t_s("Error while trying to write config."));
@@ -313,7 +315,7 @@ void CClient::UserCommand(CString& sLine) {
                                  : "ZNC is being shut down NOW!");
         }
 
-        if (!CZNC::Get().WriteConfig() && !bForce) {
+        if (!CZNC::Get().GetReadonlyConfig() && !CZNC::Get().WriteConfig() && !bForce) {
             PutStatus(
                 "ERROR: Writing config file to disk failed! Aborting. Use " +
                 sCommand.AsUpper() + " FORCE to ignore.");
