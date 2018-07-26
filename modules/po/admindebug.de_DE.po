@@ -28,26 +28,32 @@ msgstr "Zeige den Debugstatus an"
 msgid "Access denied!"
 msgstr "Zugriff verweigert!"
 
-#: admindebug.cpp:61
+#: admindebug.cpp:58
+msgid ""
+"Failure. We need to be running with a TTY. (is ZNC running with --"
+"foreground?)"
+msgstr ""
+
+#: admindebug.cpp:66
 msgid "Already enabled."
 msgstr "Bereits aktiviert."
 
-#: admindebug.cpp:63
+#: admindebug.cpp:68
 msgid "Already disabled."
 msgstr "Bereits deaktiviert."
 
-#: admindebug.cpp:88
+#: admindebug.cpp:92
 msgid "Debugging mode is on."
 msgstr "Debuggingmodus ist an."
 
-#: admindebug.cpp:90
+#: admindebug.cpp:94
 msgid "Debugging mode is off."
 msgstr "Debuggingmodus ist aus."
 
-#: admindebug.cpp:92
+#: admindebug.cpp:96
 msgid "Logging to: stdout."
 msgstr ""
 
-#: admindebug.cpp:101
+#: admindebug.cpp:105
 msgid "Enable Debug mode dynamically."
 msgstr "Aktiviere den Debugmodus dynamisch."
