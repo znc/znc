@@ -288,11 +288,13 @@ class CChanAttach : public CModule {
         if (Start > m_vMatches.size() || Start <= 0 ||
             End > m_vMatches.size() || End <= 0) {
             PutModule(t_s("Illegal # Requested"));
+            return false;
         } else {
             std::iter_swap(m_vMatches.begin() + (Start - 1),
                            m_vMatches.begin() + (End - 1));
             PutModule(t_s("Rules Swapped."));
             Save();
+            return true;
         }
     }
 
