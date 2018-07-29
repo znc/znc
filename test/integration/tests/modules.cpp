@@ -166,6 +166,10 @@ TEST_F(ZNCTest, AutoAttachModule) {
     ircd.Write(":foo PRIVMSG #znc :hello");
     ircd.ReadUntil("TEST");
     client.ReadUntil("hello");
+    client.Write("PRIVMSG *autoattach :Add * test *");
+    client.ReadUntil("Added to list");
+    client.Write("PRIVMSG *autoattach :Swap 1 2")
+    client.ReadUntil("Rules Swapped");
 }
 
 TEST_F(ZNCTest, KeepNickModule) {

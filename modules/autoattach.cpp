@@ -126,7 +126,7 @@ class CChanAttach : public CModule {
     }
 
     void HandleList(const CString& sLine) {
-        int Index;
+        int iIndex;
         CTable Table;
         Table.AddColumn(t_s("Index"));
         Table.AddColumn(t_s("Neg"));
@@ -134,19 +134,17 @@ class CChanAttach : public CModule {
         Table.AddColumn(t_s("Search"));
         Table.AddColumn(t_s("Host"));
 
-        Index = 1;
+        iIndex = 1;
         VAttachIter it = m_vMatches.begin();
         for (; it != m_vMatches.end(); ++it) {
             Table.AddRow();
-            Table.SetCell(t_s("Index"), to_string(Index));
+            Table.SetCell(t_s("Index"), to_string(iIndex));
             Table.SetCell(t_s("Neg"), it->IsNegated() ? "!" : "");
             Table.SetCell(t_s("Chan"), it->GetChans());
             Table.SetCell(t_s("Search"), it->GetSearch());
             Table.SetCell(t_s("Host"), it->GetHostMask());
-            Index += 1;
+            iIndex += 1;
         }
-
-        delete Index;
 
         if (Table.size()) {
             PutModule(Table);
@@ -189,17 +187,6 @@ class CChanAttach : public CModule {
                 PutModule(t_f("Unable to add [{1}]")(sRule));
             }
         }
-
-        for (VCString::const_iterator it = vsChans.begin(); it != vsChans.end();
-             ++it) {
-            CString sAdd = *it;
-
-            if (!AddFromString(sAdd)) {
-                PutModule(t_f("Unable to add [{1}]")(*it));
-            }
-        }
-
-        Save();
 
         return true;
     }
@@ -330,12 +317,8 @@ class CChanAttach : public CModule {
             rules.push_back(sAdd);
         }
 
-
-        for (VCString::const_iterator rit = rules.begin(); rit != rules.end();
-             ++rit) {
-            CString sRule = *rit;
+        for (const CString& sRule : rules) {
             AddFromString(sRule);
-
             DelNV(sRule);
         }
 
