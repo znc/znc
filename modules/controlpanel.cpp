@@ -1542,6 +1542,7 @@ class CAdminMod : public CModule {
         if (pNetwork->GetModules().empty()) {
             PutModule(t_f("Network {1} of user {2} has no modules loaded.")(
                 pNetwork->GetName(), pUser->GetUserName()));
+            return;
         }
 
         PutModule(t_f("Modules loaded for network {1} of user {2}:")(
