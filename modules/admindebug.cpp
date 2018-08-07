@@ -36,7 +36,7 @@ class CAdminDebugMod : public CModule {
     }
 
     void CommandEnable(const CString& sCommand) {
-        if (GetUser()->IsAdmin() == false) {
+        if (!GetUser()->IsAdmin()) {
             PutModule(t_s("Access denied!"));
             return;
         }
@@ -45,7 +45,7 @@ class CAdminDebugMod : public CModule {
     }
 
     void CommandDisable(const CString& sCommand) {
-        if (GetUser()->IsAdmin() == false) {
+        if (!GetUser()->IsAdmin()) {
             PutModule(t_s("Access denied!"));
             return;
         }
@@ -53,7 +53,12 @@ class CAdminDebugMod : public CModule {
         ToggleDebug(false, m_sEnabledBy);
     }
 
-    bool ToggleDebug(bool bEnable, CString sEnabledBy) {
+    bool ToggleDebug(bool bEnable, const CString& sEnabledBy) {
+        if (!CDebug::StdoutIsTTY()) {
+            PutModule(t_s("Failure. We need to be running with a TTY. (is ZNC running with --foreground?)"));
+            return false;
+        }
+
         bool bValue = CDebug::Debug();
 
         if (bEnable == bValue) {
@@ -66,18 +71,17 @@ class CAdminDebugMod : public CModule {
         }
 
         CDebug::SetDebug(bEnable);
-        CString sEnabled = CString(bEnable ? "on" : "off");
-        CZNC::Get().Broadcast(CString(
-            "An administrator has just turned Debug Mode \02" + sEnabled + "\02. It was enabled by \02" + sEnabledBy + "\02."
-        ));
+        CString sEnabled = bEnable ? "on" : "off";
+        CZNC::Get().Broadcast(
+            "An administrator has just turned Debug Mode \02" + sEnabled +
+            "\02. It was enabled by \02" + sEnabledBy + "\02.");
         if (bEnable) {
             CZNC::Get().Broadcast(
-                CString("Messages, credentials, and other sensitive data may"
-                " become exposed to the host during this period.")
-            );
+                "Messages, credentials, and other sensitive data may become "
+                "exposed to the host during this period.");
             m_sEnabledBy = sEnabledBy;
         } else {
-            m_sEnabledBy = nullptr;
+            m_sEnabledBy = "";
         }
 
         return true;
