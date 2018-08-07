@@ -1275,13 +1275,12 @@ bool CZNC::LoadUsers(CConfig& config, CString& sError) {
         }
 
         CString sErr;
-        if (!AddUser(pUser.release(), sErr, true)) {
+        CUser* pRawUser = pUser.release();
+        if (!AddUser(pRawUser, sErr, true)) {
             sError = "Invalid user [" + sUserName + "] " + sErr;
-        }
-
-        if (!sError.empty()) {
             CUtils::PrintError(sError);
-            pUser->SetBeingDeleted(true);
+            pRawUser->SetBeingDeleted(true);
+            delete pRawUser;
             return false;
         }
     }
