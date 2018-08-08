@@ -1,5 +1,9 @@
 msgid ""
 msgstr ""
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Language-Team: French\n"
+"Language: fr_FR\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -7,10 +11,6 @@ msgstr ""
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: fr\n"
 "X-Crowdin-File: /1.7.x/src/po/znc.pot\n"
-"Project-Id-Version: znc-bouncer\n"
-"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
-"Language-Team: French\n"
-"Language: fr_FR\n"
 
 #: webskins/_default_/tmpl/InfoBar.tmpl:6
 msgid "Logged in as: {1}"
@@ -51,27 +51,27 @@ msgid ""
 "code>”). Once you have loaded some Web-enabled modules, the menu will expand."
 msgstr ""
 
-#: znc.cpp:1563
+#: znc.cpp:1562
 msgid "User already exists"
 msgstr ""
 
-#: znc.cpp:1671
+#: znc.cpp:1670
 msgid "IPv6 is not enabled"
 msgstr ""
 
-#: znc.cpp:1679
+#: znc.cpp:1678
 msgid "SSL is not enabled"
 msgstr ""
 
-#: znc.cpp:1687
+#: znc.cpp:1686
 msgid "Unable to locate pem file: {1}"
 msgstr ""
 
-#: znc.cpp:1706
+#: znc.cpp:1705
 msgid "Invalid port"
 msgstr ""
 
-#: znc.cpp:1822 ClientCommand.cpp:1629
+#: znc.cpp:1821 ClientCommand.cpp:1629
 msgid "Unable to bind: {1}"
 msgstr ""
 
@@ -1681,15 +1681,15 @@ msgstr ""
 msgid "Some socket reached its max buffer limit and was closed!"
 msgstr ""
 
-#: SSLVerifyHost.cpp:448
+#: SSLVerifyHost.cpp:481
 msgid "hostname doesn't match"
 msgstr ""
 
-#: SSLVerifyHost.cpp:452
+#: SSLVerifyHost.cpp:485
 msgid "malformed hostname in certificate"
 msgstr ""
 
-#: SSLVerifyHost.cpp:456
+#: SSLVerifyHost.cpp:489
 msgid "hostname verification error"
 msgstr ""
 

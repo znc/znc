@@ -54,27 +54,27 @@ msgstr ""
 "status help </code>\" dan \"<code>/msg * status loadmod &lt;module&gt;</code>"
 "\"). Setelah anda memuat beberapa modul Web-enabled, menu ini akan diperluas."
 
-#: znc.cpp:1563
+#: znc.cpp:1562
 msgid "User already exists"
 msgstr "Pengguna sudah ada"
 
-#: znc.cpp:1671
+#: znc.cpp:1670
 msgid "IPv6 is not enabled"
 msgstr "IPv6 tidak diaktifkan"
 
-#: znc.cpp:1679
+#: znc.cpp:1678
 msgid "SSL is not enabled"
 msgstr "SSL tidak diaktifkan"
 
-#: znc.cpp:1687
+#: znc.cpp:1686
 msgid "Unable to locate pem file: {1}"
 msgstr "Tidak dapat menemukan berkas pem: {1}"
 
-#: znc.cpp:1706
+#: znc.cpp:1705
 msgid "Invalid port"
 msgstr "Port tidak valid"
 
-#: znc.cpp:1822 ClientCommand.cpp:1629
+#: znc.cpp:1821 ClientCommand.cpp:1629
 msgid "Unable to bind: {1}"
 msgstr "Tidak dapat mengikat: {1}"
 

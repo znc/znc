@@ -30,32 +30,26 @@ msgstr ""
 msgid "Access denied!"
 msgstr ""
 
-#: admindebug.cpp:58
-msgid ""
-"Failure. We need to be running with a TTY. (is ZNC running with --"
-"foreground?)"
-msgstr ""
-
-#: admindebug.cpp:66
+#: admindebug.cpp:61
 msgid "Already enabled."
 msgstr ""
 
-#: admindebug.cpp:68
+#: admindebug.cpp:63
 msgid "Already disabled."
 msgstr ""
 
-#: admindebug.cpp:92
+#: admindebug.cpp:88
 msgid "Debugging mode is on."
 msgstr ""
 
-#: admindebug.cpp:94
+#: admindebug.cpp:90
 msgid "Debugging mode is off."
 msgstr ""
 
-#: admindebug.cpp:96
+#: admindebug.cpp:92
 msgid "Logging to: stdout."
 msgstr ""
 
-#: admindebug.cpp:105
+#: admindebug.cpp:101
 msgid "Enable Debug mode dynamically."
 msgstr ""

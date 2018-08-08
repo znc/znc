@@ -51,27 +51,27 @@ msgid ""
 "code>”). Once you have loaded some Web-enabled modules, the menu will expand."
 msgstr ""
 
-#: znc.cpp:1563
+#: znc.cpp:1562
 msgid "User already exists"
 msgstr "O usuário já existe"
 
-#: znc.cpp:1671
+#: znc.cpp:1670
 msgid "IPv6 is not enabled"
 msgstr "O IPv6 não está habilitado"
 
-#: znc.cpp:1679
+#: znc.cpp:1678
 msgid "SSL is not enabled"
 msgstr "O SSL não está habilitado"
 
-#: znc.cpp:1687
+#: znc.cpp:1686
 msgid "Unable to locate pem file: {1}"
 msgstr "Falha ao localizar o arquivo PEM: {1}"
 
-#: znc.cpp:1706
+#: znc.cpp:1705
 msgid "Invalid port"
 msgstr "Porta inválida"
 
-#: znc.cpp:1822 ClientCommand.cpp:1629
+#: znc.cpp:1821 ClientCommand.cpp:1629
 msgid "Unable to bind: {1}"
 msgstr ""
 
