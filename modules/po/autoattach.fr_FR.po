@@ -14,72 +14,72 @@ msgstr ""
 
 #: autoattach.cpp:94
 msgid "Added to list"
-msgstr ""
+msgstr "Ajouté à la liste"
 
 #: autoattach.cpp:96
 msgid "{1} is already added"
-msgstr ""
+msgstr "{1} est déjà présent"
 
 #: autoattach.cpp:100
 msgid "Usage: Add [!]<#chan> <search> <host>"
-msgstr ""
+msgstr "Usage : Add [!]<#salon> <recherche> <hôte>"
 
 #: autoattach.cpp:101
 msgid "Wildcards are allowed"
-msgstr ""
+msgstr "Les jokers sont autorisés"
 
 #: autoattach.cpp:113
 msgid "Removed {1} from list"
-msgstr ""
+msgstr "{1} retiré de la liste"
 
 #: autoattach.cpp:115
 msgid "Usage: Del [!]<#chan> <search> <host>"
-msgstr ""
+msgstr "Usage : Del[!]<#salon> <recherche> <hôte>"
 
 #: autoattach.cpp:121 autoattach.cpp:129
 msgid "Neg"
-msgstr ""
+msgstr "Neg"
 
 #: autoattach.cpp:122 autoattach.cpp:130
 msgid "Chan"
-msgstr ""
+msgstr "Salon"
 
 #: autoattach.cpp:123 autoattach.cpp:131
 msgid "Search"
-msgstr ""
+msgstr "Recherche"
 
 #: autoattach.cpp:124 autoattach.cpp:132
 msgid "Host"
-msgstr ""
+msgstr "Hôte"
 
 #: autoattach.cpp:138
 msgid "You have no entries."
-msgstr ""
+msgstr "Vous n'avez aucune entrée."
 
 #: autoattach.cpp:146 autoattach.cpp:149
 msgid "[!]<#chan> <search> <host>"
-msgstr ""
+msgstr "[!]<#salon> <recherche> <hôte>"
 
 #: autoattach.cpp:147
 msgid "Add an entry, use !#chan to negate and * for wildcards"
-msgstr ""
+msgstr "Ajoute une entrée, utilisez !#salon pour inverser et * comme joker"
 
 #: autoattach.cpp:150
 msgid "Remove an entry, needs to be an exact match"
-msgstr ""
+msgstr "Retire une entrée, requiert une correspondance exacte"
 
 #: autoattach.cpp:152
 msgid "List all entries"
-msgstr ""
+msgstr "Liste toutes les entrées"
 
 #: autoattach.cpp:171
 msgid "Unable to add [{1}]"
-msgstr ""
+msgstr "Impossible d'ajouter [{1}]"
 
 #: autoattach.cpp:283
 msgid "List of channel masks and channel masks with ! before them."
-msgstr ""
+msgstr "Liste les masques de salons, y compris préfixés par !."
 
 #: autoattach.cpp:286
 msgid "Reattaches you to channels on activity."
-msgstr ""
+msgstr "Vous réattache automatiquement aux salons lorsqu'ils sont actifs."

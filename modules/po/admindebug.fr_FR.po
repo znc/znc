@@ -22,38 +22,40 @@ msgstr ""
 
 #: admindebug.cpp:34
 msgid "Show the Debug Mode status"
-msgstr ""
+msgstr "Afficher le statut du mode de déboguage"
 
 #: admindebug.cpp:40 admindebug.cpp:49
 msgid "Access denied!"
-msgstr ""
+msgstr "Accès refusé !"
 
 #: admindebug.cpp:58
 msgid ""
 "Failure. We need to be running with a TTY. (is ZNC running with --"
 "foreground?)"
 msgstr ""
+"Échec, ZNC n'est pas lancé dans un TTY (peut-être que l'option --foreground "
+"est active ?)"
 
 #: admindebug.cpp:66
 msgid "Already enabled."
-msgstr ""
+msgstr "Déjà activé."
 
 #: admindebug.cpp:68
 msgid "Already disabled."
-msgstr ""
+msgstr "Déjà désactivé."
 
 #: admindebug.cpp:92
 msgid "Debugging mode is on."
-msgstr ""
+msgstr "Le déboguage est actif."
 
 #: admindebug.cpp:94
 msgid "Debugging mode is off."
-msgstr ""
+msgstr "Le débogage est inactif."
 
 #: admindebug.cpp:96
 msgid "Logging to: stdout."
-msgstr ""
+msgstr "Journaux envoyés dans stdout."
 
 #: admindebug.cpp:105
 msgid "Enable Debug mode dynamically."
-msgstr ""
+msgstr "Activer le déboguage dynamiquement."
