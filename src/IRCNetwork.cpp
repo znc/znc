@@ -485,7 +485,19 @@ bool CIRCNetwork::ParseConfig(CConfig* pConfig, CString& sError,
 
     pConfig->FindStringVector("server", vsList);
     for (const CString& sServer : vsList) {
-        CUtils::PrintAction("Adding server [" + sServer + "]");
+        VCString vsSafeServerCopy;
+        sServer.Split(" ", vsSafeServerCopy);
+        CString sSafeServer = CString("unknown");
+
+        if (vsSafeServerCopy.size() > 2) { // server + port + password
+            sSafeServer = CString(vsSafeServerCopy[0] + " " + vsSafeServerCopy[1] + " <censored>");
+        } else if (vsSafeServerCopy.size() > 1) { // server + port
+            sSafeServer = CString(vsSafeServerCopy[0] + " " + vsSafeServerCopy[1]);
+        } else if (vsSafeServerCopy.size() == 1) {
+            sSafeServer = CString(vsSafeServerCopy[0]);
+        }
+
+        CUtils::PrintAction("Adding server [" + sSafeServer + "]");
         CUtils::PrintStatus(AddServer(sServer));
     }
 
