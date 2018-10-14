@@ -483,23 +483,13 @@ bool CIRCNetwork::ParseConfig(CConfig* pConfig, CString& sError,
         }
     }
 
+    int iNumServers = 0;
     pConfig->FindStringVector("server", vsList);
     for (const CString& sServer : vsList) {
-        VCString vsSafeServerCopy;
-        sServer.Split(" ", vsSafeServerCopy);
-        CString sSafeServer = CString("unknown");
-
-        if (vsSafeServerCopy.size() > 2) { // server + port + password
-            sSafeServer = CString(vsSafeServerCopy[0] + " " + vsSafeServerCopy[1] + " <censored>");
-        } else if (vsSafeServerCopy.size() > 1) { // server + port
-            sSafeServer = CString(vsSafeServerCopy[0] + " " + vsSafeServerCopy[1]);
-        } else if (vsSafeServerCopy.size() == 1) {
-            sSafeServer = CString(vsSafeServerCopy[0]);
-        }
-
-        CUtils::PrintAction("Adding server [" + sSafeServer + "]");
+        iNumServers++;
         CUtils::PrintStatus(AddServer(sServer));
     }
+    CUtils::PrintAction("Added " + CString(iNumServers) + " server(s)");
 
     pConfig->FindStringVector("trustedserverfingerprint", vsList);
     for (const CString& sFP : vsList) {
