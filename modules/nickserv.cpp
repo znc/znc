@@ -57,6 +57,21 @@ class CNickServ : public CModule {
         PutModule(t_s("Ok"));
     }
 
+    void SetTriggerCommand(const CString& sLine) {
+        CString sTrigger = sLine.Token(1, true);
+        SetNV("CustomTrigger", sTrigger);
+        PutModule(t_s("Ok"));
+    }
+
+    void ViewTriggerCommand(const CString& sLine) {
+        CString sTrigger = GetNV("CustomTrigger");
+        if (sTrigger.empty()) {
+            PutModule(t_s("No custom trigger set."));
+        } else {
+            PutModule(sTrigger);
+        }
+    }
+
     MODCONSTRUCTOR(CNickServ) {
         AddHelpCommand();
         AddCommand("Set", t_d("password"), t_d("Set your nickserv password"),
@@ -77,6 +92,11 @@ class CNickServ : public CModule {
         AddCommand("SetCommand", t_d("cmd new-pattern"),
                    t_d("Set pattern for commands"),
                    [=](const CString& sLine) { SetCommandCommand(sLine); });
+        AddCommand("SetTrigger", t_d("string"), t_d("Set a custom string to "
+                   "match incoming NickServ messages against"),
+                   [=](const CString& sLine) { SetTriggerCommand(sLine); });
+        AddCommand("ViewTrigger", "", t_d("View custom match string"),
+                   [=](const CString& sLine) { ViewTriggerCommand(sLine); });
     }
 
     ~CNickServ() override {}
@@ -113,7 +133,9 @@ class CNickServ : public CModule {
              sMessage.StripControls_n().find(
                  "type /NickServ IDENTIFY password") != CString::npos ||
              sMessage.StripControls_n().find(
-                 "type /msg NickServ IDENTIFY password") != CString::npos) &&
+                 "type /msg NickServ IDENTIFY password") != CString::npos ||
+             sMessage.StripControls_n().find(
+                 GetNV("CustomTrigger")) != CString::npos) &&
             sMessage.AsUpper().find("IDENTIFY") != CString::npos &&
             sMessage.find("help") == CString::npos) {
             MCString msValues;
