@@ -134,8 +134,9 @@ class CNickServ : public CModule {
                  "type /NickServ IDENTIFY password") != CString::npos ||
              sMessage.StripControls_n().find(
                  "type /msg NickServ IDENTIFY password") != CString::npos ||
-             sMessage.StripControls_n().find(
-                 GetNV("CustomTrigger")) != CString::npos) &&
+             (!GetNV("CustomTrigger").empty() &&
+              sMessage.StripControls_n().find(
+                  GetNV("CustomTrigger")) != CString::npos)) &&
             sMessage.AsUpper().find("IDENTIFY") != CString::npos &&
             sMessage.find("help") == CString::npos) {
             MCString msValues;
