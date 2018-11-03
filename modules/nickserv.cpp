@@ -59,7 +59,7 @@ class CNickServ : public CModule {
 
     void SetTriggerCommand(const CString& sLine) {
         CString sTrigger = sLine.Token(1, true);
-        SetNV("CustomTrigger", sTrigger);
+        SetNV("CustomTrigger", sTrigger.StripControls_n());
         PutModule(t_s("Ok"));
     }
 
