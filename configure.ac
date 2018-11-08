@@ -368,6 +368,7 @@ if test "x$SSL" != "xno"; then
 		AC_LINK_IFELSE([
 			AC_LANG_PROGRAM([[
 				#include <openssl/ssl.h>
+				#include <openssl/dh.h>
 			]], [[
 				SSL_CTX* ctx = SSL_CTX_new(TLSv1_method());
 				SSL* ssl = SSL_new(ctx);
