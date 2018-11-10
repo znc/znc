@@ -34,10 +34,6 @@ matrix:
           compiler: clang
           env: BUILD_TYPE=tsan BUILD_WITH=cmake COVERAGE=no
         - os: osx
-          osx_image: xcode7.3 # OS X 10.11
-          compiler: clang
-          env: BUILD_TYPE=normal BUILD_WITH=cmake COVERAGE=llvm
-        - os: osx
           osx_image: xcode8.3 # macOS 10.12
           compiler: clang
           env: BUILD_TYPE=normal BUILD_WITH=cmake COVERAGE=llvm

@@ -27,6 +27,8 @@
 #include <znc/Message.h>
 #ifdef HAVE_LIBSSL
 #include <openssl/ssl.h>
+#include <openssl/bn.h>
+#include <openssl/rsa.h>
 #endif /* HAVE_LIBSSL */
 #include <memory>
 #include <unistd.h>
