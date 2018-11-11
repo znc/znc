@@ -1086,9 +1086,7 @@ bool CUser::PutAllUser(const CString& sLine, CClient* pClient,
     PutUser(sLine, pClient, pSkipClient);
 
     for (CIRCNetwork* pNetwork : m_vIRCNetworks) {
-        if (pNetwork->PutUser(sLine, pClient, pSkipClient)) {
-            return true;
-        }
+        pNetwork->PutUser(sLine, pClient, pSkipClient);
     }
 
     return (pClient == nullptr);
