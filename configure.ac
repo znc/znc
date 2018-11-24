@@ -370,7 +370,7 @@ if test "x$SSL" != "xno"; then
 				#include <openssl/ssl.h>
 				#include <openssl/dh.h>
 			]], [[
-				SSL_CTX* ctx = SSL_CTX_new(TLSv1_method());
+				SSL_CTX* ctx = SSL_CTX_new(SSLv23_method());
 				SSL* ssl = SSL_new(ctx);
 				DH* dh = DH_new();
 				DH_free(dh);
