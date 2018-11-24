@@ -219,6 +219,10 @@ class CTable : protected std::vector<std::vector<CString>> {
 #include <openssl/aes.h>
 #include <openssl/blowfish.h>
 #include <openssl/md5.h>
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#define X509_getm_notBefore X509_get_notBefore
+#define X509_getm_notAfter X509_get_notAfter
+#endif
 //! does Blowfish w/64 bit feedback, no padding
 class CBlowfish {
   public:

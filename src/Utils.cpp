@@ -95,8 +95,8 @@ void CUtils::GenerateCert(FILE* pOut, const CString& sHost) {
 
     X509_set_version(pCert.get(), 2);
     ASN1_INTEGER_set(X509_get_serialNumber(pCert.get()), serial);
-    X509_gmtime_adj(X509_get_notBefore(pCert.get()), 0);
-    X509_gmtime_adj(X509_get_notAfter(pCert.get()),
+    X509_gmtime_adj(X509_getm_notBefore(pCert.get()), 0);
+    X509_gmtime_adj(X509_getm_notAfter(pCert.get()),
                     (long)60 * 60 * 24 * days * years);
     X509_set_pubkey(pCert.get(), pKey.get());
 
