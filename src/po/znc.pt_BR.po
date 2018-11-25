@@ -73,7 +73,7 @@ msgstr "Porta inválida"
 
 #: znc.cpp:1821 ClientCommand.cpp:1629
 msgid "Unable to bind: {1}"
-msgstr ""
+msgstr "Não foi possível vincular: {1}"
 
 #: IRCNetwork.cpp:235
 msgid "Jumping servers because this server is no longer in the list"
@@ -86,6 +86,7 @@ msgstr "Bem-vindo(a) ao ZNC"
 #: IRCNetwork.cpp:728
 msgid "You are currently disconnected from IRC. Use 'connect' to reconnect."
 msgstr ""
+"Você está desconectado do IRC no momento. Digite 'connect' para reconectar."
 
 #: IRCNetwork.cpp:758
 msgid "This network is being deleted or moved to another user."
@@ -165,11 +166,11 @@ msgstr ""
 
 #: IRCSock.cpp:1444
 msgid "No free nick available"
-msgstr ""
+msgstr "Não há apelidos livres disponíveis"
 
 #: IRCSock.cpp:1452
 msgid "No free nick found"
-msgstr ""
+msgstr "Nenhum apelido livre foi encontrado"
 
 #: Client.cpp:74
 msgid "No such module {1}"
@@ -235,7 +236,7 @@ msgstr ""
 
 #: Client.cpp:1181
 msgid "Removing channel {1}"
-msgstr ""
+msgstr "Removendo canal {1}"
 
 #: Client.cpp:1257
 msgid "Your message to {1} got lost, you are not connected to IRC!"
@@ -243,11 +244,11 @@ msgstr ""
 
 #: Client.cpp:1310 Client.cpp:1316
 msgid "Hello. How may I help you?"
-msgstr ""
+msgstr "Olá. Como posso ajudá-lo(a)?"
 
 #: Client.cpp:1330
 msgid "Usage: /attach <#chans>"
-msgstr ""
+msgstr "Uso: /attach <#canais>"
 
 #: Client.cpp:1337 Client.cpp:1359 ClientCommand.cpp:129 ClientCommand.cpp:151
 msgid "There was {1} channel matching [{2}]"
@@ -277,12 +278,12 @@ msgstr ""
 
 #: Chan.cpp:676
 msgid "Playback Complete."
-msgstr ""
+msgstr "Reprodução completa."
 
 #: Modules.cpp:528
 msgctxt "modhelpcmd"
 msgid "<search>"
-msgstr ""
+msgstr "<pesquisa>"
 
 #: Modules.cpp:529
 msgctxt "modhelpcmd"
@@ -347,25 +348,27 @@ msgstr ""
 
 #: Modules.cpp:1778
 msgid "Reloaded module {1}."
-msgstr ""
+msgstr "O módulo {1} foi reiniciado."
 
 #: Modules.cpp:1793
 msgid "Unable to find module {1}."
-msgstr ""
+msgstr "Não foi possível encontrar o módulo {1}."
 
 #: Modules.cpp:1919
 msgid ""
 "Module names can only contain letters, numbers and underscores, [{1}] is "
 "invalid"
 msgstr ""
+"Os nomes de módulos podem conter apenas letras, números e underlines. [{1}] "
+"é inválido"
 
 #: Modules.cpp:1943
 msgid "Unknown error"
-msgstr ""
+msgstr "Erro desconhecido"
 
 #: Modules.cpp:1944
 msgid "Unable to open module {1}: {2}"
-msgstr ""
+msgstr "Não foi possível abrir o módulo {1}: {2}"
 
 #: Modules.cpp:1953
 msgid "Could not find ZNCModuleEntry in module {1}"
