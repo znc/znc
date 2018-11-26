@@ -484,8 +484,8 @@ bool CIRCNetwork::ParseConfig(CConfig* pConfig, CString& sError,
     }
 
     pConfig->FindStringVector("server", vsList);
+    CUtils::PrintAction("Adding " + CString(vsList.size()) + " servers");
     for (const CString& sServer : vsList) {
-        CUtils::PrintAction("Adding server [" + sServer + "]");
         CUtils::PrintStatus(AddServer(sServer));
     }
 
