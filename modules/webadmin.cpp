@@ -882,6 +882,15 @@ class CWebAdminMod : public CModule {
         std::shared_ptr<CWebSession> spSession = WebSock.GetSession();
         Tmpl.SetFile("add_edit_network.tmpl");
 
+        if (!pNetwork && !spSession->IsAdmin() &&
+            !pUser->HasSpaceForNewNetwork()) {
+            WebSock.PrintErrorPage(t_s(
+                "Network number limit reached. Ask an admin to increase the "
+                "limit for you, or delete unneeded networks from Your "
+                "Settings."));
+            return true;
+        }
+
         if (!WebSock.GetParam("submitted").ToUInt()) {
             Tmpl["Username"] = pUser->GetUserName();
             CTemplate& breadNet = Tmpl.AddRow("BreadCrumbs");
@@ -896,14 +905,6 @@ class CWebAdminMod : public CModule {
                 breadNet["Text"] =
                     t_f("Edit Network [{1}]")(pNetwork->GetName());
             } else {
-                if (!spSession->IsAdmin() && !pUser->HasSpaceForNewNetwork()) {
-                    WebSock.PrintErrorPage(
-                        t_s("Network number limit reached. Ask an admin to "
-                            "increase the limit for you, or delete unneeded "
-                            "networks from Your Settings."));
-                    return true;
-                }
-
                 Tmpl["Action"] = "addnetwork";
                 Tmpl["Title"] =
                     t_f("Add Network for User [{1}]")(pUser->GetUserName());
@@ -1070,14 +1071,6 @@ class CWebAdminMod : public CModule {
         CString sName = WebSock.GetParam("name").Trim_n();
         if (sName.empty()) {
             WebSock.PrintErrorPage(t_s("Network name is a required argument"));
-            return true;
-        }
-        if (!pNetwork && !spSession->IsAdmin() &&
-            !pUser->HasSpaceForNewNetwork()) {
-            WebSock.PrintErrorPage(t_s(
-                "Network number limit reached. Ask an admin to increase the "
-                "limit for you, or delete unneeded networks from Your "
-                "Settings."));
             return true;
         }
         if (!pNetwork || pNetwork->GetName() != sName) {
