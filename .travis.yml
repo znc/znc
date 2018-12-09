@@ -83,7 +83,7 @@ matrix:
             - export SECRET_KEY=no DOCKER_PASSWORD=no DOCKER_USERNAME=no
           script:
             - echo "$TRAVIS_BRANCH-$(git describe)" > .nightly
-            - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then docker build --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` --build-arg VCS_REF=`git rev-parse HEAD` --build-arg VERSION_EXTRA=+docker-git- -t "zncbouncer/znc-git:$TRAVIS_BRANCH" -t "zncbouncer/znc-git:$TRAVIS_BRANCH-$(git describe)" .; fi
+            - docker build --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` --build-arg VCS_REF=`git rev-parse HEAD` --build-arg VERSION_EXTRA=+docker-git- -t "zncbouncer/znc-git:$TRAVIS_BRANCH" -t "zncbouncer/znc-git:$TRAVIS_BRANCH-$(git describe)" .
             - if [[ "$ATTEMPT_DEPLOY" == "yes" && "$TRAVIS_BRANCH" == "master" ]]; then docker tag "zncbouncer/znc-git:$TRAVIS_BRANCH" zncbouncer/znc-git:latest; fi
             - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then docker push zncbouncer/znc-git; fi
           after_success:
