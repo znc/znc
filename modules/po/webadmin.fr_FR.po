@@ -1048,7 +1048,7 @@ msgstr "Utilisateur"
 msgid "Network"
 msgstr "Réseau"
 
-#: webadmin.cpp:91 webadmin.cpp:1879
+#: webadmin.cpp:91 webadmin.cpp:1872
 msgid "Global Settings"
 msgstr "Paramètres globaux"
 
@@ -1056,11 +1056,11 @@ msgstr "Paramètres globaux"
 msgid "Your Settings"
 msgstr "Vos paramètres"
 
-#: webadmin.cpp:94 webadmin.cpp:1691
+#: webadmin.cpp:94 webadmin.cpp:1684
 msgid "Traffic Info"
 msgstr "Informations sur le trafic"
 
-#: webadmin.cpp:97 webadmin.cpp:1670
+#: webadmin.cpp:97 webadmin.cpp:1663
 msgid "Manage Users"
 msgstr "Gérer les utilisateurs"
 
@@ -1076,7 +1076,7 @@ msgstr "Soumission invalide [les mots de passe ne correspondent pas]"
 msgid "Timeout can't be less than 30 seconds!"
 msgstr "Le délai d'expiration ne peut être inférieur à 30 secondes !"
 
-#: webadmin.cpp:407 webadmin.cpp:435 webadmin.cpp:1189 webadmin.cpp:2064
+#: webadmin.cpp:407 webadmin.cpp:435 webadmin.cpp:1182 webadmin.cpp:2057
 msgid "Unable to load module [{1}]: {2}"
 msgstr "Impossible de charger le module [{1}] : {2}"
 
@@ -1085,7 +1085,7 @@ msgid "Unable to load module [{1}] with arguments [{2}]"
 msgstr "Impossible de charger le module [{1}] avec les arguments [{2}]"
 
 #: webadmin.cpp:521 webadmin.cpp:625 webadmin.cpp:650 webadmin.cpp:672
-#: webadmin.cpp:706 webadmin.cpp:1256
+#: webadmin.cpp:706 webadmin.cpp:1249
 msgid "No such user"
 msgstr "Utilisateur inconnu"
 
@@ -1101,11 +1101,11 @@ msgstr "Salon inconnu"
 msgid "Please don't delete yourself, suicide is not the answer!"
 msgstr "Veuillez ne pas vous supprimer, le suicide n'est pas la solution !"
 
-#: webadmin.cpp:715 webadmin.cpp:971 webadmin.cpp:1321
+#: webadmin.cpp:715 webadmin.cpp:972 webadmin.cpp:1314
 msgid "Edit User [{1}]"
 msgstr "Modifier l'utilisateur [{1}]"
 
-#: webadmin.cpp:719 webadmin.cpp:897
+#: webadmin.cpp:719 webadmin.cpp:906
 msgid "Edit Network [{1}]"
 msgstr "Modifier le réseau [{1}]"
 
@@ -1125,7 +1125,7 @@ msgstr "Ajouter un salon au réseau [{1}] de l'utilisateur [{2}]"
 msgid "Add Channel"
 msgstr "Ajouter un salon"
 
-#: webadmin.cpp:756 webadmin.cpp:1517
+#: webadmin.cpp:756 webadmin.cpp:1510
 msgid "Auto Clear Chan Buffer"
 msgstr "Vider automatiquement le tampon des salons"
 
@@ -1159,11 +1159,7 @@ msgstr ""
 "Le salon a été ajouté ou modifié, mais la configuration n'a pas pu être "
 "sauvegardée"
 
-#: webadmin.cpp:894
-msgid "Edit Network [{1}] of User [{2}]"
-msgstr "Modifier le réseau [{1}] de l'utilisateur [{2}]"
-
-#: webadmin.cpp:901 webadmin.cpp:1078
+#: webadmin.cpp:888
 msgid ""
 "Network number limit reached. Ask an admin to increase the limit for you, or "
 "delete unneeded networks from Your Settings."
@@ -1172,51 +1168,55 @@ msgstr ""
 "d'augmenter cette limite pour vous ou bien supprimez des réseaux obsolètes "
 "de vos paramètres."
 
-#: webadmin.cpp:909
+#: webadmin.cpp:903
+msgid "Edit Network [{1}] of User [{2}]"
+msgstr "Modifier le réseau [{1}] de l'utilisateur [{2}]"
+
+#: webadmin.cpp:910
 msgid "Add Network for User [{1}]"
 msgstr "Ajouter un réseau pour l'utilisateur [{1}]"
 
-#: webadmin.cpp:910
+#: webadmin.cpp:911
 msgid "Add Network"
 msgstr "Ajouter un réseau"
 
-#: webadmin.cpp:1072
+#: webadmin.cpp:1073
 msgid "Network name is a required argument"
 msgstr "Le nom du réseau est un argument requis"
 
-#: webadmin.cpp:1196 webadmin.cpp:2071
+#: webadmin.cpp:1189 webadmin.cpp:2064
 msgid "Unable to reload module [{1}]: {2}"
 msgstr "Impossible de recharger le module [{1}] : {2}"
 
-#: webadmin.cpp:1233
+#: webadmin.cpp:1226
 msgid "Network was added/modified, but config file was not written"
 msgstr ""
 "Le réseau a été ajouté ou modifié, mais la configuration n'a pas pu être "
 "sauvegardée"
 
-#: webadmin.cpp:1262
+#: webadmin.cpp:1255
 msgid "That network doesn't exist for this user"
 msgstr "Le réseau n'existe pas pour cet utilisateur"
 
-#: webadmin.cpp:1279
+#: webadmin.cpp:1272
 msgid "Network was deleted, but config file was not written"
 msgstr ""
 "Le réseau a été supprimé, mais la configuration n'a pas pu être sauvegardée"
 
-#: webadmin.cpp:1293
+#: webadmin.cpp:1286
 msgid "That channel doesn't exist for this network"
 msgstr "Le salon n'existe pas pour ce réseau"
 
-#: webadmin.cpp:1302
+#: webadmin.cpp:1295
 msgid "Channel was deleted, but config file was not written"
 msgstr ""
 "Le salon a été supprimé, mais la configuration n'a pas pu être sauvegardée"
 
-#: webadmin.cpp:1330
+#: webadmin.cpp:1323
 msgid "Clone User [{1}]"
 msgstr "Dupliquer l'utilisateur [{1}]"
 
-#: webadmin.cpp:1519
+#: webadmin.cpp:1512
 msgid ""
 "Automatically Clear Channel Buffer After Playback (the default value for new "
 "channels)"
@@ -1224,80 +1224,80 @@ msgstr ""
 "Vider automatiquement le tampon des salons après l'avoir rejoué (valeur par "
 "défaut pour les nouveaux salons)"
 
-#: webadmin.cpp:1529
+#: webadmin.cpp:1522
 msgid "Multi Clients"
 msgstr "Multi Clients"
 
-#: webadmin.cpp:1536
+#: webadmin.cpp:1529
 msgid "Append Timestamps"
 msgstr "Ajouter un horodatage après"
 
-#: webadmin.cpp:1543
+#: webadmin.cpp:1536
 msgid "Prepend Timestamps"
 msgstr "Ajouter un horodatage avant"
 
-#: webadmin.cpp:1551
+#: webadmin.cpp:1544
 msgid "Deny LoadMod"
 msgstr "Interdire LoadMod"
 
-#: webadmin.cpp:1558
+#: webadmin.cpp:1551
 msgid "Admin"
 msgstr "Admin"
 
-#: webadmin.cpp:1568
+#: webadmin.cpp:1561
 msgid "Deny SetBindHost"
 msgstr "Interdire SetBindHost"
 
-#: webadmin.cpp:1576
+#: webadmin.cpp:1569
 msgid "Auto Clear Query Buffer"
 msgstr "Vider automatiquement le tampon des messages privés"
 
-#: webadmin.cpp:1578
+#: webadmin.cpp:1571
 msgid "Automatically Clear Query Buffer After Playback"
 msgstr ""
 "Vider automatiquement le tampon des messages privés après l'avoir rejoué"
 
-#: webadmin.cpp:1602
+#: webadmin.cpp:1595
 msgid "Invalid Submission: User {1} already exists"
 msgstr "Requête invalide : l'utilisateur {1} existe déjà"
 
-#: webadmin.cpp:1624 webadmin.cpp:1635
+#: webadmin.cpp:1617 webadmin.cpp:1628
 msgid "Invalid submission: {1}"
 msgstr "Requête invalide : {1}"
 
-#: webadmin.cpp:1630
+#: webadmin.cpp:1623
 msgid "User was added, but config file was not written"
 msgstr ""
 "L'utilisateur a été ajouté, mais la configuration n'a pas pu être sauvegardée"
 
-#: webadmin.cpp:1641
+#: webadmin.cpp:1634
 msgid "User was edited, but config file was not written"
 msgstr ""
 "L'utilisateur a été modifié, mais la configuration n'a pas pu être "
 "sauvegardée"
 
-#: webadmin.cpp:1799
+#: webadmin.cpp:1792
 msgid "Choose either IPv4 or IPv6 or both."
 msgstr "Choisissez IPv4 ou IPv6 (ou les deux)."
 
-#: webadmin.cpp:1816
+#: webadmin.cpp:1809
 msgid "Choose either IRC or HTTP or both."
 msgstr "Choisissez IRC ou HTTP (ou les deux)."
 
-#: webadmin.cpp:1829 webadmin.cpp:1865
+#: webadmin.cpp:1822 webadmin.cpp:1858
 msgid "Port was changed, but config file was not written"
 msgstr ""
 "Le port a été modifié, mais la configuration n'a pas pu être sauvegardée"
 
-#: webadmin.cpp:1855
+#: webadmin.cpp:1848
 msgid "Invalid request."
 msgstr "Requête non valide."
 
-#: webadmin.cpp:1869
+#: webadmin.cpp:1862
 msgid "The specified listener was not found."
 msgstr "Le canal d'écoute spécifié est introuvable."
 
-#: webadmin.cpp:2100
+#: webadmin.cpp:2093
 msgid "Settings were changed, but config file was not written"
 msgstr ""
 "Les paramètres ont été changés, mais la configuration n'a pas pu être "
