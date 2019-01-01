@@ -37,7 +37,7 @@ class CServer;
 
 class CUser : private CCoreTranslationMixin {
   public:
-    CUser(const CString& sUserName);
+    CUser(const CString& sUsername);
     ~CUser();
 
     CUser(const CUser&) = delete;
@@ -68,8 +68,8 @@ class CUser : private CCoreTranslationMixin {
     void ClearAllowedHosts();
     bool IsHostAllowed(const CString& sHost) const;
     bool IsValid(CString& sErrMsg, bool bSkipPass = false) const;
-    static bool IsValidUserName(const CString& sUserName);
-    static CString MakeCleanUserName(const CString& sUserName);
+    static bool IsValidUserName(const CString& sUsername);
+    static CString MakeCleanUserName(const CString& sUsername);
 
     // Modules
     CModules& GetModules() { return *m_pModules; }
@@ -220,8 +220,8 @@ class CUser : private CCoreTranslationMixin {
     // !Getters
 
   protected:
-    const CString m_sUserName;
-    const CString m_sCleanUserName;
+    const CString m_sUsername;
+    const CString m_sCleanUsername;
     CString m_sNick;
     CString m_sAltNick;
     CString m_sIdent;

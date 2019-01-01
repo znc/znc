@@ -59,12 +59,12 @@ class CUserTimer : public CCron {
     CUser* m_pUser;
 };
 
-CUser::CUser(const CString& sUserName)
-    : m_sUserName(sUserName),
-      m_sCleanUserName(MakeCleanUserName(sUserName)),
-      m_sNick(m_sCleanUserName),
+CUser::CUser(const CString& sUsername)
+    : m_sUsername(sUsername),
+      m_sCleanUsername(MakeCleanUserName(sUsername)),
+      m_sNick(m_sCleanUsername),
       m_sAltNick(""),
-      m_sIdent(m_sCleanUserName),
+      m_sIdent(m_sCleanUsername),
       m_sRealName(""),
       m_sBindHost(""),
       m_sDCCBindHost(""),
@@ -78,7 +78,7 @@ CUser::CUser(const CString& sUserName)
       m_sTimestampFormat("[%H:%M:%S]"),
       m_sTimezone(""),
       m_eHashType(HASH_NONE),
-      m_sUserPath(CZNC::Get().GetUserPath() + "/" + sUserName),
+      m_sUserPath(CZNC::Get().GetUserPath() + "/" + sUsername),
       m_bMultiClients(true),
       m_bDenyLoadMod(false),
       m_bAdmin(false),
@@ -877,11 +877,11 @@ const CString& CUser::GetTimestampFormat() const { return m_sTimestampFormat; }
 bool CUser::GetTimestampAppend() const { return m_bAppendTimestamp; }
 bool CUser::GetTimestampPrepend() const { return m_bPrependTimestamp; }
 
-bool CUser::IsValidUserName(const CString& sUserName) {
+bool CUser::IsValidUserName(const CString& sUsername) {
     // /^[a-zA-Z][a-zA-Z@._\-]*$/
-    const char* p = sUserName.c_str();
+    const char* p = sUsername.c_str();
 
-    if (sUserName.empty()) {
+    if (sUsername.empty()) {
         return false;
     }
 
@@ -908,12 +908,12 @@ bool CUser::IsValid(CString& sErrMsg, bool bSkipPass) const {
         return false;
     }
 
-    if (m_sUserName.empty()) {
+    if (m_sUsername.empty()) {
         sErrMsg = t_s("Username is empty");
         return false;
     }
 
-    if (!CUser::IsValidUserName(m_sUserName)) {
+    if (!CUser::IsValidUserName(m_sUsername)) {
         sErrMsg = t_s("Username is invalid");
         return false;
     }
@@ -1034,7 +1034,7 @@ bool CUser::CheckPass(const CString& sPass) const {
 /*CClient* CUser::GetClient() {
     // Todo: optimize this by saving a pointer to the sock
     CSockManager& Manager = CZNC::Get().GetManager();
-    CString sSockName = "USR::" + m_sUserName;
+    CString sSockName = "USR::" + m_sUsername;
 
     for (unsigned int a = 0; a < Manager.size(); a++) {
         Csock* pSock = Manager[a];
@@ -1160,8 +1160,8 @@ bool CUser::PutModNotice(const CString& sModule, const CString& sLine,
     return (pClient == nullptr);
 }
 
-CString CUser::MakeCleanUserName(const CString& sUserName) {
-    return sUserName.Token(0, false, "@").Replace_n(".", "");
+CString CUser::MakeCleanUserName(const CString& sUsername) {
+    return sUsername.Token(0, false, "@").Replace_n(".", "");
 }
 
 bool CUser::IsUserAttached() const {
@@ -1356,8 +1356,8 @@ vector<CClient*> CUser::GetAllClients() const {
     return vClients;
 }
 
-const CString& CUser::GetUserName() const { return m_sUserName; }
-const CString& CUser::GetCleanUserName() const { return m_sCleanUserName; }
+const CString& CUser::GetUserName() const { return m_sUsername; }
+const CString& CUser::GetCleanUserName() const { return m_sCleanUsername; }
 const CString& CUser::GetNick(bool bAllowDefault) const {
     return (bAllowDefault && m_sNick.empty()) ? GetCleanUserName() : m_sNick;
 }

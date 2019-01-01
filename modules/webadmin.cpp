@@ -452,13 +452,13 @@ class CWebAdminMod : public CModule {
     }
 
     CString SafeGetUserNameParam(CWebSock& WebSock) {
-        CString sUserName = WebSock.GetParam("user");  // check for POST param
-        if (sUserName.empty() && !WebSock.IsPost()) {
+        CString sUsername = WebSock.GetParam("user");  // check for POST param
+        if (sUsername.empty() && !WebSock.IsPost()) {
             // if no POST param named user has been given and we are not
             // saving this form, fall back to using the GET parameter.
-            sUserName = WebSock.GetParam("user", false);
+            sUsername = WebSock.GetParam("user", false);
         }
-        return sUserName;
+        return sUsername;
     }
 
     CString SafeGetNetworkParam(CWebSock& WebSock) {
@@ -650,11 +650,11 @@ class CWebAdminMod : public CModule {
             WebSock.PrintErrorPage(t_s("No such user"));
             return true;
         } else if (sPageName == "edituser") {
-            CString sUserName = SafeGetUserNameParam(WebSock);
-            CUser* pUser = CZNC::Get().FindUser(sUserName);
+            CString sUsername = SafeGetUserNameParam(WebSock);
+            CUser* pUser = CZNC::Get().FindUser(sUsername);
 
             if (!pUser) {
-                if (sUserName.empty()) {
+                if (sUsername.empty()) {
                     pUser = spSession->GetUser();
                 }  // else: the "no such user" message will be printed.
             }

@@ -301,7 +301,7 @@ class CAdminMod : public CModule {
 
     void Set(const CString& sLine) {
         const CString sVar = sLine.Token(1).AsLower();
-        CString sUserName = sLine.Token(2);
+        CString sUsername = sLine.Token(2);
         CString sValue = sLine.Token(3, true);
 
         if (sValue.empty()) {
@@ -309,7 +309,7 @@ class CAdminMod : public CModule {
             return;
         }
 
-        CUser* pUser = FindUser(sUserName);
+        CUser* pUser = FindUser(sUsername);
         if (!pUser) return;
 
         if (sVar == "nick") {
@@ -1207,7 +1207,7 @@ class CAdminMod : public CModule {
     }
 
     void ReconnectUser(const CString& sLine) {
-        CString sUserName = sLine.Token(1);
+        CString sUsername = sLine.Token(1);
         CString sNetwork = sLine.Token(2);
 
         if (sNetwork.empty()) {
@@ -1215,7 +1215,7 @@ class CAdminMod : public CModule {
             return;
         }
 
-        CUser* pUser = FindUser(sUserName);
+        CUser* pUser = FindUser(sUsername);
         if (!pUser) {
             return;
         }
@@ -1243,7 +1243,7 @@ class CAdminMod : public CModule {
     }
 
     void DisconnectUser(const CString& sLine) {
-        CString sUserName = sLine.Token(1);
+        CString sUsername = sLine.Token(1);
         CString sNetwork = sLine.Token(2);
 
         if (sNetwork.empty()) {
@@ -1251,7 +1251,7 @@ class CAdminMod : public CModule {
             return;
         }
 
-        CUser* pUser = FindUser(sUserName);
+        CUser* pUser = FindUser(sUsername);
         if (!pUser) {
             return;
         }
@@ -1267,12 +1267,12 @@ class CAdminMod : public CModule {
     }
 
     void ListCTCP(const CString& sLine) {
-        CString sUserName = sLine.Token(1, true);
+        CString sUsername = sLine.Token(1, true);
 
-        if (sUserName.empty()) {
-            sUserName = GetUser()->GetUserName();
+        if (sUsername.empty()) {
+            sUsername = GetUser()->GetUserName();
         }
-        CUser* pUser = FindUser(sUserName);
+        CUser* pUser = FindUser(sUsername);
         if (!pUser) return;
 
         const MCString& msCTCPReplies = pUser->GetCTCPReplies();
@@ -1295,14 +1295,14 @@ class CAdminMod : public CModule {
     }
 
     void AddCTCP(const CString& sLine) {
-        CString sUserName = sLine.Token(1);
+        CString sUsername = sLine.Token(1);
         CString sCTCPRequest = sLine.Token(2);
         CString sCTCPReply = sLine.Token(3, true);
 
         if (sCTCPRequest.empty()) {
-            sCTCPRequest = sUserName;
+            sCTCPRequest = sUsername;
             sCTCPReply = sLine.Token(2, true);
-            sUserName = GetUser()->GetUserName();
+            sUsername = GetUser()->GetUserName();
         }
         if (sCTCPRequest.empty()) {
             PutModule(t_s("Usage: AddCTCP [user] [request] [reply]"));
@@ -1314,7 +1314,7 @@ class CAdminMod : public CModule {
             return;
         }
 
-        CUser* pUser = FindUser(sUserName);
+        CUser* pUser = FindUser(sUsername);
         if (!pUser) return;
 
         pUser->AddCTCPReply(sCTCPRequest, sCTCPReply);
@@ -1329,14 +1329,14 @@ class CAdminMod : public CModule {
     }
 
     void DelCTCP(const CString& sLine) {
-        CString sUserName = sLine.Token(1);
+        CString sUsername = sLine.Token(1);
         CString sCTCPRequest = sLine.Token(2, true);
 
         if (sCTCPRequest.empty()) {
-            sCTCPRequest = sUserName;
-            sUserName = GetUser()->GetUserName();
+            sCTCPRequest = sUsername;
+            sUsername = GetUser()->GetUserName();
         }
-        CUser* pUser = FindUser(sUserName);
+        CUser* pUser = FindUser(sUsername);
         if (!pUser) return;
 
         if (sCTCPRequest.empty()) {

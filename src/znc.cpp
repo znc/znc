@@ -1246,12 +1246,12 @@ bool CZNC::LoadUsers(CConfig& config, CString& sError) {
     config.FindSubConfig("user", subConf);
 
     for (const auto& subIt : subConf) {
-        const CString& sUserName = subIt.first;
+        const CString& sUsername = subIt.first;
         CConfig* pSubConf = subIt.second.m_pSubConfig;
 
-        CUtils::PrintMessage("Loading user [" + sUserName + "]");
+        CUtils::PrintMessage("Loading user [" + sUsername + "]");
 
-        std::unique_ptr<CUser> pUser(new CUser(sUserName));
+        std::unique_ptr<CUser> pUser(new CUser(sUsername));
 
         if (!m_sStatusPrefix.empty()) {
             if (!pUser->SetStatusPrefix(m_sStatusPrefix)) {
@@ -1268,7 +1268,7 @@ bool CZNC::LoadUsers(CConfig& config, CString& sError) {
         }
 
         if (!pSubConf->empty()) {
-            sError = "Unhandled lines in config for User [" + sUserName + "]!";
+            sError = "Unhandled lines in config for User [" + sUsername + "]!";
             CUtils::PrintError(sError);
             DumpConfig(pSubConf);
             return false;
@@ -1277,7 +1277,7 @@ bool CZNC::LoadUsers(CConfig& config, CString& sError) {
         CString sErr;
         CUser* pRawUser = pUser.release();
         if (!AddUser(pRawUser, sErr, true)) {
-            sError = "Invalid user [" + sUserName + "] " + sErr;
+            sError = "Invalid user [" + sUsername + "] " + sErr;
             CUtils::PrintError(sError);
             pRawUser->SetBeingDeleted(true);
             delete pRawUser;
