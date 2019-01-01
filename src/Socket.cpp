@@ -225,7 +225,7 @@ void CSockManager::CDNSJob::runThread() {
 
 void CSockManager::CDNSJob::runMain() {
     if (0 != this->iRes) {
-        DEBUG("Error in threaded DNS: " << gai_strerror(this->iRes));
+        DEBUG("Error in threaded DNS: " << gai_strerror(this->iRes) << " while trying to resolve " << this->sHostname);
         if (this->aiResult) {
             DEBUG("And aiResult is not nullptr...");
         }
