@@ -68,7 +68,11 @@ class CUser : private CCoreTranslationMixin {
     void ClearAllowedHosts();
     bool IsHostAllowed(const CString& sHost) const;
     bool IsValid(CString& sErrMsg, bool bSkipPass = false) const;
+    static bool IsValidUsername(const CString& sUsername);
+    /** @deprecated Use IsValidUsername() instead. */
     static bool IsValidUserName(const CString& sUsername);
+    static CString MakeCleanUsername(const CString& sUsername);
+    /** @deprecated Use MakeCleanUsername() instead. */
     static CString MakeCleanUserName(const CString& sUsername);
 
     // Modules
@@ -164,7 +168,9 @@ class CUser : private CCoreTranslationMixin {
     // Getters
     const std::vector<CClient*>& GetUserClients() const { return m_vClients; }
     std::vector<CClient*> GetAllClients() const;
+    /** @deprecated Use GetUsername() instead. */
     const CString& GetUserName() const;
+    const CString& GetUsername() const;
     const CString& GetCleanUserName() const;
     const CString& GetNick(bool bAllowDefault = true) const;
     const CString& GetAltNick(bool bAllowDefault = true) const;

@@ -283,7 +283,7 @@ class CSaveBuff : public CModule {
     }
 
     CString GetPath(const CString& sTarget) const {
-        CString sBuffer = GetUser()->GetUserName() + sTarget.AsLower();
+        CString sBuffer = GetUser()->GetUsername() + sTarget.AsLower();
         CString sRet = GetSavePath();
         sRet += "/" + CBlowfish::MD5(sBuffer, true);
         return (sRet);

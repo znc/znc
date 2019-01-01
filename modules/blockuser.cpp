@@ -101,7 +101,7 @@ class CBlockUser : public CModule {
             return;
         }
 
-        if (GetUser()->GetUserName().Equals(sUser)) {
+        if (GetUser()->GetUsername().Equals(sUser)) {
             PutModule(t_s("You can't block yourself"));
             return;
         }
@@ -135,13 +135,13 @@ class CBlockUser : public CModule {
             if (sAction == "display") {
                 Tmpl["Blocked"] = CString(IsBlocked(Tmpl["Username"]));
                 Tmpl["Self"] = CString(Tmpl["Username"].Equals(
-                    WebSock.GetSession()->GetUser()->GetUserName()));
+                    WebSock.GetSession()->GetUser()->GetUsername()));
                 return true;
             }
             if (sAction == "change" &&
                 WebSock.GetParam("embed_blockuser_presented").ToBool()) {
                 if (Tmpl["Username"].Equals(
-                        WebSock.GetSession()->GetUser()->GetUserName()) &&
+                        WebSock.GetSession()->GetUser()->GetUsername()) &&
                     WebSock.GetParam("embed_blockuser_block").ToBool()) {
                     WebSock.GetSession()->AddError(
                         t_s("You can't block yourself"));
@@ -203,7 +203,7 @@ class CBlockUser : public CModule {
             (*it2)->SetIRCConnectEnabled(false);
         }
 
-        SetNV(pUser->GetUserName(), "");
+        SetNV(pUser->GetUsername(), "");
         return true;
     }
 };

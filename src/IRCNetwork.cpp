@@ -34,7 +34,7 @@ class CIRCNetworkPingTimer : public CCron {
     CIRCNetworkPingTimer(CIRCNetwork* pNetwork)
         : CCron(), m_pNetwork(pNetwork) {
         SetName("CIRCNetworkPingTimer::" +
-                m_pNetwork->GetUser()->GetUserName() + "::" +
+                m_pNetwork->GetUser()->GetUsername() + "::" +
                 m_pNetwork->GetName());
         Start(m_pNetwork->GetUser()->GetPingSlack());
     }
@@ -77,7 +77,7 @@ class CIRCNetworkJoinTimer : public CCron {
     CIRCNetworkJoinTimer(CIRCNetwork* pNetwork)
         : CCron(), m_bDelayed(false), m_pNetwork(pNetwork) {
         SetName("CIRCNetworkJoinTimer::" +
-                m_pNetwork->GetUser()->GetUserName() + "::" +
+                m_pNetwork->GetUser()->GetUsername() + "::" +
                 m_pNetwork->GetName());
         Start(JOIN_FREQUENCY);
     }
@@ -510,7 +510,7 @@ bool CIRCNetwork::ParseConfig(CConfig* pConfig, CString& sError,
 
         if (!pSubConf->empty()) {
             sError = "Unhandled lines in config for User [" +
-                     m_pUser->GetUserName() + "], Network [" + GetName() +
+                     m_pUser->GetUsername() + "], Network [" + GetName() +
                      "], Channel [" + sChanName + "]!";
             CUtils::PrintError(sError);
 
@@ -1289,7 +1289,7 @@ bool CIRCNetwork::Connect() {
     pIRCSock->SetTrustAllCerts(GetTrustAllCerts());
     pIRCSock->SetTrustPKI(GetTrustPKI());
 
-    DEBUG("Connecting user/network [" << m_pUser->GetUserName() << "/"
+    DEBUG("Connecting user/network [" << m_pUser->GetUsername() << "/"
                                       << m_sName << "]");
 
     bool bAbort = false;
@@ -1303,7 +1303,7 @@ bool CIRCNetwork::Connect() {
         return false;
     }
 
-    CString sSockName = "IRC::" + m_pUser->GetUserName() + "::" + m_sName;
+    CString sSockName = "IRC::" + m_pUser->GetUsername() + "::" + m_sName;
     CZNC::Get().GetManager().Connect(pServer->GetName(), pServer->GetPort(),
                                      sSockName, 120, bSSL, GetBindHost(),
                                      pIRCSock);

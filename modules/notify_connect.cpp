@@ -31,7 +31,7 @@ class CNotifyConnectMod : public CModule {
     }
 
     void NotifyAdmins(const CString& event) {
-        CString client = GetUser()->GetUserName();
+        CString client = GetUser()->GetUsername();
         if (GetClient()->GetIdentifier() != "") {
             client += "@";
             client += GetClient()->GetIdentifier();

@@ -92,7 +92,7 @@ class CSSLClientCertMod : public CModule {
 
     bool AddKey(CUser* pUser, const CString& sKey) {
         const pair<SCString::const_iterator, bool> pair =
-            m_PubKeys[pUser->GetUserName()].insert(sKey.AsLower());
+            m_PubKeys[pUser->GetUsername()].insert(sKey.AsLower());
 
         if (pair.second) {
             Save();
@@ -170,7 +170,7 @@ class CSSLClientCertMod : public CModule {
         Table.AddColumn(t_s("Id", "list"));
         Table.AddColumn(t_s("Key", "list"));
 
-        MSCString::const_iterator it = m_PubKeys.find(GetUser()->GetUserName());
+        MSCString::const_iterator it = m_PubKeys.find(GetUser()->GetUsername());
         if (it == m_PubKeys.end()) {
             PutModule(t_s("No keys set for your user"));
             return;
@@ -192,7 +192,7 @@ class CSSLClientCertMod : public CModule {
 
     void HandleDelCommand(const CString& sLine) {
         unsigned int id = sLine.Token(1, true).ToUInt();
-        MSCString::iterator it = m_PubKeys.find(GetUser()->GetUserName());
+        MSCString::iterator it = m_PubKeys.find(GetUser()->GetUsername());
 
         if (it == m_PubKeys.end()) {
             PutModule(t_s("No keys set for your user"));
@@ -242,7 +242,7 @@ class CSSLClientCertMod : public CModule {
         CUser* pUser = WebSock.GetSession()->GetUser();
 
         if (sPageName == "index") {
-            MSCString::const_iterator it = m_PubKeys.find(pUser->GetUserName());
+            MSCString::const_iterator it = m_PubKeys.find(pUser->GetUsername());
             if (it != m_PubKeys.end()) {
                 for (const CString& sKey : it->second) {
                     CTemplate& row = Tmpl.AddRow("KeyLoop");
@@ -256,7 +256,7 @@ class CSSLClientCertMod : public CModule {
             WebSock.Redirect(GetWebPath());
             return true;
         } else if (sPageName == "delete") {
-            MSCString::iterator it = m_PubKeys.find(pUser->GetUserName());
+            MSCString::iterator it = m_PubKeys.find(pUser->GetUsername());
             if (it != m_PubKeys.end()) {
                 if (it->second.erase(WebSock.GetParam("key", false))) {
                     if (it->second.size() == 0) {

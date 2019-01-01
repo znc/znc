@@ -31,7 +31,7 @@ using std::set;
 class CUserTimer : public CCron {
   public:
     CUserTimer(CUser* pUser) : CCron(), m_pUser(pUser) {
-        SetName("CUserTimer::" + m_pUser->GetUserName());
+        SetName("CUserTimer::" + m_pUser->GetUsername());
         Start(m_pUser->GetPingSlack());
     }
     ~CUserTimer() override {}
@@ -61,7 +61,7 @@ class CUserTimer : public CCron {
 
 CUser::CUser(const CString& sUsername)
     : m_sUsername(sUsername),
-      m_sCleanUsername(MakeCleanUserName(sUsername)),
+      m_sCleanUsername(MakeCleanUsername(sUsername)),
       m_sNick(m_sCleanUsername),
       m_sAltNick(""),
       m_sIdent(m_sCleanUsername),
@@ -588,7 +588,7 @@ CString& CUser::ExpandString(const CString& sStr, CString& sRet) const {
     sRet.Replace("%realname%", GetRealName());
     sRet.Replace("%time%", sTime);
     sRet.Replace("%uptime%", CZNC::Get().GetUptime());
-    sRet.Replace("%user%", GetUserName());
+    sRet.Replace("%user%", GetUsername());
     sRet.Replace("%version%", CZNC::GetVersion());
     sRet.Replace("%vhost%", GetBindHost());
     sRet.Replace("%znc%", CZNC::GetTag(false));
@@ -734,9 +734,9 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 
     // user names can only specified for the constructor, changing it later
     // on breaks too much stuff (e.g. lots of paths depend on the user name)
-    if (GetUserName() != User.GetUserName()) {
+    if (GetUsername() != User.GetUsername()) {
         DEBUG("Ignoring username in CUser::Clone(), old username ["
-              << GetUserName() << "]; New username [" << User.GetUserName()
+              << GetUsername() << "]; New username [" << User.GetUsername()
               << "]");
     }
 
@@ -877,6 +877,11 @@ const CString& CUser::GetTimestampFormat() const { return m_sTimestampFormat; }
 bool CUser::GetTimestampAppend() const { return m_bAppendTimestamp; }
 bool CUser::GetTimestampPrepend() const { return m_bPrependTimestamp; }
 
+bool CUser::IsValidUsername(const CString& sUsername) {
+    return CUser::IsValidUserName(sUsername);
+}
+
+/// @deprecated
 bool CUser::IsValidUserName(const CString& sUsername) {
     // /^[a-zA-Z][a-zA-Z@._\-]*$/
     const char* p = sUsername.c_str();
@@ -913,7 +918,7 @@ bool CUser::IsValid(CString& sErrMsg, bool bSkipPass) const {
         return false;
     }
 
-    if (!CUser::IsValidUserName(m_sUsername)) {
+    if (!CUser::IsValidUsername(m_sUsername)) {
         sErrMsg = t_s("Username is invalid");
         return false;
     }
@@ -1160,6 +1165,12 @@ bool CUser::PutModNotice(const CString& sModule, const CString& sLine,
     return (pClient == nullptr);
 }
 
+
+CString CUser::MakeCleanUsername(const CString& sUsername) {
+    return CUser::MakeCleanUserName(sUsername);
+}
+
+/// @deprecated
 CString CUser::MakeCleanUserName(const CString& sUsername) {
     return sUsername.Token(0, false, "@").Replace_n(".", "");
 }
@@ -1356,7 +1367,9 @@ vector<CClient*> CUser::GetAllClients() const {
     return vClients;
 }
 
+/// @deprecated
 const CString& CUser::GetUserName() const { return m_sUsername; }
+const CString& CUser::GetUsername() const { return m_sUsername; }
 const CString& CUser::GetCleanUserName() const { return m_sCleanUsername; }
 const CString& CUser::GetNick(bool bAllowDefault) const {
     return (bAllowDefault && m_sNick.empty()) ? GetCleanUserName() : m_sNick;

@@ -257,10 +257,10 @@ class CPyRetBool {
 
 %extend CUser {
 	CString __str__() {
-		return $self->GetUserName();
+		return $self->GetUsername();
 	}
 	CString __repr__() {
-		return "<CUser " + $self->GetUserName() + ">";
+		return "<CUser " + $self->GetUsername() + ">";
 	}
 	std::vector<CIRCNetwork*> GetNetworks_() {
 		return $self->GetNetworks();

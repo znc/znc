@@ -560,8 +560,8 @@ void CClient::UserCommand(CString& sLine) {
             PutStatus(
                 t_f("Network added. Use /znc JumpNetwork {1}, or connect to "
                     "ZNC with username {2} (instead of just {3}) to connect to "
-                    "it.")(sNetwork, m_pUser->GetUserName() + "/" + sNetwork,
-                           m_pUser->GetUserName()));
+                    "it.")(sNetwork, m_pUser->GetUsername() + "/" + sNetwork,
+                           m_pUser->GetUsername()));
         } else {
             PutStatus(t_s("Unable to add that network"));
             PutStatus(sNetworkAddError);

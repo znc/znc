@@ -236,7 +236,7 @@ class CPartylineMod : public CModule {
         for (set<CString>::iterator a = m_ssDefaultChans.begin();
              a != m_ssDefaultChans.end(); ++a) {
             CPartylineChannel* pChannel = GetChannel(*a);
-            const CString& sNick = pUser->GetUserName();
+            const CString& sNick = pUser->GetUsername();
 
             if (pChannel->IsInChannel(sNick)) continue;
 
@@ -259,7 +259,7 @@ class CPartylineMod : public CModule {
              it != m_ssChannels.end(); ++it) {
             const set<CString>& ssNicks = (*it)->GetNicks();
 
-            if ((*it)->IsInChannel(pUser->GetUserName())) {
+            if ((*it)->IsInChannel(pUser->GetUsername())) {
                 pClient->PutClient(":" + sNickMask + " JOIN " +
                                    (*it)->GetName());
 
@@ -274,7 +274,7 @@ class CPartylineMod : public CModule {
                 PutChan(ssNicks, ":*" + GetModName() + "!znc@znc.in MODE " +
                                      (*it)->GetName() + " +" +
                                      CString(pUser->IsAdmin() ? "o" : "v") +
-                                     " " + NICK_PREFIX + pUser->GetUserName(),
+                                     " " + NICK_PREFIX + pUser->GetUsername(),
                         false);
             }
         }
@@ -287,12 +287,12 @@ class CPartylineMod : public CModule {
                  it != m_ssChannels.end(); ++it) {
                 const set<CString>& ssNicks = (*it)->GetNicks();
 
-                if (ssNicks.find(pUser->GetUserName()) != ssNicks.end()) {
+                if (ssNicks.find(pUser->GetUsername()) != ssNicks.end()) {
                     PutChan(ssNicks,
                             ":*" + GetModName() + "!znc@znc.in MODE " +
                                 (*it)->GetName() + " -ov " + NICK_PREFIX +
-                                pUser->GetUserName() + " " + NICK_PREFIX +
-                                pUser->GetUserName(),
+                                pUser->GetUsername() + " " + NICK_PREFIX +
+                                pUser->GetUsername(),
                             false);
                 }
             }
@@ -315,7 +315,7 @@ class CPartylineMod : public CModule {
             CClient* pClient = GetClient();
             CPartylineChannel* pChannel = FindChannel(sChannel);
 
-            if (pChannel && pChannel->IsInChannel(pUser->GetUserName())) {
+            if (pChannel && pChannel->IsInChannel(pUser->GetUsername())) {
                 const set<CString>& ssNicks = pChannel->GetNicks();
                 if (!sTopic.empty()) {
                     if (pUser->IsAdmin()) {
@@ -377,7 +377,7 @@ class CPartylineMod : public CModule {
     void RemoveUser(CUser* pUser, CPartylineChannel* pChannel,
                     const CString& sCommand, const CString& sMessage = "",
                     bool bNickAsTarget = false) {
-        if (!pChannel || !pChannel->IsInChannel(pUser->GetUserName())) {
+        if (!pChannel || !pChannel->IsInChannel(pUser->GetUsername())) {
             return;
         }
 
@@ -387,7 +387,7 @@ class CPartylineMod : public CModule {
         CString sMsg = sMessage;
         if (!sMsg.empty()) sMsg = " :" + sMsg;
 
-        pChannel->DelNick(pUser->GetUserName());
+        pChannel->DelNick(pUser->GetUsername());
 
         const set<CString>& ssNicks = pChannel->GetNicks();
         CString sHost = pUser->GetBindHost();
@@ -406,10 +406,10 @@ class CPartylineMod : public CModule {
                                    pClient->GetNick() + sMsg);
             }
 
-            PutChan(ssNicks, ":" + NICK_PREFIX + pUser->GetUserName() + "!" +
+            PutChan(ssNicks, ":" + NICK_PREFIX + pUser->GetUsername() + "!" +
                                  pUser->GetIdent() + "@" + sHost + sCmd +
                                  pChannel->GetName() + " " + NICK_PREFIX +
-                                 pUser->GetUserName() + sMsg,
+                                 pUser->GetUsername() + sMsg,
                     false, true, pUser);
         } else {
             for (vector<CClient*>::const_iterator it = vClients.begin();
@@ -420,7 +420,7 @@ class CPartylineMod : public CModule {
                                    pChannel->GetName() + sMsg);
             }
 
-            PutChan(ssNicks, ":" + NICK_PREFIX + pUser->GetUserName() + "!" +
+            PutChan(ssNicks, ":" + NICK_PREFIX + pUser->GetUsername() + "!" +
                                  pUser->GetIdent() + "@" + sHost + sCmd +
                                  pChannel->GetName() + sMsg,
                     false, true, pUser);
@@ -459,11 +459,11 @@ class CPartylineMod : public CModule {
     }
 
     void JoinUser(CUser* pUser, CPartylineChannel* pChannel) {
-        if (pChannel && !pChannel->IsInChannel(pUser->GetUserName())) {
+        if (pChannel && !pChannel->IsInChannel(pUser->GetUsername())) {
             vector<CClient*> vClients = pUser->GetAllClients();
 
             const set<CString>& ssNicks = pChannel->GetNicks();
-            const CString& sNick = pUser->GetUserName();
+            const CString& sNick = pUser->GetUsername();
             pChannel->AddNick(sNick);
 
             CString sHost = pUser->GetBindHost();
@@ -503,13 +503,13 @@ class CPartylineMod : public CModule {
             if (pUser->IsAdmin()) {
                 PutChan(ssNicks, ":*" + GetModName() + "!znc@znc.in MODE " +
                                      pChannel->GetName() + " +o " +
-                                     NICK_PREFIX + pUser->GetUserName(),
+                                     NICK_PREFIX + pUser->GetUsername(),
                         false, false, pUser);
             }
 
             PutChan(ssNicks, ":*" + GetModName() + "!znc@znc.in MODE " +
                                  pChannel->GetName() + " +v " + NICK_PREFIX +
-                                 pUser->GetUserName(),
+                                 pUser->GetUsername(),
                     false, false, pUser);
         }
     }
@@ -543,7 +543,7 @@ class CPartylineMod : public CModule {
                 return HALT;
             }
 
-            PutChan(sTarget, ":" + NICK_PREFIX + pUser->GetUserName() + "!" +
+            PutChan(sTarget, ":" + NICK_PREFIX + pUser->GetUsername() + "!" +
                                  pUser->GetIdent() + "@" + sHost + " " + sCmd +
                                  " " + sTarget + " :" + sMessage,
                     true, false);
@@ -566,7 +566,7 @@ class CPartylineMod : public CModule {
                     CClient* pTarget = *it;
 
                     pTarget->PutClient(
-                        ":" + NICK_PREFIX + pUser->GetUserName() + "!" +
+                        ":" + NICK_PREFIX + pUser->GetUsername() + "!" +
                         pUser->GetIdent() + "@" + sHost + " " + sCmd + " " +
                         pTarget->GetNick() + " :" + sMessage);
                 }

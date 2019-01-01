@@ -385,7 +385,7 @@ void CClient::AcceptLogin(CUser& User) {
     // (constructor set a different timeout and mode)
     SetTimeout(User.GetNoTrafficTimeout(), TMO_READ);
 
-    SetSockName("USR::" + m_pUser->GetUserName());
+    SetSockName("USR::" + m_pUser->GetUsername());
     SetEncoding(m_pUser->GetClientEncoding());
 
     if (!m_sNetwork.empty()) {
@@ -413,7 +413,7 @@ void CClient::AcceptLogin(CUser& User) {
             PutStatusNotice(t_f(
                 "If you want to choose another network, use /znc JumpNetwork "
                 "<network>, or connect to ZNC with username {1}/<network> "
-                "(instead of just {1})")(m_pUser->GetUserName()));
+                "(instead of just {1})")(m_pUser->GetUsername()));
         }
     } else {
         PutStatusNotice(
@@ -470,7 +470,7 @@ void CClient::PutIRC(const CString& sLine) {
 
 CString CClient::GetFullName() const {
     if (!m_pUser) return GetRemoteIP();
-    CString sFullName = m_pUser->GetUserName();
+    CString sFullName = m_pUser->GetUsername();
     if (!m_sIdentifier.empty()) sFullName += "@" + m_sIdentifier;
     if (m_pNetwork) sFullName += "/" + m_pNetwork->GetName();
     return sFullName;

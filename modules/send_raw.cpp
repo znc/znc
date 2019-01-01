@@ -30,7 +30,7 @@ class CSendRaw_Mod : public CModule {
             if (pNetwork) {
                 pNetwork->PutUser(sLine.Token(3, true));
                 PutModule(t_f("Sent [{1}] to {2}/{3}")(sLine.Token(3, true),
-                                                       pUser->GetUserName(),
+                                                       pUser->GetUsername(),
                                                        pNetwork->GetName()));
             } else {
                 PutModule(t_f("Network {1} not found for user {2}")(
@@ -50,7 +50,7 @@ class CSendRaw_Mod : public CModule {
             if (pNetwork) {
                 pNetwork->PutIRC(sLine.Token(3, true));
                 PutModule(t_f("Sent [{1}] to IRC server of {2}/{3}")(
-                    sLine.Token(3, true), pUser->GetUserName(),
+                    sLine.Token(3, true), pUser->GetUsername(),
                     pNetwork->GetName()));
             } else {
                 PutModule(t_f("Network {1} not found for user {2}")(
@@ -103,7 +103,7 @@ class CSendRaw_Mod : public CModule {
                 bool bToServer = WebSock.GetParam("send_to") == "server";
                 const CString sLine = WebSock.GetParam("line");
 
-                Tmpl["user"] = pUser->GetUserName();
+                Tmpl["user"] = pUser->GetUsername();
                 Tmpl[bToServer ? "to_server" : "to_client"] = "true";
                 Tmpl["line"] = sLine;
 
@@ -119,12 +119,12 @@ class CSendRaw_Mod : public CModule {
             const map<CString, CUser*>& msUsers = CZNC::Get().GetUserMap();
             for (const auto& it : msUsers) {
                 CTemplate& l = Tmpl.AddRow("UserLoop");
-                l["Username"] = it.second->GetUserName();
+                l["Username"] = it.second->GetUsername();
 
                 vector<CIRCNetwork*> vNetworks = it.second->GetNetworks();
                 for (const CIRCNetwork* pNetwork : vNetworks) {
                     CTemplate& NetworkLoop = l.AddRow("NetworkLoop");
-                    NetworkLoop["Username"] = it.second->GetUserName();
+                    NetworkLoop["Username"] = it.second->GetUsername();
                     NetworkLoop["Network"] = pNetwork->GetName();
                 }
             }

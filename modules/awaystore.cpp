@@ -351,7 +351,7 @@ class CAway : public CModule {
     void OnClientDisconnect() override { Away(); }
 
     CString GetPath() {
-        CString sBuffer = GetUser()->GetUserName();
+        CString sBuffer = GetUser()->GetUsername();
         CString sRet = GetSavePath();
         sRet += "/.znc-away-" + CBlowfish::MD5(sBuffer, true);
         return (sRet);
