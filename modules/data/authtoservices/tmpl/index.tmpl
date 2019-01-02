@@ -1,16 +1,16 @@
-<? I18N znc-sasl ?>
+<? I18N znc-authtoservices ?>
 <? INC Header.tmpl ?>
 
 <form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>" method="post">
 	<? INC _csrf_check.tmpl ?>
 	<div class="section">
-		<h3><? FORMAT "SASL" ?></h3>
+		<h3><? FORMAT "Services authentication" ?></h3>
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Username:" ?></div>
-					<input type="text" name="username" value="<? VAR Username ?>" class="half" maxlength="128"
-							   title="<? FORMAT "Please enter a username." ?>" />
+					<div class="inputlabel"><? FORMAT "Services account / username:" ?></div>
+					<input type="text" name="account" value="<? VAR Account ?>" class="half" maxlength="128"
+							   title="<? FORMAT "Please enter a services account / user name." ?>" />
 				</div>
 				<div class="subsection">
 					<div class="inputlabel"><? FORMAT "Password:" ?></div>
@@ -23,8 +23,13 @@
 		<div class="sectionbg">
 			<div class="sectionbody lotsofcheckboxes">
 				<span class="checkboxandlabel" title="<? FORMAT "Connect only if SASL authentication succeeds." ?>">
-					<input type="checkbox" name="require_auth" id="opt_require_auth" value="1"<? IF RequireAuth ?> checked="checked"<? ENDIF ?> />
-					<label for="opt_require_auth"><? FORMAT "Require authentication" ?></label>
+					<input type="checkbox" name="require_sasl" id="opt_require_sasl" value="1"<? IF RequireSasl ?> checked="checked"<? ENDIF ?> />
+					<label for="opt_require_sasl"><? FORMAT "Require SASL authentication" ?></label>
+				</span>
+				<div style="clear:both;"></div>
+				<span class="checkboxandlabel" title="<? FORMAT "Attempt SASL authentication on connect." ?>">
+					<input type="checkbox" name="require_auth" id="opt_try_sasl" value="1"<? IF TrySasl ?> checked="checked"<? ENDIF ?> />
+					<label for="opt_try_sasl"><? FORMAT "Attempt SASL authentication" ?></label>
 				</span>
 				<div style="clear:both;"></div>
 			</div>

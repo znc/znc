@@ -54,6 +54,8 @@ class CIRCNetwork : private CCoreTranslationMixin {
 
     void DelServers();
 
+    bool ModuleInConfig(CConfig* pConfig, const CString& sModule) const;
+
     bool ParseConfig(CConfig* pConfig, CString& sError, bool bUpgrade = false);
     CConfig ToConfig() const;
 
