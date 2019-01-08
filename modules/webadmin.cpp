@@ -191,7 +191,7 @@ class CWebAdminMod : public CModule {
 
         if (pUser) {
             /* If we are editing a user we must not change the user name */
-            sUsername = pUser->GetUserName();
+            sUsername = pUser->GetUsername();
         }
 
         CString sArg = WebSock.GetParam("password");
@@ -451,14 +451,14 @@ class CWebAdminMod : public CModule {
         return pNewUser;
     }
 
-    CString SafeGetUserNameParam(CWebSock& WebSock) {
-        CString sUserName = WebSock.GetParam("user");  // check for POST param
-        if (sUserName.empty() && !WebSock.IsPost()) {
+    CString SafeGetUsernameParam(CWebSock& WebSock) {
+        CString sUsername = WebSock.GetParam("user");  // check for POST param
+        if (sUsername.empty() && !WebSock.IsPost()) {
             // if no POST param named user has been given and we are not
             // saving this form, fall back to using the GET parameter.
-            sUserName = WebSock.GetParam("user", false);
+            sUsername = WebSock.GetParam("user", false);
         }
-        return sUserName;
+        return sUsername;
     }
 
     CString SafeGetNetworkParam(CWebSock& WebSock) {
@@ -472,11 +472,11 @@ class CWebAdminMod : public CModule {
     }
 
     CUser* SafeGetUserFromParam(CWebSock& WebSock) {
-        return CZNC::Get().FindUser(SafeGetUserNameParam(WebSock));
+        return CZNC::Get().FindUser(SafeGetUsernameParam(WebSock));
     }
 
     CIRCNetwork* SafeGetNetworkFromParam(CWebSock& WebSock) {
-        CUser* pUser = CZNC::Get().FindUser(SafeGetUserNameParam(WebSock));
+        CUser* pUser = CZNC::Get().FindUser(SafeGetUsernameParam(WebSock));
         CIRCNetwork* pNetwork = nullptr;
 
         if (pUser) {
@@ -650,11 +650,11 @@ class CWebAdminMod : public CModule {
             WebSock.PrintErrorPage(t_s("No such user"));
             return true;
         } else if (sPageName == "edituser") {
-            CString sUserName = SafeGetUserNameParam(WebSock);
-            CUser* pUser = CZNC::Get().FindUser(sUserName);
+            CString sUsername = SafeGetUsernameParam(WebSock);
+            CUser* pUser = CZNC::Get().FindUser(sUsername);
 
             if (!pUser) {
-                if (sUserName.empty()) {
+                if (sUsername.empty()) {
                     pUser = spSession->GetUser();
                 }  // else: the "no such user" message will be printed.
             }
@@ -708,17 +708,17 @@ class CWebAdminMod : public CModule {
         }
 
         if (!WebSock.GetParam("submitted").ToUInt()) {
-            Tmpl["User"] = pUser->GetUserName();
+            Tmpl["User"] = pUser->GetUsername();
             Tmpl["Network"] = pNetwork->GetName();
 
             CTemplate& breadUser = Tmpl.AddRow("BreadCrumbs");
-            breadUser["Text"] = t_f("Edit User [{1}]")(pUser->GetUserName());
+            breadUser["Text"] = t_f("Edit User [{1}]")(pUser->GetUsername());
             breadUser["URL"] =
-                GetWebPath() + "edituser?user=" + pUser->GetUserName();
+                GetWebPath() + "edituser?user=" + pUser->GetUsername();
             CTemplate& breadNet = Tmpl.AddRow("BreadCrumbs");
             breadNet["Text"] = t_f("Edit Network [{1}]")(pNetwork->GetName());
             breadNet["URL"] = GetWebPath() + "editnetwork?user=" +
-                              pUser->GetUserName() + "&network=" +
+                              pUser->GetUsername() + "&network=" +
                               pNetwork->GetName();
             CTemplate& breadChan = Tmpl.AddRow("BreadCrumbs");
 
@@ -728,7 +728,7 @@ class CWebAdminMod : public CModule {
                 Tmpl["Title"] =
                     t_f("Edit Channel [{1}] of Network [{2}] of User [{3}]")(
                         pChan->GetName(), pNetwork->GetName(),
-                        pUser->GetUserName());
+                        pUser->GetUsername());
                 Tmpl["ChanName"] = pChan->GetName();
                 Tmpl["BufferSize"] = CString(pChan->GetBufferCount());
                 Tmpl["DefModes"] = pChan->GetDefaultModes();
@@ -742,7 +742,7 @@ class CWebAdminMod : public CModule {
                 Tmpl["Action"] = "addchan";
                 Tmpl["Title"] =
                     t_f("Add Channel to Network [{1}] of User [{2}]")(
-                        pNetwork->GetName(), pUser->GetUserName());
+                        pNetwork->GetName(), pUser->GetUsername());
                 Tmpl["BufferSize"] = CString(pUser->GetBufferCount());
                 Tmpl["DefModes"] = CString(pUser->GetDefaultChanModes());
                 Tmpl["InConfig"] = "true";
@@ -849,7 +849,7 @@ class CWebAdminMod : public CModule {
             pChan->Disable();
 
         CTemplate TmplMod;
-        TmplMod["User"] = pUser->GetUserName();
+        TmplMod["User"] = pUser->GetUsername();
         TmplMod["ChanName"] = pChan->GetName();
         TmplMod["WebadminAction"] = "change";
         FOR_EACH_MODULE(it, pNetwork) {
@@ -864,13 +864,13 @@ class CWebAdminMod : public CModule {
 
         if (WebSock.HasParam("submit_return")) {
             WebSock.Redirect(GetWebPath() + "editnetwork?user=" +
-                             pUser->GetUserName().Escape_n(CString::EURL) +
+                             pUser->GetUsername().Escape_n(CString::EURL) +
                              "&network=" +
                              pNetwork->GetName().Escape_n(CString::EURL));
         } else {
             WebSock.Redirect(
                 GetWebPath() + "editchan?user=" +
-                pUser->GetUserName().Escape_n(CString::EURL) + "&network=" +
+                pUser->GetUsername().Escape_n(CString::EURL) + "&network=" +
                 pNetwork->GetName().Escape_n(CString::EURL) + "&name=" +
                 pChan->GetName().Escape_n(CString::EURL));
         }
@@ -892,7 +892,7 @@ class CWebAdminMod : public CModule {
         }
 
         if (!WebSock.GetParam("submitted").ToUInt()) {
-            Tmpl["Username"] = pUser->GetUserName();
+            Tmpl["Username"] = pUser->GetUsername();
             CTemplate& breadNet = Tmpl.AddRow("BreadCrumbs");
 
             CIRCNetwork EmptyNetwork(pUser, "");
@@ -901,13 +901,13 @@ class CWebAdminMod : public CModule {
                 Tmpl["Action"] = "editnetwork";
                 Tmpl["Edit"] = "true";
                 Tmpl["Title"] = t_f("Edit Network [{1}] of User [{2}]")(
-                    pNetwork->GetName(), pUser->GetUserName());
+                    pNetwork->GetName(), pUser->GetUsername());
                 breadNet["Text"] =
                     t_f("Edit Network [{1}]")(pNetwork->GetName());
             } else {
                 Tmpl["Action"] = "addnetwork";
                 Tmpl["Title"] =
-                    t_f("Add Network for User [{1}]")(pUser->GetUserName());
+                    t_f("Add Network for User [{1}]")(pUser->GetUsername());
                 breadNet["Text"] = t_s("Add Network");
 
                 pNetwork = &EmptyNetwork;
@@ -969,9 +969,9 @@ class CWebAdminMod : public CModule {
             }
 
             CTemplate& breadUser = Tmpl.AddRow("BreadCrumbs");
-            breadUser["Text"] = t_f("Edit User [{1}]")(pUser->GetUserName());
+            breadUser["Text"] = t_f("Edit User [{1}]")(pUser->GetUsername());
             breadUser["URL"] =
-                GetWebPath() + "edituser?user=" + pUser->GetUserName();
+                GetWebPath() + "edituser?user=" + pUser->GetUsername();
 
             Tmpl["Name"] = pNetwork->GetName();
 
@@ -1005,7 +1005,7 @@ class CWebAdminMod : public CModule {
                 CTemplate& l = Tmpl.AddRow("ChannelLoop");
 
                 l["Network"] = pNetwork->GetName();
-                l["Username"] = pUser->GetUserName();
+                l["Username"] = pUser->GetUsername();
                 l["Name"] = pChan->GetName();
                 l["Perms"] = pChan->GetPermStr();
                 l["CurModes"] = pChan->GetModeString();
@@ -1214,7 +1214,7 @@ class CWebAdminMod : public CModule {
         }
 
         CTemplate TmplMod;
-        TmplMod["Username"] = pUser->GetUserName();
+        TmplMod["Username"] = pUser->GetUsername();
         TmplMod["Name"] = pNetwork->GetName();
         TmplMod["WebadminAction"] = "change";
         FOR_EACH_MODULE(it, make_pair(pUser, pNetwork)) {
@@ -1229,10 +1229,10 @@ class CWebAdminMod : public CModule {
 
         if (WebSock.HasParam("submit_return")) {
             WebSock.Redirect(GetWebPath() + "edituser?user=" +
-                             pUser->GetUserName().Escape_n(CString::EURL));
+                             pUser->GetUsername().Escape_n(CString::EURL));
         } else {
             WebSock.Redirect(GetWebPath() + "editnetwork?user=" +
-                             pUser->GetUserName().Escape_n(CString::EURL) +
+                             pUser->GetUsername().Escape_n(CString::EURL) +
                              "&network=" +
                              pNetwork->GetName().Escape_n(CString::EURL));
         }
@@ -1260,7 +1260,7 @@ class CWebAdminMod : public CModule {
             // Show the "Are you sure?" page:
 
             Tmpl.SetFile("del_network.tmpl");
-            Tmpl["Username"] = pUser->GetUserName();
+            Tmpl["Username"] = pUser->GetUsername();
             Tmpl["Network"] = sNetwork;
             return true;
         }
@@ -1274,7 +1274,7 @@ class CWebAdminMod : public CModule {
         }
 
         WebSock.Redirect(GetWebPath() + "edituser?user=" +
-                         pUser->GetUserName().Escape_n(CString::EURL));
+                         pUser->GetUsername().Escape_n(CString::EURL));
         return false;
     }
 
@@ -1298,7 +1298,7 @@ class CWebAdminMod : public CModule {
 
         WebSock.Redirect(
             GetWebPath() + "editnetwork?user=" +
-            pNetwork->GetUser()->GetUserName().Escape_n(CString::EURL) +
+            pNetwork->GetUser()->GetUsername().Escape_n(CString::EURL) +
             "&network=" + pNetwork->GetName().Escape_n(CString::EURL));
         return false;
     }
@@ -1311,7 +1311,7 @@ class CWebAdminMod : public CModule {
             CUser EmptyUser("");
             CUser* pRealUser = pUser;
             if (pUser) {
-                Tmpl["Title"] = t_f("Edit User [{1}]")(pUser->GetUserName());
+                Tmpl["Title"] = t_f("Edit User [{1}]")(pUser->GetUsername());
                 Tmpl["Edit"] = "true";
             } else {
                 CString sUsername = WebSock.GetParam("clone", false);
@@ -1320,9 +1320,9 @@ class CWebAdminMod : public CModule {
 
                 if (pUser) {
                     Tmpl["Title"] =
-                        t_f("Clone User [{1}]")(pUser->GetUserName());
+                        t_f("Clone User [{1}]")(pUser->GetUsername());
                     Tmpl["Clone"] = "true";
-                    Tmpl["CloneUsername"] = pUser->GetUserName();
+                    Tmpl["CloneUsername"] = pUser->GetUsername();
                 } else {
                     pUser = &EmptyUser;
                     Tmpl["Title"] = "Add User";
@@ -1331,7 +1331,7 @@ class CWebAdminMod : public CModule {
 
             Tmpl["ImAdmin"] = CString(spSession->IsAdmin());
 
-            Tmpl["Username"] = pUser->GetUserName();
+            Tmpl["Username"] = pUser->GetUsername();
             Tmpl["AuthOnlyViaModule"] = CString(pUser->AuthOnlyViaModule());
             Tmpl["Nick"] = pUser->GetNick();
             Tmpl["AltNick"] = pUser->GetAltNick();
@@ -1361,7 +1361,7 @@ class CWebAdminMod : public CModule {
             for (const CIRCNetwork* pNetwork : vNetworks) {
                 CTemplate& l = Tmpl.AddRow("NetworkLoop");
                 l["Name"] = pNetwork->GetName();
-                l["Username"] = pUser->GetUserName();
+                l["Username"] = pUser->GetUsername();
                 l["Clients"] = CString(pNetwork->GetClients().size());
                 l["IRCNick"] = pNetwork->GetIRCNick().GetNick();
                 CServer* pServer = pNetwork->GetCurrentServer();
@@ -1650,7 +1650,7 @@ class CWebAdminMod : public CModule {
             WebSock.Redirect(GetWebPath() + "listusers");
         } else {
             WebSock.Redirect(GetWebPath() + "edituser?user=" +
-                             pUser->GetUserName());
+                             pUser->GetUsername());
         }
 
         /* we don't want the template to be printed while we redirect */
@@ -1667,7 +1667,7 @@ class CWebAdminMod : public CModule {
             CTemplate& l = Tmpl.AddRow("UserLoop");
             CUser* pUser = it.second;
 
-            l["Username"] = pUser->GetUserName();
+            l["Username"] = pUser->GetUsername();
             l["Clients"] = CString(pUser->GetAllClients().size());
             l["Networks"] = CString(pUser->GetNetworks().size());
 
@@ -1726,7 +1726,7 @@ class CWebAdminMod : public CModule {
 
         for (const auto& it : traffic) {
             if (!spSession->IsAdmin() &&
-                !spSession->GetUser()->GetUserName().Equals(it.first)) {
+                !spSession->GetUser()->GetUsername().Equals(it.first)) {
                 continue;
             }
 

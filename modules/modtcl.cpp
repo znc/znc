@@ -300,7 +300,7 @@ class CModTcl : public CModule {
 
     static int tcl_GetUsername STDVAR {
         CModTcl* mod = static_cast<CModTcl*>(cd);
-        Tcl_SetResult(irp, (char*)mod->GetUser()->GetUserName().c_str(),
+        Tcl_SetResult(irp, (char*)mod->GetUser()->GetUsername().c_str(),
                       TCL_VOLATILE);
         return TCL_OK;
     }

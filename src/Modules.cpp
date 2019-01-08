@@ -234,13 +234,13 @@ CString CModule::GetWebFilesPath() {
 }
 
 bool CModule::LoadRegistry() {
-    // CString sPrefix = (m_pUser) ? m_pUser->GetUserName() : ".global";
+    // CString sPrefix = (m_pUser) ? m_pUser->GetUsername() : ".global";
     return (m_mssRegistry.ReadFromDisk(GetSavePath() + "/.registry") ==
             MCString::MCS_SUCCESS);
 }
 
 bool CModule::SaveRegistry() const {
-    // CString sPrefix = (m_pUser) ? m_pUser->GetUserName() : ".global";
+    // CString sPrefix = (m_pUser) ? m_pUser->GetUsername() : ".global";
     return (m_mssRegistry.WriteToDisk(GetSavePath() + "/.registry", 0600) ==
             MCString::MCS_SUCCESS);
 }

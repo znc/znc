@@ -159,7 +159,7 @@ void CIRCSock::ReadLine(const CString& sData) {
     sLine.Replace("\n", "");
     sLine.Replace("\r", "");
 
-    DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/"
+    DEBUG("(" << m_pNetwork->GetUser()->GetUsername() << "/"
               << m_pNetwork->GetName() << ") IRC -> ZNC [" << sLine << "]");
 
     bool bReturn = false;
@@ -1139,7 +1139,7 @@ void CIRCSock::PutIRC(const CMessage& Message) {
     // Only print if the line won't get sent immediately (same condition as in
     // TrySend()!)
     if (m_bFloodProtection && m_iSendsAllowed <= 0) {
-        DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/"
+        DEBUG("(" << m_pNetwork->GetUser()->GetUsername() << "/"
                   << m_pNetwork->GetName() << ") ZNC -> IRC ["
                   << CDebug::Filter(Message.ToString()) << "] (queued)");
     }
@@ -1151,7 +1151,7 @@ void CIRCSock::PutIRCQuick(const CString& sLine) {
     // Only print if the line won't get sent immediately (same condition as in
     // TrySend()!)
     if (m_bFloodProtection && m_iSendsAllowed <= 0) {
-        DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/"
+        DEBUG("(" << m_pNetwork->GetUser()->GetUsername() << "/"
                   << m_pNetwork->GetName() << ") ZNC -> IRC ["
                   << CDebug::Filter(sLine) << "] (queued to front)");
     }
@@ -1190,7 +1190,7 @@ void CIRCSock::PutIRCRaw(const CString& sLine) {
     bool bSkip = false;
     IRCSOCKMODULECALL(OnSendToIRC(sCopy), &bSkip);
     if (!bSkip) {
-        DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/"
+        DEBUG("(" << m_pNetwork->GetUser()->GetUsername() << "/"
                   << m_pNetwork->GetName() << ") ZNC -> IRC ["
                   << CDebug::Filter(sCopy) << "]");
         Write(sCopy + "\r\n");

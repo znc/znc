@@ -543,7 +543,7 @@ bool CSocket::Connect(const CString& sHostname, unsigned short uPort, bool bSSL,
     CString sBindHost;
 
     if (pUser) {
-        sSockName += "::" + pUser->GetUserName();
+        sSockName += "::" + pUser->GetUsername();
         sBindHost = pUser->GetBindHost();
         CIRCNetwork* pNetwork = m_pModule->GetNetwork();
         if (pNetwork) {
@@ -574,7 +574,7 @@ bool CSocket::Listen(unsigned short uPort, bool bSSL, unsigned int uTimeout) {
     CString sSockName = "MOD::L::" + m_pModule->GetModName();
 
     if (pUser) {
-        sSockName += "::" + pUser->GetUserName();
+        sSockName += "::" + pUser->GetUsername();
     }
     // Don't overwrite the socket name if one is already set
     if (!GetSockName().empty()) {

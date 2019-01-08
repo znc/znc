@@ -32,7 +32,7 @@ TEST_F(ZNCTest, Modperl) {
     client.Write("znc loadmod perleval");
     client.Write("PRIVMSG *perleval :2+2");
     client.ReadUntil(":*perleval!znc@znc.in PRIVMSG nick :Result: 4");
-    client.Write("PRIVMSG *perleval :$self->GetUser->GetUserName");
+    client.Write("PRIVMSG *perleval :$self->GetUser->GetUsername");
     client.ReadUntil("Result: user");
 }
 
@@ -49,7 +49,7 @@ TEST_F(ZNCTest, Modpython) {
     client.Write("znc loadmod pyeval");
     client.Write("PRIVMSG *pyeval :2+2");
     client.ReadUntil(":*pyeval!znc@znc.in PRIVMSG nick :4");
-    client.Write("PRIVMSG *pyeval :module.GetUser().GetUserName()");
+    client.Write("PRIVMSG *pyeval :module.GetUser().GetUsername()");
     client.ReadUntil("nick :'user'");
     ircd.Write(":server 001 nick :Hello");
     ircd.Write(":n!u@h PRIVMSG nick :Hi\xF0, github issue #1229");

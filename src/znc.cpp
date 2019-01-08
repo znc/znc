@@ -169,7 +169,7 @@ bool CZNC::HandleUserDeletion() {
             pUser->SetBeingDeleted(false);
             continue;
         }
-        m_msUsers.erase(pUser->GetUserName());
+        m_msUsers.erase(pUser->GetUsername());
         CWebSock::FinishUserSessions(*pUser);
         delete pUser;
     }
@@ -573,7 +573,7 @@ bool CZNC::WriteConfig() {
             continue;
         }
 
-        config.AddSubConfig("User", it.second->GetUserName(),
+        config.AddSubConfig("User", it.second->GetUsername(),
                             it.second->ToConfig());
     }
 
@@ -739,7 +739,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
     CString sNick;
     do {
         CUtils::GetInput("Username", sUser, "", "alphanumeric");
-    } while (!CUser::IsValidUserName(sUser));
+    } while (!CUser::IsValidUsername(sUser));
 
     vsLines.push_back("<User " + sUser + ">");
     CString sSalt;
@@ -749,7 +749,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 
     vsLines.push_back("\tAdmin      = true");
 
-    CUtils::GetInput("Nick", sNick, CUser::MakeCleanUserName(sUser));
+    CUtils::GetInput("Nick", sNick, CUser::MakeCleanUsername(sUser));
     vsLines.push_back("\tNick       = " + sNick);
     CUtils::GetInput("Alternate nick", sAnswer, sNick + "_");
     if (!sAnswer.empty()) {
@@ -1246,12 +1246,12 @@ bool CZNC::LoadUsers(CConfig& config, CString& sError) {
     config.FindSubConfig("user", subConf);
 
     for (const auto& subIt : subConf) {
-        const CString& sUserName = subIt.first;
+        const CString& sUsername = subIt.first;
         CConfig* pSubConf = subIt.second.m_pSubConfig;
 
-        CUtils::PrintMessage("Loading user [" + sUserName + "]");
+        CUtils::PrintMessage("Loading user [" + sUsername + "]");
 
-        std::unique_ptr<CUser> pUser(new CUser(sUserName));
+        std::unique_ptr<CUser> pUser(new CUser(sUsername));
 
         if (!m_sStatusPrefix.empty()) {
             if (!pUser->SetStatusPrefix(m_sStatusPrefix)) {
@@ -1268,7 +1268,7 @@ bool CZNC::LoadUsers(CConfig& config, CString& sError) {
         }
 
         if (!pSubConf->empty()) {
-            sError = "Unhandled lines in config for User [" + sUserName + "]!";
+            sError = "Unhandled lines in config for User [" + sUsername + "]!";
             CUtils::PrintError(sError);
             DumpConfig(pSubConf);
             return false;
@@ -1277,7 +1277,7 @@ bool CZNC::LoadUsers(CConfig& config, CString& sError) {
         CString sErr;
         CUser* pRawUser = pUser.release();
         if (!AddUser(pRawUser, sErr, true)) {
-            sError = "Invalid user [" + sUserName + "] " + sErr;
+            sError = "Invalid user [" + sUsername + "] " + sErr;
             CUtils::PrintError(sError);
             pRawUser->SetBeingDeleted(true);
             delete pRawUser;
@@ -1512,7 +1512,7 @@ bool CZNC::UpdateModule(const CString& sModule) {
         if (!pUser->GetModules().LoadModule(
                 sModule, sArgs, CModInfo::UserModule, pUser, nullptr, sErr)) {
             DEBUG("Failed to reload [" << sModule << "] for ["
-                                       << pUser->GetUserName() << "] [" << sErr
+                                       << pUser->GetUsername() << "] [" << sErr
                                        << "]");
             bError = true;
         }
@@ -1527,7 +1527,7 @@ bool CZNC::UpdateModule(const CString& sModule) {
                 sModule, sArgs, CModInfo::NetworkModule, pNetwork->GetUser(),
                 pNetwork, sErr)) {
             DEBUG("Failed to reload ["
-                  << sModule << "] for [" << pNetwork->GetUser()->GetUserName()
+                  << sModule << "] for [" << pNetwork->GetUser()->GetUsername()
                   << "/" << pNetwork->GetName() << "] [" << sErr << "]");
             bError = true;
         }
@@ -1553,18 +1553,18 @@ bool CZNC::DeleteUser(const CString& sUsername) {
         return false;
     }
 
-    m_msDelUsers[pUser->GetUserName()] = pUser;
+    m_msDelUsers[pUser->GetUsername()] = pUser;
     return true;
 }
 
 bool CZNC::AddUser(CUser* pUser, CString& sErrorRet, bool bStartup) {
-    if (FindUser(pUser->GetUserName()) != nullptr) {
+    if (FindUser(pUser->GetUsername()) != nullptr) {
         sErrorRet = t_s("User already exists");
-        DEBUG("User [" << pUser->GetUserName() << "] - already exists");
+        DEBUG("User [" << pUser->GetUsername() << "] - already exists");
         return false;
     }
     if (!pUser->IsValid(sErrorRet)) {
-        DEBUG("Invalid user [" << pUser->GetUserName() << "] - [" << sErrorRet
+        DEBUG("Invalid user [" << pUser->GetUsername() << "] - [" << sErrorRet
                                << "]");
         return false;
     }
@@ -1576,11 +1576,11 @@ bool CZNC::AddUser(CUser* pUser, CString& sErrorRet, bool bStartup) {
     }
 
     if (bFailed) {
-        DEBUG("AddUser [" << pUser->GetUserName() << "] aborted by a module ["
+        DEBUG("AddUser [" << pUser->GetUsername() << "] aborted by a module ["
                           << sErrorRet << "]");
         return false;
     }
-    m_msUsers[pUser->GetUserName()] = pUser;
+    m_msUsers[pUser->GetUsername()] = pUser;
     return true;
 }
 
@@ -1863,8 +1863,8 @@ CZNC::TrafficStatsMap CZNC::GetTrafficStats(TrafficStatsPair& Users,
         }
 
         if (pUser) {
-            ret[pUser->GetUserName()].first += pSock->GetBytesRead();
-            ret[pUser->GetUserName()].second += pSock->GetBytesWritten();
+            ret[pUser->GetUsername()].first += pSock->GetBytesRead();
+            ret[pUser->GetUsername()].second += pSock->GetBytesWritten();
             uiUsers_in += pSock->GetBytesRead();
             uiUsers_out += pSock->GetBytesWritten();
         } else {
