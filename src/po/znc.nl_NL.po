@@ -1788,18 +1788,18 @@ msgstr ""
 "Je verbinding wordt verbroken omdat het niet meer toegestaan is om met jouw "
 "IP-adres naar deze gebruiker te verbinden"
 
-#: User.cpp:907
+#: User.cpp:912
 msgid "Password is empty"
 msgstr "Wachtwoord is leeg"
 
-#: User.cpp:912
+#: User.cpp:917
 msgid "Username is empty"
 msgstr "Gebruikersnaam is leeg"
 
-#: User.cpp:917
+#: User.cpp:922
 msgid "Username is invalid"
 msgstr "Gebruikersnaam is ongeldig"
 
-#: User.cpp:1188
+#: User.cpp:1199
 msgid "Unable to find modinfo {1}: {2}"
 msgstr "Kan modinfo niet vinden {1}: {2}"

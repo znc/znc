@@ -1771,18 +1771,18 @@ msgstr ""
 "Has sido desconectado porque a tu IP ya no se le permite conectar a este "
 "usuario"
 
-#: User.cpp:907
+#: User.cpp:912
 msgid "Password is empty"
 msgstr "La contraseña está vacía"
 
-#: User.cpp:912
+#: User.cpp:917
 msgid "Username is empty"
 msgstr "El nombre de usuario está vacío"
 
-#: User.cpp:917
+#: User.cpp:922
 msgid "Username is invalid"
 msgstr "El nombre de usuario no es válido"
 
-#: User.cpp:1188
+#: User.cpp:1199
 msgid "Unable to find modinfo {1}: {2}"
 msgstr "No se ha podido encontrar modinfo {1}: {2}"

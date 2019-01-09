@@ -1761,18 +1761,18 @@ msgid ""
 "to this user"
 msgstr ""
 
-#: User.cpp:907
+#: User.cpp:912
 msgid "Password is empty"
 msgstr ""
 
-#: User.cpp:912
+#: User.cpp:917
 msgid "Username is empty"
 msgstr ""
 
-#: User.cpp:917
+#: User.cpp:922
 msgid "Username is invalid"
 msgstr ""
 
-#: User.cpp:1188
+#: User.cpp:1199
 msgid "Unable to find modinfo {1}: {2}"
 msgstr ""
