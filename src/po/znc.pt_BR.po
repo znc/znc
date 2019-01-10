@@ -108,67 +108,67 @@ msgstr ""
 msgid "Some module aborted the connection attempt"
 msgstr "Algum módulo cancelou a tentativa de conexão"
 
-#: IRCSock.cpp:485
+#: IRCSock.cpp:490
 msgid "Error from server: {1}"
 msgstr "Erro do servidor: {1}"
 
-#: IRCSock.cpp:687
+#: IRCSock.cpp:692
 msgid "ZNC seems to be connected to itself, disconnecting..."
 msgstr ""
 
-#: IRCSock.cpp:734
+#: IRCSock.cpp:739
 msgid "Server {1} redirects us to {2}:{3} with reason: {4}"
 msgstr ""
 
-#: IRCSock.cpp:738
+#: IRCSock.cpp:743
 msgid "Perhaps you want to add it as a new server."
 msgstr ""
 
-#: IRCSock.cpp:968
+#: IRCSock.cpp:973
 msgid "Channel {1} is linked to another channel and was thus disabled."
 msgstr ""
 
-#: IRCSock.cpp:980
+#: IRCSock.cpp:985
 msgid "Switched to SSL (STARTTLS)"
 msgstr ""
 
-#: IRCSock.cpp:1033
+#: IRCSock.cpp:1038
 msgid "You quit: {1}"
 msgstr "Você saiu: {1}"
 
-#: IRCSock.cpp:1239
+#: IRCSock.cpp:1244
 msgid "Disconnected from IRC. Reconnecting..."
 msgstr "Desconectado. Reconectando..."
 
-#: IRCSock.cpp:1270
+#: IRCSock.cpp:1275
 msgid "Cannot connect to IRC ({1}). Retrying..."
 msgstr "Não foi possível conectar-se ao IRC ({1}). Tentando novamente..."
 
-#: IRCSock.cpp:1273
+#: IRCSock.cpp:1278
 msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr "Desconectado do IRC ({1}). Reconectando..."
 
-#: IRCSock.cpp:1303
+#: IRCSock.cpp:1308
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 
-#: IRCSock.cpp:1320
+#: IRCSock.cpp:1325
 msgid "IRC connection timed out.  Reconnecting..."
 msgstr ""
 
-#: IRCSock.cpp:1332
+#: IRCSock.cpp:1337
 msgid "Connection Refused.  Reconnecting..."
 msgstr "Conexão rejeitada. Reconectando..."
 
-#: IRCSock.cpp:1340
+#: IRCSock.cpp:1345
 msgid "Received a too long line from the IRC server!"
 msgstr ""
 
-#: IRCSock.cpp:1444
+#: IRCSock.cpp:1449
 msgid "No free nick available"
 msgstr "Não há apelidos livres disponíveis"
 
-#: IRCSock.cpp:1452
+#: IRCSock.cpp:1457
 msgid "No free nick found"
 msgstr "Nenhum apelido livre foi encontrado"
 

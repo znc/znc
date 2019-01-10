@@ -111,68 +111,68 @@ msgstr ""
 msgid "Some module aborted the connection attempt"
 msgstr "Algún módulo ha abortado el intento de conexión"
 
-#: IRCSock.cpp:485
+#: IRCSock.cpp:490
 msgid "Error from server: {1}"
 msgstr "Error del servidor: {1}"
 
-#: IRCSock.cpp:687
+#: IRCSock.cpp:692
 msgid "ZNC seems to be connected to itself, disconnecting..."
 msgstr "ZNC parece que se ha conectado a si mismo, desconectando..."
 
-#: IRCSock.cpp:734
+#: IRCSock.cpp:739
 msgid "Server {1} redirects us to {2}:{3} with reason: {4}"
 msgstr "Servidor {1} nos redirige a {2}:{3} por: {4}"
 
-#: IRCSock.cpp:738
+#: IRCSock.cpp:743
 msgid "Perhaps you want to add it as a new server."
 msgstr "Puede que quieras añadirlo como nuevo servidor."
 
-#: IRCSock.cpp:968
+#: IRCSock.cpp:973
 msgid "Channel {1} is linked to another channel and was thus disabled."
 msgstr "El canal {1} está enlazado a otro canal y por eso está deshabilitado."
 
-#: IRCSock.cpp:980
+#: IRCSock.cpp:985
 msgid "Switched to SSL (STARTTLS)"
 msgstr "Cambiado a SSL (STARTTLS)"
 
-#: IRCSock.cpp:1033
+#: IRCSock.cpp:1038
 msgid "You quit: {1}"
 msgstr "Has salido: {1}"
 
-#: IRCSock.cpp:1239
+#: IRCSock.cpp:1244
 msgid "Disconnected from IRC. Reconnecting..."
 msgstr "Desconectado del IRC. Volviendo a conectar..."
 
-#: IRCSock.cpp:1270
+#: IRCSock.cpp:1275
 msgid "Cannot connect to IRC ({1}). Retrying..."
 msgstr "No se puede conectar al IRC ({1}). Reintentándolo..."
 
-#: IRCSock.cpp:1273
+#: IRCSock.cpp:1278
 msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr "Desconectado del IRC ({1}). Volviendo a conectar..."
 
-#: IRCSock.cpp:1303
+#: IRCSock.cpp:1308
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 "Si confías en este certificado, ejecuta /znc AddTrustedServerFingerprint {1}"
 
-#: IRCSock.cpp:1320
+#: IRCSock.cpp:1325
 msgid "IRC connection timed out.  Reconnecting..."
 msgstr "Tiempo de espera agotado en la conexión al IRC. Reconectando..."
 
-#: IRCSock.cpp:1332
+#: IRCSock.cpp:1337
 msgid "Connection Refused.  Reconnecting..."
 msgstr "Conexión rechazada. Reconectando..."
 
-#: IRCSock.cpp:1340
+#: IRCSock.cpp:1345
 msgid "Received a too long line from the IRC server!"
 msgstr "¡Recibida línea demasiado larga desde el servidor de IRC!"
 
-#: IRCSock.cpp:1444
+#: IRCSock.cpp:1449
 msgid "No free nick available"
 msgstr "No hay ningún nick disponible"
 
-#: IRCSock.cpp:1452
+#: IRCSock.cpp:1457
 msgid "No free nick found"
 msgstr "No se ha encontrado ningún nick disponible"
 

@@ -429,7 +429,12 @@ bool CIRCSock::OnCTCPMessage(CCTCPMessage& Message) {
         if (pChan) {
             Message.SetChan(pChan);
             FixupChanNick(Message.GetNick(), pChan);
-            IRCSOCKMODULECALL(OnChanCTCPMessage(Message), &bResult);
+            if (Message.IsReply()) {
+                IRCSOCKMODULECALL(OnCTCPReplyMessage(Message), &bResult);
+                return bResult;
+            } else {
+                IRCSOCKMODULECALL(OnChanCTCPMessage(Message), &bResult);
+            }
             if (bResult) return true;
         }
     }
