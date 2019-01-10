@@ -1784,18 +1784,18 @@ msgstr ""
 "Vous avez été déconnecté car votre adresse IP n'est plus autorisée à se "
 "connecter à cet utilisateur"
 
-#: User.cpp:907
+#: User.cpp:912
 msgid "Password is empty"
 msgstr "Le mot de passe est vide"
 
-#: User.cpp:912
+#: User.cpp:917
 msgid "Username is empty"
 msgstr "L'identifiant est vide"
 
-#: User.cpp:917
+#: User.cpp:922
 msgid "Username is invalid"
 msgstr "L'identifiant est invalide"
 
-#: User.cpp:1188
+#: User.cpp:1199
 msgid "Unable to find modinfo {1}: {2}"
 msgstr "Impossible de trouver d'information sur le module {1} : {2}"

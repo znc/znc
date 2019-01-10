@@ -1789,18 +1789,18 @@ msgstr ""
 "Deine Verbindung wird geschlossen da deine IP sich nicht länger zu diesem "
 "Benutzer verbinden darf"
 
-#: User.cpp:907
+#: User.cpp:912
 msgid "Password is empty"
 msgstr "Passwort ist leer"
 
-#: User.cpp:912
+#: User.cpp:917
 msgid "Username is empty"
 msgstr "Benutzername ist leer"
 
-#: User.cpp:917
+#: User.cpp:922
 msgid "Username is invalid"
 msgstr "Benutzername ist ungültig"
 
-#: User.cpp:1188
+#: User.cpp:1199
 msgid "Unable to find modinfo {1}: {2}"
 msgstr "Kann Modulinformationen für {1} nicht finden: {2}"
