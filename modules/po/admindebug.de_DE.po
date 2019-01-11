@@ -33,6 +33,8 @@ msgid ""
 "Failure. We need to be running with a TTY. (is ZNC running with --"
 "foreground?)"
 msgstr ""
+"Fehler: Der Prozess muss in einem TTY laufen (läuft ZNC mit dem Parameter --"
+"foreground?)"
 
 #: admindebug.cpp:66
 msgid "Already enabled."
@@ -52,7 +54,7 @@ msgstr "Debuggingmodus ist aus."
 
 #: admindebug.cpp:96
 msgid "Logging to: stdout."
-msgstr ""
+msgstr "Logge nach: stdout."
 
 #: admindebug.cpp:105
 msgid "Enable Debug mode dynamically."

@@ -14,135 +14,139 @@ msgstr ""
 
 #: log.cpp:59
 msgid "<rules>"
-msgstr ""
+msgstr "<Regeln>"
 
 #: log.cpp:60
 msgid "Set logging rules, use !#chan or !query to negate and * "
-msgstr ""
+msgstr "Setze Logging-Regeln, !#chan oder !query zum Negieren und * "
 
 #: log.cpp:62
 msgid "Clear all logging rules"
-msgstr ""
+msgstr "Alle Regeln löschen"
 
 #: log.cpp:64
 msgid "List all logging rules"
-msgstr ""
+msgstr "Alle Regeln auflisten"
 
 #: log.cpp:67
 msgid "<var> true|false"
-msgstr ""
+msgstr "<var> true|false"
 
 #: log.cpp:68
 msgid "Set one of the following options: joins, quits, nickchanges"
-msgstr ""
+msgstr "Setze eine der folgenden Optionen: joins, quits, nickchanges"
 
 #: log.cpp:71
 msgid "Show current settings set by Set command"
-msgstr ""
+msgstr "Aktuelle Einstellungen durch \"set\"-Kommando anzeigen"
 
 #: log.cpp:143
 msgid "Usage: SetRules <rules>"
-msgstr ""
+msgstr "Benutzung: SetRules <Regeln>"
 
 #: log.cpp:144
 msgid "Wildcards are allowed"
-msgstr ""
+msgstr "Wildcards können verwendet werden"
 
 #: log.cpp:156 log.cpp:178
 msgid "No logging rules. Everything is logged."
-msgstr ""
+msgstr "Keine Logging-Regeln - alles wird geloggt."
 
 #: log.cpp:161
 msgid "1 rule removed: {2}"
 msgid_plural "{1} rules removed: {2}"
 msgstr[0] ""
-msgstr[1] ""
+msgstr[1] "{1} Regeln entfernt: {2}"
 
 #: log.cpp:168 log.cpp:173
 msgctxt "listrules"
 msgid "Rule"
-msgstr ""
+msgstr "Regel"
 
 #: log.cpp:169 log.cpp:174
 msgctxt "listrules"
 msgid "Logging enabled"
-msgstr ""
+msgstr "Logging aktiviert"
 
 #: log.cpp:189
 msgid ""
 "Usage: Set <var> true|false, where <var> is one of: joins, quits, nickchanges"
 msgstr ""
+"Benutzung: Set <var> true|false, wobei <var> entweder joins, quits oder "
+"nickchanges ist"
 
 #: log.cpp:196
 msgid "Will log joins"
-msgstr ""
+msgstr "Joins werden geloggt"
 
 #: log.cpp:196
 msgid "Will not log joins"
-msgstr ""
+msgstr "Joins werden nicht geloggt"
 
 #: log.cpp:197
 msgid "Will log quits"
-msgstr ""
+msgstr "Quits werden geloggt"
 
 #: log.cpp:197
 msgid "Will not log quits"
-msgstr ""
+msgstr "Quits werden nicht geloggt"
 
 #: log.cpp:199
 msgid "Will log nick changes"
-msgstr ""
+msgstr "Nick-Wechsel werden geloggt"
 
 #: log.cpp:199
 msgid "Will not log nick changes"
-msgstr ""
+msgstr "Nick-Wechsel werden nicht geloggt"
 
 #: log.cpp:203
 msgid "Unknown variable. Known variables: joins, quits, nickchanges"
-msgstr ""
+msgstr "Unbekannte Variable. Gültig sind: joins, quits, nickchanges"
 
 #: log.cpp:211
 msgid "Logging joins"
-msgstr ""
+msgstr "Joins werden geloggt"
 
 #: log.cpp:211
 msgid "Not logging joins"
-msgstr ""
+msgstr "Joins werden nicht geloggt"
 
 #: log.cpp:212
 msgid "Logging quits"
-msgstr ""
+msgstr "Quits werden geloggt"
 
 #: log.cpp:212
 msgid "Not logging quits"
-msgstr ""
+msgstr "Quits werden nicht geloggt"
 
 #: log.cpp:213
 msgid "Logging nick changes"
-msgstr ""
+msgstr "Nick-Wechsel werden geloggt"
 
 #: log.cpp:214
 msgid "Not logging nick changes"
-msgstr ""
+msgstr "Nick-Wechsel werden nicht geloggt"
 
 #: log.cpp:351
 msgid ""
 "Invalid args [{1}]. Only one log path allowed.  Check that there are no "
 "spaces in the path."
 msgstr ""
+"Ungültige Argumente [{1}]. Nur ein Logging-Pfad ist erlaubt. Prüfe, dass der "
+"Pfad keine Leerzeichen enthält."
 
 #: log.cpp:401
 msgid "Invalid log path [{1}]"
-msgstr ""
+msgstr "Ungültiger Log-Pfad [{1}]"
 
 #: log.cpp:404
 msgid "Logging to [{1}]. Using timestamp format '{2}'"
-msgstr ""
+msgstr "Logge nach [{1}] mit Zeitstempelformat '{2}'"
 
 #: log.cpp:559
 msgid "[-sanitize] Optional path where to store logs."
-msgstr ""
+msgstr "[-sanitize] Optionaler Pfad zum Speichern von Logs."
 
 #: log.cpp:563
 msgid "Writes IRC logs."
-msgstr ""
+msgstr "Schreibt IRC-Logs."
