@@ -32,8 +32,7 @@ else
 	ZNCDIR=znc-$VERSION
 	TARGZ=$ZNCDIR.tar.gz
 	SIGN=1
-	DESC=""
-	# DESC="-rc1"
+	DESC="$(sed -En 's/set\(alpha_version "(.*)"\).*/\1/p' CMakeLists.txt)"
 fi
 
 TARGZ=`readlink -f -- $TARGZ`
