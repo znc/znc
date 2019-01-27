@@ -1,3 +1,21 @@
+# ZNC 1.7.2 (2019-01-19)
+
+## New
+* Add French translation
+* Update translations
+
+## Fixes
+* Fix compilation without deprecated APIs in OpenSSL
+* Distinguish Channel CTCP Requests and Replies
+* admindebug: Enforce need of TTY to turn on debug mode
+* controlpanel: Add missing return to ListNetMods
+* webadmin: Fix adding the last allowed network
+
+## Internal
+* Add more details to DNS error logs
+
+
+
 # ZNC 1.7.1 (2018-07-17)
 
 ## Security critical fixes
