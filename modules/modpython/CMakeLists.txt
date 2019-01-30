@@ -54,7 +54,7 @@ if(SWIG_FOUND)
 		-outdir "${CMAKE_CURRENT_BINARY_DIR}"
 		-o "${CMAKE_CURRENT_BINARY_DIR}/modpython_biglib.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/modpython.i"
-		DEPENDS "modpython.i" copy_csocket_h
+		DEPENDS "modpython.i" ${maybe_copy_csocket_h}
 		IMPLICIT_DEPENDS CXX "${CMAKE_CURRENT_SOURCE_DIR}/modpython.i"
 		VERBATIM)
 else()
@@ -102,4 +102,6 @@ add_custom_target(modpython_dist
 	"swigpyrun.h" "znc_core.py" "modpython_biglib.cpp" "pyfunctions.cpp"
 	DEPENDS swigpyrun.h znc_core.py modpython_biglib.cpp pyfunctions.cpp
 	VERBATIM)
-add_dependencies(modpython_dist copy_csocket_h)
+if (NOT WANT_ASIO)
+	add_dependencies(modpython_dist copy_csocket_h)
+endif()

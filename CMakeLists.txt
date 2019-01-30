@@ -127,6 +127,14 @@ if(WANT_ICU)
 endif()
 set(HAVE_ICU "${ICU_FOUND}")
 
+set(WANT_ASIO false CACHE BOOL "Use experimental asio backend")
+set(ZNC_USE_ASIO "${WANT_ASIO}")
+if(WANT_ASIO)
+	set(maybe_copy_csocket_h)
+else()
+	set(maybe_copy_csocket_h copy_csocket_h)
+endif()
+
 set(WANT_PERL false CACHE BOOL "Support Perl modules")
 set(WANT_PYTHON false CACHE BOOL "Support Python modules")
 set(WANT_PYTHON_VERSION "python3" CACHE STRING

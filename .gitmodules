@@ -7,3 +7,6 @@
 [submodule "docker"]
 	path = docker
 	url = https://github.com/znc/znc-docker
+[submodule "third_party/asio"]
+	path = third_party/asio
+	url = https://github.com/chriskohlhoff/asio

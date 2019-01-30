@@ -91,6 +91,7 @@ unsigned int CSockManager::GetAnonConnectionCount(const CString& sIP) const {
     return ret;
 }
 
+#ifndef ZNC_USE_ASIO
 int CZNCSock::ConvertAddress(const struct sockaddr_storage* pAddr,
                              socklen_t iAddrLen, CString& sIP,
                              u_short* piPort) const {
@@ -98,6 +99,7 @@ int CZNCSock::ConvertAddress(const struct sockaddr_storage* pAddr,
     if (ret == 0) sIP.TrimPrefix("::ffff:");
     return ret;
 }
+#endif
 
 #ifdef HAVE_LIBSSL
 int CZNCSock::VerifyPeerCertificate(int iPreVerify, X509_STORE_CTX* pStoreCTX) {
@@ -105,15 +107,22 @@ int CZNCSock::VerifyPeerCertificate(int iPreVerify, X509_STORE_CTX* pStoreCTX) {
         m_ssCertVerificationErrors.insert(
             X509_verify_cert_error_string(X509_STORE_CTX_get_error(pStoreCTX)));
     }
+#if ZNC_USE_ASIO
+    if (X509_STORE_CTX_get_error_depth(pStoreCTX) == 0) {
+        return CheckSSLCert(X509_STORE_CTX_get_current_cert(pStoreCTX));
+    }
+#endif
     return 1;
 }
 
 void CZNCSock::SSLHandShakeFinished() {
+#ifndef ZNC_USE_ASIO
     X509* pCert = GetX509();
     if (!CheckSSLCert(pCert)) {
         Close();
     }
     X509_free(pCert);
+#endif
 }
 
 bool CZNCSock::CheckSSLCert(X509* pCert) {
