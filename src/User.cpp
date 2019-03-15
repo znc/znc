@@ -1253,9 +1253,9 @@ void CUser::SetAdmin(bool b) { m_bAdmin = b; }
 void CUser::SetDenySetBindHost(bool b) { m_bDenySetBindHost = b; }
 void CUser::SetDefaultChanModes(const CString& s) { m_sDefaultChanModes = s; }
 void CUser::SetClientEncoding(const CString& s) {
-    m_sClientEncoding = s;
+    m_sClientEncoding = CZNC::Get().FixupEncoding(s);
     for (CClient* pClient : GetAllClients()) {
-        pClient->SetEncoding(s);
+        pClient->SetEncoding(m_sClientEncoding);
     }
 }
 void CUser::SetQuitMsg(const CString& s) { m_sQuitMsg = s; }

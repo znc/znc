@@ -2092,18 +2092,36 @@ void CZNC::ForceEncoding() {
     m_uiForceEncoding++;
 #ifdef HAVE_ICU
     for (Csock* pSock : GetManager()) {
-        if (pSock->GetEncoding().empty()) {
-            pSock->SetEncoding("UTF-8");
-        }
+        pSock->SetEncoding(FixupEncoding(pSock->GetEncoding()));
     }
 #endif
 }
 void CZNC::UnforceEncoding() { m_uiForceEncoding--; }
 bool CZNC::IsForcingEncoding() const { return m_uiForceEncoding; }
 CString CZNC::FixupEncoding(const CString& sEncoding) const {
-    if (sEncoding.empty() && m_uiForceEncoding) {
+    if (!m_uiForceEncoding) {
+        return sEncoding;
+    }
+    if (sEncoding.empty()) {
         return "UTF-8";
     }
+    const char* sRealEncoding = sEncoding.c_str();
+    if (sEncoding[0] == '*' || sEncoding[0] == '^') {
+        sRealEncoding++;
+    }
+    if (!*sRealEncoding) {
+        return "UTF-8";
+    }
+#ifdef HAVE_ICU
+    UErrorCode e = U_ZERO_ERROR;
+    UConverter* cnv = ucnv_open(sRealEncoding, &e);
+    if (cnv) {
+        ucnv_close(cnv);
+    }
+    if (U_FAILURE(e)) {
+        return "UTF-8";
+    }
+#endif
     return sEncoding;
 }
 

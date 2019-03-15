@@ -55,6 +55,13 @@ TEST_F(ZNCTest, Modpython) {
     ircd.Write(":n!u@h PRIVMSG nick :Hi\xF0, github issue #1229");
     // "replacement character"
     client.ReadUntil("Hi\xEF\xBF\xBD, github issue");
+
+    // Non-existing encoding
+    client.Write("PRIVMSG *controlpanel :Set ClientEncoding $me Western");
+    client.Write("JOIN #a\342");
+    client.ReadUntil(
+        ":*controlpanel!znc@znc.in PRIVMSG nick :ClientEncoding = UTF-8");
+    ircd.ReadUntil("JOIN #a\xEF\xBF\xBD");
 }
 
 TEST_F(ZNCTest, ModpythonSocket) {

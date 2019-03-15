@@ -495,7 +495,7 @@ class CAdminMod : public CModule {
 #ifdef HAVE_ICU
         else if (sVar == "clientencoding") {
             pUser->SetClientEncoding(sValue);
-            PutModule("ClientEncoding = " + sValue);
+            PutModule("ClientEncoding = " + pUser->GetClientEncoding());
         }
 #endif
         else
