@@ -622,6 +622,10 @@ void CClient::PutModule(const CString& sModule, const CString& sLine) {
         return;
     }
 
+    bool bReturn = false;
+    USERMODULECALL(OnPutModule(((sModule.empty()) ? "status" : sModule), sLine, this), m_pUser, nullptr, &bReturn);
+    if (bReturn) return;
+
     DEBUG("(" << GetFullName()
               << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() +
                      ((sModule.empty()) ? "status" : sModule) +

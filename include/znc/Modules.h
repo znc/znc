@@ -1050,6 +1050,13 @@ class CModule {
     /// @deprecated Use OnSendToIRCMessage() instead.
     virtual EModRet OnSendToIRC(CString& sLine);
 
+   /** Called immediately before ZNC sends a *status message to the client.
+     *  @since 1.8.0
+     *  @param Message The status message being sent to the client.
+     *  @return See CModule::EModRet.
+     */
+    virtual EModRet OnPutModule(const CString& sModule, const CString& sLine, CClient* pClient);
+
     ModHandle GetDLL() { return m_pDLL; }
 
     /** This function sends a given IRC line to the IRC server, if we
@@ -1541,6 +1548,8 @@ class CModules : public std::vector<CModule*>, private CCoreTranslationMixin {
     bool OnSendToClientMessage(CMessage& Message);
     bool OnSendToIRC(CString& sLine);
     bool OnSendToIRCMessage(CMessage& Message);
+
+    bool OnPutModule(const CString& sModule, const CString& sLine, CClient* pClient);
 
     bool OnServerCapAvailable(const CString& sCap);
     bool OnServerCapResult(const CString& sCap, bool bSuccess);

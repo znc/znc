@@ -998,6 +998,10 @@ CModule::EModRet CModule::OnSendToIRCMessage(CMessage& Message) {
     return CONTINUE;
 }
 
+CModule::EModRet CModule::OnPutModule(const CString& sModule, const CString& sLine, CClient* pClient) {
+    return CONTINUE;
+}
+
 bool CModule::OnServerCapAvailable(const CString& sCap) { return false; }
 void CModule::OnServerCapResult(const CString& sCap, bool bSuccess) {}
 
@@ -1473,6 +1477,9 @@ bool CModules::OnSendToClientMessage(CMessage& Message) {
 bool CModules::OnSendToIRC(CString& sLine) { MODHALTCHK(OnSendToIRC(sLine)); }
 bool CModules::OnSendToIRCMessage(CMessage& Message) {
     MODHALTCHK(OnSendToIRCMessage(Message));
+}
+bool CModules::OnPutModule(const CString& sModule, const CString& sLine, CClient* pClient) {
+    MODHALTCHK(OnPutModule(sModule, sLine, pClient));
 }
 bool CModules::OnStatusCommand(CString& sCommand) {
     MODHALTCHK(OnStatusCommand(sCommand));
