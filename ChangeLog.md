@@ -1,3 +1,13 @@
+# ZNC 1.7.3 (2019-03-30)
+
+## Fixes
+This is a security release to fix CVE-2019-9917. Thanks to LunarBNC for the bugreport.
+
+## New
+Docker only: the znc image now supports --user option of docker run.
+
+
+
 # ZNC 1.7.2 (2019-01-19)
 
 ## New

@@ -1482,9 +1482,9 @@ void CIRCNetwork::SetBindHost(const CString& s) {
 }
 
 void CIRCNetwork::SetEncoding(const CString& s) {
-    m_sEncoding = s;
+    m_sEncoding = CZNC::Get().FixupEncoding(s);
     if (GetIRCSock()) {
-        GetIRCSock()->SetEncoding(s);
+        GetIRCSock()->SetEncoding(m_sEncoding);
     }
 }
 
