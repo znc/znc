@@ -470,6 +470,21 @@ bool CIRCNetwork::ParseConfig(CConfig* pConfig, CString& sError,
                     return false;
                 }
 
+                // Partyline is removed in znc 1.8
+                if (sModName == "partyline") {
+                    CUtils::PrintError(
+                        "NOTICE: [partyline] is unavailable, cannot load.");
+                    CUtils::PrintError(
+                        "NOTICE: [partyline] is removed in this release"
+                        " of ZNC. Please either remove it from your config or "
+                        "install it as a third party module with the same "
+                        "name.");
+                    CUtils::PrintError(
+                        "NOTICE: More info can be found on "
+                        "https://wiki.znc.in/Partyline");
+                    return false;
+                }
+
                 // XXX The awaynick module was retired in 1.6 (still available
                 // as external module)
                 if (sModName == "awaynick") {
