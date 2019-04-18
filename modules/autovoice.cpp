@@ -27,16 +27,16 @@ class CAutoVoiceUser {
 
     CAutoVoiceUser(const CString& sLine) { FromString(sLine); }
 
-    CAutoVoiceUser(const CString& sUsername, const CString& sHostmask,
+    CAutoVoiceUser(const CString& sUsername, const CString& sHostmasks,
                    const CString& sChannels)
-        : m_sUsername(sUsername), m_sHostmask(sHostmask) {
-        AddChans(sChannels);
+        : m_sUsername(sUsername) {
+            AddHostmasks(sHostmasks);
+            AddChans(sChannels);
     }
 
     virtual ~CAutoVoiceUser() {}
 
     const CString& GetUsername() const { return m_sUsername; }
-    const CString& GetHostmask() const { return m_sHostmask; }
 
     bool ChannelMatches(const CString& sChan) const {
         for (const CString& s : m_ssChans) {
@@ -49,7 +49,16 @@ class CAutoVoiceUser {
     }
 
     bool HostMatches(const CString& sHostmask) {
-        return sHostmask.WildCmp(m_sHostmask, CString::CaseInsensitive);
+        for (const CString& s : m_ssHostmasks) {
+            if (sHostmask.WildCmp(s, CString::CaseInsensitive)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    CString GetHostmasks() const {
+        return CString(",").Join(m_ssHostmasks.begin(), m_ssHostmasks.end());
     }
 
     CString GetChannels() const {
@@ -64,6 +73,26 @@ class CAutoVoiceUser {
         }
 
         return sRet;
+    }
+
+    bool DelHostmasks(const CString& sHostmasks) {
+        VCString vsHostmasks;
+        sHostmasks.Split(",", vsHostmasks);
+
+        for (const CString& s : vsHostmasks) {
+            m_ssHostmasks.erase(s);
+        }
+
+        return m_ssHostmasks.empty();
+    }
+
+    void AddHostmasks(const CString& sHostmasks) {
+        VCString vsHostmasks;
+        sHostmasks.Split(",", vsHostmasks);
+
+        for (const CString& s : vsHostmasks) {
+            m_ssHostmasks.insert(s);
+        }
     }
 
     void DelChans(const CString& sChans) {
@@ -95,21 +124,21 @@ class CAutoVoiceUser {
             sChans += sChan;
         }
 
-        return m_sUsername + "\t" + m_sHostmask + "\t" + sChans;
+        return m_sUsername + "\t" + GetHostmasks() + "\t" + sChans;
     }
 
     bool FromString(const CString& sLine) {
         m_sUsername = sLine.Token(0, false, "\t");
-        m_sHostmask = sLine.Token(1, false, "\t");
+        sLine.Token(1, false, "\t").Split(",", m_ssHostmasks);
         sLine.Token(2, false, "\t").Split(" ", m_ssChans);
 
-        return !m_sHostmask.empty();
+        return !m_ssHostmasks.empty();
     }
 
   private:
   protected:
     CString m_sUsername;
-    CString m_sHostmask;
+    set<CString> m_ssHostmasks;
     set<CString> m_ssChans;
 };
 
