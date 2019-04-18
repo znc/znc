@@ -154,7 +154,14 @@ class CAutoVoiceMod : public CModule {
         AddCommand("DelChans", t_d("<user> <channel> [channel] ..."),
                    t_d("Removes channels from a user"),
                    [=](const CString& sLine) { OnDelChansCommand(sLine); });
-        AddCommand("AddUser", t_d("<user> <hostmask> [channels]"),
+        AddCommand("AddMasks", t_d("<user> <mask>,[mask] ..."),
+                   t_d("Adds masks to a user"),
+                   [=](const CString& sLine) { OnAddMasksCommand(sLine); });
+        AddCommand("DelMasks", t_d("<user> <mask>,[mask] ..."),
+                   t_d("Removes masks from a user"),
+                   [=](const CString& sLine) { OnDelMasksCommand(sLine); });
+        AddCommand("AddUser",
+                   t_d("<user> <hostmask>[,<hostmasks>...] [channels]"),
                    t_d("Adds a user"),
                    [=](const CString& sLine) { OnAddUserCommand(sLine); });
         AddCommand("DelUser", t_d("<user>"), t_d("Removes a user"),
@@ -241,7 +248,8 @@ class CAutoVoiceMod : public CModule {
         CString sHost = sLine.Token(2);
 
         if (sHost.empty()) {
-            PutModule(t_s("Usage: AddUser <user> <hostmask> [channels]"));
+            PutModule(t_s("Usage: AddUser <user> <hostmask>[,<hostmasks>...]"
+                          " [channels]"));
         } else {
             CAutoVoiceUser* pUser = AddUser(sUser, sHost, sLine.Token(3, true));
 
@@ -271,14 +279,24 @@ class CAutoVoiceMod : public CModule {
         CTable Table;
 
         Table.AddColumn(t_s("User"));
-        Table.AddColumn(t_s("Hostmask"));
+        Table.AddColumn(t_s("Hostmasks"));
         Table.AddColumn(t_s("Channels"));
 
         for (const auto& it : m_msUsers) {
-            Table.AddRow();
-            Table.SetCell(t_s("User"), it.second->GetUsername());
-            Table.SetCell(t_s("Hostmask"), it.second->GetHostmask());
-            Table.SetCell(t_s("Channels"), it.second->GetChannels());
+            VCString vsHostmasks;
+            it.second->GetHostmasks().Split(",", vsHostmasks);
+            for (unsigned int a = 0; a < vsHostmasks.size(); a++) {
+                Table.AddRow();
+                if (a == 0) {
+                    Table.SetCell(t_s("User"), it.second->GetUsername());
+                    Table.SetCell(t_s("Channels"), it.second->GetChannels());
+                } else if (a == vsHostmasks.size() - 1) {
+                    Table.SetCell(t_s("User"), "`-");
+                } else {
+                    Table.SetCell(t_s("User"), "|-");
+                }
+                Table.SetCell(t_s("Hostmasks"), vsHostmasks[a]);
+            }
         }
 
         PutModule(Table);
@@ -329,6 +347,55 @@ class CAutoVoiceMod : public CModule {
         SetNV(pUser->GetUsername(), pUser->ToString());
     }
 
+    void OnAddMasksCommand(const CString& sLine) {
+        CString sUser = sLine.Token(1);
+        CString sHostmasks = sLine.Token(2, true);
+
+        if (sHostmasks.empty()) {
+            PutModule(t_s("Usage: AddMasks <user> <mask>,[mask] ..."));
+            return;
+        }
+
+        CAutoVoiceUser* pUser = FindUser(sUser);
+
+        if (!pUser) {
+            PutModule(t_s("No such user"));
+            return;
+        }
+
+        pUser->AddHostmasks(sHostmasks);
+        PutModule(t_f("Hostmasks(s) added to user {1}")(pUser->GetUsername()));
+        SetNV(pUser->GetUsername(), pUser->ToString());
+    }
+
+    void OnDelMasksCommand(const CString& sLine) {
+        CString sUser = sLine.Token(1);
+        CString sHostmasks = sLine.Token(2, true);
+
+        if (sHostmasks.empty()) {
+            PutModule(t_s("Usage: DelMasks <user> <mask>,[mask] ..."));
+            return;
+        }
+
+        CAutoVoiceUser* pUser = FindUser(sUser);
+
+        if (!pUser) {
+            PutModule(t_s("No such user"));
+            return;
+        }
+
+        if (pUser->DelHostmasks(sHostmasks)) {
+            PutModule(t_f("Removed user {1} with channels {2}")(
+                pUser->GetUsername(), pUser->GetChannels()));
+            DelUser(sUser);
+            DelNV(sUser);
+        } else {
+            PutModule(t_f("Hostmasks(s) Removed from user {1}")(
+                pUser->GetUsername()));
+            SetNV(pUser->GetUsername(), pUser->ToString());
+        }
+    }
+
     CAutoVoiceUser* FindUser(const CString& sUser) {
         map<CString, CAutoVoiceUser*>::iterator it =
             m_msUsers.find(sUser.AsLower());
@@ -364,16 +431,16 @@ class CAutoVoiceMod : public CModule {
         PutModule(t_f("User {1} removed")(sUser));
     }
 
-    CAutoVoiceUser* AddUser(const CString& sUser, const CString& sHost,
+    CAutoVoiceUser* AddUser(const CString& sUser, const CString& sHosts,
                             const CString& sChans) {
         if (m_msUsers.find(sUser) != m_msUsers.end()) {
             PutModule(t_s("That user already exists"));
             return nullptr;
         }
 
-        CAutoVoiceUser* pUser = new CAutoVoiceUser(sUser, sHost, sChans);
+        CAutoVoiceUser* pUser = new CAutoVoiceUser(sUser, sHosts, sChans);
         m_msUsers[sUser.AsLower()] = pUser;
-        PutModule(t_f("User {1} added with hostmask {2}")(sUser, sHost));
+        PutModule(t_f("User {1} added with hostmask(s) {2}")(sUser, sHosts));
         return pUser;
     }
 
