@@ -57,9 +57,7 @@ void ZNCTest::SetUp() {
 }
 
 Socket ZNCTest::ConnectIRCd() {
-    [this] {
-        ASSERT_TRUE(m_server.waitForNewConnection(30000 /* msec */));
-    }();
+    [this] { ASSERT_TRUE(m_server.waitForNewConnection(30000 /* msec */)); }();
     return WrapIO(m_server.nextPendingConnection());
 }
 
@@ -84,8 +82,9 @@ Socket ZNCTest::LoginClient() {
 
 std::unique_ptr<Process> ZNCTest::Run() {
     return std::unique_ptr<Process>(new Process(
-        ZNC_BIN_DIR "/znc", QStringList() << "--debug"
-                                          << "--datadir" << m_dir.path(),
+        ZNC_BIN_DIR "/znc",
+        QStringList() << "--debug"
+                      << "--datadir" << m_dir.path(),
         [](QProcess* proc) {
             proc->setProcessChannelMode(QProcess::ForwardedChannels);
         }));
@@ -137,13 +136,13 @@ void ZNCTest::InstallModule(QString name, QString content) {
         QTextStream out(&file);
         out << content;
         file.close();
-        Process p(
-            ZNC_BIN_DIR "/znc-buildmod", QStringList() << file.fileName(),
-            [&](QProcess* proc) {
-                proc->setWorkingDirectory(dir.absolutePath());
-                proc->setProcessChannelMode(QProcess::ForwardedChannels);
-            });
+        Process p(ZNC_BIN_DIR "/znc-buildmod", QStringList() << file.fileName(),
+                  [&](QProcess* proc) {
+                      proc->setWorkingDirectory(dir.absolutePath());
+                      proc->setProcessChannelMode(QProcess::ForwardedChannels);
+                  });
         p.ShouldFinishItself();
+        p.ShouldFinishInSec(300);
     } else if (name.endsWith(".py")) {
         // Dedent
         QStringList lines = content.split("\n");
@@ -151,8 +150,7 @@ void ZNCTest::InstallModule(QString name, QString content) {
         for (const QString& line : lines) {
             int nonspace = line.indexOf(QRegExp("\\S"));
             if (nonspace == -1) continue;
-            if (nonspace < maxoffset || maxoffset == -1)
-                maxoffset = nonspace;
+            if (nonspace < maxoffset || maxoffset == -1) maxoffset = nonspace;
         }
         if (maxoffset == -1) maxoffset = 0;
         QFile file(dir.filePath(name));
@@ -172,6 +170,5 @@ void ZNCTest::InstallModule(QString name, QString content) {
         out << content;
     }
 }
-
 
 }  // namespace znc_inttest

@@ -45,7 +45,7 @@ Process::Process(QString cmd, QStringList args,
 
 Process::~Process() {
     if (m_kill) m_proc.terminate();
-    bool bFinished = m_proc.waitForFinished();
+    bool bFinished = m_proc.waitForFinished(1000 * m_finishTimeoutSec);
     EXPECT_TRUE(bFinished);
     if (!bFinished) return;
     if (!m_allowDie) {
