@@ -217,6 +217,7 @@ TEST_F(ZNCTest, BuildMod) {
                       proc->setProcessChannelMode(QProcess::ForwardedChannels);
                   });
         p.ShouldFinishItself(1);
+        p.ShouldFinishInSec(300);
     }
     {
         Process p(ZNC_BIN_DIR "/znc-buildmod",
@@ -226,6 +227,7 @@ TEST_F(ZNCTest, BuildMod) {
                       proc->setProcessChannelMode(QProcess::ForwardedChannels);
                   });
         p.ShouldFinishItself();
+        p.ShouldFinishInSec(300);
     }
     client.Write("znc loadmod testmod");
     client.Write("PRIVMSG *testmod :hi");

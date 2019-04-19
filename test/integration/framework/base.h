@@ -70,6 +70,7 @@ class Process : public IO<QProcess> {
         m_exit = code;
     }
     void CanDie() { m_allowDie = true; }
+    void ShouldFinishInSec(int sec) { m_finishTimeoutSec = sec; }
 
     // I can't do much about SWIG...
     void CanLeak() { m_allowLeak = true; }
@@ -80,6 +81,7 @@ class Process : public IO<QProcess> {
     bool m_allowDie = false;
     bool m_allowLeak = false;
     QProcess m_proc;
+    int m_finishTimeoutSec = 30;
 };
 
 // Can't use QEventLoop without existing QCoreApplication
