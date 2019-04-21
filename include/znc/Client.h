@@ -266,7 +266,7 @@ class CClient : public CIRCSocket {
      *  \endcode
      */
     bool PutClient(const CMessage& Message);
-    unsigned int PutStatus(const CTable& table);
+    unsigned int PutStatus(const CTable& table, CTable::EStyle eStyle = CTable::GridStyle);
     void PutStatus(const CString& sLine);
     void PutStatusNotice(const CString& sLine);
     void PutModule(const CString& sModule, const CString& sLine);

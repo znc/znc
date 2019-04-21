@@ -128,7 +128,7 @@ class CException {
 };
 
 
-/** Generate a grid-like output from a given input.
+/** Generate a grid-like or list-like output from a given input.
  *
  *  @code
  *  CTable table;
@@ -152,9 +152,21 @@ class CException {
 +-------+-------+
 | hello | world |
 +-------+-------+@endverbatim
+ *
+ *  List-style output can be generated like so (only supports two columns!):
+ *  @code
+ *  while (table.GetLine(idx++, tmp, CTable::ListStyle)) {
+ *      // Output tmp somehow
+ *  }
+ *  @endcode
+ *  Output (asterisks mark bold text; Note that the header will be omitted):
+ *  @verbatim
+*hello*: world
+@endverbatim
  */
 class CTable : protected std::vector<std::vector<CString>> {
   public:
+    typedef enum { GridStyle, ListStyle } EStyle;
     CTable() {}
     virtual ~CTable() {}
 
@@ -185,9 +197,10 @@ class CTable : protected std::vector<std::vector<CString>> {
     /** Get a line of the table's output
      *  @param uIdx The index of the line you want.
      *  @param sLine This string will receive the output.
+     *  @param eStyle (optional) Display style.
      *  @return True unless uIdx is past the end of the table.
      */
-    bool GetLine(unsigned int uIdx, CString& sLine) const;
+    bool GetLine(unsigned int uIdx, CString& sLine, EStyle eStyle = GridStyle) const;
 
     /** Return the width of the given column.
      *  Please note that adding and filling new rows might change the

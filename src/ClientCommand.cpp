@@ -1670,7 +1670,8 @@ void CClient::HelpUser(const CString& sFilter) {
         if (sFilter.empty() || sCmd.StartsWith(sFilter) ||
             sCmd.AsLower().WildCmp(sFilter.AsLower())) {
             Table.AddRow();
-            Table.SetCell(t_s("Command", "helpcmd"), sCmd + " " + sArgs);
+            Table.SetCell(t_s("Command", "helpcmd"),
+                          sCmd + (sArgs == "" ? "" : " ") + sArgs);
             Table.SetCell(t_s("Description", "helpcmd"), sDesc);
         }
     };
@@ -1893,6 +1894,6 @@ void CClient::HelpUser(const CString& sFilter) {
     if (Table.empty()) {
         PutStatus(t_f("No matches for '{1}'")(sFilter));
     } else {
-        PutStatus(Table);
+        PutStatus(Table, CTable::ListStyle);
     }
 }
