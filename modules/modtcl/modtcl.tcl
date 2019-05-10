@@ -33,6 +33,7 @@ proc bgerror {message} {
 set ::botnet-nick ZNC_[GetUsername]
 set ::botnick [GetCurNick]
 set ::server [GetServer]
+set ::network [GetServerName]
 set ::server-online [expr [GetServerOnline] / 1000]
 
 # add some eggdrop style procs
