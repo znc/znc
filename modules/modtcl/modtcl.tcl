@@ -34,7 +34,7 @@ set ::botnet-nick ZNC_[GetUsername]
 set ::botnick [GetCurNick]
 set ::server [GetServer]
 set ::server-online [expr [GetServerOnline] / 1000]
-set ::network	[GetServerName]
+set ::network	[GetNetworkName]
 
 # add some eggdrop style procs
 proc putlog message {PutModule $message}
