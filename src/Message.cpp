@@ -267,3 +267,23 @@ void CMessage::InitType() {
         }
     }
 }
+
+VCString CMessage::GetParamsSplit(unsigned int uIdx, unsigned int uLen) const {
+    VCString splitParams;
+    const VCString &params = GetParams();
+
+    if (uIdx >= params.size())
+        return splitParams;
+
+    VCString::const_iterator startIt = params.begin() + uIdx;
+    VCString::const_iterator endIt;
+
+    if (uIdx + uLen >= params.size())
+        endIt = params.end();
+    else
+        endIt = startIt + uLen;
+
+    splitParams.assign(startIt, endIt);
+
+    return splitParams;
+}

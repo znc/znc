@@ -77,7 +77,9 @@ class CChan : private CCoreTranslationMixin {
 
     // Modes
     void SetModes(const CString& s);
+    void SetModes(const VCString& vsModes);
     void ModeChange(const CString& sModes, const CNick* OpNick = nullptr);
+    void ModeChange(const VCString& vsModes, const CNick* OpNick = nullptr);
     bool AddMode(char cMode, const CString& sArg);
     bool RemMode(char cMode);
     CString GetModeString() const;

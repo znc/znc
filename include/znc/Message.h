@@ -121,6 +121,8 @@ class CMessage {
     void SetCommand(const CString& sCommand);
 
     const VCString& GetParams() const { return m_vsParams; }
+
+    VCString GetParamsSplit(unsigned int uIdx, unsigned int uLen = -1) const;
     void SetParams(const VCString& vsParams);
 
     /// @deprecated use GetParamsColon() instead.
@@ -258,6 +260,8 @@ REGISTER_ZNC_MESSAGE(CJoinMessage);
 class CModeMessage : public CTargetMessage {
   public:
     CString GetModes() const { return GetParamsColon(1).TrimPrefix_n(":"); }
+
+    VCString GetModeList() const { return GetParamsSplit(1); };
 };
 REGISTER_ZNC_MESSAGE(CModeMessage);
 
