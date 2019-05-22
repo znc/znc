@@ -44,8 +44,8 @@ static const struct {
        {
         {"353", false}, /* rfc1459 RPL_NAMREPLY */
         {"366", true},  /* rfc1459 RPL_ENDOFNAMES */
-        // No such nick/channel
-        {"401", true},
+        {"401", true},  /* rfc1459 ERR_NOSUCHNICK */
+        {"403", true},  /* rfc1459 ERR_NOSUCHCHANNEL */
         {nullptr, true},
        }},
       {"LUSERS",
