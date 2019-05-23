@@ -434,7 +434,7 @@ void CChan::ModeChange(const VCString& vsModes, const CNick* pOpNick) {
 void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
     VCString vsModes;
     CString sModeArg = sModes.Token(0);
-    bool colon = sModeArg.TrimPrefix(":")
+    bool colon = sModeArg.TrimPrefix(":");
     vsModes.push_back(sModeArg);
 
     // Only handle parameters if sModes doesn't start with a colon
