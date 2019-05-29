@@ -888,6 +888,7 @@ void CClient::UserCommand(CString& sLine) {
             CTable Table;
             Table.AddColumn(t_s("Name", "listmods"));
             Table.AddColumn(t_s("Arguments", "listmods"));
+            Table.SetStyle(CTable::ListStyle);
             for (const CModule* pMod : Modules) {
                 Table.AddRow();
                 Table.SetCell(t_s("Name", "listmods"), pMod->GetModName());
@@ -898,6 +899,7 @@ void CClient::UserCommand(CString& sLine) {
         if (m_pUser->IsAdmin()) {
             const CModules& GModules = CZNC::Get().GetModules();
 
+            PutStatus("");
             if (!GModules.size()) {
                 PutStatus(t_s("No global modules loaded."));
             } else {
@@ -908,6 +910,7 @@ void CClient::UserCommand(CString& sLine) {
 
         const CModules& UModules = m_pUser->GetModules();
 
+        PutStatus("");
         if (!UModules.size()) {
             PutStatus(t_s("Your user has no modules loaded."));
         } else {
@@ -917,6 +920,7 @@ void CClient::UserCommand(CString& sLine) {
 
         if (m_pNetwork) {
             const CModules& NetworkModules = m_pNetwork->GetModules();
+            PutStatus("");
             if (NetworkModules.empty()) {
                 PutStatus(t_s("This network has no modules loaded."));
             } else {
@@ -937,6 +941,7 @@ void CClient::UserCommand(CString& sLine) {
             CTable Table;
             Table.AddColumn(t_s("Name", "listavailmods"));
             Table.AddColumn(t_s("Description", "listavailmods"));
+            Table.SetStyle(CTable::ListStyle);
 
             for (const CModInfo& Info : ssModules) {
                 Table.AddRow();
@@ -958,6 +963,7 @@ void CClient::UserCommand(CString& sLine) {
             CZNC::Get().GetModules().GetAvailableMods(ssGlobalMods,
                                                       CModInfo::GlobalModule);
 
+            PutStatus("");
             if (ssGlobalMods.empty()) {
                 PutStatus(t_s("No global modules available."));
             } else {
@@ -969,6 +975,7 @@ void CClient::UserCommand(CString& sLine) {
         set<CModInfo> ssUserMods;
         CZNC::Get().GetModules().GetAvailableMods(ssUserMods);
 
+        PutStatus("");
         if (ssUserMods.empty()) {
             PutStatus(t_s("No user modules available."));
         } else {
@@ -980,6 +987,7 @@ void CClient::UserCommand(CString& sLine) {
         CZNC::Get().GetModules().GetAvailableMods(ssNetworkMods,
                                                   CModInfo::NetworkModule);
 
+        PutStatus("");
         if (ssNetworkMods.empty()) {
             PutStatus(t_s("No network modules available."));
         } else {

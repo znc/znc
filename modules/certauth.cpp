@@ -169,6 +169,7 @@ class CSSLClientCertMod : public CModule {
 
         Table.AddColumn(t_s("Id", "list"));
         Table.AddColumn(t_s("Key", "list"));
+        Table.SetStyle(CTable::ListStyle);
 
         MSCString::const_iterator it = m_PubKeys.find(GetUser()->GetUsername());
         if (it == m_PubKeys.end()) {

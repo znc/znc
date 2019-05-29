@@ -167,6 +167,7 @@ void CLogMod::ListRulesCmd(const CString& sLine) {
     CTable Table;
     Table.AddColumn(t_s("Rule", "listrules"));
     Table.AddColumn(t_s("Logging enabled", "listrules"));
+    Table.SetStyle(CTable::ListStyle);
 
     for (const CLogRule& Rule : m_vRules) {
         Table.AddRow();

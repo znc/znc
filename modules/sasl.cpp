@@ -87,6 +87,7 @@ class CSASLMod : public CModule {
         CTable Mechanisms;
         Mechanisms.AddColumn(t_s("Mechanism"));
         Mechanisms.AddColumn(t_s("Description"));
+        Mechanisms.SetStyle(CTable::ListStyle);
 
         for (const auto& it : SupportedMechanisms) {
             Mechanisms.AddRow();
@@ -94,6 +95,7 @@ class CSASLMod : public CModule {
             Mechanisms.SetCell(t_s("Description"), it.sDescription.Resolve());
         }
 
+        PutModule("");
         PutModule(t_s("The following mechanisms are available:"));
         PutModule(Mechanisms);
     }

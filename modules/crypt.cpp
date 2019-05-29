@@ -473,6 +473,7 @@ class CCryptMod : public CModule {
         CTable Table;
         Table.AddColumn(t_s("Target", "listkeys"));
         Table.AddColumn(t_s("Key", "listkeys"));
+        Table.SetStyle(CTable::ListStyle);
 
         for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
             if (!it->first.Equals(NICK_PREFIX_KEY)) {

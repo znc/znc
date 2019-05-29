@@ -83,6 +83,7 @@ class CAutoCycleMod : public CModule {
     void OnListCommand(const CString& sLine) {
         CTable Table;
         Table.AddColumn(t_s("Channel"));
+        Table.SetStyle(CTable::ListStyle);
 
         for (const CString& sChan : m_vsChans) {
             Table.AddRow();

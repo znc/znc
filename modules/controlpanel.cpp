@@ -50,6 +50,7 @@ class CAdminMod : public CModule {
         CTable VarTable;
         VarTable.AddColumn(t_s("Type", "helptable"));
         VarTable.AddColumn(t_s("Variables", "helptable"));
+        VarTable.SetStyle(CTable::ListStyle);
         std::map<CString, VCString> mvsTypedVariables;
         for (unsigned int i = 0; i != uSize; ++i) {
             CString sVar = CString(vars[i].name).AsLower();
@@ -119,6 +120,7 @@ class CAdminMod : public CModule {
                 {"ClientEncoding", str},
 #endif
             };
+            PutModule("");
             PrintVarsHelp(sVarFilter, vars, ARRAY_SIZE(vars),
                           t_s("The following variables are available when "
                               "using the Set/Get commands:"));
@@ -142,6 +144,7 @@ class CAdminMod : public CModule {
                 {"TrustAllCerts", boolean},
                 {"TrustPKI", boolean},
             };
+            PutModule("");
             PrintVarsHelp(sVarFilter, nvars, ARRAY_SIZE(nvars),
                           t_s("The following variables are available when "
                               "using the SetNetwork/GetNetwork commands:"));
@@ -155,12 +158,14 @@ class CAdminMod : public CModule {
                                {"InConfig", boolean},
                                {"AutoClearChanBuffer", boolean},
                                {"Detached", boolean}};
+            PutModule("");
             PrintVarsHelp(sVarFilter, cvars, ARRAY_SIZE(cvars),
                           t_s("The following variables are available when "
                               "using the SetChan/GetChan commands:"));
         }
 
         if (sCmdFilter.empty())
+            PutModule("");
             PutModule(
                 t_s("You can use $user as the user name and $network as the "
                     "network name for modifying your own user and network."));
@@ -1279,6 +1284,7 @@ class CAdminMod : public CModule {
         CTable Table;
         Table.AddColumn(t_s("Request", "listctcp"));
         Table.AddColumn(t_s("Reply", "listctcp"));
+        Table.SetStyle(CTable::ListStyle);
         for (const auto& it : msCTCPReplies) {
             Table.AddRow();
             Table.SetCell(t_s("Request", "listctcp"), it.first);
@@ -1493,6 +1499,7 @@ class CAdminMod : public CModule {
         CTable Table;
         Table.AddColumn(t_s("Name", "listmodules"));
         Table.AddColumn(t_s("Arguments", "listmodules"));
+        Table.SetStyle(CTable::ListStyle);
 
         for (const CModule* pMod : Modules) {
             Table.AddRow();
