@@ -760,6 +760,8 @@ void CUtils::SetMessageTags(CString& sLine, const MCString& mssTags) {
 }
 
 bool CTable::AddColumn(const CString& sName) {
+    if (eStyle == ListStyle && m_vsHeaders.size() >= 2)
+        return false;
     for (const CString& sHeader : m_vsHeaders) {
         if (sHeader.Equals(sName)) {
             return false;
@@ -769,6 +771,19 @@ bool CTable::AddColumn(const CString& sName) {
     m_vsHeaders.push_back(sName);
     m_msuWidths[sName] = sName.size();
 
+    return true;
+}
+
+bool CTable::SetStyle(EStyle eNewStyle) {
+    switch (eNewStyle) {
+    case GridStyle:
+        break;
+    case ListStyle:
+        if (m_vsHeaders.size() > 2) return false;
+        break;
+    }
+
+    eStyle = eNewStyle;
     return true;
 }
 
@@ -810,6 +825,20 @@ bool CTable::GetLine(unsigned int uIdx, CString& sLine) const {
 
     if (empty()) {
         return false;
+    }
+
+    if (eStyle == ListStyle) {
+        if (m_vsHeaders.size() > 2) return false; // definition list mode can only do up to two columns
+        if (uIdx >= size()) return false;
+
+        const std::vector<CString>& mRow = (*this)[uIdx];
+        ssRet << "\x02" << mRow[0] << "\x0f"; //bold first column
+        if (m_vsHeaders.size() >= 2 && mRow[1] != "") {
+            ssRet << ": " << mRow[1];
+        }
+
+        sLine = ssRet.str();
+        return true;
     }
 
     if (uIdx == 1) {

@@ -128,7 +128,7 @@ class CException {
 };
 
 
-/** Generate a grid-like output from a given input.
+/** Generate a grid-like or list-like output from a given input.
  *
  *  @code
  *  CTable table;
@@ -152,9 +152,25 @@ class CException {
 +-------+-------+
 | hello | world |
 +-------+-------+@endverbatim
+ *
+ *  If the table has at most two columns, one can switch to ListStyle output
+ *  like so:
+ *  @code
+ *  CTable table;
+ *  table.AddColumn("a");
+ *  table.AddColumn("b");
+ *  table.SetStyle(CTable::ListStyle);
+ *  // ...
+ *  @endcode
+ *
+ *  This will yield the following (Note that the header is omitted; asterisks
+ *  denote bold text):
+ *  @verbatim
+*hello*: world@endverbatim
  */
 class CTable : protected std::vector<std::vector<CString>> {
   public:
+    enum EStyle { GridStyle, ListStyle };
     CTable() {}
     virtual ~CTable() {}
 
@@ -162,9 +178,17 @@ class CTable : protected std::vector<std::vector<CString>> {
      *  Please note that you should add all columns before starting to fill
      *  the table!
      *  @param sName The name of the column.
-     *  @return false if a column by that name already existed.
+     *  @return false if a column by that name already existed or the current 
+     *  style does not allow this many columns.
      */
     bool AddColumn(const CString& sName);
+
+    /** Selects the output style of the table.
+     *  Select between different styles for printing. Default is GridStyle.
+     *  @param eNewStyle Table style type.
+     *  @return false if the style cannot be applied (usually too many columns).
+     */
+    bool SetStyle(EStyle eNewStyle);
 
     /** Adds a new row to the table.
      *  After calling this you can fill the row with content.
@@ -213,6 +237,7 @@ class CTable : protected std::vector<std::vector<CString>> {
     std::vector<CString> m_vsHeaders;
     // Used to cache the width of a column
     std::map<CString, CString::size_type> m_msuWidths;
+    EStyle eStyle = GridStyle;
 };
 
 #ifdef HAVE_LIBSSL
