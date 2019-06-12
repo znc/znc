@@ -358,7 +358,16 @@ TEST(MessageTest, Mode) {
     msg.Parse(":nick MODE nick :+i");
     EXPECT_EQ(msg.GetModes(), "+i");
 
+    EXPECT_EQ(msg.GetModeList(), "+i");
+
     EXPECT_EQ(msg.ToString(), ":nick MODE nick :+i");
+
+    msg.Parse(":nick MODE nick +ov Person :Other");
+
+    EXPECT_EQ(msg.GetModeList(), "+ov");
+    EXPECT_EQ(msg.GetModeParams().size(), 2);
+    EXPECT_EQ(msg.GetModeParams().at(0), "Person");
+    EXPECT_EQ(msg.GetModeParams().at(1), "Other");
 }
 
 TEST(MessageTest, Nick) {
