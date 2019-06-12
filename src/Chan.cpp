@@ -260,9 +260,9 @@ void CChan::SetModes(const CString& sModes) {
     ModeChange(sModes);
 }
 
-void CChan::SetModes(const VCString& vsModes) {
+void CChan::SetModes(const CString& modes, const VCString& vsModeParams) {
     m_mcsModes.clear();
-    ModeChange(vsModes);
+    ModeChange(modes, vsModeParams);
 }
 
 void CChan::SetAutoClearChanBuffer(bool b) {
@@ -300,8 +300,7 @@ void CChan::OnWho(const CString& sNick, const CString& sIdent,
     }
 }
 
-void CChan::ModeChange(const VCString& vsModes, const CNick* pOpNick) {
-    CString sModeArg = vsModes.at(0);
+void CChan::ModeChange(const CString& sModes, const VCString& vsModes, const CNick* pOpNick) {
     bool bAdd = true;
 
     /* Try to find a CNick* from this channel so that pOpNick->HasPerm()
@@ -314,14 +313,14 @@ void CChan::ModeChange(const VCString& vsModes, const CNick* pOpNick) {
     }
 
     {
-        CString sArgs = CString(" ").Join(vsModes.begin() + 1, vsModes.end());
-        NETWORKMODULECALL(OnRawMode2(pOpNick, *this, sModeArg, sArgs),
+        CString sArgs = CString(" ").Join(vsModes.begin(), vsModes.end());
+        NETWORKMODULECALL(OnRawMode2(pOpNick, *this, sModes, sArgs),
                           m_pNetwork->GetUser(), m_pNetwork, nullptr, NOTHING);
     }
 
-    VCString::const_iterator argIter = vsModes.begin() + 1;
-    for (unsigned int a = 0; a < sModeArg.size(); a++) {
-        const char& cMode = sModeArg[a];
+    VCString::const_iterator argIter = vsModes.begin();
+    for (unsigned int a = 0; a < sModes.size(); a++) {
+        const char& cMode = sModes[a];
 
         if (cMode == '+') {
             bAdd = true;
@@ -435,7 +434,6 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
     VCString vsModes;
     CString sModeArg = sModes.Token(0);
     bool colon = sModeArg.TrimPrefix(":");
-    vsModes.push_back(sModeArg);
 
     // Only handle parameters if sModes doesn't start with a colon
     if (!colon) {
@@ -452,7 +450,7 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
         }
     }
 
-    ModeChange(vsModes, pOpNick);
+    ModeChange(sModeArg, vsModes, pOpNick);
 }
 
 CString CChan::GetOptions() const {

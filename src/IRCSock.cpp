@@ -556,23 +556,24 @@ bool CIRCSock::OnModeMessage(CModeMessage& Message) {
     const CNick& Nick = Message.GetNick();
     CString sTarget = Message.GetTarget();
     VCString vsModes = Message.GetModeList();
+    CString sModes = vsModes.front();
+    vsModes.erase(vsModes.begin());
 
     CChan* pChan = m_pNetwork->FindChan(sTarget);
     if (pChan) {
-        pChan->ModeChange(vsModes, &Nick);
+        pChan->ModeChange(sModes, vsModes, &Nick);
 
         if (pChan->IsDetached()) {
             return true;
         }
     } else if (sTarget == m_Nick.GetNick()) {
-        CString sModeArg = vsModes.at(0);
         bool bAdd = true;
         /* no module call defined (yet?)
                 MODULECALL(OnRawUserMode(*pOpNick, *this, sModeArg, sArgs),
            m_pNetwork->GetUser(), nullptr, );
         */
-        for (unsigned int a = 0; a < sModeArg.size(); a++) {
-            const char& cMode = sModeArg[a];
+        for (unsigned int a = 0; a < sModes.size(); a++) {
+            const char& cMode = sModes[a];
 
             if (cMode == '+') {
                 bAdd = true;
@@ -767,7 +768,7 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
             CChan* pChan = m_pNetwork->FindChan(Message.GetParam(1));
 
             if (pChan) {
-                pChan->SetModes(Message.GetParamsSplit(2));
+                pChan->SetModes(Message.GetParam(2), Message.GetParamsSplit(3));
 
                 // We don't SetModeKnown(true) here,
                 // because a 329 will follow
