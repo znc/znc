@@ -122,6 +122,12 @@ class CMessage {
 
     const VCString& GetParams() const { return m_vsParams; }
 
+    /**
+     * Get a subset of the message parameters
+     * @param uIdx The index of the first parameter to retrieve
+     * @param uLen How many parameters to retrieve
+     * @return A VCString containing the retrieved parameters
+     */
     VCString GetParamsSplit(unsigned int uIdx, unsigned int uLen = -1) const;
     void SetParams(const VCString& vsParams);
 
