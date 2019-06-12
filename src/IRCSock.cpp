@@ -555,9 +555,8 @@ bool CIRCSock::OnKickMessage(CKickMessage& Message) {
 bool CIRCSock::OnModeMessage(CModeMessage& Message) {
     const CNick& Nick = Message.GetNick();
     CString sTarget = Message.GetTarget();
-    VCString vsModes = Message.GetModeList();
-    CString sModes = vsModes.front();
-    vsModes.erase(vsModes.begin());
+    VCString vsModes = Message.GetModeParams();
+    CString sModes = Message.GetModeList();
 
     CChan* pChan = m_pNetwork->FindChan(sTarget);
     if (pChan) {

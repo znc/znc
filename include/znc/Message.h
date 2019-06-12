@@ -267,7 +267,9 @@ class CModeMessage : public CTargetMessage {
   public:
     CString GetModes() const { return GetParamsColon(1).TrimPrefix_n(":"); }
 
-    VCString GetModeList() const { return GetParamsSplit(1); };
+    CString GetModeList() const { return GetParam(1); };
+
+    VCString GetModeParams() const { return GetParamsSplit(2); };
 };
 REGISTER_ZNC_MESSAGE(CModeMessage);
 
