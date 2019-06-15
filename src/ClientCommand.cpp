@@ -1658,6 +1658,7 @@ void CClient::HelpUser(const CString& sFilter) {
     CTable Table;
     Table.AddColumn(t_s("Command", "helpcmd"));
     Table.AddColumn(t_s("Description", "helpcmd"));
+    Table.SetStyle(CTable::ListStyle);
 
     if (sFilter.empty()) {
         PutStatus(
@@ -1670,7 +1671,8 @@ void CClient::HelpUser(const CString& sFilter) {
         if (sFilter.empty() || sCmd.StartsWith(sFilter) ||
             sCmd.AsLower().WildCmp(sFilter.AsLower())) {
             Table.AddRow();
-            Table.SetCell(t_s("Command", "helpcmd"), sCmd + " " + sArgs);
+            Table.SetCell(t_s("Command", "helpcmd"),
+                          sCmd + (sArgs.empty() ? "" : " ") + sArgs);
             Table.SetCell(t_s("Description", "helpcmd"), sDesc);
         }
     };

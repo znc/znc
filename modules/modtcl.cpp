@@ -116,6 +116,8 @@ class CModTcl : public CModule {
         Tcl_CreateCommand(interp, "GetCurNick", tcl_GetCurNick, this, nullptr);
         Tcl_CreateCommand(interp, "GetUsername", tcl_GetUsername, this,
                           nullptr);
+        Tcl_CreateCommand(interp, "GetNetworkName", tcl_GetNetworkName, this,
+                          nullptr);
         Tcl_CreateCommand(interp, "GetRealName", tcl_GetRealName, this,
                           nullptr);
         Tcl_CreateCommand(interp, "GetVHost", tcl_GetBindHost, this, nullptr);
@@ -301,6 +303,13 @@ class CModTcl : public CModule {
     static int tcl_GetUsername STDVAR {
         CModTcl* mod = static_cast<CModTcl*>(cd);
         Tcl_SetResult(irp, (char*)mod->GetUser()->GetUsername().c_str(),
+                      TCL_VOLATILE);
+        return TCL_OK;
+    }
+
+    static int tcl_GetNetworkName STDVAR {
+        CModTcl* mod = static_cast<CModTcl*>(cd);
+        Tcl_SetResult(irp, (char*)mod->GetNetwork()->GetName().c_str(),
                       TCL_VOLATILE);
         return TCL_OK;
     }
