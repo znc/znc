@@ -1600,6 +1600,7 @@ class CModules : public std::vector<CModule*>, private CCoreTranslationMixin {
   private:
     static ModHandle OpenModule(const CString& sModule, const CString& sModPath,
                                 CModInfo& Info, CString& sRetMsg);
+    static bool ValidateModuleName(const CString& sModule, CString& sRetMsg);
 
   protected:
     CUser* m_pUser;

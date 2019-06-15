@@ -700,7 +700,6 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
             PutIRC("WHO " + sNick);
 
             m_bAuthed = true;
-            m_pNetwork->PutStatus("Connected!");
 
             const vector<CClient*>& vClients = m_pNetwork->GetClients();
 
@@ -718,6 +717,7 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 
             SetNick(sNick);
 
+            m_pNetwork->PutStatus("Connected!");
             IRCSOCKMODULECALL(OnIRCConnected(), NOTHING);
 
             m_pNetwork->ClearRawBuffer();
