@@ -20,9 +20,9 @@ limitations under the License.
 // The following defines are for #if comparison (preprocessor only likes ints)
 #define VERSION_MAJOR 1
 #define VERSION_MINOR 7
-#define VERSION_PATCH 4
+#define VERSION_PATCH -1
 // This one is for display purpose and to check ABI compatibility of modules
-#define VERSION_STR "1.7.4"
+#define VERSION_STR "1.7.x"
 #endif
 
 // Don't use this one
