@@ -1,3 +1,14 @@
+# ZNC 1.7.4 (2019-06-19)
+
+## Fixes
+* This is a security release to fix CVE-2019-12816 (remote code execution by existing non-admin users). Thanks to Jeriko One for the bugreport.
+* Send "Connected!" messages to client to the correct nick.
+
+# Internal
+* Increase znc-buildmod timeout in the test.
+
+
+
 # ZNC 1.7.3 (2019-03-30)
 
 ## Fixes
