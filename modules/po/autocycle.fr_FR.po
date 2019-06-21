@@ -8,7 +8,7 @@ msgstr ""
 "X-Crowdin-Language: fr\n"
 "X-Crowdin-File: /master/modules/po/autocycle.pot\n"
 "Project-Id-Version: znc-bouncer\n"
-"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Last-Translator: DarthGandalf\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
 
@@ -52,19 +52,19 @@ msgstr "{1} retiré de la liste"
 msgid "Usage: Del [!]<#chan>"
 msgstr "Usage: Del[!]<#salon>"
 
-#: autocycle.cpp:85 autocycle.cpp:89 autocycle.cpp:94
+#: autocycle.cpp:85 autocycle.cpp:90 autocycle.cpp:95
 msgid "Channel"
 msgstr "Salon"
 
-#: autocycle.cpp:100
+#: autocycle.cpp:101
 msgid "You have no entries."
 msgstr "Vous n'avez aucune entrée."
 
-#: autocycle.cpp:229
+#: autocycle.cpp:230
 msgid "List of channel masks and channel masks with ! before them."
 msgstr "Liste les masques de salons, y compris préfixés par !."
 
-#: autocycle.cpp:234
+#: autocycle.cpp:235
 msgid "Rejoins channels to gain Op if you're the only user left"
 msgstr ""
 "Rejoint un salon automatiquement si vous êtes le dernier utilisateur pour "

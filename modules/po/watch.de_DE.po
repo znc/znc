@@ -8,7 +8,7 @@ msgstr ""
 "X-Crowdin-Language: de\n"
 "X-Crowdin-File: /master/modules/po/watch.pot\n"
 "Project-Id-Version: znc-bouncer\n"
-"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Last-Translator: DarthGandalf\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
 
@@ -120,130 +120,130 @@ msgstr ""
 msgid "Id {1} removed."
 msgstr ""
 
-#: watch.cpp:600 watch.cpp:604 watch.cpp:609 watch.cpp:614 watch.cpp:620
-#: watch.cpp:625 watch.cpp:629 watch.cpp:633 watch.cpp:638 watch.cpp:645
-#: watch.cpp:652 watch.cpp:658 watch.cpp:664
+#: watch.cpp:600 watch.cpp:605 watch.cpp:610 watch.cpp:615 watch.cpp:621
+#: watch.cpp:626 watch.cpp:630 watch.cpp:634 watch.cpp:639 watch.cpp:646
+#: watch.cpp:653 watch.cpp:659 watch.cpp:665
 msgid "Command"
 msgstr ""
 
-#: watch.cpp:601 watch.cpp:605 watch.cpp:610 watch.cpp:616 watch.cpp:621
-#: watch.cpp:626 watch.cpp:630 watch.cpp:634 watch.cpp:641 watch.cpp:648
-#: watch.cpp:654 watch.cpp:660 watch.cpp:665
+#: watch.cpp:601 watch.cpp:606 watch.cpp:611 watch.cpp:617 watch.cpp:622
+#: watch.cpp:627 watch.cpp:631 watch.cpp:635 watch.cpp:642 watch.cpp:649
+#: watch.cpp:655 watch.cpp:661 watch.cpp:666
 msgid "Description"
 msgstr ""
 
-#: watch.cpp:604
+#: watch.cpp:605
 msgid "Add <HostMask> [Target] [Pattern]"
 msgstr ""
 
-#: watch.cpp:606
+#: watch.cpp:607
 msgid "Used to add an entry to watch for."
 msgstr ""
 
-#: watch.cpp:609
+#: watch.cpp:610
 msgid "List"
 msgstr ""
 
-#: watch.cpp:611
+#: watch.cpp:612
 msgid "List all entries being watched."
 msgstr ""
 
-#: watch.cpp:614
+#: watch.cpp:615
 msgid "Dump"
 msgstr ""
 
-#: watch.cpp:617
+#: watch.cpp:618
 msgid "Dump a list of all current entries to be used later."
 msgstr ""
 
-#: watch.cpp:620
+#: watch.cpp:621
 msgid "Del <Id>"
 msgstr ""
 
-#: watch.cpp:622
+#: watch.cpp:623
 msgid "Deletes Id from the list of watched entries."
 msgstr ""
 
-#: watch.cpp:625
+#: watch.cpp:626
 msgid "Clear"
 msgstr ""
 
-#: watch.cpp:626
+#: watch.cpp:627
 msgid "Delete all entries."
 msgstr ""
 
-#: watch.cpp:629
+#: watch.cpp:630
 msgid "Enable <Id | *>"
 msgstr ""
 
-#: watch.cpp:630
+#: watch.cpp:631
 msgid "Enable a disabled entry."
 msgstr ""
 
-#: watch.cpp:633
+#: watch.cpp:634
 msgid "Disable <Id | *>"
 msgstr ""
 
-#: watch.cpp:635
+#: watch.cpp:636
 msgid "Disable (but don't delete) an entry."
 msgstr ""
 
-#: watch.cpp:639
+#: watch.cpp:640
 msgid "SetDetachedClientOnly <Id | *> <True | False>"
 msgstr ""
 
-#: watch.cpp:642
+#: watch.cpp:643
 msgid "Enable or disable detached client only for an entry."
 msgstr ""
 
-#: watch.cpp:646
+#: watch.cpp:647
 msgid "SetDetachedChannelOnly <Id | *> <True | False>"
 msgstr ""
 
-#: watch.cpp:649
+#: watch.cpp:650
 msgid "Enable or disable detached channel only for an entry."
 msgstr ""
 
-#: watch.cpp:652
+#: watch.cpp:653
 msgid "Buffer [Count]"
 msgstr ""
 
-#: watch.cpp:655
+#: watch.cpp:656
 msgid "Show/Set the amount of buffered lines while detached."
 msgstr ""
 
-#: watch.cpp:659
+#: watch.cpp:660
 msgid "SetSources <Id> [#chan priv #foo* !#bar]"
 msgstr ""
 
-#: watch.cpp:661
+#: watch.cpp:662
 msgid "Set the source channels that you care about."
 msgstr ""
 
-#: watch.cpp:664
+#: watch.cpp:665
 msgid "Help"
 msgstr ""
 
-#: watch.cpp:665
+#: watch.cpp:666
 msgid "This help."
 msgstr ""
 
-#: watch.cpp:681
+#: watch.cpp:682
 msgid "Entry for {1} already exists."
 msgstr ""
 
-#: watch.cpp:689
+#: watch.cpp:690
 msgid "Adding entry: {1} watching for [{2}] -> {3}"
 msgstr ""
 
-#: watch.cpp:695
+#: watch.cpp:696
 msgid "Watch: Not enough arguments.  Try Help"
 msgstr ""
 
-#: watch.cpp:764
+#: watch.cpp:765
 msgid "WARNING: malformed entry found while loading"
 msgstr ""
 
-#: watch.cpp:778
+#: watch.cpp:779
 msgid "Copy activity from a specific user into a separate window"
 msgstr ""

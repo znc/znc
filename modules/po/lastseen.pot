@@ -7,7 +7,7 @@ msgstr ""
 msgid "User"
 msgstr ""
 
-#: modules/po/../data/lastseen/tmpl/index.tmpl:9 lastseen.cpp:98
+#: modules/po/../data/lastseen/tmpl/index.tmpl:9 lastseen.cpp:99
 msgid "Last Seen"
 msgstr ""
 
@@ -35,24 +35,24 @@ msgstr ""
 msgid "Access denied"
 msgstr ""
 
-#: lastseen.cpp:61 lastseen.cpp:66
+#: lastseen.cpp:61 lastseen.cpp:67
 msgctxt "show"
 msgid "User"
 msgstr ""
 
-#: lastseen.cpp:62 lastseen.cpp:67
+#: lastseen.cpp:62 lastseen.cpp:68
 msgctxt "show"
 msgid "Last Seen"
 msgstr ""
 
-#: lastseen.cpp:68 lastseen.cpp:124
+#: lastseen.cpp:69 lastseen.cpp:125
 msgid "never"
 msgstr ""
 
-#: lastseen.cpp:78
+#: lastseen.cpp:79
 msgid "Shows list of users and when they last logged in"
 msgstr ""
 
-#: lastseen.cpp:153
+#: lastseen.cpp:154
 msgid "Collects data about when a user last logged in."
 msgstr ""

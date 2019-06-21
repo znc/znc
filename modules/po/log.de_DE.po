@@ -8,7 +8,7 @@ msgstr ""
 "X-Crowdin-Language: de\n"
 "X-Crowdin-File: /master/modules/po/log.pot\n"
 "Project-Id-Version: znc-bouncer\n"
-"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Last-Translator: DarthGandalf\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
 
@@ -48,7 +48,7 @@ msgstr "Benutzung: SetRules <Regeln>"
 msgid "Wildcards are allowed"
 msgstr "Wildcards können verwendet werden"
 
-#: log.cpp:156 log.cpp:178
+#: log.cpp:156 log.cpp:179
 msgid "No logging rules. Everything is logged."
 msgstr "Keine Logging-Regeln - alles wird geloggt."
 
@@ -58,76 +58,76 @@ msgid_plural "{1} rules removed: {2}"
 msgstr[0] ""
 msgstr[1] "{1} Regeln entfernt: {2}"
 
-#: log.cpp:168 log.cpp:173
+#: log.cpp:168 log.cpp:174
 msgctxt "listrules"
 msgid "Rule"
 msgstr "Regel"
 
-#: log.cpp:169 log.cpp:174
+#: log.cpp:169 log.cpp:175
 msgctxt "listrules"
 msgid "Logging enabled"
 msgstr "Logging aktiviert"
 
-#: log.cpp:189
+#: log.cpp:190
 msgid ""
 "Usage: Set <var> true|false, where <var> is one of: joins, quits, nickchanges"
 msgstr ""
 "Benutzung: Set <var> true|false, wobei <var> entweder joins, quits oder "
 "nickchanges ist"
 
-#: log.cpp:196
+#: log.cpp:197
 msgid "Will log joins"
 msgstr "Joins werden geloggt"
 
-#: log.cpp:196
+#: log.cpp:197
 msgid "Will not log joins"
 msgstr "Joins werden nicht geloggt"
 
-#: log.cpp:197
+#: log.cpp:198
 msgid "Will log quits"
 msgstr "Quits werden geloggt"
 
-#: log.cpp:197
+#: log.cpp:198
 msgid "Will not log quits"
 msgstr "Quits werden nicht geloggt"
 
-#: log.cpp:199
+#: log.cpp:200
 msgid "Will log nick changes"
 msgstr "Nick-Wechsel werden geloggt"
 
-#: log.cpp:199
+#: log.cpp:200
 msgid "Will not log nick changes"
 msgstr "Nick-Wechsel werden nicht geloggt"
 
-#: log.cpp:203
+#: log.cpp:204
 msgid "Unknown variable. Known variables: joins, quits, nickchanges"
 msgstr "Unbekannte Variable. Gültig sind: joins, quits, nickchanges"
 
-#: log.cpp:211
+#: log.cpp:212
 msgid "Logging joins"
 msgstr "Joins werden geloggt"
 
-#: log.cpp:211
+#: log.cpp:212
 msgid "Not logging joins"
 msgstr "Joins werden nicht geloggt"
 
-#: log.cpp:212
+#: log.cpp:213
 msgid "Logging quits"
 msgstr "Quits werden geloggt"
 
-#: log.cpp:212
+#: log.cpp:213
 msgid "Not logging quits"
 msgstr "Quits werden nicht geloggt"
 
-#: log.cpp:213
+#: log.cpp:214
 msgid "Logging nick changes"
 msgstr "Nick-Wechsel werden geloggt"
 
-#: log.cpp:214
+#: log.cpp:215
 msgid "Not logging nick changes"
 msgstr "Nick-Wechsel werden nicht geloggt"
 
-#: log.cpp:351
+#: log.cpp:352
 msgid ""
 "Invalid args [{1}]. Only one log path allowed.  Check that there are no "
 "spaces in the path."
@@ -135,18 +135,18 @@ msgstr ""
 "Ungültige Argumente [{1}]. Nur ein Logging-Pfad ist erlaubt. Prüfe, dass der "
 "Pfad keine Leerzeichen enthält."
 
-#: log.cpp:401
+#: log.cpp:402
 msgid "Invalid log path [{1}]"
 msgstr "Ungültiger Log-Pfad [{1}]"
 
-#: log.cpp:404
+#: log.cpp:405
 msgid "Logging to [{1}]. Using timestamp format '{2}'"
 msgstr "Logge nach [{1}] mit Zeitstempelformat '{2}'"
 
-#: log.cpp:559
+#: log.cpp:560
 msgid "[-sanitize] Optional path where to store logs."
 msgstr "[-sanitize] Optionaler Pfad zum Speichern von Logs."
 
-#: log.cpp:563
+#: log.cpp:564
 msgid "Writes IRC logs."
 msgstr "Schreibt IRC-Logs."

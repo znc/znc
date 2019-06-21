@@ -8,7 +8,7 @@ msgstr ""
 "X-Crowdin-Language: de\n"
 "X-Crowdin-File: /master/modules/po/fail2ban.pot\n"
 "Project-Id-Version: znc-bouncer\n"
-"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Last-Translator: DarthGandalf\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
 
@@ -96,22 +96,22 @@ msgstr "Entbannt: {1}"
 msgid "Ignored: {1}"
 msgstr "Ignoriert: {1}"
 
-#: fail2ban.cpp:177 fail2ban.cpp:182
+#: fail2ban.cpp:177 fail2ban.cpp:183
 msgctxt "list"
 msgid "Host"
 msgstr "Host"
 
-#: fail2ban.cpp:178 fail2ban.cpp:183
+#: fail2ban.cpp:178 fail2ban.cpp:184
 msgctxt "list"
 msgid "Attempts"
 msgstr "Versuche"
 
-#: fail2ban.cpp:187
+#: fail2ban.cpp:188
 msgctxt "list"
 msgid "No bans"
 msgstr "Keine Bannungen"
 
-#: fail2ban.cpp:244
+#: fail2ban.cpp:245
 msgid ""
 "You might enter the time in minutes for the IP banning and the number of "
 "failed logins before any action is taken."
@@ -119,6 +119,6 @@ msgstr ""
 "Du kannst die Zeit in Minuten eingeben, die IPs gebannt werden, und die "
 "Anzahl an fehlgeschlagenen Anmeldeversuchen, bevor etwas unternommen wird."
 
-#: fail2ban.cpp:249
+#: fail2ban.cpp:250
 msgid "Block IPs for some time after a failed login."
 msgstr "Blockiere IPs für eine Weile nach fehlgeschlagenen Anmeldungen."

@@ -8,7 +8,7 @@ msgstr ""
 "X-Crowdin-Language: nl\n"
 "X-Crowdin-File: /master/modules/po/notes.pot\n"
 "Project-Id-Version: znc-bouncer\n"
-"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Last-Translator: DarthGandalf\n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
 
@@ -32,11 +32,11 @@ msgstr "Voeg notitie toe"
 msgid "You have no notes to display."
 msgstr "Je hebt geen notities om weer te geven."
 
-#: modules/po/../data/notes/tmpl/index.tmpl:34 notes.cpp:164 notes.cpp:169
+#: modules/po/../data/notes/tmpl/index.tmpl:34 notes.cpp:164 notes.cpp:170
 msgid "Key"
 msgstr "Sleutel"
 
-#: modules/po/../data/notes/tmpl/index.tmpl:35 notes.cpp:165 notes.cpp:170
+#: modules/po/../data/notes/tmpl/index.tmpl:35 notes.cpp:165 notes.cpp:171
 msgid "Note"
 msgstr "Notitie"
 
@@ -106,11 +106,11 @@ msgid "That note already exists.  Use /#+<key> <note> to overwrite."
 msgstr ""
 "Die notitie bestaat al. Gebruik /#+<sleutel> <notitie> om te overschrijven."
 
-#: notes.cpp:185 notes.cpp:187
+#: notes.cpp:186 notes.cpp:188
 msgid "You have no entries."
 msgstr "Je hebt geen notities."
 
-#: notes.cpp:223
+#: notes.cpp:224
 msgid ""
 "This user module takes up to one arguments. It can be -disableNotesOnLogin "
 "not to show notes upon client login"
@@ -119,6 +119,6 @@ msgstr ""
 "disableNotesOnLogin zodat notities niet worden laten zien wanneer een "
 "gebruiker inlogd"
 
-#: notes.cpp:227
+#: notes.cpp:228
 msgid "Keep and replay notes"
 msgstr "Hou en speel notities opnieuw af"

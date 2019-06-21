@@ -8,7 +8,7 @@ msgstr ""
 "X-Crowdin-Language: nl\n"
 "X-Crowdin-File: /master/modules/po/log.pot\n"
 "Project-Id-Version: znc-bouncer\n"
-"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Last-Translator: DarthGandalf\n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
 
@@ -52,7 +52,7 @@ msgstr "Gebruik: SetRules <regels>"
 msgid "Wildcards are allowed"
 msgstr "Jokers zijn toegestaan"
 
-#: log.cpp:156 log.cpp:178
+#: log.cpp:156 log.cpp:179
 msgid "No logging rules. Everything is logged."
 msgstr "Geen logboek regels. Alles wordt bijgehouden."
 
@@ -62,76 +62,76 @@ msgid_plural "{1} rules removed: {2}"
 msgstr[0] "1 regel verwijderd: {2}"
 msgstr[1] "{1} regels verwijderd: {2}"
 
-#: log.cpp:168 log.cpp:173
+#: log.cpp:168 log.cpp:174
 msgctxt "listrules"
 msgid "Rule"
 msgstr "Regel"
 
-#: log.cpp:169 log.cpp:174
+#: log.cpp:169 log.cpp:175
 msgctxt "listrules"
 msgid "Logging enabled"
 msgstr "Logboek ingeschakeld"
 
-#: log.cpp:189
+#: log.cpp:190
 msgid ""
 "Usage: Set <var> true|false, where <var> is one of: joins, quits, nickchanges"
 msgstr ""
 "Gebruik: Set <variabele> true|false, waar <variabele> is een van de "
 "volgende: joins, quits, nickchanges"
 
-#: log.cpp:196
+#: log.cpp:197
 msgid "Will log joins"
 msgstr "Zal toetredingen vastleggen"
 
-#: log.cpp:196
+#: log.cpp:197
 msgid "Will not log joins"
 msgstr "Zal toetredingen niet vastleggen"
 
-#: log.cpp:197
+#: log.cpp:198
 msgid "Will log quits"
 msgstr "Zal verlatingen vastleggen"
 
-#: log.cpp:197
+#: log.cpp:198
 msgid "Will not log quits"
 msgstr "Zal verlatingen niet vastleggen"
 
-#: log.cpp:199
+#: log.cpp:200
 msgid "Will log nick changes"
 msgstr "Zal naamaanpassingen vastleggen"
 
-#: log.cpp:199
+#: log.cpp:200
 msgid "Will not log nick changes"
 msgstr "Zal naamaanpassingen niet vastleggen"
 
-#: log.cpp:203
+#: log.cpp:204
 msgid "Unknown variable. Known variables: joins, quits, nickchanges"
 msgstr "Onbekende variabele. Bekende variabelen: joins, quits, nickchanges"
 
-#: log.cpp:211
+#: log.cpp:212
 msgid "Logging joins"
 msgstr "Toetredingen worden vastgelegd"
 
-#: log.cpp:211
+#: log.cpp:212
 msgid "Not logging joins"
 msgstr "Toetredingen worden niet vastgelegd"
 
-#: log.cpp:212
+#: log.cpp:213
 msgid "Logging quits"
 msgstr "Verlatingen worden vastgelegd"
 
-#: log.cpp:212
+#: log.cpp:213
 msgid "Not logging quits"
 msgstr "Verlatingen worden niet vastgelegd"
 
-#: log.cpp:213
+#: log.cpp:214
 msgid "Logging nick changes"
 msgstr "Naamaanpassingen worden vastgelegd"
 
-#: log.cpp:214
+#: log.cpp:215
 msgid "Not logging nick changes"
 msgstr "Naamaanpassingen worden niet vastgelegd"
 
-#: log.cpp:351
+#: log.cpp:352
 msgid ""
 "Invalid args [{1}]. Only one log path allowed.  Check that there are no "
 "spaces in the path."
@@ -139,18 +139,18 @@ msgstr ""
 "Ongeldige argumenten [{1}]. Maar één logboekpad is toegestaan. Controleer of "
 "er geen spaties in het pad voorkomen."
 
-#: log.cpp:401
+#: log.cpp:402
 msgid "Invalid log path [{1}]"
 msgstr "Ongeldig logboekpad [{1}]"
 
-#: log.cpp:404
+#: log.cpp:405
 msgid "Logging to [{1}]. Using timestamp format '{2}'"
 msgstr "Logboek schrijven naar [{1}]. Gebruik tijdstempel: '{2}'"
 
-#: log.cpp:559
+#: log.cpp:560
 msgid "[-sanitize] Optional path where to store logs."
 msgstr "[-sanitize] Optioneel pad waar het logboek opgeslagen moet worden."
 
-#: log.cpp:563
+#: log.cpp:564
 msgid "Writes IRC logs."
 msgstr "Schrijft IRC logboeken."

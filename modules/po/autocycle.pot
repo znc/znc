@@ -43,18 +43,18 @@ msgstr ""
 msgid "Usage: Del [!]<#chan>"
 msgstr ""
 
-#: autocycle.cpp:85 autocycle.cpp:89 autocycle.cpp:94
+#: autocycle.cpp:85 autocycle.cpp:90 autocycle.cpp:95
 msgid "Channel"
 msgstr ""
 
-#: autocycle.cpp:100
+#: autocycle.cpp:101
 msgid "You have no entries."
 msgstr ""
 
-#: autocycle.cpp:229
+#: autocycle.cpp:230
 msgid "List of channel masks and channel masks with ! before them."
 msgstr ""
 
-#: autocycle.cpp:234
+#: autocycle.cpp:235
 msgid "Rejoins channels to gain Op if you're the only user left"
 msgstr ""

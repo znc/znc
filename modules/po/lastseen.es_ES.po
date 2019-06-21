@@ -8,7 +8,7 @@ msgstr ""
 "X-Crowdin-Language: es-ES\n"
 "X-Crowdin-File: /master/modules/po/lastseen.pot\n"
 "Project-Id-Version: znc-bouncer\n"
-"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Last-Translator: DarthGandalf\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
 
@@ -16,7 +16,7 @@ msgstr ""
 msgid "User"
 msgstr "Usuario"
 
-#: modules/po/../data/lastseen/tmpl/index.tmpl:9 lastseen.cpp:98
+#: modules/po/../data/lastseen/tmpl/index.tmpl:9 lastseen.cpp:99
 msgid "Last Seen"
 msgstr "Última conexión"
 
@@ -44,24 +44,24 @@ msgstr "Última conexión:"
 msgid "Access denied"
 msgstr "Acceso denegado"
 
-#: lastseen.cpp:61 lastseen.cpp:66
+#: lastseen.cpp:61 lastseen.cpp:67
 msgctxt "show"
 msgid "User"
 msgstr "Usuario"
 
-#: lastseen.cpp:62 lastseen.cpp:67
+#: lastseen.cpp:62 lastseen.cpp:68
 msgctxt "show"
 msgid "Last Seen"
 msgstr "Última conexión"
 
-#: lastseen.cpp:68 lastseen.cpp:124
+#: lastseen.cpp:69 lastseen.cpp:125
 msgid "never"
 msgstr "nunca"
 
-#: lastseen.cpp:78
+#: lastseen.cpp:79
 msgid "Shows list of users and when they last logged in"
 msgstr "Muestra una lista de usuarios y cuando conectaron por última vez"
 
-#: lastseen.cpp:153
+#: lastseen.cpp:154
 msgid "Collects data about when a user last logged in."
 msgstr "Recopila datos sobre la última conexión de un usuario."

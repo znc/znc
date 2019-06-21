@@ -8,7 +8,7 @@ msgstr ""
 "X-Crowdin-Language: de\n"
 "X-Crowdin-File: /master/modules/po/certauth.pot\n"
 "Project-Id-Version: znc-bouncer\n"
-"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Last-Translator: DarthGandalf\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
 
@@ -84,29 +84,29 @@ msgstr "Schlüssel '{1}' hinzugefügt."
 msgid "The key '{1}' is already added."
 msgstr "Der Schlüssel '{1}' wurde bereits hinzugefügt."
 
-#: certauth.cpp:170 certauth.cpp:182
+#: certauth.cpp:170 certauth.cpp:183
 msgctxt "list"
 msgid "Id"
 msgstr "Id"
 
-#: certauth.cpp:171 certauth.cpp:183
+#: certauth.cpp:171 certauth.cpp:184
 msgctxt "list"
 msgid "Key"
 msgstr "Schlüssel"
 
-#: certauth.cpp:175 certauth.cpp:189 certauth.cpp:198
+#: certauth.cpp:176 certauth.cpp:190 certauth.cpp:199
 msgid "No keys set for your user"
 msgstr "Keine Schlüssel für deinen Benutzer gesetzt"
 
-#: certauth.cpp:203
+#: certauth.cpp:204
 msgid "Invalid #, check \"list\""
 msgstr "Ungültige #, prüfe \"list\""
 
-#: certauth.cpp:215
+#: certauth.cpp:216
 msgid "Removed"
 msgstr "Entfernt"
 
-#: certauth.cpp:290
+#: certauth.cpp:291
 msgid "Allows users to authenticate via SSL client certificates."
 msgstr ""
 "Ermöglicht es Benutzern sich über SSL-Client-Zertifikate zu authentifizieren."

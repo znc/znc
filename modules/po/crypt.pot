@@ -115,20 +115,20 @@ msgstr ""
 msgid "Setting Nick Prefix to {1}"
 msgstr ""
 
-#: crypt.cpp:474 crypt.cpp:480
+#: crypt.cpp:474 crypt.cpp:481
 msgctxt "listkeys"
 msgid "Target"
 msgstr ""
 
-#: crypt.cpp:475 crypt.cpp:481
+#: crypt.cpp:475 crypt.cpp:482
 msgctxt "listkeys"
 msgid "Key"
 msgstr ""
 
-#: crypt.cpp:485
+#: crypt.cpp:486
 msgid "You have no encryption keys set."
 msgstr ""
 
-#: crypt.cpp:507
+#: crypt.cpp:508
 msgid "Encryption for channel/private messages"
 msgstr ""

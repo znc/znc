@@ -8,7 +8,7 @@ msgstr ""
 "X-Crowdin-Language: fr\n"
 "X-Crowdin-File: /master/modules/po/notes.pot\n"
 "Project-Id-Version: znc-bouncer\n"
-"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Last-Translator: DarthGandalf\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
 
@@ -32,11 +32,11 @@ msgstr ""
 msgid "You have no notes to display."
 msgstr ""
 
-#: modules/po/../data/notes/tmpl/index.tmpl:34 notes.cpp:164 notes.cpp:169
+#: modules/po/../data/notes/tmpl/index.tmpl:34 notes.cpp:164 notes.cpp:170
 msgid "Key"
 msgstr ""
 
-#: modules/po/../data/notes/tmpl/index.tmpl:35 notes.cpp:165 notes.cpp:170
+#: modules/po/../data/notes/tmpl/index.tmpl:35 notes.cpp:165 notes.cpp:171
 msgid "Note"
 msgstr ""
 
@@ -104,16 +104,16 @@ msgstr ""
 msgid "That note already exists.  Use /#+<key> <note> to overwrite."
 msgstr ""
 
-#: notes.cpp:185 notes.cpp:187
+#: notes.cpp:186 notes.cpp:188
 msgid "You have no entries."
 msgstr ""
 
-#: notes.cpp:223
+#: notes.cpp:224
 msgid ""
 "This user module takes up to one arguments. It can be -disableNotesOnLogin "
 "not to show notes upon client login"
 msgstr ""
 
-#: notes.cpp:227
+#: notes.cpp:228
 msgid "Keep and replay notes"
 msgstr ""

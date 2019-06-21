@@ -8,25 +8,25 @@ msgstr ""
 "X-Crowdin-Language: nl\n"
 "X-Crowdin-File: /master/modules/po/route_replies.pot\n"
 "Project-Id-Version: znc-bouncer\n"
-"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Last-Translator: DarthGandalf\n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
 
-#: route_replies.cpp:211
+#: route_replies.cpp:215
 msgid "[yes|no]"
 msgstr "[yes|no]"
 
-#: route_replies.cpp:212
+#: route_replies.cpp:216
 msgid "Decides whether to show the timeout messages or not"
 msgstr "Beslist of time-out berichten laten zien worden of niet"
 
-#: route_replies.cpp:352
+#: route_replies.cpp:356
 msgid "This module hit a timeout which is probably a connectivity issue."
 msgstr ""
 "Deze module heeft een time-out geraakt, dit is waarschijnlijk een "
 "connectiviteitsprobleem."
 
-#: route_replies.cpp:355
+#: route_replies.cpp:359
 msgid ""
 "However, if you can provide steps to reproduce this issue, please do report "
 "a bug."
@@ -34,30 +34,30 @@ msgstr ""
 "Maar, als je de stappen kan herproduceren, stuur alsjeblieft een bugrapport "
 "hier mee."
 
-#: route_replies.cpp:358
+#: route_replies.cpp:362
 msgid "To disable this message, do \"/msg {1} silent yes\""
 msgstr "Om dit bericht uit te zetten, doe \"/msg {1} silent yes\""
 
-#: route_replies.cpp:360
+#: route_replies.cpp:364
 msgid "Last request: {1}"
 msgstr "Laatste aanvraag: {1}"
 
-#: route_replies.cpp:361
+#: route_replies.cpp:365
 msgid "Expected replies:"
 msgstr "Verwachte antwoorden:"
 
-#: route_replies.cpp:365
+#: route_replies.cpp:369
 msgid "{1} (last)"
 msgstr "{1} (laatste)"
 
-#: route_replies.cpp:437
+#: route_replies.cpp:441
 msgid "Timeout messages are disabled."
 msgstr "Time-out berichten uitgeschakeld."
 
-#: route_replies.cpp:438
+#: route_replies.cpp:442
 msgid "Timeout messages are enabled."
 msgstr "Time-out berichten ingeschakeld."
 
-#: route_replies.cpp:459
+#: route_replies.cpp:463
 msgid "Send replies (e.g. to /who) to the right client only"
 msgstr "Stuur antwoorden (zoals /who) alleen naar de juiste clients"
