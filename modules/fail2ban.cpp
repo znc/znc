@@ -176,6 +176,7 @@ class CFailToBanMod : public CModule {
         CTable Table;
         Table.AddColumn(t_s("Host", "list"));
         Table.AddColumn(t_s("Attempts", "list"));
+        Table.SetStyle(CTable::ListStyle);
 
         for (const auto& it : m_Cache.GetItems()) {
             Table.AddRow();

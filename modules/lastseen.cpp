@@ -60,6 +60,7 @@ class CLastSeenMod : public CModule {
 
         Table.AddColumn(t_s("User", "show"));
         Table.AddColumn(t_s("Last Seen", "show"));
+        Table.SetStyle(CTable::ListStyle);
 
         for (it = mUsers.begin(); it != mUsers.end(); ++it) {
             Table.AddRow();

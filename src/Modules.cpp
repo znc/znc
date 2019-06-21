@@ -2019,13 +2019,15 @@ CModCommand::CModCommand(const CString& sCmd, CmdFunc func,
     : m_sCmd(sCmd), m_pFunc(std::move(func)), m_Args(Args), m_Desc(Desc) {}
 
 void CModCommand::InitHelp(CTable& Table) {
+    Table.SetStyle(CTable::ListStyle);
     Table.AddColumn(t_s("Command", "modhelpcmd"));
     Table.AddColumn(t_s("Description", "modhelpcmd"));
 }
 
 void CModCommand::AddHelp(CTable& Table) const {
     Table.AddRow();
-    Table.SetCell(t_s("Command", "modhelpcmd"), GetCommand() + " " + GetArgs());
+    Table.SetCell(t_s("Command", "modhelpcmd"),
+                  GetCommand() + (GetArgs().empty() ? "" : " ") + GetArgs());
     Table.SetCell(t_s("Description", "modhelpcmd"), GetDescription());
 }
 

@@ -599,6 +599,7 @@ class CWatcherMod : public CModule {
 
         Table.AddColumn(t_s("Command"));
         Table.AddColumn(t_s("Description"));
+        Table.SetStyle(CTable::ListStyle);
 
         Table.AddRow();
         Table.SetCell(t_s("Command"), t_s("Add <HostMask> [Target] [Pattern]"));

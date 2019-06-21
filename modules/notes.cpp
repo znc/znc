@@ -163,6 +163,7 @@ class CNotesMod : public CModule {
             CTable Table;
             Table.AddColumn(t_s("Key"));
             Table.AddColumn(t_s("Note"));
+            Table.SetStyle(CTable::ListStyle);
 
             for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
                 Table.AddRow();
