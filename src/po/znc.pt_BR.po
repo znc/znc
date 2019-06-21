@@ -8,7 +8,7 @@ msgstr ""
 "X-Crowdin-Language: pt-BR\n"
 "X-Crowdin-File: /1.7.x/src/po/znc.pot\n"
 "Project-Id-Version: znc-bouncer\n"
-"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Last-Translator: DarthGandalf\n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
 
@@ -310,58 +310,6 @@ msgid "Unknown command!"
 msgstr "Comando desconhecido!"
 
 #: Modules.cpp:1633
-msgid "Module {1} already loaded."
-msgstr "O módulo {1} já está carregado."
-
-#: Modules.cpp:1647
-msgid "Unable to find module {1}"
-msgstr "Não foi possível encontrar o módulo {1}"
-
-#: Modules.cpp:1659
-msgid "Module {1} does not support module type {2}."
-msgstr "O módulo {1} não suporta o tipo de módulo {2}."
-
-#: Modules.cpp:1666
-msgid "Module {1} requires a user."
-msgstr "O módulo {1} requer um usuário."
-
-#: Modules.cpp:1672
-msgid "Module {1} requires a network."
-msgstr "O módulo {1} requer uma rede."
-
-#: Modules.cpp:1688
-msgid "Caught an exception"
-msgstr ""
-
-#: Modules.cpp:1694
-msgid "Module {1} aborted: {2}"
-msgstr "Módulo {1} finalizado: {2}"
-
-#: Modules.cpp:1696
-msgid "Module {1} aborted."
-msgstr "Módulo {1} finalizado."
-
-#: Modules.cpp:1720 Modules.cpp:1762
-msgid "Module [{1}] not loaded."
-msgstr "O módulo [{1}] não foi carregado."
-
-#: Modules.cpp:1744
-msgid "Module {1} unloaded."
-msgstr "Módulo {1} desligado."
-
-#: Modules.cpp:1749
-msgid "Unable to unload module {1}."
-msgstr "Não foi possível desativar o módulo {1}."
-
-#: Modules.cpp:1778
-msgid "Reloaded module {1}."
-msgstr "O módulo {1} foi reiniciado."
-
-#: Modules.cpp:1793
-msgid "Unable to find module {1}."
-msgstr "Não foi possível encontrar o módulo {1}."
-
-#: Modules.cpp:1919
 msgid ""
 "Module names can only contain letters, numbers and underscores, [{1}] is "
 "invalid"
@@ -369,36 +317,88 @@ msgstr ""
 "Os nomes de módulos podem conter apenas letras, números e underlines. [{1}] "
 "é inválido"
 
-#: Modules.cpp:1943
+#: Modules.cpp:1652
+msgid "Module {1} already loaded."
+msgstr "O módulo {1} já está carregado."
+
+#: Modules.cpp:1666
+msgid "Unable to find module {1}"
+msgstr "Não foi possível encontrar o módulo {1}"
+
+#: Modules.cpp:1678
+msgid "Module {1} does not support module type {2}."
+msgstr "O módulo {1} não suporta o tipo de módulo {2}."
+
+#: Modules.cpp:1685
+msgid "Module {1} requires a user."
+msgstr "O módulo {1} requer um usuário."
+
+#: Modules.cpp:1691
+msgid "Module {1} requires a network."
+msgstr "O módulo {1} requer uma rede."
+
+#: Modules.cpp:1707
+msgid "Caught an exception"
+msgstr ""
+
+#: Modules.cpp:1713
+msgid "Module {1} aborted: {2}"
+msgstr "Módulo {1} finalizado: {2}"
+
+#: Modules.cpp:1715
+msgid "Module {1} aborted."
+msgstr "Módulo {1} finalizado."
+
+#: Modules.cpp:1739 Modules.cpp:1781
+msgid "Module [{1}] not loaded."
+msgstr "O módulo [{1}] não foi carregado."
+
+#: Modules.cpp:1763
+msgid "Module {1} unloaded."
+msgstr "Módulo {1} desligado."
+
+#: Modules.cpp:1768
+msgid "Unable to unload module {1}."
+msgstr "Não foi possível desativar o módulo {1}."
+
+#: Modules.cpp:1797
+msgid "Reloaded module {1}."
+msgstr "O módulo {1} foi reiniciado."
+
+#: Modules.cpp:1816
+msgid "Unable to find module {1}."
+msgstr "Não foi possível encontrar o módulo {1}."
+
+#: Modules.cpp:1963
 msgid "Unknown error"
 msgstr "Erro desconhecido"
 
-#: Modules.cpp:1944
+#: Modules.cpp:1964
 msgid "Unable to open module {1}: {2}"
 msgstr "Não foi possível abrir o módulo {1}: {2}"
 
-#: Modules.cpp:1953
+#: Modules.cpp:1973
 msgid "Could not find ZNCModuleEntry in module {1}"
 msgstr ""
 
-#: Modules.cpp:1961
+#: Modules.cpp:1981
 msgid ""
 "Version mismatch for module {1}: core is {2}, module is built for {3}. "
 "Recompile this module."
 msgstr ""
 
-#: Modules.cpp:1972
+#: Modules.cpp:1992
 msgid ""
 "Module {1} is built incompatibly: core is '{2}', module is '{3}'. Recompile "
 "this module."
 msgstr ""
 
-#: Modules.cpp:2002 Modules.cpp:2008
+#: Modules.cpp:2022 Modules.cpp:2028
 msgctxt "modhelpcmd"
 msgid "Command"
 msgstr "Comando"
 
-#: Modules.cpp:2003 Modules.cpp:2009
+#: Modules.cpp:2023 Modules.cpp:2029
 msgctxt "modhelpcmd"
 msgid "Description"
 msgstr "Descrição"
@@ -414,7 +414,7 @@ msgstr "Você precisa estar conectado a uma rede para usar este comando"
 
 #: ClientCommand.cpp:58
 msgid "Usage: ListNicks <#chan>"
-msgstr ""
+msgstr "Uso: ListNicks <#canal>"
 
 #: ClientCommand.cpp:65
 msgid "You are not on [{1}]"
@@ -470,7 +470,7 @@ msgstr ""
 
 #: ClientCommand.cpp:455
 msgid "Usage: ListChans"
-msgstr ""
+msgstr "Uso: ListChans"
 
 #: ClientCommand.cpp:462
 msgid "No such user [{1}]"
@@ -573,11 +573,11 @@ msgstr ""
 
 #: ClientCommand.cpp:566
 msgid "Unable to add that network"
-msgstr ""
+msgstr "Não foi possível adicionar esta rede"
 
 #: ClientCommand.cpp:573
 msgid "Usage: DelNetwork <name>"
-msgstr ""
+msgstr "Uso: DelNetwork <nome>"
 
 #: ClientCommand.cpp:582
 msgid "Network deleted"
@@ -589,7 +589,7 @@ msgstr "Falha ao excluir rede. Talvez esta rede não existe."
 
 #: ClientCommand.cpp:595
 msgid "User {1} not found"
-msgstr ""
+msgstr "Usuário {1} não encontrado"
 
 #: ClientCommand.cpp:603 ClientCommand.cpp:611
 msgctxt "listnetworks"
@@ -638,6 +638,7 @@ msgstr "Acesso negado."
 #: ClientCommand.cpp:643
 msgid "Usage: MoveNetwork <old user> <old network> <new user> [new network]"
 msgstr ""
+"Uso: MoveNetwork <usuário antigo> <rede antiga> <novo usuário> [nova rede]"
 
 #: ClientCommand.cpp:653
 msgid "Old user {1} not found."
@@ -653,7 +654,7 @@ msgstr ""
 
 #: ClientCommand.cpp:670
 msgid "User {1} already has network {2}."
-msgstr ""
+msgstr "O usuário {1} já possui a rede {2}."
 
 #: ClientCommand.cpp:676
 msgid "Invalid network name [{1}]"
@@ -665,7 +666,7 @@ msgstr ""
 
 #: ClientCommand.cpp:706
 msgid "Error adding network: {1}"
-msgstr ""
+msgstr "Falha ao adicionar rede: {1}"
 
 #: ClientCommand.cpp:718
 msgid "Success."
@@ -765,7 +766,7 @@ msgstr ""
 #: ClientCommand.cpp:874 ClientCommand.cpp:880
 msgctxt "topicscmd"
 msgid "Channel"
-msgstr ""
+msgstr "Canal"
 
 #: ClientCommand.cpp:875 ClientCommand.cpp:881
 msgctxt "topicscmd"
@@ -814,32 +815,32 @@ msgstr ""
 #: ClientCommand.cpp:938 ClientCommand.cpp:944
 msgctxt "listavailmods"
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: ClientCommand.cpp:939 ClientCommand.cpp:949
 msgctxt "listavailmods"
 msgid "Description"
-msgstr ""
+msgstr "Descrição"
 
 #: ClientCommand.cpp:962
 msgid "No global modules available."
-msgstr ""
+msgstr "Não há módulos globais disponíveis."
 
 #: ClientCommand.cpp:973
 msgid "No user modules available."
-msgstr ""
+msgstr "Não há módulos de usuário disponíveis."
 
 #: ClientCommand.cpp:984
 msgid "No network modules available."
-msgstr ""
+msgstr "Não há módulos de rede disponíveis."
 
 #: ClientCommand.cpp:1012
 msgid "Unable to load {1}: Access denied."
-msgstr ""
+msgstr "Falha ao carregar {1}: acesso negado."
 
 #: ClientCommand.cpp:1018
 msgid "Usage: LoadMod [--type=global|user|network] <module> [args]"
-msgstr ""
+msgstr "Uso: LoadMod [--type=global|user|network] <módulo> [parâmetros]"
 
 #: ClientCommand.cpp:1025
 msgid "Unable to load {1}: {2}"
@@ -859,11 +860,11 @@ msgstr ""
 
 #: ClientCommand.cpp:1068
 msgid "Loaded module {1}"
-msgstr ""
+msgstr "Módulo {1} carregado"
 
 #: ClientCommand.cpp:1070
 msgid "Loaded module {1}: {2}"
-msgstr ""
+msgstr "Módulo {1} carregado: {2}"
 
 #: ClientCommand.cpp:1073
 msgid "Unable to load module {1}: {2}"
@@ -919,7 +920,7 @@ msgstr ""
 
 #: ClientCommand.cpp:1236
 msgid "Usage: UpdateMod <module>"
-msgstr ""
+msgstr "Uso: UpdateMod <módulo>"
 
 #: ClientCommand.cpp:1240
 msgid "Reloading {1} everywhere"

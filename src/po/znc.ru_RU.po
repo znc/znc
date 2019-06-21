@@ -10,7 +10,7 @@ msgstr ""
 "X-Crowdin-Language: ru\n"
 "X-Crowdin-File: /1.7.x/src/po/znc.pot\n"
 "Project-Id-Version: znc-bouncer\n"
-"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Last-Translator: DarthGandalf\n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
 
@@ -317,58 +317,6 @@ msgid "Unknown command!"
 msgstr "Неизвестная команда!"
 
 #: Modules.cpp:1633
-msgid "Module {1} already loaded."
-msgstr "Модуль {1} уже загружен."
-
-#: Modules.cpp:1647
-msgid "Unable to find module {1}"
-msgstr "Не могу найти модуль {1}"
-
-#: Modules.cpp:1659
-msgid "Module {1} does not support module type {2}."
-msgstr "Модуль {1} не поддерживает тип модулей «{2}»."
-
-#: Modules.cpp:1666
-msgid "Module {1} requires a user."
-msgstr "Модулю {1} необходим пользователь."
-
-#: Modules.cpp:1672
-msgid "Module {1} requires a network."
-msgstr "Модулю {1} необходима сеть."
-
-#: Modules.cpp:1688
-msgid "Caught an exception"
-msgstr "Поймано исключение"
-
-#: Modules.cpp:1694
-msgid "Module {1} aborted: {2}"
-msgstr "Модуль {1} прервал: {2}"
-
-#: Modules.cpp:1696
-msgid "Module {1} aborted."
-msgstr "Модуль {1} прервал."
-
-#: Modules.cpp:1720 Modules.cpp:1762
-msgid "Module [{1}] not loaded."
-msgstr "Модуль [{1}] не загружен."
-
-#: Modules.cpp:1744
-msgid "Module {1} unloaded."
-msgstr "Модуль {1} выгружен."
-
-#: Modules.cpp:1749
-msgid "Unable to unload module {1}."
-msgstr "Не могу выгрузить модуль {1}."
-
-#: Modules.cpp:1778
-msgid "Reloaded module {1}."
-msgstr "Модуль {1} перезагружен."
-
-#: Modules.cpp:1793
-msgid "Unable to find module {1}."
-msgstr "Не могу найти модуль {1}."
-
-#: Modules.cpp:1919
 msgid ""
 "Module names can only contain letters, numbers and underscores, [{1}] is "
 "invalid"
@@ -376,26 +324,78 @@ msgstr ""
 "Названия модуля может содержать только латинские буквы, цифры и знак "
 "подчёркивания; [{1}] не соответствует требованиям"
 
-#: Modules.cpp:1943
+#: Modules.cpp:1652
+msgid "Module {1} already loaded."
+msgstr "Модуль {1} уже загружен."
+
+#: Modules.cpp:1666
+msgid "Unable to find module {1}"
+msgstr "Не могу найти модуль {1}"
+
+#: Modules.cpp:1678
+msgid "Module {1} does not support module type {2}."
+msgstr "Модуль {1} не поддерживает тип модулей «{2}»."
+
+#: Modules.cpp:1685
+msgid "Module {1} requires a user."
+msgstr "Модулю {1} необходим пользователь."
+
+#: Modules.cpp:1691
+msgid "Module {1} requires a network."
+msgstr "Модулю {1} необходима сеть."
+
+#: Modules.cpp:1707
+msgid "Caught an exception"
+msgstr "Поймано исключение"
+
+#: Modules.cpp:1713
+msgid "Module {1} aborted: {2}"
+msgstr "Модуль {1} прервал: {2}"
+
+#: Modules.cpp:1715
+msgid "Module {1} aborted."
+msgstr "Модуль {1} прервал."
+
+#: Modules.cpp:1739 Modules.cpp:1781
+msgid "Module [{1}] not loaded."
+msgstr "Модуль [{1}] не загружен."
+
+#: Modules.cpp:1763
+msgid "Module {1} unloaded."
+msgstr "Модуль {1} выгружен."
+
+#: Modules.cpp:1768
+msgid "Unable to unload module {1}."
+msgstr "Не могу выгрузить модуль {1}."
+
+#: Modules.cpp:1797
+msgid "Reloaded module {1}."
+msgstr "Модуль {1} перезагружен."
+
+#: Modules.cpp:1816
+msgid "Unable to find module {1}."
+msgstr "Не могу найти модуль {1}."
+
+#: Modules.cpp:1963
 msgid "Unknown error"
 msgstr "Неизвестная ошибка"
 
-#: Modules.cpp:1944
+#: Modules.cpp:1964
 msgid "Unable to open module {1}: {2}"
 msgstr "Не могу открыть модуль {1}: {2}"
 
-#: Modules.cpp:1953
+#: Modules.cpp:1973
 msgid "Could not find ZNCModuleEntry in module {1}"
 msgstr "Не могу найти ZNCModuleEntry в модуле {1}"
 
-#: Modules.cpp:1961
+#: Modules.cpp:1981
 msgid ""
 "Version mismatch for module {1}: core is {2}, module is built for {3}. "
 "Recompile this module."
 msgstr ""
 "Ядро имеет версию {2}, а модуль {1} собран для {3}. Пересоберите этот модуль."
 
-#: Modules.cpp:1972
+#: Modules.cpp:1992
 msgid ""
 "Module {1} is built incompatibly: core is '{2}', module is '{3}'. Recompile "
 "this module."
@@ -403,12 +403,12 @@ msgstr ""
 "Модуль {1} собран не так: ядро — «{2}», а модуль — «{3}». Пересоберите этот "
 "модуль."
 
-#: Modules.cpp:2002 Modules.cpp:2008
+#: Modules.cpp:2022 Modules.cpp:2028
 msgctxt "modhelpcmd"
 msgid "Command"
 msgstr "Команда"
 
-#: Modules.cpp:2003 Modules.cpp:2009
+#: Modules.cpp:2023 Modules.cpp:2029
 msgctxt "modhelpcmd"
 msgid "Description"
 msgstr "Описание"

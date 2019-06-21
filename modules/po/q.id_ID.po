@@ -8,33 +8,33 @@ msgstr ""
 "X-Crowdin-Language: id\n"
 "X-Crowdin-File: /1.7.x/modules/po/q.pot\n"
 "Project-Id-Version: znc-bouncer\n"
-"Last-Translator: DarthGandalf <alexey+crowdin@asokolov.org>\n"
+"Last-Translator: DarthGandalf\n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
 
 #: modules/po/../data/q/tmpl/index.tmpl:11
 msgid "Username:"
-msgstr "Nama pengguna:"
+msgstr ""
 
 #: modules/po/../data/q/tmpl/index.tmpl:13
 msgid "Please enter a username."
-msgstr "Silahkan masukan nama pengguna."
+msgstr ""
 
 #: modules/po/../data/q/tmpl/index.tmpl:16
 msgid "Password:"
-msgstr "Kata Sandi:"
+msgstr ""
 
 #: modules/po/../data/q/tmpl/index.tmpl:18
 msgid "Please enter a password."
-msgstr "Silakan masukkan sandi."
+msgstr ""
 
 #: modules/po/../data/q/tmpl/index.tmpl:26
 msgid "Options"
-msgstr "Opsi"
+msgstr ""
 
 #: modules/po/../data/q/tmpl/index.tmpl:42
 msgid "Save"
-msgstr "Simpan"
+msgstr ""
 
 #: q.cpp:74
 msgid ""
@@ -45,45 +45,41 @@ msgstr ""
 
 #: q.cpp:111
 msgid "The following commands are available:"
-msgstr "Perintah berikut tersedia:"
+msgstr ""
 
 #: q.cpp:113 q.cpp:116 q.cpp:121 q.cpp:126 q.cpp:130 q.cpp:135 q.cpp:140
 msgid "Command"
-msgstr "Perintah"
+msgstr ""
 
 #: q.cpp:114 q.cpp:117 q.cpp:123 q.cpp:127 q.cpp:132 q.cpp:136 q.cpp:141
 #: q.cpp:150 q.cpp:154 q.cpp:158 q.cpp:162 q.cpp:168 q.cpp:174 q.cpp:180
 #: q.cpp:186
 msgid "Description"
-msgstr "Deskripsi"
+msgstr ""
 
 #: q.cpp:116
 msgid "Auth [<username> <password>]"
-msgstr "Auth [<username> <password>]"
+msgstr ""
 
 #: q.cpp:118
 msgid "Tries to authenticate you with Q. Both parameters are optional."
 msgstr ""
-"Mencoba untuk mengautentikasi anda dengan Q. Kedua parameter bersifat "
-"opsional."
 
 #: q.cpp:124
 msgid "Tries to set usermode +x to hide your real hostname."
 msgstr ""
-"Mencoba untuk menetapkan usermode +x untuk menyembunyikan nama host anda "
-"yang sebenarnya."
 
 #: q.cpp:128
 msgid "Prints the current status of the module."
-msgstr "Mencetak status modul saat ini."
+msgstr ""
 
 #: q.cpp:133
 msgid "Re-requests the current user information from Q."
-msgstr "Minta ulang informasi pengguna saat ini dari Q."
+msgstr ""
 
 #: q.cpp:135
 msgid "Set <setting> <value>"
-msgstr "Set <setting> <value>"
+msgstr ""
 
 #: q.cpp:137
 msgid "Changes the value of the given setting. See the list of settings below."
@@ -101,16 +97,16 @@ msgstr ""
 #: q.cpp:183 q.cpp:227 q.cpp:230 q.cpp:233 q.cpp:236 q.cpp:239 q.cpp:242
 #: q.cpp:245 q.cpp:248
 msgid "Setting"
-msgstr "Setelan"
+msgstr ""
 
 #: q.cpp:149 q.cpp:153 q.cpp:157 q.cpp:161 q.cpp:167 q.cpp:173 q.cpp:179
 #: q.cpp:184
 msgid "Type"
-msgstr "Tipe"
+msgstr ""
 
 #: q.cpp:153 q.cpp:157
 msgid "String"
-msgstr "String"
+msgstr ""
 
 #: q.cpp:154
 msgid "Your Q username."
