@@ -1,0 +1,61 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: bg\n"
+"X-Crowdin-File: /1.7.x/modules/po/admindebug.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf\n"
+"Language-Team: Bulgarian\n"
+"Language: bg_BG\n"
+
+#: admindebug.cpp:30
+msgid "Enable Debug Mode"
+msgstr "Активиране на Debug "
+
+#: admindebug.cpp:32
+msgid "Disable Debug Mode"
+msgstr "Деактивиране на Debug "
+
+#: admindebug.cpp:34
+msgid "Show the Debug Mode status"
+msgstr "Покажи статуса на Debug мода"
+
+#: admindebug.cpp:40 admindebug.cpp:49
+msgid "Access denied!"
+msgstr "Достъпът е отказан!"
+
+#: admindebug.cpp:58
+msgid ""
+"Failure. We need to be running with a TTY. (is ZNC running with --"
+"foreground?)"
+msgstr ""
+"Повреда. Трябва да работим с TTY. (Може би ZNC е подкаран с опцията -"
+"foreground?)"
+
+#: admindebug.cpp:66
+msgid "Already enabled."
+msgstr "Вече е активиран."
+
+#: admindebug.cpp:68
+msgid "Already disabled."
+msgstr "Вече е деактивиран."
+
+#: admindebug.cpp:92
+msgid "Debugging mode is on."
+msgstr "Debugging mode е включен."
+
+#: admindebug.cpp:94
+msgid "Debugging mode is off."
+msgstr "Debugging mode е изключен."
+
+#: admindebug.cpp:96
+msgid "Logging to: stdout."
+msgstr "Влизане в: stdout."
+
+#: admindebug.cpp:105
+msgid "Enable Debug mode dynamically."
+msgstr "Активирайте Debug модула динамично."
