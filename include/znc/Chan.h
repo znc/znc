@@ -76,6 +76,7 @@ class CChan : private CCoreTranslationMixin {
                const CString& sHost);
 
     // Modes
+    /// @deprecated Use SetModes(CString, VCString)
     void SetModes(const CString& s);
     /**
      * Set the current modes for this channel
@@ -83,6 +84,7 @@ class CChan : private CCoreTranslationMixin {
      * @param vsModeParams The parameters for the modes to be set
      */
     void SetModes(const CString& sModes, const VCString& vsModeParams);
+    /// @deprecated Use ModeChange(CString, VCString, CNick*)
     void ModeChange(const CString& sModes, const CNick* OpNick = nullptr);
     /**
      * Handle changing the modes on a channel
