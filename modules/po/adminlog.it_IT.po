@@ -1,0 +1,69 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Language: it\n"
+"X-Crowdin-File: /1.7.x/modules/po/adminlog.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf\n"
+"Language-Team: Italian\n"
+"Language: it_IT\n"
+
+#: adminlog.cpp:29
+msgid "Show the logging target"
+msgstr ""
+
+#: adminlog.cpp:31
+msgid "<file|syslog|both> [path]"
+msgstr ""
+
+#: adminlog.cpp:32
+msgid "Set the logging target"
+msgstr ""
+
+#: adminlog.cpp:142
+msgid "Access denied"
+msgstr ""
+
+#: adminlog.cpp:156
+msgid "Now logging to file"
+msgstr ""
+
+#: adminlog.cpp:160
+msgid "Now only logging to syslog"
+msgstr ""
+
+#: adminlog.cpp:164
+msgid "Now logging to syslog and file"
+msgstr ""
+
+#: adminlog.cpp:168
+msgid "Usage: Target <file|syslog|both> [path]"
+msgstr ""
+
+#: adminlog.cpp:170
+msgid "Unknown target"
+msgstr ""
+
+#: adminlog.cpp:192
+msgid "Logging is enabled for file"
+msgstr ""
+
+#: adminlog.cpp:195
+msgid "Logging is enabled for syslog"
+msgstr ""
+
+#: adminlog.cpp:198
+msgid "Logging is enabled for both, file and syslog"
+msgstr ""
+
+#: adminlog.cpp:204
+msgid "Log file will be written to {1}"
+msgstr ""
+
+#: adminlog.cpp:222
+msgid "Log ZNC events to file and/or syslog."
+msgstr ""
