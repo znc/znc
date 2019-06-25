@@ -42,7 +42,7 @@ msgstr ""
 
 #: blockuser.cpp:76
 msgid "Access denied"
-msgstr ""
+msgstr "Accesso negato"
 
 #: blockuser.cpp:85
 msgid "No users are blocked"
@@ -50,7 +50,7 @@ msgstr ""
 
 #: blockuser.cpp:88
 msgid "Blocked users:"
-msgstr ""
+msgstr "Utenti bloccati:"
 
 #: blockuser.cpp:100
 msgid "Usage: Block <user>"

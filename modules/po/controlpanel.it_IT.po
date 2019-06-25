@@ -15,28 +15,28 @@ msgstr ""
 #: controlpanel.cpp:51 controlpanel.cpp:63
 msgctxt "helptable"
 msgid "Type"
-msgstr ""
+msgstr "Tipo"
 
 #: controlpanel.cpp:52 controlpanel.cpp:65
 msgctxt "helptable"
 msgid "Variables"
-msgstr ""
+msgstr "Variabili"
 
 #: controlpanel.cpp:77
 msgid "String"
-msgstr ""
+msgstr "Stringa"
 
 #: controlpanel.cpp:78
 msgid "Boolean (true/false)"
-msgstr ""
+msgstr "Boolean (vero / falso)"
 
 #: controlpanel.cpp:79
 msgid "Integer"
-msgstr ""
+msgstr "Numero intero"
 
 #: controlpanel.cpp:80
 msgid "Number"
-msgstr ""
+msgstr "Numero"
 
 #: controlpanel.cpp:123
 msgid "The following variables are available when using the Set/Get commands:"

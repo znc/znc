@@ -14,7 +14,7 @@ msgstr ""
 
 #: autovoice.cpp:120
 msgid "List all users"
-msgstr ""
+msgstr "Elenca tutti gli utenti"
 
 #: autovoice.cpp:122 autovoice.cpp:125
 msgid "<user> <channel> [channel] ..."
@@ -34,7 +34,7 @@ msgstr ""
 
 #: autovoice.cpp:129
 msgid "Adds a user"
-msgstr ""
+msgstr "Aggiungi un utente"
 
 #: autovoice.cpp:131
 msgid "<user>"
@@ -42,7 +42,7 @@ msgstr ""
 
 #: autovoice.cpp:131
 msgid "Removes a user"
-msgstr ""
+msgstr "Rimuovi un utente"
 
 #: autovoice.cpp:215
 msgid "Usage: AddUser <user> <hostmask> [channels]"
@@ -58,7 +58,7 @@ msgstr ""
 
 #: autovoice.cpp:244 autovoice.cpp:250
 msgid "User"
-msgstr ""
+msgstr "Utente"
 
 #: autovoice.cpp:245 autovoice.cpp:251
 msgid "Hostmask"
@@ -66,7 +66,7 @@ msgstr ""
 
 #: autovoice.cpp:246 autovoice.cpp:252
 msgid "Channels"
-msgstr ""
+msgstr "Canali"
 
 #: autovoice.cpp:263
 msgid "Usage: AddChans <user> <channel> [channel] ..."
@@ -74,7 +74,7 @@ msgstr ""
 
 #: autovoice.cpp:270 autovoice.cpp:292 autovoice.cpp:329
 msgid "No such user"
-msgstr ""
+msgstr "Utente non presente"
 
 #: autovoice.cpp:275
 msgid "Channel(s) added to user {1}"

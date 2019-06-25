@@ -14,7 +14,7 @@ msgstr ""
 
 #: autoop.cpp:154
 msgid "List all users"
-msgstr ""
+msgstr "Elenca tutti gli utenti"
 
 #: autoop.cpp:156 autoop.cpp:159
 msgid "<user> <channel> [channel] ..."
@@ -78,11 +78,11 @@ msgstr ""
 
 #: autoop.cpp:308 autoop.cpp:318
 msgid "Key"
-msgstr ""
+msgstr "Key"
 
 #: autoop.cpp:309 autoop.cpp:319
 msgid "Channels"
-msgstr ""
+msgstr "Canali"
 
 #: autoop.cpp:337
 msgid "Usage: AddChans <user> <channel> [channel] ..."
@@ -90,7 +90,7 @@ msgstr ""
 
 #: autoop.cpp:344 autoop.cpp:365 autoop.cpp:387 autoop.cpp:408 autoop.cpp:472
 msgid "No such user"
-msgstr ""
+msgstr "Utente non presente"
 
 #: autoop.cpp:349
 msgid "Channel(s) added to user {1}"

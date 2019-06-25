@@ -18,7 +18,7 @@ msgstr ""
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:11
 msgid "Key:"
-msgstr ""
+msgstr "Key:"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:15
 msgid "Add Key"
@@ -101,7 +101,7 @@ msgstr ""
 
 #: certauth.cpp:215
 msgid "Removed"
-msgstr ""
+msgstr "Rimosso"
 
 #: certauth.cpp:290
 msgid "Allows users to authenticate via SSL client certificates."
