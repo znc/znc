@@ -11,6 +11,8 @@ if ($ENV{MSGFILTER_MSGID}) {
 	print $text;
 } else {
 	for (split(/^/, $text)) {
-		print unless /^PO-Revision-Date:/;
+		next if /^PO-Revision-Date:/;
+		s/^Last-Translator: \K.*/Various people/;
+		print;
 	}
 }
