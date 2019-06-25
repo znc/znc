@@ -30,7 +30,7 @@ msgstr ""
 
 #: buffextras.cpp:73
 msgid "{1} joined"
-msgstr ""
+msgstr "{1} è entrato"
 
 #: buffextras.cpp:81
 msgid "{1} parted: {2}"

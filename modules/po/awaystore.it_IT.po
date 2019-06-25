@@ -18,7 +18,7 @@ msgstr ""
 
 #: awaystore.cpp:78 awaystore.cpp:385 awaystore.cpp:388
 msgid "Welcome back!"
-msgstr ""
+msgstr "Bentornato!"
 
 #: awaystore.cpp:100
 msgid "Deleted {1} messages"
@@ -42,7 +42,7 @@ msgstr ""
 
 #: awaystore.cpp:124
 msgid "There are no messages to save"
-msgstr ""
+msgstr "Non sono presenti messaggi da salvare"
 
 #: awaystore.cpp:135
 msgid "Password updated to [{1}]"
@@ -66,7 +66,7 @@ msgstr ""
 
 #: awaystore.cpp:188 awaystore.cpp:197
 msgid "Timer disabled"
-msgstr ""
+msgstr "Timer disabilitato"
 
 #: awaystore.cpp:199
 msgid "Timer set to {1} seconds"

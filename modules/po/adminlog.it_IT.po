@@ -26,7 +26,7 @@ msgstr ""
 
 #: adminlog.cpp:142
 msgid "Access denied"
-msgstr ""
+msgstr "Accesso negato"
 
 #: adminlog.cpp:156
 msgid "Now logging to file"
