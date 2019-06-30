@@ -251,6 +251,8 @@ if(csocket_files STREQUAL "")
 		message(FATAL_ERROR
 			" It looks like git submodules are not initialized.\n"
 			" Either this is not a git clone, or you don't have git installed")
+			" If you downloaded the source file from git submodules are not included \n"
+			" you'll need to fetch the modules in \"third_party\" manually ")
 	else()
 		message(FATAL_ERROR
 			" It looks like git submodules are not initialized.\n"
