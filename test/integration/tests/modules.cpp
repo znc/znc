@@ -123,7 +123,7 @@ TEST_F(ZNCTest, ModuleCrypt) {
     client2.Write("PRIVMSG *crypt :listkeys");
     QByteArray key2("");
     client2.ReadUntilAndGet("\002user\017: ", key2);
-    ASSERT_EQ(key1.mid(11), key2.mid(11));
+    ASSERT_EQ(key1.mid(9), key2.mid(8));
     client1.Write("CAP REQ :echo-message");
     client1.Write("PRIVMSG .nick2 :Hello");
     QByteArray secretmsg;
