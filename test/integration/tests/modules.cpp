@@ -119,11 +119,11 @@ TEST_F(ZNCTest, ModuleCrypt) {
 
     client1.Write("PRIVMSG *crypt :listkeys");
     QByteArray key1("");
-    client1.ReadUntilAndGet("| nick2  | ", key1);
+    client1.ReadUntilAndGet("\002nick2\017: ", key1);
     client2.Write("PRIVMSG *crypt :listkeys");
     QByteArray key2("");
-    client2.ReadUntilAndGet("| user   | ", key2);
-    ASSERT_EQ(key1.mid(11), key2.mid(11));
+    client2.ReadUntilAndGet("\002user\017: ", key2);
+    ASSERT_EQ(key1.mid(9), key2.mid(8));
     client1.Write("CAP REQ :echo-message");
     client1.Write("PRIVMSG .nick2 :Hello");
     QByteArray secretmsg;
