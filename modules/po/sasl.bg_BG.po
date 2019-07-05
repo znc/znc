@@ -6,6 +6,7 @@ msgstr ""
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: bg\n"
+<<<<<<< HEAD
 "X-Crowdin-File: /master/modules/po/sasl.pot\n"
 "Project-Id-Version: znc-bouncer\n"
 "Last-Translator: Various people\n"
@@ -13,6 +14,15 @@ msgstr ""
 "Language: bg_BG\n"
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:7 sasl.cpp:292
+=======
+"X-Crowdin-File: /1.7.x/modules/po/sasl.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf\n"
+"Language-Team: Bulgarian\n"
+"Language: bg_BG\n"
+
+#: modules/po/../data/sasl/tmpl/index.tmpl:7 sasl.cpp:290
+>>>>>>> 1.7.x
 msgid "SASL"
 msgstr ""
 
@@ -52,7 +62,11 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
+<<<<<<< HEAD
 #: modules/po/../data/sasl/tmpl/index.tmpl:43 sasl.cpp:89 sasl.cpp:95
+=======
+#: modules/po/../data/sasl/tmpl/index.tmpl:43 sasl.cpp:89 sasl.cpp:94
+>>>>>>> 1.7.x
 msgid "Description"
 msgstr ""
 
@@ -107,6 +121,7 @@ msgstr ""
 msgid "Don't connect unless SASL authentication succeeds"
 msgstr ""
 
+<<<<<<< HEAD
 #: sasl.cpp:88 sasl.cpp:94
 msgid "Mechanism"
 msgstr ""
@@ -168,6 +183,69 @@ msgid "{1} mechanism failed."
 msgstr ""
 
 #: sasl.cpp:337
+=======
+#: sasl.cpp:88 sasl.cpp:93
+msgid "Mechanism"
+msgstr ""
+
+#: sasl.cpp:97
+msgid "The following mechanisms are available:"
+msgstr ""
+
+#: sasl.cpp:107
+msgid "Username is currently not set"
+msgstr ""
+
+#: sasl.cpp:109
+msgid "Username is currently set to '{1}'"
+msgstr ""
+
+#: sasl.cpp:112
+msgid "Password was not supplied"
+msgstr ""
+
+#: sasl.cpp:114
+msgid "Password was supplied"
+msgstr ""
+
+#: sasl.cpp:122
+msgid "Username has been set to [{1}]"
+msgstr ""
+
+#: sasl.cpp:123
+msgid "Password has been set to [{1}]"
+msgstr ""
+
+#: sasl.cpp:143
+msgid "Current mechanisms set: {1}"
+msgstr ""
+
+#: sasl.cpp:152
+msgid "We require SASL negotiation to connect"
+msgstr ""
+
+#: sasl.cpp:154
+msgid "We will connect even if SASL fails"
+msgstr ""
+
+#: sasl.cpp:191
+msgid "Disabling network, we require authentication."
+msgstr ""
+
+#: sasl.cpp:192
+msgid "Use 'RequireAuth no' to disable."
+msgstr ""
+
+#: sasl.cpp:245
+msgid "{1} mechanism succeeded."
+msgstr ""
+
+#: sasl.cpp:257
+msgid "{1} mechanism failed."
+msgstr ""
+
+#: sasl.cpp:335
+>>>>>>> 1.7.x
 msgid ""
 "Adds support for sasl authentication capability to authenticate to an IRC "
 "server"

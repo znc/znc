@@ -10,7 +10,11 @@ msgstr ""
 "X-Crowdin-Language: ru\n"
 "X-Crowdin-File: /master/src/po/znc.pot\n"
 "Project-Id-Version: znc-bouncer\n"
+<<<<<<< HEAD
 "Last-Translator: Various people\n"
+=======
+"Last-Translator: DarthGandalf\n"
+>>>>>>> 1.7.x
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
 
@@ -403,12 +407,20 @@ msgstr ""
 "Модуль {1} собран не так: ядро — «{2}», а модуль — «{3}». Пересоберите этот "
 "модуль."
 
+<<<<<<< HEAD
 #: Modules.cpp:2023 Modules.cpp:2029
+=======
+#: Modules.cpp:2022 Modules.cpp:2028
+>>>>>>> 1.7.x
 msgctxt "modhelpcmd"
 msgid "Command"
 msgstr "Команда"
 
+<<<<<<< HEAD
 #: Modules.cpp:2024 Modules.cpp:2031
+=======
+#: Modules.cpp:2023 Modules.cpp:2029
+>>>>>>> 1.7.x
 msgctxt "modhelpcmd"
 msgid "Description"
 msgstr "Описание"

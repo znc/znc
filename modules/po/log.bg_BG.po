@@ -6,9 +6,15 @@ msgstr ""
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: bg\n"
+<<<<<<< HEAD
 "X-Crowdin-File: /master/modules/po/log.pot\n"
 "Project-Id-Version: znc-bouncer\n"
 "Last-Translator: Various people\n"
+=======
+"X-Crowdin-File: /1.7.x/modules/po/log.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Last-Translator: DarthGandalf\n"
+>>>>>>> 1.7.x
 "Language-Team: Bulgarian\n"
 "Language: bg_BG\n"
 
@@ -48,7 +54,11 @@ msgstr ""
 msgid "Wildcards are allowed"
 msgstr ""
 
+<<<<<<< HEAD
 #: log.cpp:156 log.cpp:179
+=======
+#: log.cpp:156 log.cpp:178
+>>>>>>> 1.7.x
 msgid "No logging rules. Everything is logged."
 msgstr ""
 
@@ -58,21 +68,34 @@ msgid_plural "{1} rules removed: {2}"
 msgstr[0] ""
 msgstr[1] ""
 
+<<<<<<< HEAD
 #: log.cpp:168 log.cpp:174
+=======
+#: log.cpp:168 log.cpp:173
+>>>>>>> 1.7.x
 msgctxt "listrules"
 msgid "Rule"
 msgstr ""
 
+<<<<<<< HEAD
 #: log.cpp:169 log.cpp:175
+=======
+#: log.cpp:169 log.cpp:174
+>>>>>>> 1.7.x
 msgctxt "listrules"
 msgid "Logging enabled"
 msgstr ""
 
+<<<<<<< HEAD
 #: log.cpp:190
+=======
+#: log.cpp:189
+>>>>>>> 1.7.x
 msgid ""
 "Usage: Set <var> true|false, where <var> is one of: joins, quits, nickchanges"
 msgstr ""
 
+<<<<<<< HEAD
 #: log.cpp:197
 msgid "Will log joins"
 msgstr ""
@@ -126,11 +149,67 @@ msgid "Not logging nick changes"
 msgstr ""
 
 #: log.cpp:352
+=======
+#: log.cpp:196
+msgid "Will log joins"
+msgstr ""
+
+#: log.cpp:196
+msgid "Will not log joins"
+msgstr ""
+
+#: log.cpp:197
+msgid "Will log quits"
+msgstr ""
+
+#: log.cpp:197
+msgid "Will not log quits"
+msgstr ""
+
+#: log.cpp:199
+msgid "Will log nick changes"
+msgstr ""
+
+#: log.cpp:199
+msgid "Will not log nick changes"
+msgstr ""
+
+#: log.cpp:203
+msgid "Unknown variable. Known variables: joins, quits, nickchanges"
+msgstr ""
+
+#: log.cpp:211
+msgid "Logging joins"
+msgstr ""
+
+#: log.cpp:211
+msgid "Not logging joins"
+msgstr ""
+
+#: log.cpp:212
+msgid "Logging quits"
+msgstr ""
+
+#: log.cpp:212
+msgid "Not logging quits"
+msgstr ""
+
+#: log.cpp:213
+msgid "Logging nick changes"
+msgstr ""
+
+#: log.cpp:214
+msgid "Not logging nick changes"
+msgstr ""
+
+#: log.cpp:351
+>>>>>>> 1.7.x
 msgid ""
 "Invalid args [{1}]. Only one log path allowed.  Check that there are no "
 "spaces in the path."
 msgstr ""
 
+<<<<<<< HEAD
 #: log.cpp:402
 msgid "Invalid log path [{1}]"
 msgstr ""
@@ -144,5 +223,20 @@ msgid "[-sanitize] Optional path where to store logs."
 msgstr ""
 
 #: log.cpp:564
+=======
+#: log.cpp:401
+msgid "Invalid log path [{1}]"
+msgstr ""
+
+#: log.cpp:404
+msgid "Logging to [{1}]. Using timestamp format '{2}'"
+msgstr ""
+
+#: log.cpp:559
+msgid "[-sanitize] Optional path where to store logs."
+msgstr ""
+
+#: log.cpp:563
+>>>>>>> 1.7.x
 msgid "Writes IRC logs."
 msgstr ""

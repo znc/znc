@@ -250,7 +250,8 @@ if(csocket_files STREQUAL "")
 	if(git_status_var)
 		message(FATAL_ERROR
 			" It looks like git submodules are not initialized.\n"
-			" Either this is not a git clone, or you don't have git installed")
+			" Either this is not a git clone, or you don't have git installed.\n"
+			" Fetch the tarball from the website: https://znc.in/releases/ ")
 	else()
 		message(FATAL_ERROR
 			" It looks like git submodules are not initialized.\n"
