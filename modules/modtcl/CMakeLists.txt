@@ -16,3 +16,6 @@
 
 set(modinclude_modtcl PRIVATE ${TCL_INCLUDE_PATH} PARENT_SCOPE)
 set(modlink_modtcl PRIVATE ${TCL_LIBRARY} PARENT_SCOPE)
+
+install(FILES "modtcl.tcl" "binds.tcl"
+	DESTINATION "${CMAKE_INSTALL_DATADIR}/znc/modtcl")
