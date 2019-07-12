@@ -6,15 +6,9 @@ msgstr ""
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: it\n"
-<<<<<<< HEAD
 "X-Crowdin-File: /master/modules/po/certauth.pot\n"
 "Project-Id-Version: znc-bouncer\n"
 "Last-Translator: Various people\n"
-=======
-"X-Crowdin-File: /1.7.x/modules/po/certauth.pot\n"
-"Project-Id-Version: znc-bouncer\n"
-"Last-Translator: DarthGandalf\n"
->>>>>>> 1.7.x
 "Language-Team: Italian\n"
 "Language: it_IT\n"
 
@@ -87,25 +81,16 @@ msgstr ""
 msgid "The key '{1}' is already added."
 msgstr ""
 
-<<<<<<< HEAD
 #: certauth.cpp:170 certauth.cpp:183
-=======
-#: certauth.cpp:170 certauth.cpp:182
->>>>>>> 1.7.x
 msgctxt "list"
 msgid "Id"
 msgstr ""
 
-<<<<<<< HEAD
 #: certauth.cpp:171 certauth.cpp:184
-=======
-#: certauth.cpp:171 certauth.cpp:183
->>>>>>> 1.7.x
 msgctxt "list"
 msgid "Key"
 msgstr ""
 
-<<<<<<< HEAD
 #: certauth.cpp:176 certauth.cpp:190 certauth.cpp:199
 msgid "No keys set for your user"
 msgstr ""
@@ -119,20 +104,5 @@ msgid "Removed"
 msgstr "Rimosso"
 
 #: certauth.cpp:291
-=======
-#: certauth.cpp:175 certauth.cpp:189 certauth.cpp:198
-msgid "No keys set for your user"
-msgstr ""
-
-#: certauth.cpp:203
-msgid "Invalid #, check \"list\""
-msgstr ""
-
-#: certauth.cpp:215
-msgid "Removed"
-msgstr "Rimosso"
-
-#: certauth.cpp:290
->>>>>>> 1.7.x
 msgid "Allows users to authenticate via SSL client certificates."
 msgstr ""

@@ -6,15 +6,9 @@ msgstr ""
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: bg\n"
-<<<<<<< HEAD
 "X-Crowdin-File: /master/modules/po/crypt.pot\n"
 "Project-Id-Version: znc-bouncer\n"
 "Last-Translator: Various people\n"
-=======
-"X-Crowdin-File: /1.7.x/modules/po/crypt.pot\n"
-"Project-Id-Version: znc-bouncer\n"
-"Last-Translator: DarthGandalf\n"
->>>>>>> 1.7.x
 "Language-Team: Bulgarian\n"
 "Language: bg_BG\n"
 
@@ -130,36 +124,20 @@ msgstr ""
 msgid "Setting Nick Prefix to {1}"
 msgstr ""
 
-<<<<<<< HEAD
 #: crypt.cpp:474 crypt.cpp:481
-=======
-#: crypt.cpp:474 crypt.cpp:480
->>>>>>> 1.7.x
 msgctxt "listkeys"
 msgid "Target"
 msgstr ""
 
-<<<<<<< HEAD
 #: crypt.cpp:475 crypt.cpp:482
-=======
-#: crypt.cpp:475 crypt.cpp:481
->>>>>>> 1.7.x
 msgctxt "listkeys"
 msgid "Key"
 msgstr ""
 
-<<<<<<< HEAD
 #: crypt.cpp:486
 msgid "You have no encryption keys set."
 msgstr ""
 
 #: crypt.cpp:508
-=======
-#: crypt.cpp:485
-msgid "You have no encryption keys set."
-msgstr ""
-
-#: crypt.cpp:507
->>>>>>> 1.7.x
 msgid "Encryption for channel/private messages"
 msgstr ""
