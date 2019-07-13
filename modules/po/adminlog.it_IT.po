@@ -8,21 +8,21 @@ msgstr ""
 "X-Crowdin-Language: it\n"
 "X-Crowdin-File: /1.7.x/modules/po/adminlog.pot\n"
 "Project-Id-Version: znc-bouncer\n"
-"Last-Translator: DarthGandalf\n"
+"Last-Translator: Various people\n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
 
 #: adminlog.cpp:29
 msgid "Show the logging target"
-msgstr ""
+msgstr "Mostra il target (destinazione) del logging"
 
 #: adminlog.cpp:31
 msgid "<file|syslog|both> [path]"
-msgstr ""
+msgstr "Usa: Target <file|syslog|both> [path]"
 
 #: adminlog.cpp:32
 msgid "Set the logging target"
-msgstr ""
+msgstr "Imposta il target (destinazione) del logging"
 
 #: adminlog.cpp:142
 msgid "Access denied"
@@ -30,40 +30,40 @@ msgstr "Accesso negato"
 
 #: adminlog.cpp:156
 msgid "Now logging to file"
-msgstr ""
+msgstr "Nuovo logging su file"
 
 #: adminlog.cpp:160
 msgid "Now only logging to syslog"
-msgstr ""
+msgstr "Ora logging solo su syslog"
 
 #: adminlog.cpp:164
 msgid "Now logging to syslog and file"
-msgstr ""
+msgstr "Nuovo logging su syslog e file"
 
 #: adminlog.cpp:168
 msgid "Usage: Target <file|syslog|both> [path]"
-msgstr ""
+msgstr "Usa: Target <file|syslog|both> [path]"
 
 #: adminlog.cpp:170
 msgid "Unknown target"
-msgstr ""
+msgstr "Target (destinazione) sconosciuto"
 
 #: adminlog.cpp:192
 msgid "Logging is enabled for file"
-msgstr ""
+msgstr "Il logging è abilitato per i file"
 
 #: adminlog.cpp:195
 msgid "Logging is enabled for syslog"
-msgstr ""
+msgstr "Il logging è abilitato per il syslog"
 
 #: adminlog.cpp:198
 msgid "Logging is enabled for both, file and syslog"
-msgstr ""
+msgstr "Il logging è abilitato per entrambi, file e syslog"
 
 #: adminlog.cpp:204
 msgid "Log file will be written to {1}"
-msgstr ""
+msgstr "I file di Log verranno scritti su {1}"
 
 #: adminlog.cpp:222
 msgid "Log ZNC events to file and/or syslog."
-msgstr ""
+msgstr "Logga gli eventi dello ZNC su file e/o syslog."
