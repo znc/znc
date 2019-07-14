@@ -18,7 +18,7 @@ msgstr "Elenca tutti gli utenti"
 
 #: autoop.cpp:156 autoop.cpp:159
 msgid "<user> <channel> [channel] ..."
-msgstr ""
+msgstr "<utente> <canale> [canale] ..."
 
 #: autoop.cpp:157
 msgid "Adds channels to a user"
@@ -30,7 +30,7 @@ msgstr "Rimuove canali da un utente"
 
 #: autoop.cpp:162 autoop.cpp:165
 msgid "<user> <mask>,[mask] ..."
-msgstr ""
+msgstr "<utente> <maschera>,[maschera] ..."
 
 #: autoop.cpp:163
 msgid "Adds masks to a user"
@@ -42,7 +42,7 @@ msgstr "Rimuove una maschera (masks) da un utente"
 
 #: autoop.cpp:169
 msgid "<user> <hostmask>[,<hostmasks>...] <key> [channels]"
-msgstr ""
+msgstr "<utente> <hostmask>[,<hostmasks>...] <chiave> [canali]"
 
 #: autoop.cpp:170
 msgid "Adds a user"
@@ -50,7 +50,7 @@ msgstr "Aggiunge un utente"
 
 #: autoop.cpp:172
 msgid "<user>"
-msgstr ""
+msgstr "<utente>"
 
 #: autoop.cpp:172
 msgid "Removes a user"
@@ -74,7 +74,7 @@ msgstr "Utente"
 
 #: autoop.cpp:307 autoop.cpp:325
 msgid "Hostmasks"
-msgstr ""
+msgstr "Hostmasks"
 
 #: autoop.cpp:308 autoop.cpp:318
 msgid "Key"
@@ -140,18 +140,24 @@ msgstr "L'utente {1} viene aggiunto con la hostmask(s) {2}"
 msgid ""
 "[{1}] sent us a challenge but they are not opped in any defined channels."
 msgstr ""
+"[{1}] ci ha inviato una sfida ma loro non sono appati in nessuno dei canali "
+"definiti."
 
 #: autoop.cpp:536
 msgid "[{1}] sent us a challenge but they do not match a defined user."
 msgstr ""
+"[{1}] ci ha inviato una sfida ma loro non corrispondono a nessuno degli "
+"utenti definiti."
 
 #: autoop.cpp:544
 msgid "WARNING! [{1}] sent an invalid challenge."
-msgstr ""
+msgstr "AVVISO! [{1}] ha inviato una sfida non valida."
 
 #: autoop.cpp:560
 msgid "[{1}] sent an unchallenged response.  This could be due to lag."
 msgstr ""
+"[{1}] ha inviato una risposta in contrastante.  Questo potrebbe essere "
+"dovuto ad un ritardo (lag)."
 
 #: autoop.cpp:577
 msgid ""
@@ -164,6 +170,8 @@ msgstr ""
 #: autoop.cpp:586
 msgid "WARNING! [{1}] sent a response but did not match any defined users."
 msgstr ""
+"AVVISO! [{1}] ha inviato una risposta, ma non corrisponde ad alcun utente "
+"definito."
 
 #: autoop.cpp:644
 msgid "Auto op the good people"
