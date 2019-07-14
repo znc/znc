@@ -14,72 +14,76 @@ msgstr ""
 
 #: autoattach.cpp:94
 msgid "Added to list"
-msgstr ""
+msgstr "Aggiunto alla lista"
 
 #: autoattach.cpp:96
 msgid "{1} is already added"
-msgstr ""
+msgstr "{1} è già aggiunto"
 
 #: autoattach.cpp:100
 msgid "Usage: Add [!]<#chan> <search> <host>"
-msgstr ""
+msgstr "Usa: Add [!]<#canale> <ricerca> <host>"
 
 #: autoattach.cpp:101
 msgid "Wildcards are allowed"
-msgstr ""
+msgstr "Sono ammesse wildcards (caratteri jolly)"
 
 #: autoattach.cpp:113
 msgid "Removed {1} from list"
-msgstr ""
+msgstr "Rimosso {1} dalla lista"
 
 #: autoattach.cpp:115
 msgid "Usage: Del [!]<#chan> <search> <host>"
-msgstr ""
+msgstr "Usa: Del [!]<#canale> <ricerca> <host>"
 
 #: autoattach.cpp:121 autoattach.cpp:129
 msgid "Neg"
-msgstr ""
+msgstr "Neg"
 
 #: autoattach.cpp:122 autoattach.cpp:130
 msgid "Chan"
-msgstr ""
+msgstr "Canale"
 
 #: autoattach.cpp:123 autoattach.cpp:131
 msgid "Search"
-msgstr ""
+msgstr "Ricerca"
 
 #: autoattach.cpp:124 autoattach.cpp:132
 msgid "Host"
-msgstr ""
+msgstr "Host"
 
 #: autoattach.cpp:138
 msgid "You have no entries."
-msgstr ""
+msgstr "Non hai voci."
 
 #: autoattach.cpp:146 autoattach.cpp:149
 msgid "[!]<#chan> <search> <host>"
-msgstr ""
+msgstr "[!]<#canale> <ricerca> <host>"
 
 #: autoattach.cpp:147
 msgid "Add an entry, use !#chan to negate and * for wildcards"
 msgstr ""
+"Aggiunge una voce, usa !#canale per negare e * come wildcards (caratteri "
+"jolly)"
 
 #: autoattach.cpp:150
 msgid "Remove an entry, needs to be an exact match"
-msgstr ""
+msgstr "Rimuove una voce, deve essere una corrispondenza esatta"
 
 #: autoattach.cpp:152
 msgid "List all entries"
-msgstr ""
+msgstr "Elenca tutte le voci"
 
 #: autoattach.cpp:171
 msgid "Unable to add [{1}]"
-msgstr ""
+msgstr "Impossibile aggiungere [{1}]"
 
 #: autoattach.cpp:283
 msgid "List of channel masks and channel masks with ! before them."
 msgstr ""
+"Elenco delle maschere di canale e delle maschere di canale con il ! "
+"antecedente."
 
 #: autoattach.cpp:286
 msgid "Reattaches you to channels on activity."
-msgstr ""
+msgstr "Ricollega i canali quando c'è attività."

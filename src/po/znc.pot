@@ -368,20 +368,12 @@ msgid ""
 "this module."
 msgstr ""
 
-<<<<<<< HEAD
 #: Modules.cpp:2023 Modules.cpp:2029
-=======
-#: Modules.cpp:2022 Modules.cpp:2028
->>>>>>> 1.7.x
 msgctxt "modhelpcmd"
 msgid "Command"
 msgstr ""
 
-<<<<<<< HEAD
 #: Modules.cpp:2024 Modules.cpp:2031
-=======
-#: Modules.cpp:2023 Modules.cpp:2029
->>>>>>> 1.7.x
 msgctxt "modhelpcmd"
 msgid "Description"
 msgstr ""

@@ -14,30 +14,32 @@ msgstr ""
 
 #: autoreply.cpp:25
 msgid "<reply>"
-msgstr ""
+msgstr "<risposta>"
 
 #: autoreply.cpp:25
 msgid "Sets a new reply"
-msgstr ""
+msgstr "Imposta una nuova risposta"
 
 #: autoreply.cpp:27
 msgid "Displays the current query reply"
-msgstr ""
+msgstr "Mostra l'attuale risposta alle query"
 
 #: autoreply.cpp:75
 msgid "Current reply is: {1} ({2})"
-msgstr ""
+msgstr "La risposta attuale è: {1} ({2})"
 
 #: autoreply.cpp:81
 msgid "New reply set to: {1} ({2})"
-msgstr ""
+msgstr "Nuova risposta impostata: {1} ({2})"
 
 #: autoreply.cpp:94
 msgid ""
 "You might specify a reply text. It is used when automatically answering "
 "queries, if you are not connected to ZNC."
 msgstr ""
+"Puoi specificare un testo di risposta. Viente utilizzato quando si risponde "
+"automaticamente alle query se non si è connessi allo ZNC."
 
 #: autoreply.cpp:98
 msgid "Reply to queries when you are away"
-msgstr ""
+msgstr "Risponde alle queries quando sei assente"
