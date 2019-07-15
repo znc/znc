@@ -53,13 +53,8 @@ timestamps {
           return
         }
         sh "git remote add my github.com:${my_user}/${my_repo}.git"
-        // TODO simplify when https://issues.jenkins-ci.org/browse/JENKINS-28335 is fixed
-        withCredentials([sshUserPrivateKey(credentialsId: '6ef10f80-20dc-4661-af45-52a6e1e15749', keyFileVariable: 'GITHUB_KEY')]) {
-          sh 'echo ssh -i $GITHUB_KEY -l git -o StrictHostKeyChecking=no \\"\\$@\\" > run_ssh.sh'
-          sh 'chmod +x run_ssh.sh'
-          withEnv(['GIT_SSH=run_ssh.sh']) {
-            sh "git push my HEAD:refs/heads/${my_branch} -f"
-          }
+        sshagent(credentials: ['6ef10f80-20dc-4661-af45-52a6e1e15749']) {
+          sh "git push my HEAD:refs/heads/${my_branch} -f"
         }
         // Create pull request if it doesn't exist yet
         withCredentials([string(credentialsId: '7a2546ae-8a29-4eab-921c-6a4803456dce', variable: 'GITHUB_OAUTH_KEY')]) {
