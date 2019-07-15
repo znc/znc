@@ -54,11 +54,11 @@ msgstr ""
 
 #: bouncedcc.cpp:125
 msgid "Waiting"
-msgstr ""
+msgstr "In attesa"
 
 #: bouncedcc.cpp:127
 msgid "Halfway"
-msgstr ""
+msgstr "A metà strada (Halfway)"
 
 #: bouncedcc.cpp:129
 msgid "Connected"
@@ -66,19 +66,19 @@ msgstr "Connesso"
 
 #: bouncedcc.cpp:137
 msgid "You have no active DCCs."
-msgstr ""
+msgstr "Non hai DCCs attive."
 
 #: bouncedcc.cpp:148
 msgid "Use client IP: {1}"
-msgstr ""
+msgstr "Usa client IP: {1}"
 
 #: bouncedcc.cpp:153
 msgid "List all active DCCs"
-msgstr ""
+msgstr "Elenco di tutte le DCCs attive"
 
 #: bouncedcc.cpp:156
 msgid "Change the option to use IP of client"
-msgstr ""
+msgstr "Cambia l'opzione per utilizzare l'indirizzo IP del client"
 
 #: bouncedcc.cpp:383 bouncedcc.cpp:412 bouncedcc.cpp:436 bouncedcc.cpp:451
 msgctxt "type"
@@ -92,40 +92,47 @@ msgstr ""
 
 #: bouncedcc.cpp:385
 msgid "DCC {1} Bounce ({2}): Too long line received"
-msgstr ""
+msgstr "DCC {1} Bounce ({2}): Linea ricevuta troppo lunga"
 
 #: bouncedcc.cpp:418
 msgid "DCC {1} Bounce ({2}): Timeout while connecting to {3} {4}"
 msgstr ""
+"DCC {1} Bounce ({2}): (Timeout) Tempo scaduto durante la connessione a {3} "
+"{4}"
 
 #: bouncedcc.cpp:422
 msgid "DCC {1} Bounce ({2}): Timeout while connecting."
-msgstr ""
+msgstr "DCC {1} Bounce ({2}): (Timeout) Tempo scaduto durante la connessione."
 
 #: bouncedcc.cpp:427
 msgid ""
 "DCC {1} Bounce ({2}): Timeout while waiting for incoming connection on {3} "
 "{4}"
 msgstr ""
+"DCC {1} Bounce ({2}): (Timeout) Tempo scaduto in attesa della connessione in "
+"arrivo {3} {4}"
 
 #: bouncedcc.cpp:440
 msgid "DCC {1} Bounce ({2}): Connection refused while connecting to {3} {4}"
 msgstr ""
+"DCC {1} Bounce ({2}): Connessione rifiutata durante la connessione a {3} {4}"
 
 #: bouncedcc.cpp:444
 msgid "DCC {1} Bounce ({2}): Connection refused while connecting."
-msgstr ""
+msgstr "DCC {1} Bounce ({2}): Connessione rifiutata durante la connessione."
 
 #: bouncedcc.cpp:457 bouncedcc.cpp:465
 msgid "DCC {1} Bounce ({2}): Socket error on {3} {4}: {5}"
-msgstr ""
+msgstr "DCC {1} Bounce ({2}): Errore di socket su {3} {4}: {5}"
 
 #: bouncedcc.cpp:460
 msgid "DCC {1} Bounce ({2}): Socket error: {3}"
-msgstr ""
+msgstr "DCC {1} Bounce ({2}): Errore socket: {3}"
 
 #: bouncedcc.cpp:547
 msgid ""
 "Bounces DCC transfers through ZNC instead of sending them directly to the "
 "user. "
 msgstr ""
+"Rimuove/Rimbalza i trasferimenti DCC tramite ZNC invece di inviarli "
+"direttamente all'utente."

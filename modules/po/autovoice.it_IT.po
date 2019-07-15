@@ -18,19 +18,19 @@ msgstr "Elenca tutti gli utenti"
 
 #: autovoice.cpp:122 autovoice.cpp:125
 msgid "<user> <channel> [channel] ..."
-msgstr ""
+msgstr "<utente> <canale> [canale] ..."
 
 #: autovoice.cpp:123
 msgid "Adds channels to a user"
-msgstr ""
+msgstr "Aggiunge canali ad un utente"
 
 #: autovoice.cpp:126
 msgid "Removes channels from a user"
-msgstr ""
+msgstr "Rimuove canali ad un utente"
 
 #: autovoice.cpp:128
 msgid "<user> <hostmask> [channels]"
-msgstr ""
+msgstr "<utente> <hostmask> [canali]"
 
 #: autovoice.cpp:129
 msgid "Adds a user"
@@ -38,7 +38,7 @@ msgstr "Aggiungi un utente"
 
 #: autovoice.cpp:131
 msgid "<user>"
-msgstr ""
+msgstr "<utente>"
 
 #: autovoice.cpp:131
 msgid "Removes a user"
@@ -46,15 +46,15 @@ msgstr "Rimuovi un utente"
 
 #: autovoice.cpp:215
 msgid "Usage: AddUser <user> <hostmask> [channels]"
-msgstr ""
+msgstr "Usa: AddUser <utente> <hostmask> [canali]"
 
 #: autovoice.cpp:229
 msgid "Usage: DelUser <user>"
-msgstr ""
+msgstr "Usa: DelUser <utente>"
 
 #: autovoice.cpp:238
 msgid "There are no users defined"
-msgstr ""
+msgstr "Non ci sono utenti definiti"
 
 #: autovoice.cpp:244 autovoice.cpp:250
 msgid "User"
@@ -62,7 +62,7 @@ msgstr "Utente"
 
 #: autovoice.cpp:245 autovoice.cpp:251
 msgid "Hostmask"
-msgstr ""
+msgstr "Hostmask"
 
 #: autovoice.cpp:246 autovoice.cpp:252
 msgid "Channels"
@@ -70,7 +70,7 @@ msgstr "Canali"
 
 #: autovoice.cpp:263
 msgid "Usage: AddChans <user> <channel> [channel] ..."
-msgstr ""
+msgstr "Usa: AddChans <utente> <canale> [canale] ..."
 
 #: autovoice.cpp:270 autovoice.cpp:292 autovoice.cpp:329
 msgid "No such user"
@@ -78,34 +78,37 @@ msgstr "Utente non presente"
 
 #: autovoice.cpp:275
 msgid "Channel(s) added to user {1}"
-msgstr ""
+msgstr "Canale(i) aggiunti all'utente {1}"
 
 #: autovoice.cpp:285
 msgid "Usage: DelChans <user> <channel> [channel] ..."
-msgstr ""
+msgstr "Usa: DelChans <utente> <canale> [canale] ..."
 
 #: autovoice.cpp:298
 msgid "Channel(s) Removed from user {1}"
-msgstr ""
+msgstr "Canale(i) rimossi dall'utente {1}"
 
 #: autovoice.cpp:335
 msgid "User {1} removed"
-msgstr ""
+msgstr "L'utente {1} è stato rimosso"
 
 #: autovoice.cpp:341
 msgid "That user already exists"
-msgstr ""
+msgstr "Questo utente è già esistente"
 
 #: autovoice.cpp:347
 msgid "User {1} added with hostmask {2}"
-msgstr ""
+msgstr "L'utente {1} è stato aggiunto con la seguente hostmask {2}"
 
 #: autovoice.cpp:360
 msgid ""
 "Each argument is either a channel you want autovoice for (which can include "
 "wildcards) or, if it starts with !, it is an exception for autovoice."
 msgstr ""
+"Ogni argomento è o un canale per il quale si vuole l'autovoice (che può "
+"includere caratteri jolly) o, se inizia con !, è un'eccezione per "
+"l'autovoice."
 
 #: autovoice.cpp:365
 msgid "Auto voice the good people"
-msgstr ""
+msgstr "Assegna automaticamente il voice alle buone persone"

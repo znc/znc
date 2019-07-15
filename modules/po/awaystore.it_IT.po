@@ -14,7 +14,7 @@ msgstr ""
 
 #: awaystore.cpp:67
 msgid "You have been marked as away"
-msgstr ""
+msgstr "Sei contrassegnato come assente"
 
 #: awaystore.cpp:78 awaystore.cpp:385 awaystore.cpp:388
 msgid "Welcome back!"
@@ -22,23 +22,23 @@ msgstr "Bentornato!"
 
 #: awaystore.cpp:100
 msgid "Deleted {1} messages"
-msgstr ""
+msgstr "Eliminato {1} messaggi"
 
 #: awaystore.cpp:104
 msgid "USAGE: delete <num|all>"
-msgstr ""
+msgstr "USA: delete <num|all>"
 
 #: awaystore.cpp:109
 msgid "Illegal message # requested"
-msgstr ""
+msgstr "Messaggio illegale # richiesto"
 
 #: awaystore.cpp:113
 msgid "Message erased"
-msgstr ""
+msgstr "Messaggio cancellato"
 
 #: awaystore.cpp:122
 msgid "Messages saved to disk"
-msgstr ""
+msgstr "Messaggi salvati su disco"
 
 #: awaystore.cpp:124
 msgid "There are no messages to save"
@@ -46,23 +46,23 @@ msgstr "Non sono presenti messaggi da salvare"
 
 #: awaystore.cpp:135
 msgid "Password updated to [{1}]"
-msgstr ""
+msgstr "Password aggiornata a [{1}]"
 
 #: awaystore.cpp:147
 msgid "Corrupt message! [{1}]"
-msgstr ""
+msgstr "Messaggio corrotto! [{1}]"
 
 #: awaystore.cpp:159
 msgid "Corrupt time stamp! [{1}]"
-msgstr ""
+msgstr "Time stamp corrotto! [{1}]"
 
 #: awaystore.cpp:178
 msgid "#--- End of messages"
-msgstr ""
+msgstr "#--- Fine dei messaggi"
 
 #: awaystore.cpp:183
 msgid "Timer set to 300 seconds"
-msgstr ""
+msgstr "Timer impostato a 300 secondi"
 
 #: awaystore.cpp:188 awaystore.cpp:197
 msgid "Timer disabled"
@@ -70,41 +70,49 @@ msgstr "Timer disabilitato"
 
 #: awaystore.cpp:199
 msgid "Timer set to {1} seconds"
-msgstr ""
+msgstr "Timer impostato a {1} secondi"
 
 #: awaystore.cpp:203
 msgid "Current timer setting: {1} seconds"
-msgstr ""
+msgstr "Impostazioni dell'ora corrente: {1} secondi"
 
 #: awaystore.cpp:278
 msgid "This module needs as an argument a keyphrase used for encryption"
 msgstr ""
+"Questo mudulo necessita di un argomento come frase chiave utilizzata per la "
+"crittografia"
 
 #: awaystore.cpp:285
 msgid ""
 "Failed to decrypt your saved messages - Did you give the right encryption "
 "key as an argument to this module?"
 msgstr ""
+"Impossibile decrittografare i messaggi salvati. Hai fornito la chiave di "
+"crittografia giusta come argomento per questo modulo?"
 
 #: awaystore.cpp:386 awaystore.cpp:389
 msgid "You have {1} messages!"
-msgstr ""
+msgstr "Hai {1} messaggi!"
 
 #: awaystore.cpp:456
 msgid "Unable to find buffer"
-msgstr ""
+msgstr "Impossibile trovare il buffer"
 
 #: awaystore.cpp:469
 msgid "Unable to decode encrypted messages"
-msgstr ""
+msgstr "Impossibile decodificare i messaggi crittografati"
 
 #: awaystore.cpp:516
 msgid ""
 "[ -notimer | -timer N ] [-chans]  passw0rd . N is number of seconds, 600 by "
 "default."
 msgstr ""
+"[ -notimer | -timer N ] [-chans]  passw0rd . N è il numero di secondi, 600 "
+"di default."
 
 #: awaystore.cpp:521
 msgid ""
 "Adds auto-away with logging, useful when you use ZNC from different locations"
 msgstr ""
+"Aggiunge un auto-away con logging, utile quando si utilizza lo ZNC da "
+"diverse posizioni"

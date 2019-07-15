@@ -14,24 +14,24 @@ msgstr ""
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:7
 msgid "Add a key"
-msgstr ""
+msgstr "Aggiunge una chiave"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:11
 msgid "Key:"
-msgstr "Key:"
+msgstr "Chiave:"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:15
 msgid "Add Key"
-msgstr ""
+msgstr "Aggiungi chiave"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:23
 msgid "You have no keys."
-msgstr ""
+msgstr "Non hai chiavi."
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:30
 msgctxt "web"
 msgid "Key"
-msgstr ""
+msgstr "Chiave"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:36
 msgid "del"
@@ -44,56 +44,58 @@ msgstr ""
 #: certauth.cpp:32
 msgid "Add a public key. If key is not provided will use the current key"
 msgstr ""
+"Aggiunge una chiva pubblica. Se non viene fornita alcuna chiave verrà usata "
+"la chiave corrente"
 
 #: certauth.cpp:35
 msgid "id"
-msgstr ""
+msgstr "id"
 
 #: certauth.cpp:35
 msgid "Delete a key by its number in List"
-msgstr ""
+msgstr "Cancella una chiave usando il suo numero in lista"
 
 #: certauth.cpp:37
 msgid "List your public keys"
-msgstr ""
+msgstr "Elenco delle tue chiavi pubbliche"
 
 #: certauth.cpp:39
 msgid "Print your current key"
-msgstr ""
+msgstr "Stamp la tua chiave attuale"
 
 #: certauth.cpp:142
 msgid "You are not connected with any valid public key"
-msgstr ""
+msgstr "Non sei connesso con una chiave pubblica valida"
 
 #: certauth.cpp:144
 msgid "Your current public key is: {1}"
-msgstr ""
+msgstr "La tua chiave pubblica corrente è: {1}"
 
 #: certauth.cpp:157
 msgid "You did not supply a public key or connect with one."
-msgstr ""
+msgstr "Non hai fornito una chiave pubblica o ti sei connesso con uno."
 
 #: certauth.cpp:160
 msgid "Key '{1}' added."
-msgstr ""
+msgstr "Chiave '{1}' aggiunta."
 
 #: certauth.cpp:162
 msgid "The key '{1}' is already added."
-msgstr ""
+msgstr "La chiave '{1}' è già stata aggiunta."
 
 #: certauth.cpp:170 certauth.cpp:183
 msgctxt "list"
 msgid "Id"
-msgstr ""
+msgstr "Id"
 
 #: certauth.cpp:171 certauth.cpp:184
 msgctxt "list"
 msgid "Key"
-msgstr ""
+msgstr "Chiave"
 
 #: certauth.cpp:176 certauth.cpp:190 certauth.cpp:199
 msgid "No keys set for your user"
-msgstr ""
+msgstr "Nessuna chiave impostata per il tuo utente"
 
 #: certauth.cpp:204
 msgid "Invalid #, check \"list\""
@@ -106,3 +108,4 @@ msgstr "Rimosso"
 #: certauth.cpp:291
 msgid "Allows users to authenticate via SSL client certificates."
 msgstr ""
+"Permette agli utenti di autenticarsi tramite certificati SSL del client."
