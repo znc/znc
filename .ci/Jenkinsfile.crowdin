@@ -30,7 +30,7 @@ timestamps {
           stage(upstream_branch) {
             dir(upstream_branch) {
               stage("Checkout ${upstream_branch}") {
-                checkout([$class: 'GitSCM', branches: [[name: "*/${upstream_branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'SubmoduleOption', recursiveSubmodules: true]], userRemoteConfigs: [[credentialsId: '6ef10f80-20dc-4661-af45-52a6e1e15749', name: 'upstream', url: "github.com:${upstream_user}/${upstream_repo}.git"]]])
+                checkout([$class: 'GitSCM', branches: [[name: "*/${upstream_branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'SubmoduleOption', recursiveSubmodules: true]], userRemoteConfigs: [[credentialsId: '6ef10f80-20dc-4661-af45-52a6e1e15749', name: 'upstream', url: "git@github.com:${upstream_user}/${upstream_repo}.git"]]])
               }
               stage("Prepare strings for ${upstream_branch}") {
                 dir("build") {
@@ -67,7 +67,7 @@ timestamps {
                   echo 'No changes found'
                   return
                 }
-                sh "git remote add my github.com:${my_user}/${my_repo}.git"
+                sh "git remote add my git@github.com:${my_user}/${my_repo}.git"
                 if (!pr_mode) {
                   sshagent(credentials: ['baf2df74-935d-40e5-b20f-076e92fa3e9f']) {
                     sh "git push upstream HEAD:refs/heads/${upstream_branch}"
