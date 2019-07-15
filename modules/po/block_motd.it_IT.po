@@ -14,22 +14,24 @@ msgstr ""
 
 #: block_motd.cpp:26
 msgid "[<server>]"
-msgstr ""
+msgstr "[<server>]"
 
 #: block_motd.cpp:27
 msgid ""
 "Override the block with this command. Can optionally specify which server to "
 "query."
 msgstr ""
+"Oltrepassa il blocco con questo comando. Opzionalmente puoi specificare "
+"quale server interrogare."
 
 #: block_motd.cpp:36
 msgid "You are not connected to an IRC Server."
-msgstr ""
+msgstr "Non sei connesso ad un server IRC."
 
 #: block_motd.cpp:58
 msgid "MOTD blocked by ZNC"
-msgstr ""
+msgstr "MOTD bloccato dallo ZNC"
 
 #: block_motd.cpp:104
 msgid "Block the MOTD from IRC so it's not sent to your client(s)."
-msgstr ""
+msgstr "Blocca il MOTD da IRC in modo che non venga inviato ai tuoi client."

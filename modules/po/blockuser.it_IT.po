@@ -14,31 +14,31 @@ msgstr ""
 
 #: modules/po/../data/blockuser/tmpl/blockuser_WebadminUser.tmpl:9
 msgid "Account is blocked"
-msgstr ""
+msgstr "L'account è bloccato"
 
 #: blockuser.cpp:23
 msgid "Your account has been disabled. Contact your administrator."
-msgstr ""
+msgstr "Il tuo account è stato disabilitato. Contatta il tuo amministratore."
 
 #: blockuser.cpp:29
 msgid "List blocked users"
-msgstr ""
+msgstr "Elenco utenti bloccati"
 
 #: blockuser.cpp:31 blockuser.cpp:33
 msgid "<user>"
-msgstr ""
+msgstr "<utente>"
 
 #: blockuser.cpp:31
 msgid "Block a user"
-msgstr ""
+msgstr "Blocca un utente"
 
 #: blockuser.cpp:33
 msgid "Unblock a user"
-msgstr ""
+msgstr "Sblocca un utente"
 
 #: blockuser.cpp:55
 msgid "Could not block {1}"
-msgstr ""
+msgstr "Impossibile bloccare {1}"
 
 #: blockuser.cpp:76
 msgid "Access denied"
@@ -46,7 +46,7 @@ msgstr "Accesso negato"
 
 #: blockuser.cpp:85
 msgid "No users are blocked"
-msgstr ""
+msgstr "Nessun utente bloccato"
 
 #: blockuser.cpp:88
 msgid "Blocked users:"
@@ -54,44 +54,44 @@ msgstr "Utenti bloccati:"
 
 #: blockuser.cpp:100
 msgid "Usage: Block <user>"
-msgstr ""
+msgstr "Usa: Block <utente>"
 
 #: blockuser.cpp:105 blockuser.cpp:147
 msgid "You can't block yourself"
-msgstr ""
+msgstr "Non puoi bloccare te stesso"
 
 #: blockuser.cpp:110 blockuser.cpp:152
 msgid "Blocked {1}"
-msgstr ""
+msgstr "Bloccato {1}"
 
 #: blockuser.cpp:112
 msgid "Could not block {1} (misspelled?)"
-msgstr ""
+msgstr "Impossibile bloccare {1} (errore di ortografia?)"
 
 #: blockuser.cpp:120
 msgid "Usage: Unblock <user>"
-msgstr ""
+msgstr "Usa: Unblock <utente>"
 
 #: blockuser.cpp:125 blockuser.cpp:161
 msgid "Unblocked {1}"
-msgstr ""
+msgstr "Sbloccato {1}"
 
 #: blockuser.cpp:127
 msgid "This user is not blocked"
-msgstr ""
+msgstr "Questo utente non è bloccato"
 
 #: blockuser.cpp:155
 msgid "Couldn't block {1}"
-msgstr ""
+msgstr "Impossibile bloccare {1}"
 
 #: blockuser.cpp:164
 msgid "User {1} is not blocked"
-msgstr ""
+msgstr "L'utente {1} non è bloccato"
 
 #: blockuser.cpp:216
 msgid "Enter one or more user names. Separate them by spaces."
-msgstr ""
+msgstr "Inserisci uno o più nomi utente. Seprali da uno spazio."
 
 #: blockuser.cpp:219
 msgid "Block certain users from logging in."
-msgstr ""
+msgstr "Blocca determinati utenti a partire dal login."
