@@ -1814,7 +1814,7 @@ void CClient::HelpUser(const CString& sFilter) {
 
     if (!m_pUser->DenyLoadMod()) {
         AddCommandHelp("LoadMod",
-                       t_s("[--type=global|user|network] <module>",
+                       t_s("[--type=global|user|network] <module> [args]",
                            "helpcmd|LoadMod|args"),
                        t_s("Load a module", "helpcmd|LoadMod|desc"));
         AddCommandHelp("UnloadMod",
@@ -1822,7 +1822,7 @@ void CClient::HelpUser(const CString& sFilter) {
                            "helpcmd|UnloadMod|args"),
                        t_s("Unload a module", "helpcmd|UnloadMod|desc"));
         AddCommandHelp("ReloadMod",
-                       t_s("[--type=global|user|network] <module>",
+                       t_s("[--type=global|user|network] <module> [args]",
                            "helpcmd|ReloadMod|args"),
                        t_s("Reload a module", "helpcmd|ReloadMod|desc"));
         if (m_pUser->IsAdmin()) {
