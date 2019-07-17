@@ -14,7 +14,7 @@ msgstr ""
 
 #: buffextras.cpp:45
 msgid "Server"
-msgstr ""
+msgstr "Server"
 
 #: buffextras.cpp:47
 msgid "{1} set mode: {2} {3}"
@@ -26,7 +26,7 @@ msgstr "{1} kicked {2} per questo motivo: {3}"
 
 #: buffextras.cpp:64
 msgid "{1} quit: {2}"
-msgstr ""
+msgstr "{1} quit: {2}"
 
 #: buffextras.cpp:73
 msgid "{1} joined"

@@ -50,7 +50,7 @@ msgstr "Chat"
 #: bouncedcc.cpp:121
 msgctxt "list"
 msgid "Xfer"
-msgstr ""
+msgstr "Xfer"
 
 #: bouncedcc.cpp:125
 msgid "Waiting"
@@ -88,7 +88,7 @@ msgstr "Chat"
 #: bouncedcc.cpp:383 bouncedcc.cpp:412 bouncedcc.cpp:436 bouncedcc.cpp:451
 msgctxt "type"
 msgid "Xfer"
-msgstr ""
+msgstr "Xfer"
 
 #: bouncedcc.cpp:385
 msgid "DCC {1} Bounce ({2}): Too long line received"

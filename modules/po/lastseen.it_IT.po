@@ -18,7 +18,7 @@ msgstr ""
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:9 lastseen.cpp:99
 msgid "Last Seen"
-msgstr ""
+msgstr "Ultima visualizzazione"
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:10
 msgid "Info"
@@ -26,42 +26,45 @@ msgstr ""
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:11
 msgid "Action"
-msgstr ""
+msgstr "Azione"
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:21
 msgid "Edit"
-msgstr ""
+msgstr "Modifica"
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:22
 msgid "Delete"
-msgstr ""
+msgstr "Elimina"
 
 #: modules/po/../data/lastseen/tmpl/lastseen_WebadminUser.tmpl:6
 msgid "Last login time:"
-msgstr ""
+msgstr "Ultimo accesso:"
 
 #: lastseen.cpp:53
 msgid "Access denied"
-msgstr ""
+msgstr "Accesso negato"
 
 #: lastseen.cpp:61 lastseen.cpp:67
 msgctxt "show"
 msgid "User"
-msgstr ""
+msgstr "Utente"
 
 #: lastseen.cpp:62 lastseen.cpp:68
 msgctxt "show"
 msgid "Last Seen"
-msgstr ""
+msgstr "Ultima visualizzazione"
 
 #: lastseen.cpp:69 lastseen.cpp:125
 msgid "never"
-msgstr ""
+msgstr "mai"
 
 #: lastseen.cpp:79
 msgid "Shows list of users and when they last logged in"
 msgstr ""
+"Mostra l'elenco degli utenti e quando hanno effettuato l'ultimo accesso "
+"(logged in)"
 
 #: lastseen.cpp:154
 msgid "Collects data about when a user last logged in."
 msgstr ""
+"Raccoglie dati riguardo l'ultimo accesso effettuato da un utente (logged in)."

@@ -14,8 +14,8 @@ msgstr ""
 
 #: imapauth.cpp:168
 msgid "[ server [+]port [ UserFormatString ] ]"
-msgstr ""
+msgstr "[ server [+]porta [ UserFormatString ] ]"
 
 #: imapauth.cpp:171
 msgid "Allow users to authenticate via IMAP."
-msgstr ""
+msgstr "Permette agli utenti di autenticarsi tramite IMAP."
