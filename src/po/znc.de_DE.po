@@ -1568,8 +1568,8 @@ msgstr "Zeige wie lange ZNC schon läuft"
 
 #: ClientCommand.cpp:1827
 msgctxt "helpcmd|LoadMod|args"
-msgid "[--type=global|user|network] <module>"
-msgstr "[--type=global|user|network] <Modul>"
+msgid "[--type=global|user|network] <module> [args]"
+msgstr ""
 
 #: ClientCommand.cpp:1829
 msgctxt "helpcmd|LoadMod|desc"
@@ -1588,8 +1588,8 @@ msgstr "Entlade ein Modul"
 
 #: ClientCommand.cpp:1835
 msgctxt "helpcmd|ReloadMod|args"
-msgid "[--type=global|user|network] <module>"
-msgstr "[--type=global|user|network] <Modul>"
+msgid "[--type=global|user|network] <module> [args]"
+msgstr ""
 
 #: ClientCommand.cpp:1837
 msgctxt "helpcmd|ReloadMod|desc"
