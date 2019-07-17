@@ -214,7 +214,7 @@ msgstr "è Admin"
 #: controlpanel.cpp:887 controlpanel.cpp:901
 msgctxt "listusers"
 msgid "Nick"
-msgstr ""
+msgstr "Nick"
 
 #: controlpanel.cpp:888 controlpanel.cpp:902
 msgctxt "listusers"
@@ -224,16 +224,16 @@ msgstr "Nick alternativo"
 #: controlpanel.cpp:889 controlpanel.cpp:903
 msgctxt "listusers"
 msgid "Ident"
-msgstr ""
+msgstr "Ident"
 
 #: controlpanel.cpp:890 controlpanel.cpp:904
 msgctxt "listusers"
 msgid "BindHost"
-msgstr ""
+msgstr "BindHost"
 
 #: controlpanel.cpp:898 controlpanel.cpp:1138
 msgid "No"
-msgstr ""
+msgstr "No"
 
 #: controlpanel.cpp:900 controlpanel.cpp:1130
 msgid "Yes"
@@ -336,7 +336,7 @@ msgstr "Errore: Il network {1} non può essere eliminato per l'utente {2}."
 #: controlpanel.cpp:1120 controlpanel.cpp:1128
 msgctxt "listnetworks"
 msgid "Network"
-msgstr ""
+msgstr "Network"
 
 #: controlpanel.cpp:1121 controlpanel.cpp:1130 controlpanel.cpp:1138
 msgctxt "listnetworks"

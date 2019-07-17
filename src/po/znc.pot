@@ -1487,7 +1487,7 @@ msgstr ""
 
 #: ClientCommand.cpp:1817
 msgctxt "helpcmd|LoadMod|args"
-msgid "[--type=global|user|network] <module>"
+msgid "[--type=global|user|network] <module> [args]"
 msgstr ""
 
 #: ClientCommand.cpp:1819
@@ -1507,7 +1507,7 @@ msgstr ""
 
 #: ClientCommand.cpp:1825
 msgctxt "helpcmd|ReloadMod|args"
-msgid "[--type=global|user|network] <module>"
+msgid "[--type=global|user|network] <module> [args]"
 msgstr ""
 
 #: ClientCommand.cpp:1827

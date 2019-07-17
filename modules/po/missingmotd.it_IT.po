@@ -14,4 +14,4 @@ msgstr ""
 
 #: missingmotd.cpp:36
 msgid "Sends 422 to clients when they login"
-msgstr ""
+msgstr "Invia 422 ai client quando effettuano l'accesso"

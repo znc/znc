@@ -14,214 +14,221 @@ msgstr ""
 
 #: dcc.cpp:88
 msgid "<nick> <file>"
-msgstr ""
+msgstr "<nick> <file>"
 
 #: dcc.cpp:89
 msgid "Send a file from ZNC to someone"
-msgstr ""
+msgstr "Invia un file dallo ZNC a qualcuno"
 
 #: dcc.cpp:91
 msgid "<file>"
-msgstr ""
+msgstr "<file>"
 
 #: dcc.cpp:92
 msgid "Send a file from ZNC to your client"
-msgstr ""
+msgstr "Invia un file dallo ZNC al tuo client"
 
 #: dcc.cpp:94
 msgid "List current transfers"
-msgstr ""
+msgstr "Elenca i trasferimenti correnti"
 
 #: dcc.cpp:103
 msgid "You must be admin to use the DCC module"
-msgstr ""
+msgstr "Devi essere amministratore per usare il modulo DCC"
 
 #: dcc.cpp:140
 msgid "Attempting to send [{1}] to [{2}]."
-msgstr ""
+msgstr "Stò tentando di inviare [{1}] a [{2}]."
 
 #: dcc.cpp:149 dcc.cpp:554
 msgid "Receiving [{1}] from [{2}]: File already exists."
-msgstr ""
+msgstr "Ricezione del file [{1}] dall'utente [{2}]: File già esistente."
 
 #: dcc.cpp:167
 msgid ""
 "Attempting to connect to [{1} {2}] in order to download [{3}] from [{4}]."
-msgstr ""
+msgstr "Stò tentando di connettermi a [{1} {2}] per scaricare [{3}] da [{4}]."
 
 #: dcc.cpp:179
 msgid "Usage: Send <nick> <file>"
-msgstr ""
+msgstr "Usa: Send <nick> <file>"
 
 #: dcc.cpp:186 dcc.cpp:206
 msgid "Illegal path."
-msgstr ""
+msgstr "Percorso illegale."
 
 #: dcc.cpp:199
 msgid "Usage: Get <file>"
-msgstr ""
+msgstr "Usa: Get <file>"
 
 #: dcc.cpp:215 dcc.cpp:232 dcc.cpp:234
 msgctxt "list"
 msgid "Type"
-msgstr ""
+msgstr "Tipo"
 
 #: dcc.cpp:216 dcc.cpp:238 dcc.cpp:241
 msgctxt "list"
 msgid "State"
-msgstr ""
+msgstr "Stato"
 
 #: dcc.cpp:217 dcc.cpp:243
 msgctxt "list"
 msgid "Speed"
-msgstr ""
+msgstr "Velocità"
 
 #: dcc.cpp:218 dcc.cpp:227
 msgctxt "list"
 msgid "Nick"
-msgstr ""
+msgstr "Nick"
 
 #: dcc.cpp:219 dcc.cpp:228
 msgctxt "list"
 msgid "IP"
-msgstr ""
+msgstr "IP"
 
 #: dcc.cpp:220 dcc.cpp:229
 msgctxt "list"
 msgid "File"
-msgstr ""
+msgstr "File"
 
 #: dcc.cpp:232
 msgctxt "list-type"
 msgid "Sending"
-msgstr ""
+msgstr "In invio"
 
 #: dcc.cpp:234
 msgctxt "list-type"
 msgid "Getting"
-msgstr ""
+msgstr "In ricezione"
 
 #: dcc.cpp:239
 msgctxt "list-state"
 msgid "Waiting"
-msgstr ""
+msgstr "In attesa"
 
 #: dcc.cpp:244
 msgid "{1} KiB/s"
-msgstr ""
+msgstr "{1} KiB/s"
 
 #: dcc.cpp:250
 msgid "You have no active DCC transfers."
-msgstr ""
+msgstr "Non hai trasferimenti DCC attivi."
 
 #: dcc.cpp:267
 msgid "Attempting to resume send from position {1} of file [{2}] for [{3}]"
 msgstr ""
+"Stò tentando di riprendere l'invio della posizione {1} del file [{2}] per "
+"[{3}]"
 
 #: dcc.cpp:277
 msgid "Couldn't resume file [{1}] for [{2}]: not sending anything."
-msgstr ""
+msgstr "Impossibile riprendere il file [{1}] per [{2}]: non inviare nulla."
 
 #: dcc.cpp:286
 msgid "Bad DCC file: {1}"
-msgstr ""
+msgstr "File DCC dannoso (bad): {1}"
 
 #: dcc.cpp:341
 msgid "Sending [{1}] to [{2}]: File not open!"
-msgstr ""
+msgstr "Invio del file [{1}] all'utente [{2}]: File non aperto!"
 
 #: dcc.cpp:345
 msgid "Receiving [{1}] from [{2}]: File not open!"
-msgstr ""
+msgstr "Ricezione del file [{1}] dall'utente [{2}]: File non aperto!"
 
 #: dcc.cpp:385
 msgid "Sending [{1}] to [{2}]: Connection refused."
-msgstr ""
+msgstr "Invio del file [{1}] all'utente [{2}] : Connessione rifiutata."
 
 #: dcc.cpp:389
 msgid "Receiving [{1}] from [{2}]: Connection refused."
-msgstr ""
+msgstr "Ricezione del file [{1}] dall'utente [{2}]: Connessione rifiutata."
 
 #: dcc.cpp:397
 msgid "Sending [{1}] to [{2}]: Timeout."
-msgstr ""
+msgstr "Invio del file [{1}] all'utente [{2}]: Fuori tempo (Timeout)."
 
 #: dcc.cpp:401
 msgid "Receiving [{1}] from [{2}]: Timeout."
-msgstr ""
+msgstr "Ricezione del file [{1}] dall'utente [{2}]: Fuori tempo (Timeout)."
 
 #: dcc.cpp:411
 msgid "Sending [{1}] to [{2}]: Socket error {3}: {4}"
-msgstr ""
+msgstr "Invio del file [{1}] all'utente [{2}]: Errore di socket {3}: {4}"
 
 #: dcc.cpp:415
 msgid "Receiving [{1}] from [{2}]: Socket error {3}: {4}"
-msgstr ""
+msgstr "Ricezione del file [{1}] dall'utente [{2}]: Errore di socket {3}: {4}"
 
 #: dcc.cpp:423
 msgid "Sending [{1}] to [{2}]: Transfer started."
-msgstr ""
+msgstr "Invio del file [{1}] all'utente [{2}]: Trasferimento avviato."
 
 #: dcc.cpp:427
 msgid "Receiving [{1}] from [{2}]: Transfer started."
-msgstr ""
+msgstr "Ricezione del file [{1}] dall'utente [{2}]: Trasferimento avviato."
 
 #: dcc.cpp:446
 msgid "Sending [{1}] to [{2}]: Too much data!"
-msgstr ""
+msgstr "Invio del file [{1}] all'utente [{2}]: Troppi dati!"
 
 #: dcc.cpp:450
 msgid "Receiving [{1}] from [{2}]: Too much data!"
-msgstr ""
+msgstr "Ricezione del file [{1}] dall'utente [{2}]: Troppi dati!"
 
 #: dcc.cpp:456
 msgid "Sending [{1}] to [{2}] completed at {3} KiB/s"
-msgstr ""
+msgstr "L'invio del file [{1}] all'utente [{2}] viene completato a {3} KiB/s"
 
 #: dcc.cpp:461
 msgid "Receiving [{1}] from [{2}] completed at {3} KiB/s"
 msgstr ""
+"La ricezione del file [{1}] inviato da [{2}] viene completata a {3} KiB/s"
 
 #: dcc.cpp:474
 msgid "Sending [{1}] to [{2}]: File closed prematurely."
-msgstr ""
+msgstr "Invio del file [{1}] all'utente [{2}]: File chiuso prematuramente."
 
 #: dcc.cpp:478
 msgid "Receiving [{1}] from [{2}]: File closed prematurely."
 msgstr ""
+"Ricezione del file [{1}] dall'utente [{2}]: File chiuso prematuramente."
 
 #: dcc.cpp:501
 msgid "Sending [{1}] to [{2}]: Error reading from file."
-msgstr ""
+msgstr "Invio del file [{1}] all'utente [{2}]: Errore di lettura del file."
 
 #: dcc.cpp:505
 msgid "Receiving [{1}] from [{2}]: Error reading from file."
 msgstr ""
+"Ricezione del file [{1}] dall'utente [{2}]: Errore di lettura del file."
 
 #: dcc.cpp:537
 msgid "Sending [{1}] to [{2}]: Unable to open file."
-msgstr ""
+msgstr "Invio del file [{1}] all'utente [{2}]: Impossibile aprire il file."
 
 #: dcc.cpp:541
 msgid "Receiving [{1}] from [{2}]: Unable to open file."
 msgstr ""
+"Ricezione del file [{1}] dall'utente [{2}]: Impossibile aprire il file."
 
 #: dcc.cpp:563
 msgid "Receiving [{1}] from [{2}]: Could not open file."
 msgstr ""
+"Ricezione del file [{1}] dall'utente [{2}]: Impossibile aprire il file."
 
 #: dcc.cpp:572
 msgid "Sending [{1}] to [{2}]: Not a file."
-msgstr ""
+msgstr "Invio del file [{1}] all'utente [{2}]: Non è un file."
 
 #: dcc.cpp:581
 msgid "Sending [{1}] to [{2}]: Could not open file."
-msgstr ""
+msgstr "Invio del file [{1}] all'utente [{2}]: Impossibile aprire il file."
 
 #: dcc.cpp:593
 msgid "Sending [{1}] to [{2}]: File too large (>4 GiB)."
-msgstr ""
+msgstr "Invio del file [{1}] all'utente [{2}]: File troppo grande (>4 GiB)."
 
 #: dcc.cpp:623
 msgid "This module allows you to transfer files to and from ZNC"
-msgstr ""
+msgstr "Questo modulo ti consente di trasferire file da e verso lo ZNC"

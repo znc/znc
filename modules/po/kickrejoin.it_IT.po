@@ -14,48 +14,57 @@ msgstr ""
 
 #: kickrejoin.cpp:56
 msgid "<secs>"
-msgstr ""
+msgstr "<secondi>"
 
 #: kickrejoin.cpp:56
 msgid "Set the rejoin delay"
 msgstr ""
+"Imposta il ritardo del rientro automatico (rejoin) (valore 0 per "
+"disabilitare)"
 
 #: kickrejoin.cpp:58
 msgid "Show the rejoin delay"
-msgstr ""
+msgstr "Mostra il ritardo del rientro automatico (rejoin)"
 
 #: kickrejoin.cpp:77
 msgid "Illegal argument, must be a positive number or 0"
-msgstr ""
+msgstr "Argomento non accettato, deve essere 0 oppure un numero positivo"
 
 #: kickrejoin.cpp:90
 msgid "Negative delays don't make any sense!"
 msgstr ""
+"Impostare il ritardo del rientro automatico (rejoin) con numeri negativi non "
+"ha alcun senso!"
 
 #: kickrejoin.cpp:98
 msgid "Rejoin delay set to 1 second"
 msgid_plural "Rejoin delay set to {1} seconds"
-msgstr[0] ""
+msgstr[0] "Il ritardo del rientro automatico (rejoin) è impostato a 1 secondo"
 msgstr[1] ""
+"Il ritardo del rientro automatico (rejoin) è impostato a {1} secondi"
 
 #: kickrejoin.cpp:101
 msgid "Rejoin delay disabled"
-msgstr ""
+msgstr "Il ritardo del rientro automatico (rejoin) è disabilitato"
 
 #: kickrejoin.cpp:106
 msgid "Rejoin delay is set to 1 second"
 msgid_plural "Rejoin delay is set to {1} seconds"
 msgstr[0] ""
+"Il ritardo del rientro automatico (rejoin) è stato impostato a 1 secondo"
 msgstr[1] ""
+"Il ritardo del rientro automatico (rejoin) è stato impostato a {1} secondi"
 
 #: kickrejoin.cpp:109
 msgid "Rejoin delay is disabled"
-msgstr ""
+msgstr "Il ritardo del rientro automatico (rejoin) è stato disabilitato"
 
 #: kickrejoin.cpp:131
 msgid "You might enter the number of seconds to wait before rejoining."
 msgstr ""
+"Puoi inserire il numero di secondi che lo ZNC deve attendere prima di "
+"rientrare automaticamente (rejoining)."
 
 #: kickrejoin.cpp:134
 msgid "Autorejoins on kick"
-msgstr ""
+msgstr "Rientra automaticamente dopo un kick (Autorejoins)"
