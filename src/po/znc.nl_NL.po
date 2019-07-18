@@ -1567,8 +1567,8 @@ msgstr "Laat zien hoe lang ZNC al draait"
 
 #: ClientCommand.cpp:1817
 msgctxt "helpcmd|LoadMod|args"
-msgid "[--type=global|user|network] <module>"
-msgstr "[--type=global|user|network] <module>"
+msgid "[--type=global|user|network] <module> [args]"
+msgstr ""
 
 #: ClientCommand.cpp:1819
 msgctxt "helpcmd|LoadMod|desc"
@@ -1587,8 +1587,8 @@ msgstr "Stop een module"
 
 #: ClientCommand.cpp:1825
 msgctxt "helpcmd|ReloadMod|args"
-msgid "[--type=global|user|network] <module>"
-msgstr "[--type=global|user|network] <module>"
+msgid "[--type=global|user|network] <module> [args]"
+msgstr ""
 
 #: ClientCommand.cpp:1827
 msgctxt "helpcmd|ReloadMod|desc"
