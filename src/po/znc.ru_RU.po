@@ -1257,47 +1257,47 @@ msgstr ""
 #: ClientCommand.cpp:1690
 msgctxt "helpcmd|Version|desc"
 msgid "Print which version of ZNC this is"
-msgstr ""
+msgstr "Показывает версию ZNC"
 
 #: ClientCommand.cpp:1693
 msgctxt "helpcmd|ListMods|desc"
 msgid "List all loaded modules"
-msgstr ""
+msgstr "Список всех загруженных модулей"
 
 #: ClientCommand.cpp:1696
 msgctxt "helpcmd|ListAvailMods|desc"
 msgid "List all available modules"
-msgstr ""
+msgstr "Список всех доступных модулей"
 
 #: ClientCommand.cpp:1700 ClientCommand.cpp:1886
 msgctxt "helpcmd|ListChans|desc"
 msgid "List all channels"
-msgstr ""
+msgstr "Список всех каналов"
 
 #: ClientCommand.cpp:1703
 msgctxt "helpcmd|ListNicks|args"
 msgid "<#chan>"
-msgstr ""
+msgstr "<#канал>"
 
 #: ClientCommand.cpp:1704
 msgctxt "helpcmd|ListNicks|desc"
 msgid "List all nicks on a channel"
-msgstr ""
+msgstr "Список всех людей на канале"
 
 #: ClientCommand.cpp:1707
 msgctxt "helpcmd|ListClients|desc"
 msgid "List all clients connected to your ZNC user"
-msgstr ""
+msgstr "Список всех клиентов, подключенных к вашему пользователю ZNC"
 
 #: ClientCommand.cpp:1711
 msgctxt "helpcmd|ListServers|desc"
 msgid "List all servers of current IRC network"
-msgstr ""
+msgstr "Список всех серверов этой сети IRC"
 
 #: ClientCommand.cpp:1715
 msgctxt "helpcmd|AddNetwork|args"
 msgid "<name>"
-msgstr ""
+msgstr "<название>"
 
 #: ClientCommand.cpp:1716
 msgctxt "helpcmd|AddNetwork|desc"
@@ -1322,7 +1322,7 @@ msgstr ""
 #: ClientCommand.cpp:1724
 msgctxt "helpcmd|MoveNetwork|args"
 msgid "<old user> <old network> <new user> [new network]"
-msgstr ""
+msgstr "<старый пользователь> <старая сеть> <новый пользователь> [новая сеть]"
 
 #: ClientCommand.cpp:1726
 msgctxt "helpcmd|MoveNetwork|desc"
