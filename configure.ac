@@ -720,6 +720,10 @@ fi
 echo
 echo ZNC AC_PACKAGE_VERSION configured
 echo
+echo "The configure script is deprecated and will be removed from ZNC"
+echo "in some future version. Use either CMake or the convenience wrapper"
+echo "configure.sh which takes the same parameters as configure."
+echo
 echo "prefix:       $prefix"
 echo "debug:        $DEBUG"
 echo "ipv6:         $IPV6"
