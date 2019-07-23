@@ -570,7 +570,9 @@ if test "x$PYTHON" != "xno"; then
 	if test -z "$PKG_CONFIG"; then
 		AC_MSG_ERROR([pkg-config is required for modpython.])
 	fi
-	PKG_CHECK_MODULES([python], [$PYTHON >= 3.0],, AC_MSG_ERROR([$PYTHON.pc not found or is wrong. Try --disable-python or install python3.]))
+	PKG_CHECK_MODULES([python], [$PYTHON-embed >= 3.0],, [
+		PKG_CHECK_MODULES([python], [$PYTHON >= 3.0],, AC_MSG_ERROR([$PYTHON.pc not found or is wrong. Try --disable-python or install python3.]))
+	])
 	my_saved_LIBS="$LIBS"
 	my_saved_CXXFLAGS="$CXXFLAGS"
 	appendLib $python_LIBS
