@@ -172,9 +172,42 @@ if(WANT_PERL)
 endif()
 if (WANT_PYTHON)
 	find_package(Perl 5.10 REQUIRED)
-	pkg_check_modules(PYTHON "${WANT_PYTHON_VERSION}-embed")
-	if (NOT PYTHON_FOUND)
-		pkg_check_modules(PYTHON "${WANT_PYTHON_VERSION}" REQUIRED)
+	# VERSION_GREATER_EQUAL is available only since 3.7
+	if (CMAKE_VERSION VERSION_LESS 3.12)
+	else()
+		# Even if FindPython3 is available (since CMake 3.12) we still use
+		# pkg-config, because FindPython has a hardcoded list of python
+		# versions, which may become outdated when new pythons are released,
+		# but when cmake in the distro is old.
+		#
+		# Why FindPython3 is useful at all? Because sometimes there is no
+		# python3.pc, but only python-3.5.pc and python-3.6.pc; which would
+		# force user to provide the version explicitly via
+		# WANT_PYTHON_VERSION. This is the case on Gentoo when NOT building
+		# via emerge.
+		if (WANT_PYTHON_VERSION STREQUAL "python3")
+			find_package(Python3 COMPONENTS Development)
+		else()
+			# We used to pass value like "python-3.5" to the variable.
+			if (WANT_PYTHON_VERSION MATCHES "^(python-)?(.*)$")
+				find_package(Python3 COMPONENTS Development
+					EXACT "${CMAKE_MATCH_2}")
+			else()
+				message(FATAL_ERROR "Invalid value of WANT_PYTHON_VERSION")
+			endif()
+		endif()
+		# Compatibility with pkg-config variables
+		set(Python3_LDFLAGS "${Python3_LIBRARIES}")
+	endif()
+	if (NOT Python3_FOUND AND WANT_PYTHON_VERSION MATCHES "^python")
+		# Since python 3.8, -embed is required for embedding.
+		pkg_check_modules(Python3 "${WANT_PYTHON_VERSION}-embed >= 3.0")
+		if (NOT Python3_FOUND)
+			pkg_check_modules(Python3 "${WANT_PYTHON_VERSION} >= 3.0")
+		endif()
+	endif()
+	if (NOT Python3_FOUND)
+		message(FATAL_ERROR "Python 3 is not found. Try disabling it.")
 	endif()
 endif()
 
@@ -361,7 +394,7 @@ summary_line("SSL      " "${OPENSSL_FOUND}")
 summary_line("IPv6     " "${WANT_IPV6}")
 summary_line("Async DNS" "${HAVE_THREADED_DNS}")
 summary_line("Perl     " "${PERLLIBS_FOUND}")
-summary_line("Python   " "${PYTHON_FOUND}")
+summary_line("Python   " "${Python3_FOUND}")
 summary_line("Tcl      " "${TCL_FOUND}")
 summary_line("Cyrus    " "${CYRUS_FOUND}")
 summary_line("Charset  " "${ICU_FOUND}")
