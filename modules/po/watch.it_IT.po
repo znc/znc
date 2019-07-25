@@ -14,59 +14,59 @@ msgstr ""
 
 #: watch.cpp:334
 msgid "All entries cleared."
-msgstr ""
+msgstr "Tutte le voci cancellate."
 
 #: watch.cpp:344
 msgid "Buffer count is set to {1}"
-msgstr ""
+msgstr "Buffer count è impostato a {1}"
 
 #: watch.cpp:348
 msgid "Unknown command: {1}"
-msgstr ""
+msgstr "Comando sconosciuto: {1}"
 
 #: watch.cpp:397
 msgid "Disabled all entries."
-msgstr ""
+msgstr "Disabilitate tutte le voci"
 
 #: watch.cpp:398
 msgid "Enabled all entries."
-msgstr ""
+msgstr "Abilitate tutte le voci"
 
 #: watch.cpp:405 watch.cpp:437 watch.cpp:470 watch.cpp:570 watch.cpp:585
 msgid "Invalid Id"
-msgstr ""
+msgstr "Id non valido"
 
 #: watch.cpp:414
 msgid "Id {1} disabled"
-msgstr ""
+msgstr "Id {1} disabilitato"
 
 #: watch.cpp:416
 msgid "Id {1} enabled"
-msgstr ""
+msgstr "Id {1} abilitato"
 
 #: watch.cpp:428
 msgid "Set DetachedClientOnly for all entries to Yes"
-msgstr ""
+msgstr "Imposta il DetachedClientOnly per tutte le voci su Sì"
 
 #: watch.cpp:430
 msgid "Set DetachedClientOnly for all entries to No"
-msgstr ""
+msgstr "Imposta il DetachedClientOnly per tutte le voci su No"
 
 #: watch.cpp:446 watch.cpp:479
 msgid "Id {1} set to Yes"
-msgstr ""
+msgstr "Id {1} impostato a Si"
 
 #: watch.cpp:448 watch.cpp:481
 msgid "Id {1} set to No"
-msgstr ""
+msgstr "Id {1} impostato a No"
 
 #: watch.cpp:461
 msgid "Set DetachedChannelOnly for all entries to Yes"
-msgstr ""
+msgstr "Imposta il DetachedChannelOnly per tutte le voci su Yes"
 
 #: watch.cpp:463
 msgid "Set DetachedChannelOnly for all entries to No"
-msgstr ""
+msgstr "Imposta il DetachedChannelOnly per teutte le voci a No"
 
 #: watch.cpp:487 watch.cpp:503
 msgid "Id"
@@ -82,11 +82,11 @@ msgstr ""
 
 #: watch.cpp:490 watch.cpp:506
 msgid "Pattern"
-msgstr ""
+msgstr "Modello"
 
 #: watch.cpp:491 watch.cpp:507
 msgid "Sources"
-msgstr ""
+msgstr "Sorgenti"
 
 #: watch.cpp:492 watch.cpp:508 watch.cpp:509
 msgid "Off"
@@ -102,7 +102,7 @@ msgstr ""
 
 #: watch.cpp:512 watch.cpp:515
 msgid "Yes"
-msgstr ""
+msgstr "Si"
 
 #: watch.cpp:512 watch.cpp:515
 msgid "No"
@@ -110,83 +110,83 @@ msgstr ""
 
 #: watch.cpp:521 watch.cpp:527
 msgid "You have no entries."
-msgstr ""
+msgstr "Non hai voci"
 
 #: watch.cpp:578
 msgid "Sources set for Id {1}."
-msgstr ""
+msgstr "Sorgenti impostate per Id {1}."
 
 #: watch.cpp:593
 msgid "Id {1} removed."
-msgstr ""
+msgstr "Id {1} rimosso."
 
 #: watch.cpp:600 watch.cpp:605 watch.cpp:610 watch.cpp:615 watch.cpp:621
 #: watch.cpp:626 watch.cpp:630 watch.cpp:634 watch.cpp:639 watch.cpp:646
 #: watch.cpp:653 watch.cpp:659 watch.cpp:665
 msgid "Command"
-msgstr ""
+msgstr "Comando"
 
 #: watch.cpp:601 watch.cpp:606 watch.cpp:611 watch.cpp:617 watch.cpp:622
 #: watch.cpp:627 watch.cpp:631 watch.cpp:635 watch.cpp:642 watch.cpp:649
 #: watch.cpp:655 watch.cpp:661 watch.cpp:666
 msgid "Description"
-msgstr ""
+msgstr "Descrizione"
 
 #: watch.cpp:605
 msgid "Add <HostMask> [Target] [Pattern]"
-msgstr ""
+msgstr "Add <HostMask> [Target] [Modello]"
 
 #: watch.cpp:607
 msgid "Used to add an entry to watch for."
-msgstr ""
+msgstr "Utilizzato per aggiungere una voce da tenere d'occhio."
 
 #: watch.cpp:610
 msgid "List"
-msgstr ""
+msgstr "Lista"
 
 #: watch.cpp:612
 msgid "List all entries being watched."
-msgstr ""
+msgstr "Elenca tutte le voci che si stanno guardando"
 
 #: watch.cpp:615
 msgid "Dump"
-msgstr ""
+msgstr "Scarica"
 
 #: watch.cpp:618
 msgid "Dump a list of all current entries to be used later."
-msgstr ""
+msgstr "Scarica un elenco di tutte le voci correnti da utilizzare in seguito."
 
 #: watch.cpp:621
 msgid "Del <Id>"
-msgstr ""
+msgstr "Elimina <Id>"
 
 #: watch.cpp:623
 msgid "Deletes Id from the list of watched entries."
-msgstr ""
+msgstr "Elimina l'ID dall'elenco delle voci osservate."
 
 #: watch.cpp:626
 msgid "Clear"
-msgstr ""
+msgstr "Cancella"
 
 #: watch.cpp:627
 msgid "Delete all entries."
-msgstr ""
+msgstr "Elimina tutte le voci."
 
 #: watch.cpp:630
 msgid "Enable <Id | *>"
-msgstr ""
+msgstr "Abilita <Id | *>"
 
 #: watch.cpp:631
 msgid "Enable a disabled entry."
-msgstr ""
+msgstr "Abilita una voce disabilitata"
 
 #: watch.cpp:634
 msgid "Disable <Id | *>"
-msgstr ""
+msgstr "Disabilita <Id | *>"
 
 #: watch.cpp:636
 msgid "Disable (but don't delete) an entry."
-msgstr ""
+msgstr "Disabilita (ma non elimina) una voce."
 
 #: watch.cpp:640
 msgid "SetDetachedClientOnly <Id | *> <True | False>"
@@ -194,7 +194,7 @@ msgstr ""
 
 #: watch.cpp:643
 msgid "Enable or disable detached client only for an entry."
-msgstr ""
+msgstr "Abilita o disabilita il client separato (detached) solo per una voce."
 
 #: watch.cpp:647
 msgid "SetDetachedChannelOnly <Id | *> <True | False>"
@@ -202,7 +202,7 @@ msgstr ""
 
 #: watch.cpp:650
 msgid "Enable or disable detached channel only for an entry."
-msgstr ""
+msgstr "Abilita o disabilita il canale separato (detached) solo per una voce."
 
 #: watch.cpp:653
 msgid "Buffer [Count]"
@@ -211,39 +211,41 @@ msgstr ""
 #: watch.cpp:656
 msgid "Show/Set the amount of buffered lines while detached."
 msgstr ""
+"Mostra/Imposta la quantità di linee bufferizzate mentre è "
+"distaccata(detached)."
 
 #: watch.cpp:660
 msgid "SetSources <Id> [#chan priv #foo* !#bar]"
-msgstr ""
+msgstr "SetSources <Id> [#canale priv #foo* !#bar]"
 
 #: watch.cpp:662
 msgid "Set the source channels that you care about."
-msgstr ""
+msgstr "Imposta i canali sorgente che ti interessano."
 
 #: watch.cpp:665
 msgid "Help"
-msgstr ""
+msgstr "Aiuto"
 
 #: watch.cpp:666
 msgid "This help."
-msgstr ""
+msgstr "Questo aiuto."
 
 #: watch.cpp:682
 msgid "Entry for {1} already exists."
-msgstr ""
+msgstr "La voce per {1} esiste già."
 
 #: watch.cpp:690
 msgid "Adding entry: {1} watching for [{2}] -> {3}"
-msgstr ""
+msgstr "Aggiunta voce: {1} in cerca di [{2}] -> {3}"
 
 #: watch.cpp:696
 msgid "Watch: Not enough arguments.  Try Help"
-msgstr ""
+msgstr "Guarda: argomenti insufficienti. Prova aiuto"
 
 #: watch.cpp:765
 msgid "WARNING: malformed entry found while loading"
-msgstr ""
+msgstr "ATTENZIONE: rilevata immissione errata durante il caricamento"
 
 #: watch.cpp:779
 msgid "Copy activity from a specific user into a separate window"
-msgstr ""
+msgstr "Copia l'attività di uno specifico utente in una finestra separata"

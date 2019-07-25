@@ -14,89 +14,92 @@ msgstr ""
 
 #: modules/po/../data/stickychan/tmpl/index.tmpl:9
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: modules/po/../data/stickychan/tmpl/index.tmpl:10
 msgid "Sticky"
-msgstr ""
+msgstr "Appiccicoso"
 
 #: modules/po/../data/stickychan/tmpl/index.tmpl:25
 msgid "Save"
-msgstr ""
+msgstr "Salva"
 
 #: modules/po/../data/stickychan/tmpl/stickychan_WebadminChan.tmpl:8
 msgid "Channel is sticky"
-msgstr ""
+msgstr "Canale è appiccicoso (sticky)"
 
 #: stickychan.cpp:28
 msgid "<#channel> [key]"
-msgstr ""
+msgstr "<#canale> [chiave]"
 
 #: stickychan.cpp:28
 msgid "Sticks a channel"
-msgstr ""
+msgstr "Attacca/Aggancia/Appiccica un canale"
 
 #: stickychan.cpp:30
 msgid "<#channel>"
-msgstr ""
+msgstr "<#canale>"
 
 #: stickychan.cpp:30
 msgid "Unsticks a channel"
-msgstr ""
+msgstr "Scolla un canale (Unsticks)"
 
 #: stickychan.cpp:32
 msgid "Lists sticky channels"
-msgstr ""
+msgstr "Elenco dei canali appiccicosi (sticky)"
 
 #: stickychan.cpp:75
 msgid "Usage: Stick <#channel> [key]"
-msgstr ""
+msgstr "Usa: Stick <#canale> [chiave]"
 
 #: stickychan.cpp:79
 msgid "Stuck {1}"
-msgstr ""
+msgstr "Appiccicato {1}"
 
 #: stickychan.cpp:85
 msgid "Usage: Unstick <#channel>"
-msgstr ""
+msgstr "Usa: Unstick <#canale>"
 
 #: stickychan.cpp:89
 msgid "Unstuck {1}"
-msgstr ""
+msgstr "Scollato {1}"
 
 #: stickychan.cpp:101
 msgid " -- End of List"
-msgstr ""
+msgstr " -- Fine della lista"
 
 #: stickychan.cpp:115
 msgid "Could not join {1} (# prefix missing?)"
-msgstr ""
+msgstr "Impossibile entrare in {1} (# prefisso mancante?)"
 
 #: stickychan.cpp:128
 msgid "Sticky Channels"
-msgstr ""
+msgstr "Canali appiccicosi"
 
 #: stickychan.cpp:160
 msgid "Changes have been saved!"
-msgstr ""
+msgstr "I cambiamenti sono stati salvati!"
 
 #: stickychan.cpp:185
 msgid "Channel became sticky!"
-msgstr ""
+msgstr "Il canale è diventato appiccicoso! (sticky)"
 
 #: stickychan.cpp:189
 msgid "Channel stopped being sticky!"
-msgstr ""
+msgstr "Il canale ha smesso di essere appiccicoso (sticky)!"
 
 #: stickychan.cpp:209
 msgid ""
 "Channel {1} cannot be joined, it is an illegal channel name. Unsticking."
 msgstr ""
+"Impossibile entrare nel canale {1}, non è un nome di canale valido ed è "
+"stato scollegato (Unsticking)."
 
 #: stickychan.cpp:246
 msgid "List of channels, separated by comma."
-msgstr ""
+msgstr "Elenco dei canali, separati dalla virgola."
 
 #: stickychan.cpp:251
 msgid "configless sticky chans, keeps you there very stickily even"
 msgstr ""
+"configura i canali meno appiccicosi, ti mantiene lì molto appiccicosamente"

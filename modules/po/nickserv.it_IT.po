@@ -14,15 +14,17 @@ msgstr ""
 
 #: nickserv.cpp:31
 msgid "Password set"
-msgstr ""
+msgstr "Password impostata correttamente"
 
 #: nickserv.cpp:38
 msgid "NickServ name set"
-msgstr ""
+msgstr "Nuovo nome per NickServ impostato correttamente"
 
 #: nickserv.cpp:54
 msgid "No such editable command. See ViewCommands for list."
 msgstr ""
+"Nessun comando simile da modificare. Digita ViewCommands per vederne la "
+"lista."
 
 #: nickserv.cpp:57
 msgid "Ok"
@@ -34,11 +36,11 @@ msgstr ""
 
 #: nickserv.cpp:62
 msgid "Set your nickserv password"
-msgstr ""
+msgstr "Imposta la tua password per nickserv"
 
 #: nickserv.cpp:64
 msgid "Clear your nickserv password"
-msgstr ""
+msgstr "Rimuove dallo ZNC la password utilizzata per identificarti a NickServ"
 
 #: nickserv.cpp:66
 msgid "nickname"
@@ -49,27 +51,33 @@ msgid ""
 "Set NickServ name (Useful on networks like EpiKnet, where NickServ is named "
 "Themis"
 msgstr ""
+"Imposta il nome di NickServ (utile su networks come EpiKnet, dove NickServ è "
+"chiamato Themis)"
 
 #: nickserv.cpp:71
 msgid "Reset NickServ name to default (NickServ)"
-msgstr ""
+msgstr "Riporta il nome di NickServ ai valori di default (NickServ)"
 
 #: nickserv.cpp:75
 msgid "Show patterns for lines, which are being sent to NickServ"
-msgstr ""
+msgstr "Mostra i modelli (patterns) per linea, che vengono inviati a nikserv"
 
 #: nickserv.cpp:77
 msgid "cmd new-pattern"
-msgstr ""
+msgstr "comando nuovo-modello"
 
 #: nickserv.cpp:78
 msgid "Set pattern for commands"
-msgstr ""
+msgstr "Imposta un modello (pattern) per i comandi"
 
 #: nickserv.cpp:140
 msgid "Please enter your nickserv password."
 msgstr ""
+"Per favore inserisci la password che usi per identificarti attraverso "
+"NickServ."
 
 #: nickserv.cpp:144
 msgid "Auths you with NickServ (prefer SASL module instead)"
 msgstr ""
+"Autorizza il tuo nick attraverso NickServ (anziché dal modulo SASL "
+"(preferito))"

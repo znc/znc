@@ -14,16 +14,18 @@ msgstr ""
 
 #: notify_connect.cpp:24
 msgid "attached"
-msgstr ""
+msgstr "attaccato"
 
 #: notify_connect.cpp:26
 msgid "detached"
-msgstr ""
+msgstr "distaccato"
 
 #: notify_connect.cpp:41
 msgid "{1} {2} from {3}"
-msgstr ""
+msgstr "{1} {2} da {3}"
 
 #: notify_connect.cpp:52
 msgid "Notifies all admin users when a client connects or disconnects."
 msgstr ""
+"Notifica a tutti gli utenti amministratori quando un client si connette o si "
+"disconnette."
