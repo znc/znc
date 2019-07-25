@@ -22,7 +22,7 @@ msgstr ""
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:13
 msgid "Please enter a username."
-msgstr ""
+msgstr "Per favore inserisci un username."
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:16
 msgid "Password:"
@@ -30,145 +30,152 @@ msgstr ""
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:18
 msgid "Please enter a password."
-msgstr ""
+msgstr "Per favore inserisci una password."
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:22
 msgid "Options"
-msgstr ""
+msgstr "Opzioni"
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:25
 msgid "Connect only if SASL authentication succeeds."
-msgstr ""
+msgstr "Connette solo se l'autenticazione SASL ha esito positivo."
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:27
 msgid "Require authentication"
-msgstr ""
+msgstr "Richiede l'autenticazione"
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:35
 msgid "Mechanisms"
-msgstr ""
+msgstr "Meccanismi"
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:42
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:43 sasl.cpp:89 sasl.cpp:94
 msgid "Description"
-msgstr ""
+msgstr "Descrizione"
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:57
 msgid "Selected mechanisms and their order:"
-msgstr ""
+msgstr "Meccanismi selezionati ed il loro ordine:"
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:74
 msgid "Save"
-msgstr ""
+msgstr "Salva"
 
 #: sasl.cpp:54
 msgid "TLS certificate, for use with the *cert module"
-msgstr ""
+msgstr "Certificato TLS, da utilizzare con il modulo *cert"
 
 #: sasl.cpp:56
 msgid ""
 "Plain text negotiation, this should work always if the network supports SASL"
 msgstr ""
+"La negoziazione del testo semplice, dovrebbe funzionare sempre se il network "
+"supporta SASL"
 
 #: sasl.cpp:62
 msgid "search"
-msgstr ""
+msgstr "ricerca"
 
 #: sasl.cpp:62
 msgid "Generate this output"
-msgstr ""
+msgstr "Genera questo output"
 
 #: sasl.cpp:64
 msgid "[<username> [<password>]]"
-msgstr ""
+msgstr "[<nome utente> [<password>]]"
 
 #: sasl.cpp:65
 msgid ""
 "Set username and password for the mechanisms that need them. Password is "
 "optional. Without parameters, returns information about current settings."
 msgstr ""
+"Imposta username e password per i meccanismi che ne hanno bisogno. La "
+"password è facoltativa. Senza parametri, restituisce informazioni sulle "
+"impostazioni correnti."
 
 #: sasl.cpp:69
 msgid "[mechanism[ ...]]"
-msgstr ""
+msgstr "[meccanismo[ ...]]"
 
 #: sasl.cpp:70
 msgid "Set the mechanisms to be attempted (in order)"
-msgstr ""
+msgstr "Imposta i meccanismi da tentare (in ordine)"
 
 #: sasl.cpp:72
 msgid "[yes|no]"
-msgstr ""
+msgstr "[si|no]"
 
 #: sasl.cpp:73
 msgid "Don't connect unless SASL authentication succeeds"
-msgstr ""
+msgstr "Non connettersi a meno che l'autenticazione SASL non abbia successo"
 
 #: sasl.cpp:88 sasl.cpp:93
 msgid "Mechanism"
-msgstr ""
+msgstr "Meccanismo"
 
 #: sasl.cpp:97
 msgid "The following mechanisms are available:"
-msgstr ""
+msgstr "Sono disponibili i seguenti meccanismi:"
 
 #: sasl.cpp:107
 msgid "Username is currently not set"
-msgstr ""
+msgstr "L'username non è attualmente impostato"
 
 #: sasl.cpp:109
 msgid "Username is currently set to '{1}'"
-msgstr ""
+msgstr "L'username è attualmente impostato a '{1}'"
 
 #: sasl.cpp:112
 msgid "Password was not supplied"
-msgstr ""
+msgstr "La password non è stata fornita"
 
 #: sasl.cpp:114
 msgid "Password was supplied"
-msgstr ""
+msgstr "La password è stata fornita"
 
 #: sasl.cpp:122
 msgid "Username has been set to [{1}]"
-msgstr ""
+msgstr "L'username è stato impostato a [{1}]"
 
 #: sasl.cpp:123
 msgid "Password has been set to [{1}]"
-msgstr ""
+msgstr "La password è stata impostata a [{1}]"
 
 #: sasl.cpp:143
 msgid "Current mechanisms set: {1}"
-msgstr ""
+msgstr "Meccanismi correnti impostati: {1}"
 
 #: sasl.cpp:152
 msgid "We require SASL negotiation to connect"
-msgstr ""
+msgstr "Noi richiediamo la negoziazione SASL per connettersi"
 
 #: sasl.cpp:154
 msgid "We will connect even if SASL fails"
-msgstr ""
+msgstr "Ci collegheremo anche se SASL fallisce"
 
 #: sasl.cpp:191
 msgid "Disabling network, we require authentication."
-msgstr ""
+msgstr "Disabilitando il network, è rischiesta l'autenticazione."
 
 #: sasl.cpp:192
 msgid "Use 'RequireAuth no' to disable."
-msgstr ""
+msgstr "Usa 'RequireAuth no' per disabilitare."
 
 #: sasl.cpp:245
 msgid "{1} mechanism succeeded."
-msgstr ""
+msgstr "{1} meccanismo riuscito."
 
 #: sasl.cpp:257
 msgid "{1} mechanism failed."
-msgstr ""
+msgstr "{1} meccanismo fallito."
 
 #: sasl.cpp:335
 msgid ""
 "Adds support for sasl authentication capability to authenticate to an IRC "
 "server"
 msgstr ""
+"Aggiunge il supporto per la funzionalità di autenticazione sasl per "
+"l'autenticazione al server IRC"

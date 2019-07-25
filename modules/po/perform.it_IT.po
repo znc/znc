@@ -18,23 +18,23 @@ msgstr ""
 
 #: modules/po/../data/perform/tmpl/index.tmpl:11
 msgid "Perform commands:"
-msgstr ""
+msgstr "Comandi Perform:"
 
 #: modules/po/../data/perform/tmpl/index.tmpl:15
 msgid "Commands sent to the IRC server on connect, one per line."
-msgstr ""
+msgstr "Comandi inviati al server IRC durante la connessione, uno per linea."
 
 #: modules/po/../data/perform/tmpl/index.tmpl:18
 msgid "Save"
-msgstr ""
+msgstr "Salva"
 
 #: perform.cpp:24
 msgid "Usage: add <command>"
-msgstr ""
+msgstr "Usa: add <comando>"
 
 #: perform.cpp:29
 msgid "Added!"
-msgstr ""
+msgstr "Aggiunto!"
 
 #: perform.cpp:37 perform.cpp:82
 msgid "Illegal # Requested"
@@ -42,12 +42,12 @@ msgstr ""
 
 #: perform.cpp:41
 msgid "Command Erased."
-msgstr ""
+msgstr "Comando cancellato."
 
 #: perform.cpp:50 perform.cpp:56
 msgctxt "list"
 msgid "Id"
-msgstr ""
+msgstr "ID"
 
 #: perform.cpp:51 perform.cpp:57
 msgctxt "list"
@@ -57,52 +57,54 @@ msgstr ""
 #: perform.cpp:52 perform.cpp:62
 msgctxt "list"
 msgid "Expanded"
-msgstr ""
+msgstr "Espanso"
 
 #: perform.cpp:67
 msgid "No commands in your perform list."
-msgstr ""
+msgstr "Nessun comando nella tua lista dei Perform."
 
 #: perform.cpp:73
 msgid "perform commands sent"
-msgstr ""
+msgstr "comandi perform inviati"
 
 #: perform.cpp:86
 msgid "Commands Swapped."
-msgstr ""
+msgstr "Comandi scambiati."
 
 #: perform.cpp:95
 msgid "<command>"
-msgstr ""
+msgstr "<comando>"
 
 #: perform.cpp:96
 msgid "Adds perform command to be sent to the server on connect"
 msgstr ""
+"Aggiunge dei comandi (Perform) da inviare al server durante la connessione"
 
 #: perform.cpp:98
 msgid "<number>"
-msgstr ""
+msgstr "<numero>"
 
 #: perform.cpp:98
 msgid "Delete a perform command"
-msgstr ""
+msgstr "Elimina i comandi Perform"
 
 #: perform.cpp:100
 msgid "List the perform commands"
-msgstr ""
+msgstr "Elenco dei comandi Perform"
 
 #: perform.cpp:103
 msgid "Send the perform commands to the server now"
-msgstr ""
+msgstr "Invia i comandi Perform al server adesso"
 
 #: perform.cpp:105
 msgid "<number> <number>"
-msgstr ""
+msgstr "<numero> <numero>"
 
 #: perform.cpp:106
 msgid "Swap two perform commands"
-msgstr ""
+msgstr "Scambia due comandi Perform"
 
 #: perform.cpp:192
 msgid "Keeps a list of commands to be executed when ZNC connects to IRC."
 msgstr ""
+"Mantiene una lista di comandi da eseguire quando lo ZNC si connette ad IRC."
