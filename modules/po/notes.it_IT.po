@@ -42,7 +42,7 @@ msgstr "Nota"
 
 #: modules/po/../data/notes/tmpl/index.tmpl:41
 msgid "[del]"
-msgstr ""
+msgstr "[del]"
 
 #: notes.cpp:32
 msgid "That note already exists.  Use MOD <key> <note> to overwrite."

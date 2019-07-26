@@ -35,11 +35,11 @@ msgstr "Chiave"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:36
 msgid "del"
-msgstr ""
+msgstr "elimina"
 
 #: certauth.cpp:31
 msgid "[pubkey]"
-msgstr ""
+msgstr "[chiave pubblica]"
 
 #: certauth.cpp:32
 msgid "Add a public key. If key is not provided will use the current key"
@@ -99,7 +99,7 @@ msgstr "Nessuna chiave impostata per il tuo utente"
 
 #: certauth.cpp:204
 msgid "Invalid #, check \"list\""
-msgstr ""
+msgstr "# Non valido, selezionare \"list\""
 
 #: certauth.cpp:216
 msgid "Removed"

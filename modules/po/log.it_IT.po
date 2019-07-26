@@ -32,7 +32,7 @@ msgstr "Elenca tutte le regole di registrazione"
 
 #: log.cpp:67
 msgid "<var> true|false"
-msgstr ""
+msgstr "<var> vero|falso"
 
 #: log.cpp:68
 msgid "Set one of the following options: joins, quits, nickchanges"

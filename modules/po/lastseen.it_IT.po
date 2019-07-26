@@ -14,7 +14,7 @@ msgstr ""
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:8
 msgid "User"
-msgstr ""
+msgstr "Utente"
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:9 lastseen.cpp:99
 msgid "Last Seen"
@@ -22,7 +22,7 @@ msgstr "Ultima visualizzazione"
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:10
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:11
 msgid "Action"
