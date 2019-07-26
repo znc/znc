@@ -14,11 +14,11 @@ msgstr ""
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:7 sasl.cpp:290
 msgid "SASL"
-msgstr ""
+msgstr "SASL"
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:11
 msgid "Username:"
-msgstr ""
+msgstr "Nome utente:"
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:13
 msgid "Please enter a username."
@@ -26,7 +26,7 @@ msgstr "Per favore inserisci un username."
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:16
 msgid "Password:"
-msgstr ""
+msgstr "Password:"
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:18
 msgid "Please enter a password."

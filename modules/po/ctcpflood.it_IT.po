@@ -49,7 +49,7 @@ msgstr[1] "{1} Messaggi CTCP"
 #: ctcpflood.cpp:127
 msgid "every second"
 msgid_plural "every {1} seconds"
-msgstr[0] ""
+msgstr[0] "ogni secondo"
 msgstr[1] "ogni {1} secondi"
 
 #: ctcpflood.cpp:129

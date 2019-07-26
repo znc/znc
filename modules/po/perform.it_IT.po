@@ -14,7 +14,7 @@ msgstr ""
 
 #: modules/po/../data/perform/tmpl/index.tmpl:7 perform.cpp:143
 msgid "Perform"
-msgstr ""
+msgstr "Perform"
 
 #: modules/po/../data/perform/tmpl/index.tmpl:11
 msgid "Perform commands:"
@@ -38,7 +38,7 @@ msgstr "Aggiunto!"
 
 #: perform.cpp:37 perform.cpp:82
 msgid "Illegal # Requested"
-msgstr ""
+msgstr "Numero # non trovato"
 
 #: perform.cpp:41
 msgid "Command Erased."
@@ -52,7 +52,7 @@ msgstr "ID"
 #: perform.cpp:51 perform.cpp:57
 msgctxt "list"
 msgid "Perform"
-msgstr ""
+msgstr "Perform"
 
 #: perform.cpp:52 perform.cpp:62
 msgctxt "list"

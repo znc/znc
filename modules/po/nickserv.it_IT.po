@@ -28,11 +28,11 @@ msgstr ""
 
 #: nickserv.cpp:57
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #: nickserv.cpp:62
 msgid "password"
-msgstr ""
+msgstr "password"
 
 #: nickserv.cpp:62
 msgid "Set your nickserv password"
@@ -44,7 +44,7 @@ msgstr "Rimuove dallo ZNC la password utilizzata per identificarti a NickServ"
 
 #: nickserv.cpp:66
 msgid "nickname"
-msgstr ""
+msgstr "nickname"
 
 #: nickserv.cpp:67
 msgid ""

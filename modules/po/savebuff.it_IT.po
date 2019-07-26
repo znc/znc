@@ -14,7 +14,7 @@ msgstr ""
 
 #: savebuff.cpp:65
 msgid "<password>"
-msgstr ""
+msgstr "<password>"
 
 #: savebuff.cpp:65
 msgid "Sets the password"
@@ -22,7 +22,7 @@ msgstr "Imposta la password"
 
 #: savebuff.cpp:67
 msgid "<buffer>"
-msgstr ""
+msgstr "<buffer>"
 
 #: savebuff.cpp:67
 msgid "Replays the buffer"

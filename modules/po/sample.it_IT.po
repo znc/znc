@@ -26,7 +26,7 @@ msgstr "Campione di lavoto fatto"
 
 #: sample.cpp:65
 msgid "TEST!!!!"
-msgstr ""
+msgstr "TEST!!!!"
 
 #: sample.cpp:74
 msgid "I'm being loaded with the arguments: {1}"

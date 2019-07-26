@@ -70,15 +70,15 @@ msgstr "Imposta il DetachedChannelOnly per teutte le voci a No"
 
 #: watch.cpp:487 watch.cpp:503
 msgid "Id"
-msgstr ""
+msgstr "Id"
 
 #: watch.cpp:488 watch.cpp:504
 msgid "HostMask"
-msgstr ""
+msgstr "HostMask"
 
 #: watch.cpp:489 watch.cpp:505
 msgid "Target"
-msgstr ""
+msgstr "Target"
 
 #: watch.cpp:490 watch.cpp:506
 msgid "Pattern"
@@ -90,15 +90,15 @@ msgstr "Sorgenti"
 
 #: watch.cpp:492 watch.cpp:508 watch.cpp:509
 msgid "Off"
-msgstr ""
+msgstr "Off"
 
 #: watch.cpp:493 watch.cpp:511
 msgid "DetachedClientOnly"
-msgstr ""
+msgstr "DetachedClientOnly"
 
 #: watch.cpp:494 watch.cpp:514
 msgid "DetachedChannelOnly"
-msgstr ""
+msgstr "DetachedChannelOnly"
 
 #: watch.cpp:512 watch.cpp:515
 msgid "Yes"
@@ -106,7 +106,7 @@ msgstr "Si"
 
 #: watch.cpp:512 watch.cpp:515
 msgid "No"
-msgstr ""
+msgstr "No"
 
 #: watch.cpp:521 watch.cpp:527
 msgid "You have no entries."
@@ -190,7 +190,7 @@ msgstr "Disabilita (ma non elimina) una voce."
 
 #: watch.cpp:639
 msgid "SetDetachedClientOnly <Id | *> <True | False>"
-msgstr ""
+msgstr "SetDetachedClientOnly <Id | *> <True | False>"
 
 #: watch.cpp:642
 msgid "Enable or disable detached client only for an entry."
@@ -198,7 +198,7 @@ msgstr "Abilita o disabilita il client separato (detached) solo per una voce."
 
 #: watch.cpp:646
 msgid "SetDetachedChannelOnly <Id | *> <True | False>"
-msgstr ""
+msgstr "SetDetachedChannelOnly <Id | *> <True | False>"
 
 #: watch.cpp:649
 msgid "Enable or disable detached channel only for an entry."
@@ -206,7 +206,7 @@ msgstr "Abilita o disabilita il canale separato (detached) solo per una voce."
 
 #: watch.cpp:652
 msgid "Buffer [Count]"
-msgstr ""
+msgstr "Buffer [Count]"
 
 #: watch.cpp:655
 msgid "Show/Set the amount of buffered lines while detached."
