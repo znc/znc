@@ -14,27 +14,27 @@ msgstr ""
 
 #: modules/po/../data/q/tmpl/index.tmpl:11
 msgid "Username:"
-msgstr ""
+msgstr "Nome Utente:"
 
 #: modules/po/../data/q/tmpl/index.tmpl:13
 msgid "Please enter a username."
-msgstr ""
+msgstr "Per favore inserisci il nome utente."
 
 #: modules/po/../data/q/tmpl/index.tmpl:16
 msgid "Password:"
-msgstr ""
+msgstr "Password:"
 
 #: modules/po/../data/q/tmpl/index.tmpl:18
 msgid "Please enter a password."
-msgstr ""
+msgstr "Pe favore inserisci una password."
 
 #: modules/po/../data/q/tmpl/index.tmpl:26
 msgid "Options"
-msgstr ""
+msgstr "Opzioni"
 
 #: modules/po/../data/q/tmpl/index.tmpl:42
 msgid "Save"
-msgstr ""
+msgstr "Salva"
 
 #: q.cpp:74
 msgid ""

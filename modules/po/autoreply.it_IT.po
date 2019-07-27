@@ -37,9 +37,9 @@ msgid ""
 "You might specify a reply text. It is used when automatically answering "
 "queries, if you are not connected to ZNC."
 msgstr ""
-"Puoi specificare un testo di risposta. Viente utilizzato quando si risponde "
-"automaticamente alle query se non si è connessi allo ZNC."
+"Puoi specificare un testo di risposta. Essa viene utilizzata automaticamente "
+"per rispondere alle query se non si è connessi a ZNC."
 
 #: autoreply.cpp:98
 msgid "Reply to queries when you are away"
-msgstr "Risponde alle queries quando sei assente"
+msgstr "Risponde alle query quando sei assente"

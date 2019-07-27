@@ -62,8 +62,8 @@ msgstr "Il ritardo del rientro automatico (rejoin) è stato disabilitato"
 #: kickrejoin.cpp:131
 msgid "You might enter the number of seconds to wait before rejoining."
 msgstr ""
-"Puoi inserire il numero di secondi che lo ZNC deve attendere prima di "
-"rientrare automaticamente (rejoining)."
+"Puoi inserire il numero di secondi che Znc deve attendere prima di rientrare "
+"automaticamente (rejoining)."
 
 #: kickrejoin.cpp:134
 msgid "Autorejoins on kick"

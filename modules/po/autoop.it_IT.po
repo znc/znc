@@ -34,11 +34,11 @@ msgstr "<utente> <maschera>,[maschera] ..."
 
 #: autoop.cpp:163
 msgid "Adds masks to a user"
-msgstr "Aggiunge una maschera (masks) ad un utente"
+msgstr "Aggiunge una maschera (mask) ad un utente"
 
 #: autoop.cpp:166
 msgid "Removes masks from a user"
-msgstr "Rimuove una maschera (masks) da un utente"
+msgstr "Rimuove una maschera (mask) da un utente"
 
 #: autoop.cpp:169
 msgid "<user> <hostmask>[,<hostmasks>...] <key> [channels]"
@@ -58,11 +58,11 @@ msgstr "Rimuove un utente"
 
 #: autoop.cpp:275
 msgid "Usage: AddUser <user> <hostmask>[,<hostmasks>...] <key> [channels]"
-msgstr "Usa: AddUser <utente> <hostmask>[,<hostmasks>...] <chiave> [channels]"
+msgstr "Utilizzo: AddUser <user> <hostmask>[,<hostmasks>...] <key> [channels]"
 
 #: autoop.cpp:291
 msgid "Usage: DelUser <user>"
-msgstr "Usa: DelUser <utente>"
+msgstr "Utilizzo: DelUser <utente>"
 
 #: autoop.cpp:300
 msgid "There are no users defined"
@@ -90,7 +90,7 @@ msgstr "Usa: AddChans <utente> <canale> [channel] ..."
 
 #: autoop.cpp:344 autoop.cpp:365 autoop.cpp:387 autoop.cpp:408 autoop.cpp:472
 msgid "No such user"
-msgstr "Utente non presente"
+msgstr "Utente inesistente"
 
 #: autoop.cpp:349
 msgid "Channel(s) added to user {1}"
@@ -98,7 +98,7 @@ msgstr "Canali aggiunti all'utente {1}"
 
 #: autoop.cpp:358
 msgid "Usage: DelChans <user> <channel> [channel] ..."
-msgstr "Usa: DelChans <utente> <canale> [channel] ..."
+msgstr "Utilizzo: DelChans <utente> <canale> [channel] ..."
 
 #: autoop.cpp:371
 msgid "Channel(s) Removed from user {1}"
@@ -140,18 +140,18 @@ msgstr "L'utente {1} viene aggiunto con la hostmask(s) {2}"
 msgid ""
 "[{1}] sent us a challenge but they are not opped in any defined channels."
 msgstr ""
-"[{1}] ci ha inviato una sfida ma loro non sono appati in nessuno dei canali "
-"definiti."
+"[{1}] ci ha inviato una challenge ma loro non sono operatori in nessuno dei "
+"canali definiti."
 
 #: autoop.cpp:536
 msgid "[{1}] sent us a challenge but they do not match a defined user."
 msgstr ""
-"[{1}] ci ha inviato una sfida ma loro non corrispondono a nessuno degli "
+"[{1}] ci ha inviato una challenge ma loro non corrispondono a nessuno degli "
 "utenti definiti."
 
 #: autoop.cpp:544
 msgid "WARNING! [{1}] sent an invalid challenge."
-msgstr "AVVISO! [{1}] ha inviato una sfida non valida."
+msgstr "ATTENZIONE! [{1}] ha inviato una challenge non valida."
 
 #: autoop.cpp:560
 msgid "[{1}] sent an unchallenged response.  This could be due to lag."
@@ -164,15 +164,15 @@ msgid ""
 "WARNING! [{1}] sent a bad response.  Please verify that you have their "
 "correct password."
 msgstr ""
-"AVVISO! [{1}] inviato una brutta risposta. Per favore verifica di avere la "
-"loro password corretta."
+"ATTENZIONE! [{1}] inviato una risposta errata. Per favore verifica di avere "
+"la loro password corretta."
 
 #: autoop.cpp:586
 msgid "WARNING! [{1}] sent a response but did not match any defined users."
 msgstr ""
-"AVVISO! [{1}] ha inviato una risposta, ma non corrisponde ad alcun utente "
-"definito."
+"ATTENZIONE! [{1}] ha inviato una risposta, ma non corrisponde ad alcun "
+"utente definito."
 
 #: autoop.cpp:644
 msgid "Auto op the good people"
-msgstr "Auto Op alle buone persone"
+msgstr "Auto Op le buone persone"

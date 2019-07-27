@@ -44,7 +44,7 @@ msgstr "Mostra le impostazioni correnti impostate dal comando Set"
 
 #: log.cpp:143
 msgid "Usage: SetRules <rules>"
-msgstr "Usa: SetRules <regole>"
+msgstr "Utilizzo: SetRules <regole>"
 
 #: log.cpp:144
 msgid "Wildcards are allowed"
@@ -52,13 +52,13 @@ msgstr "Le wildcards (caratteri jolly) sono permesse"
 
 #: log.cpp:156 log.cpp:178
 msgid "No logging rules. Everything is logged."
-msgstr "Nessuna regola di registrazione. Tutto è registrato."
+msgstr "Nessuna regola di registrazione. Tutto viene loggato."
 
 #: log.cpp:161
 msgid "1 rule removed: {2}"
 msgid_plural "{1} rules removed: {2}"
-msgstr[0] "1 ruolo rimosso: {2}"
-msgstr[1] "{1} ruoli rimossi: {2}"
+msgstr[0] "1 regola rimssa {2}"
+msgstr[1] "{1} regole rimosse: {2}"
 
 #: log.cpp:168 log.cpp:173
 msgctxt "listrules"
@@ -68,7 +68,7 @@ msgstr "Ruolo"
 #: log.cpp:169 log.cpp:174
 msgctxt "listrules"
 msgid "Logging enabled"
-msgstr "Registrazione abilitata (Logging)"
+msgstr "Logging abilitato"
 
 #: log.cpp:189
 msgid ""
@@ -79,23 +79,23 @@ msgstr ""
 
 #: log.cpp:196
 msgid "Will log joins"
-msgstr "Registrerà i joins"
+msgstr "Loggerà i joins"
 
 #: log.cpp:196
 msgid "Will not log joins"
-msgstr "Non registrerà i joins"
+msgstr "Non loggerà i joins"
 
 #: log.cpp:197
 msgid "Will log quits"
-msgstr "Registrerà i quits"
+msgstr "Loggerà i quits"
 
 #: log.cpp:197
 msgid "Will not log quits"
-msgstr "Non registrerà i quits"
+msgstr "Non loggerà i quits"
 
 #: log.cpp:199
 msgid "Will log nick changes"
-msgstr "Registrerà i cambi di nick"
+msgstr "Loggerà i cambi di nick"
 
 #: log.cpp:199
 msgid "Will not log nick changes"

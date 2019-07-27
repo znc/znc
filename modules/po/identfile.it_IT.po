@@ -42,7 +42,7 @@ msgstr "Mostra lo stato corrente"
 
 #: identfile.cpp:48
 msgid "File is set to: {1}"
-msgstr "File è impostato su: {1}"
+msgstr "File impostato su: {1}"
 
 #: identfile.cpp:53
 msgid "File has been set to: {1}"
@@ -62,7 +62,7 @@ msgstr "Il formato è impostato su: {1}"
 
 #: identfile.cpp:78
 msgid "identfile is free"
-msgstr "identfile è free"
+msgstr "l'identfile è libero"
 
 #: identfile.cpp:86
 msgid "Access denied"
@@ -73,12 +73,12 @@ msgid ""
 "Aborting connection, another user or network is currently connecting and "
 "using the ident spoof file"
 msgstr ""
-"Connessione interrotta, un altro utente o network è attualmente connesso e "
-"utilizzando ident spoof file"
+"Connessione interrotta, un altro utente o network è attualmente connesso "
+"utilizzando un file ident spoof"
 
 #: identfile.cpp:189
 msgid "[{1}] could not be written, retrying..."
-msgstr "[{1}] non può essere scritto, riprovare..."
+msgstr "[{1}] non può essere scritto, riprovo..."
 
 #: identfile.cpp:223
 msgid "Write the ident of a user to a file when they are trying to connect."

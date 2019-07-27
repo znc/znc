@@ -32,19 +32,19 @@ msgstr "Accesso negato"
 
 #: cyrusauth.cpp:70
 msgid "Ignoring invalid SASL pwcheck method: {1}"
-msgstr "Ignorando il metodo non valido SASL pwcheck: {1}"
+msgstr "Ignoro il metodo non valido SASL pwcheck: {1}"
 
 #: cyrusauth.cpp:71
 msgid "Ignored invalid SASL pwcheck method"
-msgstr "Ignorato il metodo non valido SASL pwcheck"
+msgstr "Ignoro il metodo non valido SASL pwcheck"
 
 #: cyrusauth.cpp:79
 msgid "Need a pwcheck method as argument (saslauthd, auxprop)"
-msgstr "Hai bisogno di un metodo pwcheck come argomento (saslauthd, auxprop)"
+msgstr "Serve un metodo pwcheck come argomento (saslauthd, auxprop)"
 
 #: cyrusauth.cpp:84
 msgid "SASL Could Not Be Initialized - Halting Startup"
-msgstr "SASL non può essere inizializzato - Arrestato all'avvio"
+msgstr "SASL non può essere inizializzato - Arrestato l'avvio"
 
 #: cyrusauth.cpp:171 cyrusauth.cpp:186
 msgid "We will not create users on their first login"
@@ -64,7 +64,8 @@ msgstr "Creeremo gli utenti al loro primo accesso"
 #: cyrusauth.cpp:199
 msgid "Usage: CreateUsers yes, CreateUsers no, or CreateUsers clone <username>"
 msgstr ""
-"Usa: CreateUsers yes, CreateUsers no, oppure CreateUsers clone <nome utente>"
+"Utilizzo: CreateUsers yes, CreateUsers no, oppure CreateUsers clone <nome "
+"utente>"
 
 #: cyrusauth.cpp:232
 msgid ""

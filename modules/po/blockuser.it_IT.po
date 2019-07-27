@@ -54,7 +54,7 @@ msgstr "Utenti bloccati:"
 
 #: blockuser.cpp:100
 msgid "Usage: Block <user>"
-msgstr "Usa: Block <utente>"
+msgstr "Utilizzo: Block <utente>"
 
 #: blockuser.cpp:105 blockuser.cpp:147
 msgid "You can't block yourself"
@@ -70,7 +70,7 @@ msgstr "Impossibile bloccare {1} (errore di ortografia?)"
 
 #: blockuser.cpp:120
 msgid "Usage: Unblock <user>"
-msgstr "Usa: Unblock <utente>"
+msgstr "Utilizzo: Unblock <utente>"
 
 #: blockuser.cpp:125 blockuser.cpp:161
 msgid "Unblocked {1}"
@@ -90,8 +90,8 @@ msgstr "L'utente {1} non è bloccato"
 
 #: blockuser.cpp:216
 msgid "Enter one or more user names. Separate them by spaces."
-msgstr "Inserisci uno o più nomi utente. Seprali da uno spazio."
+msgstr "Inserisci uno o più nomi utente. Separali con uno spazio."
 
 #: blockuser.cpp:219
 msgid "Block certain users from logging in."
-msgstr "Blocca determinati utenti a partire dal login."
+msgstr "Blocca il login di determinati utenti."

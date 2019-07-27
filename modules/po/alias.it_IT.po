@@ -14,7 +14,7 @@ msgstr ""
 
 #: alias.cpp:141
 msgid "missing required parameter: {1}"
-msgstr "manca il parametro richiesto: {1}"
+msgstr "manca il parametro obbligatorio: {1}"
 
 #: alias.cpp:201
 msgid "Created alias: {1}"
@@ -56,7 +56,7 @@ msgstr ", "
 
 #: alias.cpp:324
 msgid "Actions for alias {1}:"
-msgstr "Azioni dell'alias {1}:"
+msgstr "Azioni per l'alias {1}:"
 
 #: alias.cpp:331
 msgid "End of actions for alias {1}."
@@ -68,7 +68,7 @@ msgstr "<nome>"
 
 #: alias.cpp:339
 msgid "Creates a new, blank alias called name."
-msgstr "Crea un nuovo alias vuto, chiamato nome."
+msgstr "Crea un nuovo alias vuoto, chiamato nome."
 
 #: alias.cpp:341
 msgid "Deletes an existing alias."
@@ -88,7 +88,7 @@ msgstr "<nome> <posizione> <azione ...>"
 
 #: alias.cpp:347
 msgid "Inserts a line into an existing alias."
-msgstr "Inserisce una linea in un'alias esistente."
+msgstr "Inserisce una linea in un alias esistente."
 
 #: alias.cpp:349
 msgid "<name> <pos>"
@@ -117,7 +117,7 @@ msgstr ""
 
 #: alias.cpp:374
 msgid "Clearing all of them!"
-msgstr "Libera tutti loro!"
+msgstr "Pulisco tutti!"
 
 #: alias.cpp:409
 msgid "Provides bouncer-side command alias support."

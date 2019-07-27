@@ -70,11 +70,11 @@ msgstr "Canali"
 
 #: autovoice.cpp:263
 msgid "Usage: AddChans <user> <channel> [channel] ..."
-msgstr "Usa: AddChans <utente> <canale> [canale] ..."
+msgstr "Utilizzo: AddChans <utente> <canale> [canale] ..."
 
 #: autovoice.cpp:270 autovoice.cpp:292 autovoice.cpp:329
 msgid "No such user"
-msgstr "Utente non presente"
+msgstr "Utente inesistente"
 
 #: autovoice.cpp:275
 msgid "Channel(s) added to user {1}"
@@ -94,7 +94,7 @@ msgstr "L'utente {1} è stato rimosso"
 
 #: autovoice.cpp:341
 msgid "That user already exists"
-msgstr "Questo utente è già esistente"
+msgstr "Questo utente già esiste"
 
 #: autovoice.cpp:347
 msgid "User {1} added with hostmask {2}"
@@ -105,8 +105,8 @@ msgid ""
 "Each argument is either a channel you want autovoice for (which can include "
 "wildcards) or, if it starts with !, it is an exception for autovoice."
 msgstr ""
-"Ogni argomento è o un canale per il quale si vuole l'autovoice (che può "
-"includere caratteri jolly) o, se inizia con !, è un'eccezione per "
+"Ogni argomento è un canale per il quale si vuole l'autovoice (che può "
+"includere caratteri jolly) oppure, se inizia con !, è un'eccezione per "
 "l'autovoice."
 
 #: autovoice.cpp:365
