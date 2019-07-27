@@ -54,11 +54,11 @@ msgstr "Imposta il prefisso del nick, senza argomenti viene disabilitato."
 
 #: crypt.cpp:270
 msgid "Received DH1080 public key from {1}, sending mine..."
-msgstr "Ricevuta la chiave pubblica DH1080 da {1}, inviando il mio..."
+msgstr "Ricevuta la chiave pubblica DH1080 da {1}, ora invio la mia..."
 
 #: crypt.cpp:275 crypt.cpp:296
 msgid "Key for {1} successfully set."
-msgstr "La chiave per {1} è impostata con succcesso."
+msgstr "La chiave per {1} è stata impostata con successo."
 
 #: crypt.cpp:278 crypt.cpp:299
 msgid "Error in {1} with {2}: {3}"
@@ -78,7 +78,7 @@ msgstr "Target [{1}] non trovato"
 
 #: crypt.cpp:400
 msgid "Usage DelKey <#chan|Nick>"
-msgstr "Usa DelKey <#canale|Nick>"
+msgstr "Utilizzo: DelKey <#canale|Nick>"
 
 #: crypt.cpp:415
 msgid "Set encryption key for [{1}] to [{2}]"
@@ -86,19 +86,19 @@ msgstr "Imposta la chiave di crittografia per [{1}] a [{2}]"
 
 #: crypt.cpp:417
 msgid "Usage: SetKey <#chan|Nick> <Key>"
-msgstr "Usa: SetKey <#canale|Nick> <chiave>"
+msgstr "Utilizzo: SetKey <#canale|Nick> <chiave>"
 
 #: crypt.cpp:428
 msgid "Sent my DH1080 public key to {1}, waiting for reply ..."
-msgstr "Inviato la mia chiave pubblica DH1080 a {1}, attendo risposta ..."
+msgstr "Inviata la mia chiave pubblica DH1080 a {1}, attendo risposta ..."
 
 #: crypt.cpp:430
 msgid "Error generating our keys, nothing sent."
-msgstr "Errore del generatore dalle nostre chiavi, inviato nulla."
+msgstr "Errore del generatore dalle nostre chiavi, non ho inviato nulla."
 
 #: crypt.cpp:433
 msgid "Usage: KeyX <Nick>"
-msgstr "Usa: KeyX <Nick>"
+msgstr "Utilizzo: KeyX <Nick>"
 
 #: crypt.cpp:440
 msgid "Nick Prefix disabled."
@@ -111,7 +111,8 @@ msgstr "Prefisso del nick: {1}"
 #: crypt.cpp:451
 msgid "You cannot use :, even followed by other symbols, as Nick Prefix."
 msgstr ""
-"Non puoi usare :, seguito anche da altri simboli, come prefisso del nick."
+"Non puoi usare :, come prefisso del nick - nemmeno se seguito anche da altri "
+"simboli."
 
 #: crypt.cpp:460
 msgid "Overlap with Status Prefix ({1}), this Nick Prefix will not be used!"

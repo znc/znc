@@ -50,6 +50,10 @@ msgid ""
 "*status help</code>” and “<code>/msg *status loadmod &lt;module&gt;</"
 "code>”). Once you have loaded some Web-enabled modules, the menu will expand."
 msgstr ""
+"Nessuno dei moduli abilitati al web sono stati caricati. Carica i moduli da "
+"IRC (“<code>/msg *status help</code>” e “<code>/msg *status loadmod &lt;nome "
+"del modulo&gt;</code>”). Dopo aver caricato alcuni moduli abilitati per al "
+"Web, il menù si espanderà."
 
 #: znc.cpp:1562
 msgid "User already exists"
@@ -179,6 +183,8 @@ msgstr "Modulo non trovato {1}"
 #: Client.cpp:359
 msgid "A client from {1} attempted to login as you, but was rejected: {2}"
 msgstr ""
+"Un client da {1} ha tentato di accedere al posto tuo, ma è stato rifiutato: "
+"{2}"
 
 #: Client.cpp:394
 msgid "Network {1} doesn't exist."
@@ -1009,8 +1015,8 @@ msgstr "Usa: ClearBuffer <#canale|query>"
 #: ClientCommand.cpp:1403
 msgid "{1} buffer matching {2} has been cleared"
 msgid_plural "{1} buffers matching {2} have been cleared"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{1} corrispondenza del buffer {2} è stato cancellata"
+msgstr[1] "{1} corrispondenze del buffers {2} sono state cancellate"
 
 #: ClientCommand.cpp:1416
 msgid "All channel buffers have been cleared"
@@ -1339,6 +1345,8 @@ msgid ""
 "Add a trusted server SSL certificate fingerprint (SHA-256) to current IRC "
 "network."
 msgstr ""
+"Aggiunge un'impronta digitale attendibile del certificato SSL del server "
+"(SHA-256) al network IRC corrente."
 
 #: ClientCommand.cpp:1754
 msgctxt "helpcmd|DelTrustedServerFingerprint|args"
@@ -1629,7 +1637,7 @@ msgstr "Elenca tutti gli utenti dello ZNC ed i loro networks"
 #: ClientCommand.cpp:1885
 msgctxt "helpcmd|ListChans|args"
 msgid "[user <network>]"
-msgstr ""
+msgstr "[utente <network>]"
 
 #: ClientCommand.cpp:1888
 msgctxt "helpcmd|ListClients|args"

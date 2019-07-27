@@ -14,7 +14,7 @@ msgstr ""
 
 #: awaystore.cpp:67
 msgid "You have been marked as away"
-msgstr "Sei contrassegnato come assente"
+msgstr "Sei contrassegnato come assente (away)"
 
 #: awaystore.cpp:78 awaystore.cpp:385 awaystore.cpp:388
 msgid "Welcome back!"
@@ -26,7 +26,7 @@ msgstr "Eliminato {1} messaggi"
 
 #: awaystore.cpp:104
 msgid "USAGE: delete <num|all>"
-msgstr "USA: delete <num|all>"
+msgstr "UTILIZZA: delete <num|all>"
 
 #: awaystore.cpp:109
 msgid "Illegal message # requested"
@@ -74,7 +74,7 @@ msgstr "Timer impostato a {1} secondi"
 
 #: awaystore.cpp:203
 msgid "Current timer setting: {1} seconds"
-msgstr "Impostazioni dell'ora corrente: {1} secondi"
+msgstr "Impostazioni del timer corrente: {1} secondi"
 
 #: awaystore.cpp:278
 msgid "This module needs as an argument a keyphrase used for encryption"
@@ -87,7 +87,7 @@ msgid ""
 "Failed to decrypt your saved messages - Did you give the right encryption "
 "key as an argument to this module?"
 msgstr ""
-"Impossibile decrittografare i messaggi salvati. Hai fornito la chiave di "
+"Impossibile decriptare i messaggi salvati. Hai fornito la chiave di "
 "crittografia giusta come argomento per questo modulo?"
 
 #: awaystore.cpp:386 awaystore.cpp:389
@@ -100,7 +100,7 @@ msgstr "Impossibile trovare il buffer"
 
 #: awaystore.cpp:469
 msgid "Unable to decode encrypted messages"
-msgstr "Impossibile decodificare i messaggi crittografati"
+msgstr "Impossibile decriptare i messaggi crittografati"
 
 #: awaystore.cpp:516
 msgid ""
@@ -114,5 +114,5 @@ msgstr ""
 msgid ""
 "Adds auto-away with logging, useful when you use ZNC from different locations"
 msgstr ""
-"Aggiunge un auto-away con logging, utile quando si utilizza lo ZNC da "
-"diverse posizioni"
+"Aggiunge un auto-away con logging, utile quando si utilizza ZNC da diverse "
+"posizioni"

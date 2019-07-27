@@ -26,7 +26,7 @@ msgstr "{1} kicked {2} per questo motivo: {3}"
 
 #: buffextras.cpp:64
 msgid "{1} quit: {2}"
-msgstr "{1} quit: {2}"
+msgstr "{1} lascia: {2}"
 
 #: buffextras.cpp:73
 msgid "{1} joined"
@@ -46,4 +46,4 @@ msgstr "{1} ha cambiato il topic in: {2}"
 
 #: buffextras.cpp:115
 msgid "Adds joins, parts etc. to the playback buffer"
-msgstr "Aggiugne joins, parts eccetera al buffer del playback"
+msgstr "Aggiunge joins, parts ecc. al buffer del playback"

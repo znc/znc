@@ -44,11 +44,11 @@ msgstr "Remoto"
 
 #: modules/po/../data/listsockets/tmpl/index.tmpl:13
 msgid "Data In"
-msgstr "Dati entranti"
+msgstr "Dati in entrata"
 
 #: modules/po/../data/listsockets/tmpl/index.tmpl:14
 msgid "Data Out"
-msgstr "Dati uscenti"
+msgstr "Dati in uscita"
 
 #: listsockets.cpp:62
 msgid "[-n]"
@@ -79,7 +79,7 @@ msgstr "No"
 
 #: listsockets.cpp:142
 msgid "Listener"
-msgstr "Ascoltatore"
+msgstr "Listener (in ascolto)"
 
 #: listsockets.cpp:144
 msgid "Inbound"

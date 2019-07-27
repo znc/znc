@@ -18,7 +18,7 @@ msgstr "<limite>"
 
 #: ctcpflood.cpp:25
 msgid "Set seconds limit"
-msgstr "Imposta il limite dei secondi"
+msgstr "Imposta il limite in secondi"
 
 #: ctcpflood.cpp:27
 msgid "Set lines limit"
@@ -34,11 +34,11 @@ msgstr "Limite raggiunto da {1}, blocco tutti i CTCP"
 
 #: ctcpflood.cpp:98
 msgid "Usage: Secs <limit>"
-msgstr "Usa: Secs <limite>"
+msgstr "Utilizzo: Secs <limite>"
 
 #: ctcpflood.cpp:113
 msgid "Usage: Lines <limit>"
-msgstr "Usa: Lines <limite>"
+msgstr "Utilizzo: Lines <limite>"
 
 #: ctcpflood.cpp:125
 msgid "1 CTCP message"
@@ -63,12 +63,12 @@ msgid ""
 "argument is the time (sec) to in which the number of lines is reached. The "
 "default setting is 4 CTCPs in 2 seconds"
 msgstr ""
-"Questo modulo utente non accetta nessuno o due argomenti. Il primo argomento "
-"è il numero di linee dopo le quali viene attivata la protezione contro i "
-"flood (flood-protection). Il secondo argomento è il tempo (second) in cui il "
+"Questo modulo utente accetta da zero a due argomenti. Il primo argomento è "
+"il numero di linee dopo le quali viene attivata la protezione contro i flood "
+"(flood-protection). Il secondo argomento è il tempo (in secondi) in cui il "
 "numero di linee viene raggiunto. L'impostazione predefinita è 4 CTCP in 2 "
 "secondi"
 
 #: ctcpflood.cpp:151
 msgid "Don't forward CTCP floods to clients"
-msgstr "Non inoltrare i flussi CTCP (floods) ai clients"
+msgstr "Non inoltrare i flussi CTCP (floods) ai client"

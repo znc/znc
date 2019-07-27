@@ -18,7 +18,7 @@ msgstr "Aggiunto alla lista"
 
 #: autoattach.cpp:96
 msgid "{1} is already added"
-msgstr "{1} è già aggiunto"
+msgstr "{1} è già stato aggiunto"
 
 #: autoattach.cpp:100
 msgid "Usage: Add [!]<#chan> <search> <host>"
@@ -46,7 +46,7 @@ msgstr "Canale"
 
 #: autoattach.cpp:123 autoattach.cpp:131
 msgid "Search"
-msgstr "Ricerca"
+msgstr "Cerca"
 
 #: autoattach.cpp:124 autoattach.cpp:132
 msgid "Host"
@@ -63,7 +63,7 @@ msgstr "[!]<#canale> <ricerca> <host>"
 #: autoattach.cpp:147
 msgid "Add an entry, use !#chan to negate and * for wildcards"
 msgstr ""
-"Aggiunge una voce, usa !#canale per negare e * come wildcards (caratteri "
+"Aggiunge una voce, usa !#canale per negare e * come wildcard (caratteri "
 "jolly)"
 
 #: autoattach.cpp:150

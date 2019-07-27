@@ -38,7 +38,7 @@ msgstr "Elimina"
 
 #: modules/po/../data/lastseen/tmpl/lastseen_WebadminUser.tmpl:6
 msgid "Last login time:"
-msgstr "Ultimo accesso:"
+msgstr "Ultimo ora di accesso:"
 
 #: lastseen.cpp:53
 msgid "Access denied"

@@ -50,7 +50,7 @@ msgstr[1] ""
 
 #: clientnotify.cpp:108
 msgid "Usage: Method <message|notice|off>"
-msgstr "Usa: Metodo <message|notice|off>"
+msgstr "Utilizzo: Metodo <message|notice|off>"
 
 #: clientnotify.cpp:114 clientnotify.cpp:127 clientnotify.cpp:140
 msgid "Saved."

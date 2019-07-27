@@ -45,7 +45,7 @@ msgstr "Aggiornare"
 
 #: cert.cpp:28
 msgid "Pem file deleted"
-msgstr "Pem file eliminato"
+msgstr "File PEM eliminato"
 
 #: cert.cpp:31
 msgid "The pem file doesn't exist or there was a error deleting the pem file."

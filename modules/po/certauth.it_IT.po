@@ -14,7 +14,7 @@ msgstr ""
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:7
 msgid "Add a key"
-msgstr "Aggiunge una chiave"
+msgstr "Aggiungi una chiave"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:11
 msgid "Key:"
@@ -44,7 +44,7 @@ msgstr "[chiave pubblica]"
 #: certauth.cpp:32
 msgid "Add a public key. If key is not provided will use the current key"
 msgstr ""
-"Aggiunge una chiva pubblica. Se non viene fornita alcuna chiave verrà usata "
+"Aggiunge una chiave pubblica. Se non viene fornita alcuna chiave verrà usata "
 "la chiave corrente"
 
 #: certauth.cpp:35
@@ -61,7 +61,7 @@ msgstr "Elenco delle tue chiavi pubbliche"
 
 #: certauth.cpp:39
 msgid "Print your current key"
-msgstr "Stamp la tua chiave attuale"
+msgstr "Mostra la tua chiave attuale"
 
 #: certauth.cpp:142
 msgid "You are not connected with any valid public key"
@@ -99,7 +99,7 @@ msgstr "Nessuna chiave impostata per il tuo utente"
 
 #: certauth.cpp:204
 msgid "Invalid #, check \"list\""
-msgstr "# Non valido, selezionare \"list\""
+msgstr "Numero non valido, selezionare \"list\""
 
 #: certauth.cpp:216
 msgid "Removed"

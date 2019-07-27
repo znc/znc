@@ -31,17 +31,17 @@ msgstr "Mostra o imposta il numero di linee nell'intervallo di tempo"
 #: flooddetach.cpp:39
 msgid "Show or set whether to notify you about detaching and attaching back"
 msgstr ""
-"Mostra o imposta se notificarti su come staccarti e ricollegareti dai canali "
-"(detaching e attaching)"
+"Mostra o imposta se essere notificato sullo sgancio (detach) e il ri-"
+"aggancio (attaching)"
 
 #: flooddetach.cpp:93
 msgid "Flood in {1} is over, reattaching..."
-msgstr "Il flood su {1} è finito, riattacco..."
+msgstr "Il flood su {1} è finito, ri-aggancio..."
 
 #: flooddetach.cpp:150
 msgid "Channel {1} was flooded, you've been detached"
 msgstr ""
-"Canale{1} è stato \"invaso da messaggi\" (flooded), sei stato distaccato "
+"Canale{1} è stato \"invaso da messaggi\" (flooded), sei stato sganciato "
 "(detached)"
 
 #: flooddetach.cpp:187
@@ -66,7 +66,7 @@ msgstr "Il limite dei secondi è {1}"
 
 #: flooddetach.cpp:202
 msgid "Set seconds limit to {1}"
-msgstr "Imposta il limite dei secondi a {1}"
+msgstr "Imposta il limite in secondi a {1}"
 
 #: flooddetach.cpp:211
 msgid "Lines limit is {1}"
@@ -94,4 +94,6 @@ msgstr ""
 
 #: flooddetach.cpp:251
 msgid "Detach channels when flooded"
-msgstr "Distacca (detach) i canali quando vengono flooded"
+msgstr ""
+"Sgancia (detach) dai canali quando vengono c'è un flood (invasione di "
+"messaggi)"
