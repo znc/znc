@@ -14,23 +14,23 @@ msgstr ""
 
 #: autoreply.cpp:25
 msgid "<reply>"
-msgstr ""
+msgstr "<resposta>"
 
 #: autoreply.cpp:25
 msgid "Sets a new reply"
-msgstr ""
+msgstr "Define uma nova resposta"
 
 #: autoreply.cpp:27
 msgid "Displays the current query reply"
-msgstr ""
+msgstr "Mostra a atual resposta de query"
 
 #: autoreply.cpp:75
 msgid "Current reply is: {1} ({2})"
-msgstr ""
+msgstr "A resposta atual é: {1} ({2})"
 
 #: autoreply.cpp:81
 msgid "New reply set to: {1} ({2})"
-msgstr ""
+msgstr "Nova resposta definida como: {1} ({2})"
 
 #: autoreply.cpp:94
 msgid ""
