@@ -58,28 +58,28 @@ msgstr ""
 
 #: autoattach.cpp:146 autoattach.cpp:149
 msgid "[!]<#chan> <search> <host>"
-msgstr ""
+msgstr "[!]<#canal> <pesquisa> <host>"
 
 #: autoattach.cpp:147
 msgid "Add an entry, use !#chan to negate and * for wildcards"
-msgstr ""
+msgstr "Adicione uma entrada, use !#canal para negar e * para wildcard"
 
 #: autoattach.cpp:150
 msgid "Remove an entry, needs to be an exact match"
-msgstr ""
+msgstr "Remove uma entrada, precisa ser exatamente correspondente"
 
 #: autoattach.cpp:152
 msgid "List all entries"
-msgstr ""
+msgstr "Lista todas as entradas"
 
 #: autoattach.cpp:171
 msgid "Unable to add [{1}]"
-msgstr ""
+msgstr "Não foi possível adicionar [{1}]"
 
 #: autoattach.cpp:283
 msgid "List of channel masks and channel masks with ! before them."
-msgstr ""
+msgstr "Lista de máscaras de canais e máscaras de canais com ! antes delas."
 
 #: autoattach.cpp:286
 msgid "Reattaches you to channels on activity."
-msgstr ""
+msgstr "Reanexa você a canais quando há atividade."
