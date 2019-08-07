@@ -436,10 +436,13 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
     bool colon = sModeArg.TrimPrefix(":");
 
     // Only handle parameters if sModes doesn't start with a colon
+    // because if it does, we only have the mode string with no parameters
     if (!colon) {
         CString sArgs = sModes.Token(1, true);
 
         while (!sArgs.empty()) {
+            // Check if this parameter is a trailing parameter
+            // If so, treat the rest of sArgs as one parameter
             if (sArgs.TrimPrefix(":")) {
                 vsModes.push_back(sArgs);
                 sArgs.clear();

@@ -124,6 +124,10 @@ class CMessage {
 
     /**
      * Get a subset of the message parameters
+     *
+     * This allows accessing a vector of a specific range of parameters,
+     * allowing easy inline use, such as `pChan->SetModes(Message.GetParam(2), Message.GetParamsSplit(3));`
+     *
      * @param uIdx The index of the first parameter to retrieve
      * @param uLen How many parameters to retrieve
      * @return A VCString containing the retrieved parameters
