@@ -71,39 +71,39 @@ TEST(MessageTest, GetParams) {
 }
 
 TEST(MessageTest, GetParamsSplit) {
-    EXPECT_THAT(CMessage("CMD").GetParamsSplit(0), ContainerEq(VCString()));
-    EXPECT_THAT(CMessage("CMD").GetParamsSplit(1), ContainerEq(VCString()));
-    EXPECT_THAT(CMessage("CMD").GetParamsSplit(-1), ContainerEq(VCString()));
+    EXPECT_THAT(CMessage("CMD").GetParamsSplit(0), IsEmpty());
+    EXPECT_THAT(CMessage("CMD").GetParamsSplit(1), IsEmpty());
+    EXPECT_THAT(CMessage("CMD").GetParamsSplit(-1), IsEmpty());
 
-    EXPECT_THAT(CMessage("CMD").GetParamsSplit(0, 0), ContainerEq(VCString()));
-    EXPECT_THAT(CMessage("CMD").GetParamsSplit(1, 0), ContainerEq(VCString()));
-    EXPECT_THAT(CMessage("CMD").GetParamsSplit(-1, 0), ContainerEq(VCString()));
+    EXPECT_THAT(CMessage("CMD").GetParamsSplit(0, 0), IsEmpty());
+    EXPECT_THAT(CMessage("CMD").GetParamsSplit(1, 0), IsEmpty());
+    EXPECT_THAT(CMessage("CMD").GetParamsSplit(-1, 0), IsEmpty());
 
-    EXPECT_THAT(CMessage("CMD").GetParamsSplit(0, 1), ContainerEq(VCString()));
-    EXPECT_THAT(CMessage("CMD").GetParamsSplit(1, 1), ContainerEq(VCString()));
-    EXPECT_THAT(CMessage("CMD").GetParamsSplit(-1, 1), ContainerEq(VCString()));
+    EXPECT_THAT(CMessage("CMD").GetParamsSplit(0, 1), IsEmpty());
+    EXPECT_THAT(CMessage("CMD").GetParamsSplit(1, 1), IsEmpty());
+    EXPECT_THAT(CMessage("CMD").GetParamsSplit(-1, 1), IsEmpty());
 
-    EXPECT_THAT(CMessage("CMD").GetParamsSplit(0, 10), ContainerEq(VCString()));
-    EXPECT_THAT(CMessage("CMD").GetParamsSplit(1, 10), ContainerEq(VCString()));
-    EXPECT_THAT(CMessage("CMD").GetParamsSplit(-1, 10), ContainerEq(VCString()));
+    EXPECT_THAT(CMessage("CMD").GetParamsSplit(0, 10), IsEmpty());
+    EXPECT_THAT(CMessage("CMD").GetParamsSplit(1, 10), IsEmpty());
+    EXPECT_THAT(CMessage("CMD").GetParamsSplit(-1, 10), IsEmpty());
 
-    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(0), ContainerEq(VCString({"p1", "p2 p3"})));
-    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(1), ContainerEq(VCString({"p2 p3"})));
-    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(-1), ContainerEq(VCString()));
+    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(0), ElementsAre("p1", "p2 p3"));
+    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(1), ElementsAre("p2 p3"));
+    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(-1), IsEmpty());
 
-    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(0, 0), ContainerEq(VCString()));
-    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(1, 0), ContainerEq(VCString()));
-    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(-1, 0), ContainerEq(VCString()));
+    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(0, 0), IsEmpty());
+    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(1, 0), IsEmpty());
+    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(-1, 0), IsEmpty());
 
-    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(0, 1), ContainerEq(VCString({"p1"})));
-    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(1, 1), ContainerEq(VCString({"p2 p3"})));
-    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(-1, 1), ContainerEq(VCString()));
+    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(0, 1), ElementsAre("p1"));
+    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(1, 1), ElementsAre("p2 p3"));
+    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(-1, 1), IsEmpty());
 
-    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(0, 10), ContainerEq(VCString({"p1", "p2 p3"})));
-    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(1, 10), ContainerEq(VCString({"p2 p3"})));
-    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(-1, 10), ContainerEq(VCString()));
+    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(0, 10), ElementsAre("p1", "p2 p3"));
+    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(1, 10), ElementsAre("p2 p3"));
+    EXPECT_THAT(CMessage("CMD p1 :p2 p3").GetParamsSplit(-1, 10), IsEmpty());
 
-    EXPECT_THAT(CMessage("CMD p1 :").GetParamsSplit(0), ContainerEq(VCString({"p1", ""})));
+    EXPECT_THAT(CMessage("CMD p1 :").GetParamsSplit(0), ElementsAre("p1", ""));
 }
 
 TEST(MessageTest, ToString) {
@@ -401,7 +401,7 @@ TEST(MessageTest, Mode) {
     msg.Parse(":nick MODE nick +ov Person :Other");
 
     EXPECT_EQ(msg.GetModeList(), "+ov");
-    EXPECT_THAT(msg.GetModeParams(), ContainerEq(VCString({"Person", "Other"})));
+    EXPECT_THAT(msg.GetModeParams(), ElementsAre("Person", "Other"));
 }
 
 TEST(MessageTest, Nick) {
