@@ -21,6 +21,7 @@
 
 using ::testing::IsEmpty;
 using ::testing::ContainerEq;
+using ::testing::ElementsAre;
 
 TEST(MessageTest, SetParam) {
     CMessage msg;
