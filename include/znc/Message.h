@@ -269,11 +269,14 @@ REGISTER_ZNC_MESSAGE(CJoinMessage);
 
 class CModeMessage : public CTargetMessage {
   public:
+    /// @deprecated Use GetModeList() and GetModeParams()
     CString GetModes() const { return GetParamsColon(1).TrimPrefix_n(":"); }
 
     CString GetModeList() const { return GetParam(1); };
 
     VCString GetModeParams() const { return GetParamsSplit(2); };
+
+    bool HasModes() const { return !GetModeList().empty(); };
 };
 REGISTER_ZNC_MESSAGE(CModeMessage);
 
