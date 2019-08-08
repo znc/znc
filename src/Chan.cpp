@@ -260,6 +260,11 @@ void CChan::SetModes(const CString& sModes) {
     ModeChange(sModes);
 }
 
+void CChan::SetModes(const CString& modes, const VCString& vsModeParams) {
+    m_mcsModes.clear();
+    ModeChange(modes, vsModeParams);
+}
+
 void CChan::SetAutoClearChanBuffer(bool b) {
     m_bHasAutoClearChanBufferSet = true;
     m_bAutoClearChanBuffer = b;
@@ -295,9 +300,7 @@ void CChan::OnWho(const CString& sNick, const CString& sIdent,
     }
 }
 
-void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
-    CString sModeArg = sModes.Token(0);
-    CString sArgs = sModes.Token(1, true);
+void CChan::ModeChange(const CString& sModes, const VCString& vsModes, const CNick* pOpNick) {
     bool bAdd = true;
 
     /* Try to find a CNick* from this channel so that pOpNick->HasPerm()
@@ -309,18 +312,22 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
         if (OpNick) pOpNick = OpNick;
     }
 
-    NETWORKMODULECALL(OnRawMode2(pOpNick, *this, sModeArg, sArgs),
-                      m_pNetwork->GetUser(), m_pNetwork, nullptr, NOTHING);
+    {
+        CString sArgs = CString(" ").Join(vsModes.begin(), vsModes.end());
+        NETWORKMODULECALL(OnRawMode2(pOpNick, *this, sModes, sArgs),
+                          m_pNetwork->GetUser(), m_pNetwork, nullptr, NOTHING);
+    }
 
-    for (unsigned int a = 0; a < sModeArg.size(); a++) {
-        const char& cMode = sModeArg[a];
+    VCString::const_iterator argIter = vsModes.begin();
+    for (unsigned int a = 0; a < sModes.size(); a++) {
+        const char& cMode = sModes[a];
 
         if (cMode == '+') {
             bAdd = true;
         } else if (cMode == '-') {
             bAdd = false;
         } else if (m_pNetwork->GetIRCSock()->IsPermMode(cMode)) {
-            CString sArg = GetModeArg(sArgs);
+            CString sArg = *argIter++;
             CNick* pNick = FindNick(sArg);
             if (pNick) {
                 char cPerm =
@@ -382,16 +389,16 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
             switch (m_pNetwork->GetIRCSock()->GetModeType(cMode)) {
                 case CIRCSock::ListArg:
                     bList = true;
-                    sArg = GetModeArg(sArgs);
+                    sArg = *argIter++;
                     break;
                 case CIRCSock::HasArg:
-                    sArg = GetModeArg(sArgs);
+                    sArg = *argIter++;
                     break;
                 case CIRCSock::NoArg:
                     break;
                 case CIRCSock::ArgWhenSet:
                     if (bAdd) {
-                        sArg = GetModeArg(sArgs);
+                        sArg = *argIter++;
                     }
 
                     break;
@@ -421,6 +428,32 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
             }
         }
     }
+}
+
+void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
+    VCString vsModes;
+    CString sModeArg = sModes.Token(0);
+    bool colon = sModeArg.TrimPrefix(":");
+
+    // Only handle parameters if sModes doesn't start with a colon
+    // because if it does, we only have the mode string with no parameters
+    if (!colon) {
+        CString sArgs = sModes.Token(1, true);
+
+        while (!sArgs.empty()) {
+            // Check if this parameter is a trailing parameter
+            // If so, treat the rest of sArgs as one parameter
+            if (sArgs.TrimPrefix(":")) {
+                vsModes.push_back(sArgs);
+                sArgs.clear();
+            } else {
+                vsModes.push_back(sArgs.Token(0));
+                sArgs = sArgs.Token(1, true);
+            }
+        }
+    }
+
+    ModeChange(sModeArg, vsModes, pOpNick);
 }
 
 CString CChan::GetOptions() const {

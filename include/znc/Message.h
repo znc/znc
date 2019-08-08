@@ -121,6 +121,18 @@ class CMessage {
     void SetCommand(const CString& sCommand);
 
     const VCString& GetParams() const { return m_vsParams; }
+
+    /**
+     * Get a subset of the message parameters
+     *
+     * This allows accessing a vector of a specific range of parameters,
+     * allowing easy inline use, such as `pChan->SetModes(Message.GetParam(2), Message.GetParamsSplit(3));`
+     *
+     * @param uIdx The index of the first parameter to retrieve
+     * @param uLen How many parameters to retrieve
+     * @return A VCString containing the retrieved parameters
+     */
+    VCString GetParamsSplit(unsigned int uIdx, unsigned int uLen = -1) const;
     void SetParams(const VCString& vsParams);
 
     /// @deprecated use GetParamsColon() instead.
@@ -257,7 +269,14 @@ REGISTER_ZNC_MESSAGE(CJoinMessage);
 
 class CModeMessage : public CTargetMessage {
   public:
+    /// @deprecated Use GetModeList() and GetModeParams()
     CString GetModes() const { return GetParamsColon(1).TrimPrefix_n(":"); }
+
+    CString GetModeList() const { return GetParam(1); };
+
+    VCString GetModeParams() const { return GetParamsSplit(2); };
+
+    bool HasModes() const { return !GetModeList().empty(); };
 };
 REGISTER_ZNC_MESSAGE(CModeMessage);
 

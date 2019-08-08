@@ -1086,9 +1086,8 @@ bool CClient::OnJoinMessage(CJoinMessage& Message) {
 
 bool CClient::OnModeMessage(CModeMessage& Message) {
     CString sTarget = Message.GetTarget();
-    CString sModes = Message.GetModes();
 
-    if (m_pNetwork && m_pNetwork->IsChan(sTarget) && sModes.empty()) {
+    if (m_pNetwork && m_pNetwork->IsChan(sTarget) && !Message.HasModes()) {
         // If we are on that channel and already received a
         // /mode reply from the server, we can answer this
         // request ourself.

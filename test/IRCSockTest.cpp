@@ -330,6 +330,23 @@ TEST_F(IRCSockTest, OnPartMessage) {
     EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(m_pTestChan));
 }
 
+TEST_F(IRCSockTest, StatusModes) {
+    m_pTestSock->ReadLine(":server 005 user PREFIX=(Yohv)!@%+ :are supported by this server");
+
+    EXPECT_TRUE(m_pTestSock->IsPermMode('Y'));
+    EXPECT_TRUE(m_pTestSock->IsPermMode('o'));
+    EXPECT_TRUE(m_pTestSock->IsPermMode('h'));
+    EXPECT_TRUE(m_pTestSock->IsPermMode('v'));
+
+    m_pTestChan->SetModes("+sp");
+    m_pTestChan->ModeChange("+Y :nick");
+    EXPECT_EQ(m_pTestChan->GetModeString(), "+ps");
+
+    const CNick& pNick = m_pTestChan->GetNicks().at("nick");
+    EXPECT_TRUE(pNick.HasPerm('!'));
+    EXPECT_FALSE(pNick.HasPerm('@'));
+}
+
 TEST_F(IRCSockTest, OnPingMessage) {
     CMessage msg(":server PING :arg");
     m_pTestSock->ReadLine(msg.ToString());

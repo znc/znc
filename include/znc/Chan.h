@@ -76,8 +76,22 @@ class CChan : private CCoreTranslationMixin {
                const CString& sHost);
 
     // Modes
+    /// @deprecated Use SetModes(CString, VCString)
     void SetModes(const CString& s);
+    /**
+     * Set the current modes for this channel
+     * @param sModes The mode characters being changed
+     * @param vsModeParams The parameters for the modes to be set
+     */
+    void SetModes(const CString& sModes, const VCString& vsModeParams);
+    /// @deprecated Use ModeChange(CString, VCString, CNick*)
     void ModeChange(const CString& sModes, const CNick* OpNick = nullptr);
+    /**
+     * Handle changing the modes on a channel
+     * @param sModes The mode string (eg. +ovbs-pbo)
+     * @param vsModeParams The parameters for the mode string
+     */
+    void ModeChange(const CString& sModes,const VCString& vsModeParams, const CNick* OpNick = nullptr);
     bool AddMode(char cMode, const CString& sArg);
     bool RemMode(char cMode);
     CString GetModeString() const;
