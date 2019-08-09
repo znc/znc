@@ -223,53 +223,53 @@ msgstr ""
 msgid "Your CTCP to {1} got lost, you are not connected to IRC!"
 msgstr ""
 
-#: Client.cpp:1142
+#: Client.cpp:1141
 msgid "Your notice to {1} got lost, you are not connected to IRC!"
 msgstr ""
 
-#: Client.cpp:1181
+#: Client.cpp:1180
 msgid "Removing channel {1}"
 msgstr ""
 
-#: Client.cpp:1257
+#: Client.cpp:1256
 msgid "Your message to {1} got lost, you are not connected to IRC!"
 msgstr ""
 
-#: Client.cpp:1310 Client.cpp:1316
+#: Client.cpp:1309 Client.cpp:1315
 msgid "Hello. How may I help you?"
 msgstr ""
 
-#: Client.cpp:1330
+#: Client.cpp:1329
 msgid "Usage: /attach <#chans>"
 msgstr ""
 
-#: Client.cpp:1337 Client.cpp:1359 ClientCommand.cpp:129 ClientCommand.cpp:151
+#: Client.cpp:1336 Client.cpp:1358 ClientCommand.cpp:129 ClientCommand.cpp:151
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
 msgstr[0] ""
 msgstr[1] ""
 
-#: Client.cpp:1340 ClientCommand.cpp:132
+#: Client.cpp:1339 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] ""
 msgstr[1] ""
 
-#: Client.cpp:1352
+#: Client.cpp:1351
 msgid "Usage: /detach <#chans>"
 msgstr ""
 
-#: Client.cpp:1362 ClientCommand.cpp:154
+#: Client.cpp:1361 ClientCommand.cpp:154
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] ""
 msgstr[1] ""
 
-#: Chan.cpp:638
+#: Chan.cpp:671
 msgid "Buffer Playback..."
 msgstr ""
 
-#: Chan.cpp:676
+#: Chan.cpp:709
 msgid "Playback Complete."
 msgstr ""
 
