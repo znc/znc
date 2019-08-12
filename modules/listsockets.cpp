@@ -19,7 +19,7 @@
 
 class CSocketSorter {
   public:
-    CSocketSorter(Csock* p) { m_pSock = p; }
+    CSocketSorter(const Csock* p) { m_pSock = p; }
     bool operator<(const CSocketSorter& other) const {
         // The 'biggest' item is displayed first.
         // return false: this is first
@@ -49,10 +49,10 @@ class CSocketSorter {
         // and finally sort by the whole socket name
         return sMyName.StrCmp(sHisName) > 0;
     }
-    Csock* GetSock() const { return m_pSock; }
+    const Csock* GetSock() const { return m_pSock; }
 
   private:
-    Csock* m_pSock;
+    const Csock* m_pSock;
 };
 
 class CListSockets : public CModule {
@@ -79,8 +79,7 @@ class CListSockets : public CModule {
         CSockManager& m = CZNC::Get().GetManager();
         std::priority_queue<CSocketSorter> ret;
 
-        for (unsigned int a = 0; a < m.size(); a++) {
-            Csock* pSock = m[a];
+        for (const Csock* pSock : m) {
             // These sockets went through SwapSockByAddr. That means
             // another socket took over the connection from this
             // socket. So ignore this to avoid listing the
@@ -105,7 +104,7 @@ class CListSockets : public CModule {
             std::priority_queue<CSocketSorter> socks = GetSockets();
 
             while (!socks.empty()) {
-                Csock* pSocket = socks.top().GetSock();
+                const Csock* pSocket = socks.top().GetSock();
                 socks.pop();
 
                 CTemplate& Row = Tmpl.AddRow("SocketsLoop");
@@ -136,7 +135,7 @@ class CListSockets : public CModule {
         ShowSocks(bShowHosts);
     }
 
-    CString GetSocketState(Csock* pSocket) {
+    CString GetSocketState(const Csock* pSocket) {
         switch (pSocket->GetType()) {
             case Csock::LISTENER:
                 return t_s("Listener");
@@ -152,7 +151,7 @@ class CListSockets : public CModule {
         return t_s("UNKNOWN");
     }
 
-    CString GetCreatedTime(Csock* pSocket) {
+    CString GetCreatedTime(const Csock* pSocket) {
         unsigned long long iStartTime = pSocket->GetStartTime();
         timeval tv;
         tv.tv_sec = iStartTime / 1000;
@@ -161,7 +160,7 @@ class CListSockets : public CModule {
                                   GetUser()->GetTimezone());
     }
 
-    CString GetLocalHost(Csock* pSocket, bool bShowHosts) {
+    CString GetLocalHost(const Csock* pSocket, bool bShowHosts) {
         CString sBindHost;
 
         if (bShowHosts) {
@@ -175,7 +174,7 @@ class CListSockets : public CModule {
         return sBindHost + " " + CString(pSocket->GetLocalPort());
     }
 
-    CString GetRemoteHost(Csock* pSocket, bool bShowHosts) {
+    CString GetRemoteHost(const Csock* pSocket, bool bShowHosts) {
         CString sHost;
         u_short uPort;
 
@@ -223,7 +222,7 @@ class CListSockets : public CModule {
         Table.AddColumn(t_s("Out"));
 
         while (!socks.empty()) {
-            Csock* pSocket = socks.top().GetSock();
+            const Csock* pSocket = socks.top().GetSock();
             socks.pop();
 
             Table.AddRow();
