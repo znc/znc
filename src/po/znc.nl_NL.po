@@ -1730,11 +1730,11 @@ msgctxt "helpcmd|Restart|desc"
 msgid "Restart ZNC"
 msgstr "Herstart ZNC"
 
-#: Socket.cpp:336
+#: Socket.cpp:334
 msgid "Can't resolve server hostname"
 msgstr "Kan server hostnaam niet oplossen"
 
-#: Socket.cpp:343
+#: Socket.cpp:341
 msgid ""
 "Can't resolve bind hostname. Try /znc ClearBindHost and /znc "
 "ClearUserBindHost"
@@ -1742,15 +1742,15 @@ msgstr ""
 "Kan bindhostnaam niet oplossen. Probeer /znc ClearBindHost en /znc "
 "ClearUserBindHost"
 
-#: Socket.cpp:348
+#: Socket.cpp:346
 msgid "Server address is IPv4-only, but bindhost is IPv6-only"
 msgstr "Server adres is alleen IPv4, maar de bindhost is alleen IPv6"
 
-#: Socket.cpp:357
+#: Socket.cpp:355
 msgid "Server address is IPv6-only, but bindhost is IPv4-only"
 msgstr "Server adres is alleen IPv6, maar de bindhost is alleen IPv4"
 
-#: Socket.cpp:515
+#: Socket.cpp:513
 msgid "Some socket reached its max buffer limit and was closed!"
 msgstr ""
 "Een of andere socket heeft de maximale buffer limiet bereikt en was "

@@ -1659,25 +1659,25 @@ msgctxt "helpcmd|Restart|desc"
 msgid "Restart ZNC"
 msgstr ""
 
-#: Socket.cpp:336
+#: Socket.cpp:334
 msgid "Can't resolve server hostname"
 msgstr ""
 
-#: Socket.cpp:343
+#: Socket.cpp:341
 msgid ""
 "Can't resolve bind hostname. Try /znc ClearBindHost and /znc "
 "ClearUserBindHost"
 msgstr ""
 
-#: Socket.cpp:348
+#: Socket.cpp:346
 msgid "Server address is IPv4-only, but bindhost is IPv6-only"
 msgstr ""
 
-#: Socket.cpp:357
+#: Socket.cpp:355
 msgid "Server address is IPv6-only, but bindhost is IPv4-only"
 msgstr ""
 
-#: Socket.cpp:515
+#: Socket.cpp:513
 msgid "Some socket reached its max buffer limit and was closed!"
 msgstr ""
 

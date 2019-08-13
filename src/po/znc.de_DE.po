@@ -1569,7 +1569,7 @@ msgstr "Zeige wie lange ZNC schon läuft"
 #: ClientCommand.cpp:1827
 msgctxt "helpcmd|LoadMod|args"
 msgid "[--type=global|user|network] <module> [args]"
-msgstr ""
+msgstr "[--type=global|user|network] <Modul> [args]"
 
 #: ClientCommand.cpp:1829
 msgctxt "helpcmd|LoadMod|desc"
@@ -1589,7 +1589,7 @@ msgstr "Entlade ein Modul"
 #: ClientCommand.cpp:1835
 msgctxt "helpcmd|ReloadMod|args"
 msgid "[--type=global|user|network] <module> [args]"
-msgstr ""
+msgstr "[--type=global|user|network] <Modul> [args]"
 
 #: ClientCommand.cpp:1837
 msgctxt "helpcmd|ReloadMod|desc"
@@ -1731,11 +1731,11 @@ msgctxt "helpcmd|Restart|desc"
 msgid "Restart ZNC"
 msgstr "Starte ZNC neu"
 
-#: Socket.cpp:336
+#: Socket.cpp:334
 msgid "Can't resolve server hostname"
 msgstr "Kann den Hostnamen des Servers nicht auflösen"
 
-#: Socket.cpp:343
+#: Socket.cpp:341
 msgid ""
 "Can't resolve bind hostname. Try /znc ClearBindHost and /znc "
 "ClearUserBindHost"
@@ -1743,15 +1743,15 @@ msgstr ""
 "Kann Binde-Hostnamen nicht auflösen. Versuche /znc ClearBindHost und /znc "
 "ClearUserBindHost"
 
-#: Socket.cpp:348
+#: Socket.cpp:346
 msgid "Server address is IPv4-only, but bindhost is IPv6-only"
 msgstr "Server hat nur eine IPv4-Adresse, aber Binde-Hostname ist nur IPv6"
 
-#: Socket.cpp:357
+#: Socket.cpp:355
 msgid "Server address is IPv6-only, but bindhost is IPv4-only"
 msgstr "Server hat nur eine IPv6-Adresse, aber Binde-Hostname ist nur IPv4"
 
-#: Socket.cpp:515
+#: Socket.cpp:513
 msgid "Some socket reached its max buffer limit and was closed!"
 msgstr ""
 "Eine Verbindung hat ihre maximale Puffergrenze erreicht und wurde "
