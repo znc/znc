@@ -14,19 +14,19 @@ msgstr ""
 
 #: partyline.cpp:60
 msgid "There are no open channels."
-msgstr ""
+msgstr "Il n'y a pas de canaux ouverts."
 
 #: partyline.cpp:66 partyline.cpp:73
 msgid "Channel"
-msgstr ""
+msgstr "Canal"
 
 #: partyline.cpp:67 partyline.cpp:74
 msgid "Users"
-msgstr ""
+msgstr "Utilisateurs"
 
 #: partyline.cpp:82
 msgid "List all open channels"
-msgstr ""
+msgstr "Lister tous les canaux ouverts"
 
 #: partyline.cpp:733
 msgid ""
