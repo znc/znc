@@ -14,19 +14,19 @@ msgstr ""
 
 #: autoop.cpp:154
 msgid "List all users"
-msgstr ""
+msgstr "Lister tous les utilisateurs"
 
 #: autoop.cpp:156 autoop.cpp:159
 msgid "<user> <channel> [channel] ..."
-msgstr ""
+msgstr "<utilisateur> <salon> [channel]..."
 
 #: autoop.cpp:157
 msgid "Adds channels to a user"
-msgstr ""
+msgstr "Ajoute des salons à un utilisateur"
 
 #: autoop.cpp:160
 msgid "Removes channels from a user"
-msgstr ""
+msgstr "Retire des salons d'un utilisateur"
 
 #: autoop.cpp:162 autoop.cpp:165
 msgid "<user> <mask>,[mask] ..."

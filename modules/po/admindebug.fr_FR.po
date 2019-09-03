@@ -14,11 +14,11 @@ msgstr ""
 
 #: admindebug.cpp:30
 msgid "Enable Debug Mode"
-msgstr ""
+msgstr "Activer le débogage"
 
 #: admindebug.cpp:32
 msgid "Disable Debug Mode"
-msgstr ""
+msgstr "Désactiver le débogage"
 
 #: admindebug.cpp:34
 msgid "Show the Debug Mode status"

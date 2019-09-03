@@ -42,255 +42,276 @@ msgid ""
 "want to cloak your host now, /msg *q Cloak. You can set your preference "
 "with /msg *q Set UseCloakedHost true/false."
 msgstr ""
+"Note : Votre nom d'hôte sera remplacé par votre cloak la prochaine fois que "
+"vous vous reconnectez à IRC. Si vous voulez que ce soit fait maintenant, "
+"tapez /msg *q Cloak. Vous pouvez modifier vos préférences avec /msg *q Set "
+"UseCloakedHost true/false."
 
 #: q.cpp:111
 msgid "The following commands are available:"
-msgstr ""
+msgstr "Les commandes suivantes sont disponibles :"
 
 #: q.cpp:113 q.cpp:116 q.cpp:121 q.cpp:126 q.cpp:130 q.cpp:135 q.cpp:140
 msgid "Command"
-msgstr ""
+msgstr "Commande"
 
 #: q.cpp:114 q.cpp:117 q.cpp:123 q.cpp:127 q.cpp:132 q.cpp:136 q.cpp:141
 #: q.cpp:150 q.cpp:154 q.cpp:158 q.cpp:162 q.cpp:168 q.cpp:174 q.cpp:180
 #: q.cpp:186
 msgid "Description"
-msgstr ""
+msgstr "Description"
 
 #: q.cpp:116
 msgid "Auth [<username> <password>]"
-msgstr ""
+msgstr "Auth [<nom d'utilisateur> <mot de passe>]"
 
 #: q.cpp:118
 msgid "Tries to authenticate you with Q. Both parameters are optional."
-msgstr ""
+msgstr "Tente de vous identifier avec Q. Tous les paramètres sont optionnels."
 
 #: q.cpp:124
 msgid "Tries to set usermode +x to hide your real hostname."
 msgstr ""
+"Tente d'ajouter le mode +x à l'utilisateur pour cacher votre nom d'hôte."
 
 #: q.cpp:128
 msgid "Prints the current status of the module."
-msgstr ""
+msgstr "Affiche le statut actuel du module."
 
 #: q.cpp:133
 msgid "Re-requests the current user information from Q."
-msgstr ""
+msgstr "Redemande les informations utilisateur actuelles à Q."
 
 #: q.cpp:135
 msgid "Set <setting> <value>"
-msgstr ""
+msgstr "Set <paramètre> <valeur>"
 
 #: q.cpp:137
 msgid "Changes the value of the given setting. See the list of settings below."
 msgstr ""
+"Change la valeur du paramètre voulu. Voir la liste des paramètres ci-dessous."
 
 #: q.cpp:142
 msgid "Prints out the current configuration. See the list of settings below."
 msgstr ""
+"Affiche la configuration actuelle. Voir la liste des paramètres ci-dessous."
 
 #: q.cpp:146
 msgid "The following settings are available:"
-msgstr ""
+msgstr "Les paramètres suivants sont disponibles :"
 
 #: q.cpp:148 q.cpp:152 q.cpp:156 q.cpp:160 q.cpp:166 q.cpp:172 q.cpp:178
 #: q.cpp:183 q.cpp:227 q.cpp:230 q.cpp:233 q.cpp:236 q.cpp:239 q.cpp:242
 #: q.cpp:245 q.cpp:248
 msgid "Setting"
-msgstr ""
+msgstr "Paramètre"
 
 #: q.cpp:149 q.cpp:153 q.cpp:157 q.cpp:161 q.cpp:167 q.cpp:173 q.cpp:179
 #: q.cpp:184
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 #: q.cpp:153 q.cpp:157
 msgid "String"
-msgstr ""
+msgstr "Chaîne"
 
 #: q.cpp:154
 msgid "Your Q username."
-msgstr ""
+msgstr "Votre nom d'utilisateur Q."
 
 #: q.cpp:158
 msgid "Your Q password."
-msgstr ""
+msgstr "Votre mot de passe Q."
 
 #: q.cpp:161 q.cpp:167 q.cpp:173 q.cpp:179 q.cpp:184
 msgid "Boolean"
-msgstr ""
+msgstr "Booléen"
 
 #: q.cpp:163 q.cpp:373
 msgid "Whether to cloak your hostname (+x) automatically on connect."
 msgstr ""
+"Activer ou non le cloak du nom d'hôte (+x) automatiquement à la connexion."
 
 #: q.cpp:169 q.cpp:381
 msgid ""
 "Whether to use the CHALLENGEAUTH mechanism to avoid sending passwords in "
 "cleartext."
 msgstr ""
+"Utiliser ou non le mécanisme CHALLENGEAUTH pour éviter d'envoyer des mots de "
+"passe en clair."
 
 #: q.cpp:175 q.cpp:389
 msgid "Whether to request voice/op from Q on join/devoice/deop."
 msgstr ""
+"Demander ou non parole/opérateur de Q à l'entrée/privation de parole/"
+"privation d'opérateur."
 
 #: q.cpp:181 q.cpp:395
 msgid "Whether to join channels when Q invites you."
-msgstr ""
+msgstr "Rejoindre ou non un salon si Q vous y invite."
 
 #: q.cpp:187 q.cpp:402
 msgid "Whether to delay joining channels until after you are cloaked."
 msgstr ""
+"Instaurer ou non un délai à la connexion des salons après activation du "
+"cloak."
 
 #: q.cpp:192
 msgid "This module takes 2 optional parameters: <username> <password>"
 msgstr ""
+"Ce module nécessite 2 paramètres optionnels : <nom d'utilisateur> <mot de "
+"passe>"
 
 #: q.cpp:194
 msgid "Module settings are stored between restarts."
-msgstr ""
+msgstr "Les réglages du module sont sauvegardés après redémarrage."
 
 #: q.cpp:200
 msgid "Syntax: Set <setting> <value>"
-msgstr ""
+msgstr "Syntaxe : Set <paramètre> <valeur>"
 
 #: q.cpp:203
 msgid "Username set"
-msgstr ""
+msgstr "Nom d'utilisateur indiqué"
 
 #: q.cpp:206
 msgid "Password set"
-msgstr ""
+msgstr "Mot de passe indiqué"
 
 #: q.cpp:209
 msgid "UseCloakedHost set"
-msgstr ""
+msgstr "UseCloakedHost paramétré"
 
 #: q.cpp:212
 msgid "UseChallenge set"
-msgstr ""
+msgstr "UseChallenge paramétré"
 
 #: q.cpp:215
 msgid "RequestPerms set"
-msgstr ""
+msgstr "RequestPerms paramétré"
 
 #: q.cpp:218
 msgid "JoinOnInvite set"
-msgstr ""
+msgstr "JoinOnInvite paramétré"
 
 #: q.cpp:221
 msgid "JoinAfterCloaked set"
-msgstr ""
+msgstr "JoinAfterCloaked paramétré"
 
 #: q.cpp:223
 msgid "Unknown setting: {1}"
-msgstr ""
+msgstr "Réglage inconnu : {1}"
 
 #: q.cpp:228 q.cpp:231 q.cpp:234 q.cpp:237 q.cpp:240 q.cpp:243 q.cpp:246
 #: q.cpp:249
 msgid "Value"
-msgstr ""
+msgstr "Valeur"
 
 #: q.cpp:253
 msgid "Connected: yes"
-msgstr ""
+msgstr "Connecté : oui"
 
 #: q.cpp:254
 msgid "Connected: no"
-msgstr ""
+msgstr "Connecté : non"
 
 #: q.cpp:255
 msgid "Cloacked: yes"
-msgstr ""
+msgstr "Cloaké : oui"
 
 #: q.cpp:255
 msgid "Cloacked: no"
-msgstr ""
+msgstr "Cloaké : non"
 
 #: q.cpp:256
 msgid "Authenticated: yes"
-msgstr ""
+msgstr "Identifié : oui"
 
 #: q.cpp:257
 msgid "Authenticated: no"
-msgstr ""
+msgstr "Identifié : non"
 
 #: q.cpp:262
 msgid "Error: You are not connected to IRC."
-msgstr ""
+msgstr "Erreur : vous n'êtes pas connectés à IRC."
 
 #: q.cpp:270
 msgid "Error: You are already cloaked!"
-msgstr ""
+msgstr "Erreur : le cloak est déjà actif !"
 
 #: q.cpp:276
 msgid "Error: You are already authed!"
-msgstr ""
+msgstr "Erreur : vous êtes déjà identifié !"
 
 #: q.cpp:280
 msgid "Update requested."
-msgstr ""
+msgstr "Mise à jour demandée."
 
 #: q.cpp:283
 msgid "Unknown command. Try 'help'."
-msgstr ""
+msgstr "Commande inconnue. Essayez 'help'."
 
 #: q.cpp:293
 msgid "Cloak successful: Your hostname is now cloaked."
-msgstr ""
+msgstr "Cloak réussi : votre nom d'hôte est maintenant caché."
 
 #: q.cpp:408
 msgid "Changes have been saved!"
-msgstr ""
+msgstr "Les changements ont été enregistrés !"
 
 #: q.cpp:435
 msgid "Cloak: Trying to cloak your hostname, setting +x..."
-msgstr ""
+msgstr "Cloak : tentative d'anonymisation de l'hôte, ajout du mode +x..."
 
 #: q.cpp:452
 msgid ""
 "You have to set a username and password to use this module! See 'help' for "
 "details."
 msgstr ""
+"Vous devez indiquer un nom d'utilisateur et un mot de passe pour utiliser ce "
+"module ! Voyez 'help' pour plus de détails."
 
 #: q.cpp:458
 msgid "Auth: Requesting CHALLENGE..."
-msgstr ""
+msgstr "Auth : demande CHALLENGE..."
 
 #: q.cpp:462
 msgid "Auth: Sending AUTH request..."
-msgstr ""
+msgstr "Auth : envoi de la requête AUTH..."
 
 #: q.cpp:479
 msgid "Auth: Received challenge, sending CHALLENGEAUTH request..."
-msgstr ""
+msgstr "Auth : CHALLENGE reçu, envoi de la requête CHALLENGEAUTH..."
 
 #: q.cpp:521
 msgid "Authentication failed: {1}"
-msgstr ""
+msgstr "Échec de l'identification : {1}"
 
 #: q.cpp:525
 msgid "Authentication successful: {1}"
-msgstr ""
+msgstr "Identification réussie : {1}"
 
 #: q.cpp:539
 msgid ""
 "Auth failed: Q does not support HMAC-SHA-256 for CHALLENGEAUTH, falling back "
 "to standard AUTH."
 msgstr ""
+"Échec de l'identification : Q ne supporte pas HMAC-SHA-256 pour le message "
+"CHALLENGEAUTH, rétrograde à AUTH standard."
 
 #: q.cpp:566
 msgid "RequestPerms: Requesting op on {1}"
-msgstr ""
+msgstr "RequestPerms : Demande de statut opérateur sur {1}"
 
 #: q.cpp:579
 msgid "RequestPerms: Requesting voice on {1}"
-msgstr ""
+msgstr "RequestPerms : Demande la parole sur {1}"
 
 #: q.cpp:686
 msgid "Please provide your username and password for Q."
 msgstr ""
+"Veuillez indiquer votre nom d'utilisateur et votre mot de passe pour Q."
 
 #: q.cpp:689
 msgid "Auths you with QuakeNet's Q bot."
-msgstr ""
+msgstr "Vous identifie avec le robot Q de QuakeNet."
