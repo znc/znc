@@ -273,15 +273,16 @@ msgstr ""
 
 #: q.cpp:458
 msgid "Auth: Requesting CHALLENGE..."
-msgstr "Auth : demande CHALLENGE..."
+msgstr "Identification : demande du message CHALLENGE..."
 
 #: q.cpp:462
 msgid "Auth: Sending AUTH request..."
-msgstr "Auth : envoi de la requête AUTH..."
+msgstr "Identification : envoi de la requête AUTH..."
 
 #: q.cpp:479
 msgid "Auth: Received challenge, sending CHALLENGEAUTH request..."
-msgstr "Auth : CHALLENGE reçu, envoi de la requête CHALLENGEAUTH..."
+msgstr ""
+"Identification : message CHALLENGE reçu, envoi de la requête CHALLENGEAUTH..."
 
 #: q.cpp:521
 msgid "Authentication failed: {1}"

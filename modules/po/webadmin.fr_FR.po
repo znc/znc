@@ -202,7 +202,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:83
 msgid "Trust the PKI:"
-msgstr ""
+msgstr "Approuver le PKI :"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:85
 msgid ""
