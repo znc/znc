@@ -14,127 +14,129 @@ msgstr ""
 
 #: autoop.cpp:154
 msgid "List all users"
-msgstr ""
+msgstr "Lister tous les utilisateurs"
 
 #: autoop.cpp:156 autoop.cpp:159
 msgid "<user> <channel> [channel] ..."
-msgstr ""
+msgstr "<utilisateur> <salon> [channel]..."
 
 #: autoop.cpp:157
 msgid "Adds channels to a user"
-msgstr ""
+msgstr "Ajoute des salons à un utilisateur"
 
 #: autoop.cpp:160
 msgid "Removes channels from a user"
-msgstr ""
+msgstr "Retire des salons d'un utilisateur"
 
 #: autoop.cpp:162 autoop.cpp:165
 msgid "<user> <mask>,[mask] ..."
-msgstr ""
+msgstr "<utilisateur> <masque réseau>,[mask] ..."
 
 #: autoop.cpp:163
 msgid "Adds masks to a user"
-msgstr ""
+msgstr "Ajoute des masques à un utilisateur"
 
 #: autoop.cpp:166
 msgid "Removes masks from a user"
-msgstr ""
+msgstr "Supprime des masques d'un utilisateur"
 
 #: autoop.cpp:169
 msgid "<user> <hostmask>[,<hostmasks>...] <key> [channels]"
-msgstr ""
+msgstr "<utilisateur> <masque réseau>[,<hostmasks>...]<clé> [channels]"
 
 #: autoop.cpp:170
 msgid "Adds a user"
-msgstr ""
+msgstr "Ajoute un utilisateur"
 
 #: autoop.cpp:172
 msgid "<user>"
-msgstr ""
+msgstr "<utilisateur>"
 
 #: autoop.cpp:172
 msgid "Removes a user"
-msgstr ""
+msgstr "Supprime un utilisateur"
 
 #: autoop.cpp:275
 msgid "Usage: AddUser <user> <hostmask>[,<hostmasks>...] <key> [channels]"
 msgstr ""
+"Utilisation : AddUser <utilisateur> <masque réseau>[,<masques réseau>...] "
+"<clé> [channels]"
 
 #: autoop.cpp:291
 msgid "Usage: DelUser <user>"
-msgstr ""
+msgstr "Utilisation : DelUser <utilisateur>"
 
 #: autoop.cpp:300
 msgid "There are no users defined"
-msgstr ""
+msgstr "Il n'y a pas d'utilisateurs définis"
 
 #: autoop.cpp:306 autoop.cpp:317 autoop.cpp:321 autoop.cpp:323
 msgid "User"
-msgstr ""
+msgstr "Utilisateur"
 
 #: autoop.cpp:307 autoop.cpp:325
 msgid "Hostmasks"
-msgstr ""
+msgstr "Masque réseau"
 
 #: autoop.cpp:308 autoop.cpp:318
 msgid "Key"
-msgstr ""
+msgstr "Clé"
 
 #: autoop.cpp:309 autoop.cpp:319
 msgid "Channels"
-msgstr ""
+msgstr "Salons"
 
 #: autoop.cpp:337
 msgid "Usage: AddChans <user> <channel> [channel] ..."
-msgstr ""
+msgstr "Utilisation : AddChans <utilisateur> <salon> [channel] ..."
 
 #: autoop.cpp:344 autoop.cpp:365 autoop.cpp:387 autoop.cpp:408 autoop.cpp:472
 msgid "No such user"
-msgstr ""
+msgstr "Utilisateur inconnu"
 
 #: autoop.cpp:349
 msgid "Channel(s) added to user {1}"
-msgstr ""
+msgstr "Salon(s) ajouté(s) à l'utilisateur {1}"
 
 #: autoop.cpp:358
 msgid "Usage: DelChans <user> <channel> [channel] ..."
-msgstr ""
+msgstr "Utilisation : DelChans <utilisateur> <salon> [channel] ..."
 
 #: autoop.cpp:371
 msgid "Channel(s) Removed from user {1}"
-msgstr ""
+msgstr "Salons(s) supprimés de l'utilisateur {1}"
 
 #: autoop.cpp:380
 msgid "Usage: AddMasks <user> <mask>,[mask] ..."
-msgstr ""
+msgstr "Utilisation : AddMasks <utilisateur> <masque>,[mask] ..."
 
 #: autoop.cpp:392
 msgid "Hostmasks(s) added to user {1}"
-msgstr ""
+msgstr "Masques(s) ajouté(s) à l'utilisateur {1}"
 
 #: autoop.cpp:401
 msgid "Usage: DelMasks <user> <mask>,[mask] ..."
-msgstr ""
+msgstr "Utilisation : DelMasks <utilisateur> <masque>,[mask] ..."
 
 #: autoop.cpp:413
 msgid "Removed user {1} with key {2} and channels {3}"
-msgstr ""
+msgstr "Utilisateur {1} avec la clé {2} et les salons {3} supprimé"
 
 #: autoop.cpp:419
 msgid "Hostmasks(s) Removed from user {1}"
-msgstr ""
+msgstr "Masques(s) supprimé(s) de l'utilisateur {1}"
 
 #: autoop.cpp:478
 msgid "User {1} removed"
-msgstr ""
+msgstr "Utilisateur {1} supprimé"
 
 #: autoop.cpp:484
 msgid "That user already exists"
-msgstr ""
+msgstr "Cet utilisateur existe déjà"
 
 #: autoop.cpp:490
 msgid "User {1} added with hostmask(s) {2}"
-msgstr ""
+msgstr "Utilisateur {1} ajouté avec le(s) masque(s) {2}"
 
 #: autoop.cpp:532
 msgid ""

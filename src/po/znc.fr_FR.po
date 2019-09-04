@@ -1563,7 +1563,7 @@ msgstr "Afficher le temps écoulé depuis le lancement de ZNC"
 #: ClientCommand.cpp:1827
 msgctxt "helpcmd|LoadMod|args"
 msgid "[--type=global|user|network] <module> [args]"
-msgstr ""
+msgstr "[--type=global|utilisateur|réseau] <module> [arguments]"
 
 #: ClientCommand.cpp:1829
 msgctxt "helpcmd|LoadMod|desc"
@@ -1583,7 +1583,7 @@ msgstr "Désactiver un module"
 #: ClientCommand.cpp:1835
 msgctxt "helpcmd|ReloadMod|args"
 msgid "[--type=global|user|network] <module> [args]"
-msgstr ""
+msgstr "[--type=global|utilisateur|réseau] <module> [arguments]"
 
 #: ClientCommand.cpp:1837
 msgctxt "helpcmd|ReloadMod|desc"
