@@ -15,10 +15,10 @@
 #
 
 cmake_minimum_required(VERSION 3.1)
-project(ZNC VERSION 1.7.4)
-set(ZNC_VERSION 1.7.x)
-set(append_git_version true)
-set(alpha_version "") # e.g. "-rc1"
+project(ZNC VERSION 1.7.5)
+set(ZNC_VERSION 1.7.5)
+set(append_git_version false)
+set(alpha_version "-rc1") # e.g. "-rc1"
 set(VERSION_EXTRA "" CACHE STRING
 	"Additional string appended to version, e.g. to mark distribution")
 
