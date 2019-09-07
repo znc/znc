@@ -31,14 +31,20 @@ class CNickServ : public CModule {
         PutModule(t_s("Password set"));
     }
 
-    void ClearCommand(const CString& sLine) { DelNV("Password"); }
+    void ClearCommand(const CString& sLine) {
+        DelNV("Password");
+        PutModule(t_s("Done"));
+    }
 
     void SetNSNameCommand(const CString& sLine) {
         SetNV("NickServName", sLine.Token(1, true));
         PutModule(t_s("NickServ name set"));
     }
 
-    void ClearNSNameCommand(const CString& sLine) { DelNV("NickServName"); }
+    void ClearNSNameCommand(const CString& sLine) {
+        DelNV("NickServName");
+        PutModule(t_s("Done"));
+    }
 
     void ViewCommandsCommand(const CString& sLine) {
         PutModule("IDENTIFY " + GetNV("IdentifyCmd"));
