@@ -26,7 +26,7 @@ msgstr "Password:"
 
 #: modules/po/../data/q/tmpl/index.tmpl:18
 msgid "Please enter a password."
-msgstr "Pe favore inserisci una password."
+msgstr "Per favore inserisci una password."
 
 #: modules/po/../data/q/tmpl/index.tmpl:26
 msgid "Options"
