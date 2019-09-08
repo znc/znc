@@ -34,7 +34,7 @@ msgstr "Adesso logging su file"
 
 #: adminlog.cpp:160
 msgid "Now only logging to syslog"
-msgstr "Adesso logging solo su syslog"
+msgstr "Ora logging solo su syslog"
 
 #: adminlog.cpp:164
 msgid "Now logging to syslog and file"
@@ -58,7 +58,7 @@ msgstr "Il logging è abilitato per il syslog"
 
 #: adminlog.cpp:198
 msgid "Logging is enabled for both, file and syslog"
-msgstr "Il logging è abilitato per sia per i file sia per il syslog"
+msgstr "Il logging è abilitato per entrambi, file e syslog"
 
 #: adminlog.cpp:204
 msgid "Log file will be written to {1}"
@@ -66,4 +66,4 @@ msgstr "I file di Log verranno scritti su {1}"
 
 #: adminlog.cpp:222
 msgid "Log ZNC events to file and/or syslog."
-msgstr "Logga gli eventi ZNC su file e/o syslog."
+msgstr "Logga gli eventi dello ZNC su file e/o syslog."
