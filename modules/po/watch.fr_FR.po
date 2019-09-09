@@ -14,7 +14,7 @@ msgstr ""
 
 #: watch.cpp:334
 msgid "All entries cleared."
-msgstr ""
+msgstr "Toutes les entrées sont effacées."
 
 #: watch.cpp:344
 msgid "Buffer count is set to {1}"
@@ -30,11 +30,11 @@ msgstr ""
 
 #: watch.cpp:398
 msgid "Enabled all entries."
-msgstr ""
+msgstr "Toutes les entrées sont activées."
 
 #: watch.cpp:405 watch.cpp:437 watch.cpp:470 watch.cpp:570 watch.cpp:585
 msgid "Invalid Id"
-msgstr ""
+msgstr "Identifiant invalide"
 
 #: watch.cpp:414
 msgid "Id {1} disabled"
