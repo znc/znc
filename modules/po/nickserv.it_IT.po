@@ -18,7 +18,7 @@ msgstr "Password impostata correttamente"
 
 #: nickserv.cpp:36 nickserv.cpp:46
 msgid "Done"
-msgstr ""
+msgstr "Fatto"
 
 #: nickserv.cpp:41
 msgid "NickServ name set"

@@ -14,7 +14,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:12
 msgid "Channel Info"
-msgstr "Informazioni canale"
+msgstr "Informazioni sul canale"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:17
 msgid "Channel Name:"
