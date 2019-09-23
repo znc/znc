@@ -1,3 +1,14 @@
+# ZNC 1.7.5 (2019-09-23)
+
+* modpython: Add support for Python 3.8
+* modtcl: install .tcl files when building with CMake
+* nickserv: report success of Clear commands
+* Update translations, add Italian, Bulgarian, fix name of Dutch
+* Update error messages to be clearer
+* Add a deprecation warning to ./configure to use CMake instead in addition to an already existing warning in README
+
+
+
 # ZNC 1.7.4 (2019-06-19)
 
 ## Fixes
