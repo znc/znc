@@ -14,7 +14,7 @@ msgstr ""
 
 #: alias.cpp:141
 msgid "missing required parameter: {1}"
-msgstr ""
+msgstr "parâmetro requirido faltando: {1}"
 
 #: alias.cpp:201
 msgid "Created alias: {1}"

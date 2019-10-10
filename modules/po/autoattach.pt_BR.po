@@ -14,7 +14,7 @@ msgstr ""
 
 #: autoattach.cpp:94
 msgid "Added to list"
-msgstr ""
+msgstr "Adicionado à lista"
 
 #: autoattach.cpp:96
 msgid "{1} is already added"
@@ -42,11 +42,11 @@ msgstr ""
 
 #: autoattach.cpp:122 autoattach.cpp:130
 msgid "Chan"
-msgstr ""
+msgstr "Canal"
 
 #: autoattach.cpp:123 autoattach.cpp:131
 msgid "Search"
-msgstr ""
+msgstr "Buscar"
 
 #: autoattach.cpp:124 autoattach.cpp:132
 msgid "Host"

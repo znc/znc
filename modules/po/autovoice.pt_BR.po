@@ -14,7 +14,7 @@ msgstr ""
 
 #: autovoice.cpp:120
 msgid "List all users"
-msgstr ""
+msgstr "Listar todos os usuários"
 
 #: autovoice.cpp:122 autovoice.cpp:125
 msgid "<user> <channel> [channel] ..."
@@ -22,11 +22,11 @@ msgstr ""
 
 #: autovoice.cpp:123
 msgid "Adds channels to a user"
-msgstr ""
+msgstr "Adiciona canais a um usuário"
 
 #: autovoice.cpp:126
 msgid "Removes channels from a user"
-msgstr ""
+msgstr "Remove canais de um usuário"
 
 #: autovoice.cpp:128
 msgid "<user> <hostmask> [channels]"
@@ -34,15 +34,15 @@ msgstr ""
 
 #: autovoice.cpp:129
 msgid "Adds a user"
-msgstr ""
+msgstr "Adiciona um usuário"
 
 #: autovoice.cpp:131
 msgid "<user>"
-msgstr ""
+msgstr "<usuário>"
 
 #: autovoice.cpp:131
 msgid "Removes a user"
-msgstr ""
+msgstr "Remove um usuário"
 
 #: autovoice.cpp:215
 msgid "Usage: AddUser <user> <hostmask> [channels]"
@@ -50,7 +50,7 @@ msgstr ""
 
 #: autovoice.cpp:229
 msgid "Usage: DelUser <user>"
-msgstr ""
+msgstr "Uso: DelUser <usuário>"
 
 #: autovoice.cpp:238
 msgid "There are no users defined"
@@ -58,7 +58,7 @@ msgstr ""
 
 #: autovoice.cpp:244 autovoice.cpp:250
 msgid "User"
-msgstr ""
+msgstr "Usuário"
 
 #: autovoice.cpp:245 autovoice.cpp:251
 msgid "Hostmask"
@@ -66,7 +66,7 @@ msgstr ""
 
 #: autovoice.cpp:246 autovoice.cpp:252
 msgid "Channels"
-msgstr ""
+msgstr "Canais"
 
 #: autovoice.cpp:263
 msgid "Usage: AddChans <user> <channel> [channel] ..."

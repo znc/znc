@@ -733,7 +733,7 @@ msgstr "Você não tem servidores adicionados."
 
 #: ClientCommand.cpp:787
 msgid "Server removed"
-msgstr ""
+msgstr "Servidor removido"
 
 #: ClientCommand.cpp:789
 msgid "No such server"
@@ -793,17 +793,17 @@ msgstr ""
 #: ClientCommand.cpp:876 ClientCommand.cpp:882
 msgctxt "topicscmd"
 msgid "Topic"
-msgstr ""
+msgstr "Tópico"
 
 #: ClientCommand.cpp:889 ClientCommand.cpp:894
 msgctxt "listmods"
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: ClientCommand.cpp:890 ClientCommand.cpp:895
 msgctxt "listmods"
 msgid "Arguments"
-msgstr ""
+msgstr "Parâmetros"
 
 #: ClientCommand.cpp:904
 msgid "No global modules loaded."
@@ -811,23 +811,23 @@ msgstr ""
 
 #: ClientCommand.cpp:906 ClientCommand.cpp:970
 msgid "Global modules:"
-msgstr ""
+msgstr "Módulos globais:"
 
 #: ClientCommand.cpp:915
 msgid "Your user has no modules loaded."
-msgstr ""
+msgstr "Seu usuário não possui módulos carregados."
 
 #: ClientCommand.cpp:917 ClientCommand.cpp:982
 msgid "User modules:"
-msgstr ""
+msgstr "Módulos de usuário:"
 
 #: ClientCommand.cpp:925
 msgid "This network has no modules loaded."
-msgstr ""
+msgstr "Esta rede não possui módulos carregados."
 
 #: ClientCommand.cpp:927 ClientCommand.cpp:994
 msgid "Network modules:"
-msgstr ""
+msgstr "Módulos da rede:"
 
 #: ClientCommand.cpp:942 ClientCommand.cpp:949
 msgctxt "listavailmods"
@@ -861,7 +861,7 @@ msgstr "Uso: LoadMod [--type=global|user|network] <módulo> [parâmetros]"
 
 #: ClientCommand.cpp:1033
 msgid "Unable to load {1}: {2}"
-msgstr ""
+msgstr "Não foi possível carregar {1}: {2}"
 
 #: ClientCommand.cpp:1043
 msgid "Unable to load global module {1}: Access denied."
@@ -960,7 +960,7 @@ msgstr ""
 
 #: ClientCommand.cpp:1268
 msgid "Usage: SetBindHost <host>"
-msgstr ""
+msgstr "Uso: SetBindHost <host>"
 
 #: ClientCommand.cpp:1273 ClientCommand.cpp:1290
 msgid "You already have this bind host!"
@@ -972,7 +972,7 @@ msgstr ""
 
 #: ClientCommand.cpp:1285
 msgid "Usage: SetUserBindHost <host>"
-msgstr ""
+msgstr "Uso: SetUserBindHost <host>"
 
 #: ClientCommand.cpp:1295
 msgid "Set default bind host to {1}"
@@ -1010,7 +1010,7 @@ msgstr ""
 
 #: ClientCommand.cpp:1336
 msgid "Usage: PlayBuffer <#chan|query>"
-msgstr ""
+msgstr "Uso: PlayBuffer <#canal|query>"
 
 #: ClientCommand.cpp:1344
 msgid "You are not on {1}"
@@ -1402,7 +1402,7 @@ msgstr ""
 #: ClientCommand.cpp:1766
 msgctxt "helpcmd|Attach|args"
 msgid "<#chans>"
-msgstr ""
+msgstr "<#canais>"
 
 #: ClientCommand.cpp:1767
 msgctxt "helpcmd|Attach|desc"
@@ -1412,7 +1412,7 @@ msgstr ""
 #: ClientCommand.cpp:1768
 msgctxt "helpcmd|Detach|args"
 msgid "<#chans>"
-msgstr ""
+msgstr "<#canais>"
 
 #: ClientCommand.cpp:1769
 msgctxt "helpcmd|Detach|desc"
@@ -1507,7 +1507,7 @@ msgstr ""
 #: ClientCommand.cpp:1815
 msgctxt "helpcmd|Jump|args"
 msgid "[server]"
-msgstr ""
+msgstr "[servidor]"
 
 #: ClientCommand.cpp:1816
 msgctxt "helpcmd|Jump|desc"
