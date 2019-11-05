@@ -77,18 +77,30 @@ externalproject_add(inttest_bin
 	BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/integration"
 	INSTALL_COMMAND ""
 	CMAKE_CACHE_ARGS
-	# Note the space in the end: protect from CXXFLAGS env var, but
-	# still support custom flags
+	# Note the space in the end: protect from CXXFLAGS env var (see comment
+	# above), but still support custom flags
 	"-DCMAKE_CXX_FLAGS:string=${INTEGRATION_TEST_CXX_FLAGS} "
+	# Build integration test with the correct compiler.
+	# https://bugs.gentoo.org/699258
+	# CMAKE_CXX_COMPILER is passed for the case if the main cmake was called
+	# with -DCMAKE_CXX_COMPILER but without -DCMAKE_TOOLCHAIN_FILE.
+	"-DCMAKE_TOOLCHAIN_FILE:path=${CMAKE_TOOLCHAIN_FILE}"
+	"-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}"
+
 	"-DGTEST_ROOT:path=${GTEST_ROOT}"
 	"-DGMOCK_ROOT:path=${GMOCK_ROOT}"
 	"-DZNC_BIN_DIR:path=${CMAKE_INSTALL_FULL_BINDIR}"
 	"-DQt5_HINTS:path=${brew_qt5}")
 add_custom_target(inttest COMMAND
+	#   MAKEFLAGS:
 	# Prevent a warning from test of znc-buildmod, when inner make
 	# discovers that there is an outer make and tries to use it:
 	# gmake[4]: warning: jobserver unavailable: using -j1.  Add '+' to parent make rule.
 	# This option doesn't affect ninja, which doesn't show that warning anyway.
-	${CMAKE_COMMAND} -E env MAKEFLAGS=
+	#
+	#   CXX: 
+	# znc-buildmod should use the correct compiler.
+	# https://bugs.gentoo.org/699258 is an example of how it can go wrong.
+	${CMAKE_COMMAND} -E env MAKEFLAGS= CXX=${CMAKE_CXX_COMPILER}
 	"${CMAKE_CURRENT_BINARY_DIR}/integration/inttest")
 add_dependencies(inttest inttest_bin)
