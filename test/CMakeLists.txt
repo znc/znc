@@ -85,7 +85,7 @@ externalproject_add(inttest_bin
 	# CMAKE_CXX_COMPILER is passed for the case if the main cmake was called
 	# with -DCMAKE_CXX_COMPILER but without -DCMAKE_TOOLCHAIN_FILE.
 	"-DCMAKE_TOOLCHAIN_FILE:path=${CMAKE_TOOLCHAIN_FILE}"
-	"-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}"
+	"-DCMAKE_CXX_COMPILER:string=${CMAKE_CXX_COMPILER}"
 
 	"-DGTEST_ROOT:path=${GTEST_ROOT}"
 	"-DGMOCK_ROOT:path=${GMOCK_ROOT}"
