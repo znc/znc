@@ -10,12 +10,10 @@ env:
 
 # These linux-specific parameters could be moved into matrix.include items, but that's lots of repetition
 sudo: required
-dist: trusty
+dist: bionic
+arch: amd64
 services:
     - docker
-
-# See https://github.com/google/sanitizers/issues/856
-group: deprecated-2017Q3
 
 # TODO: add Linux LLVM coverage; clang 3.5.0 on ubuntu trusty is too old.
 matrix:
@@ -23,34 +21,41 @@ matrix:
     include:
         - os: linux
           compiler: gcc
-          env: BUILD_TYPE=normal BUILD_WITH=cmake COVERAGE=gcov
+          env: BUILD_TYPE=normal BUILD_WITH=cmake
         - os: linux
           compiler: gcc
-          env: BUILD_TYPE=normal BUILD_WITH=autoconf COVERAGE=gcov
+          env: BUILD_TYPE=normal BUILD_WITH=autoconf
         - os: linux
           compiler: clang
-          env: BUILD_TYPE=asan BUILD_WITH=cmake COVERAGE=no
+          env: BUILD_TYPE=asan BUILD_WITH=cmake
         - os: linux
           compiler: clang
-          env: BUILD_TYPE=tsan BUILD_WITH=cmake COVERAGE=no
-        - os: osx
-          osx_image: xcode8.3 # macOS 10.12
-          compiler: clang
-          env: BUILD_TYPE=normal BUILD_WITH=cmake COVERAGE=llvm
+          env: BUILD_TYPE=tsan BUILD_WITH=cmake
+          # TODO: enable
+          # - os: linux
+          #   compiler: clang
+          #   env: BUILD_TYPE=msan BUILD_WITH=cmake
+          # - os: linux
+          #   compiler: clang
+          #   env: BUILD_TYPE=ubsan BUILD_WITH=cmake
+        - os: linux
+          compiler: gcc
+          env: BUILD_TYPE=normal BUILD_WITH=cmake
+          arch: arm64
         - os: osx
           osx_image: xcode9.3 # macOS 10.13
           compiler: clang
-          env: BUILD_TYPE=normal BUILD_WITH=cmake COVERAGE=llvm
+          env: BUILD_TYPE=normal BUILD_WITH=cmake
         - os: osx
           osx_image: xcode9.3 # macOS 10.13
           compiler: clang
-          env: BUILD_TYPE=normal BUILD_WITH=autoconf COVERAGE=llvm
+          env: BUILD_TYPE=normal BUILD_WITH=autoconf
         - os: linux
           compiler: gcc
-          env: BUILD_TYPE=tarball BUILD_WITH=cmake COVERAGE=gcov
+          env: BUILD_TYPE=tarball BUILD_WITH=cmake
         - os: linux
           compiler: gcc
-          env: BUILD_TYPE=tarball BUILD_WITH=autoconf COVERAGE=gcov
+          env: BUILD_TYPE=tarball BUILD_WITH=autoconf
         - stage: deploy
           os: linux
           before_install:
@@ -75,8 +80,6 @@ matrix:
         - stage: deploy
           os: linux
           before_install:
-            - sudo apt-get update
-            - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
           install:
             - if [[ "$TRAVIS_REPO_SLUG" == "znc/znc" && "$TRAVIS_PULL_REQUEST" == "false" ]]; then ATTEMPT_DEPLOY=yes; else ATTEMPT_DEPLOY=no; fi
             - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; fi
@@ -95,25 +98,17 @@ before_install:
     - if [[ "$BUILD_TYPE" == "tarball" ]]; then CFGFLAGS+=" --with-gtest=$TRAVIS_BUILD_DIR/third_party/googletest/googletest --with-gmock=$TRAVIS_BUILD_DIR/third_party/googletest/googlemock --disable-swig"; fi
     - if [[ "$BUILD_TYPE" == "asan" ]]; then MYCXXFLAGS+=" -fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fPIE" MYLDFLAGS+=" -fsanitize=address -pie"; fi
     - if [[ "$BUILD_TYPE" == "tsan" ]]; then MYCXXFLAGS+=" -fsanitize=thread -O1 -fPIE" MYLDFLAGS+=" -fsanitize=thread"; fi
+    - if [[ "$BUILD_TYPE" == "msan" ]]; then MYCXXFLAGS+=" -fsanitize=memory -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize-memory-track-origins" MYLDFLAGS+=" -fsanitize=memory"; fi
+    - if [[ "$BUILD_TYPE" == "ubsan" ]]; then MYCXXFLAGS=" -fsanitize=undefined -O1 -fPIE -fno-sanitize-recover" MYLDFLAGS="-fsanitize=undefined -pie -fno-sanitize-recover"; fi
     - if [[ "$BUILD_WITH" == "cmake" ]]; then CFGSUFFIX=.sh UNITTEST=unittest INTTEST=inttest; else CFGSUFFIX= UNITTEST=test INTTEST=test2; fi
-    - if [[ "$COVERAGE" == "gcov" ]]; then MYCXXFLAGS+=" --coverage" MYLDFLAGS+=" --coverage"; fi
-    - if [[ "$COVERAGE" == "llvm" ]]; then MYCXXFLAGS+=" -fprofile-instr-generate -fcoverage-mapping" MYLDFLAGS+=" -fprofile-instr-generate"; fi
-      # UBSan randomly crashes clang, and very often :(
-      # CFGFLAGS= MYCXXFLAGS="-fsanitize=undefined -O1 -fPIE -fno-sanitize-recover" MYLDFLAGS="-fsanitize=undefined -pie -fno-sanitize-recover"
+    - if [[ "$CC" == "gcc" ]]; then MYCXXFLAGS+=" --coverage" MYLDFLAGS+=" --coverage"; fi
+    - if [[ "$CC" == "clang" ]]; then MYCXXFLAGS+=" -fprofile-instr-generate -fcoverage-mapping" MYLDFLAGS+=" -fprofile-instr-generate"; fi
 install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cat /proc/cpuinfo /proc/meminfo; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then lsb_release -a; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:teward/swig3.0; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:beineri/opt-qt551-trusty; fi  # default qt5.2 from trusty doesn't support QByteArray::toStdString()
-    - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_WITH" == "cmake" ]]; then sudo add-apt-repository -y ppa:george-edison55/cmake-3.x; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y libperl-dev tcl-dev libsasl2-dev libicu-dev swig3.0 qt55base libboost-locale-dev; fi
-      # Clang 3.5 TSan is broken on Travis Ubuntu 14.04. Clang 3.8 seems to work, but only without -pie (https://github.com/google/sanitizers/issues/503)
-    - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_TYPE" == "tsan" ]]; then sudo apt-get install -y clang-3.8; export CC=clang-3.8 CXX=clang++-3.8; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then source /opt/qt55/bin/qt55-env.sh; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y libperl-dev tcl-dev libsasl2-dev libicu-dev swig qtbase5-dev libboost-locale-dev python3-pip cpanminus; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_WITH" == "cmake" ]]; then sudo apt-get install -y cmake; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then source ~/virtualenv/python3.5/bin/activate; fi  # for pip3
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PKG_CONFIG_PATH="/opt/python/3.5/lib/pkgconfig:$PKG_CONFIG_PATH" LD_LIBRARY_PATH="/opt/python/3.5/lib:$LD_LIBRARY_PATH"; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cpanm --local-lib=~/perl5 local::lib && eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib); fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cpanm --notest Devel::Cover::Report::Clover; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export ZNC_MODPERL_COVERAGE=1; fi
@@ -150,7 +145,7 @@ script:
 after_success:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ~/perl5/bin/cover --no-gcov --report=clover; fi
     - |
-         if [[ "$TRAVIS_OS_NAME" == "osx" && "$COVERAGE" == "llvm" ]]; then
+         if [[ "$TRAVIS_OS_NAME" == "osx" && "$CC" == "clang" ]]; then
              xcrun llvm-profdata merge unittest.profraw -o unittest.profdata
              xcrun llvm-profdata merge inttest.profraw -o inttest.profdata
              xcrun llvm-cov show -show-line-counts-or-regions -instr-profile=unittest.profdata test/unittest_bin > unittest-cmake-coverage.txt
