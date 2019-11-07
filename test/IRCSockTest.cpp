@@ -331,7 +331,8 @@ TEST_F(IRCSockTest, OnPartMessage) {
 }
 
 TEST_F(IRCSockTest, StatusModes) {
-    m_pTestSock->ReadLine(":server 005 user PREFIX=(Yohv)!@%+ :are supported by this server");
+    m_pTestSock->ReadLine(
+        ":server 005 user PREFIX=(Yohv)!@%+ :are supported by this server");
 
     EXPECT_TRUE(m_pTestSock->IsPermMode('Y'));
     EXPECT_TRUE(m_pTestSock->IsPermMode('o'));
@@ -546,4 +547,14 @@ TEST_F(IRCSockTest, StatusMsg) {
     m_pTestUser->SetTimestampPrepend(false);
     EXPECT_EQ(m_pTestChan->GetBuffer().GetLine(0, *m_pTestClient),
               ":someone PRIVMSG @#chan :hello ops");
+}
+
+TEST_F(IRCSockTest, ChanMode) {
+    // https://github.com/znc/znc/issues/1684
+    m_pTestSock->ReadLine(
+        ":irc.znc.in 001 me :Welcome to the Internet Relay Network me");
+    m_pTestSock->ReadLine(
+        ":irc.znc.in 005 me CHANMODES=be,f,lj,nti "
+        ":are supported by this server");
+	m_pTestSock->ReadLine(":irc.znc.in 324 me #chan +ntf ");
 }

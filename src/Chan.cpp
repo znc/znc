@@ -300,7 +300,8 @@ void CChan::OnWho(const CString& sNick, const CString& sIdent,
     }
 }
 
-void CChan::ModeChange(const CString& sModes, const VCString& vsModes, const CNick* pOpNick) {
+void CChan::ModeChange(const CString& sModes, const VCString& vsModes,
+                       const CNick* pOpNick) {
     bool bAdd = true;
 
     /* Try to find a CNick* from this channel so that pOpNick->HasPerm()
@@ -319,6 +320,13 @@ void CChan::ModeChange(const CString& sModes, const VCString& vsModes, const CNi
     }
 
     VCString::const_iterator argIter = vsModes.begin();
+    const CString sEmpty;
+    auto nextArg = [&]() -> const CString& {
+        if (argIter == vsModes.end()) {
+            return sEmpty;
+        }
+        return *argIter++;
+    };
     for (unsigned int a = 0; a < sModes.size(); a++) {
         const char& cMode = sModes[a];
 
@@ -327,11 +335,10 @@ void CChan::ModeChange(const CString& sModes, const VCString& vsModes, const CNi
         } else if (cMode == '-') {
             bAdd = false;
         } else if (m_pNetwork->GetIRCSock()->IsPermMode(cMode)) {
-            CString sArg = *argIter++;
+            const CString& sArg = nextArg();
             CNick* pNick = FindNick(sArg);
             if (pNick) {
-                char cPerm =
-                    m_pNetwork->GetIRCSock()->GetPermFromMode(cMode);
+                char cPerm = m_pNetwork->GetIRCSock()->GetPermFromMode(cMode);
 
                 if (cPerm) {
                     bool bNoChange = (pNick->HasPerm(cPerm) == bAdd);
@@ -389,16 +396,16 @@ void CChan::ModeChange(const CString& sModes, const VCString& vsModes, const CNi
             switch (m_pNetwork->GetIRCSock()->GetModeType(cMode)) {
                 case CIRCSock::ListArg:
                     bList = true;
-                    sArg = *argIter++;
+                    sArg = nextArg();
                     break;
                 case CIRCSock::HasArg:
-                    sArg = *argIter++;
+                    sArg = nextArg();
                     break;
                 case CIRCSock::NoArg:
                     break;
                 case CIRCSock::ArgWhenSet:
                     if (bAdd) {
-                        sArg = *argIter++;
+                        sArg = nextArg();
                     }
 
                     break;
