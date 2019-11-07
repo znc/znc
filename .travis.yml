@@ -1,12 +1,4 @@
 language: cpp
-env:
-    global:
-          # SECRET_KEY, used to push docs to github and to init coverity scans
-        - secure: "i2f2UVDnyHT/9z0U3XvgTj8eDERvnc1Wk7HpseEjb75JwGzqn/2R+RKHmoSrwK3hFgij2IMxZL19XtHFwMz9t5A/huAAKD74KMMI/QpeZEJ/sjT3CTLcE9HEVDdJOjc7dfLRxb2hZtgvx8clZIMrpeUdPhci8openff30KvXVbg="
-          # DOCKER_USERNAME
-        - secure: "kiR372QH5Srye2beHVamOVLIPeXnDipWfzvzGJEZzbpH+aXsiD+CkbtulCR+XnKpnUAXQTmEc5ts1KjI9MGlxvP1ztxW8HMDGUMF4iFAjgZO8GyAZlH5I7pMEw7D5pn3W9y1LuCW5C9IsDcWnNTJkm32D7N34lLBCTQVw68ooDk="
-          # DOCKER_PASSWORD
-        - secure: "FMKQarGQJ/MFXnQQWEnlWMM+XItbDPgm5tzCn4k36AsAB1s1SiQ08wmy2Ys/+kRvnPN3Clpl8P2C8CoRTMJ8WCUYZVmf3HsqvsLdrODyusR5/N1y5eOKWxo+t1qN2Jzt6oIi/ofUZdn5mdzt8yif+ufxoez+2ncZDt5HoB/suHE="
 
 # These linux-specific parameters could be moved into matrix.include items, but that's lots of repetition
 sudo: required
@@ -58,11 +50,14 @@ matrix:
           env: BUILD_TYPE=tarball BUILD_WITH=autoconf
         - stage: deploy
           os: linux
+          env:
+              # SECRET_KEY, used to push docs to github and to init coverity scans
+            - secure: "ne14MIcNsUNKjqtgrLHJTHXCUUMKfkV/o4sm2scWYOiIl8s1Hoqnx6mPYIr8qnedIra8fsI7sWVxXLDLd/KMTN9v9WpCwc6Sf45vYtkfrS+rNOr86wOeEbgaxDTsb2UDJhtK0InhhpkipA5jrFzQuMMMEB+JgBQltKV43wmd7Yc="
           before_install:
           install:
             - if [[ "$TRAVIS_REPO_SLUG" == "znc/znc" && "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_BRANCH" == "master" ]]; then ATTEMPT_DEPLOY=yes; else ATTEMPT_DEPLOY=no; fi
-            - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then openssl aes-256-cbc -d -in .travis-github.enc -out ~/znc-github-key -k ${SECRET_KEY}; fi
-            - export SECRET_KEY=no DOCKER_PASSWORD=no DOCKER_USERNAME=no
+            - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then openssl aes-256-cbc -d -salt -pbkdf2 -in .travis-github.enc -out ~/znc-github-key -k ${SECRET_KEY}; fi
+            - export SECRET_KEY=no
             - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then sudo apt-get update; fi
             - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then sudo apt-get install -y doxygen graphviz python3-yaml; fi
           script:
@@ -79,11 +74,16 @@ matrix:
           after_success:
         - stage: deploy
           os: linux
+          env:
+              # DOCKER_USERNAME
+            - secure: "kiR372QH5Srye2beHVamOVLIPeXnDipWfzvzGJEZzbpH+aXsiD+CkbtulCR+XnKpnUAXQTmEc5ts1KjI9MGlxvP1ztxW8HMDGUMF4iFAjgZO8GyAZlH5I7pMEw7D5pn3W9y1LuCW5C9IsDcWnNTJkm32D7N34lLBCTQVw68ooDk="
+              # DOCKER_PASSWORD
+            - secure: "FMKQarGQJ/MFXnQQWEnlWMM+XItbDPgm5tzCn4k36AsAB1s1SiQ08wmy2Ys/+kRvnPN3Clpl8P2C8CoRTMJ8WCUYZVmf3HsqvsLdrODyusR5/N1y5eOKWxo+t1qN2Jzt6oIi/ofUZdn5mdzt8yif+ufxoez+2ncZDt5HoB/suHE="
           before_install:
           install:
             - if [[ "$TRAVIS_REPO_SLUG" == "znc/znc" && "$TRAVIS_PULL_REQUEST" == "false" ]]; then ATTEMPT_DEPLOY=yes; else ATTEMPT_DEPLOY=no; fi
             - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; fi
-            - export SECRET_KEY=no DOCKER_PASSWORD=no DOCKER_USERNAME=no
+            - export DOCKER_PASSWORD=no DOCKER_USERNAME=no
           script:
             - echo "$TRAVIS_BRANCH-$(git describe)" > .nightly
             - docker build --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` --build-arg VCS_REF=`git rev-parse HEAD` --build-arg VERSION_EXTRA=+docker-git- -t "zncbouncer/znc-git:$TRAVIS_BRANCH" -t "zncbouncer/znc-git:$TRAVIS_BRANCH-$(git describe)" .
@@ -93,7 +93,6 @@ matrix:
 before_install:
     - python -c "import fcntl; fcntl.fcntl(1, fcntl.F_SETFL, 0)"  # https://github.com/travis-ci/travis-ci/issues/8920
     - "echo os: [$TRAVIS_OS_NAME] build: [$BUILD_TYPE]"
-    - export SECRET_KEY=no DOCKER_PASSWORD=no DOCKER_USERNAME=no
     - export CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=
     - if [[ "$BUILD_TYPE" == "tarball" ]]; then CFGFLAGS+=" --with-gtest=$TRAVIS_BUILD_DIR/third_party/googletest/googletest --with-gmock=$TRAVIS_BUILD_DIR/third_party/googletest/googlemock --disable-swig"; fi
     - if [[ "$BUILD_TYPE" == "asan" ]]; then MYCXXFLAGS+=" -fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fPIE" MYLDFLAGS+=" -fsanitize=address -pie"; fi
