@@ -278,11 +278,11 @@ msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] ""
 
-#: Chan.cpp:671
+#: Chan.cpp:678
 msgid "Buffer Playback..."
 msgstr ""
 
-#: Chan.cpp:709
+#: Chan.cpp:716
 msgid "Playback Complete."
 msgstr ""
 

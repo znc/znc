@@ -296,11 +296,11 @@ msgid_plural "Detached {1} channels"
 msgstr[0] "Losgekoppeld van {1} kanaal"
 msgstr[1] "Losgekoppeld van {1} kanalen"
 
-#: Chan.cpp:671
+#: Chan.cpp:678
 msgid "Buffer Playback..."
 msgstr "Buffer afspelen..."
 
-#: Chan.cpp:709
+#: Chan.cpp:716
 msgid "Playback Complete."
 msgstr "Afspelen compleet."
 
