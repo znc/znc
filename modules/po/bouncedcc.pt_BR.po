@@ -15,32 +15,32 @@ msgstr ""
 #: bouncedcc.cpp:101 bouncedcc.cpp:119 bouncedcc.cpp:121
 msgctxt "list"
 msgid "Type"
-msgstr ""
+msgstr "Tipo"
 
 #: bouncedcc.cpp:102 bouncedcc.cpp:132
 msgctxt "list"
 msgid "State"
-msgstr ""
+msgstr "Estado"
 
 #: bouncedcc.cpp:103
 msgctxt "list"
 msgid "Speed"
-msgstr ""
+msgstr "Velocidade"
 
 #: bouncedcc.cpp:104 bouncedcc.cpp:115
 msgctxt "list"
 msgid "Nick"
-msgstr ""
+msgstr "Apelido"
 
 #: bouncedcc.cpp:105 bouncedcc.cpp:116
 msgctxt "list"
 msgid "IP"
-msgstr ""
+msgstr "IP"
 
 #: bouncedcc.cpp:106 bouncedcc.cpp:122
 msgctxt "list"
 msgid "File"
-msgstr ""
+msgstr "Arquivo"
 
 #: bouncedcc.cpp:119
 msgctxt "list"
@@ -54,7 +54,7 @@ msgstr ""
 
 #: bouncedcc.cpp:125
 msgid "Waiting"
-msgstr ""
+msgstr "Aguardando"
 
 #: bouncedcc.cpp:127
 msgid "Halfway"
@@ -62,7 +62,7 @@ msgstr ""
 
 #: bouncedcc.cpp:129
 msgid "Connected"
-msgstr ""
+msgstr "Conectado"
 
 #: bouncedcc.cpp:137
 msgid "You have no active DCCs."

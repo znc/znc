@@ -90,11 +90,11 @@ msgstr ""
 
 #: autovoice.cpp:335
 msgid "User {1} removed"
-msgstr ""
+msgstr "O usuário {1} foi removido"
 
 #: autovoice.cpp:341
 msgid "That user already exists"
-msgstr ""
+msgstr "Este usuário já existe"
 
 #: autovoice.cpp:347
 msgid "User {1} added with hostmask {2}"

@@ -14,15 +14,15 @@ msgstr ""
 
 #: awaystore.cpp:67
 msgid "You have been marked as away"
-msgstr ""
+msgstr "Você foi marcado como ausente"
 
 #: awaystore.cpp:78 awaystore.cpp:385 awaystore.cpp:388
 msgid "Welcome back!"
-msgstr ""
+msgstr "Bem-vindo novamente!"
 
 #: awaystore.cpp:100
 msgid "Deleted {1} messages"
-msgstr ""
+msgstr "{1} mensagens foram excluídas"
 
 #: awaystore.cpp:104
 msgid "USAGE: delete <num|all>"
@@ -34,7 +34,7 @@ msgstr ""
 
 #: awaystore.cpp:113
 msgid "Message erased"
-msgstr ""
+msgstr "Mensagem apagada"
 
 #: awaystore.cpp:122
 msgid "Messages saved to disk"
@@ -46,7 +46,7 @@ msgstr ""
 
 #: awaystore.cpp:135
 msgid "Password updated to [{1}]"
-msgstr ""
+msgstr "Senha atualizada para [{1}]"
 
 #: awaystore.cpp:147
 msgid "Corrupt message! [{1}]"
@@ -58,7 +58,7 @@ msgstr ""
 
 #: awaystore.cpp:178
 msgid "#--- End of messages"
-msgstr ""
+msgstr "#--- Fim das mensagens"
 
 #: awaystore.cpp:183
 msgid "Timer set to 300 seconds"
