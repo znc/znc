@@ -14,15 +14,15 @@ msgstr ""
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:7
 msgid "Add a key"
-msgstr ""
+msgstr "Adicionar chave"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:11
 msgid "Key:"
-msgstr ""
+msgstr "Chave:"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:15
 msgid "Add Key"
-msgstr ""
+msgstr "Adicionar chave"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:23
 msgid "You have no keys."
@@ -31,7 +31,7 @@ msgstr ""
 #: modules/po/../data/certauth/tmpl/index.tmpl:30
 msgctxt "web"
 msgid "Key"
-msgstr ""
+msgstr "Chave"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:36
 msgid "del"
@@ -44,6 +44,8 @@ msgstr ""
 #: certauth.cpp:32
 msgid "Add a public key. If key is not provided will use the current key"
 msgstr ""
+"Adiciona uma chave pública. Se a chave não for fornecida, a chave atual será "
+"utilizada."
 
 #: certauth.cpp:35
 msgid "id"
@@ -55,7 +57,7 @@ msgstr ""
 
 #: certauth.cpp:37
 msgid "List your public keys"
-msgstr ""
+msgstr "Listar as suas chaves públicas"
 
 #: certauth.cpp:39
 msgid "Print your current key"
@@ -67,7 +69,7 @@ msgstr ""
 
 #: certauth.cpp:144
 msgid "Your current public key is: {1}"
-msgstr ""
+msgstr "A sua chave pública atual é: {1}"
 
 #: certauth.cpp:157
 msgid "You did not supply a public key or connect with one."
@@ -75,7 +77,7 @@ msgstr ""
 
 #: certauth.cpp:160
 msgid "Key '{1}' added."
-msgstr ""
+msgstr "Chave \"{1}\" adicionada."
 
 #: certauth.cpp:162
 msgid "The key '{1}' is already added."

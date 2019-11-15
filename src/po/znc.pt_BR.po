@@ -788,7 +788,7 @@ msgstr "Canal"
 #: ClientCommand.cpp:875 ClientCommand.cpp:881
 msgctxt "topicscmd"
 msgid "Set By"
-msgstr ""
+msgstr "Definido por"
 
 #: ClientCommand.cpp:876 ClientCommand.cpp:882
 msgctxt "topicscmd"
@@ -807,7 +807,7 @@ msgstr "Parâmetros"
 
 #: ClientCommand.cpp:902
 msgid "No global modules loaded."
-msgstr ""
+msgstr "Não há módulos globais carregados."
 
 #: ClientCommand.cpp:904 ClientCommand.cpp:964
 msgid "Global modules:"
@@ -865,7 +865,7 @@ msgstr "Não foi possível carregar {1}: {2}"
 
 #: ClientCommand.cpp:1035
 msgid "Unable to load global module {1}: Access denied."
-msgstr ""
+msgstr "Falha ao carregar o módulo global {1}: acesso negado."
 
 #: ClientCommand.cpp:1041
 msgid "Unable to load network module {1}: Not connected with a network."
@@ -873,7 +873,7 @@ msgstr ""
 
 #: ClientCommand.cpp:1063
 msgid "Unknown module type"
-msgstr ""
+msgstr "Tipo de módulo desconhecido"
 
 #: ClientCommand.cpp:1068
 msgid "Loaded module {1}"
@@ -885,7 +885,7 @@ msgstr "Módulo {1} carregado: {2}"
 
 #: ClientCommand.cpp:1073
 msgid "Unable to load module {1}: {2}"
-msgstr ""
+msgstr "Falha ao carregar o módulo {1}: {2}"
 
 #: ClientCommand.cpp:1096
 msgid "Unable to unload {1}: Access denied."
@@ -1260,7 +1260,7 @@ msgstr "Lista todos os módulos disponíveis"
 #: ClientCommand.cpp:1690 ClientCommand.cpp:1876
 msgctxt "helpcmd|ListChans|desc"
 msgid "List all channels"
-msgstr ""
+msgstr "Listar todos os canais"
 
 #: ClientCommand.cpp:1693
 msgctxt "helpcmd|ListNicks|args"
@@ -1270,17 +1270,17 @@ msgstr ""
 #: ClientCommand.cpp:1694
 msgctxt "helpcmd|ListNicks|desc"
 msgid "List all nicks on a channel"
-msgstr ""
+msgstr "Listar todos os apelidos em um canal"
 
 #: ClientCommand.cpp:1697
 msgctxt "helpcmd|ListClients|desc"
 msgid "List all clients connected to your ZNC user"
-msgstr ""
+msgstr "Listar todos os clientes conectados ao seu usuário do ZNC"
 
 #: ClientCommand.cpp:1701
 msgctxt "helpcmd|ListServers|desc"
 msgid "List all servers of current IRC network"
-msgstr ""
+msgstr "Listar todos os servidores da rede atual"
 
 #: ClientCommand.cpp:1705
 msgctxt "helpcmd|AddNetwork|args"
@@ -1290,7 +1290,7 @@ msgstr ""
 #: ClientCommand.cpp:1706
 msgctxt "helpcmd|AddNetwork|desc"
 msgid "Add a network to your user"
-msgstr ""
+msgstr "Adiciona uma rede ao seu usuário"
 
 #: ClientCommand.cpp:1708
 msgctxt "helpcmd|DelNetwork|args"
@@ -1300,12 +1300,12 @@ msgstr ""
 #: ClientCommand.cpp:1709
 msgctxt "helpcmd|DelNetwork|desc"
 msgid "Delete a network from your user"
-msgstr ""
+msgstr "Exclui uma rede do seu usuário"
 
 #: ClientCommand.cpp:1711
 msgctxt "helpcmd|ListNetworks|desc"
 msgid "List all networks"
-msgstr ""
+msgstr "Listar todas as redes"
 
 #: ClientCommand.cpp:1714
 msgctxt "helpcmd|MoveNetwork|args"
@@ -1315,7 +1315,7 @@ msgstr ""
 #: ClientCommand.cpp:1716
 msgctxt "helpcmd|MoveNetwork|desc"
 msgid "Move an IRC network from one user to another"
-msgstr ""
+msgstr "Move uma rede de um usuário para outro"
 
 #: ClientCommand.cpp:1720
 msgctxt "helpcmd|JumpNetwork|args"

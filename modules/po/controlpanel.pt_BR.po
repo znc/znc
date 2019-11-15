@@ -15,12 +15,12 @@ msgstr ""
 #: controlpanel.cpp:51 controlpanel.cpp:63
 msgctxt "helptable"
 msgid "Type"
-msgstr ""
+msgstr "Tipo"
 
 #: controlpanel.cpp:52 controlpanel.cpp:65
 msgctxt "helptable"
 msgid "Variables"
-msgstr ""
+msgstr "Variáveis"
 
 #: controlpanel.cpp:77
 msgid "String"
@@ -105,7 +105,7 @@ msgstr ""
 
 #: controlpanel.cpp:400
 msgid "Password has been changed!"
-msgstr ""
+msgstr "A senha foi alterada!"
 
 #: controlpanel.cpp:408
 msgid "Timeout can't be less than 30 seconds!"
@@ -117,7 +117,7 @@ msgstr ""
 
 #: controlpanel.cpp:490
 msgid "Supported languages: {1}"
-msgstr ""
+msgstr "Idiomas suportados: {1}"
 
 #: controlpanel.cpp:514
 msgid "Usage: GetNetwork <variable> [username] [network]"
@@ -195,17 +195,17 @@ msgstr ""
 #: controlpanel.cpp:886 controlpanel.cpp:898 controlpanel.cpp:900
 msgctxt "listusers"
 msgid "IsAdmin"
-msgstr ""
+msgstr "Administrador"
 
 #: controlpanel.cpp:887 controlpanel.cpp:901
 msgctxt "listusers"
 msgid "Nick"
-msgstr ""
+msgstr "Apelido"
 
 #: controlpanel.cpp:888 controlpanel.cpp:902
 msgctxt "listusers"
 msgid "AltNick"
-msgstr ""
+msgstr "Apelido alternativo"
 
 #: controlpanel.cpp:889 controlpanel.cpp:903
 msgctxt "listusers"
@@ -219,11 +219,11 @@ msgstr ""
 
 #: controlpanel.cpp:898 controlpanel.cpp:1138
 msgid "No"
-msgstr ""
+msgstr "Não"
 
 #: controlpanel.cpp:900 controlpanel.cpp:1130
 msgid "Yes"
-msgstr ""
+msgstr "Sim"
 
 #: controlpanel.cpp:914 controlpanel.cpp:983
 msgid "Error: You need to have admin rights to add new users!"
