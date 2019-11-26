@@ -154,17 +154,23 @@ msgstr ""
 #: autoop.cpp:560
 msgid "[{1}] sent an unchallenged response.  This could be due to lag."
 msgstr ""
+"[{1}] a envoyé une réponse non sollicitée. Cela peut être dû à une mauvaise "
+"connexion."
 
 #: autoop.cpp:577
 msgid ""
 "WARNING! [{1}] sent a bad response.  Please verify that you have their "
 "correct password."
 msgstr ""
+"ATTENTION ! [{1}] a envoyé une mauvaise réponse. Veuillez vérifier que vous "
+"avez le bon mot de passe."
 
 #: autoop.cpp:586
 msgid "WARNING! [{1}] sent a response but did not match any defined users."
 msgstr ""
+"ATTENTION ! [{1}] a envoyé une réponse mais ne correspond à aucun des "
+"utilisateurs définis."
 
 #: autoop.cpp:644
 msgid "Auto op the good people"
-msgstr ""
+msgstr "Donne la parole automatiquement aux bonnes personnes"
