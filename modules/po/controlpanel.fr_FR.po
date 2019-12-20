@@ -3,235 +3,255 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: fr\n"
 "X-Crowdin-File: /master/modules/po/controlpanel.pot\n"
 "Project-Id-Version: znc-bouncer\n"
-"Last-Translator: Various people\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
 
 #: controlpanel.cpp:51 controlpanel.cpp:64
 msgctxt "helptable"
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 #: controlpanel.cpp:52 controlpanel.cpp:66
 msgctxt "helptable"
 msgid "Variables"
-msgstr ""
+msgstr "Variables"
 
 #: controlpanel.cpp:78
 msgid "String"
-msgstr ""
+msgstr "Chaîne"
 
 #: controlpanel.cpp:79
 msgid "Boolean (true/false)"
-msgstr ""
+msgstr "Booléen (vrai/faux)"
 
 #: controlpanel.cpp:80
 msgid "Integer"
-msgstr ""
+msgstr "Entier"
 
 #: controlpanel.cpp:81
 msgid "Number"
-msgstr ""
+msgstr "Nombre"
 
 #: controlpanel.cpp:125
 msgid "The following variables are available when using the Set/Get commands:"
 msgstr ""
+"Les variables suivantes sont disponibles en utilisant les commandes Set/Get :"
 
 #: controlpanel.cpp:149
 msgid ""
 "The following variables are available when using the SetNetwork/GetNetwork "
 "commands:"
 msgstr ""
+"Les variables suivantes sont disponibles en utilisant les commandes "
+"SetNetwork/GetNetwork :"
 
 #: controlpanel.cpp:163
 msgid ""
 "The following variables are available when using the SetChan/GetChan "
 "commands:"
 msgstr ""
+"Les variables suivantes sont disponibles en utilisant les commandes SetChan/"
+"GetChan :"
 
 #: controlpanel.cpp:170
 msgid ""
 "You can use $user as the user name and $network as the network name for "
 "modifying your own user and network."
 msgstr ""
+"Vous pouvez utiliser $user comme nom d'utilisateur et $network comme nom de "
+"réseau pour modifier votre propre utilisateur et réseau."
 
 #: controlpanel.cpp:179 controlpanel.cpp:966 controlpanel.cpp:1003
 msgid "Error: User [{1}] does not exist!"
-msgstr ""
+msgstr "Erreur : l'utilisateur [{1}] n'existe pas !"
 
 #: controlpanel.cpp:184
 msgid "Error: You need to have admin rights to modify other users!"
 msgstr ""
+"Erreur : vous devez avoir les droits d'administration pour modifier les "
+"autres utilisateurs !"
 
 #: controlpanel.cpp:194
 msgid "Error: You cannot use $network to modify other users!"
 msgstr ""
+"Erreur : vous ne pouvez pas utiliser $network pour modifier les autres "
+"utilisateurs !"
 
 #: controlpanel.cpp:202
 msgid "Error: User {1} does not have a network named [{2}]."
-msgstr ""
+msgstr "Erreur : l'utilisateur {1} n'a pas de réseau nommé [{2}]."
 
 #: controlpanel.cpp:214
 msgid "Usage: Get <variable> [username]"
-msgstr ""
+msgstr "Utilisation : Get <variable>[username]"
 
 #: controlpanel.cpp:304 controlpanel.cpp:507 controlpanel.cpp:582
 #: controlpanel.cpp:658 controlpanel.cpp:793 controlpanel.cpp:878
 msgid "Error: Unknown variable"
-msgstr ""
+msgstr "Erreur : variable inconnue"
 
 #: controlpanel.cpp:313
 msgid "Usage: Set <variable> <username> <value>"
-msgstr ""
+msgstr "Utilisation : Set <variable> <nom d'utilisateur> <valeur>"
 
 #: controlpanel.cpp:335 controlpanel.cpp:623
 msgid "This bind host is already set!"
-msgstr ""
+msgstr "Cet hôte lié est déjà configuré !"
 
 #: controlpanel.cpp:342 controlpanel.cpp:354 controlpanel.cpp:362
 #: controlpanel.cpp:425 controlpanel.cpp:444 controlpanel.cpp:460
 #: controlpanel.cpp:470 controlpanel.cpp:630
 msgid "Access denied!"
-msgstr ""
+msgstr "Accès refusé !"
 
 #: controlpanel.cpp:376 controlpanel.cpp:385 controlpanel.cpp:842
 msgid "Setting failed, limit for buffer size is {1}"
-msgstr ""
+msgstr "Configuration impossible, la limite de la taille du cache est de {1}"
 
 #: controlpanel.cpp:405
 msgid "Password has been changed!"
-msgstr ""
+msgstr "Le mot de passe a été modifié !"
 
 #: controlpanel.cpp:413
 msgid "Timeout can't be less than 30 seconds!"
-msgstr ""
+msgstr "L'expiration ne peut pas être inférieure à 30 secondes !"
 
 #: controlpanel.cpp:477
 msgid "That would be a bad idea!"
-msgstr ""
+msgstr "Ce serait une mauvaise idée !"
 
 #: controlpanel.cpp:495
 msgid "Supported languages: {1}"
-msgstr ""
+msgstr "Langues supportées : {1}"
 
 #: controlpanel.cpp:519
 msgid "Usage: GetNetwork <variable> [username] [network]"
-msgstr ""
+msgstr "Utilisation : GetNetwork <variable> [username] [network]"
 
 #: controlpanel.cpp:538
 msgid "Error: A network must be specified to get another users settings."
 msgstr ""
+"Erreur : un réseau doit être spécifié pour accéder aux paramètres d'un autre "
+"utilisateur."
 
 #: controlpanel.cpp:544
 msgid "You are not currently attached to a network."
-msgstr ""
+msgstr "Vous n'êtes pas actuellement rattaché à un réseau."
 
 #: controlpanel.cpp:550
 msgid "Error: Invalid network."
-msgstr ""
+msgstr "Erreur : réseau non valide."
 
 #: controlpanel.cpp:594
 msgid "Usage: SetNetwork <variable> <username> <network> <value>"
 msgstr ""
+"Utilisation : SetNetwork <variable> <nom d'utilisateur> <réseau> <valeur>"
 
 #: controlpanel.cpp:668
 msgid "Usage: AddChan <username> <network> <channel>"
-msgstr ""
+msgstr "Utilisation : AddChan <nom d'utilisateur> <réseau> <salon>"
 
 #: controlpanel.cpp:681
 msgid "Error: User {1} already has a channel named {2}."
-msgstr ""
+msgstr "Erreur : l'utilisateur {1} a déjà un salon nommé {2}."
 
 #: controlpanel.cpp:688
 msgid "Channel {1} for user {2} added to network {3}."
-msgstr ""
+msgstr "Salon {1} pour l'utilisateur {2} ajouté au réseau {3}."
 
 #: controlpanel.cpp:692
 msgid ""
 "Could not add channel {1} for user {2} to network {3}, does it already exist?"
 msgstr ""
+"Impossible d'ajouter le salon {1} pour l'utilisateur {2} au réseau {3}, "
+"existe-t-il déjà ?"
 
 #: controlpanel.cpp:702
 msgid "Usage: DelChan <username> <network> <channel>"
-msgstr ""
+msgstr "Utilisation : DelChan <nom d'utilisateur> <réseau> <salon>"
 
 #: controlpanel.cpp:717
 msgid "Error: User {1} does not have any channel matching [{2}] in network {3}"
 msgstr ""
+"Erreur : l'utilisateur {1} n'a aucun salon correspondant à [{2}] dans le "
+"réseau {3}"
 
 #: controlpanel.cpp:730
 msgid "Channel {1} is deleted from network {2} of user {3}"
 msgid_plural "Channels {1} are deleted from network {2} of user {3}"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Le salon {1} est supprimé du réseau {2} de l'utilisateur {3}"
+msgstr[1] "Les salons {1} sont supprimés du réseau {2} de l'utilisateur {3}"
 
 #: controlpanel.cpp:745
 msgid "Usage: GetChan <variable> <username> <network> <chan>"
-msgstr ""
+msgstr "Utilisation : GetChan <variable> <nom d'utilisateur> <réseau> <salon>"
 
 #: controlpanel.cpp:759 controlpanel.cpp:823
 msgid "Error: No channels matching [{1}] found."
-msgstr ""
+msgstr "Erreur : aucun salon correspondant à [{1}] trouvé."
 
 #: controlpanel.cpp:808
 msgid "Usage: SetChan <variable> <username> <network> <chan> <value>"
 msgstr ""
+"Utilisation : SetChan <variable> <nom d'utilisateur> <réseau> <salon> "
+"<valeur>"
 
 #: controlpanel.cpp:889 controlpanel.cpp:899
 msgctxt "listusers"
 msgid "Username"
-msgstr ""
+msgstr "Nom d'utilisateur"
 
 #: controlpanel.cpp:890 controlpanel.cpp:900
 msgctxt "listusers"
 msgid "Realname"
-msgstr ""
+msgstr "Nom réel"
 
 #: controlpanel.cpp:891 controlpanel.cpp:903 controlpanel.cpp:905
 msgctxt "listusers"
 msgid "IsAdmin"
-msgstr ""
+msgstr "Est administrateur"
 
 #: controlpanel.cpp:892 controlpanel.cpp:906
 msgctxt "listusers"
 msgid "Nick"
-msgstr ""
+msgstr "Pseudo"
 
 #: controlpanel.cpp:893 controlpanel.cpp:907
 msgctxt "listusers"
 msgid "AltNick"
-msgstr ""
+msgstr "Pseudo alternatif"
 
 #: controlpanel.cpp:894 controlpanel.cpp:908
 msgctxt "listusers"
 msgid "Ident"
-msgstr ""
+msgstr "Identité"
 
 #: controlpanel.cpp:895 controlpanel.cpp:909
 msgctxt "listusers"
 msgid "BindHost"
-msgstr ""
+msgstr "Hôte lié"
 
 #: controlpanel.cpp:903 controlpanel.cpp:1143
 msgid "No"
-msgstr ""
+msgstr "Non"
 
 #: controlpanel.cpp:905 controlpanel.cpp:1135
 msgid "Yes"
-msgstr ""
+msgstr "Oui"
 
 #: controlpanel.cpp:919 controlpanel.cpp:988
 msgid "Error: You need to have admin rights to add new users!"
 msgstr ""
+"Erreur : vous devez avoir les droits d'administration pour ajouter de "
+"nouveaux utilisateurs !"
 
 #: controlpanel.cpp:925
 msgid "Usage: AddUser <username> <password>"
-msgstr ""
+msgstr "Utilisation : AddUser <nom d'utilisateur> <mot de passe>"
 
 #: controlpanel.cpp:930
 msgid "Error: User {1} already exists!"

@@ -3,12 +3,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: fr\n"
 "X-Crowdin-File: /master/modules/po/autoop.pot\n"
 "Project-Id-Version: znc-bouncer\n"
-"Last-Translator: Various people\n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
 
@@ -142,14 +140,18 @@ msgstr "Utilisateur {1} ajouté avec le(s) masque(s) {2}"
 msgid ""
 "[{1}] sent us a challenge but they are not opped in any defined channels."
 msgstr ""
+"[{1}] nous ont envoyé une sollicitation mais ils ne sont opérateurs dans "
+"aucun des salons définis."
 
 #: autoop.cpp:536
 msgid "[{1}] sent us a challenge but they do not match a defined user."
 msgstr ""
+"[{1}] nous ont envoyé une sollicitation mais ils ne correspondent à aucun "
+"utilisateur défini."
 
 #: autoop.cpp:544
 msgid "WARNING! [{1}] sent an invalid challenge."
-msgstr ""
+msgstr "ATTENTION ! [{1}] a envoyé une sollicitation erronée."
 
 #: autoop.cpp:560
 msgid "[{1}] sent an unchallenged response.  This could be due to lag."
@@ -173,4 +175,4 @@ msgstr ""
 
 #: autoop.cpp:644
 msgid "Auto op the good people"
-msgstr "Donne la parole automatiquement aux bonnes personnes"
+msgstr "Donne le statut d'opérateur automatiquement aux bonnes personnes"
