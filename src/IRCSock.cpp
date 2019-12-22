@@ -1277,39 +1277,9 @@ void CIRCSock::SockError(int iErrno, const CString& sDescription) {
             m_pNetwork->PutStatus(
                 t_f("Disconnected from IRC ({1}). Reconnecting...")(sError));
         }
-#ifdef HAVE_LIBSSL
-        if (iErrno == errnoBadSSLCert) {
-            // Stringify bad cert
-            X509* pCert = GetX509();
-            if (pCert) {
-                BIO* mem = BIO_new(BIO_s_mem());
-                X509_print(mem, pCert);
-                X509_free(pCert);
-                char* pCertStr = nullptr;
-                long iLen = BIO_get_mem_data(mem, &pCertStr);
-                CString sCert(pCertStr, iLen);
-                BIO_free(mem);
-
-                VCString vsCert;
-                sCert.Split("\n", vsCert);
-                for (const CString& s : vsCert) {
-                    // It shouldn't contain any bad characters, but let's be
-                    // safe...
-                    m_pNetwork->PutStatus("|" + s.Escape_n(CString::EDEBUG));
-                }
-                CString sSHA1;
-                if (GetPeerFingerprint(sSHA1))
-                    m_pNetwork->PutStatus(
-                        "SHA1: " +
-                        sSHA1.Escape_n(CString::EHEXCOLON, CString::EHEXCOLON));
-                CString sSHA256 = GetSSLPeerFingerprint();
-                m_pNetwork->PutStatus("SHA-256: " + sSHA256);
-                m_pNetwork->PutStatus(
-                    t_f("If you trust this certificate, do /znc "
-                        "AddTrustedServerFingerprint {1}")(sSHA256));
-            }
-        }
-#endif
+    }
+    for (const CString& s : m_vsSSLError) {
+        m_pNetwork->PutStatus(s);
     }
     m_pNetwork->ClearRawBuffer();
     m_pNetwork->ClearMotdBuffer();
@@ -1317,6 +1287,34 @@ void CIRCSock::SockError(int iErrno, const CString& sDescription) {
     ResetChans();
     m_scUserModes.clear();
 }
+
+#ifdef HAVE_LIBSSL
+void CIRCSock::SSLCertError(X509* pCert) {
+    BIO* mem = BIO_new(BIO_s_mem());
+    X509_print(mem, pCert);
+    char* pCertStr = nullptr;
+    long iLen = BIO_get_mem_data(mem, &pCertStr);
+    CString sCert(pCertStr, iLen);
+    BIO_free(mem);
+
+    VCString vsCert;
+    sCert.Split("\n", vsCert);
+    for (const CString& s : vsCert) {
+        // It shouldn't contain any bad characters, but let's be
+        // safe...
+        m_vsSSLError.push_back("|" + s.Escape_n(CString::EDEBUG));
+    }
+    CString sSHA1;
+    if (GetPeerFingerprint(sSHA1))
+        m_vsSSLError.push_back(
+            "SHA1: " + sSHA1.Escape_n(CString::EHEXCOLON, CString::EHEXCOLON));
+    CString sSHA256 = GetSSLPeerFingerprint(pCert);
+    m_vsSSLError.push_back("SHA-256: " + sSHA256);
+    m_vsSSLError.push_back(
+        t_f("If you trust this certificate, do /znc "
+            "AddTrustedServerFingerprint {1}")(sSHA256));
+}
+#endif
 
 void CIRCSock::Timeout() {
     DEBUG(GetSockName() << " == Timeout()");

@@ -56,6 +56,9 @@ class CIRCSock : public CIRCSocket {
     void SockError(int iErrno, const CString& sDescription) override;
     void Timeout() override;
     void ReachedMaxBuffer() override;
+#ifdef HAVE_LIBSSL
+    void SSLCertError(X509* pCert) override;
+#endif
     /** Sends a raw data line to the server.
      *  @param sLine The line to be sent.
      *
@@ -229,6 +232,7 @@ class CIRCSock : public CIRCSocket {
     double m_fFloodRate;
     bool m_bFloodProtection;
     SCString m_ssSupportedTags;
+    VCString m_vsSSLError;
 
     friend class CIRCFloodTimer;
 };
