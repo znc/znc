@@ -80,9 +80,9 @@
 				</div>
 
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Trust the PKI:" ?></div>
+					<div class="inputlabel"><? FORMAT "Automatically detect trusted certificates (Trust the PKI):" ?></div>
 					<div class="checkbox"><input type="checkbox" name="trustpki" id="trustpki_checkbox"<? IF TrustPKI ?> checked="checked"<? ENDIF ?> />
-						<label for="trustpki_checkbox"><? FORMAT "Setting this to false will trust only certificates you added fingerprints for." ?></label></div>
+						<label for="trustpki_checkbox"><? FORMAT "When disabled, manually whitelist all server fingerprints, even if the certificate is valid" ?></label></div>
 				</div>
 
 				<div class="subsection half" id="servers_plain">
