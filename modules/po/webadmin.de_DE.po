@@ -198,16 +198,14 @@ msgstr ""
 "UNSICHER!"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:83
-msgid "Trust the PKI:"
-msgstr "Vertraue dem PKI:"
+msgid "Automatically detect trusted certificates (Trust the PKI):"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:85
 msgid ""
-"Setting this to false will trust only certificates you added fingerprints "
-"for."
+"When disabled, manually whitelist all server fingerprints, even if the "
+"certificate is valid"
 msgstr ""
-"Wenn diese Option nicht gesetzt ist, wird nur den Zertifikaten vertraut, für "
-"die Du Fingerprints hinzugefügt hast."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:89
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:96

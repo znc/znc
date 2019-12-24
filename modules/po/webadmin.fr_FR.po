@@ -199,16 +199,14 @@ msgstr ""
 "SÉCURISÉ !"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:83
-msgid "Trust the PKI:"
-msgstr "Approuver le PKI :"
+msgid "Automatically detect trusted certificates (Trust the PKI):"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:85
 msgid ""
-"Setting this to false will trust only certificates you added fingerprints "
-"for."
+"When disabled, manually whitelist all server fingerprints, even if the "
+"certificate is valid"
 msgstr ""
-"Configurer ce paramètre à faux n'autorisera que les certificats dont vous "
-"avez ajouté les empreintes."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:89
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:96
