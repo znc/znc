@@ -36,12 +36,16 @@ class CZNCSock : public Csock, protected CCoreTranslationMixin {
     int VerifyPeerCertificate(int iPreVerify,
                               X509_STORE_CTX* pStoreCTX) override;
     void SSLHandShakeFinished() override;
+    bool CheckSSLCert(X509* pCert);
+    virtual void SSLCertError(X509* pCert) {}
     bool SNIConfigureClient(CString& sHostname) override;
+    CString GetSSLPeerFingerprint(X509* pCert = nullptr) const;
+#else
+    CString GetSSLPeerFingerprint() const { return ""; }
 #endif
     void SetHostToVerifySSL(const CString& sHost) {
         m_sHostToVerifySSL = sHost;
     }
-    CString GetSSLPeerFingerprint() const;
     void SetSSLTrustedPeerFingerprints(const SCString& ssFPs) {
         m_ssTrustedFingerprints = ssFPs;
     }

@@ -109,55 +109,63 @@ int CZNCSock::VerifyPeerCertificate(int iPreVerify, X509_STORE_CTX* pStoreCTX) {
 }
 
 void CZNCSock::SSLHandShakeFinished() {
+    X509* pCert = GetX509();
+    if (!CheckSSLCert(pCert)) {
+        Close();
+    }
+    X509_free(pCert);
+}
+
+bool CZNCSock::CheckSSLCert(X509* pCert) {
     if (GetType() != ETConn::OUTBOUND) {
-        return;
+        return true;
     }
 
-    X509* pCert = GetX509();
     if (!pCert) {
         DEBUG(GetSockName() + ": No cert");
         CallSockError(errnoBadSSLCert, "Anonymous SSL cert is not allowed");
-        Close();
-        return;
+        return false;
     }
     if (GetTrustAllCerts()) {
         DEBUG(GetSockName() + ": Verification disabled, trusting all.");
-        return;
+        return true;
     }
     CString sHostVerifyError;
     if (!ZNC_SSLVerifyHost(m_sHostToVerifySSL, pCert, sHostVerifyError)) {
         m_ssCertVerificationErrors.insert(sHostVerifyError);
     }
-    X509_free(pCert);
     if (GetTrustPKI() && m_ssCertVerificationErrors.empty()) {
         DEBUG(GetSockName() + ": Good cert (PKI valid)");
-        return;
+        return true;
     }
-    CString sFP = GetSSLPeerFingerprint();
+    CString sFP = GetSSLPeerFingerprint(pCert);
     if (m_ssTrustedFingerprints.count(sFP) != 0) {
         DEBUG(GetSockName() + ": Cert explicitly trusted by user: " << sFP);
-        return;
+        return true;
     }
     DEBUG(GetSockName() + ": Bad cert");
     CString sErrorMsg = "Invalid SSL certificate: ";
     sErrorMsg += CString(", ").Join(begin(m_ssCertVerificationErrors),
                                     end(m_ssCertVerificationErrors));
+    SSLCertError(pCert);
     CallSockError(errnoBadSSLCert, sErrorMsg);
-    Close();
+    return false;
 }
 
 bool CZNCSock::SNIConfigureClient(CString& sHostname) {
     sHostname = m_sHostToVerifySSL;
     return true;
 }
-#endif
 
-CString CZNCSock::GetSSLPeerFingerprint() const {
-#ifdef HAVE_LIBSSL
+CString CZNCSock::GetSSLPeerFingerprint(X509* pCert) const {
     // Csocket's version returns insecure SHA-1
     // This one is SHA-256
     const EVP_MD* evp = EVP_sha256();
-    X509* pCert = GetX509();
+    bool bOwned = false;
+    if (!pCert) {
+        pCert = GetX509();
+        bOwned = true;
+    }
     if (!pCert) {
         DEBUG(GetSockName() + ": GetSSLPeerFingerprint: Anonymous cert");
         return "";
@@ -165,17 +173,17 @@ CString CZNCSock::GetSSLPeerFingerprint() const {
     unsigned char buf[256 / 8];
     unsigned int _32 = 256 / 8;
     int iSuccess = X509_digest(pCert, evp, buf, &_32);
-    X509_free(pCert);
+    if (bOwned) {
+        X509_free(pCert);
+    }
     if (!iSuccess) {
         DEBUG(GetSockName() + ": GetSSLPeerFingerprint: Couldn't find digest");
         return "";
     }
     return CString(reinterpret_cast<const char*>(buf), sizeof buf)
         .Escape_n(CString::EASCII, CString::EHEXCOLON);
-#else
-    return "";
-#endif
 }
+#endif
 
 void CZNCSock::SetEncoding(const CString& sEncoding) {
 #ifdef HAVE_ICU
