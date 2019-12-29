@@ -114,10 +114,14 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sw_vers; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sysctl -a | grep cpu; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sysctl -a | grep mem; fi
+      # Something broke in Travis brew making it impossible to update python versions (complaining about nil:NilClass), so remove preinstalled brew and install from scratch
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then rm -rf /usr/local/Cellar/* /usr/local/opt/* /usr/local/share/aclocal; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"; hash -r; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew config; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew list --versions; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install swig icu4c jq qt5 gettext; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install swig icu4c jq qt5 gettext python cmake openssl pkg-config; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install autoconf automake; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew outdated python || brew upgrade python; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" && "$BUILD_WITH" == "cmake" ]]; then brew outdated cmake || brew upgrade cmake; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew info --json=v1 --installed | jq .; fi
