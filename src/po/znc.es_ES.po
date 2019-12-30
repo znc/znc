@@ -149,28 +149,28 @@ msgstr "No se puede conectar al IRC ({1}). Reintentándolo..."
 msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr "Desconectado del IRC ({1}). Volviendo a conectar..."
 
-#: IRCSock.cpp:1308
+#: IRCSock.cpp:1314
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 "Si confías en este certificado, ejecuta /znc AddTrustedServerFingerprint {1}"
 
-#: IRCSock.cpp:1325
+#: IRCSock.cpp:1323
 msgid "IRC connection timed out.  Reconnecting..."
 msgstr "Tiempo de espera agotado en la conexión al IRC. Reconectando..."
 
-#: IRCSock.cpp:1337
+#: IRCSock.cpp:1335
 msgid "Connection Refused.  Reconnecting..."
 msgstr "Conexión rechazada. Reconectando..."
 
-#: IRCSock.cpp:1345
+#: IRCSock.cpp:1343
 msgid "Received a too long line from the IRC server!"
 msgstr "¡Recibida línea demasiado larga desde el servidor de IRC!"
 
-#: IRCSock.cpp:1449
+#: IRCSock.cpp:1447
 msgid "No free nick available"
 msgstr "No hay ningún nick disponible"
 
-#: IRCSock.cpp:1457
+#: IRCSock.cpp:1455
 msgid "No free nick found"
 msgstr "No se ha encontrado ningún nick disponible"
 
@@ -1712,11 +1712,11 @@ msgctxt "helpcmd|Restart|desc"
 msgid "Restart ZNC"
 msgstr "Reiniciar ZNC"
 
-#: Socket.cpp:334
+#: Socket.cpp:342
 msgid "Can't resolve server hostname"
 msgstr "No se puede resolver el hostname del servidor"
 
-#: Socket.cpp:341
+#: Socket.cpp:349
 msgid ""
 "Can't resolve bind hostname. Try /znc ClearBindHost and /znc "
 "ClearUserBindHost"
@@ -1724,15 +1724,15 @@ msgstr ""
 "No se puede resolver el bindhost. Prueba /znc ClearBindHost y /znc "
 "ClearUserBindHost"
 
-#: Socket.cpp:346
+#: Socket.cpp:354
 msgid "Server address is IPv4-only, but bindhost is IPv6-only"
 msgstr "La dirección del servidor es solo-IPv4, pero el bindhost es solo-IPv6"
 
-#: Socket.cpp:355
+#: Socket.cpp:363
 msgid "Server address is IPv6-only, but bindhost is IPv4-only"
 msgstr "La dirección del servidor es solo-IPv6, pero el bindhost es solo-IPv4"
 
-#: Socket.cpp:513
+#: Socket.cpp:521
 msgid "Some socket reached its max buffer limit and was closed!"
 msgstr ""
 "¡Algún socket ha alcanzado el límite de su búfer máximo y se ha cerrado!"

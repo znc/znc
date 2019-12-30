@@ -155,29 +155,29 @@ msgstr "Kann nicht mit IRC verbinden ({1}). Versuche es erneut..."
 msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr "IRC-Verbindung getrennt ({1}). Verbinde erneut..."
 
-#: IRCSock.cpp:1308
+#: IRCSock.cpp:1314
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 "Falls du diesem Zertifikat vertraust, mache /znc AddTrustedServerFingerprint "
 "{1}"
 
-#: IRCSock.cpp:1325
+#: IRCSock.cpp:1323
 msgid "IRC connection timed out.  Reconnecting..."
 msgstr "Zeitüberschreitung der IRC-Verbindung. Verbinde erneut..."
 
-#: IRCSock.cpp:1337
+#: IRCSock.cpp:1335
 msgid "Connection Refused.  Reconnecting..."
 msgstr "Verbindung abgelehnt. Verbinde erneut..."
 
-#: IRCSock.cpp:1345
+#: IRCSock.cpp:1343
 msgid "Received a too long line from the IRC server!"
 msgstr "Eine zu lange Zeile wurde vom IRC-Server empfangen!"
 
-#: IRCSock.cpp:1449
+#: IRCSock.cpp:1447
 msgid "No free nick available"
 msgstr "Kein freier Nick verfügbar"
 
-#: IRCSock.cpp:1457
+#: IRCSock.cpp:1455
 msgid "No free nick found"
 msgstr "Kein freier Nick gefunden"
 
@@ -1729,11 +1729,11 @@ msgctxt "helpcmd|Restart|desc"
 msgid "Restart ZNC"
 msgstr "Starte ZNC neu"
 
-#: Socket.cpp:334
+#: Socket.cpp:342
 msgid "Can't resolve server hostname"
 msgstr "Kann den Hostnamen des Servers nicht auflösen"
 
-#: Socket.cpp:341
+#: Socket.cpp:349
 msgid ""
 "Can't resolve bind hostname. Try /znc ClearBindHost and /znc "
 "ClearUserBindHost"
@@ -1741,15 +1741,15 @@ msgstr ""
 "Kann Binde-Hostnamen nicht auflösen. Versuche /znc ClearBindHost und /znc "
 "ClearUserBindHost"
 
-#: Socket.cpp:346
+#: Socket.cpp:354
 msgid "Server address is IPv4-only, but bindhost is IPv6-only"
 msgstr "Server hat nur eine IPv4-Adresse, aber Binde-Hostname ist nur IPv6"
 
-#: Socket.cpp:355
+#: Socket.cpp:363
 msgid "Server address is IPv6-only, but bindhost is IPv4-only"
 msgstr "Server hat nur eine IPv6-Adresse, aber Binde-Hostname ist nur IPv4"
 
-#: Socket.cpp:513
+#: Socket.cpp:521
 msgid "Some socket reached its max buffer limit and was closed!"
 msgstr ""
 "Eine Verbindung hat ihre maximale Puffergrenze erreicht und wurde "

@@ -151,29 +151,29 @@ msgstr "Tidak dapat terhubung ke IRC ({1}). Mencoba lagi..."
 msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr "Terputus dari IRC ({1}). Menghubungkan..."
 
-#: IRCSock.cpp:1308
+#: IRCSock.cpp:1314
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 "Jika anda mempercayai sertifikat ini, lakukan /znc "
 "AddTrustedServerFingerprint {1}"
 
-#: IRCSock.cpp:1325
+#: IRCSock.cpp:1323
 msgid "IRC connection timed out.  Reconnecting..."
 msgstr "Koneksi IRC kehabisan waktu. Menghubungkan..."
 
-#: IRCSock.cpp:1337
+#: IRCSock.cpp:1335
 msgid "Connection Refused.  Reconnecting..."
 msgstr "Koneksi tertolak. Menguhungkan..."
 
-#: IRCSock.cpp:1345
+#: IRCSock.cpp:1343
 msgid "Received a too long line from the IRC server!"
 msgstr "Menerima baris terlalu panjang dari server IRC!"
 
-#: IRCSock.cpp:1449
+#: IRCSock.cpp:1447
 msgid "No free nick available"
 msgstr "Tidak ada nick tersedia"
 
-#: IRCSock.cpp:1457
+#: IRCSock.cpp:1455
 msgid "No free nick found"
 msgstr "Tidak ada nick ditemukan"
 
@@ -1666,25 +1666,25 @@ msgctxt "helpcmd|Restart|desc"
 msgid "Restart ZNC"
 msgstr ""
 
-#: Socket.cpp:334
+#: Socket.cpp:342
 msgid "Can't resolve server hostname"
 msgstr ""
 
-#: Socket.cpp:341
+#: Socket.cpp:349
 msgid ""
 "Can't resolve bind hostname. Try /znc ClearBindHost and /znc "
 "ClearUserBindHost"
 msgstr ""
 
-#: Socket.cpp:346
+#: Socket.cpp:354
 msgid "Server address is IPv4-only, but bindhost is IPv6-only"
 msgstr ""
 
-#: Socket.cpp:355
+#: Socket.cpp:363
 msgid "Server address is IPv6-only, but bindhost is IPv4-only"
 msgstr ""
 
-#: Socket.cpp:513
+#: Socket.cpp:521
 msgid "Some socket reached its max buffer limit and was closed!"
 msgstr ""
 

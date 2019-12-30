@@ -161,28 +161,28 @@ msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr ""
 "Verbinding met IRC verbroken ({1}). We proberen opnieuw te verbinden..."
 
-#: IRCSock.cpp:1308
+#: IRCSock.cpp:1314
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 "Als je dit certificaat vertrouwt, doe: /znc AddTrustedServerFingerprint {1}"
 
-#: IRCSock.cpp:1325
+#: IRCSock.cpp:1323
 msgid "IRC connection timed out.  Reconnecting..."
 msgstr "IRC verbinding time-out. We proberen opnieuw te verbinden..."
 
-#: IRCSock.cpp:1337
+#: IRCSock.cpp:1335
 msgid "Connection Refused.  Reconnecting..."
 msgstr "Verbinding geweigerd. We proberen opnieuw te verbinden..."
 
-#: IRCSock.cpp:1345
+#: IRCSock.cpp:1343
 msgid "Received a too long line from the IRC server!"
 msgstr "Een te lange regel ontvangen van de IRC server!"
 
-#: IRCSock.cpp:1449
+#: IRCSock.cpp:1447
 msgid "No free nick available"
 msgstr "Geen beschikbare bijnaam"
 
-#: IRCSock.cpp:1457
+#: IRCSock.cpp:1455
 msgid "No free nick found"
 msgstr "Geen beschikbare bijnaam gevonden"
 
@@ -1728,11 +1728,11 @@ msgctxt "helpcmd|Restart|desc"
 msgid "Restart ZNC"
 msgstr "Herstart ZNC"
 
-#: Socket.cpp:334
+#: Socket.cpp:342
 msgid "Can't resolve server hostname"
 msgstr "Kan server hostnaam niet oplossen"
 
-#: Socket.cpp:341
+#: Socket.cpp:349
 msgid ""
 "Can't resolve bind hostname. Try /znc ClearBindHost and /znc "
 "ClearUserBindHost"
@@ -1740,15 +1740,15 @@ msgstr ""
 "Kan bindhostnaam niet oplossen. Probeer /znc ClearBindHost en /znc "
 "ClearUserBindHost"
 
-#: Socket.cpp:346
+#: Socket.cpp:354
 msgid "Server address is IPv4-only, but bindhost is IPv6-only"
 msgstr "Server adres is alleen IPv4, maar de bindhost is alleen IPv6"
 
-#: Socket.cpp:355
+#: Socket.cpp:363
 msgid "Server address is IPv6-only, but bindhost is IPv4-only"
 msgstr "Server adres is alleen IPv6, maar de bindhost is alleen IPv4"
 
-#: Socket.cpp:513
+#: Socket.cpp:521
 msgid "Some socket reached its max buffer limit and was closed!"
 msgstr ""
 "Een of andere socket heeft de maximale buffer limiet bereikt en was "
