@@ -152,28 +152,28 @@ msgstr "Não foi possível conectar-se ao IRC ({1}). Tentando novamente..."
 msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr "Desconectado do IRC ({1}). Reconectando..."
 
-#: IRCSock.cpp:1308
+#: IRCSock.cpp:1314
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 "Caso confie neste certificado, digite /znc AddTrustedServerFingerprint {1}"
 
-#: IRCSock.cpp:1325
+#: IRCSock.cpp:1323
 msgid "IRC connection timed out.  Reconnecting..."
 msgstr "A conexão ao servidor expirou. Reconectando..."
 
-#: IRCSock.cpp:1337
+#: IRCSock.cpp:1335
 msgid "Connection Refused.  Reconnecting..."
 msgstr "Conexão rejeitada. Reconectando..."
 
-#: IRCSock.cpp:1345
+#: IRCSock.cpp:1343
 msgid "Received a too long line from the IRC server!"
 msgstr "Uma linha muito longa foi recebida do servidor de IRC!"
 
-#: IRCSock.cpp:1449
+#: IRCSock.cpp:1447
 msgid "No free nick available"
 msgstr "Não há apelidos livres disponíveis"
 
-#: IRCSock.cpp:1457
+#: IRCSock.cpp:1455
 msgid "No free nick found"
 msgstr "Nenhum apelido livre foi encontrado"
 
@@ -1697,11 +1697,11 @@ msgctxt "helpcmd|Restart|desc"
 msgid "Restart ZNC"
 msgstr "Reinicia o ZNC"
 
-#: Socket.cpp:334
+#: Socket.cpp:342
 msgid "Can't resolve server hostname"
 msgstr "Não é possível resolver o nome do host do servidor"
 
-#: Socket.cpp:341
+#: Socket.cpp:349
 msgid ""
 "Can't resolve bind hostname. Try /znc ClearBindHost and /znc "
 "ClearUserBindHost"
@@ -1709,17 +1709,17 @@ msgstr ""
 "Não é possível resolver o nome do host de ligação (BindHost). Tente /znc "
 "ClearBindHost e /znc ClearUserBindHost"
 
-#: Socket.cpp:346
+#: Socket.cpp:354
 msgid "Server address is IPv4-only, but bindhost is IPv6-only"
 msgstr ""
 "O endereço do servidor permite apenas IPv4, mas o bindhost é apenas IPv6"
 
-#: Socket.cpp:355
+#: Socket.cpp:363
 msgid "Server address is IPv6-only, but bindhost is IPv4-only"
 msgstr ""
 "O endereço do servidor permite apenas IPv6, mas o bindhost é apenas IPv4"
 
-#: Socket.cpp:513
+#: Socket.cpp:521
 msgid "Some socket reached its max buffer limit and was closed!"
 msgstr "Algum socket atingiu seu limite máximo de buffer e foi fechado!"
 
