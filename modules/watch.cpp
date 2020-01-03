@@ -16,6 +16,7 @@
 
 #include <znc/Chan.h>
 #include <znc/IRCNetwork.h>
+#include <znc/Query.h>                 
 
 using std::list;
 using std::vector;
@@ -173,7 +174,6 @@ class CWatchEntry {
 class CWatcherMod : public CModule {
   public:
     MODCONSTRUCTOR(CWatcherMod) {
-        m_Buffer.SetLineCount(500);
         Load();
     }
 
@@ -184,17 +184,6 @@ class CWatcherMod : public CModule {
         Process(OpNick, "* " + OpNick.GetNick() + " sets mode: " + sModes +
                             " " + sArgs + " on " + Channel.GetName(),
                 Channel.GetName());
-    }
-
-    void OnClientLogin() override {
-        MCString msParams;
-        msParams["target"] = GetNetwork()->GetCurNick();
-
-        size_t uSize = m_Buffer.Size();
-        for (unsigned int uIdx = 0; uIdx < uSize; uIdx++) {
-            PutUser(m_Buffer.GetLine(uIdx, *GetClient(), msParams));
-        }
-        m_Buffer.Clear();
     }
 
     void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel,
@@ -333,15 +322,6 @@ class CWatcherMod : public CModule {
             m_lsWatchers.clear();
             PutModule(t_s("All entries cleared."));
             Save();
-        } else if (sCmdName.Equals("BUFFER")) {
-            CString sCount = sCommand.Token(1);
-
-            if (sCount.size()) {
-                m_Buffer.SetLineCount(sCount.ToUInt());
-            }
-
-            PutModule(
-                t_f("Buffer count is set to {1}")(m_Buffer.GetLineCount()));
         } else if (sCmdName.Equals("DEL")) {
             Remove(sCommand.Token(1).ToUInt());
         } else {
@@ -377,10 +357,14 @@ class CWatcherMod : public CModule {
                                       "!watch@znc.in PRIVMSG " +
                                       pNetwork->GetCurNick() + " :" + sMessage);
                 } else {
-                    m_Buffer.AddLine(
+                    CQuery* pQuery = pNetwork->AddQuery(WatchEntry.GetTarget());
+                    if (pQuery) {
+                        
+                        pQuery->AddBuffer(
                         ":" + _NAMEDFMT(WatchEntry.GetTarget()) +
                             "!watch@znc.in PRIVMSG {target} :{text}",
                         sMessage);
+                    }
                 }
                 sHandledTargets.insert(WatchEntry.GetTarget());
             }
@@ -650,12 +634,6 @@ class CWatcherMod : public CModule {
             t_s("Enable or disable detached channel only for an entry."));
 
         Table.AddRow();
-        Table.SetCell(t_s("Command"), t_s("Buffer [Count]"));
-        Table.SetCell(
-            t_s("Description"),
-            t_s("Show/Set the amount of buffered lines while detached."));
-
-        Table.AddRow();
         Table.SetCell(t_s("Command"),
                       t_s("SetSources <Id> [#chan priv #foo* !#bar]"));
         Table.SetCell(t_s("Description"),
@@ -766,7 +744,6 @@ class CWatcherMod : public CModule {
     }
 
     list<CWatchEntry> m_lsWatchers;
-    CBuffer m_Buffer;
 };
 
 template <>
