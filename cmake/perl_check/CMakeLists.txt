@@ -15,7 +15,7 @@
 #
 
 cmake_minimum_required(VERSION 3.0)
-project(perl_check)
+project(perl_check LANGUAGES CXX)
 set(CMAKE_VERBOSE_MAKEFILE true)
 
 if(APPLE)

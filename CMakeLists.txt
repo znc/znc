@@ -15,7 +15,7 @@
 #
 
 cmake_minimum_required(VERSION 3.1)
-project(ZNC VERSION 1.8.0)
+project(ZNC VERSION 1.8.0 LANGUAGES CXX)
 set(ZNC_VERSION 1.8.x)
 set(append_git_version true)
 set(alpha_version "") # e.g. "-rc1"

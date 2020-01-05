@@ -15,7 +15,7 @@
 #
 
 cmake_minimum_required(VERSION 3.0)
-project(cxx11check)
+project(cxx11check LANGUAGES CXX)
 set(CMAKE_VERBOSE_MAKEFILE true)
 
 set(CMAKE_CXX_STANDARD 11)

@@ -57,7 +57,7 @@ args = parser.parse_args()
 with tempfile.TemporaryDirectory() as cmdir:
     with open(os.path.join(cmdir, 'CMakeLists.txt'), 'w') as cm:
         print('cmake_minimum_required(VERSION 3.1)', file=cm)
-        print('project(ExternalModules)', file=cm)
+        print('project(ExternalModules LANGUAGES CXX)', file=cm)
         print('find_package(ZNC @ZNC_VERSION_MAJOR@.@ZNC_VERSION_MINOR@ HINTS '
             '@CMAKE_INSTALL_FULL_DATADIR@/znc REQUIRED)', file=cm)
         if args.verbose > 0:
