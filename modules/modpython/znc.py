@@ -25,7 +25,7 @@ from functools import wraps
 import imp
 import re
 import traceback
-import collections
+import collections.abc
 
 from znc_core import *
 
@@ -125,7 +125,7 @@ class Timer:
         pass
 
 
-class ModuleNVIter(collections.Iterator):
+class ModuleNVIter(collections.abc.Iterator):
     def __init__(self, cmod):
         self._cmod = cmod
         self.it = cmod.BeginNV_()
@@ -138,7 +138,7 @@ class ModuleNVIter(collections.Iterator):
         return res
 
 
-class ModuleNV(collections.MutableMapping):
+class ModuleNV(collections.abc.MutableMapping):
     def __init__(self, cmod):
         self._cmod = cmod
 
@@ -957,7 +957,7 @@ CModule.AddSocket = FreeOwnership(func=CModule.AddSocket)
 CModule.AddSubPage = FreeOwnership(func=CModule.AddSubPage)
 
 
-class ModulesIter(collections.Iterator):
+class ModulesIter(collections.abc.Iterator):
     def __init__(self, cmod):
         self._cmod = cmod
 
