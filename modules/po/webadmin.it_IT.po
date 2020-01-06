@@ -12,7 +12,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:12
 msgid "Channel Info"
-msgstr "Informazioni sul canale"
+msgstr "Impostazioni ed informazioni per questo canale"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:17
 msgid "Channel Name:"
@@ -20,15 +20,15 @@ msgstr "Nome del canale:"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:19
 msgid "The channel name."
-msgstr "Il nome del canale."
+msgstr "Inserisci il nome del canale che vuoi aggiungere"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:24
 msgid "Key:"
-msgstr "Chiave:"
+msgstr "Password (Chiave):"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:26
 msgid "The password of the channel, if there is one."
-msgstr "La password del canale, se presente."
+msgstr "Inserisci la password (chiave) del canale, se presente"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:30
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:241
@@ -38,7 +38,7 @@ msgstr "Dimensione del Buffer:"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:32
 msgid "The buffer count."
-msgstr "Il conteggio del buffer."
+msgstr "Inserisci il numero di linee da utilizzare per il buffer"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:36
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:235
@@ -47,7 +47,9 @@ msgstr "Modes predefiniti:"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:38
 msgid "The default modes of the channel."
-msgstr "I modi di default del canale."
+msgstr ""
+"Inserisci i Modes di default che la ZNC tenta di impostare al canale quando "
+"accedi ed è vuoto"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:46
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:270
@@ -199,12 +201,16 @@ msgstr ""
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:83
 msgid "Automatically detect trusted certificates (Trust the PKI):"
 msgstr ""
+"Rileva automaticamente i certificati attendibili (Fidati del PKI - Public "
+"Key Infrastructure):"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:85
 msgid ""
 "When disabled, manually whitelist all server fingerprints, even if the "
 "certificate is valid"
 msgstr ""
+"Quando è disabilitato, tutte le fingerprints del server (impronte digitali) "
+"vanno autorizzate manualmente, anche se il certificato è valido"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:89
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:96
