@@ -101,9 +101,13 @@ msgid ""
 "To connect to this network from your IRC client, you can set the server "
 "password field as <code>{1}</code> or username field as <code>{2}</code>"
 msgstr ""
-"Per connetterti a questo network dal tuo client IRC, puoi impostare il campo "
-"password del server come <code>{1}</code> o il campo username come <code>{2}"
-"</code>"
+"Per connetterti a questo network con il tuo client IRC preferito, puoi "
+"inserire nel campo <b>Password del server</b> come segue <code>{1}</code> "
+"mentre nel campo username puoi usare <code>{2}</code>\n"
+"\n"
+"Se utilizzi mIRC puoi inserire negli alias questa stringa:\n"
+"/nomealias /server -m znc.servername.com +NumeroPortaSSL username/"
+"nomenetwork:password -i nickname nicknamealternativo username@"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:24
 msgid "Network Info"
@@ -123,7 +127,7 @@ msgstr "Nome del Network:"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:31
 msgid "The name of the IRC network."
-msgstr "Il nome del network IRC."
+msgstr "Inserisci il nome del network che stai aggiungendo"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:35
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:69
@@ -133,7 +137,7 @@ msgstr "Nickname:"
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:37
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:71
 msgid "Your nickname on IRC."
-msgstr "Il nickname che vuoi avere su IRC."
+msgstr "Inserisci il nickname che intendi usare in questo network"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:40
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:74
@@ -143,7 +147,9 @@ msgstr "Nickname alternativo:"
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:42
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:76
 msgid "Your secondary nickname, if the first is not available on IRC."
-msgstr "Il tuo secondo nickname, se il primo non fosse disponibile su IRC."
+msgstr ""
+"Inserisci un nickname di riserva qual'ora il primo fosse momentaneamente "
+"occupato"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:46
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:80
@@ -152,7 +158,7 @@ msgstr "Ident: (userID)"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:48
 msgid "Your ident."
-msgstr "Il tuo ident (userID)."
+msgstr "Inserisci il tuo ident (userID)"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:51
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:91
@@ -162,7 +168,7 @@ msgstr "Nome reale:"
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:53
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:93
 msgid "Your real name."
-msgstr "Il tuo nome reale."
+msgstr "Inserisci il tuo nome reale"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:58
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:99
@@ -177,7 +183,9 @@ msgstr "Messaggio di Quit:"
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:67
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:114
 msgid "You may define a Message shown, when you quit IRC."
-msgstr "È possibile definire un messaggio da mostrare quando si esce da IRC."
+msgstr ""
+"Inserisci un messaggio per il Quit per mostrarlo a tutti quando ti scolleghi "
+"da IRC"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:71
 msgid "Active:"
