@@ -175,16 +175,26 @@ class CWatcherMod : public CModule {
   public:
     MODCONSTRUCTOR(CWatcherMod) {
         AddHelpCommand();
-        AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(&CWatcherMod::Watch), "<HostMask> [Target] [Pattern]", "Used to add an entry to watch for.");        
-        AddCommand("List", static_cast<CModCommand::ModCmdFunc>(&CWatcherMod::List), "", "List all entries being watched.");        
-        AddCommand("Dump", static_cast<CModCommand::ModCmdFunc>(&CWatcherMod::Dump), "", "Dump a list of all current entries to be used later.");        
-        AddCommand("Del", static_cast<CModCommand::ModCmdFunc>(&CWatcherMod::Remove), "<Id>", "Deletes Id from the list of watched entries.");        
-        AddCommand("Clear", static_cast<CModCommand::ModCmdFunc>(&CWatcherMod::Clear), "", "Delete all entries.");        
-        AddCommand("Enable", static_cast<CModCommand::ModCmdFunc>(&CWatcherMod::Enable), "<Id | *>", "Enable a disabled entry.");        
-        AddCommand("Disable", static_cast<CModCommand::ModCmdFunc>(&CWatcherMod::Disable), "<Id | *>", "Disable (but don't delete) an entry.");        
-        AddCommand("SetDetachedClientOnly", static_cast<CModCommand::ModCmdFunc>(&CWatcherMod::SetDetachedClientOnly), "<Id | *> <True | False>", "Enable or disable detached client only for an entry.");        
-        AddCommand("SetDetachedChannelOnly", static_cast<CModCommand::ModCmdFunc>(&CWatcherMod::SetDetachedChannelOnly), "<Id | *> <True | False>", "Enable or disable detached channel only for an entry.");        
-        AddCommand("SetSources", static_cast<CModCommand::ModCmdFunc>(&CWatcherMod::SetSources), "<Id> [#chan priv #foo* !#bar]", "Set the source channels that you care about.");        
+        AddCommand("Add", t_d("<HostMask> [Target] [Pattern]"), t_d("Used to add an entry to watch for."),
+                   [=](const CString& sLine) { Watch(sLine); });
+        AddCommand("List", "", t_d("List all entries being watched."),
+                   [=](const CString& sLine) { List(); });
+        AddCommand("Dump", "", t_d("Dump a list of all current entries to be used later."),
+                   [=](const CString& sLine) { Dump(); });
+        AddCommand("Del", t_d("<Id>"), t_d("Deletes Id from the list of watched entries."),
+                   [=](const CString& sLine) { Remove(sLine); });
+        AddCommand("Clear", "", t_d("Delete all entries."),
+                   [=](const CString& sLine) { Clear(); });
+        AddCommand("Enable", t_d("<Id | *>"), t_d("Enable a disabled entry."),
+                   [=](const CString& sLine) { Enable(sLine); });
+        AddCommand("Disable", t_d("<Id | *>"), t_d("Disable (but don't delete) an entry."),
+                   [=](const CString& sLine) { Disable(sLine); });
+        AddCommand("SetDetachedClientOnly", t_d("<Id | *> <True | False>"), t_d("Enable or disable detached client only for an entry."),
+                   [=](const CString& sLine) { SetDetachedClientOnly(sLine); });
+        AddCommand("SetDetachedChannelOnly", t_d("<Id | *> <True | False>"), t_d("Enable or disable detached channel only for an entry."),
+                   [=](const CString& sLine) { SetDetachedChannelOnly(sLine); });
+        AddCommand("SetSources", t_d("<Id> [#chan priv #foo* !#bar]"), t_d("Set the source channels that you care about."),
+                   [=](const CString& sLine) { SetSources(sLine); });
     }
 
     ~CWatcherMod() override {}
@@ -393,9 +403,9 @@ class CWatcherMod : public CModule {
         Save();
     }
 
-    void SetDetachedClientOnly(const CString& line) {
-        bool bDetachedClientOnly = line.Token(2).ToBool();
-        CString sTok = line.Token(1);
+    void SetDetachedClientOnly(const CString& sLine) {
+        bool bDetachedClientOnly = sLine.Token(2).ToBool();
+        CString sTok = sLine.Token(1);
         unsigned int uIdx;
         
         if (sTok == "*") {
@@ -435,9 +445,9 @@ class CWatcherMod : public CModule {
         Save();
     }
 
-    void SetDetachedChannelOnly(const CString& line) {
-        bool bDetachedChannelOnly = line.Token(2).ToBool();
-        CString sTok = line.Token(1);
+    void SetDetachedChannelOnly(const CString& sLine) {
+        bool bDetachedChannelOnly = sLine.Token(2).ToBool();
+        CString sTok = sLine.Token(1);
         unsigned int uIdx;
 
         if (sTok == "*") {
@@ -477,7 +487,7 @@ class CWatcherMod : public CModule {
         Save();
     }
 
-    void List(const CString& line) {
+    void List() {
         CTable Table;
         Table.AddColumn(t_s("Id"));
         Table.AddColumn(t_s("HostMask"));
@@ -517,7 +527,7 @@ class CWatcherMod : public CModule {
         }
     }
 
-    void Dump(const CString& line) {
+    void Dump() {
         if (m_lsWatchers.empty()) {
             PutModule(t_s("You have no entries."));
             return;
@@ -559,9 +569,9 @@ class CWatcherMod : public CModule {
         PutModule("---------------");
     }
 
-    void SetSources(const CString& line) {
-        unsigned int uIdx = line.Token(1).ToUInt();
-        CString sSources = line.Token(2, true);
+    void SetSources(const CString& sLine) {
+        unsigned int uIdx = sLine.Token(1).ToUInt();
+        CString sSources = sLine.Token(2, true);
         
         uIdx--;  // "convert" index to zero based
         if (uIdx >= m_lsWatchers.size()) {
@@ -577,8 +587,8 @@ class CWatcherMod : public CModule {
         Save();
     }
 
-    void Enable(const CString& line) {
-        CString sTok = line.Token(1);
+    void Enable(const CString& sLine) {
+        CString sTok = sLine.Token(1);
         if (sTok == "*") {
             SetDisabled(~0, false);
         } else {
@@ -586,8 +596,8 @@ class CWatcherMod : public CModule {
         }
     }
     
-    void Disable(const CString& line) {
-        CString sTok = line.Token(1);
+    void Disable(const CString& sLine) {
+        CString sTok = sLine.Token(1);
         if (sTok == "*") {
             SetDisabled(~0, true);
         } else {
@@ -595,15 +605,15 @@ class CWatcherMod : public CModule {
         }
     }
 
-    void Clear(const CString& line) {
+    void Clear() {
         m_lsWatchers.clear();
         PutModule(t_s("All entries cleared."));
         Save();
     }
 
-    void Remove(const CString& line) {
+    void Remove(const CString& sLine) {
         
-        unsigned int uIdx = line.Token(1).ToUInt();
+        unsigned int uIdx = sLine.Token(1).ToUInt();
         
         uIdx--;  // "convert" index to zero based
         if (uIdx >= m_lsWatchers.size()) {
@@ -619,11 +629,11 @@ class CWatcherMod : public CModule {
         Save();
     }
 
-    void Watch(const CString& line) {
+    void Watch(const CString& sLine) {
     
-        CString sHostMask = line.Token(1);
-        CString sTarget = line.Token(2);
-        CString sPattern = line.Token(3);
+        CString sHostMask = sLine.Token(1);
+        CString sTarget = sLine.Token(2);
+        CString sPattern = sLine.Token(3);
 
         CString sMessage;
 
