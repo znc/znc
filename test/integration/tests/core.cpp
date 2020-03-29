@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-#include "znctest.h"
 #include <gmock/gmock.h>
+
+#include "znctest.h"
 
 using testing::HasSubstr;
 
@@ -244,7 +245,8 @@ TEST_F(ZNCTest, AwayNotify) {
     client.Write("USER user/test x x :x");
     QByteArray cap_ls;
     client.ReadUntilAndGet(" LS :", cap_ls);
-    ASSERT_THAT(cap_ls.toStdString(), AllOf(HasSubstr("cap-notify"), Not(HasSubstr("away-notify"))));
+    ASSERT_THAT(cap_ls.toStdString(),
+                AllOf(HasSubstr("cap-notify"), Not(HasSubstr("away-notify"))));
     client.Write("CAP REQ :cap-notify");
     client.ReadUntil("ACK :cap-notify");
     client.Write("CAP END");
@@ -282,6 +284,16 @@ TEST_F(ZNCTest, JoinKey) {
     ircd = ConnectIRCd();
     ircd.Write(":server 001 nick :Hello");
     ircd.ReadUntil("JOIN #znc secret");
+}
+
+TEST_F(ZNCTest, StatusEchoMessage) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("CAP REQ :echo-message");
+    client.Write("PRIVMSG *status :blah");
+    client.ReadUntil(":nick!user@irc.znc.in PRIVMSG *status :blah");
+    client.ReadUntil(":*status!znc@znc.in PRIVMSG nick :Unknown command");
 }
 
 }  // namespace

@@ -1234,6 +1234,8 @@ bool CClient::OnTextMessage(CTextMessage& Message) {
         }
 
         if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
+            EchoMessage(Message);
+
             if (sTarget.Equals("status")) {
                 CString sMsg = Message.GetText();
                 UserCommand(sMsg);
