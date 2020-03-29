@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-#include "znctest.h"
 #include <gmock/gmock.h>
+#include <gtest/gtest.h>
+
+#include "znctest.h"
 
 using testing::HasSubstr;
 
@@ -138,8 +140,8 @@ TEST_F(ZNCTest, AutoAttachModule) {
     auto ircd = ConnectIRCd();
     auto client = LoginClient();
     InstallModule("testmod.cpp", R"(
-        #include <znc/Modules.h>
         #include <znc/Client.h>
+        #include <znc/Modules.h>
         class TestModule : public CModule {
           public:
             MODCONSTRUCTOR(TestModule) {}
@@ -192,12 +194,79 @@ TEST_F(ZNCTest, ModuleCSRFOverride) {
     auto client = LoginClient();
     client.Write("znc loadmod samplewebapi");
     client.ReadUntil("Loaded module");
-    auto request = QNetworkRequest(QUrl("http://127.0.0.1:12345/mods/global/samplewebapi/"));
-    auto reply = HttpPost(request, {
-        {"text", "ipsum"}
-    })->readAll().toStdString();
+    auto request = QNetworkRequest(
+        QUrl("http://127.0.0.1:12345/mods/global/samplewebapi/"));
+    auto reply =
+        HttpPost(request, {{"text", "ipsum"}})->readAll().toStdString();
     EXPECT_THAT(reply, HasSubstr("ipsum"));
 }
+
+class SaslModuleTest : public ZNCTest,
+                       public testing::WithParamInterface<
+                           std::pair<int, std::vector<std::string>>> {
+  public:
+    static std::string Prefix() {
+        std::string s;
+        for (int i = 0; i < 33; ++i) s += "YWFh";
+        s += "YQBh";
+        for (int i = 0; i < 33; ++i) s += "YWFh";
+        s += "AGJi";
+        for (int i = 0; i < 31; ++i) s += "YmJi";
+        EXPECT_EQ(s.length(), 396);
+        return s;
+    }
+
+  protected:
+    int PassLen() { return std::get<0>(GetParam()); }
+    void ExpectPlainAuth(Socket& ircd) {
+        for (const auto& str : std::get<1>(GetParam())) {
+            QByteArray line;
+            ircd.ReadUntilAndGet("AUTHENTICATE ", line);
+            ASSERT_EQ(line.toStdString(), "AUTHENTICATE " + str);
+        }
+        ASSERT_EQ(ircd.ReadRemainder().indexOf("AUTHENTICATE"), -1);
+    }
+};
+
+TEST_P(SaslModuleTest, Test) {
+    QFile conf(m_dir.path() + "/configs/znc.conf");
+    ASSERT_TRUE(conf.open(QIODevice::Append | QIODevice::Text));
+    QTextStream(&conf) << "ServerThrottle = 1\n";
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod sasl");
+    QByteArray sUser(100, 'a');
+    QByteArray sPass(PassLen(), 'b');
+    client.Write("PRIVMSG *sasl :set " + sUser + " " + sPass);
+    client.Write("znc jump");
+    ircd = ConnectIRCd();
+    ircd.ReadUntil("CAP LS");
+    ircd.Write("CAP * LS :sasl");
+    ircd.ReadUntil("CAP REQ :sasl");
+    ircd.Write("CAP * ACK :sasl");
+    ircd.ReadUntil("AUTHENTICATE EXTERNAL");
+    ircd.Write(":server 904 *");
+    ircd.ReadUntil("AUTHENTICATE PLAIN");
+    ircd.Write("AUTHENTICATE +");
+    ExpectPlainAuth(ircd);
+    ircd.Write(":server 903 user :Logged in");
+    ircd.ReadUntil("CAP END");
+}
+
+INSTANTIATE_TEST_CASE_P(SaslInst, SaslModuleTest,
+                        testing::Values(
+                            std::pair<int, std::vector<std::string>>{
+                                95, {SaslModuleTest::Prefix()}},
+                            std::pair<int, std::vector<std::string>>{
+                                96, {SaslModuleTest::Prefix() + "Yg==", "+"}},
+                            std::pair<int, std::vector<std::string>>{
+                                97, {SaslModuleTest::Prefix() + "YmI=", "+"}},
+                            std::pair<int, std::vector<std::string>>{
+                                98, {SaslModuleTest::Prefix() + "YmJi", "+"}},
+                            std::pair<int, std::vector<std::string>>{
+                                99,
+                                {SaslModuleTest::Prefix() + "YmJi", "Yg=="}}));
 
 }  // namespace
 }  // namespace znc_inttest
