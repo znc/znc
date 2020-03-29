@@ -16,6 +16,7 @@ if [ "x$1" = "x--nightly" ]; then
 	TARGZ=$3
 	SIGN=0
 	DESC=-nightly-`date +%Y%m%d`-`git $GITDIR rev-parse HEAD | cut -b-8`
+	NIGHTLY=1
 else
 	VERSION=$1
 	if [ "x$VERSION" = "x" ] ; then
@@ -33,6 +34,7 @@ else
 	TARGZ=$ZNCDIR.tar.gz
 	SIGN=1
 	DESC="$(sed -En 's/set\(alpha_version "(.*)"\).*/\1/p' CMakeLists.txt)"
+	NIGHTLY=0
 fi
 
 TARGZ=`readlink -f -- $TARGZ`
@@ -58,7 +60,9 @@ cp -p third_party/Csocket/Csocket.cc third_party/Csocket/Csocket.h $TMPDIR/$ZNCD
 	echo "const char* ZNC_VERSION_EXTRA = VERSION_EXTRA \"$DESC\";" >> src/version.cpp
 	# For cmake
 	if [ "x$DESC" != "x" ]; then
-		echo $DESC > .nightly
+		if [ $NIGHTLY = 1 ]; then
+			echo $DESC > .nightly
+		fi
 	fi
 )
 (
