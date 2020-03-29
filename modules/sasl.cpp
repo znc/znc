@@ -196,13 +196,22 @@ class CSASLMod : public CModule {
     }
 
     void Authenticate(const CString& sLine) {
+        /* Send blank authenticate for other mechanisms (like EXTERNAL). */
+        CString sAuthLine;
         if (m_Mechanisms.GetCurrent().Equals("PLAIN") && sLine.Equals("+")) {
-            CString sAuthLine = GetNV("username") + '\0' + GetNV("username") +
+            sAuthLine = GetNV("username") + '\0' + GetNV("username") +
                                 '\0' + GetNV("password");
             sAuthLine.Base64Encode();
-            PutIRC("AUTHENTICATE " + sAuthLine);
-        } else {
-            /* Send blank authenticate for other mechanisms (like EXTERNAL). */
+        }
+
+        /* The spec requires authentication data to be sent in chunks */
+        const size_t chunkSize = 400;
+        for (size_t offset = 0; offset < sAuthLine.length(); offset += chunkSize) {
+            size_t size = std::min(chunkSize, sAuthLine.length() - offset);
+            PutIRC("AUTHENTICATE " + sAuthLine.substr(offset, size));
+        }
+        if (sAuthLine.length() % chunkSize == 0) {
+            /* Signal end if we have a multiple of the chunk size */
             PutIRC("AUTHENTICATE +");
         }
     }
