@@ -113,6 +113,7 @@ class CAdminMod : public CModule {
                 {"TimestampFormat", str},
                 {"DCCBindHost", str},
                 {"StatusPrefix", str},
+                {"NoTrafficTimeout", integer},
 #ifdef HAVE_I18N
                 {"Language", str},
 #endif
