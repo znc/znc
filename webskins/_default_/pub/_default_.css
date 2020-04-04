@@ -295,7 +295,6 @@ tr.evenrow td {
 
 .subsection {
 	clear: both;
-	margin: 0;
 }
 
 .subsection div {
@@ -316,10 +315,13 @@ tr.evenrow td {
 
 .subsection div.checkbox {
 	padding: 9px 0 0 3px;
+	width: 537px;
 }
 
-.subsection div.checkbox input {
-	min-width: 0;
+.subsection div.checkbox label {
+	vertical-align: top;
+	display: inline-block;
+	width:520px;
 }
 
 .section .info {
@@ -380,4 +382,3 @@ td {
 .textsection p {
 	margin-bottom: 0.7em;
 }
-
