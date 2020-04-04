@@ -133,7 +133,7 @@ static const struct option g_LongOpts[] = {
     {"no-color", no_argument, nullptr, 'n'},
     {"allow-root", no_argument, nullptr, 'r'},
     {"makeconf", no_argument, nullptr, 'c'},
-    {"makepass", no_argument, nullptr, 's'},
+    {"makepass", optional_argument, nullptr, 's'},
     {"makepem", no_argument, nullptr, 'p'},
     {"datadir", required_argument, nullptr, 'd'},
     {nullptr, 0, nullptr, 0}};
@@ -294,6 +294,7 @@ static void seedPRNG() {
 int main(int argc, char** argv) {
     CString sConfig;
     CString sDataDir = "";
+    CString sUserPass = "";
 
     thread_setup();
 
@@ -313,7 +314,7 @@ int main(int argc, char** argv) {
 #endif
     CZNC::CreateInstance();
 
-    while ((iArg = getopt_long(argc, argv, "hvnrcspd:Df", g_LongOpts,
+    while ((iArg = getopt_long(argc, argv, "hvnrcs::pd:Df", g_LongOpts,
                                &iOptIndex)) != -1) {
         switch (iArg) {
             case 'h':
@@ -334,6 +335,7 @@ int main(int argc, char** argv) {
                 break;
             case 's':
                 bMakePass = true;
+                sUserPass = CString(optarg);
                 break;
             case 'p':
 #ifdef HAVE_LIBSSL
@@ -384,12 +386,19 @@ int main(int argc, char** argv) {
 
     if (bMakePass) {
         CString sSalt;
-        CUtils::PrintMessage("Type your new password.");
-        CString sHash = CUtils::GetSaltedHashPass(sSalt);
-        CUtils::PrintMessage("Kill ZNC process, if it's running.");
-        CUtils::PrintMessage(
-            "Then replace password in the <User> section of your config with "
-            "this:");
+
+        if (sUserPass != "") {
+            CUtils::PrintMessage("Type your new password.");
+            CString sHash = CUtils::GetSaltedHashPass(sSalt);
+            CUtils::PrintMessage("Kill ZNC process, if it's running.");
+            CUtils::PrintMessage(
+                "Then replace password in the <User> section of your config "
+                "with this:");
+        } else {
+            sSalt = CUtils::GetSalt();
+            CUtils::SaltedSHA256Hash(sUserPass, sSalt);
+        }
+
         // Not PrintMessage(), to remove [**] from the beginning, to ease
         // copypasting
         std::cout << "<Pass password>" << std::endl;
@@ -397,9 +406,12 @@ int main(int argc, char** argv) {
         std::cout << "\tHash = " << sHash << std::endl;
         std::cout << "\tSalt = " << sSalt << std::endl;
         std::cout << "</Pass>" << std::endl;
-        CUtils::PrintMessage(
-            "After that start ZNC again, and you should be able to login with "
-            "the new password.");
+
+        if (sUserPass != "") {
+            CUtils::PrintMessage(
+                "After that start ZNC again, and you should be able to login "
+                "with the new password.");
+        }
 
         CZNC::DestroyInstance();
         return 0;
