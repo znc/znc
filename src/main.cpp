@@ -387,7 +387,7 @@ int main(int argc, char** argv) {
     if (bMakePass) {
         CString sSalt;
 
-        if (sUserPass != "") {
+        if (!sUserPass.empty()) {
             CUtils::PrintMessage("Type your new password.");
             CString sHash = CUtils::GetSaltedHashPass(sSalt);
             CUtils::PrintMessage("Kill ZNC process, if it's running.");
@@ -407,7 +407,7 @@ int main(int argc, char** argv) {
         std::cout << "\tSalt = " << sSalt << std::endl;
         std::cout << "</Pass>" << std::endl;
 
-        if (sUserPass != "") {
+        if (!sUserPass.empty()) {
             CUtils::PrintMessage(
                 "After that start ZNC again, and you should be able to login "
                 "with the new password.");

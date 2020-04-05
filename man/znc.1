@@ -6,20 +6,19 @@ znc \- An advanced IRC bouncer
 .br
 .B znc \-\-version
 .br
-.B znc \-\-makepass
-.IR [ password ]
+.BI "znc \-\-makepass"[=PASSWORD]
 .br
 .B znc
 .RB [ \-n ]
 .RB [ \-d
-.IR datadir ]
+.IR DATADIR ]
 .RB [ \-D ]
 .RB [ \-f ]
 .br
 .B znc
 .RB [ \-n ]
 .RB [ \-d
-.IR datadir ]
+.IR DATADIR ]
 .RB [ \-D ]
 .RB [ \-f ]
 .B \-\-makeconf
@@ -27,7 +26,7 @@ znc \- An advanced IRC bouncer
 .B znc
 .RB [ \-n ]
 .RB [ \-d
-.IR datadir ]
+.IR DATADIR ]
 .RB [ \-D ]
 .RB [ \-f ]
 .B \-\-makepem
@@ -70,6 +69,11 @@ Interactively create a new configuration.
 .BI \-s " [PASSWORD]" "\fR,\fP \-\-makepass" =[PASSWORD]
 Hash a password for use in
 .IR znc.conf .
+The optional
+.IR [PASSWORD]
+argument allows generation of the
+.IR <PASS>
+element and can be used to automate configuration of a ZNC installation.
 .TP
 .BR \-p ", " \-\-makepem
 Generate
