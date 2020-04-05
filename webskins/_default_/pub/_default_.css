@@ -293,8 +293,10 @@ tr.evenrow td {
 	font-size: 80%;
 }
 
-.subsection {
+.subsection::after {
+	content: "";
 	clear: both;
+	display: table;
 }
 
 .subsection div {
@@ -315,13 +317,13 @@ tr.evenrow td {
 
 .subsection div.checkbox {
 	padding: 9px 0 0 3px;
-	width: 537px;
+	max-width: 537px;
 }
 
 .subsection div.checkbox label {
 	vertical-align: top;
 	display: inline-block;
-	width:520px;
+	max-width:510px;
 }
 
 .section .info {
@@ -373,6 +375,11 @@ td.mod_name,
 	padding: 0 0 3px 1px;
 	margin-bottom: 10px;
 	border-bottom: 1px solid #aaa;
+}
+
+#servers_js > div:first-child {
+	font-weight: bold;
+	margin: 20px 0 8px;
 }
 
 td {
