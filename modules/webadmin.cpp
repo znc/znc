@@ -1548,7 +1548,7 @@ class CWebAdminMod : public CModule {
 
                 CTemplate& o10 = Tmpl.AddRow("OptionLoop");
                 o10["Name"] = "isadmin";
-                o10["DisplayName"] = t_s("Admin");
+                o10["DisplayName"] = t_s("Admin (dangerous! may gain shell access)");
                 if (pUser->IsAdmin()) {
                     o10["Checked"] = "true";
                 }
