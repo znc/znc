@@ -11,7 +11,7 @@ def upstream_user = 'znc'
 def upstream_repo = 'znc'
 def my_user = 'znc-jenkins'
 def my_repo = 'znc'
-def branches = ['master', '1.7.x']
+def branches = ['master', '1.8.x']
 
 def pr_mode = false
 
