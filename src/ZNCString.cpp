@@ -294,13 +294,13 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
                     }
 
                     if (ch == 0) {
-                        if (!strncasecmp((const char*)&pTmp, "&lt;", 2))
+                        if (!strncasecmp((const char*)&pTmp, "&lt;", 4))
                             ch = '<';
-                        else if (!strncasecmp((const char*)&pTmp, "&gt;", 2))
+                        else if (!strncasecmp((const char*)&pTmp, "&gt;", 4))
                             ch = '>';
-                        else if (!strncasecmp((const char*)&pTmp, "&quot;", 4))
+                        else if (!strncasecmp((const char*)&pTmp, "&quot;", 6))
                             ch = '"';
-                        else if (!strncasecmp((const char*)&pTmp, "&amp;", 3))
+                        else if (!strncasecmp((const char*)&pTmp, "&amp;", 5))
                             ch = '&';
                     }
 
