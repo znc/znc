@@ -259,36 +259,36 @@ msgstr ""
 msgid "Removing channel {1}"
 msgstr "Kanaal verwijderen: {1}"
 
-#: Client.cpp:1256
+#: Client.cpp:1258
 msgid "Your message to {1} got lost, you are not connected to IRC!"
 msgstr ""
 "Je bericht naar {1} is verloren geraakt, je bent niet verbonden met IRC!"
 
-#: Client.cpp:1309 Client.cpp:1315
+#: Client.cpp:1311 Client.cpp:1317
 msgid "Hello. How may I help you?"
 msgstr "Hallo. Hoe kan ik je helpen?"
 
-#: Client.cpp:1329
+#: Client.cpp:1331
 msgid "Usage: /attach <#chans>"
 msgstr "Gebruik: /attach <#kanalen>"
 
-#: Client.cpp:1336 Client.cpp:1358 ClientCommand.cpp:129 ClientCommand.cpp:151
+#: Client.cpp:1338 Client.cpp:1360 ClientCommand.cpp:129 ClientCommand.cpp:151
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
 msgstr[0] "Er was {1} kanaal overeenkomend met [{2}]"
 msgstr[1] "Er waren {1} kanalen overeenkomend met [{2}]"
 
-#: Client.cpp:1339 ClientCommand.cpp:132
+#: Client.cpp:1341 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] "Gekoppeld aan {1} kanaal"
 msgstr[1] "Gekoppeld aan {1} kanalen"
 
-#: Client.cpp:1351
+#: Client.cpp:1353
 msgid "Usage: /detach <#chans>"
 msgstr "Gebruik: /detach <#kanalen>"
 
-#: Client.cpp:1361 ClientCommand.cpp:154
+#: Client.cpp:1363 ClientCommand.cpp:154
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] "Losgekoppeld van {1} kanaal"

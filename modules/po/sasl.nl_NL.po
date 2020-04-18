@@ -10,7 +10,7 @@ msgstr ""
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
 
-#: modules/po/../data/sasl/tmpl/index.tmpl:7 sasl.cpp:292
+#: modules/po/../data/sasl/tmpl/index.tmpl:7 sasl.cpp:301
 msgid "SASL"
 msgstr "SASL"
 
@@ -162,15 +162,15 @@ msgstr "Netwerk uitgeschakeld, we eisen authenticatie."
 msgid "Use 'RequireAuth no' to disable."
 msgstr "Gebruik 'RequireAuth no' om uit te schakelen."
 
-#: sasl.cpp:247
+#: sasl.cpp:256
 msgid "{1} mechanism succeeded."
 msgstr "{1} mechanisme gelukt."
 
-#: sasl.cpp:259
+#: sasl.cpp:268
 msgid "{1} mechanism failed."
 msgstr "{1} mechanisme gefaalt."
 
-#: sasl.cpp:337
+#: sasl.cpp:346
 msgid ""
 "Adds support for sasl authentication capability to authenticate to an IRC "
 "server"

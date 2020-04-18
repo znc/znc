@@ -1209,7 +1209,7 @@ msgid "Deny LoadMod"
 msgstr ""
 
 #: webadmin.cpp:1551
-msgid "Admin"
+msgid "Admin (dangerous! may gain shell access)"
 msgstr ""
 
 #: webadmin.cpp:1561

@@ -244,19 +244,19 @@ msgstr "Вы не подключены к IRC, ваше сообщение к {1
 msgid "Removing channel {1}"
 msgstr "Убираю канал {1}"
 
-#: Client.cpp:1256
+#: Client.cpp:1258
 msgid "Your message to {1} got lost, you are not connected to IRC!"
 msgstr "Вы не подключены к IRC, ваше сообщение к {1} утеряно!"
 
-#: Client.cpp:1309 Client.cpp:1315
+#: Client.cpp:1311 Client.cpp:1317
 msgid "Hello. How may I help you?"
 msgstr "Привет, чем могу быть вам полезен?"
 
-#: Client.cpp:1329
+#: Client.cpp:1331
 msgid "Usage: /attach <#chans>"
 msgstr "Использование: /attach <#каналы>"
 
-#: Client.cpp:1336 Client.cpp:1358 ClientCommand.cpp:129 ClientCommand.cpp:151
+#: Client.cpp:1338 Client.cpp:1360 ClientCommand.cpp:129 ClientCommand.cpp:151
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
 msgstr[0] "{1} канал подходит под маску [{2}]"
@@ -264,7 +264,7 @@ msgstr[1] "{1} канала подходят под маску [{2}]"
 msgstr[2] "{1} каналов подходят под маску [{2}]"
 msgstr[3] "{1} каналов подходят под маску [{2}]"
 
-#: Client.cpp:1339 ClientCommand.cpp:132
+#: Client.cpp:1341 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] "Прицепляю {1} канал"
@@ -272,11 +272,11 @@ msgstr[1] "Прицепляю {1} канала"
 msgstr[2] "Прицепляю {1} каналов"
 msgstr[3] "Прицепляю {1} каналов"
 
-#: Client.cpp:1351
+#: Client.cpp:1353
 msgid "Usage: /detach <#chans>"
 msgstr "Использование: /detach <#каналы>"
 
-#: Client.cpp:1361 ClientCommand.cpp:154
+#: Client.cpp:1363 ClientCommand.cpp:154
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] "Отцепляю {1} канал"

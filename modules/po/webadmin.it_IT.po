@@ -1252,8 +1252,8 @@ msgid "Deny LoadMod"
 msgstr "Nega LoadMod"
 
 #: webadmin.cpp:1551
-msgid "Admin"
-msgstr "Admin"
+msgid "Admin (dangerous! may gain shell access)"
+msgstr ""
 
 #: webadmin.cpp:1561
 msgid "Deny SetBindHost"

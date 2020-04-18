@@ -245,33 +245,33 @@ msgstr "Notice anda untuk {1} tersesat, anda tidak terhubung ke IRC!"
 msgid "Removing channel {1}"
 msgstr "Menghapus channel {1}"
 
-#: Client.cpp:1256
+#: Client.cpp:1258
 msgid "Your message to {1} got lost, you are not connected to IRC!"
 msgstr "Pesan anda untuk {1} tersesat, anda tidak terhubung ke IRC!"
 
-#: Client.cpp:1309 Client.cpp:1315
+#: Client.cpp:1311 Client.cpp:1317
 msgid "Hello. How may I help you?"
 msgstr "Halo. Bagaimana saya bisa membantu anda?"
 
-#: Client.cpp:1329
+#: Client.cpp:1331
 msgid "Usage: /attach <#chans>"
 msgstr "Gunakan: /attach <#chan>"
 
-#: Client.cpp:1336 Client.cpp:1358 ClientCommand.cpp:129 ClientCommand.cpp:151
+#: Client.cpp:1338 Client.cpp:1360 ClientCommand.cpp:129 ClientCommand.cpp:151
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
 msgstr[0] "Ada {1} pencocokan saluran [{2}]"
 
-#: Client.cpp:1339 ClientCommand.cpp:132
+#: Client.cpp:1341 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] ""
 
-#: Client.cpp:1351
+#: Client.cpp:1353
 msgid "Usage: /detach <#chans>"
 msgstr ""
 
-#: Client.cpp:1361 ClientCommand.cpp:154
+#: Client.cpp:1363 ClientCommand.cpp:154
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] ""
