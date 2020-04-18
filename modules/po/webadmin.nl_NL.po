@@ -5,7 +5,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: nl\n"
-"X-Crowdin-File: /master/modules/po/webadmin.pot\n"
+"X-Crowdin-File: /1.8.x/modules/po/webadmin.pot\n"
 "Project-Id-Version: znc-bouncer\n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -1221,8 +1221,8 @@ msgid "Deny LoadMod"
 msgstr "Sta LoadMod niet toe"
 
 #: webadmin.cpp:1551
-msgid "Admin"
-msgstr "Beheerder"
+msgid "Admin (dangerous! may gain shell access)"
+msgstr ""
 
 #: webadmin.cpp:1561
 msgid "Deny SetBindHost"

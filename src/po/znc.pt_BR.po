@@ -5,7 +5,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: pt-BR\n"
-"X-Crowdin-File: /master/src/po/znc.pot\n"
+"X-Crowdin-File: /1.8.x/src/po/znc.pot\n"
 "Project-Id-Version: znc-bouncer\n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -249,35 +249,35 @@ msgstr "O seu aviso para {1} foi perdido, você não está conectado ao IRC!"
 msgid "Removing channel {1}"
 msgstr "Removendo canal {1}"
 
-#: Client.cpp:1256
+#: Client.cpp:1258
 msgid "Your message to {1} got lost, you are not connected to IRC!"
 msgstr "Sua mensagem para {1} foi perdida, você não está conectado ao IRC!"
 
-#: Client.cpp:1309 Client.cpp:1315
+#: Client.cpp:1311 Client.cpp:1317
 msgid "Hello. How may I help you?"
 msgstr "Olá. Como posso ajudá-lo(a)?"
 
-#: Client.cpp:1329
+#: Client.cpp:1331
 msgid "Usage: /attach <#chans>"
 msgstr "Uso: /attach <#canais>"
 
-#: Client.cpp:1336 Client.cpp:1358 ClientCommand.cpp:129 ClientCommand.cpp:151
+#: Client.cpp:1338 Client.cpp:1360 ClientCommand.cpp:129 ClientCommand.cpp:151
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
 msgstr[0] "Foi encontrado {1} canal correspondente a [{2}]"
 msgstr[1] "Foi encontrado {1} canal correspondentes a [{2}]"
 
-#: Client.cpp:1339 ClientCommand.cpp:132
+#: Client.cpp:1341 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] "{1} canal foi anexado"
 msgstr[1] "{1} canais foram anexados"
 
-#: Client.cpp:1351
+#: Client.cpp:1353
 msgid "Usage: /detach <#chans>"
 msgstr "Uso: /detach <#canais>"
 
-#: Client.cpp:1361 ClientCommand.cpp:154
+#: Client.cpp:1363 ClientCommand.cpp:154
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] "{1} canal foi desanexado"
@@ -919,7 +919,7 @@ msgstr ""
 
 #: ClientCommand.cpp:1196
 msgid "Unable to reload {1}: {2}"
-msgstr ""
+msgstr "Falha ao recarregar {1}: {2}"
 
 #: ClientCommand.cpp:1204
 msgid "Unable to reload global module {1}: Access denied."
@@ -1263,7 +1263,7 @@ msgstr "Listar todos os canais"
 #: ClientCommand.cpp:1703
 msgctxt "helpcmd|ListNicks|args"
 msgid "<#chan>"
-msgstr ""
+msgstr "<#canal>"
 
 #: ClientCommand.cpp:1704
 msgctxt "helpcmd|ListNicks|desc"
@@ -1283,7 +1283,7 @@ msgstr "Listar todos os servidores da rede atual"
 #: ClientCommand.cpp:1715
 msgctxt "helpcmd|AddNetwork|args"
 msgid "<name>"
-msgstr ""
+msgstr "<nome>"
 
 #: ClientCommand.cpp:1716
 msgctxt "helpcmd|AddNetwork|desc"
@@ -1385,7 +1385,7 @@ msgstr ""
 #: ClientCommand.cpp:1763
 msgctxt "helpcmd|EnableChan|desc"
 msgid "Enable channels"
-msgstr ""
+msgstr "Habilitar canais"
 
 #: ClientCommand.cpp:1764
 msgctxt "helpcmd|DisableChan|args"
