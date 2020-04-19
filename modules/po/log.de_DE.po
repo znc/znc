@@ -54,7 +54,7 @@ msgstr "Keine Logging-Regeln - alles wird geloggt."
 msgid "1 rule removed: {2}"
 msgid_plural "{1} rules removed: {2}"
 msgstr[0] ""
-msgstr[1] "{1} Regeln entfernt: {2}"
+msgstr[1] ""
 
 #: log.cpp:168 log.cpp:173
 msgctxt "listrules"

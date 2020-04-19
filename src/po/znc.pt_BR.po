@@ -919,7 +919,7 @@ msgstr ""
 
 #: ClientCommand.cpp:1188
 msgid "Unable to reload {1}: {2}"
-msgstr ""
+msgstr "Falha ao recarregar {1}: {2}"
 
 #: ClientCommand.cpp:1196
 msgid "Unable to reload global module {1}: Access denied."
@@ -1263,7 +1263,7 @@ msgstr "Listar todos os canais"
 #: ClientCommand.cpp:1693
 msgctxt "helpcmd|ListNicks|args"
 msgid "<#chan>"
-msgstr ""
+msgstr "<#canal>"
 
 #: ClientCommand.cpp:1694
 msgctxt "helpcmd|ListNicks|desc"
@@ -1283,7 +1283,7 @@ msgstr "Listar todos os servidores da rede atual"
 #: ClientCommand.cpp:1705
 msgctxt "helpcmd|AddNetwork|args"
 msgid "<name>"
-msgstr ""
+msgstr "<nome>"
 
 #: ClientCommand.cpp:1706
 msgctxt "helpcmd|AddNetwork|desc"
@@ -1385,7 +1385,7 @@ msgstr ""
 #: ClientCommand.cpp:1753
 msgctxt "helpcmd|EnableChan|desc"
 msgid "Enable channels"
-msgstr ""
+msgstr "Habilitar canais"
 
 #: ClientCommand.cpp:1754
 msgctxt "helpcmd|DisableChan|args"
