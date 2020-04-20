@@ -386,17 +386,18 @@ int main(int argc, char** argv) {
 
     if (bMakePass) {
         CString sSalt;
+        CString sHash;
 
         if (!sUserPass.empty()) {
             CUtils::PrintMessage("Type your new password.");
-            CString sHash = CUtils::GetSaltedHashPass(sSalt);
+            sHash = CUtils::GetSaltedHashPass(sSalt);
             CUtils::PrintMessage("Kill ZNC process, if it's running.");
             CUtils::PrintMessage(
                 "Then replace password in the <User> section of your config "
                 "with this:");
         } else {
             sSalt = CUtils::GetSalt();
-            CUtils::SaltedSHA256Hash(sUserPass, sSalt);
+            sHash = CUtils::SaltedSHA256Hash(sUserPass, sSalt);
         }
 
         // Not PrintMessage(), to remove [**] from the beginning, to ease
