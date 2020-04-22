@@ -264,6 +264,9 @@ TEST_F(ZNCTest, AwayNotify) {
     client.ReadUntil(":x!y@z AWAY :reason");
     ircd.Close();
     client.ReadUntil("DEL :away-notify");
+    // This test often fails on macos due to ZNC process not finishing.
+    // No idea why. Let's try to shutdown it more explicitly...
+    client.Write("znc shutdown");
 }
 
 TEST_F(ZNCTest, JoinKey) {
