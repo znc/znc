@@ -1,3 +1,42 @@
+# ZNC 1.8.0 (2020-05-01)
+
+## New
+* Output of various commands (e.g. `/znc help`) was switched from a table to a list
+* Support IP while verifying SSL certificates
+* Make it more visible that admins have lots of privileges
+
+## Fixes
+* Fix parsing of channel modes when the last parameter starts with a colon, improving compatibility with InspIRCd v3
+* Fix null dereference on startup when reading invalid config
+* Don't show server passwords on ZNC startup
+* Fix build with newer OpenSSL
+* Fix in-source CMake build
+* Fix echo-message for `status`
+
+## Modules
+* controlpanel: Add already supported NoTrafficTimeout User variable to help output
+* modpython:
+    * Use FindPython3 in addition to pkg-config in CMake to simplify builds on Gentoo when not using emerge
+    * Support python 3.9
+* modtcl: Added GetNetworkName
+* partyline: Module is removed
+* q: Module is removed
+* route_replies: Handle more numerics
+* sasl: Fix sending of long authentication information
+* shell: Unblock signals when spawning child processes
+* simple_away: Convert to UTC time
+* watch: Better support multiple clients
+* webadmin: Better wording for TrustPKI setting
+
+## Internal
+* Refactor the way how SSL certificate is checked to simplify future socket-related refactors
+* Build integration test and ZNC itself with the same compiler (https://bugs.gentoo.org/699258)
+* Various improvements for translation CI
+* Normalize variable name sUserName/sUsername
+* Make de-escaping less lenient
+
+
+
 # ZNC 1.7.5 (2019-09-23)
 
 * modpython: Add support for Python 3.8

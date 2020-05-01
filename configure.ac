@@ -7,7 +7,7 @@ AC_DEFUN([AC_PROG_CC], [m4_errprint(__file__:__line__[: Something is trying to u
 dnl Needed for AC_PATH_PROGS_FEATURE_CHECK which was added in 2.62
 AC_PREREQ([2.62])
 dnl Keep the version number in sync with version.h!
-AC_INIT([znc], [1.8.0-rc1])
+AC_INIT([znc], [1.8.0])
 LIBZNC_VERSION=1.8.0
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([src/znc.cpp])
