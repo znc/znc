@@ -50,15 +50,8 @@ cp -p third_party/Csocket/Csocket.cc third_party/Csocket/Csocket.h $TMPDIR/$ZNCD
 )
 (
 	cd $TMPDIR/$ZNCDIR
-	AUTOMAKE_FLAGS="--add-missing --copy" ./autogen.sh
-	rm -r autom4te.cache/
 	rm -rf .travis* .appveyor* .ci/
 	rm make-tarball.sh
-	# For autoconf
-	sed -e "s/THIS_IS_NOT_TARBALL//" -i Makefile.in
-	echo '#include <znc/version.h>' > src/version.cpp
-	echo "const char* ZNC_VERSION_EXTRA = VERSION_EXTRA \"$DESC\";" >> src/version.cpp
-	# For cmake
 	if [ "x$DESC" != "x" ]; then
 		if [ $NIGHTLY = 1 ]; then
 			echo $DESC > .nightly
