@@ -134,15 +134,7 @@ CString CZNC::GetTag(bool bIncludeVersion, bool bHTML) {
 }
 
 CString CZNC::GetCompileOptionsString() {
-    // Build system doesn't affect ABI
-    return ZNC_COMPILE_OPTIONS_STRING + CString(
-                                            ", build: "
-#ifdef BUILD_WITH_CMAKE
-                                            "cmake"
-#else
-                                            "autoconf"
-#endif
-                                            );
+    return ZNC_COMPILE_OPTIONS_STRING;
 }
 
 CString CZNC::GetUptime() const {

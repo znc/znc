@@ -27,9 +27,7 @@ Core:
 * GNU make
 * pkg-config
 * GCC 4.8 or clang 3.2
-* Either of:
-    * autoconf and automake (but only if building from git, not from tarball)
-    * CMake
+* CMake
 
 ## Optional Requirements
 
@@ -55,19 +53,10 @@ Character Encodings:
 * To get proper character encoding and charsets install ICU (`libicu4-dev`)
 
 I18N (UI translation)
-* CMake-based build only
 * Boost.Locale
 * gettext is a build dependency
 
 ## Installing ZNC
-
-Currently there are 2 build systems in place: CMake and `./configure`.
-`./configure` will eventually be removed.
-There is also `configure.sh` which should make migration to CMake easier:
-it accepts the same parameters as `./configure`,
-but calls CMake with CMake-style parameters.
-
-### Installing with CMake
 
 Installation from source code is performed using the CMake toolchain.
 
@@ -81,28 +70,15 @@ make install
 
 You can use `cmake-gui` or `ccmake` for more interactiveness.
 
+There is also `configure.sh` which should make migration to CMake easier:
+it accepts the same parameters as old `./configure`,
+but calls CMake with CMake-style parameters.
+
 Note for FreeBSD users:
 By default base OpenSSL is selected.
 If you want the one from ports, use `-DOPENSSL_ROOT_DIR=/usr/local`.
 
 For troubleshooting, `cmake --system-information` will show you details.
-
-### Installing with `./configure`
-
-Installation from source code is performed using the `automake` toolchain.
-If you are building from git, you will need to run `./autogen.sh` first to
-produce the `configure` script.
-
-```shell
-mkdir build
-cd build
-../configure
-make
-make install
-```
-
-You can use `./configure --help` if you want to get a list of options, though
-the defaults should be suiting most needs.
 
 ## Setting up znc.conf
 

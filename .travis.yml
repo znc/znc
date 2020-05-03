@@ -13,41 +13,31 @@ matrix:
         - os: linux
           dist: xenial
           compiler: gcc
-          env: BUILD_TYPE=normal BUILD_WITH=cmake
-        - os: linux
-          compiler: gcc
-          env: BUILD_TYPE=normal BUILD_WITH=autoconf
+          env: BUILD_TYPE=normal
         - os: linux
           compiler: clang
-          env: BUILD_TYPE=asan BUILD_WITH=cmake
+          env: BUILD_TYPE=asan
         - os: linux
           compiler: clang
-          env: BUILD_TYPE=tsan BUILD_WITH=cmake
+          env: BUILD_TYPE=tsan
           # TODO: enable
           # - os: linux
           #   compiler: clang
-          #   env: BUILD_TYPE=msan BUILD_WITH=cmake
+          #   env: BUILD_TYPE=msan
           # - os: linux
           #   compiler: clang
-          #   env: BUILD_TYPE=ubsan BUILD_WITH=cmake
+          #   env: BUILD_TYPE=ubsan
         - os: linux
           compiler: gcc
-          env: BUILD_TYPE=normal BUILD_WITH=cmake
+          env: BUILD_TYPE=normal
           arch: arm64
         - os: osx
           osx_image: xcode9.3 # macOS 10.13
           compiler: clang
-          env: BUILD_TYPE=normal BUILD_WITH=cmake
-        - os: osx
-          osx_image: xcode9.3 # macOS 10.13
-          compiler: clang
-          env: BUILD_TYPE=normal BUILD_WITH=autoconf
+          env: BUILD_TYPE=normal
         - os: linux
           compiler: gcc
-          env: BUILD_TYPE=tarball BUILD_WITH=cmake
-        - os: linux
-          compiler: gcc
-          env: BUILD_TYPE=tarball BUILD_WITH=autoconf
+          env: BUILD_TYPE=tarball
         - stage: deploy
           os: linux
           env:
@@ -99,7 +89,6 @@ before_install:
     - if [[ "$BUILD_TYPE" == "tsan" ]]; then MYCXXFLAGS+=" -fsanitize=thread -O1 -fPIE" MYLDFLAGS+=" -fsanitize=thread"; fi
     - if [[ "$BUILD_TYPE" == "msan" ]]; then MYCXXFLAGS+=" -fsanitize=memory -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize-memory-track-origins" MYLDFLAGS+=" -fsanitize=memory"; fi
     - if [[ "$BUILD_TYPE" == "ubsan" ]]; then MYCXXFLAGS=" -fsanitize=undefined -O1 -fPIE -fno-sanitize-recover" MYLDFLAGS="-fsanitize=undefined -pie -fno-sanitize-recover"; fi
-    - if [[ "$BUILD_WITH" == "cmake" ]]; then CFGSUFFIX=.sh UNITTEST=unittest INTTEST=inttest; else CFGSUFFIX= UNITTEST=test INTTEST=test2; fi
     - if [[ "$CC" == "gcc" ]]; then MYCXXFLAGS+=" --coverage" MYLDFLAGS+=" --coverage"; fi
     - if [[ "$CC" == "clang" ]]; then MYCXXFLAGS+=" -fprofile-instr-generate -fcoverage-mapping" MYLDFLAGS+=" -fprofile-instr-generate"; fi
 install:
@@ -107,7 +96,7 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then lsb_release -a; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y libperl-dev tcl-dev libsasl2-dev libicu-dev swig qtbase5-dev libboost-locale-dev python3-pip cpanminus; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_WITH" == "cmake" ]]; then sudo apt-get install -y cmake; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y cmake; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cpanm --local-lib=~/perl5 local::lib && eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib); fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cpanm --notest Devel::Cover::Report::Clover; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export ZNC_MODPERL_COVERAGE=1; fi
@@ -121,9 +110,8 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew list --versions; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install swig icu4c jq qt5 gettext python cmake openssl pkg-config; fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install autoconf automake; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew outdated python || brew upgrade python; fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" && "$BUILD_WITH" == "cmake" ]]; then brew outdated cmake || brew upgrade cmake; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew outdated cmake || brew upgrade cmake; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew info --json=v1 --installed | jq .; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PKG_CONFIG_PATH="$(brew --prefix qt5)/lib/pkgconfig:$PKG_CONFIG_PATH"; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls -la ~/.cache; fi
@@ -139,16 +127,15 @@ script:
     - if [[ "$BUILD_TYPE" == "tarball" ]]; then ./make-tarball.sh --nightly znc-git-2015-01-16 /tmp/znc-tarball.tar.gz; fi
     - if [[ "$BUILD_TYPE" == "tarball" ]]; then cd /tmp; tar xvf znc-tarball.tar.gz; fi
     - if [[ "$BUILD_TYPE" == "tarball" ]]; then cd /tmp/znc-git-2015-01-16; fi
-    - if [[ "$BUILD_TYPE" != "tarball" && "$BUILD_WITH" != "cmake" ]]; then ./bootstrap.sh; fi
     - mkdir build
     - cd build
-    - ../configure$CFGSUFFIX --enable-debug --enable-perl --enable-python --enable-tcl --enable-cyrus --enable-charset $CFGFLAGS CXXFLAGS="$CXXFLAGS $MYCXXFLAGS" LDFLAGS="$LDFLAGS $MYLDFLAGS"
-    - if [[ "$BUILD_WITH" == "cmake" ]]; then cmake --system-information; else cat config.log; fi
+    - ../configure.sh --enable-debug --enable-perl --enable-python --enable-tcl --enable-cyrus --enable-charset $CFGFLAGS CXXFLAGS="$CXXFLAGS $MYCXXFLAGS" LDFLAGS="$LDFLAGS $MYLDFLAGS"
+    - cmake --system-information
     - make VERBOSE=1
-    - env LLVM_PROFILE_FILE="$PWD/unittest.profraw" make VERBOSE=1 $UNITTEST
+    - env LLVM_PROFILE_FILE="$PWD/unittest.profraw" make VERBOSE=1 unittest
     - sudo make install
       # TODO: use DEVEL_COVER_OPTIONS for https://metacpan.org/pod/Devel::Cover
-    - env LLVM_PROFILE_FILE="$PWD/inttest.profraw" ZNC_MODPERL_COVERAGE_OPTS="-db,$PWD/cover_db" make VERBOSE=1 $INTTEST
+    - env LLVM_PROFILE_FILE="$PWD/inttest.profraw" ZNC_MODPERL_COVERAGE_OPTS="-db,$PWD/cover_db" make VERBOSE=1 inttest
     - /usr/local/bin/znc --version
 after_success:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ~/perl5/bin/cover --no-gcov --report=clover; fi
@@ -157,7 +144,6 @@ after_success:
              xcrun llvm-profdata merge unittest.profraw -o unittest.profdata
              xcrun llvm-profdata merge inttest.profraw -o inttest.profdata
              xcrun llvm-cov show -show-line-counts-or-regions -instr-profile=unittest.profdata test/unittest_bin > unittest-cmake-coverage.txt
-             xcrun llvm-cov show -show-line-counts-or-regions -instr-profile=unittest.profdata unittest > unittest-autoconf-coverage.txt
              xcrun llvm-cov show -show-line-counts-or-regions -instr-profile=inttest.profdata /usr/local/bin/znc > inttest-znc-coverage.txt
              find /usr/local/lib/znc -name '*.so' -or -name '*.bundle' | while read f; do xcrun llvm-cov show -show-line-counts-or-regions -instr-profile=inttest.profdata $f > inttest-$(basename $f)-coverage.txt; done
          fi
