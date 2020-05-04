@@ -53,27 +53,27 @@ msgstr ""
 "del modulo&gt;</code>”). Dopo aver caricato alcuni moduli abilitati per al "
 "Web, il menù si espanderà."
 
-#: znc.cpp:1562
+#: znc.cpp:1554
 msgid "User already exists"
 msgstr "Utente già esistente"
 
-#: znc.cpp:1670
+#: znc.cpp:1662
 msgid "IPv6 is not enabled"
 msgstr "IPv6 non è abilitato"
 
-#: znc.cpp:1678
+#: znc.cpp:1670
 msgid "SSL is not enabled"
 msgstr "SSL non è abilitata"
 
-#: znc.cpp:1686
+#: znc.cpp:1678
 msgid "Unable to locate pem file: {1}"
 msgstr "Impossibile localizzare il file pem: {1}"
 
-#: znc.cpp:1705
+#: znc.cpp:1697
 msgid "Invalid port"
 msgstr "Porta non valida"
 
-#: znc.cpp:1821 ClientCommand.cpp:1637
+#: znc.cpp:1813 ClientCommand.cpp:1637
 msgid "Unable to bind: {1}"
 msgstr "Impossibile associare: {1}"
 

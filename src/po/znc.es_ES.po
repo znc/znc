@@ -52,27 +52,27 @@ msgstr ""
 "*status help</code>\" y \"<code>/msg *status loadmod &lt;módulo&gt;</code>"
 "\"). Una vez lo hayas hecho, el menú se expandirá."
 
-#: znc.cpp:1562
+#: znc.cpp:1554
 msgid "User already exists"
 msgstr "El usuario ya existe"
 
-#: znc.cpp:1670
+#: znc.cpp:1662
 msgid "IPv6 is not enabled"
 msgstr "IPv6 no está disponible"
 
-#: znc.cpp:1678
+#: znc.cpp:1670
 msgid "SSL is not enabled"
 msgstr "SSL no está habilitado"
 
-#: znc.cpp:1686
+#: znc.cpp:1678
 msgid "Unable to locate pem file: {1}"
 msgstr "No se ha localizado el fichero pem: {1}"
 
-#: znc.cpp:1705
+#: znc.cpp:1697
 msgid "Invalid port"
 msgstr "Puerto no válido"
 
-#: znc.cpp:1821 ClientCommand.cpp:1637
+#: znc.cpp:1813 ClientCommand.cpp:1637
 msgid "Unable to bind: {1}"
 msgstr "Imposible enlazar: {1}"
 

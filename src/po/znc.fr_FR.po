@@ -53,27 +53,27 @@ msgstr ""
 "loadmod &lt;module&gt;</code>”). Les modules avec des capacités web "
 "apparaîtront ci-dessous."
 
-#: znc.cpp:1562
+#: znc.cpp:1554
 msgid "User already exists"
 msgstr "Cet utilisateur existe déjà"
 
-#: znc.cpp:1670
+#: znc.cpp:1662
 msgid "IPv6 is not enabled"
 msgstr "IPv6 n'est pas activé"
 
-#: znc.cpp:1678
+#: znc.cpp:1670
 msgid "SSL is not enabled"
 msgstr "SSL n'est pas activé"
 
-#: znc.cpp:1686
+#: znc.cpp:1678
 msgid "Unable to locate pem file: {1}"
 msgstr "Impossible de trouver le fichier pem : {1}"
 
-#: znc.cpp:1705
+#: znc.cpp:1697
 msgid "Invalid port"
 msgstr "Port invalide"
 
-#: znc.cpp:1821 ClientCommand.cpp:1637
+#: znc.cpp:1813 ClientCommand.cpp:1637
 msgid "Unable to bind: {1}"
 msgstr "Impossible d'utiliser le port : {1}"
 

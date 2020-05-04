@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: znc-bouncer\n"
-"Language-Team: German\n"
-"Language: de_DE\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Language: de\n"
 "X-Crowdin-File: /master/src/po/znc.pot\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
 
 #: webskins/_default_/tmpl/InfoBar.tmpl:6
 msgid "Logged in as: {1}"
@@ -53,27 +53,27 @@ msgstr ""
 "code>\"). Sobald einige Web-fähige Module geladen wurden, wird das Menü "
 "größer."
 
-#: znc.cpp:1562
+#: znc.cpp:1554
 msgid "User already exists"
 msgstr "Benutzer existiert bereits"
 
-#: znc.cpp:1670
+#: znc.cpp:1662
 msgid "IPv6 is not enabled"
 msgstr "IPv6 ist nicht aktiviert"
 
-#: znc.cpp:1678
+#: znc.cpp:1670
 msgid "SSL is not enabled"
 msgstr "SSL ist nicht aktiviert"
 
-#: znc.cpp:1686
+#: znc.cpp:1678
 msgid "Unable to locate pem file: {1}"
 msgstr "Kann PEM-Datei nicht finden: {1}"
 
-#: znc.cpp:1705
+#: znc.cpp:1697
 msgid "Invalid port"
 msgstr "Ungültiger Port"
 
-#: znc.cpp:1821 ClientCommand.cpp:1637
+#: znc.cpp:1813 ClientCommand.cpp:1637
 msgid "Unable to bind: {1}"
 msgstr "Kann nicht horchen: {1}"
 
