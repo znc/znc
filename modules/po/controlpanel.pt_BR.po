@@ -22,19 +22,19 @@ msgstr "Variáveis"
 
 #: controlpanel.cpp:78
 msgid "String"
-msgstr ""
+msgstr "String"
 
 #: controlpanel.cpp:79
 msgid "Boolean (true/false)"
-msgstr ""
+msgstr "Booleano (verdadeiro/falso)"
 
 #: controlpanel.cpp:80
 msgid "Integer"
-msgstr ""
+msgstr "Inteiro"
 
 #: controlpanel.cpp:81
 msgid "Number"
-msgstr ""
+msgstr "Número"
 
 #: controlpanel.cpp:126
 msgid "The following variables are available when using the Set/Get commands:"
@@ -76,7 +76,7 @@ msgstr ""
 
 #: controlpanel.cpp:215
 msgid "Usage: Get <variable> [username]"
-msgstr ""
+msgstr "Sintaxe: Get <variável> [usuário]"
 
 #: controlpanel.cpp:305 controlpanel.cpp:508 controlpanel.cpp:583
 #: controlpanel.cpp:659 controlpanel.cpp:794 controlpanel.cpp:879
@@ -85,17 +85,17 @@ msgstr ""
 
 #: controlpanel.cpp:314
 msgid "Usage: Set <variable> <username> <value>"
-msgstr ""
+msgstr "Sintaxe: Set <variável> <usuário> <valor>"
 
 #: controlpanel.cpp:336 controlpanel.cpp:624
 msgid "This bind host is already set!"
-msgstr ""
+msgstr "Este host já está vinculado!"
 
 #: controlpanel.cpp:343 controlpanel.cpp:355 controlpanel.cpp:363
 #: controlpanel.cpp:426 controlpanel.cpp:445 controlpanel.cpp:461
 #: controlpanel.cpp:471 controlpanel.cpp:631
 msgid "Access denied!"
-msgstr ""
+msgstr "Acesso negado!"
 
 #: controlpanel.cpp:377 controlpanel.cpp:386 controlpanel.cpp:843
 msgid "Setting failed, limit for buffer size is {1}"
@@ -119,7 +119,7 @@ msgstr "Idiomas suportados: {1}"
 
 #: controlpanel.cpp:520
 msgid "Usage: GetNetwork <variable> [username] [network]"
-msgstr ""
+msgstr "Sintaxe: GetNetwork <variável> [usuário] [rede]"
 
 #: controlpanel.cpp:539
 msgid "Error: A network must be specified to get another users settings."
@@ -135,11 +135,11 @@ msgstr ""
 
 #: controlpanel.cpp:595
 msgid "Usage: SetNetwork <variable> <username> <network> <value>"
-msgstr ""
+msgstr "Sintaxe: SetNetwork <variável> <usuário> <rede> <valor>"
 
 #: controlpanel.cpp:669
 msgid "Usage: AddChan <username> <network> <channel>"
-msgstr ""
+msgstr "Sintaxe: AddChan <usuário> <rede> <canal>"
 
 #: controlpanel.cpp:682
 msgid "Error: User {1} already has a channel named {2}."
@@ -156,7 +156,7 @@ msgstr ""
 
 #: controlpanel.cpp:703
 msgid "Usage: DelChan <username> <network> <channel>"
-msgstr ""
+msgstr "Sintaxe: DelChan <usuário> <rede> <canal>"
 
 #: controlpanel.cpp:718
 msgid "Error: User {1} does not have any channel matching [{2}] in network {3}"
@@ -170,7 +170,7 @@ msgstr[1] ""
 
 #: controlpanel.cpp:746
 msgid "Usage: GetChan <variable> <username> <network> <chan>"
-msgstr ""
+msgstr "Sintaxe: GetChan <variável> <usuário> <rede> <canal>"
 
 #: controlpanel.cpp:760 controlpanel.cpp:824
 msgid "Error: No channels matching [{1}] found."
@@ -178,17 +178,17 @@ msgstr ""
 
 #: controlpanel.cpp:809
 msgid "Usage: SetChan <variable> <username> <network> <chan> <value>"
-msgstr ""
+msgstr "Sintaxe: SetChan <variável> <usuário> <rede> <canal> <valor>"
 
 #: controlpanel.cpp:890 controlpanel.cpp:900
 msgctxt "listusers"
 msgid "Username"
-msgstr ""
+msgstr "Nome de usuário"
 
 #: controlpanel.cpp:891 controlpanel.cpp:901
 msgctxt "listusers"
 msgid "Realname"
-msgstr ""
+msgstr "Nome real"
 
 #: controlpanel.cpp:892 controlpanel.cpp:904 controlpanel.cpp:906
 msgctxt "listusers"
@@ -208,12 +208,12 @@ msgstr "Apelido alternativo"
 #: controlpanel.cpp:895 controlpanel.cpp:909
 msgctxt "listusers"
 msgid "Ident"
-msgstr ""
+msgstr "Ident"
 
 #: controlpanel.cpp:896 controlpanel.cpp:910
 msgctxt "listusers"
 msgid "BindHost"
-msgstr ""
+msgstr "Host vinculado"
 
 #: controlpanel.cpp:904 controlpanel.cpp:1144
 msgid "No"
@@ -229,19 +229,19 @@ msgstr ""
 
 #: controlpanel.cpp:926
 msgid "Usage: AddUser <username> <password>"
-msgstr ""
+msgstr "Sintaxe: AddUser <nome de usuário> <senha>"
 
 #: controlpanel.cpp:931
 msgid "Error: User {1} already exists!"
-msgstr ""
+msgstr "Erro: o usuário {1} já existe!"
 
 #: controlpanel.cpp:943 controlpanel.cpp:1018
 msgid "Error: User not added: {1}"
-msgstr ""
+msgstr "Erro: o usuário não foi adicionado: {1}"
 
 #: controlpanel.cpp:947 controlpanel.cpp:1022
 msgid "User {1} added!"
-msgstr ""
+msgstr "O usuário {1} foi adicionado!"
 
 #: controlpanel.cpp:954
 msgid "Error: You need to have admin rights to delete users!"
@@ -249,7 +249,7 @@ msgstr ""
 
 #: controlpanel.cpp:960
 msgid "Usage: DelUser <username>"
-msgstr ""
+msgstr "Sintaxe: DelUser <usuário>"
 
 #: controlpanel.cpp:972
 msgid "Error: You can't delete yourself!"
@@ -265,7 +265,7 @@ msgstr ""
 
 #: controlpanel.cpp:997
 msgid "Usage: CloneUser <old username> <new username>"
-msgstr ""
+msgstr "Sintaxe: CloneUser <usuário antigo> <usuário novo>"
 
 #: controlpanel.cpp:1012
 msgid "Error: Cloning failed: {1}"
@@ -273,7 +273,7 @@ msgstr ""
 
 #: controlpanel.cpp:1041
 msgid "Usage: AddNetwork [user] network"
-msgstr ""
+msgstr "Sintaxe: AddNetwork [usuário] <rede>"
 
 #: controlpanel.cpp:1047
 msgid ""
@@ -295,7 +295,7 @@ msgstr ""
 
 #: controlpanel.cpp:1086
 msgid "Usage: DelNetwork [user] network"
-msgstr ""
+msgstr "Sintaxe: DelNetwork [usuário] <rede>"
 
 #: controlpanel.cpp:1097
 msgid "The currently active network can be deleted via {1}status"
@@ -340,7 +340,7 @@ msgstr ""
 
 #: controlpanel.cpp:1160
 msgid "Usage: AddServer <username> <network> <server> [[+]port] [password]"
-msgstr ""
+msgstr "Sintaxe: AddServer <usuário> <rede> <servidor> [[+]porta] [senha]"
 
 #: controlpanel.cpp:1174
 msgid "Added IRC Server {1} to network {2} for user {3}."
@@ -352,7 +352,7 @@ msgstr ""
 
 #: controlpanel.cpp:1191
 msgid "Usage: DelServer <username> <network> <server> [[+]port] [password]"
-msgstr ""
+msgstr "Sintaxe: DelServer <usuário> <rede> <servidor> [[+]porta] [senha]"
 
 #: controlpanel.cpp:1206
 msgid "Deleted IRC Server {1} from network {2} for user {3}."

@@ -62,7 +62,7 @@ msgstr ""
 
 #: alias.cpp:338 alias.cpp:341 alias.cpp:352 alias.cpp:357
 msgid "<name>"
-msgstr ""
+msgstr "<nome>"
 
 #: alias.cpp:339
 msgid "Creates a new, blank alias called name."
@@ -74,7 +74,7 @@ msgstr ""
 
 #: alias.cpp:343
 msgid "<name> <action ...>"
-msgstr ""
+msgstr "<nome> <ação...>"
 
 #: alias.cpp:344
 msgid "Adds a line to an existing alias."
@@ -82,7 +82,7 @@ msgstr ""
 
 #: alias.cpp:346
 msgid "<name> <pos> <action ...>"
-msgstr ""
+msgstr "<nome> <posição> <ação...>"
 
 #: alias.cpp:347
 msgid "Inserts a line into an existing alias."

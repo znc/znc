@@ -24,11 +24,11 @@ msgstr "{1} mensagens foram excluídas"
 
 #: awaystore.cpp:104
 msgid "USAGE: delete <num|all>"
-msgstr ""
+msgstr "Sintaxe: delete <quantidade|all>"
 
 #: awaystore.cpp:109
 msgid "Illegal message # requested"
-msgstr ""
+msgstr "Número inválido de mensagem solicitado"
 
 #: awaystore.cpp:113
 msgid "Message erased"
@@ -48,7 +48,7 @@ msgstr "Senha atualizada para [{1}]"
 
 #: awaystore.cpp:147
 msgid "Corrupt message! [{1}]"
-msgstr ""
+msgstr "Mensagem corrupta! [{1}]"
 
 #: awaystore.cpp:159
 msgid "Corrupt time stamp! [{1}]"
@@ -86,7 +86,7 @@ msgstr ""
 
 #: awaystore.cpp:386 awaystore.cpp:389
 msgid "You have {1} messages!"
-msgstr ""
+msgstr "Você tem {1} nova{s} mensagem(ns)!"
 
 #: awaystore.cpp:456
 msgid "Unable to find buffer"

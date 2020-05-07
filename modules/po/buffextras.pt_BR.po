@@ -12,7 +12,7 @@ msgstr ""
 
 #: buffextras.cpp:45
 msgid "Server"
-msgstr ""
+msgstr "Servidor"
 
 #: buffextras.cpp:47
 msgid "{1} set mode: {2} {3}"
@@ -20,27 +20,27 @@ msgstr ""
 
 #: buffextras.cpp:55
 msgid "{1} kicked {2} with reason: {3}"
-msgstr ""
+msgstr "{1} expulsou {2}: {3}"
 
 #: buffextras.cpp:64
 msgid "{1} quit: {2}"
-msgstr ""
+msgstr "{1} saiu: {2}"
 
 #: buffextras.cpp:73
 msgid "{1} joined"
-msgstr ""
+msgstr "{1} entrou"
 
 #: buffextras.cpp:81
 msgid "{1} parted: {2}"
-msgstr ""
+msgstr "{1} saiu do canal: {2}"
 
 #: buffextras.cpp:90
 msgid "{1} is now known as {2}"
-msgstr ""
+msgstr "{1} trocou de apelido: {2}"
 
 #: buffextras.cpp:100
 msgid "{1} changed the topic to: {2}"
-msgstr ""
+msgstr "{1} alterou o tópico para: {2}"
 
 #: buffextras.cpp:115
 msgid "Adds joins, parts etc. to the playback buffer"

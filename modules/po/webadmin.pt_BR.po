@@ -160,7 +160,7 @@ msgstr ""
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:58
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:99
 msgid "BindHost:"
-msgstr ""
+msgstr "Host vinculado:"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:65
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:112
