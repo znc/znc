@@ -55,7 +55,7 @@ msgstr ""
 
 #: fail2ban.cpp:86
 msgid "Usage: Timeout [minutes]"
-msgstr ""
+msgstr "Sintaxe: Timeout [minutos]"
 
 #: fail2ban.cpp:91 fail2ban.cpp:94
 msgid "Timeout: {1} min"
@@ -63,7 +63,7 @@ msgstr ""
 
 #: fail2ban.cpp:109
 msgid "Usage: Attempts [count]"
-msgstr ""
+msgstr "Sintaxe: Attempts [quantidade]"
 
 #: fail2ban.cpp:114 fail2ban.cpp:117
 msgid "Attempts: {1}"
@@ -71,7 +71,7 @@ msgstr ""
 
 #: fail2ban.cpp:130
 msgid "Usage: Ban <hosts>"
-msgstr ""
+msgstr "Sintaxe: Ban <hosts>"
 
 #: fail2ban.cpp:140
 msgid "Banned: {1}"
@@ -79,7 +79,7 @@ msgstr ""
 
 #: fail2ban.cpp:153
 msgid "Usage: Unban <hosts>"
-msgstr ""
+msgstr "Sintaxe: Unban <hosts>"
 
 #: fail2ban.cpp:163
 msgid "Unbanned: {1}"

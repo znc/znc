@@ -48,7 +48,7 @@ msgstr "Sintaxe: AddUser <usuário> <máscara de host> [canais]"
 
 #: autovoice.cpp:229
 msgid "Usage: DelUser <user>"
-msgstr "Uso: DelUser <usuário>"
+msgstr "Sintaxe: DelUser <usuário>"
 
 #: autovoice.cpp:238
 msgid "There are no users defined"
