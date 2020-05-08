@@ -49,7 +49,7 @@ msgstr ""
 
 #: dcc.cpp:179
 msgid "Usage: Send <nick> <file>"
-msgstr ""
+msgstr "Sintaxe: Send <apelido> <arquivo>"
 
 #: dcc.cpp:186 dcc.cpp:206
 msgid "Illegal path."
@@ -57,7 +57,7 @@ msgstr ""
 
 #: dcc.cpp:199
 msgid "Usage: Get <file>"
-msgstr ""
+msgstr "Sintaxe: Get <arquivo>"
 
 #: dcc.cpp:215 dcc.cpp:232 dcc.cpp:234
 msgctxt "list"

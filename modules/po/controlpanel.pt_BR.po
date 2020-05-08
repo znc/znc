@@ -364,7 +364,7 @@ msgstr ""
 
 #: controlpanel.cpp:1220
 msgid "Usage: Reconnect <username> <network>"
-msgstr ""
+msgstr "Sintaxe: Reconnect <usuário> <rede>"
 
 #: controlpanel.cpp:1247
 msgid "Queued network {1} of user {2} for a reconnect."
@@ -372,7 +372,7 @@ msgstr ""
 
 #: controlpanel.cpp:1256
 msgid "Usage: Disconnect <username> <network>"
-msgstr ""
+msgstr "Sintaxe: Disconnect <usuário> <rede>"
 
 #: controlpanel.cpp:1271
 msgid "Closed IRC connection for network {1} of user {2}."
@@ -398,7 +398,7 @@ msgstr ""
 
 #: controlpanel.cpp:1315
 msgid "Usage: AddCTCP [user] [request] [reply]"
-msgstr ""
+msgstr "Sintaxe: AddCTCP [usuário] [pedido] [resposta]"
 
 #: controlpanel.cpp:1317
 msgid ""
@@ -419,7 +419,7 @@ msgstr ""
 
 #: controlpanel.cpp:1350
 msgid "Usage: DelCTCP [user] [request]"
-msgstr ""
+msgstr "Sintaxe: DelCTCP [usuário] [pedido]"
 
 #: controlpanel.cpp:1356
 msgid "CTCP requests {1} to user {2} will now be sent to IRC clients"
@@ -457,11 +457,11 @@ msgstr ""
 
 #: controlpanel.cpp:1405
 msgid "Usage: LoadModule <username> <modulename> [args]"
-msgstr ""
+msgstr "Sintaxe: LoadModule <usuário> <nome do módulo> [parâmetros]"
 
 #: controlpanel.cpp:1424
 msgid "Usage: LoadNetModule <username> <network> <modulename> [args]"
-msgstr ""
+msgstr "Sintaxe: LoadModule <usuário> <rede> <nome do módulo> [parâmetros]"
 
 #: controlpanel.cpp:1449
 msgid "Please use /znc unloadmod {1}"
@@ -477,11 +477,11 @@ msgstr ""
 
 #: controlpanel.cpp:1467
 msgid "Usage: UnloadModule <username> <modulename>"
-msgstr ""
+msgstr "Sintaxe: UnloadModule <usuário> <nome do módulo>"
 
 #: controlpanel.cpp:1484
 msgid "Usage: UnloadNetModule <username> <network> <modulename>"
-msgstr ""
+msgstr "Sintaxe: UnloadNetModule <usuário> <rede> <nome do módulo>"
 
 #: controlpanel.cpp:1501 controlpanel.cpp:1507
 msgctxt "listmodules"

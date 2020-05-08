@@ -259,7 +259,7 @@ msgstr "Olá. Como posso ajudá-lo(a)?"
 
 #: Client.cpp:1331
 msgid "Usage: /attach <#chans>"
-msgstr "Uso: /attach <#canais>"
+msgstr "Sintaxe: /attach <#canais>"
 
 #: Client.cpp:1338 Client.cpp:1360 ClientCommand.cpp:129 ClientCommand.cpp:151
 msgid "There was {1} channel matching [{2}]"
@@ -275,7 +275,7 @@ msgstr[1] "{1} canais foram anexados"
 
 #: Client.cpp:1353
 msgid "Usage: /detach <#chans>"
-msgstr "Uso: /detach <#canais>"
+msgstr "Sintaxe: /detach <#canais>"
 
 #: Client.cpp:1363 ClientCommand.cpp:154
 msgid "Detached {1} channel"
@@ -422,7 +422,7 @@ msgstr "Você precisa estar conectado a uma rede para usar este comando"
 
 #: ClientCommand.cpp:58
 msgid "Usage: ListNicks <#chan>"
-msgstr "Uso: ListNicks <#canal>"
+msgstr "Sintaxe: ListNicks <#canal>"
 
 #: ClientCommand.cpp:65
 msgid "You are not on [{1}]"
@@ -450,11 +450,11 @@ msgstr "Host"
 
 #: ClientCommand.cpp:122
 msgid "Usage: Attach <#chans>"
-msgstr "Uso: Attach <#canais>"
+msgstr "Sintaxe: Attach <#canais>"
 
 #: ClientCommand.cpp:144
 msgid "Usage: Detach <#chans>"
-msgstr "Uso: Detach <#canais>"
+msgstr "Sintaxe: Detach <#canais>"
 
 #: ClientCommand.cpp:161
 msgid "There is no MOTD set."
@@ -478,7 +478,7 @@ msgstr "Erro ao tentar gravar as configurações."
 
 #: ClientCommand.cpp:455
 msgid "Usage: ListChans"
-msgstr "Uso: ListChans"
+msgstr "Sintaxe: ListChans"
 
 #: ClientCommand.cpp:462
 msgid "No such user [{1}]"
@@ -567,7 +567,7 @@ msgstr ""
 
 #: ClientCommand.cpp:550
 msgid "Usage: AddNetwork <name>"
-msgstr "Uso: AddNetwork <nome>"
+msgstr "Sintaxe: AddNetwork <nome>"
 
 #: ClientCommand.cpp:554
 msgid "Network name should be alphanumeric"
@@ -587,7 +587,7 @@ msgstr "Não foi possível adicionar esta rede"
 
 #: ClientCommand.cpp:573
 msgid "Usage: DelNetwork <name>"
-msgstr "Uso: DelNetwork <nome>"
+msgstr "Sintaxe: DelNetwork <nome>"
 
 #: ClientCommand.cpp:582
 msgid "Network deleted"
@@ -648,7 +648,8 @@ msgstr "Acesso negado."
 #: ClientCommand.cpp:643
 msgid "Usage: MoveNetwork <old user> <old network> <new user> [new network]"
 msgstr ""
-"Uso: MoveNetwork <usuário antigo> <rede antiga> <novo usuário> [nova rede]"
+"Sintaxe: MoveNetwork <usuário antigo> <rede antiga> <novo usuário> [nova "
+"rede]"
 
 #: ClientCommand.cpp:653
 msgid "Old user {1} not found."
@@ -707,7 +708,7 @@ msgstr "Você não tem uma rede chamada {1}"
 
 #: ClientCommand.cpp:754
 msgid "Usage: AddServer <host> [[+]port] [pass]"
-msgstr "Uso: AddServer <host> [[+]porta] [pass]"
+msgstr "Sintaxe: AddServer <host> [[+]porta] [senha]"
 
 #: ClientCommand.cpp:759
 msgid "Server added"
@@ -723,7 +724,7 @@ msgstr ""
 
 #: ClientCommand.cpp:777
 msgid "Usage: DelServer <host> [port] [pass]"
-msgstr "Uso: DelServer <host> [port] [pass]"
+msgstr "Sintaxe: DelServer <host> [porta] [senha]"
 
 #: ClientCommand.cpp:782 ClientCommand.cpp:822
 msgid "You don't have any servers added."
@@ -855,7 +856,7 @@ msgstr "Falha ao carregar {1}: acesso negado."
 
 #: ClientCommand.cpp:1026
 msgid "Usage: LoadMod [--type=global|user|network] <module> [args]"
-msgstr "Uso: LoadMod [--type=global|user|network] <módulo> [parâmetros]"
+msgstr "Sintaxe: LoadMod [--type=global|user|network] <módulo> [parâmetros]"
 
 #: ClientCommand.cpp:1033
 msgid "Unable to load {1}: {2}"
@@ -935,7 +936,7 @@ msgstr "Falha ao recarregar o módulo {1}: tipo de módulo desconhecido"
 
 #: ClientCommand.cpp:1244
 msgid "Usage: UpdateMod <module>"
-msgstr "Uso: UpdateMod <módulo>"
+msgstr "Sintaxe: UpdateMod <módulo>"
 
 #: ClientCommand.cpp:1248
 msgid "Reloading {1} everywhere"
@@ -1200,7 +1201,8 @@ msgstr "não"
 msgid ""
 "Usage: AddPort <[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost [uriprefix]]"
 msgstr ""
-"Uso: AddPort <[+]porta> <ipv4|ipv6|all><web|irc|all> [bindhost [uriprefix]]"
+"Sintaxe: AddPort <[+]porta> <ipv4|ipv6|all> <web|irc|all> [host vinculado "
+"[prefixo de URI]]"
 
 #: ClientCommand.cpp:1640
 msgid "Port added"
@@ -1212,7 +1214,7 @@ msgstr "Não foi possível adicionar esta porta"
 
 #: ClientCommand.cpp:1648
 msgid "Usage: DelPort <port> <ipv4|ipv6|all> [bindhost]"
-msgstr "Uso: DelPort <porta> <ipv4|ipv6|all> [bindhost]"
+msgstr "Sintaxe: DelPort <porta> <ipv4|ipv6|all> [host vinculado]"
 
 #: ClientCommand.cpp:1657
 msgid "Deleted Port"

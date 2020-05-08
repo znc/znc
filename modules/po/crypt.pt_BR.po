@@ -84,7 +84,7 @@ msgstr ""
 
 #: crypt.cpp:417
 msgid "Usage: SetKey <#chan|Nick> <Key>"
-msgstr ""
+msgstr "Sintaxe: SetKey <#canal|apelido> <chave>"
 
 #: crypt.cpp:428
 msgid "Sent my DH1080 public key to {1}, waiting for reply ..."
@@ -96,7 +96,7 @@ msgstr ""
 
 #: crypt.cpp:433
 msgid "Usage: KeyX <Nick>"
-msgstr ""
+msgstr "Sintaxe: KeyX <apelido>"
 
 #: crypt.cpp:440
 msgid "Nick Prefix disabled."

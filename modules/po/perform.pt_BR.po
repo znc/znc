@@ -28,7 +28,7 @@ msgstr ""
 
 #: perform.cpp:24
 msgid "Usage: add <command>"
-msgstr ""
+msgstr "Sintaxe: add <comando>"
 
 #: perform.cpp:29
 msgid "Added!"
