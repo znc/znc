@@ -40,7 +40,7 @@ msgstr ""
 
 #: adminlog.cpp:168
 msgid "Usage: Target <file|syslog|both> [path]"
-msgstr "Sintaxe: Target <arquivo|registro do sistema|ambos> [caminho]"
+msgstr "Sintaxe: Target <file|syslog|both> [caminho]"
 
 #: adminlog.cpp:170
 msgid "Unknown target"
