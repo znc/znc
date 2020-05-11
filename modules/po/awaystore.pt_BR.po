@@ -24,7 +24,7 @@ msgstr "{1} mensagens foram excluídas"
 
 #: awaystore.cpp:104
 msgid "USAGE: delete <num|all>"
-msgstr "Sintaxe: delete <quantidade|all>"
+msgstr "Sintaxe: delete <num|all>"
 
 #: awaystore.cpp:109
 msgid "Illegal message # requested"

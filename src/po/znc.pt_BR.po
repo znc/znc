@@ -765,7 +765,7 @@ msgstr "SSL"
 
 #: ClientCommand.cpp:832
 msgid "Usage: AddTrustedServerFingerprint <fi:ng:er>"
-msgstr "Sintaxe: AddTrustedServerFingerprint <impres:sãodi:gital>"
+msgstr "Sintaxe: AddTrustedServerFingerprint <im:pres:são:di:gi:tal>"
 
 #: ClientCommand.cpp:836 ClientCommand.cpp:849
 msgid "Done."
@@ -773,7 +773,7 @@ msgstr ""
 
 #: ClientCommand.cpp:845
 msgid "Usage: DelTrustedServerFingerprint <fi:ng:er>"
-msgstr "Sintaxe: AddTrustedServerFingerprint <impres:sãodi:gital>"
+msgstr "Sintaxe: AddTrustedServerFingerprint <im:pres:são:di:gi:tal>"
 
 #: ClientCommand.cpp:858
 msgid "No fingerprints added."
