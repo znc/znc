@@ -197,7 +197,7 @@
 							<? IF ArgsHelpText ?> title="<? VAR ArgsHelpText ?>"<? ENDIF ?> />
 						</td>
 						<td class="mod_descr"><? VAR Description ?></td>
-						<td align="center">
+						<td class="center">
 							<? IF CanBeLoadedByNetwork ?>
 								<input type="checkbox" name="loaded_by_network" id="loaded_by_net_<? VAR Name ?>"
 								<? IF LoadedBySomeNetworks && LoadedByAllNetworks ?>
@@ -211,7 +211,7 @@
 								<? ENDIF ?>
 							<? ENDIF ?>
 						</td>
-						<td align="center">
+						<td class="center">
 							<? IF CanBeLoadedByUser ?>
 								<input type="checkbox" name="loaded_by_user" id="loaded_by_user_<? VAR Name ?>"
 								<? IF LoadedBySomeUsers && LoadedByAllUsers ?>

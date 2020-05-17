@@ -195,7 +195,7 @@
 							<? ENDIF ?>
 						</td>
 						<td class="mod_descr"><? VAR Description ?></td>
-						<td align="center">
+						<td class="center">
 							<? IF CanBeLoadedGlobally ?>
 								<input type="checkbox" name="loaded_globally" id="loaded_globally_<? VAR Name ?>"
 								<? IF LoadedGlobally ?>
@@ -204,7 +204,7 @@
 								disabled="disabled"/>
 							<? ENDIF ?>	
 						</td>
-						<td align="center">
+						<td class="center">
 							<? IF CanBeLoadedByNetwork ?>
 								<input type="checkbox" name="loaded_by_network" id="loaded_by_net_<? VAR Name ?>"
 								<? IF LoadedBySomeNetworks && LoadedByAllNetworks ?>
