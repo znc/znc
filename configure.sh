@@ -1,1 +1,1 @@
-configure
+./configure
