@@ -40,7 +40,7 @@ msgstr ""
 
 #: log.cpp:143
 msgid "Usage: SetRules <rules>"
-msgstr ""
+msgstr "Sintaxe: SetRules <regras>"
 
 #: log.cpp:144
 msgid "Wildcards are allowed"
@@ -70,6 +70,8 @@ msgstr ""
 msgid ""
 "Usage: Set <var> true|false, where <var> is one of: joins, quits, nickchanges"
 msgstr ""
+"Sintaxe: Set <variável> true|false, onde <varíavel> é: joins, quits, "
+"nickchanges"
 
 #: log.cpp:197
 msgid "Will log joins"

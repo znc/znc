@@ -56,11 +56,13 @@ msgstr "Remove um usuário"
 
 #: autoop.cpp:275
 msgid "Usage: AddUser <user> <hostmask>[,<hostmasks>...] <key> [channels]"
-msgstr "Uso: AddUser <usuário> <hostmask>[,<hostmasks>...] <chave> [channels]"
+msgstr ""
+"Sintaxe: AddUser <usuário> <máscara de host>[,<máscaras de hosts>...] "
+"<chave> [canais]"
 
 #: autoop.cpp:291
 msgid "Usage: DelUser <user>"
-msgstr "Uso: DelUser <usuário>"
+msgstr "Sintaxe: DelUser <usuário>"
 
 #: autoop.cpp:300
 msgid "There are no users defined"
@@ -84,7 +86,7 @@ msgstr "Canais"
 
 #: autoop.cpp:337
 msgid "Usage: AddChans <user> <channel> [channel] ..."
-msgstr "Uso: AddChans <usuário> <canal> [channel] ..."
+msgstr "Sintaxe: AddChans <usuário> <canal> [canal] ..."
 
 #: autoop.cpp:344 autoop.cpp:365 autoop.cpp:387 autoop.cpp:408 autoop.cpp:472
 msgid "No such user"
@@ -96,7 +98,7 @@ msgstr "Canal(ais) adicionado(s) ao usuário {1}"
 
 #: autoop.cpp:358
 msgid "Usage: DelChans <user> <channel> [channel] ..."
-msgstr "Uso: DelChans <usuário> <canal> [channel] ..."
+msgstr "Sintaxe: DelChans <usuário> <canal> [canal] ..."
 
 #: autoop.cpp:371
 msgid "Channel(s) Removed from user {1}"
@@ -104,7 +106,7 @@ msgstr "Canal(ais) removido(s) do usuário {1}"
 
 #: autoop.cpp:380
 msgid "Usage: AddMasks <user> <mask>,[mask] ..."
-msgstr "Uso: AddMasks <usuário> <máscara>,[mask] ..."
+msgstr "Sintaxe: AddMasks <usuário> <máscara>,[máscara] ..."
 
 #: autoop.cpp:392
 msgid "Hostmasks(s) added to user {1}"
@@ -112,7 +114,7 @@ msgstr "Máscara(s) de host adicionada(s) ao usuário {1}"
 
 #: autoop.cpp:401
 msgid "Usage: DelMasks <user> <mask>,[mask] ..."
-msgstr "Uso: DelMasks <usuário> <máscara>,[mask] ..."
+msgstr "Sintaxe: DelMasks <usuário> <máscara>,[máscara] ..."
 
 #: autoop.cpp:413
 msgid "Removed user {1} with key {2} and channels {3}"

@@ -37,7 +37,7 @@ msgstr ""
 
 #: certauth.cpp:31
 msgid "[pubkey]"
-msgstr ""
+msgstr "[chave pública]"
 
 #: certauth.cpp:32
 msgid "Add a public key. If key is not provided will use the current key"

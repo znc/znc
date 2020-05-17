@@ -58,7 +58,7 @@ msgstr ""
 
 #: cyrusauth.cpp:199
 msgid "Usage: CreateUsers yes, CreateUsers no, or CreateUsers clone <username>"
-msgstr ""
+msgstr "Sintaxe: CreateUsers <yes|no|clone> <usuário>"
 
 #: cyrusauth.cpp:232
 msgid ""

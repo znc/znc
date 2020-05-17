@@ -12,7 +12,7 @@ msgstr ""
 
 #: crypt.cpp:198
 msgid "<#chan|Nick>"
-msgstr ""
+msgstr "<#Raum|Nickname>"
 
 #: crypt.cpp:199
 msgid "Remove a key for nick or channel"
@@ -36,7 +36,7 @@ msgstr ""
 
 #: crypt.cpp:207
 msgid "Start a DH1080 key exchange with nick"
-msgstr ""
+msgstr "Starte DH1080 Schlüsselaustausch mit Nick"
 
 #: crypt.cpp:210
 msgid "Get the nick prefix"
@@ -134,8 +134,8 @@ msgstr ""
 
 #: crypt.cpp:486
 msgid "You have no encryption keys set."
-msgstr ""
+msgstr "Du hast kein Verschlüsselungsschlüsselsatz."
 
 #: crypt.cpp:508
 msgid "Encryption for channel/private messages"
-msgstr ""
+msgstr "Verschlüsselung für Räume/private Nachrichten"

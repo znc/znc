@@ -12,15 +12,15 @@ msgstr ""
 
 #: dcc.cpp:88
 msgid "<nick> <file>"
-msgstr ""
+msgstr "<nick> <Datei>"
 
 #: dcc.cpp:89
 msgid "Send a file from ZNC to someone"
-msgstr ""
+msgstr "Sende Datei von ZNC zu jemandem"
 
 #: dcc.cpp:91
 msgid "<file>"
-msgstr ""
+msgstr "<Datei>"
 
 #: dcc.cpp:92
 msgid "Send a file from ZNC to your client"
@@ -62,32 +62,32 @@ msgstr ""
 #: dcc.cpp:215 dcc.cpp:232 dcc.cpp:234
 msgctxt "list"
 msgid "Type"
-msgstr ""
+msgstr "Typ"
 
 #: dcc.cpp:216 dcc.cpp:238 dcc.cpp:241
 msgctxt "list"
 msgid "State"
-msgstr ""
+msgstr "Status"
 
 #: dcc.cpp:217 dcc.cpp:243
 msgctxt "list"
 msgid "Speed"
-msgstr ""
+msgstr "Geschwindigkeit"
 
 #: dcc.cpp:218 dcc.cpp:227
 msgctxt "list"
 msgid "Nick"
-msgstr ""
+msgstr "Nick"
 
 #: dcc.cpp:219 dcc.cpp:228
 msgctxt "list"
 msgid "IP"
-msgstr ""
+msgstr "IP"
 
 #: dcc.cpp:220 dcc.cpp:229
 msgctxt "list"
 msgid "File"
-msgstr ""
+msgstr "Datei"
 
 #: dcc.cpp:232
 msgctxt "list-type"
@@ -146,23 +146,23 @@ msgstr ""
 
 #: dcc.cpp:401
 msgid "Receiving [{1}] from [{2}]: Timeout."
-msgstr ""
+msgstr "Empfangen von [{1}] von [{2}]: Zeitüberschreitung."
 
 #: dcc.cpp:411
 msgid "Sending [{1}] to [{2}]: Socket error {3}: {4}"
-msgstr ""
+msgstr "Sende [{1}] zu [{2}]: Socket Fehler {3}: {4}"
 
 #: dcc.cpp:415
 msgid "Receiving [{1}] from [{2}]: Socket error {3}: {4}"
-msgstr ""
+msgstr "Empfange [{1}] von [{2}]: Socket Fehler {3}: {4}"
 
 #: dcc.cpp:423
 msgid "Sending [{1}] to [{2}]: Transfer started."
-msgstr ""
+msgstr "Sende [{1}] zu [{2}]: Übertragung gestartet."
 
 #: dcc.cpp:427
 msgid "Receiving [{1}] from [{2}]: Transfer started."
-msgstr ""
+msgstr "Empfang [{1}] von [{2}]: Übertragung gestartet."
 
 #: dcc.cpp:446
 msgid "Sending [{1}] to [{2}]: Too much data!"

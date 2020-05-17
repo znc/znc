@@ -16,11 +16,11 @@ msgstr "Adicionado à lista"
 
 #: autoattach.cpp:96
 msgid "{1} is already added"
-msgstr ""
+msgstr "O canal {1} já foi adicionado"
 
 #: autoattach.cpp:100
 msgid "Usage: Add [!]<#chan> <search> <host>"
-msgstr ""
+msgstr "Sintaxe: Add [!]<#canal> <busca> <host>"
 
 #: autoattach.cpp:101
 msgid "Wildcards are allowed"
@@ -28,11 +28,11 @@ msgstr ""
 
 #: autoattach.cpp:113
 msgid "Removed {1} from list"
-msgstr ""
+msgstr "O canal {1} foi removido da lista"
 
 #: autoattach.cpp:115
 msgid "Usage: Del [!]<#chan> <search> <host>"
-msgstr ""
+msgstr "Sintaxe: Del [!]<#canal> <busca> <host>"
 
 #: autoattach.cpp:121 autoattach.cpp:129
 msgid "Neg"
@@ -48,7 +48,7 @@ msgstr "Buscar"
 
 #: autoattach.cpp:124 autoattach.cpp:132
 msgid "Host"
-msgstr ""
+msgstr "Host"
 
 #: autoattach.cpp:138
 msgid "You have no entries."

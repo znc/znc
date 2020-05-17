@@ -259,7 +259,7 @@ msgstr "Olá. Como posso ajudá-lo(a)?"
 
 #: Client.cpp:1331
 msgid "Usage: /attach <#chans>"
-msgstr "Uso: /attach <#canais>"
+msgstr "Sintaxe: /attach <#canais>"
 
 #: Client.cpp:1338 Client.cpp:1360 ClientCommand.cpp:129 ClientCommand.cpp:151
 msgid "There was {1} channel matching [{2}]"
@@ -275,7 +275,7 @@ msgstr[1] "{1} canais foram anexados"
 
 #: Client.cpp:1353
 msgid "Usage: /detach <#chans>"
-msgstr "Uso: /detach <#canais>"
+msgstr "Sintaxe: /detach <#canais>"
 
 #: Client.cpp:1363 ClientCommand.cpp:154
 msgid "Detached {1} channel"
@@ -422,7 +422,7 @@ msgstr "Você precisa estar conectado a uma rede para usar este comando"
 
 #: ClientCommand.cpp:58
 msgid "Usage: ListNicks <#chan>"
-msgstr "Uso: ListNicks <#canal>"
+msgstr "Sintaxe: ListNicks <#canal>"
 
 #: ClientCommand.cpp:65
 msgid "You are not on [{1}]"
@@ -450,11 +450,11 @@ msgstr "Host"
 
 #: ClientCommand.cpp:122
 msgid "Usage: Attach <#chans>"
-msgstr "Uso: Attach <#canais>"
+msgstr "Sintaxe: Attach <#canais>"
 
 #: ClientCommand.cpp:144
 msgid "Usage: Detach <#chans>"
-msgstr "Uso: Detach <#canais>"
+msgstr "Sintaxe: Detach <#canais>"
 
 #: ClientCommand.cpp:161
 msgid "There is no MOTD set."
@@ -478,7 +478,7 @@ msgstr "Erro ao tentar gravar as configurações."
 
 #: ClientCommand.cpp:455
 msgid "Usage: ListChans"
-msgstr "Uso: ListChans"
+msgstr "Sintaxe: ListChans"
 
 #: ClientCommand.cpp:462
 msgid "No such user [{1}]"
@@ -567,7 +567,7 @@ msgstr ""
 
 #: ClientCommand.cpp:550
 msgid "Usage: AddNetwork <name>"
-msgstr "Uso: AddNetwork <nome>"
+msgstr "Sintaxe: AddNetwork <nome>"
 
 #: ClientCommand.cpp:554
 msgid "Network name should be alphanumeric"
@@ -587,7 +587,7 @@ msgstr "Não foi possível adicionar esta rede"
 
 #: ClientCommand.cpp:573
 msgid "Usage: DelNetwork <name>"
-msgstr "Uso: DelNetwork <nome>"
+msgstr "Sintaxe: DelNetwork <nome>"
 
 #: ClientCommand.cpp:582
 msgid "Network deleted"
@@ -648,7 +648,8 @@ msgstr "Acesso negado."
 #: ClientCommand.cpp:643
 msgid "Usage: MoveNetwork <old user> <old network> <new user> [new network]"
 msgstr ""
-"Uso: MoveNetwork <usuário antigo> <rede antiga> <novo usuário> [nova rede]"
+"Sintaxe: MoveNetwork <usuário antigo> <rede antiga> <novo usuário> [nova "
+"rede]"
 
 #: ClientCommand.cpp:653
 msgid "Old user {1} not found."
@@ -707,7 +708,7 @@ msgstr "Você não tem uma rede chamada {1}"
 
 #: ClientCommand.cpp:754
 msgid "Usage: AddServer <host> [[+]port] [pass]"
-msgstr "Uso: AddServer <host> [[+]porta] [pass]"
+msgstr "Sintaxe: AddServer <host> [[+]porta] [senha]"
 
 #: ClientCommand.cpp:759
 msgid "Server added"
@@ -723,7 +724,7 @@ msgstr ""
 
 #: ClientCommand.cpp:777
 msgid "Usage: DelServer <host> [port] [pass]"
-msgstr "Uso: DelServer <host> [port] [pass]"
+msgstr "Sintaxe: DelServer <host> [porta] [senha]"
 
 #: ClientCommand.cpp:782 ClientCommand.cpp:822
 msgid "You don't have any servers added."
@@ -764,7 +765,7 @@ msgstr "SSL"
 
 #: ClientCommand.cpp:832
 msgid "Usage: AddTrustedServerFingerprint <fi:ng:er>"
-msgstr ""
+msgstr "Sintaxe: AddTrustedServerFingerprint <im:pres:são:di:gi:tal>"
 
 #: ClientCommand.cpp:836 ClientCommand.cpp:849
 msgid "Done."
@@ -772,11 +773,11 @@ msgstr ""
 
 #: ClientCommand.cpp:845
 msgid "Usage: DelTrustedServerFingerprint <fi:ng:er>"
-msgstr ""
+msgstr "Sintaxe: AddTrustedServerFingerprint <im:pres:são:di:gi:tal>"
 
 #: ClientCommand.cpp:858
 msgid "No fingerprints added."
-msgstr ""
+msgstr "Nenhuma impressão digital adicionada."
 
 #: ClientCommand.cpp:874 ClientCommand.cpp:880
 msgctxt "topicscmd"
@@ -855,7 +856,7 @@ msgstr "Falha ao carregar {1}: acesso negado."
 
 #: ClientCommand.cpp:1026
 msgid "Usage: LoadMod [--type=global|user|network] <module> [args]"
-msgstr "Uso: LoadMod [--type=global|user|network] <módulo> [parâmetros]"
+msgstr "Sintaxe: LoadMod [--type=global|user|network] <módulo> [parâmetros]"
 
 #: ClientCommand.cpp:1033
 msgid "Unable to load {1}: {2}"
@@ -867,7 +868,7 @@ msgstr "Falha ao carregar o módulo global {1}: acesso negado."
 
 #: ClientCommand.cpp:1049
 msgid "Unable to load network module {1}: Not connected with a network."
-msgstr ""
+msgstr "Falha ao carregar o módulo de rede {1}: sem conexão com uma rede."
 
 #: ClientCommand.cpp:1071
 msgid "Unknown module type"
@@ -887,35 +888,35 @@ msgstr "Falha ao carregar o módulo {1}: {2}"
 
 #: ClientCommand.cpp:1104
 msgid "Unable to unload {1}: Access denied."
-msgstr ""
+msgstr "Falha ao descarregar {1}: acesso negado."
 
 #: ClientCommand.cpp:1110
 msgid "Usage: UnloadMod [--type=global|user|network] <module>"
-msgstr ""
+msgstr "Sintaxe: UnloadMod [--type=global|user|network] <módulo>"
 
 #: ClientCommand.cpp:1119
 msgid "Unable to determine type of {1}: {2}"
-msgstr ""
+msgstr "Falha ao determinar o tipo do módulo {1}: {2}"
 
 #: ClientCommand.cpp:1127
 msgid "Unable to unload global module {1}: Access denied."
-msgstr ""
+msgstr "Falha ao descarregar o módulo global {1}: acesso negado."
 
 #: ClientCommand.cpp:1134
 msgid "Unable to unload network module {1}: Not connected with a network."
-msgstr ""
+msgstr "Falha ao descarregar o módulo de rede {1}: sem conexão com uma rede."
 
 #: ClientCommand.cpp:1153
 msgid "Unable to unload module {1}: Unknown module type"
-msgstr ""
+msgstr "Falha ao descarregar o módulo {1}: tipo de módulo desconhecido"
 
 #: ClientCommand.cpp:1166
 msgid "Unable to reload modules. Access denied."
-msgstr ""
+msgstr "Falha ao recarregar módulos: acesso negado."
 
 #: ClientCommand.cpp:1187
 msgid "Usage: ReloadMod [--type=global|user|network] <module> [args]"
-msgstr ""
+msgstr "Sintaxe: ReloadMod [--type=global|user|network] <módulo> [parâmetros]"
 
 #: ClientCommand.cpp:1196
 msgid "Unable to reload {1}: {2}"
@@ -923,23 +924,23 @@ msgstr "Falha ao recarregar {1}: {2}"
 
 #: ClientCommand.cpp:1204
 msgid "Unable to reload global module {1}: Access denied."
-msgstr ""
+msgstr "Falha ao recarregar o módulo global {1}: acesso negado."
 
 #: ClientCommand.cpp:1211
 msgid "Unable to reload network module {1}: Not connected with a network."
-msgstr ""
+msgstr "Falha ao recarregar o módulo de rede {1}: sem conexão com uma rede."
 
 #: ClientCommand.cpp:1233
 msgid "Unable to reload module {1}: Unknown module type"
-msgstr ""
+msgstr "Falha ao recarregar o módulo {1}: tipo de módulo desconhecido"
 
 #: ClientCommand.cpp:1244
 msgid "Usage: UpdateMod <module>"
-msgstr "Uso: UpdateMod <módulo>"
+msgstr "Sintaxe: UpdateMod <módulo>"
 
 #: ClientCommand.cpp:1248
 msgid "Reloading {1} everywhere"
-msgstr ""
+msgstr "Recarregando {1}"
 
 #: ClientCommand.cpp:1250
 msgid "Done"
@@ -958,19 +959,19 @@ msgstr ""
 
 #: ClientCommand.cpp:1268
 msgid "Usage: SetBindHost <host>"
-msgstr "Uso: SetBindHost <host>"
+msgstr "Sintaxe: SetBindHost <host>"
 
 #: ClientCommand.cpp:1273 ClientCommand.cpp:1290
 msgid "You already have this bind host!"
-msgstr ""
+msgstr "Você já está vinculado a este host!"
 
 #: ClientCommand.cpp:1278
 msgid "Set bind host for network {1} to {2}"
-msgstr ""
+msgstr "Vincular o host {2} à rede {1}"
 
 #: ClientCommand.cpp:1285
 msgid "Usage: SetUserBindHost <host>"
-msgstr "Uso: SetUserBindHost <host>"
+msgstr "Sintaxe: SetUserBindHost <host>"
 
 #: ClientCommand.cpp:1295
 msgid "Set default bind host to {1}"
@@ -996,15 +997,15 @@ msgstr ""
 
 #: ClientCommand.cpp:1315
 msgid "This user's default bind host is {1}"
-msgstr ""
+msgstr "O host padrão vinculado a este usuário é {1}"
 
 #: ClientCommand.cpp:1320
 msgid "This network's bind host not set"
-msgstr ""
+msgstr "Esta rede não possui hosts vinculados"
 
 #: ClientCommand.cpp:1322
 msgid "This network's default bind host is {1}"
-msgstr ""
+msgstr "O host padrão vinculado a esta rede é {1}"
 
 #: ClientCommand.cpp:1336
 msgid "Usage: PlayBuffer <#chan|query>"
@@ -1129,7 +1130,7 @@ msgstr "Porta"
 #: ClientCommand.cpp:1548 ClientCommand.cpp:1559
 msgctxt "listports"
 msgid "BindHost"
-msgstr "BindHost"
+msgstr "Host vinculado"
 
 #: ClientCommand.cpp:1549 ClientCommand.cpp:1562
 msgctxt "listports"
@@ -1200,7 +1201,8 @@ msgstr "não"
 msgid ""
 "Usage: AddPort <[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost [uriprefix]]"
 msgstr ""
-"Uso: AddPort <[+]porta> <ipv4|ipv6|all><web|irc|all> [bindhost [uriprefix]]"
+"Sintaxe: AddPort <[+]porta> <ipv4|ipv6|all> <web|irc|all> [host vinculado "
+"[prefixo de URI]]"
 
 #: ClientCommand.cpp:1640
 msgid "Port added"
@@ -1212,7 +1214,7 @@ msgstr "Não foi possível adicionar esta porta"
 
 #: ClientCommand.cpp:1648
 msgid "Usage: DelPort <port> <ipv4|ipv6|all> [bindhost]"
-msgstr "Uso: DelPort <porta> <ipv4|ipv6|all> [bindhost]"
+msgstr "Sintaxe: DelPort <porta> <ipv4|ipv6|all> [host vinculado]"
 
 #: ClientCommand.cpp:1657
 msgid "Deleted Port"
@@ -1293,7 +1295,7 @@ msgstr "Adiciona uma rede ao seu usuário"
 #: ClientCommand.cpp:1718
 msgctxt "helpcmd|DelNetwork|args"
 msgid "<name>"
-msgstr ""
+msgstr "<nome>"
 
 #: ClientCommand.cpp:1719
 msgctxt "helpcmd|DelNetwork|desc"
@@ -1308,7 +1310,7 @@ msgstr "Listar todas as redes"
 #: ClientCommand.cpp:1724
 msgctxt "helpcmd|MoveNetwork|args"
 msgid "<old user> <old network> <new user> [new network]"
-msgstr ""
+msgstr "<usuário antigo> <rede antiga> <usuário novo> [rede nova]"
 
 #: ClientCommand.cpp:1726
 msgctxt "helpcmd|MoveNetwork|desc"
@@ -1318,7 +1320,7 @@ msgstr "Move uma rede de um usuário para outro"
 #: ClientCommand.cpp:1730
 msgctxt "helpcmd|JumpNetwork|args"
 msgid "<network>"
-msgstr ""
+msgstr "<rede>"
 
 #: ClientCommand.cpp:1731
 msgctxt "helpcmd|JumpNetwork|desc"
@@ -1326,34 +1328,36 @@ msgid ""
 "Jump to another network (Alternatively, you can connect to ZNC several "
 "times, using `user/network` as username)"
 msgstr ""
+"Troca para outra rede (você pode também conectar ao ZNC várias vezes "
+"utilizando `usuário/rede` como nome de usuário)"
 
 #: ClientCommand.cpp:1736
 msgctxt "helpcmd|AddServer|args"
 msgid "<host> [[+]port] [pass]"
-msgstr ""
+msgstr "<host> [[+]porta] [senha]"
 
 #: ClientCommand.cpp:1737
 msgctxt "helpcmd|AddServer|desc"
 msgid ""
 "Add a server to the list of alternate/backup servers of current IRC network."
-msgstr ""
+msgstr "Adiciona um servidor à lista de servidores alternativos da rede atual."
 
 #: ClientCommand.cpp:1741
 msgctxt "helpcmd|DelServer|args"
 msgid "<host> [port] [pass]"
-msgstr ""
+msgstr "<host> [porta] [senha]"
 
 #: ClientCommand.cpp:1742
 msgctxt "helpcmd|DelServer|desc"
 msgid ""
 "Remove a server from the list of alternate/backup servers of current IRC "
 "network"
-msgstr ""
+msgstr "Remove um servidor da lista de servidores alternativos da rede atual."
 
 #: ClientCommand.cpp:1748
 msgctxt "helpcmd|AddTrustedServerFingerprint|args"
 msgid "<fi:ng:er>"
-msgstr ""
+msgstr "<impres:sãodi:gital>"
 
 #: ClientCommand.cpp:1749
 msgctxt "helpcmd|AddTrustedServerFingerprint|desc"
@@ -1361,26 +1365,28 @@ msgid ""
 "Add a trusted server SSL certificate fingerprint (SHA-256) to current IRC "
 "network."
 msgstr ""
+"Adiciona a impressão digital (SHA-256) do certificado SSL confiável de um "
+"servidor à rede atual."
 
 #: ClientCommand.cpp:1754
 msgctxt "helpcmd|DelTrustedServerFingerprint|args"
 msgid "<fi:ng:er>"
-msgstr ""
+msgstr "<impres:sãodi:gital>"
 
 #: ClientCommand.cpp:1755
 msgctxt "helpcmd|DelTrustedServerFingerprint|desc"
 msgid "Delete a trusted server SSL certificate from current IRC network."
-msgstr ""
+msgstr "Exclui um certificado SSL confiável da rede atual."
 
 #: ClientCommand.cpp:1759
 msgctxt "helpcmd|ListTrustedServerFingerprints|desc"
 msgid "List all trusted server SSL certificates of current IRC network."
-msgstr ""
+msgstr "Lista todos os certificados SSL confiáveis da rede atual."
 
 #: ClientCommand.cpp:1762
 msgctxt "helpcmd|EnableChan|args"
 msgid "<#chans>"
-msgstr ""
+msgstr "<#canais>"
 
 #: ClientCommand.cpp:1763
 msgctxt "helpcmd|EnableChan|desc"
@@ -1390,12 +1396,12 @@ msgstr "Habilitar canais"
 #: ClientCommand.cpp:1764
 msgctxt "helpcmd|DisableChan|args"
 msgid "<#chans>"
-msgstr ""
+msgstr "<#canais>"
 
 #: ClientCommand.cpp:1765
 msgctxt "helpcmd|DisableChan|desc"
 msgid "Disable channels"
-msgstr ""
+msgstr "Desativar canais"
 
 #: ClientCommand.cpp:1766
 msgctxt "helpcmd|Attach|args"
@@ -1470,22 +1476,22 @@ msgstr ""
 #: ClientCommand.cpp:1795
 msgctxt "helpcmd|SetBindHost|args"
 msgid "<host (IP preferred)>"
-msgstr ""
+msgstr "<host (preferência por IP)>"
 
 #: ClientCommand.cpp:1796
 msgctxt "helpcmd|SetBindHost|desc"
 msgid "Set the bind host for this network"
-msgstr ""
+msgstr "Vincula o host especificado a esta rede"
 
 #: ClientCommand.cpp:1800
 msgctxt "helpcmd|SetUserBindHost|args"
 msgid "<host (IP preferred)>"
-msgstr ""
+msgstr "<host (preferência por IP)>"
 
 #: ClientCommand.cpp:1801
 msgctxt "helpcmd|SetUserBindHost|desc"
 msgid "Set the default bind host for this user"
-msgstr ""
+msgstr "Vincula o host especificado a este usuário"
 
 #: ClientCommand.cpp:1804
 msgctxt "helpcmd|ClearBindHost|desc"

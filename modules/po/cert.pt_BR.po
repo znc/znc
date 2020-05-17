@@ -28,15 +28,15 @@ msgstr ""
 
 #: modules/po/../data/cert/tmpl/index.tmpl:14 cert.cpp:72
 msgid "Certificate"
-msgstr ""
+msgstr "Certificado"
 
 #: modules/po/../data/cert/tmpl/index.tmpl:18
 msgid "PEM File:"
-msgstr ""
+msgstr "Arquivo PEM:"
 
 #: modules/po/../data/cert/tmpl/index.tmpl:22
 msgid "Update"
-msgstr ""
+msgstr "Atualizar"
 
 #: cert.cpp:28
 msgid "Pem file deleted"

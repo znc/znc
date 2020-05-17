@@ -40,7 +40,7 @@ msgstr ""
 
 #: autocycle.cpp:70
 msgid "Usage: Add [!]<#chan>"
-msgstr ""
+msgstr "Sintaxe: Add [!]<#canal>"
 
 #: autocycle.cpp:78
 msgid "Removed {1} from list"
@@ -48,7 +48,7 @@ msgstr ""
 
 #: autocycle.cpp:80
 msgid "Usage: Del [!]<#chan>"
-msgstr ""
+msgstr "Sintaxe: Del [!]<#canal>"
 
 #: autocycle.cpp:85 autocycle.cpp:90 autocycle.cpp:95
 msgid "Channel"

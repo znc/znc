@@ -44,7 +44,7 @@ msgstr[1] ""
 
 #: clientnotify.cpp:108
 msgid "Usage: Method <message|notice|off>"
-msgstr ""
+msgstr "Sintaxe: Method <message|notice|off>"
 
 #: clientnotify.cpp:114 clientnotify.cpp:127 clientnotify.cpp:140
 msgid "Saved."
@@ -52,11 +52,11 @@ msgstr ""
 
 #: clientnotify.cpp:121
 msgid "Usage: NewOnly <on|off>"
-msgstr ""
+msgstr "Sintaxe: NewOnly <on|off>"
 
 #: clientnotify.cpp:134
 msgid "Usage: OnDisconnect <on|off>"
-msgstr ""
+msgstr "Sintaxe: OnDisconnect <on|off>"
 
 #: clientnotify.cpp:145
 msgid ""

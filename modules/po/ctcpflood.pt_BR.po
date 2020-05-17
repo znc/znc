@@ -32,11 +32,11 @@ msgstr ""
 
 #: ctcpflood.cpp:98
 msgid "Usage: Secs <limit>"
-msgstr ""
+msgstr "Sintaxe: Secs <limite>"
 
 #: ctcpflood.cpp:113
 msgid "Usage: Lines <limit>"
-msgstr ""
+msgstr "Sintaxe: Lines <limite>"
 
 #: ctcpflood.cpp:125
 msgid "1 CTCP message"
