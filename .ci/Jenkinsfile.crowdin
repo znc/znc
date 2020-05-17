@@ -2,7 +2,7 @@
 // This script is run daily by https://jenkins.znc.in/ to:
 // * upload new English strings to https://crowdin.com/project/znc-bouncer
 // * download new translations
-// * create a pull request with results to ZNC repo
+// * commits results to ZNC repo
 
 import groovy.json.JsonSlurper;
 import groovy.json.JsonOutput;
