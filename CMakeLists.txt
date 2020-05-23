@@ -171,6 +171,7 @@ if(WANT_PERL)
 	find_package(PerlLibs 5.10 REQUIRED)
 endif()
 if (WANT_PYTHON)
+	set (_MIN_PYTHON_VERSION 3.4)
 	find_package(Perl 5.10 REQUIRED)
 	# VERSION_GREATER_EQUAL is available only since 3.7
 	if (CMAKE_VERSION VERSION_LESS 3.12)
@@ -196,8 +197,10 @@ if (WANT_PYTHON)
 				message(FATAL_ERROR "Invalid value of WANT_PYTHON_VERSION")
 			endif()
 		endif()
-		if (Python3_FOUND AND Python3_VERSION VERSION_LESS 3.3)
-			message(STATUS "Python too old, need at least 3.3")
+		if (Python3_FOUND AND Python3_VERSION VERSION_LESS
+				${_MIN_PYTHON_VERSION})
+			message(STATUS
+				"Python too old, need at least ${_MIN_PYTHON_VERSION}")
 			set(Python3_FOUND OFF)
 		else()
 			# Compatibility with pkg-config variables
@@ -206,9 +209,11 @@ if (WANT_PYTHON)
 	endif()
 	if (NOT Python3_FOUND AND WANT_PYTHON_VERSION MATCHES "^python")
 		# Since python 3.8, -embed is required for embedding.
-		pkg_check_modules(Python3 "${WANT_PYTHON_VERSION}-embed >= 3.3")
+		pkg_check_modules(Python3
+			"${WANT_PYTHON_VERSION}-embed >= ${_MIN_PYTHON_VERSION}")
 		if (NOT Python3_FOUND)
-			pkg_check_modules(Python3 "${WANT_PYTHON_VERSION} >= 3.3")
+			pkg_check_modules(Python3
+				"${WANT_PYTHON_VERSION} >= ${_MIN_PYTHON_VERSION}")
 		endif()
 	endif()
 	if (NOT Python3_FOUND)

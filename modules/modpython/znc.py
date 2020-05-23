@@ -22,10 +22,13 @@ if os.environ.get('ZNC_MODPYTHON_COVERAGE'):
     _cov.start()
 
 from functools import wraps
-import imp
-import re
-import traceback
 import collections.abc
+import importlib.abc
+import importlib.machinery
+import importlib.util
+import re
+import sys
+import traceback
 
 from znc_core import *
 
@@ -687,47 +690,85 @@ make_inherit(Module, CPyModule, '_cmod')
 make_inherit(Timer, CPyTimer, '_ctimer')
 
 
-def find_open(modname):
-    '''Returns (pymodule, datapath)'''
-    for d in CModules.GetModDirs():
-        # d == (libdir, datadir)
-        try:
-            x = imp.find_module(modname, [d[0]])
-        except ImportError:
-            # no such file in dir d
-            continue
-        # x == (<open file './modules/admin.so', mode 'rb' at 0x7fa2dc748d20>,
-        #       './modules/admin.so', ('.so', 'rb', 3))
-        # x == (<open file './modules/pythontest.py', mode 'U' at
-        #       0x7fa2dc748d20>, './modules/pythontest.py', ('.py', 'U', 1))
-        if x[0] is None and x[2][2] != imp.PKG_DIRECTORY:
-            # the same
-            continue
-        if x[2][0] == '.so':
-            try:
-                pymodule = imp.load_module(modname, *x)
-            except ImportError:
-                # found needed .so but can't load it...
-                # maybe it's normal (non-python) znc module?
-                # another option here could be to "continue"
-                # search of python module in other moddirs.
-                # but... we respect C++ modules ;)
-                return (None, None)
-            finally:
-                x[0].close()
-        else:
-            # this is not .so, so it can be only python module .py or .pyc
-            try:
-                pymodule = imp.load_module(modname, *x)
-            finally:
-                if x[0]:
-                    x[0].close()
-        return (pymodule, d[1]+modname)
-    else:
-        # nothing found
-        return (None, None)
+class ZNCModuleLoader(importlib.abc.SourceLoader):
+    def __init__(self, modname, pypath):
+        self.pypath = pypath
+
+    def create_module(self, spec):
+        self._datadir = spec.loader_state[0]
+        self._package_dir = spec.loader_state[1]
+        return super().create_module(spec)
+
+    def get_data(self, path):
+        with open(path, 'rb') as f:
+            return f.read()
+
+    def get_filename(self, fullname):
+        return self.pypath
+
+
+class ZNCModuleFinder(importlib.abc.MetaPathFinder):
+    @staticmethod
+    def find_spec(fullname, path, target=None):
+        if fullname == 'znc_modules':
+            spec = importlib.util.spec_from_loader(fullname, None, is_package=True)
+            return spec
+        parts = fullname.split('.')
+        if parts[0] != 'znc_modules':
+            return
+        def dirs():
+            if len(parts) == 2:
+                # common case
+                yield from CModules.GetModDirs()
+            else:
+                # the module is a package and tries to load a submodule of it
+                for libdir in sys.modules['znc_modules.' + parts[1]].__loader__._package_dir:
+                    yield libdir, None
+        for libdir, datadir in dirs():
+            finder = importlib.machinery.FileFinder(libdir,
+                    (ZNCModuleLoader, importlib.machinery.SOURCE_SUFFIXES))
+            spec = finder.find_spec('.'.join(parts[1:]))
+            if spec:
+                spec.name = fullname
+                spec.loader_state = (datadir, spec.submodule_search_locations)
+                # It almost works with original submodule_search_locations,
+                # then python will find submodules of the package itself,
+                # without calling out to ZNCModuleFinder or ZNCModuleLoader.
+                # But updatemod will be flaky for those submodules because as
+                # of py3.8 importlib.invalidate_caches() goes only through
+                # sys.meta_path, but not sys.path_hooks. So we make them load
+                # through ZNCModuleFinder too, but still remember the original
+                # dir so that the whole module comes from a single entry in
+                # CModules.GetModDirs().
+                spec.submodule_search_locations = []
+                return spec
+
+
+sys.meta_path.append(ZNCModuleFinder())
 
 _py_modules = set()
+
+def find_open(modname):
+    '''Returns (pymodule, datapath)'''
+    fullname = 'znc_modules.' + modname
+    for m in _py_modules:
+        if m.GetModName() == modname:
+            break
+    else:
+        # module is not loaded, clean up previous attempts to load it or even
+        # to list as available modules
+        # This is to to let updatemod work
+        to_remove = []
+        for m in sys.modules:
+            if m == fullname or m.startswith(fullname + '.'):
+                to_remove.append(m)
+        for m in to_remove:
+            del sys.modules[m]
+    try:
+        module = importlib.import_module(fullname)
+    except ImportError:
+        return (None, None)
+    return (module, os.path.join(module.__loader__._datadir, modname))
 
 def load_module(modname, args, module_type, user, network, retmsg, modpython):
     '''Returns 0 if not found, 1 on loading error, 2 on success'''

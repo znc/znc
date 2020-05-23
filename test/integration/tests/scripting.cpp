@@ -243,5 +243,41 @@ TEST_F(ZNCTest, ModperlNV) {
     client.ReadUntil(":a b");
 }
 
+TEST_F(ZNCTest, ModpythonPackage) {
+    if (QProcessEnvironment::systemEnvironment().value(
+            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
+        return;
+    }
+    auto znc = Run();
+    znc->CanLeak();
+
+    QDir dir(m_dir.path());
+    ASSERT_TRUE(dir.mkpath("modules"));
+    ASSERT_TRUE(dir.cd("modules"));
+    ASSERT_TRUE(dir.mkpath("packagetest"));
+    InstallModule("packagetest/__init__.py", R"(
+        import znc
+        from .data import value
+
+        class packagetest(znc.Module):
+            def OnModCommand(self, cmd):
+                self.PutModule('value = ' + value)
+    )");
+    InstallModule("packagetest/data.py", "value = 'a'");
+
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod modpython");
+    client.Write("znc loadmod packagetest");
+    client.Write("PRIVMSG *packagetest :foo");
+    client.ReadUntil("value = a");
+    InstallModule("packagetest/data.py", "value = 'b'");
+    client.Write("PRIVMSG *packagetest :foo");
+    client.ReadUntil("value = a");
+    client.Write("znc updatemod packagetest");
+    client.Write("PRIVMSG *packagetest :foo");
+    client.ReadUntil("value = b");
+}
+
 }  // namespace
 }  // namespace znc_inttest
