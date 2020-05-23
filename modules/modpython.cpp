@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
 #include <znc/Chan.h>
@@ -455,7 +456,7 @@ CBSOCK(ConnectionRefused);
 void CPySocket::ReadData(const char* data, size_t len) {
     PyObject* pyRes =
         PyObject_CallMethod(m_pyObj, const_cast<char*>("OnReadData"),
-                            const_cast<char*>("y#"), data, (int)len);
+                            const_cast<char*>("y#"), data, (Py_ssize_t)len);
     CHECKCLEARSOCK("OnReadData");
 }
 
