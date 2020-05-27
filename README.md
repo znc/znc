@@ -41,7 +41,7 @@ modperl:
 * SWIG if building from git
 
 modpython:
-* python 3.3+ and its bundled libpython
+* python 3.4+ and its bundled libpython
 * perl is a build dependency
 * macOS: Python from Homebrew is preferred over system version
 * SWIG if building from git
