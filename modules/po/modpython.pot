@@ -3,6 +3,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: modpython.cpp:512
+#: modpython.cpp:513
 msgid "Loads python scripts as ZNC modules"
 msgstr ""
