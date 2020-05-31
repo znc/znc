@@ -297,6 +297,14 @@ TEST_F(ZNCTest, StatusEchoMessage) {
     client.Write("PRIVMSG *status :blah");
     client.ReadUntil(":nick!user@irc.znc.in PRIVMSG *status :blah");
     client.ReadUntil(":*status!znc@znc.in PRIVMSG nick :Unknown command");
+    client.Write("znc delnetwork test");
+    client.ReadUntil("Network deleted");
+    auto client2 = LoginClient();
+    client2.Write("PRIVMSG *status :blah2");
+    client2.ReadUntil(":*status!znc@znc.in PRIVMSG nick :Unknown command");
+    auto client3 = LoginClient();
+    client3.Write("PRIVMSG *status :blah3");
+    client3.ReadUntil(":*status!znc@znc.in PRIVMSG nick :Unknown command");
 }
 
 }  // namespace
