@@ -12,6 +12,6 @@ msgstr ""
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
 
-#: modpython.cpp:512
+#: modpython.cpp:513
 msgid "Loads python scripts as ZNC modules"
 msgstr "Загружает Python-скрипты как модули ZNC"

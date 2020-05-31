@@ -10,6 +10,6 @@ msgstr ""
 "Language-Team: Bulgarian\n"
 "Language: bg_BG\n"
 
-#: modpython.cpp:512
+#: modpython.cpp:513
 msgid "Loads python scripts as ZNC modules"
 msgstr ""
