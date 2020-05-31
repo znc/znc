@@ -128,7 +128,7 @@ class CRouteMonitorMod : public CModule {
 
     void OnClientDisconnect() override { ClearClientMonitorSubscriptions(); }
 
-    EModRet OnRawMessage(CMessage &message) override {
+    EModRet OnNumericMessage(CNumericMessage &message) override {
         if (!GetNetwork()->GetIRCSock() ||
             !GetNetwork()->GetIRCSock()->IsConnected()) {
             return CONTINUE;
@@ -139,10 +139,10 @@ class CRouteMonitorMod : public CModule {
             return CONTINUE;
         }
 
-        CString rpl = message.GetCommand();
+        unsigned int numeric = message.GetCode();
 
-        if (rpl.Equals("730") || rpl.Equals("731")) {
-            const bool online = rpl.Equals("730");
+        if (numeric == 730 || numeric == 731) {
+            const bool online = numeric == 730;
 
             CString nick = message.GetParam(0); // can be * per spec
 
