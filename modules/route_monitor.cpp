@@ -261,7 +261,7 @@ class CRouteMonitorMod : public CModule {
                 ++numTargets;
             }
         }
-        if (numTargets > m_monitorLimit) {
+        if (m_monitorLimit > 0 && numTargets > m_monitorLimit) {
             m_pClient->PutClient(
                 ":irc.znc.in 734 " + GetNetwork()->GetIRCSock()->GetNick() +
                 " " + CString(m_monitorLimit) + " " +
@@ -311,8 +311,8 @@ class CRouteMonitorMod : public CModule {
 
     // Adds an individual MONITOR subscription for a client.
     //
-    // If we're already subscribed to this target, informs the client of the
-    // current (cached) state.
+    // If we're already subscribed to this target, the caller should inform the
+    // client of the current (cached) state.
     //
     // Returns whether this needs to be synced to the IRC server.
     bool AddMonitorSubscription(const CString &target) {
