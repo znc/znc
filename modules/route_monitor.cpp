@@ -66,7 +66,8 @@ class CasefoldedNick {
 
 // MonitorTarget stores state about a nick.
 struct MonitorTarget {
-    CString actualNick; // non-casefolded nick
+    // Non-casefolded nick, including !user@host if the server provided it.
+    CString actualNick;
     bool online;
 };
 
@@ -216,13 +217,15 @@ class CRouteMonitorMod : public CModule {
     }
 
   private:
-    void RouteMonitorUpdates(const CString &nick, const VCString &targets,
+    void RouteMonitorUpdates(const CString &userNick, const VCString &targets,
                              const bool online) {
         std::map<CClient *, std::set<CString /* actual nick */>> updatesToSend;
 
         // Update m_targetState and collect updatesToSend to clients.
         for (const CString &target : targets) {
-            const auto casefoldedNick = CasefoldedNick(target);
+            // Separate the !user@host if it exists.
+            const auto nick = target.Token(0, false, "!");
+            const auto casefoldedNick = CasefoldedNick(nick);
 
             auto it = m_targetClients.find(casefoldedNick);
             if (it == m_targetClients.end()) {
@@ -234,7 +237,9 @@ class CRouteMonitorMod : public CModule {
             }
 
             MonitorTarget &targetState = m_targetState[casefoldedNick];
-            targetState.actualNick = target; // non-casefolded nick
+            // Store non-casefolded nick, including !user@host if the server
+            // provided it.
+            targetState.actualNick = target;
             targetState.online = online;
 
             for (CClient *subscribedClient : it->second) {
@@ -243,7 +248,8 @@ class CRouteMonitorMod : public CModule {
         }
 
         const CString base_reply = CString(":irc.znc.in ") +
-                                   (online ? "730" : "731") + " " + nick + " :";
+                                   (online ? "730" : "731") + " " + userNick +
+                                   " :";
 
         // Send updates to our ZNC clients.
         for (const auto &it : updatesToSend) {
