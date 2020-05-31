@@ -862,6 +862,9 @@ void CClient::ClearServerDependentCaps() {
 
 template <typename T>
 void CClient::AddBuffer(const T& Message) {
+    if (!m_pNetwork) {
+        return;
+    }
     const CString sTarget = Message.GetTarget();
 
     T Format;
@@ -898,6 +901,9 @@ void CClient::EchoMessage(const CMessage& Message) {
 }
 
 set<CChan*> CClient::MatchChans(const CString& sPatterns) const {
+    if (!m_pNetwork) {
+        return {};
+    }
     VCString vsPatterns;
     sPatterns.Replace_n(",", " ")
         .Split(" ", vsPatterns, false, "", "", true, true);
