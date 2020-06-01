@@ -238,47 +238,47 @@ msgstr ""
 "Stai per essere disconnesso perché un altro utente si è appena autenticato "
 "come te."
 
-#: Client.cpp:1015
+#: Client.cpp:1021
 msgid "Your CTCP to {1} got lost, you are not connected to IRC!"
 msgstr "Il tuo CTCP a {1} è andato perso, non sei connesso ad IRC!"
 
-#: Client.cpp:1141
+#: Client.cpp:1147
 msgid "Your notice to {1} got lost, you are not connected to IRC!"
 msgstr "Il tuo NOTICE a {1} è andato perso, non sei connesso ad IRC!"
 
-#: Client.cpp:1180
+#: Client.cpp:1186
 msgid "Removing channel {1}"
 msgstr "Rimozione del canle {1}"
 
-#: Client.cpp:1258
+#: Client.cpp:1264
 msgid "Your message to {1} got lost, you are not connected to IRC!"
 msgstr "Il tuo messaggio a {1} è andato perso, non sei connesso ad IRC!"
 
-#: Client.cpp:1311 Client.cpp:1317
+#: Client.cpp:1317 Client.cpp:1323
 msgid "Hello. How may I help you?"
 msgstr "Ciao! Come posso aiutarti? Puoi iniziare a scrivere help"
 
-#: Client.cpp:1331
+#: Client.cpp:1337
 msgid "Usage: /attach <#chans>"
 msgstr "Usa: /attach <#canali>"
 
-#: Client.cpp:1338 Client.cpp:1360 ClientCommand.cpp:129 ClientCommand.cpp:151
+#: Client.cpp:1344 Client.cpp:1366 ClientCommand.cpp:129 ClientCommand.cpp:151
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
 msgstr[0] "Trovato {1} canale corrispondente a [{2}]"
 msgstr[1] "Trovati {1} canali corrispondenti a [{2}]"
 
-#: Client.cpp:1341 ClientCommand.cpp:132
+#: Client.cpp:1347 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] "Agganciato {1} canale (Attached)"
 msgstr[1] "Agganciati {1} canali (Attached)"
 
-#: Client.cpp:1353
+#: Client.cpp:1359
 msgid "Usage: /detach <#chans>"
 msgstr "Usa: /detach <#canali>"
 
-#: Client.cpp:1363 ClientCommand.cpp:154
+#: Client.cpp:1369 ClientCommand.cpp:154
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] "Scollegato {1} canale (Detached)"
