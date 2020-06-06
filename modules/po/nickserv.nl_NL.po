@@ -16,7 +16,7 @@ msgstr "Wachtwoord ingesteld"
 
 #: nickserv.cpp:36 nickserv.cpp:46
 msgid "Done"
-msgstr ""
+msgstr "Klaar"
 
 #: nickserv.cpp:41
 msgid "NickServ name set"
