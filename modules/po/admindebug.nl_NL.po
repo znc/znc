@@ -31,6 +31,7 @@ msgid ""
 "Failure. We need to be running with a TTY. (is ZNC running with --"
 "foreground?)"
 msgstr ""
+"Mislukt. Moet uitgevoerd worden in een TTY. (Draait ZNC met --forgeround?)"
 
 #: admindebug.cpp:66
 msgid "Already enabled."

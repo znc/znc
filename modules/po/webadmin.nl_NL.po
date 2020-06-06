@@ -196,13 +196,15 @@ msgstr "Schakel certificaatvalidatie uit (komt vóór TrustPKI). NIET VEILIG!"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:83
 msgid "Automatically detect trusted certificates (Trust the PKI):"
-msgstr ""
+msgstr "Detecteer vertrouwde certificaten automatisch (Vertrouw de PKI):"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:85
 msgid ""
 "When disabled, manually whitelist all server fingerprints, even if the "
 "certificate is valid"
 msgstr ""
+"Wanneer uitgeschakeld zullen vingerafdrukken altijd handmatig toegevoegd "
+"moeten worden, ook al is het certificaat geldig"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:89
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:96
@@ -1222,7 +1224,7 @@ msgstr "Sta LoadMod niet toe"
 
 #: webadmin.cpp:1551
 msgid "Admin (dangerous! may gain shell access)"
-msgstr ""
+msgstr "Administrator (Gevaarlijk! Kan hierdoor shell toegang verkrijgen)"
 
 #: webadmin.cpp:1561
 msgid "Deny SetBindHost"
