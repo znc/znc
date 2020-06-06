@@ -66,8 +66,14 @@ class CasefoldedNick {
 
 // MonitorTarget stores state about a nick.
 struct MonitorTarget {
-    // Non-casefolded nick, including !user@host if the server provided it.
+    // Non-casefolded nick, excluding !user@host, if any.
     CString actualNick;
+
+    // user@host if the server provided it. Excludes !.
+    CString userHost;
+
+    // Whether the target is known to be online or not.
+    // Updated whenever we receive a 730/731 reply.
     bool online;
 };
 
@@ -239,7 +245,8 @@ class CRouteMonitorMod : public CModule {
             MonitorTarget &targetState = m_targetState[casefoldedNick];
             // Store non-casefolded nick, including !user@host if the server
             // provided it.
-            targetState.actualNick = target;
+            targetState.actualNick = nick;  // without !user@host
+            targetState.userHost = target.Token(1, true, "!");
             targetState.online = online;
 
             for (CClient *subscribedClient : it->second) {
@@ -289,10 +296,15 @@ class CRouteMonitorMod : public CModule {
                 std::map<CasefoldedNick, MonitorTarget>::const_iterator it =
                     m_targetState.find(CasefoldedNick(target));
                 if (it != m_targetState.end()) {
+                    CString targetToSend = it->second.actualNick;
+                    if (it->second.userHost != "") {
+                        targetToSend += "!" + it->second.userHost;
+                    }
+
                     if (it->second.online) {
-                        cachedOnlineTargets.push_back(it->second.actualNick);
+                        cachedOnlineTargets.push_back(targetToSend);
                     } else {
-                        cachedOfflineTargets.push_back(it->second.actualNick);
+                        cachedOfflineTargets.push_back(targetToSend);
                     }
                 }
             }
@@ -339,7 +351,7 @@ class CRouteMonitorMod : public CModule {
         if (targetClients.size() == 1) {
             // Assume the client is offline for now. The server will tell us if
             // they are online.
-            m_targetState[targetCasefolded] = {target, false};
+            m_targetState[targetCasefolded] = {target, "", false};
 
             // As we're the first client subscribing to this target, we need to
             // tell the server about it. The server should reply with the
