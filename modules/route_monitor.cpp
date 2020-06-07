@@ -27,15 +27,17 @@ namespace {
 // the list must be <= 512.
 template <typename Iterator, typename ConvertToCStringFn>
 void SplitAndSend(const CString &base, Iterator i_start, const Iterator &i_end,
-                  ConvertToCStringFn asString,
+                  ConvertToCStringFn asString, int targMax,
                   const std::function<void(const CString &)> &send) {
     while (i_start != i_end) {
         CString command = base + asString(*i_start);
         ++i_start;
-        while (i_start != i_end &&
+        int num_targets = 1;
+        while ((targMax == 0 || num_targets < targMax) && i_start != i_end &&
                (command.length() + 1 + asString(*i_start).length()) <= 512) {
             command += "," + asString(*i_start);
             ++i_start;
+            ++num_targets;
         }
         send(command);
     }
@@ -165,7 +167,10 @@ class CRouteMonitorMod : public CModule {
 
         // Refresh ISUPPORT information if this is a monitor numeric or we're
         // waiting to replay subscriptions.
-        if ((numeric >= 730 && numeric <= 733) || !m_replayNeeded.empty()) {
+        // Don't refresh on numeric 5 (ISUPPORT) since this hasn't been
+        // processed by ZNC core yet, and we get the information from ZNC core.
+        if ((numeric >= 730 && numeric <= 733) ||
+            (numeric != 5 && !m_replayNeeded.empty())) {
             UpdateMonitorSupport();
         }
 
@@ -177,7 +182,7 @@ class CRouteMonitorMod : public CModule {
         // Re-add subscriptions if any are waiting.
         if (!m_replayNeeded.empty()) {
             SplitAndSend("MONITOR + ", m_replayNeeded.begin(),
-                         m_replayNeeded.end(), Identity,
+                         m_replayNeeded.end(), Identity, GetMonitorTargMax(),
                          [&](const CString &command) { PutIRC(command); });
             m_replayNeeded.clear();
         }
@@ -305,7 +310,7 @@ class CRouteMonitorMod : public CModule {
         // Send updates to our ZNC clients.
         for (const auto &it : updatesToSend) {
             SplitAndSend(
-                base_reply, it.second.begin(), it.second.end(), Identity,
+                base_reply, it.second.begin(), it.second.end(), Identity, 0,
                 [&](const CString &reply) { it.first->PutClient(reply); });
         }
     }
@@ -374,18 +379,18 @@ class CRouteMonitorMod : public CModule {
 
         // Add new monitor subscriptions, if any.
         SplitAndSend("MONITOR + ", targetsToAdd.begin(), targetsToAdd.end(),
-                     Identity,
+                     Identity, GetMonitorTargMax(),
                      [&](const CString &command) { PutIRC(command); });
 
         // Inform client about online and offline cached targets, if any.
         const CString nick = GetNetwork()->GetIRCSock()->GetNick();
         SplitAndSend(
             ":irc.znc.in 730 " + nick + " :", cachedOnlineTargets.begin(),
-            cachedOnlineTargets.end(), Identity,
+            cachedOnlineTargets.end(), Identity, 0,
             [&](const CString &reply) { m_pClient->PutClient(reply); });
         SplitAndSend(
             ":irc.znc.in 731 " + nick + " :", cachedOfflineTargets.begin(),
-            cachedOfflineTargets.end(), Identity,
+            cachedOfflineTargets.end(), Identity, 0,
             [&](const CString &reply) { m_pClient->PutClient(reply); });
     }
 
@@ -440,6 +445,7 @@ class CRouteMonitorMod : public CModule {
         // Remove old monitor subscriptions, if any.
         SplitAndSend("MONITOR - ", serverTargets.begin(), serverTargets.end(),
                      Identity, // already converted above
+                     GetMonitorTargMax(),
                      [&](const CString &command) { PutIRC(command); });
     }
 
@@ -498,7 +504,7 @@ class CRouteMonitorMod : public CModule {
                                        " :";
             SplitAndSend(
                 base_reply, it->second.begin(), it->second.end(),
-                AsActualNick(&m_targetState),
+                AsActualNick(&m_targetState), 0,
                 [&](const CString &reply) { m_pClient->PutClient(reply); });
         }
 
@@ -527,13 +533,34 @@ class CRouteMonitorMod : public CModule {
     void UpdateMonitorSupport() {
         m_monitorLimit =
             GetNetwork()->GetIRCSock()->GetISupport("MONITOR", "-1").ToInt();
-
-        // TODO: Pull TARGMAX for MONITOR? We enforce the overall limit and
-        // command length <= 512 octets but not the number of targets per
-        // command.
     }
 
-    // The server-side limit on the number of targets allowed.
+    // Returns the maximum number of targets allowed in a single command.
+    // Precondition: We're connected to the server.
+    int GetMonitorTargMax() {
+        const CString targMax =
+            GetNetwork()->GetIRCSock()->GetISupport("TARGMAX", "");
+        if (targMax.empty()) {
+            return 0; // unlimited
+        }
+
+        VCString targetTypes;
+        targMax.Split(",", targetTypes, false);
+        for (const CString &targetType : targetTypes) {
+            if (!targetType.StartsWith("MONITOR:")) {
+                continue;
+            }
+            int result = targetType.TrimPrefix_n("MONITOR:").ToInt();
+            if (result < 0) {
+                return 0;
+            }
+            return result;
+        }
+
+        return 0;
+    }
+
+    // The server-side limit on the total number of active targets allowed.
     // -2 means we do not yet know if the server supports MONITOR.
     // -1 means the server does not support MONITOR.
     // 0 means unlimited.
