@@ -202,6 +202,14 @@ TEST_F(ZNCTest, RouteMonitorModule) {
     client1.Write("znc loadmod route_monitor");
     client1.ReadUntil("Loaded module");
 
+    // route_monitor should sync existing subscriptions.
+    ircd.ReadUntil("MONITOR L");
+    ircd.Write(":server 732 user :existing");
+    ircd.Write(":server 733 user :End of list");
+    ircd.ReadUntil("MONITOR S");
+    ircd.Write(":server 731 user :existing");
+    client1.ReadUntil(":irc.znc.in 731 user :existing");
+
     client1.Write("MONITOR + a,c");
     ircd.ReadUntil("MONITOR + a,c");
     ircd.Write(":server 730 user a,c");
@@ -226,7 +234,7 @@ TEST_F(ZNCTest, RouteMonitorModule) {
 
     // MONITOR L should only return the targets subscribed to by the client.
     client1.Write("MONITOR L");
-    client1.ReadUntil(":irc.znc.in 732 user :a,c");
+    client1.ReadUntil(":irc.znc.in 732 user :a,c,existing");
     client1.ReadUntil(":irc.znc.in 733 user :End of MONITOR list");
 
     // Issuing MONITOR C from client2 should only unsubscribe from b, since

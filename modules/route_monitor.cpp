@@ -114,8 +114,22 @@ class CRouteMonitorMod : public CModule {
     MODCONSTRUCTOR(CRouteMonitorMod) {}
 
     bool OnLoad(const CString &, CString &) override {
-        // TODO: Sync state with server. If the server supports MONITOR and
-        // there are existing subscriptions, subscribe all clients to them.
+        ClearState();
+
+        if (!GetNetwork()->GetIRCSock() ||
+            !GetNetwork()->GetIRCSock()->IsConnected()) {
+            // Nothing to sync, since we're not connected.
+            return true;
+        }
+
+        m_monitorLimit =
+            GetNetwork()->GetIRCSock()->GetISupport("MONITOR", "-1").ToInt();
+
+        if (m_monitorLimit >= 0) {
+            m_syncing = true;
+            PutIRC("MONITOR L");
+        }
+
         return true;
     }
 
@@ -152,14 +166,32 @@ class CRouteMonitorMod : public CModule {
             const bool online = numeric == 730;
 
             CString nick = message.GetParam(0); // can be * per spec
-
-            VCString targets;
-
-            CString rplTargets = message.GetParam(1);
-            rplTargets.TrimPrefix();
-            rplTargets.Split(",", targets, false);
+            VCString targets = ParseTargets(message.GetParam(1));
 
             RouteMonitorUpdates(nick, targets, online);
+            return HALTCORE;
+        } else if (numeric == 732) {
+            if (!m_syncing) {
+                // Unexpected MONITOR L reply from the server. Pass it through.
+                return CONTINUE;
+            }
+
+            VCString targets = ParseTargets(message.GetParam(1));
+
+            SubscribeAllClientsToTargets(targets);
+            return HALTCORE;
+        } else if (numeric == 733) {
+            if (!m_syncing) {
+                // Unexpected MONITOR L reply from the server. Pass it through.
+                return CONTINUE;
+            }
+
+            // Send MONITOR S to refresh state, if needed.
+            m_syncing = false;
+            if (!m_targetState.empty()) {
+                PutIRC("MONITOR S");
+            }
+
             return HALTCORE;
         }
 
@@ -237,8 +269,6 @@ class CRouteMonitorMod : public CModule {
             if (it == m_targetClients.end()) {
                 // No subscriptions to this target? Maybe it was just removed.
                 // Ignore it.
-                // TODO: For sync: this should trigger the subscription being
-                // added for all clients.
                 continue;
             }
 
@@ -263,6 +293,24 @@ class CRouteMonitorMod : public CModule {
             SplitAndSend(
                 base_reply, it.second.begin(), it.second.end(), Identity,
                 [&](const CString &reply) { it.first->PutClient(reply); });
+        }
+    }
+
+    void SubscribeAllClientsToTargets(const VCString& targets) {
+        // Add all clients to these targets.
+        const std::vector<CClient *> &clients = GetNetwork()->GetClients();
+        for (const CString &target : targets) {
+            // !user@host shouldn't be included, but remove it anyways.
+            const auto nick = target.Token(0, false, "!");
+            CasefoldedNick nickCasefolded(nick);
+
+            // Assume offline. We will issue MONITOR S afterwards to update
+            // this state.
+            m_targetState[nickCasefolded] = {nick, "", false};
+            for (CClient *client : clients) {
+                m_clientTargets[client].insert(nickCasefolded);
+                m_targetClients[nickCasefolded].insert(client);
+            }
         }
     }
 
@@ -445,11 +493,19 @@ class CRouteMonitorMod : public CModule {
                              " :End of MONITOR list");
     }
 
+    VCString ParseTargets(CString targets) {
+        VCString result;
+        targets.TrimPrefix();
+        targets.Split(",", result, false);
+        return result;
+    }
+
     void ClearState() {
         m_monitorLimit = -2;
         m_clientTargets.clear();
         m_targetClients.clear();
         m_targetState.clear();
+        m_syncing = false;
     }
 
     // The server-side limit on the number of targets allowed.
@@ -468,6 +524,9 @@ class CRouteMonitorMod : public CModule {
     // Cached state of monitor targets. This is populated when the state is
     // received from the server.
     std::map<CasefoldedNick, MonitorTarget> m_targetState;
+
+    // Whether we're syncing the client list.
+    bool m_syncing;
 };
 
 template <> void TModInfo<CRouteMonitorMod>(CModInfo &Info) {
