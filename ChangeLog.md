@@ -1,3 +1,11 @@
+# ZNC 1.8.1 (2020-05-07)
+
+Fixed bug introduced in ZNC 1.8.0:
+
+Authenticated users can trigger an application crash (with a NULL pointer dereference) if echo-message is not enabled and there is no network. CVE-2020-13775
+
+
+
 # ZNC 1.8.0 (2020-05-01)
 
 ## New
