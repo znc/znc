@@ -50,6 +50,13 @@ timestamps {
                 }
                 sh 'LANG=C.UTF-8 find . -name "*.po" -exec msgfilter -i "{}" -o "{}.replacement" .ci/cleanup-po.pl ";"'
                 sh 'find . -name "*.po" -exec mv "{}.replacement" "{}" ";"'
+                withCredentials([string(credentialsId: 'fe727e3e-a8e0-4019-817f-6583c3c51ef7', variable: 'CROWDIN_API2_KEY')]) {
+                  def headers = [[maskValue: true, name: 'Authorization', value: "Bearer ${env.CROWDIN_API2_KEY}"], [maskValue: false, name: 'User-Agent', value: 'https://github.com/znc/znc/blob/master/.ci/Jenkinsfile.crowdin']]
+                  def contributors = httpRequest consoleLogResponseBody: true, customHeaders: headers, url: "https://crowdin.com/api/v2/projects/289533/members?limit=500"
+                  writeFile file: 'contributors.tmp', text: contributors.content
+                }
+                sh '.ci/crowdin-contributors.py < contributors.tmp'
+                sh 'rm contributors.tmp'
               }
               stage("Push ${upstream_branch}") {
                 sh 'git config user.name "ZNC-Jenkins"'
