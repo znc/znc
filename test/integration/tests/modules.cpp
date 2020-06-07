@@ -218,6 +218,17 @@ TEST_F(ZNCTest, RouteMonitorModule) {
     ircd.Write(":server 731 user b");
     client2.ReadUntil(":irc.znc.in 731 user :b");
 
+    // Mark all targets as offline.
+    ircd.Write(":server 731 user a,b,c");
+    // Should be routed to clients accordingly.
+    client1.ReadUntil(":irc.znc.in 731 user :a,c");
+    client2.ReadUntil(":irc.znc.in 731 user :a,b,c");
+
+    // MONITOR L should only return the targets subscribed to by the client.
+    client1.Write("MONITOR L");
+    client1.ReadUntil(":irc.znc.in 732 user :a,c");
+    client1.ReadUntil(":irc.znc.in 733 user :End of MONITOR list");
+
     // Issuing MONITOR C from client2 should only unsubscribe from b, since
     // client1 is still subscribed to a and c.
     client2.Write("MONITOR C");
