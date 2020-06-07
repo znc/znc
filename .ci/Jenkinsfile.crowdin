@@ -55,7 +55,7 @@ timestamps {
                   def contributors = httpRequest consoleLogResponseBody: true, customHeaders: headers, url: "https://crowdin.com/api/v2/projects/289533/members?limit=500"
                   writeFile file: 'contributors.tmp', text: contributors.content
                 }
-                sh 'test -x .ci/crowdin-contributors.py && .ci/crowdin-contributors.py < contributors.tmp'
+                sh '.ci/crowdin-contributors.py < contributors.tmp'
                 sh 'rm contributors.tmp'
               }
               stage("Push ${upstream_branch}") {
