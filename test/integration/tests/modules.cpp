@@ -198,6 +198,7 @@ TEST_F(ZNCTest, RouteMonitorModule) {
     ircd.Write(
         ":server 005 user MONITOR=100 TARGMAX=MONITOR:100 :are supported by "
         "this server");
+    client1.ReadUntil(":server 005");
 
     client1.Write("znc loadmod route_monitor");
     client1.ReadUntil("Loaded module");
