@@ -188,6 +188,42 @@ TEST_F(ZNCTest, KeepNickModule) {
         ":Unable to obtain nick user: Nope :-P, #error");
 }
 
+TEST_F(ZNCTest, RouteMonitorModule) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client1 = LoginClient();
+
+    ircd.ReadUntil("NICK user");
+    ircd.Write(":server 001 user :Hello");
+    ircd.Write(
+        ":server 005 user MONITOR=100 TARGMAX=MONITOR:100 :are supported by "
+        "this server");
+
+    client1.Write("znc loadmod route_monitor");
+    client1.ReadUntil("Loaded module");
+
+    client1.Write("MONITOR + a,c");
+    ircd.ReadUntil("MONITOR + a,c");
+    ircd.Write(":server 730 user a,c");
+    client1.ReadUntil(":irc.znc.in 730 user :a,c");
+
+    auto client2 = LoginClient();
+    client2.Write("MONITOR + a,b,c");
+    // We're already subscribed to a and c, so route_monitor should only
+    // subscribe to b.
+    ircd.ReadUntil("MONITOR + b");
+    // route_monitor should replay the statuses of a and c from internal state.
+    client2.ReadUntil(":irc.znc.in 730 user :a,c");
+
+    ircd.Write(":server 731 user b");
+    client2.ReadUntil(":irc.znc.in 731 user :b");
+
+    // Issuing MONITOR C from client2 should only unsubscribe from b, since
+    // client1 is still subscribed to a and c.
+    client2.Write("MONITOR C");
+    ircd.ReadUntil("MONITOR - b");
+}
+
 TEST_F(ZNCTest, ModuleCSRFOverride) {
     auto znc = Run();
     auto ircd = ConnectIRCd();
