@@ -134,17 +134,23 @@ class CRouteMonitorMod : public CModule {
     }
 
     void OnIRCConnected() override {
-        // When OnIRCConnected() is called, ISUPPORT may not be available yet.
+        // When OnIRCConnected() is called, ISUPPORT is not available yet.
         m_monitorLimit = kMonitorSupportUnknown;
+        m_syncing = false;
 
-        // TODO: Replay MONITOR + to server instead of clearing state.
-        // This would need to be deferred until ISUPPORT is available.
-        ClearState();
+        // Fill in m_replayNeeded with the set of existing subscriptions. Once
+        // we see that the new server also supports MONITOR, we'll resend these
+        // subscriptions.
+        m_replayNeeded.clear();
+        for (const auto& target : m_targetState) {
+            m_replayNeeded.push_back(target.second.actualNick);
+        }
     }
 
     void OnIRCDisconnected() override {
-        // TODO: Preserve state so we can replay MONITOR + on reconnect.
-        ClearState();
+        m_monitorLimit = kMonitorSupportUnknown;
+        m_syncing = false;
+        m_replayNeeded.clear();
     }
 
     void OnClientDisconnect() override { ClearClientMonitorSubscriptions(); }
@@ -155,12 +161,26 @@ class CRouteMonitorMod : public CModule {
             return CONTINUE;
         }
 
+        unsigned int numeric = message.GetCode();
+
+        // Refresh ISUPPORT information if this is a monitor numeric or we're
+        // waiting to replay subscriptions.
+        if ((numeric >= 730 && numeric <= 733) || !m_replayNeeded.empty()) {
+            UpdateMonitorSupport();
+        }
+
         if (m_monitorLimit < 0) {
             // Network doesn't support MONITOR or we don't know yet if it does.
             return CONTINUE;
         }
 
-        unsigned int numeric = message.GetCode();
+        // Re-add subscriptions if any are waiting.
+        if (!m_replayNeeded.empty()) {
+            SplitAndSend("MONITOR + ", m_replayNeeded.begin(),
+                         m_replayNeeded.end(), Identity,
+                         [&](const CString &command) { PutIRC(command); });
+            m_replayNeeded.clear();
+        }
 
         if (numeric == 730 || numeric == 731) {
             const bool online = numeric == 730;
@@ -209,14 +229,8 @@ class CRouteMonitorMod : public CModule {
             return CONTINUE;
         }
 
-        m_monitorLimit =
-            GetNetwork()->GetIRCSock()->GetISupport("MONITOR", "-1").ToInt();
-
-        // TODO: Pull TARGMAX for MONITOR? We enforce the overall limit and
-        // command length <= 512 octets but not the number of targets per
-        // command.
-
         // We shouldn't be getting MONITOR commands if monitor isn't supported.
+        UpdateMonitorSupport();
         if (m_monitorLimit < 0) {
             PutModule("Network is missing ISUPPORT token for MONITOR. "
                       "route_monitor is inactive.");
@@ -501,11 +515,22 @@ class CRouteMonitorMod : public CModule {
     }
 
     void ClearState() {
-        m_monitorLimit = -2;
+        m_monitorLimit = kMonitorSupportUnknown;
         m_clientTargets.clear();
         m_targetClients.clear();
         m_targetState.clear();
+        m_replayNeeded.clear();
         m_syncing = false;
+    }
+    
+    // Precondition: We're connected to the server.
+    void UpdateMonitorSupport() {
+        m_monitorLimit =
+            GetNetwork()->GetIRCSock()->GetISupport("MONITOR", "-1").ToInt();
+
+        // TODO: Pull TARGMAX for MONITOR? We enforce the overall limit and
+        // command length <= 512 octets but not the number of targets per
+        // command.
     }
 
     // The server-side limit on the number of targets allowed.
@@ -524,6 +549,11 @@ class CRouteMonitorMod : public CModule {
     // Cached state of monitor targets. This is populated when the state is
     // received from the server.
     std::map<CasefoldedNick, MonitorTarget> m_targetState;
+
+    // MONITOR subscriptions that need to be resent to the server due to
+    // reconnection. This is deferred until we see the ISUPPORT token for
+    // MONITOR.
+    VCString m_replayNeeded;
 
     // Whether we're syncing the client list.
     bool m_syncing;
