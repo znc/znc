@@ -12,7 +12,7 @@ msgstr ""
 
 #: watch.cpp:178
 msgid "<HostMask> [Target] [Pattern]"
-msgstr ""
+msgstr "<HostMasker> [Doel] [Patroon]"
 
 #: watch.cpp:178
 msgid "Used to add an entry to watch for."
@@ -28,7 +28,7 @@ msgstr "Stort een lijst met alle huidige gebruikers om later te gebruiken."
 
 #: watch.cpp:184
 msgid "<Id>"
-msgstr ""
+msgstr "<ID>"
 
 #: watch.cpp:184
 msgid "Deletes Id from the list of watched entries."
@@ -40,7 +40,7 @@ msgstr "Verwijder alle gebruikers."
 
 #: watch.cpp:188 watch.cpp:190
 msgid "<Id | *>"
-msgstr ""
+msgstr "<ID | *>"
 
 #: watch.cpp:188
 msgid "Enable a disabled entry."
@@ -52,7 +52,7 @@ msgstr "Schakel een ingeschakelde gebruiker uit (maar verwijder deze niet)."
 
 #: watch.cpp:192 watch.cpp:194
 msgid "<Id | *> <True | False>"
-msgstr ""
+msgstr "<ID | > <Waar | Onwaar>"
 
 #: watch.cpp:192
 msgid "Enable or disable detached client only for an entry."
@@ -64,7 +64,7 @@ msgstr "Schakel een losgekoppeld kanaal in of uit voor een gebruiker."
 
 #: watch.cpp:196
 msgid "<Id> [#chan priv #foo* !#bar]"
-msgstr ""
+msgstr "<ID> [#kanaal priv #foo* !#bar]"
 
 #: watch.cpp:196
 msgid "Set the source channels that you care about."
