@@ -2,6 +2,7 @@ These people helped translating ZNC to various languages:
 
 * Altay
 * casmo (Casper)
+* cirinho (Ciro Moniz)
 * CJSStryker
 * DarthGandalf
 * dgw

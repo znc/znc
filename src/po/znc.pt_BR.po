@@ -4,8 +4,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: pt-BR\n"
 "X-Crowdin-File: /1.8.x/src/po/znc.pot\n"
+"X-Crowdin-File-ID: 284\n"
 "Project-Id-Version: znc-bouncer\n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -736,7 +738,7 @@ msgstr "Servidor removido"
 
 #: ClientCommand.cpp:789
 msgid "No such server"
-msgstr ""
+msgstr "Servidor não existe"
 
 #: ClientCommand.cpp:802 ClientCommand.cpp:809
 msgctxt "listservers"
@@ -769,7 +771,7 @@ msgstr "Sintaxe: AddTrustedServerFingerprint <im:pres:são:di:gi:tal>"
 
 #: ClientCommand.cpp:836 ClientCommand.cpp:849
 msgid "Done."
-msgstr ""
+msgstr "Feito."
 
 #: ClientCommand.cpp:845
 msgid "Usage: DelTrustedServerFingerprint <fi:ng:er>"
@@ -944,18 +946,22 @@ msgstr "Recarregando {1}"
 
 #: ClientCommand.cpp:1250
 msgid "Done"
-msgstr ""
+msgstr "Feito"
 
 #: ClientCommand.cpp:1253
 msgid ""
 "Done, but there were errors, module {1} could not be reloaded everywhere."
 msgstr ""
+"Concluído, porém com erros, o módulo {1} não pode ser recarregado em lugar "
+"nenhum."
 
 #: ClientCommand.cpp:1261
 msgid ""
 "You must be connected with a network to use this command. Try "
 "SetUserBindHost instead"
 msgstr ""
+"Você precisa estar conectado a uma rede para usar este comando. Tente "
+"SetUserBindHost"
 
 #: ClientCommand.cpp:1268
 msgid "Usage: SetBindHost <host>"
@@ -975,25 +981,27 @@ msgstr "Sintaxe: SetUserBindHost <host>"
 
 #: ClientCommand.cpp:1295
 msgid "Set default bind host to {1}"
-msgstr ""
+msgstr "Define o host padrão como {1}"
 
 #: ClientCommand.cpp:1301
 msgid ""
 "You must be connected with a network to use this command. Try "
 "ClearUserBindHost instead"
 msgstr ""
+"Você precisa estar conectado a uma rede para usar este comando. Tente "
+"SetUserBindHost"
 
 #: ClientCommand.cpp:1306
 msgid "Bind host cleared for this network."
-msgstr ""
+msgstr "Host removido para esta rede."
 
 #: ClientCommand.cpp:1310
 msgid "Default bind host cleared for your user."
-msgstr ""
+msgstr "Host padrão removido para seu usuário."
 
 #: ClientCommand.cpp:1313
 msgid "This user's default bind host not set"
-msgstr ""
+msgstr "O host padrão deste usuário não está definido"
 
 #: ClientCommand.cpp:1315
 msgid "This user's default bind host is {1}"
@@ -1371,7 +1379,7 @@ msgstr ""
 #: ClientCommand.cpp:1754
 msgctxt "helpcmd|DelTrustedServerFingerprint|args"
 msgid "<fi:ng:er>"
-msgstr "<impres:sãodi:gital>"
+msgstr "<im:pr:es:sã:od:ig:it:al>"
 
 #: ClientCommand.cpp:1755
 msgctxt "helpcmd|DelTrustedServerFingerprint|desc"
@@ -1411,7 +1419,7 @@ msgstr "<#canais>"
 #: ClientCommand.cpp:1767
 msgctxt "helpcmd|Attach|desc"
 msgid "Attach to channels"
-msgstr ""
+msgstr "Anexar aos canais"
 
 #: ClientCommand.cpp:1768
 msgctxt "helpcmd|Detach|args"
@@ -1421,12 +1429,12 @@ msgstr "<#canais>"
 #: ClientCommand.cpp:1769
 msgctxt "helpcmd|Detach|desc"
 msgid "Detach from channels"
-msgstr ""
+msgstr "Desconectar dos canais"
 
 #: ClientCommand.cpp:1772
 msgctxt "helpcmd|Topics|desc"
 msgid "Show topics in all your channels"
-msgstr ""
+msgstr "Mostra tópicos em todos os seus canais"
 
 #: ClientCommand.cpp:1775
 msgctxt "helpcmd|PlayBuffer|args"
@@ -1471,7 +1479,7 @@ msgstr ""
 #: ClientCommand.cpp:1791
 msgctxt "helpcmd|SetBuffer|desc"
 msgid "Set the buffer count"
-msgstr ""
+msgstr "Define a contagem do buffer"
 
 #: ClientCommand.cpp:1795
 msgctxt "helpcmd|SetBindHost|args"
@@ -1496,17 +1504,17 @@ msgstr "Vincula o host especificado a este usuário"
 #: ClientCommand.cpp:1804
 msgctxt "helpcmd|ClearBindHost|desc"
 msgid "Clear the bind host for this network"
-msgstr ""
+msgstr "Limpa o host para esta rede"
 
 #: ClientCommand.cpp:1807
 msgctxt "helpcmd|ClearUserBindHost|desc"
 msgid "Clear the default bind host for this user"
-msgstr ""
+msgstr "Limpa o host padrão para este usuário"
 
 #: ClientCommand.cpp:1813
 msgctxt "helpcmd|ShowBindHost|desc"
 msgid "Show currently selected bind host"
-msgstr ""
+msgstr "Mostra host atualmente selecionado"
 
 #: ClientCommand.cpp:1815
 msgctxt "helpcmd|Jump|args"
@@ -1516,7 +1524,7 @@ msgstr "[servidor]"
 #: ClientCommand.cpp:1816
 msgctxt "helpcmd|Jump|desc"
 msgid "Jump to the next or the specified server"
-msgstr ""
+msgstr "Pule para o próximo servidor ou para o servidor especificado"
 
 #: ClientCommand.cpp:1817
 msgctxt "helpcmd|Disconnect|args"
