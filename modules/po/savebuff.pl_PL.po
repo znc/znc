@@ -1,0 +1,64 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
+"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
+"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: /1.8.x/modules/po/savebuff.pot\n"
+"X-Crowdin-File-ID: 386\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Polish\n"
+"Language: pl_PL\n"
+
+#: savebuff.cpp:65
+msgid "<password>"
+msgstr "<hasło>"
+
+#: savebuff.cpp:65
+msgid "Sets the password"
+msgstr "Ustawia hasło"
+
+#: savebuff.cpp:67
+msgid "<buffer>"
+msgstr "<bufor>"
+
+#: savebuff.cpp:67
+msgid "Replays the buffer"
+msgstr "Odtwarza bufor"
+
+#: savebuff.cpp:69
+msgid "Saves all buffers"
+msgstr "Zapisuje wszystkie bufory"
+
+#: savebuff.cpp:221
+msgid ""
+"Password is unset usually meaning the decryption failed. You can setpass to "
+"the appropriate pass and things should start working, or setpass to a new "
+"pass and save to reinstantiate"
+msgstr ""
+
+#: savebuff.cpp:232
+msgid "Password set to [{1}]"
+msgstr "Ustawiono hasło na [{1}]"
+
+#: savebuff.cpp:262
+msgid "Replayed {1}"
+msgstr "Odtworzono {1}"
+
+#: savebuff.cpp:341
+msgid "Unable to decode Encrypted file {1}"
+msgstr "Nie udało się rozszyfrować zaszyfrowanego pliku {1}"
+
+#: savebuff.cpp:358
+msgid ""
+"This user module takes up to one arguments. Either --ask-pass or the "
+"password itself (which may contain spaces) or nothing"
+msgstr ""
+
+#: savebuff.cpp:363
+msgid "Stores channel and query buffers to disk, encrypted"
+msgstr "Przechowuje bufory kanałów i rozmów na dysku, zaszyfrowane"
