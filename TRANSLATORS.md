@@ -22,6 +22,7 @@ These people helped translating ZNC to various languages:
 * simos (filippo.cortigiani)
 * sukien
 * SunOS
+* tojestzart (tojestzart)
 * Un1matr1x (Falk Seidel)
 * Wollino
 * Xaris_ (Xaris)

@@ -1,0 +1,97 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
+"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
+"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: /master/modules/po/flooddetach.pot\n"
+"X-Crowdin-File-ID: 173\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Polish\n"
+"Language: pl_PL\n"
+
+#: flooddetach.cpp:30
+msgid "Show current limits"
+msgstr ""
+
+#: flooddetach.cpp:32 flooddetach.cpp:35
+msgid "[<limit>]"
+msgstr ""
+
+#: flooddetach.cpp:33
+msgid "Show or set number of seconds in the time interval"
+msgstr ""
+
+#: flooddetach.cpp:36
+msgid "Show or set number of lines in the time interval"
+msgstr ""
+
+#: flooddetach.cpp:39
+msgid "Show or set whether to notify you about detaching and attaching back"
+msgstr ""
+
+#: flooddetach.cpp:93
+msgid "Flood in {1} is over, reattaching..."
+msgstr ""
+
+#: flooddetach.cpp:150
+msgid "Channel {1} was flooded, you've been detached"
+msgstr ""
+
+#: flooddetach.cpp:187
+msgid "1 line"
+msgid_plural "{1} lines"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
+#: flooddetach.cpp:188
+msgid "every second"
+msgid_plural "every {1} seconds"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
+#: flooddetach.cpp:190
+msgid "Current limit is {1} {2}"
+msgstr ""
+
+#: flooddetach.cpp:197
+msgid "Seconds limit is {1}"
+msgstr ""
+
+#: flooddetach.cpp:202
+msgid "Set seconds limit to {1}"
+msgstr ""
+
+#: flooddetach.cpp:211
+msgid "Lines limit is {1}"
+msgstr ""
+
+#: flooddetach.cpp:216
+msgid "Set lines limit to {1}"
+msgstr ""
+
+#: flooddetach.cpp:229
+msgid "Module messages are disabled"
+msgstr ""
+
+#: flooddetach.cpp:231
+msgid "Module messages are enabled"
+msgstr ""
+
+#: flooddetach.cpp:247
+msgid ""
+"This user module takes up to two arguments. Arguments are numbers of "
+"messages and seconds."
+msgstr ""
+
+#: flooddetach.cpp:251
+msgid "Detach channels when flooded"
+msgstr ""
