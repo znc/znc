@@ -16,7 +16,7 @@ msgstr ""
 
 #: adminlog.cpp:29
 msgid "Show the logging target"
-msgstr "Pokaż miejsce zapisywania dziennika"
+msgstr "Pokaż miejsce docelowe zapisywania dziennika"
 
 #: adminlog.cpp:31
 msgid "<file|syslog|both> [path]"
@@ -64,7 +64,7 @@ msgstr "Dziennik jest ustawiony do zapisu do obu: do pliku i syslog"
 
 #: adminlog.cpp:204
 msgid "Log file will be written to {1}"
-msgstr "Plik dziennika zostanie zapisany do {1}"
+msgstr "Plik dziennika zostanie zapisany w {1}"
 
 #: adminlog.cpp:222
 msgid "Log ZNC events to file and/or syslog."

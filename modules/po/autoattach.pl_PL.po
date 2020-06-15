@@ -16,11 +16,11 @@ msgstr ""
 
 #: autoattach.cpp:94
 msgid "Added to list"
-msgstr ""
+msgstr "Dodano do listy"
 
 #: autoattach.cpp:96
 msgid "{1} is already added"
-msgstr ""
+msgstr "{1} już jest dodany"
 
 #: autoattach.cpp:100
 msgid "Usage: Add [!]<#chan> <search> <host>"
