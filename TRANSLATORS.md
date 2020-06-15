@@ -24,6 +24,7 @@ These people helped translating ZNC to various languages:
 * SunOS
 * tojestzart (tojestzart)
 * Un1matr1x (Falk Seidel)
+* Vimart
 * Wollino
 * Xaris_ (Xaris)
 * xAtlas (Atlas)

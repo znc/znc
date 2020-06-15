@@ -703,7 +703,7 @@ msgstr "Usuń odpowiedź CTCP"
 
 #: controlpanel.cpp:1645 controlpanel.cpp:1648
 msgid "[username] <network>"
-msgstr "[username] <sieć>"
+msgstr "[nazwa_użytkownika] <sieć>"
 
 #: controlpanel.cpp:1646
 msgid "Add a network for a user"
@@ -715,7 +715,7 @@ msgstr "Usuń sieć użytkownikowi"
 
 #: controlpanel.cpp:1651
 msgid "[username]"
-msgstr "[username]"
+msgstr "[nazwa_użytkownika]"
 
 #: controlpanel.cpp:1652
 msgid "List all networks for a user"
