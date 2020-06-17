@@ -266,7 +266,7 @@ msgstr[3] ""
 
 #: Client.cpp:1359
 msgid "Usage: /detach <#chans>"
-msgstr ""
+msgstr "Użycie: /detach <#kanały>"
 
 #: Client.cpp:1369 ClientCommand.cpp:154
 msgid "Detached {1} channel"
@@ -441,7 +441,7 @@ msgstr ""
 
 #: ClientCommand.cpp:144
 msgid "Usage: Detach <#chans>"
-msgstr ""
+msgstr "Użycie: Detach <#kanały>"
 
 #: ClientCommand.cpp:161
 msgid "There is no MOTD set."
@@ -517,7 +517,7 @@ msgstr ""
 #: ClientCommand.cpp:505
 msgctxt "listchans"
 msgid "Detached"
-msgstr ""
+msgstr "Odpięto"
 
 #: ClientCommand.cpp:506
 msgctxt "listchans"
@@ -541,7 +541,7 @@ msgstr ""
 
 #: ClientCommand.cpp:536
 msgid "Total: {1}, Joined: {2}, Detached: {3}, Disabled: {4}"
-msgstr ""
+msgstr "Sumarycznie: {1}, Dołączonych: {2}, Odpiętych: {3}, Wyłączonych: {4}"
 
 #: ClientCommand.cpp:541
 msgid ""
@@ -1391,12 +1391,12 @@ msgstr ""
 #: ClientCommand.cpp:1768
 msgctxt "helpcmd|Detach|args"
 msgid "<#chans>"
-msgstr ""
+msgstr "<#kanały>"
 
 #: ClientCommand.cpp:1769
 msgctxt "helpcmd|Detach|desc"
 msgid "Detach from channels"
-msgstr ""
+msgstr "Odepnij od kanałów"
 
 #: ClientCommand.cpp:1772
 msgctxt "helpcmd|Topics|desc"

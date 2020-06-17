@@ -16,7 +16,7 @@ msgstr ""
 
 #: block_motd.cpp:26
 msgid "[<server>]"
-msgstr ""
+msgstr "[<serwer>]"
 
 #: block_motd.cpp:27
 msgid ""
@@ -26,12 +26,12 @@ msgstr ""
 
 #: block_motd.cpp:36
 msgid "You are not connected to an IRC Server."
-msgstr ""
+msgstr "Nie jesteś połączony z serwerem IRC."
 
 #: block_motd.cpp:58
 msgid "MOTD blocked by ZNC"
-msgstr ""
+msgstr "MOTD zablokowane przez ZNC"
 
 #: block_motd.cpp:104
 msgid "Block the MOTD from IRC so it's not sent to your client(s)."
-msgstr ""
+msgstr "Blokuje MOTD z IRC, więc nie jest wysyłane do Twojego/ich klienta/tów."

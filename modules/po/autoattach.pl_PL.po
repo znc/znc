@@ -24,64 +24,64 @@ msgstr "{1} już jest dodany"
 
 #: autoattach.cpp:100
 msgid "Usage: Add [!]<#chan> <search> <host>"
-msgstr ""
+msgstr "Użycie: Add [!]<#kanał> <szukaj> <host>"
 
 #: autoattach.cpp:101
 msgid "Wildcards are allowed"
-msgstr ""
+msgstr "Wieloznaczniki są dozwolone"
 
 #: autoattach.cpp:113
 msgid "Removed {1} from list"
-msgstr ""
+msgstr "Usunięto {1} z listy"
 
 #: autoattach.cpp:115
 msgid "Usage: Del [!]<#chan> <search> <host>"
-msgstr ""
+msgstr "Użycie: Del [!]<#kanał> <szukaj> <host>"
 
 #: autoattach.cpp:121 autoattach.cpp:129
 msgid "Neg"
-msgstr ""
+msgstr "Negacja"
 
 #: autoattach.cpp:122 autoattach.cpp:130
 msgid "Chan"
-msgstr ""
+msgstr "Kanał"
 
 #: autoattach.cpp:123 autoattach.cpp:131
 msgid "Search"
-msgstr ""
+msgstr "Szukaj"
 
 #: autoattach.cpp:124 autoattach.cpp:132
 msgid "Host"
-msgstr ""
+msgstr "Host"
 
 #: autoattach.cpp:138
 msgid "You have no entries."
-msgstr ""
+msgstr "Nie masz wpisów."
 
 #: autoattach.cpp:146 autoattach.cpp:149
 msgid "[!]<#chan> <search> <host>"
-msgstr ""
+msgstr "[!]<#chan> <szukaj> <host>"
 
 #: autoattach.cpp:147
 msgid "Add an entry, use !#chan to negate and * for wildcards"
-msgstr ""
+msgstr "Dodaj wpis, użyj !#kanał aby zanegować i * dla wieloznaczników"
 
 #: autoattach.cpp:150
 msgid "Remove an entry, needs to be an exact match"
-msgstr ""
+msgstr "Usuń wpis, musi być dokładnie dopasowany"
 
 #: autoattach.cpp:152
 msgid "List all entries"
-msgstr ""
+msgstr "Lista wszystkich wpisów"
 
 #: autoattach.cpp:171
 msgid "Unable to add [{1}]"
-msgstr ""
+msgstr "Nie można dodać [{1}]"
 
 #: autoattach.cpp:283
 msgid "List of channel masks and channel masks with ! before them."
-msgstr ""
+msgstr "Lista masek kanałów i masek kanałów z ! (negującym) przed nimi."
 
 #: autoattach.cpp:286
 msgid "Reattaches you to channels on activity."
-msgstr ""
+msgstr "Przypina do kanałów przy aktywności."

@@ -16,7 +16,7 @@ msgstr ""
 
 #: clientnotify.cpp:47
 msgid "<message|notice|off>"
-msgstr ""
+msgstr "<message|notice|off>"
 
 #: clientnotify.cpp:48
 msgid "Sets the notify method"
@@ -24,7 +24,7 @@ msgstr ""
 
 #: clientnotify.cpp:50 clientnotify.cpp:54
 msgid "<on|off>"
-msgstr ""
+msgstr "<on|off>"
 
 #: clientnotify.cpp:51
 msgid "Turns notifications for unseen IP addresses on or off"
@@ -54,7 +54,7 @@ msgstr ""
 
 #: clientnotify.cpp:114 clientnotify.cpp:127 clientnotify.cpp:140
 msgid "Saved."
-msgstr ""
+msgstr "Zapisano."
 
 #: clientnotify.cpp:121
 msgid "Usage: NewOnly <on|off>"
