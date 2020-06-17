@@ -1089,7 +1089,7 @@ msgstr "Automatycznie czyść bufor kanału po odtworzeniu"
 
 #: webadmin.cpp:766
 msgid "Detached"
-msgstr "Odczepiono"
+msgstr "Odpięto"
 
 #: webadmin.cpp:773
 msgid "Enabled"

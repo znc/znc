@@ -16,36 +16,36 @@ msgstr ""
 
 #: buffextras.cpp:45
 msgid "Server"
-msgstr ""
+msgstr "Serwer"
 
 #: buffextras.cpp:47
 msgid "{1} set mode: {2} {3}"
-msgstr ""
+msgstr "{1} ustawił(a) tryb: {2} {3}"
 
 #: buffextras.cpp:55
 msgid "{1} kicked {2} with reason: {3}"
-msgstr ""
+msgstr "{1} wyrzucony {2} z powodu: {3}"
 
 #: buffextras.cpp:64
 msgid "{1} quit: {2}"
-msgstr ""
+msgstr "{1} opuścił(a) protokół IRC: {2}"
 
 #: buffextras.cpp:73
 msgid "{1} joined"
-msgstr ""
+msgstr "{1} dołączył(a)"
 
 #: buffextras.cpp:81
 msgid "{1} parted: {2}"
-msgstr ""
+msgstr "{1} wyszedł/ła z kanału: {2}"
 
 #: buffextras.cpp:90
 msgid "{1} is now known as {2}"
-msgstr ""
+msgstr "{1} jest znany teraz jako {2}"
 
 #: buffextras.cpp:100
 msgid "{1} changed the topic to: {2}"
-msgstr ""
+msgstr "{1} zmienił(a) temat na: {2}"
 
 #: buffextras.cpp:115
 msgid "Adds joins, parts etc. to the playback buffer"
-msgstr ""
+msgstr "Dodaje dołączenia, wyjścia itd. do buforu odtwarzania"

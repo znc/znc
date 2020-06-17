@@ -17,3 +17,4 @@ msgstr ""
 #: chansaver.cpp:91
 msgid "Keeps config up-to-date when user joins/parts."
 msgstr ""
+"Utrzymuje konfigurację aktualną gdy użytkownik dołącza/wychodzi z kanału."
