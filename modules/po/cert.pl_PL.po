@@ -60,8 +60,7 @@ msgstr "Masz certyfikat w {1}"
 msgid ""
 "You do not have a certificate. Please use the web interface to add a "
 "certificate"
-msgstr ""
-"Nie masz certyfikatu. Użyj interfejsu internetowego, aby dodać certyfikat"
+msgstr "Nie masz certyfikatu. Użyj interfejsu WWW, aby dodać certyfikat"
 
 #: cert.cpp:44
 msgid "Alternatively you can either place one at {1}"
