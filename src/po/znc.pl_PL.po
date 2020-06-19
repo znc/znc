@@ -404,12 +404,12 @@ msgstr ""
 #: Modules.cpp:2023 Modules.cpp:2029
 msgctxt "modhelpcmd"
 msgid "Command"
-msgstr ""
+msgstr "Polecenie"
 
 #: Modules.cpp:2024 Modules.cpp:2031
 msgctxt "modhelpcmd"
 msgid "Description"
-msgstr ""
+msgstr "Opis"
 
 #: ClientCommand.cpp:51 ClientCommand.cpp:115 ClientCommand.cpp:137
 #: ClientCommand.cpp:749 ClientCommand.cpp:768 ClientCommand.cpp:794

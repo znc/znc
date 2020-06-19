@@ -51,7 +51,7 @@ msgstr "Odtworzono {1}"
 
 #: savebuff.cpp:341
 msgid "Unable to decode Encrypted file {1}"
-msgstr "Nie udało się rozszyfrować zaszyfrowanego pliku {1}"
+msgstr "Nie można rozszyfrować zaszyfrowanego pliku {1}"
 
 #: savebuff.cpp:358
 msgid ""

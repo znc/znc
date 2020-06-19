@@ -463,7 +463,7 @@ msgstr "Ładowanie modułów zostało wyłączone."
 
 #: controlpanel.cpp:1379
 msgid "Error: Unable to load module {1}: {2}"
-msgstr "Błąd: Nie udało się załadować modułu {1}: {2}"
+msgstr "Błąd: Nie można załadować modułu {1}: {2}"
 
 #: controlpanel.cpp:1382
 msgid "Loaded module {1}"
@@ -471,7 +471,7 @@ msgstr "Załadowano moduł {1}"
 
 #: controlpanel.cpp:1387
 msgid "Error: Unable to reload module {1}: {2}"
-msgstr "Błąd: Nie udało się przeładować modułu {1}: {2}"
+msgstr "Błąd: Nie można przeładować modułu {1}: {2}"
 
 #: controlpanel.cpp:1390
 msgid "Reloaded module {1}"
@@ -479,7 +479,7 @@ msgstr "Przeładowano moduł {1}"
 
 #: controlpanel.cpp:1394
 msgid "Error: Unable to load module {1} because it is already loaded"
-msgstr "Błąd: Nie udało się załadować modułu {1}, ponieważ jest już załadowany"
+msgstr "Błąd: Nie można załadować modułu {1}, ponieważ jest już załadowany"
 
 #: controlpanel.cpp:1405
 msgid "Usage: LoadModule <username> <modulename> [args]"
@@ -496,7 +496,7 @@ msgstr "Użyj /znc unloadmod {1}"
 
 #: controlpanel.cpp:1455
 msgid "Error: Unable to unload module {1}: {2}"
-msgstr "Błąd: Nie udało się wyładować modułu {1}: {2}"
+msgstr "Błąd: Nie można wyładować modułu {1}: {2}"
 
 #: controlpanel.cpp:1458
 msgid "Unloaded module {1}"
