@@ -35,6 +35,8 @@ msgid ""
 "Failure. We need to be running with a TTY. (is ZNC running with --"
 "foreground?)"
 msgstr ""
+"Porażka. Musimy być uruchomieni na dalekopisie (TTY). (czy ZNC jest "
+"uruchomione z -foreground?)"
 
 #: admindebug.cpp:66
 msgid "Already enabled."

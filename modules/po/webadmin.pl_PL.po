@@ -1032,11 +1032,11 @@ msgstr "Limit czasu nie może być krótszy niż 30 sekund!"
 
 #: webadmin.cpp:407 webadmin.cpp:435 webadmin.cpp:1182 webadmin.cpp:2057
 msgid "Unable to load module [{1}]: {2}"
-msgstr "Nie udało się załadować modułu [{1}]: {2}"
+msgstr "Nie można załadować modułu [{1}]: {2}"
 
 #: webadmin.cpp:412 webadmin.cpp:440
 msgid "Unable to load module [{1}] with arguments [{2}]"
-msgstr "Nie udało się załadować modułu [{1}] z argumentami [{2}]"
+msgstr "Nie można załadować modułu [{1}] z argumentami [{2}]"
 
 #: webadmin.cpp:521 webadmin.cpp:625 webadmin.cpp:650 webadmin.cpp:672
 #: webadmin.cpp:706 webadmin.cpp:1249
@@ -1139,7 +1139,7 @@ msgstr "Nazwa sieci jest wymaganym argumentem"
 
 #: webadmin.cpp:1189 webadmin.cpp:2064
 msgid "Unable to reload module [{1}]: {2}"
-msgstr "Nie udało się przeładować modułu [{1}]: {2}"
+msgstr "Nie można przeładować modułu [{1}]: {2}"
 
 #: webadmin.cpp:1226
 msgid "Network was added/modified, but config file was not written"
