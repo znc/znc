@@ -36,7 +36,7 @@ msgid ""
 "foreground?)"
 msgstr ""
 "Porażka. Musimy być uruchomieni na dalekopisie (TTY). (czy ZNC jest "
-"uruchomione z -foreground?)"
+"uruchomione z --foreground?)"
 
 #: admindebug.cpp:66
 msgid "Already enabled."

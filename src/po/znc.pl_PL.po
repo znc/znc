@@ -291,16 +291,16 @@ msgstr[3] ""
 
 #: Chan.cpp:678
 msgid "Buffer Playback..."
-msgstr ""
+msgstr "Odtwarzanie bufora..."
 
 #: Chan.cpp:716
 msgid "Playback Complete."
-msgstr ""
+msgstr "Odtwarzanie zakończone."
 
 #: Modules.cpp:528
 msgctxt "modhelpcmd"
 msgid "<search>"
-msgstr ""
+msgstr "<szukaj>"
 
 #: Modules.cpp:529
 msgctxt "modhelpcmd"
@@ -313,7 +313,7 @@ msgstr "Brak dopasowań dla '{1}'"
 
 #: Modules.cpp:691
 msgid "This module doesn't implement any commands."
-msgstr ""
+msgstr "Ten moduł nie implementuje żadnych poleceń."
 
 #: Modules.cpp:693
 msgid "Unknown command!"
@@ -324,6 +324,8 @@ msgid ""
 "Module names can only contain letters, numbers and underscores, [{1}] is "
 "invalid"
 msgstr ""
+"Nazwy modułów mogą zawierać tylko litery, cyfry i znaki podkreślenia, [{1}] "
+"jest nieprawidłowa"
 
 #: Modules.cpp:1652
 msgid "Module {1} already loaded."
@@ -359,19 +361,19 @@ msgstr "Przerwano moduł {1}."
 
 #: Modules.cpp:1739 Modules.cpp:1781
 msgid "Module [{1}] not loaded."
-msgstr ""
+msgstr "Moduł [{1}] nie został załadowany."
 
 #: Modules.cpp:1763
 msgid "Module {1} unloaded."
-msgstr ""
+msgstr "Moduł {1} został wyładowany."
 
 #: Modules.cpp:1768
 msgid "Unable to unload module {1}."
-msgstr ""
+msgstr "Nie można wyładować modułu {1}."
 
 #: Modules.cpp:1797
 msgid "Reloaded module {1}."
-msgstr ""
+msgstr "Przeładowano moduł {1}."
 
 #: Modules.cpp:1816
 msgid "Unable to find module {1}."
@@ -1387,11 +1389,12 @@ msgstr ""
 msgctxt "helpcmd|ListTrustedServerFingerprints|desc"
 msgid "List all trusted server SSL certificates of current IRC network."
 msgstr ""
+"Lista wszystkie certyfikaty SSL zaufanego serwera dla bieżącej sieci IRC."
 
 #: ClientCommand.cpp:1762
 msgctxt "helpcmd|EnableChan|args"
 msgid "<#chans>"
-msgstr ""
+msgstr "<#kanały>"
 
 #: ClientCommand.cpp:1763
 msgctxt "helpcmd|EnableChan|desc"
