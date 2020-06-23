@@ -29,3 +29,4 @@ with open('.travis.yml', 'w') as f:
 subprocess.check_call(['git checkout -b coverity_scan'], shell=True)
 subprocess.check_call(['git commit .travis.yml -m"Automatic coverity scan for {}"'.format(datetime.date.today())], shell=True)
 subprocess.check_call(['git push coverity coverity_scan -f'], shell=True)
+subprocess.call(['git push coverity master'], shell=True)
