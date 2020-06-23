@@ -6,13 +6,8 @@ msgstr ""
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: it\n"
-<<<<<<< HEAD
 "X-Crowdin-File: /master/modules/po/fail2ban.pot\n"
 "X-Crowdin-File-ID: 172\n"
-=======
-"X-Crowdin-File: /1.8.x/modules/po/fail2ban.pot\n"
-"X-Crowdin-File-ID: 344\n"
->>>>>>> 1.8.x
 "Project-Id-Version: znc-bouncer\n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
