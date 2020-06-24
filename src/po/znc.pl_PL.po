@@ -377,7 +377,7 @@ msgstr "Przeładowano moduł {1}."
 
 #: Modules.cpp:1816
 msgid "Unable to find module {1}."
-msgstr ""
+msgstr "Nie można znaleźć modułu {1}."
 
 #: Modules.cpp:1963
 msgid "Unknown error"
@@ -385,23 +385,27 @@ msgstr "Nieznany błąd"
 
 #: Modules.cpp:1964
 msgid "Unable to open module {1}: {2}"
-msgstr ""
+msgstr "Nie można otworzyć modułu {1}: {2}"
 
 #: Modules.cpp:1973
 msgid "Could not find ZNCModuleEntry in module {1}"
-msgstr ""
+msgstr "Nie można znaleźć ZNCModuleEntry w module {1}"
 
 #: Modules.cpp:1981
 msgid ""
 "Version mismatch for module {1}: core is {2}, module is built for {3}. "
 "Recompile this module."
 msgstr ""
+"Niezgodność wersji dla modułu {1}: jądro to {2}, moduł jest zbudowany dla "
+"{3}. Ponownie skompiluj ten moduł."
 
 #: Modules.cpp:1992
 msgid ""
 "Module {1} is built incompatibly: core is '{2}', module is '{3}'. Recompile "
 "this module."
 msgstr ""
+"Moduł {1} jest zbudowany niekompatybilnie: jądro to „{2}”, moduł to „{3}”. "
+"Ponownie skompiluj ten moduł."
 
 #: Modules.cpp:2023 Modules.cpp:2029
 msgctxt "modhelpcmd"
@@ -420,23 +424,23 @@ msgstr "Opis"
 #: ClientCommand.cpp:1409 ClientCommand.cpp:1420 ClientCommand.cpp:1429
 #: ClientCommand.cpp:1441
 msgid "You must be connected with a network to use this command"
-msgstr ""
+msgstr "Aby korzystać z tego polecenia, musisz być podłączony z siecią"
 
 #: ClientCommand.cpp:58
 msgid "Usage: ListNicks <#chan>"
-msgstr ""
+msgstr "Użycie: ListNicks <#kanał>"
 
 #: ClientCommand.cpp:65
 msgid "You are not on [{1}]"
-msgstr ""
+msgstr "Nie jesteś na [{1}]"
 
 #: ClientCommand.cpp:70
 msgid "You are not on [{1}] (trying)"
-msgstr ""
+msgstr "Nie jesteś na [{1}] (próbowanie)"
 
 #: ClientCommand.cpp:79
 msgid "No nicks on [{1}]"
-msgstr ""
+msgstr "Brak pseudonimów na [{1}]"
 
 #: ClientCommand.cpp:91 ClientCommand.cpp:106
 msgid "Nick"
@@ -507,17 +511,17 @@ msgstr "Status"
 #: ClientCommand.cpp:486 ClientCommand.cpp:510
 msgctxt "listchans"
 msgid "In config"
-msgstr ""
+msgstr "W p. ustawień?"
 
 #: ClientCommand.cpp:487 ClientCommand.cpp:512
 msgctxt "listchans"
 msgid "Buffer"
-msgstr ""
+msgstr "Bufor"
 
 #: ClientCommand.cpp:488 ClientCommand.cpp:516
 msgctxt "listchans"
 msgid "Clear"
-msgstr ""
+msgstr "Wyczyść"
 
 #: ClientCommand.cpp:489 ClientCommand.cpp:521
 msgctxt "listchans"
@@ -563,6 +567,9 @@ msgid ""
 "Network number limit reached. Ask an admin to increase the limit for you, or "
 "delete unneeded networks using /znc DelNetwork <name>"
 msgstr ""
+"Osiągnięto maksymalną liczbę sieci. Poproś administratora o zwiększenie "
+"limitu dla Ciebie lub usuń niepotrzebne sieci za pomocą /znc DelNetwork "
+"<nazwa>"
 
 #: ClientCommand.cpp:550
 msgid "Usage: AddNetwork <name>"
@@ -570,7 +577,7 @@ msgstr "Użycie: AddNetwork <nazwa>"
 
 #: ClientCommand.cpp:554
 msgid "Network name should be alphanumeric"
-msgstr ""
+msgstr "Nazwa sieci musi być alfanumeryczna"
 
 #: ClientCommand.cpp:561
 msgid ""
@@ -1484,47 +1491,47 @@ msgstr ""
 #: ClientCommand.cpp:1795
 msgctxt "helpcmd|SetBindHost|args"
 msgid "<host (IP preferred)>"
-msgstr ""
+msgstr "<host (najlepiej adres IP)>"
 
 #: ClientCommand.cpp:1796
 msgctxt "helpcmd|SetBindHost|desc"
 msgid "Set the bind host for this network"
-msgstr ""
+msgstr "Ustaw host przypięcia dla tej sieci"
 
 #: ClientCommand.cpp:1800
 msgctxt "helpcmd|SetUserBindHost|args"
 msgid "<host (IP preferred)>"
-msgstr ""
+msgstr "<host (najlepiej adres IP)>"
 
 #: ClientCommand.cpp:1801
 msgctxt "helpcmd|SetUserBindHost|desc"
 msgid "Set the default bind host for this user"
-msgstr ""
+msgstr "Ustaw domyślny host przypięcia dla tego użytkownika"
 
 #: ClientCommand.cpp:1804
 msgctxt "helpcmd|ClearBindHost|desc"
 msgid "Clear the bind host for this network"
-msgstr ""
+msgstr "Wyczyść host przypięcia dla tej sieci"
 
 #: ClientCommand.cpp:1807
 msgctxt "helpcmd|ClearUserBindHost|desc"
 msgid "Clear the default bind host for this user"
-msgstr ""
+msgstr "Wyczyść domyślny host przypięcia dla tego użytkownika"
 
 #: ClientCommand.cpp:1813
 msgctxt "helpcmd|ShowBindHost|desc"
 msgid "Show currently selected bind host"
-msgstr ""
+msgstr "Pokaż bieżąco wybrany host przypięcia"
 
 #: ClientCommand.cpp:1815
 msgctxt "helpcmd|Jump|args"
 msgid "[server]"
-msgstr ""
+msgstr "[serwer]"
 
 #: ClientCommand.cpp:1816
 msgctxt "helpcmd|Jump|desc"
 msgid "Jump to the next or the specified server"
-msgstr ""
+msgstr "Przeskocz do następnego lub określonego serwera"
 
 #: ClientCommand.cpp:1817
 msgctxt "helpcmd|Disconnect|args"
@@ -1589,7 +1596,7 @@ msgstr "Przeładuj moduł wszędzie"
 #: ClientCommand.cpp:1847
 msgctxt "helpcmd|ShowMOTD|desc"
 msgid "Show ZNC's message of the day"
-msgstr ""
+msgstr "Pokaż wiadomość dnia ZNC"
 
 #: ClientCommand.cpp:1851
 msgctxt "helpcmd|SetMOTD|args"
@@ -1599,7 +1606,7 @@ msgstr "<wiadomość>"
 #: ClientCommand.cpp:1852
 msgctxt "helpcmd|SetMOTD|desc"
 msgid "Set ZNC's message of the day"
-msgstr ""
+msgstr "Ustaw wiadomość dnia ZNC"
 
 #: ClientCommand.cpp:1854
 msgctxt "helpcmd|AddMOTD|args"
@@ -1609,82 +1616,82 @@ msgstr "<wiadomość>"
 #: ClientCommand.cpp:1855
 msgctxt "helpcmd|AddMOTD|desc"
 msgid "Append <message> to ZNC's MOTD"
-msgstr ""
+msgstr "Dopisz <wiadomość> do wiadomości dnia ZNC"
 
 #: ClientCommand.cpp:1857
 msgctxt "helpcmd|ClearMOTD|desc"
 msgid "Clear ZNC's MOTD"
-msgstr ""
+msgstr "Wyczyść wiadomość dnia ZNC"
 
 #: ClientCommand.cpp:1860
 msgctxt "helpcmd|ListPorts|desc"
 msgid "Show all active listeners"
-msgstr ""
+msgstr "Pokaż wszystkich aktywnych nasłuchiwaczy"
 
 #: ClientCommand.cpp:1862
 msgctxt "helpcmd|AddPort|args"
 msgid "<[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost [uriprefix]]"
-msgstr ""
+msgstr "<[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost [przedrostek_uri]]"
 
 #: ClientCommand.cpp:1865
 msgctxt "helpcmd|AddPort|desc"
 msgid "Add another port for ZNC to listen on"
-msgstr ""
+msgstr "Dodaj kolejny port nasłuchujący do ZNC"
 
 #: ClientCommand.cpp:1869
 msgctxt "helpcmd|DelPort|args"
 msgid "<port> <ipv4|ipv6|all> [bindhost]"
-msgstr ""
+msgstr "<port> <ipv4|ipv6|all> [host_przypięcia]"
 
 #: ClientCommand.cpp:1870
 msgctxt "helpcmd|DelPort|desc"
 msgid "Remove a port from ZNC"
-msgstr ""
+msgstr "Usuń port z ZNC"
 
 #: ClientCommand.cpp:1873
 msgctxt "helpcmd|Rehash|desc"
 msgid "Reload global settings, modules, and listeners from znc.conf"
-msgstr ""
+msgstr "Przeładuj ustawienia globalne, moduły i nasłuchiwaczy z znc.conf"
 
 #: ClientCommand.cpp:1876
 msgctxt "helpcmd|SaveConfig|desc"
 msgid "Save the current settings to disk"
-msgstr ""
+msgstr "Zapisz bieżące ustawienia na dysk"
 
 #: ClientCommand.cpp:1879
 msgctxt "helpcmd|ListUsers|desc"
 msgid "List all ZNC users and their connection status"
-msgstr ""
+msgstr "Lista wszystkich użytkowników ZNC i ich stan połączenia"
 
 #: ClientCommand.cpp:1882
 msgctxt "helpcmd|ListAllUserNetworks|desc"
 msgid "List all ZNC users and their networks"
-msgstr ""
+msgstr "Lista wszystkich użytkowników i ich sieci"
 
 #: ClientCommand.cpp:1885
 msgctxt "helpcmd|ListChans|args"
 msgid "[user <network>]"
-msgstr ""
+msgstr "[użytkownik <sieć>]"
 
 #: ClientCommand.cpp:1888
 msgctxt "helpcmd|ListClients|args"
 msgid "[user]"
-msgstr ""
+msgstr "[użytkownik]"
 
 #: ClientCommand.cpp:1889
 msgctxt "helpcmd|ListClients|desc"
 msgid "List all connected clients"
-msgstr ""
+msgstr "Lista wszystkich połączonych klientów"
 
 #: ClientCommand.cpp:1891
 msgctxt "helpcmd|Traffic|desc"
 msgid "Show basic traffic stats for all ZNC users"
-msgstr ""
+msgstr "Pokaż podstawowe statystyki ruchu dla wszystkich użytkowników ZNC"
 
 #: ClientCommand.cpp:1893
 msgctxt "helpcmd|Broadcast|args"
 msgid "[message]"
-msgstr ""
+msgstr "[wiadomość]"
 
 #: ClientCommand.cpp:1894
 msgctxt "helpcmd|Broadcast|desc"
@@ -1694,17 +1701,17 @@ msgstr ""
 #: ClientCommand.cpp:1897
 msgctxt "helpcmd|Shutdown|args"
 msgid "[message]"
-msgstr ""
+msgstr "[wiadomość]"
 
 #: ClientCommand.cpp:1898
 msgctxt "helpcmd|Shutdown|desc"
 msgid "Shut down ZNC completely"
-msgstr ""
+msgstr "Zamknij całkowicie ZNC"
 
 #: ClientCommand.cpp:1899
 msgctxt "helpcmd|Restart|args"
 msgid "[message]"
-msgstr ""
+msgstr "[wiadomość]"
 
 #: ClientCommand.cpp:1900
 msgctxt "helpcmd|Restart|desc"
