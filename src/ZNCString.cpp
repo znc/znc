@@ -258,7 +258,7 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
     const unsigned char* p = (const unsigned char*)data();
     size_type iLength = length();
     sRet.reserve(iLength * 3);
-    unsigned char pTmp[21];
+    unsigned char pTmp[21] = {};
     unsigned int iCounted = 0;
 
     for (unsigned int a = 0; a < iLength; a++, p = pStart + a) {
@@ -1022,7 +1022,7 @@ bool CString::Base64Encode(CString& sRet, unsigned int uWrap) const {
         return 0;
     }
 
-    p = output = new unsigned char[toalloc];
+    p = output = new unsigned char[toalloc]{};
 
     while (i < len - mod) {
         *p++ = b64table[input[i++] >> 2];
@@ -1072,7 +1072,7 @@ unsigned long CString::Base64Decode(CString& sRet) const {
     char c, c1, *p;
     unsigned long i;
     unsigned long uLen = sTmp.size();
-    char* out = new char[uLen + 1];
+    char* out = new char[uLen + 1]{};
 
     for (i = 0, p = out; i < uLen; i++) {
         c = (char)base64_table[(unsigned char)in[i++]];
