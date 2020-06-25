@@ -23,6 +23,8 @@ msgid ""
 "Override the block with this command. Can optionally specify which server to "
 "query."
 msgstr ""
+"Zastąp blokadę tym poleceniem. Można opcjonalnie określić, który serwer ma "
+"zostać zapytany."
 
 #: block_motd.cpp:36
 msgid "You are not connected to an IRC Server."

@@ -75,7 +75,7 @@ msgstr "Twój bieżący klucz publiczny to: {1}"
 
 #: certauth.cpp:157
 msgid "You did not supply a public key or connect with one."
-msgstr ""
+msgstr "Nie podałeś klucza publicznego ani nie łączyłeś się z nim."
 
 #: certauth.cpp:160
 msgid "Key '{1}' added."
