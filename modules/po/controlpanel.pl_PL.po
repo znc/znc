@@ -181,10 +181,10 @@ msgstr ""
 #: controlpanel.cpp:731
 msgid "Channel {1} is deleted from network {2} of user {3}"
 msgid_plural "Channels {1} are deleted from network {2} of user {3}"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Kanał {1} został usunięty z sieci {2} użytkownika {3}"
+msgstr[1] "Kanały {1} zostały usunięte z sieci {2} użytkownika {3}"
+msgstr[2] "Wiele kanałów {1} zostało usunięte z sieci {2} użytkownika {3}"
+msgstr[3] "Kanały {1} zostały usunięte z sieci {2} użytkownika {3}"
 
 #: controlpanel.cpp:746
 msgid "Usage: GetChan <variable> <username> <network> <chan>"
@@ -450,12 +450,15 @@ msgstr "Użycie: DelCTCP [użytkownik] [zapytanie]"
 #: controlpanel.cpp:1356
 msgid "CTCP requests {1} to user {2} will now be sent to IRC clients"
 msgstr ""
+"Zapytania CTCP {1} do użytkownika {2} będą teraz wysyłane do klientów IRC"
 
 #: controlpanel.cpp:1360
 msgid ""
 "CTCP requests {1} to user {2} will be sent to IRC clients (nothing has "
 "changed)"
 msgstr ""
+"Zapytania CTCP {1} do użytkownika {2} zostaną wysłane do klientów IRC (nic "
+"się nie zmieniło)"
 
 #: controlpanel.cpp:1370 controlpanel.cpp:1444
 msgid "Loading modules has been disabled."
@@ -542,7 +545,7 @@ msgstr "[polecenie] [zmienna]"
 
 #: controlpanel.cpp:1564
 msgid "Prints help for matching commands and variables"
-msgstr ""
+msgstr "Wypisuje pomoc dla pasujących poleceń i zmiennych"
 
 #: controlpanel.cpp:1567
 msgid "<variable> [username]"
@@ -650,7 +653,7 @@ msgstr "<nazwa_użytkownika> <sieć>"
 
 #: controlpanel.cpp:1609
 msgid "Cycles the user's IRC server connection"
-msgstr ""
+msgstr "Powtarza połączenie użytkownika z serwerem IRC"
 
 #: controlpanel.cpp:1612
 msgid "Disconnects the user from their IRC server"
@@ -682,11 +685,11 @@ msgstr "<nazwa_użytkownika> <sieć> <nazwa_modułu> [argumenty]"
 
 #: controlpanel.cpp:1625
 msgid "Loads a Module for a network"
-msgstr ""
+msgstr "Ładuje moduł dla sieci"
 
 #: controlpanel.cpp:1628
 msgid "<username> <network> <modulename>"
-msgstr ""
+msgstr "<nazwa_użytkownika> <sieć> <nazwa_modułu>"
 
 #: controlpanel.cpp:1629
 msgid "Removes a Module of a network"
