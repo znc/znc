@@ -20,7 +20,7 @@ msgstr "<MaskaHosta> [Cel] [Wzorzec]"
 
 #: watch.cpp:178
 msgid "Used to add an entry to watch for."
-msgstr "Służy do dodawania wpisu, na który będzie się oczekiwać."
+msgstr "Służy do dodawania wpisu, który będzie obserwowany."
 
 #: watch.cpp:180
 msgid "List all entries being watched."
@@ -60,11 +60,11 @@ msgstr "<Id | *> <Prawda | Fałsz>"
 
 #: watch.cpp:192
 msgid "Enable or disable detached client only for an entry."
-msgstr ""
+msgstr "Włącz lub wyłącz odpiętego klienta dla wpisu."
 
 #: watch.cpp:194
 msgid "Enable or disable detached channel only for an entry."
-msgstr ""
+msgstr "Włącz lub wyłącz odpięty kanał dla wpisu."
 
 #: watch.cpp:196
 msgid "<Id> [#chan priv #foo* !#bar]"
@@ -148,11 +148,11 @@ msgstr "Wyłączony"
 
 #: watch.cpp:497 watch.cpp:515
 msgid "DetachedClientOnly"
-msgstr ""
+msgstr "OdpiętyKlient?"
 
 #: watch.cpp:498 watch.cpp:518
 msgid "DetachedChannelOnly"
-msgstr ""
+msgstr "OdpiętyKanał?"
 
 #: watch.cpp:516 watch.cpp:519
 msgid "Yes"
@@ -184,7 +184,7 @@ msgstr "Wpis dla {1} już istnieje."
 
 #: watch.cpp:654
 msgid "Adding entry: {1} watching for [{2}] -> {3}"
-msgstr ""
+msgstr "Dodawanie wpisu: {1} obserwowanie [{2}] -> {3}"
 
 #: watch.cpp:660
 msgid "Watch: Not enough arguments.  Try Help"

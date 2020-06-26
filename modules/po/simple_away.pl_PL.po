@@ -24,10 +24,12 @@ msgid ""
 "Prints or sets the away reason (%awaytime% is replaced with the time you "
 "were set away, supports substitutions using ExpandString)"
 msgstr ""
+"Wypisuje lub ustawia powód nieobecności (%awaytime% jest zastąpione czasem "
+"Twojej nieobecności, wspiera podstawienia używając ExpandString)"
 
 #: simple_away.cpp:63
 msgid "Prints the current time to wait before setting you away"
-msgstr ""
+msgstr "Wypisuje bieżący czas oczekiwania przed ustawieniem trybu nieobecności"
 
 #: simple_away.cpp:65
 msgid "<seconds>"
@@ -62,10 +64,10 @@ msgstr "Bieżący powód nieobecności byłby: {1}"
 #: simple_away.cpp:144
 msgid "Current timer setting: 1 second"
 msgid_plural "Current timer setting: {1} seconds"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Bieżące ustawienie odliczarki: 1 sekunda"
+msgstr[1] "Bieżące ustawienie odliczarki: {1} sekundy"
+msgstr[2] "Bieżące ustawienie odliczarki: {1} sekund"
+msgstr[3] "Bieżące ustawienie odliczarki: {1} sekund"
 
 #: simple_away.cpp:153 simple_away.cpp:161
 msgid "Timer disabled"
@@ -74,10 +76,10 @@ msgstr "Odliczarka wyłączona"
 #: simple_away.cpp:155
 msgid "Timer set to 1 second"
 msgid_plural "Timer set to: {1} seconds"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Odliczarka ustawiona na 1 sekundę"
+msgstr[1] "Odliczarka ustawiona na: {1} sekundy"
+msgstr[2] "Odliczarka ustawiona na: {1} sekund"
+msgstr[3] "Odliczarka ustawiona na: {1} sekund"
 
 #: simple_away.cpp:166
 msgid "Current MinClients setting: {1}"
