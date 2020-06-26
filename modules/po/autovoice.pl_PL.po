@@ -107,6 +107,10 @@ msgid ""
 "Each argument is either a channel you want autovoice for (which can include "
 "wildcards) or, if it starts with !, it is an exception for autovoice."
 msgstr ""
+"Każdy argument jest zarówno kanałem w którym chcesz automatycznie "
+"przydzielić prawa wypowiedzi (który może zawierać wieloznaczniki) lub jeżeli "
+"zaczyna się ! to będzie wyjątkiem automatycznego przydzielania prawa "
+"wypowiedzi."
 
 #: autovoice.cpp:365
 msgid "Auto voice the good people"
