@@ -16,96 +16,98 @@ msgstr ""
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:9
 msgid "Send a raw IRC line"
-msgstr ""
+msgstr "Wyślij surową linię IRC"
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:14
 msgid "User:"
-msgstr ""
+msgstr "Użytkownik:"
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:15
 msgid "To change user, click to Network selector"
-msgstr ""
+msgstr "Aby zmienić użytkownika, klinknij wybierak sieci"
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:19
 msgid "User/Network:"
-msgstr ""
+msgstr "Użytkownik/Sieć:"
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:32
 msgid "Send to:"
-msgstr ""
+msgstr "Wyślij do:"
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:34
 msgid "Client"
-msgstr ""
+msgstr "Klient"
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:35
 msgid "Server"
-msgstr ""
+msgstr "Serwer"
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:40
 msgid "Line:"
-msgstr ""
+msgstr "Linia:"
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:45
 msgid "Send"
-msgstr ""
+msgstr "Wyślij"
 
 #: send_raw.cpp:32
 msgid "Sent [{1}] to {2}/{3}"
-msgstr ""
+msgstr "Wysłano [{1}] do {2}/{3}"
 
 #: send_raw.cpp:36 send_raw.cpp:56
 msgid "Network {1} not found for user {2}"
-msgstr ""
+msgstr "Sieć {1} nieznaleziona dla użytkownika {2}"
 
 #: send_raw.cpp:40 send_raw.cpp:60
 msgid "User {1} not found"
-msgstr ""
+msgstr "Użytkownik {1} nie odnaleziony"
 
 #: send_raw.cpp:52
 msgid "Sent [{1}] to IRC server of {2}/{3}"
-msgstr ""
+msgstr "Wysłano [{1}] do serwera IRC od {2}/{3}"
 
 #: send_raw.cpp:75
 msgid "You must have admin privileges to load this module"
-msgstr ""
+msgstr "Aby załadować ten moduł, musisz mieć uprawnienia administratora"
 
 #: send_raw.cpp:82
 msgid "Send Raw"
-msgstr ""
+msgstr "Wyślij surowe"
 
 #: send_raw.cpp:92
 msgid "User not found"
-msgstr ""
+msgstr "Użytkownik nie znaleziony"
 
 #: send_raw.cpp:99
 msgid "Network not found"
-msgstr ""
+msgstr "Sieć nieznaleziona"
 
 #: send_raw.cpp:116
 msgid "Line sent"
-msgstr ""
+msgstr "Linia została wysłana"
 
 #: send_raw.cpp:140 send_raw.cpp:143
 msgid "[user] [network] [data to send]"
-msgstr ""
+msgstr "[użytkownik] [sieć] [dane do wysłania]"
 
 #: send_raw.cpp:141
 msgid "The data will be sent to the user's IRC client(s)"
-msgstr ""
+msgstr "Dane zostaną wysłane do klienta/ów IRC użytkownika"
 
 #: send_raw.cpp:144
 msgid "The data will be sent to the IRC server the user is connected to"
 msgstr ""
+"Dane zostaną wysłane do serwera IRC, z którym użytkownik jest połączony"
 
 #: send_raw.cpp:147
 msgid "[data to send]"
-msgstr ""
+msgstr "[dane do wysłania]"
 
 #: send_raw.cpp:148
 msgid "The data will be sent to your current client"
-msgstr ""
+msgstr "Dane zostaną wysłane do Twojego bieżącego klienta"
 
 #: send_raw.cpp:159
 msgid "Lets you send some raw IRC lines as/to someone else"
 msgstr ""
+"Pozwala Tobie wysłać jakieś surowe linie IRC jako/do kogoś/ktoś innego/inny"
