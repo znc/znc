@@ -16,89 +16,92 @@ msgstr ""
 
 #: modules/po/../data/stickychan/tmpl/index.tmpl:9
 msgid "Name"
-msgstr ""
+msgstr "Nazwa"
 
 #: modules/po/../data/stickychan/tmpl/index.tmpl:10
 msgid "Sticky"
-msgstr ""
+msgstr "Przyklejony"
 
 #: modules/po/../data/stickychan/tmpl/index.tmpl:25
 msgid "Save"
-msgstr ""
+msgstr "Zapisz"
 
 #: modules/po/../data/stickychan/tmpl/stickychan_WebadminChan.tmpl:8
 msgid "Channel is sticky"
-msgstr ""
+msgstr "Kanał jest przyklejony"
 
 #: stickychan.cpp:28
 msgid "<#channel> [key]"
-msgstr ""
+msgstr "<#kanałl> [klucz]"
 
 #: stickychan.cpp:28
 msgid "Sticks a channel"
-msgstr ""
+msgstr "Przykleja do kanału"
 
 #: stickychan.cpp:30
 msgid "<#channel>"
-msgstr ""
+msgstr "<#kanał>"
 
 #: stickychan.cpp:30
 msgid "Unsticks a channel"
-msgstr ""
+msgstr "Odkleja od kanału"
 
 #: stickychan.cpp:32
 msgid "Lists sticky channels"
-msgstr ""
+msgstr "Lista przyklejonych kanałów"
 
 #: stickychan.cpp:75
 msgid "Usage: Stick <#channel> [key]"
-msgstr ""
+msgstr "Użycie: Stick <#kanał> [klucz]"
 
 #: stickychan.cpp:79
 msgid "Stuck {1}"
-msgstr ""
+msgstr "Przyklejono {1}"
 
 #: stickychan.cpp:85
 msgid "Usage: Unstick <#channel>"
-msgstr ""
+msgstr "Użycie: Unstick <#kanał>"
 
 #: stickychan.cpp:89
 msgid "Unstuck {1}"
-msgstr ""
+msgstr "Odklejono {1}"
 
 #: stickychan.cpp:101
 msgid " -- End of List"
-msgstr ""
+msgstr " -- Koniec listy"
 
 #: stickychan.cpp:115
 msgid "Could not join {1} (# prefix missing?)"
-msgstr ""
+msgstr "Nie można dołączyć do {1} (brakuje przedrostka # ?)"
 
 #: stickychan.cpp:128
 msgid "Sticky Channels"
-msgstr ""
+msgstr "Przyklejone kanały"
 
 #: stickychan.cpp:160
 msgid "Changes have been saved!"
-msgstr ""
+msgstr "Zmiany zostały zapisane!"
 
 #: stickychan.cpp:185
 msgid "Channel became sticky!"
-msgstr ""
+msgstr "Kanał został przyklejony!"
 
 #: stickychan.cpp:189
 msgid "Channel stopped being sticky!"
-msgstr ""
+msgstr "Kanał przestał być przyklejonym!"
 
 #: stickychan.cpp:209
 msgid ""
 "Channel {1} cannot be joined, it is an illegal channel name. Unsticking."
 msgstr ""
+"Nie można dołączyć do kanału {1}, jest niedozwoloną nazwą kanału. Odklejanie."
 
 #: stickychan.cpp:246
 msgid "List of channels, separated by comma."
-msgstr ""
+msgstr "Lista kanałów, oddzielona przecinkiem."
 
 #: stickychan.cpp:251
 msgid "configless sticky chans, keeps you there very stickily even"
 msgstr ""
+"Niewymagające konfiguracji kanały przyklejenia, utrzymuję cie tam bardzo "
+"dobrze przyklejonym"
