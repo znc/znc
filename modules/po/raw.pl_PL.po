@@ -16,4 +16,4 @@ msgstr ""
 
 #: raw.cpp:43
 msgid "View all of the raw traffic"
-msgstr ""
+msgstr "Zobacz cały surowy ruch"

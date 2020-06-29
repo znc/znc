@@ -16,47 +16,47 @@ msgstr ""
 
 #: modules/po/../data/notes/tmpl/index.tmpl:7
 msgid "Add A Note"
-msgstr ""
+msgstr "Dodaj notatkę"
 
 #: modules/po/../data/notes/tmpl/index.tmpl:11
 msgid "Key:"
-msgstr ""
+msgstr "Klucz:"
 
 #: modules/po/../data/notes/tmpl/index.tmpl:15
 msgid "Note:"
-msgstr ""
+msgstr "Notatka:"
 
 #: modules/po/../data/notes/tmpl/index.tmpl:19
 msgid "Add Note"
-msgstr ""
+msgstr "Dodaj notatkę"
 
 #: modules/po/../data/notes/tmpl/index.tmpl:27
 msgid "You have no notes to display."
-msgstr ""
+msgstr "Nie maż żadnych notatek do wyświetlenia."
 
 #: modules/po/../data/notes/tmpl/index.tmpl:34 notes.cpp:164 notes.cpp:170
 msgid "Key"
-msgstr ""
+msgstr "Klucz"
 
 #: modules/po/../data/notes/tmpl/index.tmpl:35 notes.cpp:165 notes.cpp:171
 msgid "Note"
-msgstr ""
+msgstr "Notatka"
 
 #: modules/po/../data/notes/tmpl/index.tmpl:41
 msgid "[del]"
-msgstr ""
+msgstr "[usuń]"
 
 #: notes.cpp:32
 msgid "That note already exists.  Use MOD <key> <note> to overwrite."
-msgstr ""
+msgstr "Ta notatka już istnieje.  Użyj MOD <klucz> <notatka> aby nadpisać."
 
 #: notes.cpp:35 notes.cpp:137
 msgid "Added note {1}"
-msgstr ""
+msgstr "Dodano notatkę {1}"
 
 #: notes.cpp:37 notes.cpp:48 notes.cpp:142
 msgid "Unable to add note {1}"
-msgstr ""
+msgstr "Nie udało się dodać notatki {1}"
 
 #: notes.cpp:46 notes.cpp:139
 msgid "Set note for {1}"

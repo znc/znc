@@ -223,6 +223,8 @@ msgstr ""
 msgid ""
 "You have no networks configured. Use /znc AddNetwork <network> to add one."
 msgstr ""
+"Nie masz skonfigurowanych sieci. Użyj /znc AddNetwork <sieć>, aby dodać "
+"pierwszą."
 
 #: Client.cpp:431
 msgid "Closing link: Timeout"
@@ -236,6 +238,7 @@ msgstr ""
 msgid ""
 "You are being disconnected because another user just authenticated as you."
 msgstr ""
+"Trwa rozłączanie, ponieważ inny użytkownik właśnie uwierzytelnił się jako Ty."
 
 #: Client.cpp:1021
 msgid "Your CTCP to {1} got lost, you are not connected to IRC!"
@@ -285,9 +288,9 @@ msgstr "Użycie: /detach <#kanały>"
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] "Odpięto kanał {1}"
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] "Odpięto {1} kanały"
+msgstr[1] "Odpięto {1} kanały"
+msgstr[2] "Odpięto {1} kanałów"
+msgstr[3] "Odpięto {1} kanały/ów"
 
 #: Chan.cpp:678
 msgid "Buffer Playback..."
@@ -468,11 +471,11 @@ msgstr "Nie ma ustawionego MOTD."
 
 #: ClientCommand.cpp:167
 msgid "Rehashing succeeded!"
-msgstr ""
+msgstr "Przerabianie powiodło się!"
 
 #: ClientCommand.cpp:169
 msgid "Rehashing failed: {1}"
-msgstr ""
+msgstr "Przerabianie nie powiodło się: {1}"
 
 #: ClientCommand.cpp:173
 msgid "Wrote config to {1}"
@@ -705,15 +708,15 @@ msgstr "Jesteś już połączony z tą siecią."
 
 #: ClientCommand.cpp:739
 msgid "Switched to {1}"
-msgstr ""
+msgstr "Przełączono na {1}"
 
 #: ClientCommand.cpp:742
 msgid "You don't have a network named {1}"
-msgstr ""
+msgstr "Nie masz sieci pod nazwą {1}"
 
 #: ClientCommand.cpp:754
 msgid "Usage: AddServer <host> [[+]port] [pass]"
-msgstr ""
+msgstr "Użycie: AddServer <host> [[+]port] [hasło]"
 
 #: ClientCommand.cpp:759
 msgid "Server added"
@@ -1033,31 +1036,31 @@ msgstr "Nie jesteś na {1} (próbujesz dołączyć)"
 
 #: ClientCommand.cpp:1354
 msgid "The buffer for channel {1} is empty"
-msgstr ""
+msgstr "Bufor dla kanału {1} jest pusty"
 
 #: ClientCommand.cpp:1363
 msgid "No active query with {1}"
-msgstr ""
+msgstr "Brak aktywnej rozmowy z {1}"
 
 #: ClientCommand.cpp:1368
 msgid "The buffer for {1} is empty"
-msgstr ""
+msgstr "Bufor dla {1} jest pusty"
 
 #: ClientCommand.cpp:1384
 msgid "Usage: ClearBuffer <#chan|query>"
-msgstr ""
+msgstr "Użycie: ClearBuffer <#kanał|rozmowa>"
 
 #: ClientCommand.cpp:1403
 msgid "{1} buffer matching {2} has been cleared"
 msgid_plural "{1} buffers matching {2} have been cleared"
-msgstr[0] ""
+msgstr[0] "{1} bufor pasujący do {2} został wyczyszczony"
 msgstr[1] ""
 msgstr[2] ""
 msgstr[3] ""
 
 #: ClientCommand.cpp:1416
 msgid "All channel buffers have been cleared"
-msgstr ""
+msgstr "Wszystkie bufory kanałów zostały wyczyszczone"
 
 #: ClientCommand.cpp:1425
 msgid "All query buffers have been cleared"
@@ -1069,31 +1072,31 @@ msgstr "Wszystkie bufory zostały wyczyszczone"
 
 #: ClientCommand.cpp:1448
 msgid "Usage: SetBuffer <#chan|query> [linecount]"
-msgstr ""
+msgstr "Użycie: SetBuffer <#kanał|rozmowa> [liczba_linii]"
 
 #: ClientCommand.cpp:1469
 msgid "Setting buffer size failed for {1} buffer"
 msgid_plural "Setting buffer size failed for {1} buffers"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Ustawianie rozmiaru bufora nie powiodło się dla {1} bufora"
+msgstr[1] "Ustawianie rozmiaru bufora nie powiodło się dla {1} buforów"
+msgstr[2] "Ustawianie rozmiaru bufora nie powiodło się dla {1} buforów"
+msgstr[3] "Ustawianie rozmiaru bufora nie powiodło się dla {1} buforów"
 
 #: ClientCommand.cpp:1472
 msgid "Maximum buffer size is {1} line"
 msgid_plural "Maximum buffer size is {1} lines"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Maksymalny rozmiar bufora to {1} linia"
+msgstr[1] "Maksymalny rozmiar bufora to {1} linie"
+msgstr[2] "Maksymalny rozmiar bufora to {1} linii"
+msgstr[3] "Maksymalny rozmiar bufora to {1} linie/linii"
 
 #: ClientCommand.cpp:1477
 msgid "Size of every buffer was set to {1} line"
 msgid_plural "Size of every buffer was set to {1} lines"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Rozmiar każdego bufora został ustawiony na {1} linię"
+msgstr[1] "Rozmiar każdego bufora został ustawiony na {1} linie"
+msgstr[2] "Rozmiar każdego bufora został ustawiony na {1} linii"
+msgstr[3] "Rozmiar każdego bufora został ustawiony na {1} linię/linii"
 
 #: ClientCommand.cpp:1487 ClientCommand.cpp:1494 ClientCommand.cpp:1505
 #: ClientCommand.cpp:1514 ClientCommand.cpp:1522
@@ -1240,7 +1243,7 @@ msgstr "Usunięto port"
 
 #: ClientCommand.cpp:1659
 msgid "Unable to find a matching port"
-msgstr ""
+msgstr "Nie można znaleźć pasującego portu"
 
 #: ClientCommand.cpp:1667 ClientCommand.cpp:1682
 msgctxt "helpcmd"
@@ -1261,7 +1264,7 @@ msgstr ""
 #: ClientCommand.cpp:1690
 msgctxt "helpcmd|Version|desc"
 msgid "Print which version of ZNC this is"
-msgstr ""
+msgstr "Wypisuje, która to jest wersja ZNC"
 
 #: ClientCommand.cpp:1693
 msgctxt "helpcmd|ListMods|desc"
@@ -1357,6 +1360,7 @@ msgctxt "helpcmd|AddServer|desc"
 msgid ""
 "Add a server to the list of alternate/backup servers of current IRC network."
 msgstr ""
+"Dodaje serwer do listy alternatywnych/zapasowych serwerów bieżącej sieci IRC."
 
 #: ClientCommand.cpp:1741
 msgctxt "helpcmd|DelServer|args"
@@ -1369,6 +1373,7 @@ msgid ""
 "Remove a server from the list of alternate/backup servers of current IRC "
 "network"
 msgstr ""
+"Usuwa serwer z listy alternatywnych/zapasowych serwerów bieżącej sieci IRC"
 
 #: ClientCommand.cpp:1748
 msgctxt "helpcmd|AddTrustedServerFingerprint|args"
@@ -1441,52 +1446,52 @@ msgstr "Odepnij od kanałów"
 #: ClientCommand.cpp:1772
 msgctxt "helpcmd|Topics|desc"
 msgid "Show topics in all your channels"
-msgstr ""
+msgstr "Pokazuje tematy we wszystkich Twoich kanałach"
 
 #: ClientCommand.cpp:1775
 msgctxt "helpcmd|PlayBuffer|args"
 msgid "<#chan|query>"
-msgstr ""
+msgstr "<#kanał|rozmowa>"
 
 #: ClientCommand.cpp:1776
 msgctxt "helpcmd|PlayBuffer|desc"
 msgid "Play back the specified buffer"
-msgstr ""
+msgstr "Odtwórz określony bufor"
 
 #: ClientCommand.cpp:1778
 msgctxt "helpcmd|ClearBuffer|args"
 msgid "<#chan|query>"
-msgstr ""
+msgstr "<#kanał|rozmowa>"
 
 #: ClientCommand.cpp:1779
 msgctxt "helpcmd|ClearBuffer|desc"
 msgid "Clear the specified buffer"
-msgstr ""
+msgstr "Wyczyść określony bufor"
 
 #: ClientCommand.cpp:1781
 msgctxt "helpcmd|ClearAllBuffers|desc"
 msgid "Clear all channel and query buffers"
-msgstr ""
+msgstr "Wyczyść wszystkie bufory kanałów i rozmów"
 
 #: ClientCommand.cpp:1784
 msgctxt "helpcmd|ClearAllChannelBuffers|desc"
 msgid "Clear the channel buffers"
-msgstr ""
+msgstr "Wyczyść bufory kanału"
 
 #: ClientCommand.cpp:1788
 msgctxt "helpcmd|ClearAllQueryBuffers|desc"
 msgid "Clear the query buffers"
-msgstr ""
+msgstr "Wyczyść bufory rozmów"
 
 #: ClientCommand.cpp:1790
 msgctxt "helpcmd|SetBuffer|args"
 msgid "<#chan|query> [linecount]"
-msgstr ""
+msgstr "<#kanał|rozmowa> [liczba_linii]"
 
 #: ClientCommand.cpp:1791
 msgctxt "helpcmd|SetBuffer|desc"
 msgid "Set the buffer count"
-msgstr ""
+msgstr "Ustaw rozmiar bufora"
 
 #: ClientCommand.cpp:1795
 msgctxt "helpcmd|SetBindHost|args"
@@ -1696,7 +1701,7 @@ msgstr "[wiadomość]"
 #: ClientCommand.cpp:1894
 msgctxt "helpcmd|Broadcast|desc"
 msgid "Broadcast a message to all ZNC users"
-msgstr ""
+msgstr "Rozgłoś wiadomość do wszystkich użytkowników ZNC"
 
 #: ClientCommand.cpp:1897
 msgctxt "helpcmd|Shutdown|args"
@@ -1720,7 +1725,7 @@ msgstr "Uruchom ponownie ZNC"
 
 #: Socket.cpp:342
 msgid "Can't resolve server hostname"
-msgstr ""
+msgstr "Nie można rozwiązać nazwy hosta serwera"
 
 #: Socket.cpp:349
 msgid ""
@@ -1760,13 +1765,15 @@ msgstr ""
 
 #: User.cpp:511
 msgid "Network {1} already exists"
-msgstr ""
+msgstr "Sieć {1} już istnieje"
 
 #: User.cpp:777
 msgid ""
 "You are being disconnected because your IP is no longer allowed to connect "
 "to this user"
 msgstr ""
+"Jesteś rozłączany, ponieważ Twój adres IP nie może już łączyć się z tym "
+"użytkownikiem"
 
 #: User.cpp:912
 msgid "Password is empty"
