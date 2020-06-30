@@ -16,82 +16,86 @@ msgstr ""
 
 #: flooddetach.cpp:30
 msgid "Show current limits"
-msgstr ""
+msgstr "Pokaż bieżące limity"
 
 #: flooddetach.cpp:32 flooddetach.cpp:35
 msgid "[<limit>]"
-msgstr ""
+msgstr "[<limit>]"
 
 #: flooddetach.cpp:33
 msgid "Show or set number of seconds in the time interval"
-msgstr ""
+msgstr "Pokaż lub ustaw liczbę sekund w przedziale czasu"
 
 #: flooddetach.cpp:36
 msgid "Show or set number of lines in the time interval"
-msgstr ""
+msgstr "Pokaż lub ustaw liczbę linii w przedziale czasu"
 
 #: flooddetach.cpp:39
 msgid "Show or set whether to notify you about detaching and attaching back"
 msgstr ""
+"Pokaż lub ustaw, czy chcesz być powiadamiany o odpięciach i powrotnych "
+"dopięciach"
 
 #: flooddetach.cpp:93
 msgid "Flood in {1} is over, reattaching..."
-msgstr ""
+msgstr "Zalewanie się skończyło {1}, ponowne dopinanie..."
 
 #: flooddetach.cpp:150
 msgid "Channel {1} was flooded, you've been detached"
-msgstr ""
+msgstr "Kanał {1} był zalewany, został odpięty"
 
 #: flooddetach.cpp:187
 msgid "1 line"
 msgid_plural "{1} lines"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "1 linia"
+msgstr[1] "{1} linie"
+msgstr[2] "{1} linii"
+msgstr[3] "{1} linii/e"
 
 #: flooddetach.cpp:188
 msgid "every second"
 msgid_plural "every {1} seconds"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "co sekundę"
+msgstr[1] "co {1} sekundy"
+msgstr[2] "co {1} sekund"
+msgstr[3] "co {1} sekund"
 
 #: flooddetach.cpp:190
 msgid "Current limit is {1} {2}"
-msgstr ""
+msgstr "Bieżący limit to {1} {2}"
 
 #: flooddetach.cpp:197
 msgid "Seconds limit is {1}"
-msgstr ""
+msgstr "Limit sekund to {1}"
 
 #: flooddetach.cpp:202
 msgid "Set seconds limit to {1}"
-msgstr ""
+msgstr "Ustawiono limit sekund do {1}"
 
 #: flooddetach.cpp:211
 msgid "Lines limit is {1}"
-msgstr ""
+msgstr "Limit linii to {1}"
 
 #: flooddetach.cpp:216
 msgid "Set lines limit to {1}"
-msgstr ""
+msgstr "Ustawiono limit linii do {1}"
 
 #: flooddetach.cpp:229
 msgid "Module messages are disabled"
-msgstr ""
+msgstr "Wiadomości tego modułu zostały wyłączone"
 
 #: flooddetach.cpp:231
 msgid "Module messages are enabled"
-msgstr ""
+msgstr "Wiadomości tego modułu zostały włączone"
 
 #: flooddetach.cpp:247
 msgid ""
 "This user module takes up to two arguments. Arguments are numbers of "
 "messages and seconds."
 msgstr ""
+"Ten moduł użytkownika przyjmuje maksymalnie dwa argumenty. Argumenty to "
+"liczby wiadomości i sekund."
 
 #: flooddetach.cpp:251
 msgid "Detach channels when flooded"
-msgstr ""
+msgstr "Odpina od kanałów gdy są zalewane"

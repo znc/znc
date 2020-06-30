@@ -1260,6 +1260,8 @@ msgid ""
 "In the following list all occurrences of <#chan> support wildcards (* and ?) "
 "except ListNicks"
 msgstr ""
+"Na poniższej liście wszystkie wystąpienia <#kanał> obsługują symbole "
+"wieloznaczne (* i?) Oprócz ListNicks"
 
 #: ClientCommand.cpp:1690
 msgctxt "helpcmd|Version|desc"
@@ -1411,17 +1413,17 @@ msgstr "<#kanały>"
 #: ClientCommand.cpp:1763
 msgctxt "helpcmd|EnableChan|desc"
 msgid "Enable channels"
-msgstr ""
+msgstr "Włącz kanały"
 
 #: ClientCommand.cpp:1764
 msgctxt "helpcmd|DisableChan|args"
 msgid "<#chans>"
-msgstr ""
+msgstr "<#kanały>"
 
 #: ClientCommand.cpp:1765
 msgctxt "helpcmd|DisableChan|desc"
 msgid "Disable channels"
-msgstr ""
+msgstr "Wyłącz kanały"
 
 #: ClientCommand.cpp:1766
 msgctxt "helpcmd|Attach|args"
@@ -1431,7 +1433,7 @@ msgstr ""
 #: ClientCommand.cpp:1767
 msgctxt "helpcmd|Attach|desc"
 msgid "Attach to channels"
-msgstr ""
+msgstr "Dopnij do kanałów"
 
 #: ClientCommand.cpp:1768
 msgctxt "helpcmd|Detach|args"
