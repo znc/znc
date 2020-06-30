@@ -20,4 +20,4 @@ msgstr ""
 
 #: imapauth.cpp:171
 msgid "Allow users to authenticate via IMAP."
-msgstr ""
+msgstr "Zezwala użytkownikom na uwierzytelnianie się za pomocą IMAP."

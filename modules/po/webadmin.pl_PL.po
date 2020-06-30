@@ -623,7 +623,7 @@ msgstr "Strefa czasowa:"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:298
 msgid "E.g. <code>Europe/Berlin</code>, or <code>GMT-6</code>"
-msgstr "Np. <code>Europa/Warszawa</code>, lub <code>GMT-6</code>"
+msgstr "Np. <code>Europa/Warszawa</code>, lub <code>GMT+1</code>"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:306
 msgid "Character encoding used between IRC client and ZNC."
@@ -808,7 +808,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:36
 msgid "E.g. <code>UTF-8</code>, or <code>ISO-8859-15</code>"
-msgstr "N.p. <code>UTF-8</code>, lub <code>ISO-8859-2</code>"
+msgstr "Np. <code>UTF-8</code>, lub <code>ISO-8859-2</code>"
 
 #: modules/po/../data/webadmin/tmpl/index.tmpl:5
 msgid "Welcome to the ZNC webadmin module."
@@ -876,7 +876,7 @@ msgstr "Ustawienia"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:105
 msgid "Default for new users only."
-msgstr "Domyślny jest tylko dla nowych użytkowników."
+msgstr "Jest to wartość domyślna dla nowych użytkowników."
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:110
 msgid "Maximum Buffer Size:"
@@ -902,7 +902,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:124
 msgid "Server Throttle:"
-msgstr ""
+msgstr "Oczekiwanie na serwer:"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:126
 msgid ""
@@ -915,7 +915,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:131
 msgid "Anonymous Connection Limit per IP:"
-msgstr "Limit anonimowego połączenia na adres IP:"
+msgstr "Limit anonimowych połączeń na adres IP:"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:133
 msgid "Limits the number of unidentified connections per IP."
@@ -956,7 +956,7 @@ msgstr "Moduły globalne"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:180
 msgid "Loaded by users"
-msgstr "Załadowane przez użytkownika"
+msgstr "Załadowane przez użytkowników"
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:7
 msgid "Information"
@@ -1206,7 +1206,7 @@ msgstr ""
 
 #: webadmin.cpp:1522
 msgid "Multi Clients"
-msgstr "Dozwolonych wielu klientów"
+msgstr "Wielu klientów może się zalogować na tego użytkownika"
 
 #: webadmin.cpp:1529
 msgid "Append Timestamps"

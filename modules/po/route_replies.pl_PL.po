@@ -16,7 +16,7 @@ msgstr ""
 
 #: route_replies.cpp:215
 msgid "[yes|no]"
-msgstr ""
+msgstr "[tak|nie]"
 
 #: route_replies.cpp:216
 msgid "Decides whether to show the timeout messages or not"
@@ -58,4 +58,4 @@ msgstr ""
 
 #: route_replies.cpp:463
 msgid "Send replies (e.g. to /who) to the right client only"
-msgstr ""
+msgstr "Wysyła odpowiedzi (np. takie jak /who) tylko do właściwych klientów"
