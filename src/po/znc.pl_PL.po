@@ -1261,7 +1261,7 @@ msgid ""
 "except ListNicks"
 msgstr ""
 "Na poniższej liście wszystkie wystąpienia <#kanał> obsługują symbole "
-"wieloznaczne (* i?) Oprócz ListNicks"
+"wieloznaczne (* i ?) Oprócz ListNicks"
 
 #: ClientCommand.cpp:1690
 msgctxt "helpcmd|Version|desc"

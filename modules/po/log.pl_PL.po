@@ -38,8 +38,7 @@ msgstr "<zmienna> true|false"
 
 #: log.cpp:68
 msgid "Set one of the following options: joins, quits, nickchanges"
-msgstr ""
-"Ustaw jedną z następujących opcji: dołączenia, wyjścia, zmiany pseudonimów"
+msgstr "Ustaw jedną z następujących opcji: joins, quits, nickchanges"
 
 #: log.cpp:71
 msgid "Show current settings set by Set command"
@@ -79,8 +78,8 @@ msgstr "Włączono kronikowanie"
 msgid ""
 "Usage: Set <var> true|false, where <var> is one of: joins, quits, nickchanges"
 msgstr ""
-"Użycie: Set <zmienna> true|false, gdzie <zmienna> jest jedną z: dołączenia, "
-"wyjścia, zmiany pseudonimów"
+"Użycie: Set <zmienna> prawda|fałsz, gdzie <zmienna> jest jedną z: joins, "
+"quits, nickchanges"
 
 #: log.cpp:197
 msgid "Will log joins"
@@ -108,8 +107,7 @@ msgstr "Nie będą kronikowane zmiany pseudonimu"
 
 #: log.cpp:204
 msgid "Unknown variable. Known variables: joins, quits, nickchanges"
-msgstr ""
-"Nieznana zmienna. Znane zmienne to: dołączenia, wyjścia, zmiany pseudonimu"
+msgstr "Nieznana zmienna. Znane zmienne to: joins, quits, nickchanges"
 
 #: log.cpp:212
 msgid "Logging joins"
