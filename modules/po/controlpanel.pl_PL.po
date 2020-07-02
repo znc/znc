@@ -30,7 +30,7 @@ msgstr "Łańcuch znaków"
 
 #: controlpanel.cpp:79
 msgid "Boolean (true/false)"
-msgstr "Typ logiczny (prawda/fałsz)"
+msgstr "Typ logiczny (true/fałse)"
 
 #: controlpanel.cpp:80
 msgid "Integer"

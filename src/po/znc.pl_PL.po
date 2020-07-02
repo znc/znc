@@ -1428,7 +1428,7 @@ msgstr "Wyłącz kanały"
 #: ClientCommand.cpp:1766
 msgctxt "helpcmd|Attach|args"
 msgid "<#chans>"
-msgstr ""
+msgstr "<#kanały>"
 
 #: ClientCommand.cpp:1767
 msgctxt "helpcmd|Attach|desc"
