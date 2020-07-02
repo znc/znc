@@ -78,7 +78,7 @@ msgstr "Włączono kronikowanie"
 msgid ""
 "Usage: Set <var> true|false, where <var> is one of: joins, quits, nickchanges"
 msgstr ""
-"Użycie: Set <zmienna> prawda|fałsz, gdzie <zmienna> jest jedną z: joins, "
+"Użycie: Set <zmienna> true|false, gdzie <zmienna> jest jedną z: joins, "
 "quits, nickchanges"
 
 #: log.cpp:197
