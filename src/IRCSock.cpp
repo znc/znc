@@ -1356,7 +1356,11 @@ void CIRCSock::ParseISupport(const CMessage& Message) {
             break;
         }
 
-        m_mISupport[sName] = sValue;
+        if (sName.StartsWith("-")) {
+            m_mISupport.erase(sName.TrimPrefix_n("-"));
+        } else {
+            m_mISupport[sName] = sValue;
+        }
 
         if (sName.Equals("PREFIX")) {
             CString sPrefixes = sValue.Token(1, false, ")");
@@ -1391,10 +1395,16 @@ void CIRCSock::ParseISupport(const CMessage& Message) {
             if (m_bNamesx) continue;
             m_bNamesx = true;
             PutIRC("PROTOCTL NAMESX");
+        } else if (sName.Equals("-NAMESX")) {
+            if (!m_bNamesx) continue;
+            m_bNamesx = false;
         } else if (sName.Equals("UHNAMES")) {
             if (m_bUHNames) continue;
             m_bUHNames = true;
             PutIRC("PROTOCTL UHNAMES");
+        } else if (sName.Equals("-UHNAMES")) {
+            if (!m_bUHNames) continue;
+            m_bUHNames = false;
         }
     }
 }

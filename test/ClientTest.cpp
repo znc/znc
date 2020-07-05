@@ -136,6 +136,20 @@ TEST_F(ClientTest, MultiPrefixNames) {  // aka NAMESX
                 ElementsAre(msg.ToString(), extmsg.ToString()));
 }
 
+TEST_F(ClientTest, MultiPrefixNamesDisabled) {
+    m_pTestSock->ReadLine(
+        ":server 005 guest NAMESX :are supported by this server");
+
+    EXPECT_TRUE(m_pTestSock->HasNamesx());
+    EXPECT_EQ(m_pTestSock->GetISupport("NAMESX", "unset"), "");
+
+    m_pTestSock->ReadLine(
+        ":server 005 guest -NAMESX :are supported by this server");
+
+    EXPECT_FALSE(m_pTestSock->HasNamesx());
+    EXPECT_EQ(m_pTestSock->GetISupport("NAMESX", "unset"), "unset");
+}
+
 TEST_F(ClientTest, UserhostInNames) {  // aka UHNAMES
     m_pTestSock->ReadLine(
         ":server 005 guest UHNAMES :are supported by this server");
@@ -153,6 +167,20 @@ TEST_F(ClientTest, UserhostInNames) {  // aka UHNAMES
     m_pTestClient->PutClient(extmsg);
     EXPECT_THAT(m_pTestClient->vsLines,
                 ElementsAre(msg.ToString(), extmsg.ToString()));
+}
+
+TEST_F(ClientTest, UserhostInNamesDisabled) {
+    m_pTestSock->ReadLine(
+        ":server 005 guest UHNAMES :are supported by this server");
+
+    EXPECT_TRUE(m_pTestSock->HasUHNames());
+    EXPECT_EQ(m_pTestSock->GetISupport("UHNAMES", "unset"), "");
+
+    m_pTestSock->ReadLine(
+        ":server 005 guest -UHNAMES :are supported by this server");
+
+    EXPECT_FALSE(m_pTestSock->HasUHNames());
+    EXPECT_EQ(m_pTestSock->GetISupport("UHNAMES", "unset"), "unset");
 }
 
 TEST_F(ClientTest, ExtendedJoin) {
