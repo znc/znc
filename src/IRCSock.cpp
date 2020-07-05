@@ -385,7 +385,7 @@ bool CIRCSock::OnCapabilityMessage(CMessage& Message) {
         sArgs.Split(" ", vsTokens, false);
 
         for (const CString& sCap : vsTokens) {
-            if (OnServerCapAvailable(sCap) || mSupportedCaps.count(sCap)) {
+            if (!IsCapAccepted(sCap) && (OnServerCapAvailable(sCap) || mSupportedCaps.count(sCap))) {
                 m_ssPendingCaps.insert(sCap);
             }
         }
