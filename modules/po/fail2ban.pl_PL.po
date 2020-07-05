@@ -51,6 +51,9 @@ msgid ""
 "Invalid argument, must be the number of minutes IPs are blocked after a "
 "failed login and can be followed by number of allowed failed login attempts"
 msgstr ""
+"Niepoprawny argument, musi być liczbą minut przez które adresy IP są "
+"blokowane po nieudanej próbie logowania, następnym argumentem może też być "
+"liczba dozwolonych nieudanych prób logowania"
 
 #: fail2ban.cpp:77 fail2ban.cpp:100 fail2ban.cpp:123 fail2ban.cpp:146
 #: fail2ban.cpp:172
@@ -63,7 +66,7 @@ msgstr "Użycie: Timeout [minuty]"
 
 #: fail2ban.cpp:91 fail2ban.cpp:94
 msgid "Timeout: {1} min"
-msgstr ""
+msgstr "Czas wygaśnięcia: {1} min"
 
 #: fail2ban.cpp:109
 msgid "Usage: Attempts [count]"
@@ -118,4 +121,4 @@ msgstr ""
 
 #: fail2ban.cpp:250
 msgid "Block IPs for some time after a failed login."
-msgstr "Zablokuj IP na jakiś czas po nieudanym logowaniu."
+msgstr "Blokuje IP na jakiś czas po nieudanym logowaniu."
