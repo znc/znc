@@ -346,68 +346,66 @@ bool CIRCSock::OnAwayMessage(CMessage& Message) {
 }
 
 bool CIRCSock::OnCapabilityMessage(CMessage& Message) {
-    // CAPs are supported only before authorization.
-    if (!m_bAuthed) {
-        // The first parameter is most likely "*". No idea why, the
-        // CAP spec don't mention this, but all implementations
-        // I've seen add this extra asterisk
-        CString sSubCmd = Message.GetParam(1);
+    // The first parameter is most likely "*". No idea why, the
+    // CAP spec don't mention this, but all implementations
+    // I've seen add this extra asterisk
+    CString sSubCmd = Message.GetParam(1);
 
-        // If the caplist of a reply is too long, it's split
-        // into multiple replies. A "*" is prepended to show
-        // that the list was split into multiple replies.
-        // This is useful mainly for LS. For ACK and NAK
-        // replies, there's no real need for this, because
-        // we request only 1 capability per line.
-        // If we will need to support broken servers or will
-        // send several requests per line, need to delay ACK
-        // actions until all ACK lines are received and
-        // to recognize past request of NAK by 100 chars
-        // of this reply.
-        CString sArgs;
-        if (Message.GetParam(2) == "*") {
-            sArgs = Message.GetParam(3);
-        } else {
-            sArgs = Message.GetParam(2);
-        }
-
-        std::map<CString, std::function<void(bool bVal)>> mSupportedCaps = {
-            {"multi-prefix", [this](bool bVal) { m_bNamesx = bVal; }},
-            {"userhost-in-names", [this](bool bVal) { m_bUHNames = bVal; }},
-            {"away-notify", [this](bool bVal) { m_bAwayNotify = bVal; }},
-            {"account-notify", [this](bool bVal) { m_bAccountNotify = bVal; }},
-            {"extended-join", [this](bool bVal) { m_bExtendedJoin = bVal; }},
-            {"server-time", [this](bool bVal) { m_bServerTime = bVal; }},
-            {"znc.in/server-time-iso",
-             [this](bool bVal) { m_bServerTime = bVal; }},
-        };
-
-        if (sSubCmd == "LS") {
-            VCString vsTokens;
-            sArgs.Split(" ", vsTokens, false);
-
-            for (const CString& sCap : vsTokens) {
-                if (OnServerCapAvailable(sCap) || mSupportedCaps.count(sCap)) {
-                    m_ssPendingCaps.insert(sCap);
-                }
-            }
-        } else if (sSubCmd == "ACK") {
-            sArgs.Trim();
-            IRCSOCKMODULECALL(OnServerCapResult(sArgs, true), NOTHING);
-            const auto& it = mSupportedCaps.find(sArgs);
-            if (it != mSupportedCaps.end()) {
-                it->second(true);
-            }
-            m_ssAcceptedCaps.insert(sArgs);
-        } else if (sSubCmd == "NAK") {
-            // This should work because there's no [known]
-            // capability with length of name more than 100 characters.
-            sArgs.Trim();
-            IRCSOCKMODULECALL(OnServerCapResult(sArgs, false), NOTHING);
-        }
-
-        SendNextCap();
+    // If the caplist of a reply is too long, it's split
+    // into multiple replies. A "*" is prepended to show
+    // that the list was split into multiple replies.
+    // This is useful mainly for LS. For ACK and NAK
+    // replies, there's no real need for this, because
+    // we request only 1 capability per line.
+    // If we will need to support broken servers or will
+    // send several requests per line, need to delay ACK
+    // actions until all ACK lines are received and
+    // to recognize past request of NAK by 100 chars
+    // of this reply.
+    CString sArgs;
+    if (Message.GetParam(2) == "*") {
+        sArgs = Message.GetParam(3);
+    } else {
+        sArgs = Message.GetParam(2);
     }
+
+    std::map<CString, std::function<void(bool bVal)>> mSupportedCaps = {
+        {"multi-prefix", [this](bool bVal) { m_bNamesx = bVal; }},
+        {"userhost-in-names", [this](bool bVal) { m_bUHNames = bVal; }},
+        {"away-notify", [this](bool bVal) { m_bAwayNotify = bVal; }},
+        {"account-notify", [this](bool bVal) { m_bAccountNotify = bVal; }},
+        {"extended-join", [this](bool bVal) { m_bExtendedJoin = bVal; }},
+        {"server-time", [this](bool bVal) { m_bServerTime = bVal; }},
+        {"znc.in/server-time-iso",
+         [this](bool bVal) { m_bServerTime = bVal; }},
+    };
+
+    if (sSubCmd == "LS") {
+        VCString vsTokens;
+        sArgs.Split(" ", vsTokens, false);
+
+        for (const CString& sCap : vsTokens) {
+            if (OnServerCapAvailable(sCap) || mSupportedCaps.count(sCap)) {
+                m_ssPendingCaps.insert(sCap);
+            }
+        }
+    } else if (sSubCmd == "ACK") {
+        sArgs.Trim();
+        IRCSOCKMODULECALL(OnServerCapResult(sArgs, true), NOTHING);
+        const auto& it = mSupportedCaps.find(sArgs);
+        if (it != mSupportedCaps.end()) {
+            it->second(true);
+        }
+        m_ssAcceptedCaps.insert(sArgs);
+    } else if (sSubCmd == "NAK") {
+        // This should work because there's no [known]
+        // capability with length of name more than 100 characters.
+        sArgs.Trim();
+        IRCSOCKMODULECALL(OnServerCapResult(sArgs, false), NOTHING);
+    }
+
+    SendNextCap();
+
     // Don't forward any CAP stuff to the client
     return true;
 }
