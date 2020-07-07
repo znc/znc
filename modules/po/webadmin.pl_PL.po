@@ -546,7 +546,7 @@ msgstr ""
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:178
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:179
 msgid "Loaded by networks"
-msgstr "Załadowane przez sieci"
+msgstr "Załadowany przez sieci"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:237
 msgid ""
@@ -565,8 +565,8 @@ msgid ""
 "before dropping off the oldest line. The buffers are stored in the memory by "
 "default."
 msgstr ""
-"Jest to ilość linii, których bufor odtwarzania będzie przechowywać dla "
-"kanałów przed porzuceniem najstarszej linii. Bufory te są domyślnie "
+"To jest ilość linii, których bufor odtwarzania będzie przechowywał dla "
+"kanałów przed porzuceniem najstarszej linii. Domyślnie bufory są "
 "przechowywane w pamięci operacyjnej."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:251
@@ -587,8 +587,8 @@ msgid ""
 "before dropping off the oldest line. The buffers are stored in the memory by "
 "default."
 msgstr ""
-"Jest to ilość linii, których bufor odtwarzania będzie przechowywać dla "
-"rozmów przed porzuceniem najstarszej linii. Bufory te są domyślnie "
+"To jest ilość linii, których bufor odtwarzania będzie przechowywał dla "
+"rozmów przed porzuceniem najstarszej linii. Domyślnie bufory są "
 "przechowywane w pamięci operacyjnej."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:285
@@ -956,7 +956,7 @@ msgstr "Moduły globalne"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:180
 msgid "Loaded by users"
-msgstr "Załadowane przez użytkowników"
+msgstr "Załadowany przez użytkowników"
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:7
 msgid "Information"
@@ -1118,11 +1118,11 @@ msgstr "Automatycznie czyść bufor kanału po odtworzeniu"
 
 #: webadmin.cpp:766
 msgid "Detached"
-msgstr "Odpięto"
+msgstr "Odpięty"
 
 #: webadmin.cpp:773
 msgid "Enabled"
-msgstr "Włączone"
+msgstr "Włączony"
 
 #: webadmin.cpp:797
 msgid "Channel name is a required argument"
@@ -1210,11 +1210,11 @@ msgstr "Wielu klientów może się zalogować na tego użytkownika"
 
 #: webadmin.cpp:1529
 msgid "Append Timestamps"
-msgstr "Dopisz znacznik czasu"
+msgstr "Dopisz przed znacznik czasu"
 
 #: webadmin.cpp:1536
 msgid "Prepend Timestamps"
-msgstr ""
+msgstr "Dopisz po znacznik czasu"
 
 #: webadmin.cpp:1544
 msgid "Deny LoadMod"
