@@ -30,7 +30,7 @@ msgstr "Łańcuch znaków"
 
 #: controlpanel.cpp:79
 msgid "Boolean (true/false)"
-msgstr "Typ logiczny (true/fałse)"
+msgstr "Typ logiczny (true/false)"
 
 #: controlpanel.cpp:80
 msgid "Integer"
@@ -677,7 +677,7 @@ msgstr "Usuwa moduł użytkownika"
 
 #: controlpanel.cpp:1621
 msgid "Get the list of modules for a user"
-msgstr "Uzyskaj listę modułów dla użytkownika"
+msgstr "Uzyskuje listę modułów dla użytkownika"
 
 #: controlpanel.cpp:1624
 msgid "<username> <network> <modulename> [args]"
@@ -697,7 +697,7 @@ msgstr "Usuwa moduł z sieci"
 
 #: controlpanel.cpp:1632
 msgid "Get the list of modules for a network"
-msgstr "Uzyskaj listę modułów dla użytkownika"
+msgstr "Uzyskuje listę modułów dla użytkownika"
 
 #: controlpanel.cpp:1635
 msgid "List the configured CTCP replies"
@@ -709,7 +709,7 @@ msgstr "<nazwa_użytkownika> <ctcp> [odpowiedź]"
 
 #: controlpanel.cpp:1638
 msgid "Configure a new CTCP reply"
-msgstr "Skonfiguruj nową odpowiedź CTCP"
+msgstr "Konfiguruje nową odpowiedź CTCP"
 
 #: controlpanel.cpp:1640
 msgid "<username> <ctcp>"
@@ -717,7 +717,7 @@ msgstr "<nazwa_użytkownia> <ctcp>"
 
 #: controlpanel.cpp:1641
 msgid "Remove a CTCP reply"
-msgstr "Usuń odpowiedź CTCP"
+msgstr "Usuwa odpowiedź CTCP"
 
 #: controlpanel.cpp:1645 controlpanel.cpp:1648
 msgid "[username] <network>"
@@ -725,11 +725,11 @@ msgstr "[nazwa_użytkownika] <sieć>"
 
 #: controlpanel.cpp:1646
 msgid "Add a network for a user"
-msgstr "Dodaj sieć użytkownikowi"
+msgstr "Dodaje sieć użytkownikowi"
 
 #: controlpanel.cpp:1649
 msgid "Delete a network for a user"
-msgstr "Usuń sieć użytkownikowi"
+msgstr "Usuwa sieć użytkownikowi"
 
 #: controlpanel.cpp:1651
 msgid "[username]"
