@@ -76,4 +76,4 @@ msgstr ""
 
 #: ctcpflood.cpp:151
 msgid "Don't forward CTCP floods to clients"
-msgstr "Nie przekierowywuje zalewania zapytaniami CTCP do klientów"
+msgstr "Nie przekierowuje zalewania zapytaniami CTCP do klientów"

@@ -209,7 +209,7 @@ msgid ""
 "When disabled, manually whitelist all server fingerprints, even if the "
 "certificate is valid"
 msgstr ""
-"Gdy wyłączone, ręcznie musisz dosdać wszystkie odciski palców serwera, nawet "
+"Gdy wyłączone, ręcznie musisz dodać wszystkie odciski palców serwera, nawet "
 "jeżeli certyfikat jest poprawny"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:89
@@ -796,15 +796,15 @@ msgstr "Nie zapewniaj w ogóle żadnego kodowania (starszy tryb, niezalecane)"
 
 #: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:22
 msgid "Try to parse as UTF-8 and as {1}, send as UTF-8 (recommended)"
-msgstr ""
+msgstr "Próbuj parsować jako UTF-8 i jako {1}, wyślij jako UTF-8 (zalecane)"
 
 #: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:26
 msgid "Try to parse as UTF-8 and as {1}, send as {1}"
-msgstr ""
+msgstr "Próbuj parsować jako UTF-8 i jako {1}, wyślij jako {1}"
 
 #: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:30
 msgid "Parse and send as {1} only"
-msgstr ""
+msgstr "Parsuj i wyślij tylko jako {1}"
 
 #: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:36
 msgid "E.g. <code>UTF-8</code>, or <code>ISO-8859-15</code>"
@@ -948,7 +948,7 @@ msgstr "Wiadomość dnia:"
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:162
 msgid "“Message of the Day”, sent to all ZNC users on connect."
 msgstr ""
-"„Wiadomość dnia”, wysłana do wszystkich użytkowników ZNC przy połączeniu."
+"„Wiadomość dnia”, wysyłana do wszystkich użytkowników ZNC na połączeniu."
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:170
 msgid "Global Modules"
@@ -1210,11 +1210,11 @@ msgstr "Wielu klientów może się zalogować na tego użytkownika"
 
 #: webadmin.cpp:1529
 msgid "Append Timestamps"
-msgstr "Dopisz przed znacznik czasu"
+msgstr "Dopisz po znacznik czasu"
 
 #: webadmin.cpp:1536
 msgid "Prepend Timestamps"
-msgstr "Dopisz po znacznik czasu"
+msgstr "Dopisz przed znacznik czasu"
 
 #: webadmin.cpp:1544
 msgid "Deny LoadMod"

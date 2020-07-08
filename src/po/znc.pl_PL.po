@@ -1764,6 +1764,8 @@ msgid ""
 "Invalid network name. It should be alphanumeric. Not to be confused with "
 "server name"
 msgstr ""
+"Nieprawidłowa nazwa sieci. Powinna być alfanumeryczna. Nie należy mylić jej "
+"z nazwą serwera"
 
 #: User.cpp:511
 msgid "Network {1} already exists"

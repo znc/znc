@@ -97,4 +97,4 @@ msgstr "Wprowadź jedną lub więcej nazw użytkowników. Rozdziel je spacjami."
 
 #: blockuser.cpp:219
 msgid "Block certain users from logging in."
-msgstr "Zablokuj niektórym użytkownikom możliwość logowania."
+msgstr "Blokuje niektórym użytkownikom możliwość logowania."

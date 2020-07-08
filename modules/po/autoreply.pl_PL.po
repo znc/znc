@@ -44,4 +44,4 @@ msgstr ""
 
 #: autoreply.cpp:98
 msgid "Reply to queries when you are away"
-msgstr "Odpowiadaj na przychodzące rozmowy, gdy Cię nie ma"
+msgstr "Odpowiada na przychodzące rozmowy, gdy Cię nie ma"

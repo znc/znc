@@ -58,6 +58,8 @@ msgid ""
 "This user module takes up to one arguments. Either --ask-pass or the "
 "password itself (which may contain spaces) or nothing"
 msgstr ""
+"Ten moduł użytkownika przyjmuje do jednego argumentu. Albo --ask-pass, albo "
+"samo hasło (które może zawierać spacje) lub nic"
 
 #: savebuff.cpp:363
 msgid "Stores channel and query buffers to disk, encrypted"

@@ -60,7 +60,7 @@ msgstr "Oczekujący"
 
 #: bouncedcc.cpp:127
 msgid "Halfway"
-msgstr ""
+msgstr "Do połowy"
 
 #: bouncedcc.cpp:129
 msgid "Connected"
