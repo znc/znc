@@ -28,7 +28,7 @@ msgstr "Usunięto {1} wiadomości"
 
 #: awaystore.cpp:104
 msgid "USAGE: delete <num|all>"
-msgstr "UŻYCIE: delete <liczba|all>"
+msgstr "UŻYCIE: delete <numer|all>"
 
 #: awaystore.cpp:109
 msgid "Illegal message # requested"

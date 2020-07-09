@@ -76,4 +76,4 @@ msgstr "Pokaż bieżący certyfikat"
 
 #: cert.cpp:105
 msgid "Use a ssl certificate to connect to a server"
-msgstr "Użyj certyfikatu SSL, aby połączyć się z serwerem"
+msgstr "Używa certyfikatu SSL, aby połączyć się z serwerem"

@@ -110,4 +110,4 @@ msgstr "Usunięto"
 #: certauth.cpp:291
 msgid "Allows users to authenticate via SSL client certificates."
 msgstr ""
-"Umożliwia użytkownikom uwierzytelnianie za pomocą certyfikatów klienta SSL."
+"Pozwala użytkownikom na uwierzytelnianie za pomocą certyfikatów SSL klienta."
