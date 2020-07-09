@@ -16,7 +16,7 @@ msgstr ""
 
 #: route_replies.cpp:215
 msgid "[yes|no]"
-msgstr "[tak|nie]"
+msgstr "[yes|no]"
 
 #: route_replies.cpp:216
 msgid "Decides whether to show the timeout messages or not"

@@ -106,7 +106,7 @@ msgstr ""
 #: dcc.cpp:239
 msgctxt "list-state"
 msgid "Waiting"
-msgstr ""
+msgstr "Oczekujący"
 
 #: dcc.cpp:244
 msgid "{1} KiB/s"
@@ -118,7 +118,7 @@ msgstr "Nie masz aktywnych transferów DCC."
 
 #: dcc.cpp:267
 msgid "Attempting to resume send from position {1} of file [{2}] for [{3}]"
-msgstr ""
+msgstr "Próba wznowienia wysyłania z pozycji {1} pliku [{2}] dla [{3}]"
 
 #: dcc.cpp:277
 msgid "Couldn't resume file [{1}] for [{2}]: not sending anything."
