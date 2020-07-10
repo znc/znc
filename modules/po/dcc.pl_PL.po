@@ -101,7 +101,7 @@ msgstr "Wysyłanie"
 #: dcc.cpp:234
 msgctxt "list-type"
 msgid "Getting"
-msgstr ""
+msgstr "Pobieranie"
 
 #: dcc.cpp:239
 msgctxt "list-state"

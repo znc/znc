@@ -474,7 +474,7 @@ msgid ""
 "line, wildcards * and ? are available."
 msgstr ""
 "Pozostaw puste, aby zezwolić na połączenia ze wszystkich adresów IP. <br/> W "
-"przeciwnym razie jeden wpis na linię, symbole wieloznaczne * i? są dostępne."
+"przeciwnym razie jeden wpis na linię, symbole wieloznaczne * i ? są dostępne."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:62
 msgid "IRC Information"
