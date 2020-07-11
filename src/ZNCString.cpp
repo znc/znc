@@ -1239,7 +1239,18 @@ short CString::ToShort() const {
     return (short int)strtol(this->c_str(), (char**)nullptr, 10);
 }
 unsigned short CString::ToUShort() const {
-    return (unsigned short int)strtoul(this->c_str(), (char**)nullptr, 10);
+    unsigned short int ret;
+    unsigned long int val;
+    val = strtoul(this->c_str(), (char**)nullptr, 10);
+
+    // We need short ints greater than 16bits as much as men need nipples
+    if (val > 65535) {
+	    val = 0;
+    }
+
+    ret = (unsigned short int) val;
+
+    return ret;
 }
 unsigned int CString::ToUInt() const {
     return (unsigned int)strtoul(this->c_str(), (char**)nullptr, 10);
