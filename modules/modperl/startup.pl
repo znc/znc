@@ -641,7 +641,7 @@ sub CreateTimer {
 			$self->{_cmod},
 			$a{interval}//10,
 			$a{cycles}//1,
-			"perl-timer",
+			$a{label}//"perl-timer",
 			$a{description}//'Just Another Perl Timer',
 			$ptimer);
 	$ptimer->{_ctimer} = $ctimer;
