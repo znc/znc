@@ -650,7 +650,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
         bSuccess = true;
         while (true) {
             if (!CUtils::GetNumInput("Listen on port", uListenPort, 1025,
-                                     65534)) {
+                                     65535)) {
                 continue;
             }
             if (uListenPort == 6667) {
@@ -1627,9 +1627,19 @@ bool CZNC::AddListener(const CString& sLine, CString& sError) {
 
     // No support for URIPrefix for old-style configs.
     CString sURIPrefix;
-    unsigned short uPort = sPort.ToUShort();
-    return AddListener(uPort, sBindHost, sURIPrefix, bSSL, eAddr, eAccept,
-                       sError);
+
+    // Do some port  validation before adding the listener
+    unsigned long int ulPort = sPort.ToULong();
+    if (ulPort >= 1 && ulPort <= 65535) { 
+        unsigned short uPort = (unsigned short) ulPort;
+        return AddListener(uPort, sBindHost, sURIPrefix, bSSL, eAddr, eAccept,
+                           sError);
+    }
+    else {
+       sError = t_f("Port [{1}] is out of the 1-65535 range")(sPort);
+       CUtils::PrintStatus(false, sError);
+       return false;
+    }
 }
 
 bool CZNC::AddListener(unsigned short uPort, const CString& sBindHost,
@@ -1738,12 +1748,21 @@ bool CZNC::AddListener(CConfig* pConfig, CString& sError) {
 #endif
     bool bIRC;
     bool bWeb;
+    CString sPort;
     unsigned short uPort;
-    if (!pConfig->FindUShortEntry("port", uPort)) {
+    unsigned long int ulPort; //read the port with some extra bits for validation
+    if (!pConfig->FindStringEntry("port", sPort)) {
         sError = "No port given";
         CUtils::PrintError(sError);
         return false;
     }
+    ulPort = sPort.ToULong();
+    if (ulPort > 65535 || ulPort < 1) {
+	sError = t_f("Port [{1}] is out of the 1-65535 range")(sPort);
+	CUtils::PrintError(sError);
+	return false;
+    }
+    uPort = (unsigned short) ulPort;
     pConfig->FindStringEntry("host", sBindHost);
     pConfig->FindBoolEntry("ssl", bSSL, false);
     pConfig->FindBoolEntry("ipv4", b4, true);
