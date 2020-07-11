@@ -16,35 +16,35 @@ msgstr ""
 
 #: dcc.cpp:88
 msgid "<nick> <file>"
-msgstr ""
+msgstr "<pseudonim> <plik>"
 
 #: dcc.cpp:89
 msgid "Send a file from ZNC to someone"
-msgstr ""
+msgstr "Wyślij plik z ZNC do kogoś"
 
 #: dcc.cpp:91
 msgid "<file>"
-msgstr ""
+msgstr "<plik>"
 
 #: dcc.cpp:92
 msgid "Send a file from ZNC to your client"
-msgstr ""
+msgstr "Wyślij plik z ZNC do Twojego klienta"
 
 #: dcc.cpp:94
 msgid "List current transfers"
-msgstr ""
+msgstr "Lista bieżących transferów"
 
 #: dcc.cpp:103
 msgid "You must be admin to use the DCC module"
-msgstr ""
+msgstr "Musisz być administratorem, aby używać modułu DCC"
 
 #: dcc.cpp:140
 msgid "Attempting to send [{1}] to [{2}]."
-msgstr ""
+msgstr "Próba wysłania [{1}] do [{2}]."
 
 #: dcc.cpp:149 dcc.cpp:554
 msgid "Receiving [{1}] from [{2}]: File already exists."
-msgstr ""
+msgstr "Odbieranie [{1}] od [{2}]: Plik już istnieje."
 
 #: dcc.cpp:167
 msgid ""
@@ -53,72 +53,72 @@ msgstr ""
 
 #: dcc.cpp:179
 msgid "Usage: Send <nick> <file>"
-msgstr ""
+msgstr "Użycie: Send <pseudonim> <plik>"
 
 #: dcc.cpp:186 dcc.cpp:206
 msgid "Illegal path."
-msgstr ""
+msgstr "Niedozwolona ścieżka."
 
 #: dcc.cpp:199
 msgid "Usage: Get <file>"
-msgstr ""
+msgstr "Użycie: Get <plik>"
 
 #: dcc.cpp:215 dcc.cpp:232 dcc.cpp:234
 msgctxt "list"
 msgid "Type"
-msgstr ""
+msgstr "Typ"
 
 #: dcc.cpp:216 dcc.cpp:238 dcc.cpp:241
 msgctxt "list"
 msgid "State"
-msgstr ""
+msgstr "Stan"
 
 #: dcc.cpp:217 dcc.cpp:243
 msgctxt "list"
 msgid "Speed"
-msgstr ""
+msgstr "Prędkość"
 
 #: dcc.cpp:218 dcc.cpp:227
 msgctxt "list"
 msgid "Nick"
-msgstr ""
+msgstr "Pseudonim"
 
 #: dcc.cpp:219 dcc.cpp:228
 msgctxt "list"
 msgid "IP"
-msgstr ""
+msgstr "IP"
 
 #: dcc.cpp:220 dcc.cpp:229
 msgctxt "list"
 msgid "File"
-msgstr ""
+msgstr "Plik"
 
 #: dcc.cpp:232
 msgctxt "list-type"
 msgid "Sending"
-msgstr ""
+msgstr "Wysyłanie"
 
 #: dcc.cpp:234
 msgctxt "list-type"
 msgid "Getting"
-msgstr ""
+msgstr "Pobieranie"
 
 #: dcc.cpp:239
 msgctxt "list-state"
 msgid "Waiting"
-msgstr ""
+msgstr "Oczekujący"
 
 #: dcc.cpp:244
 msgid "{1} KiB/s"
-msgstr ""
+msgstr "{1} KiB/s"
 
 #: dcc.cpp:250
 msgid "You have no active DCC transfers."
-msgstr ""
+msgstr "Nie masz aktywnych transferów DCC."
 
 #: dcc.cpp:267
 msgid "Attempting to resume send from position {1} of file [{2}] for [{3}]"
-msgstr ""
+msgstr "Próba wznowienia wysyłania z pozycji {1} pliku [{2}] dla [{3}]"
 
 #: dcc.cpp:277
 msgid "Couldn't resume file [{1}] for [{2}]: not sending anything."
@@ -226,4 +226,4 @@ msgstr ""
 
 #: dcc.cpp:623
 msgid "This module allows you to transfer files to and from ZNC"
-msgstr ""
+msgstr "Ten moduł pozwala na przesyłanie plików do i z ZNC"

@@ -59,11 +59,11 @@ msgstr "Wykonaj"
 #: perform.cpp:52 perform.cpp:62
 msgctxt "list"
 msgid "Expanded"
-msgstr ""
+msgstr "Podstawienie"
 
 #: perform.cpp:67
 msgid "No commands in your perform list."
-msgstr "Brak poleceń na Twojej liście wykonania."
+msgstr "Brak poleceń na Twojej liście do wykonania."
 
 #: perform.cpp:73
 msgid "perform commands sent"
