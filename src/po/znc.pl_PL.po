@@ -135,7 +135,7 @@ msgstr "Być może chcesz dodać go jako nowy serwer."
 
 #: IRCSock.cpp:973
 msgid "Channel {1} is linked to another channel and was thus disabled."
-msgstr ""
+msgstr "Kanał {1} jest połączony z innym kanałem i dlatego został zablokowany."
 
 #: IRCSock.cpp:985
 msgid "Switched to SSL (STARTTLS)"
@@ -228,11 +228,11 @@ msgstr ""
 
 #: Client.cpp:431
 msgid "Closing link: Timeout"
-msgstr ""
+msgstr "Zamknięcie połączenia: przedawnienie"
 
 #: Client.cpp:453
 msgid "Closing link: Too long raw line"
-msgstr ""
+msgstr "Zamknięcie połączenia: za długa surowa linia"
 
 #: Client.cpp:460
 msgid ""
@@ -267,7 +267,7 @@ msgstr "Użycie: /attach <#kanały>"
 #: Client.cpp:1344 Client.cpp:1366 ClientCommand.cpp:129 ClientCommand.cpp:151
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
-msgstr[0] ""
+msgstr[0] "Jest {1} kanał pasujący do [{2}]"
 msgstr[1] ""
 msgstr[2] ""
 msgstr[3] ""
@@ -275,7 +275,7 @@ msgstr[3] ""
 #: Client.cpp:1347 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
-msgstr[0] ""
+msgstr[0] "Podłączony {1} kanał"
 msgstr[1] ""
 msgstr[2] ""
 msgstr[3] ""
@@ -340,7 +340,7 @@ msgstr "Nie udało się odnaleźć modułu {1}"
 
 #: Modules.cpp:1678
 msgid "Module {1} does not support module type {2}."
-msgstr ""
+msgstr "Moduł {1} nie wspiera modułów typu {2}."
 
 #: Modules.cpp:1685
 msgid "Module {1} requires a user."
@@ -352,7 +352,7 @@ msgstr "Moduł {1} wymaga sieci."
 
 #: Modules.cpp:1707
 msgid "Caught an exception"
-msgstr ""
+msgstr "Napotkano wyjątek"
 
 #: Modules.cpp:1713
 msgid "Module {1} aborted: {2}"
@@ -683,7 +683,7 @@ msgstr "Nieprawidłowa nazwa sieci [{1}]"
 
 #: ClientCommand.cpp:692
 msgid "Some files seem to be in {1}. You might want to move them to {2}"
-msgstr ""
+msgstr "Niektóre pliki zdają się być w {1}. Może chcesz je przenieść do {2}"
 
 #: ClientCommand.cpp:706
 msgid "Error adding network: {1}"
@@ -1224,6 +1224,8 @@ msgstr "nie"
 msgid ""
 "Usage: AddPort <[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost [uriprefix]]"
 msgstr ""
+"Użycie: AddPort <[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost "
+"[uriprefix]]"
 
 #: ClientCommand.cpp:1640
 msgid "Port added"
@@ -1235,7 +1237,7 @@ msgstr "Nie można dodać portu"
 
 #: ClientCommand.cpp:1648
 msgid "Usage: DelPort <port> <ipv4|ipv6|all> [bindhost]"
-msgstr ""
+msgstr "Użycie: DelPort <port> <ipv4|ipv6|all> [bindhost]"
 
 #: ClientCommand.cpp:1657
 msgid "Deleted Port"
@@ -1388,6 +1390,8 @@ msgid ""
 "Add a trusted server SSL certificate fingerprint (SHA-256) to current IRC "
 "network."
 msgstr ""
+"Dodaj zaufany odciski certyfikatu SSL (SHA-256) serwera do bieżącej sieci "
+"IRC."
 
 #: ClientCommand.cpp:1754
 msgctxt "helpcmd|DelTrustedServerFingerprint|args"
@@ -1397,7 +1401,7 @@ msgstr "<p:al:ec>"
 #: ClientCommand.cpp:1755
 msgctxt "helpcmd|DelTrustedServerFingerprint|desc"
 msgid "Delete a trusted server SSL certificate from current IRC network."
-msgstr ""
+msgstr "Usuń zaufany odcisk SSL serwera z obecnej sieci IRC."
 
 #: ClientCommand.cpp:1759
 msgctxt "helpcmd|ListTrustedServerFingerprints|desc"
@@ -1734,30 +1738,34 @@ msgid ""
 "Can't resolve bind hostname. Try /znc ClearBindHost and /znc "
 "ClearUserBindHost"
 msgstr ""
+"Nie mogę rozwiązać nazwy hosta. Spróbuj /znc ClearBindHost oraz /znc "
+"ClearUserBindHost"
 
 #: Socket.cpp:354
 msgid "Server address is IPv4-only, but bindhost is IPv6-only"
-msgstr ""
+msgstr "Adres serwera jest tylko IPv4, ale podłączony host jest tylko IPv6"
 
 #: Socket.cpp:363
 msgid "Server address is IPv6-only, but bindhost is IPv4-only"
-msgstr ""
+msgstr "Adres serwera jest tylko IPv6, ale podłączony host jest tylko IPv4"
 
 #: Socket.cpp:521
 msgid "Some socket reached its max buffer limit and was closed!"
 msgstr ""
+"Niektóre gniazda osiągnęły limit swego maksymalnego bufora i zostały "
+"zamknięte!"
 
 #: SSLVerifyHost.cpp:481
 msgid "hostname doesn't match"
-msgstr ""
+msgstr "nazwa hosta nie pasuje"
 
 #: SSLVerifyHost.cpp:485
 msgid "malformed hostname in certificate"
-msgstr ""
+msgstr "zniekształcona nazwa hosta w certyfikacie"
 
 #: SSLVerifyHost.cpp:489
 msgid "hostname verification error"
-msgstr ""
+msgstr "błąd weryfikacji hosta"
 
 #: User.cpp:507
 msgid ""
@@ -1793,4 +1801,4 @@ msgstr "Nazwa użytkownika jest niepoprawna"
 
 #: User.cpp:1199
 msgid "Unable to find modinfo {1}: {2}"
-msgstr ""
+msgstr "Nie można znaleźć modinfo {1}: {2}"
