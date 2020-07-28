@@ -122,4 +122,4 @@ msgstr "Czyszczenie ich wszystkich!"
 
 #: alias.cpp:409
 msgid "Provides bouncer-side command alias support."
-msgstr ""
+msgstr "Dostarcza wsparcie aliasów komand bouncera."
