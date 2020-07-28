@@ -34,7 +34,7 @@ msgstr "Lista wszystkich reguł kronikowania"
 
 #: log.cpp:67
 msgid "<var> true|false"
-msgstr "<zmienna> true|false"
+msgstr "<var> true|false"
 
 #: log.cpp:68
 msgid "Set one of the following options: joins, quits, nickchanges"
