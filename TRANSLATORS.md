@@ -1,6 +1,7 @@
 These people helped translating ZNC to various languages:
 
 * Altay
+* bashgeek (Daniel)
 * casmo (Casper)
 * ChaosEngine (Andrzej Pauli)
 * cirinho (Ciro Moniz)

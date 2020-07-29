@@ -26,11 +26,12 @@ msgstr "Zeige oder Setze die Anzahl an Sekunden im Zeitinterval"
 
 #: flooddetach.cpp:36
 msgid "Show or set number of lines in the time interval"
-msgstr ""
+msgstr "Zeige oder Setze die Anzahl an Sekunden im Interval"
 
 #: flooddetach.cpp:39
 msgid "Show or set whether to notify you about detaching and attaching back"
 msgstr ""
+"Zeige oder Setze ob du über das Trennen und Neuverbinden benachrichtigt wirst"
 
 #: flooddetach.cpp:93
 msgid "Flood in {1} is over, reattaching..."
