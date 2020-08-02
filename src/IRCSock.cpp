@@ -254,11 +254,17 @@ void CIRCSock::SendNextCap() {
     }
 }
 
-void CIRCSock::PauseCap() { ++m_uCapPaused; }
+void CIRCSock::PauseCap() {
+    if (!IsAuthed()) {
+        ++m_uCapPaused;
+    }
+}
 
 void CIRCSock::ResumeCap() {
-    --m_uCapPaused;
-    SendNextCap();
+    if (!IsAuthed()) {
+        --m_uCapPaused;
+        SendNextCap();
+    }
 }
 
 bool CIRCSock::OnServerCapAvailable(const CString& sCap) {
