@@ -82,6 +82,23 @@ TEST_F(ClientTest, AccountNotify) {
     EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString()));
 }
 
+TEST_F(ClientTest, AccountTag) {
+    m_pTestSock->ReadLine(":server CAP * ACK :account-tag");
+    m_pTestClient->Reset();
+
+    CMessage msg(":nick!user@host PRIVMSG #channel :text");
+    CMessage extmsg("@account=account-name :nick!user@host PRIVMSG #channel :text");
+    EXPECT_FALSE(m_pTestClient->HasAccountTag());
+    m_pTestClient->PutClient(extmsg);
+    EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString()));
+    m_pTestClient->SetAccountTag(true);
+    m_pTestClient->SetTagSupport("account", true);
+    EXPECT_TRUE(m_pTestClient->HasAccountTag());
+    m_pTestClient->PutClient(extmsg);
+    EXPECT_THAT(m_pTestClient->vsLines,
+                ElementsAre(msg.ToString(), extmsg.ToString()));
+}
+
 TEST_F(ClientTest, AwayNotify) {
     CMessage msg(":nick!user@host AWAY :message");
     EXPECT_FALSE(m_pTestClient->HasAwayNotify());
