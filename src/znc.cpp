@@ -653,14 +653,14 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
                                      65534)) {
                 continue;
             }
-            if (uListenPort == 6667) {
+            if (uListenPort == 6667 || uListenPort == 6697) {
                 CUtils::PrintStatus(false,
-                                    "WARNING: Some web browsers reject port "
-                                    "6667. If you intend to");
+                                    "WARNING: Some web browsers reject ports "
+                                    "6667 and 6697. If you intend to");
                 CUtils::PrintStatus(false,
                                     "use ZNC's web interface, you might want "
                                     "to use another port.");
-                if (!CUtils::GetBoolInput("Proceed with port 6667 anyway?",
+                if (!CUtils::GetBoolInput("Proceed anyway?",
                                           true)) {
                     continue;
                 }
