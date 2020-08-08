@@ -854,6 +854,7 @@ void CClient::ClearServerDependentCaps() {
                 const auto& handler = std::get<1>(it->second);
                 handler(false);
             }
+            m_ssAcceptedCaps.erase(sCap);
         }
     }
 
