@@ -491,120 +491,122 @@ msgstr "Fehler beim Schreiben der Konfiguration."
 
 #: ClientCommand.cpp:183
 msgid "Usage: ListClients"
-msgstr ""
+msgstr "Benutzung: ListClients"
 
 #: ClientCommand.cpp:190
 msgid "No such user: {1}"
-msgstr ""
+msgstr "Kein Benutzer gefunden: {1}"
 
 #: ClientCommand.cpp:198
 msgid "No clients are connected"
-msgstr ""
+msgstr "Keine Klienten verbunden"
 
 #: ClientCommand.cpp:203 ClientCommand.cpp:209
 msgctxt "listclientscmd"
 msgid "Host"
-msgstr ""
+msgstr "Host"
 
 #: ClientCommand.cpp:204 ClientCommand.cpp:212
 msgctxt "listclientscmd"
 msgid "Network"
-msgstr ""
+msgstr "Netzwerk"
 
 #: ClientCommand.cpp:205 ClientCommand.cpp:215
 msgctxt "listclientscmd"
 msgid "Identifier"
-msgstr ""
+msgstr "Kennung"
 
 #: ClientCommand.cpp:223 ClientCommand.cpp:229
 msgctxt "listuserscmd"
 msgid "Username"
-msgstr ""
+msgstr "Benutzername"
 
 #: ClientCommand.cpp:224 ClientCommand.cpp:230
 msgctxt "listuserscmd"
 msgid "Networks"
-msgstr ""
+msgstr "Netzwerke"
 
 #: ClientCommand.cpp:225 ClientCommand.cpp:232
 msgctxt "listuserscmd"
 msgid "Clients"
-msgstr ""
+msgstr "Klienten"
 
 #: ClientCommand.cpp:240 ClientCommand.cpp:250 ClientCommand.cpp:260
 #: ClientCommand.cpp:263
 msgctxt "listallusernetworkscmd"
 msgid "Username"
-msgstr ""
+msgstr "Benutzername"
 
 #: ClientCommand.cpp:241 ClientCommand.cpp:251 ClientCommand.cpp:266
 msgctxt "listallusernetworkscmd"
 msgid "Network"
-msgstr ""
+msgstr "Netzwerk"
 
 #: ClientCommand.cpp:242 ClientCommand.cpp:252 ClientCommand.cpp:268
 msgctxt "listallusernetworkscmd"
 msgid "Clients"
-msgstr ""
+msgstr "Klienten"
 
 #: ClientCommand.cpp:243 ClientCommand.cpp:271 ClientCommand.cpp:280
 msgctxt "listallusernetworkscmd"
 msgid "On IRC"
-msgstr ""
+msgstr "Im IRC"
 
 #: ClientCommand.cpp:244 ClientCommand.cpp:273
 msgctxt "listallusernetworkscmd"
 msgid "IRC Server"
-msgstr ""
+msgstr "IRC Server"
 
 #: ClientCommand.cpp:245 ClientCommand.cpp:275
 msgctxt "listallusernetworkscmd"
 msgid "IRC User"
-msgstr ""
+msgstr "IRC Benutzer"
 
 #: ClientCommand.cpp:246 ClientCommand.cpp:277
 msgctxt "listallusernetworkscmd"
 msgid "Channels"
-msgstr ""
+msgstr "Kanäle"
 
 #: ClientCommand.cpp:251
 msgid "N/A"
-msgstr ""
+msgstr "N/A"
 
 #: ClientCommand.cpp:272
 msgctxt "listallusernetworkscmd"
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 #: ClientCommand.cpp:281
 msgctxt "listallusernetworkscmd"
 msgid "No"
-msgstr ""
+msgstr "Nein"
 
 #: ClientCommand.cpp:291
 msgid "Usage: SetMOTD <message>"
-msgstr ""
+msgstr "Benutzung: SetMOTD <message>"
 
 #: ClientCommand.cpp:294
 msgid "MOTD set to: {1}"
-msgstr ""
+msgstr "MOTD gesetzt auf: {1}"
 
 #: ClientCommand.cpp:300
 msgid "Usage: AddMOTD <message>"
-msgstr ""
+msgstr "Benutzung: AddMOTD <message>"
 
 #: ClientCommand.cpp:303
 msgid "Added [{1}] to MOTD"
-msgstr ""
+msgstr "[{1}] zur MOTD hinzugefügt"
 
 #: ClientCommand.cpp:307
 msgid "Cleared MOTD"
-msgstr ""
+msgstr "MOTD geleert"
 
 #: ClientCommand.cpp:329
 msgid ""
 "ERROR: Writing config file to disk failed! Aborting. Use {1} FORCE to ignore."
 msgstr ""
+"FEHLER: Konnte Konfigurations-Datei nicht schreiben. Abbruch. Benutzer {1} "
+"FORCE um den Fehler zu ignorieren."
 
 #: ClientCommand.cpp:344 ClientCommand.cpp:797 ClientCommand.cpp:838
 msgid "You don't have any servers added."
@@ -612,43 +614,45 @@ msgstr "Du hast keine Server hinzugefügt."
 
 #: ClientCommand.cpp:355
 msgid "Server [{1}] not found"
-msgstr ""
+msgstr "Server [{1}] nicht gefunden"
 
 #: ClientCommand.cpp:375 ClientCommand.cpp:380
 msgid "Connecting to {1}..."
-msgstr ""
+msgstr "Verbinde zu {1}..."
 
 #: ClientCommand.cpp:377
 msgid "Jumping to the next server in the list..."
-msgstr ""
+msgstr "Springe zum nächsten Server in der Liste..."
 
 #: ClientCommand.cpp:382
 msgid "Connecting..."
-msgstr ""
+msgstr "Verbinde..."
 
 #: ClientCommand.cpp:400
 msgid "Disconnected from IRC. Use 'connect' to reconnect."
 msgstr ""
+"Du bist zur Zeit nicht mit dem IRC verbunden. Verwende 'connect' zum "
+"Verbinden."
 
 #: ClientCommand.cpp:412
 msgid "Usage: EnableChan <#chans>"
-msgstr ""
+msgstr "Benutzung: EnableChan <#chans>"
 
 #: ClientCommand.cpp:426
 msgid "Enabled {1} channel"
 msgid_plural "Enabled {1} channels"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{1} Kanal aktiviert"
+msgstr[1] "{1} Kanäle aktiviert"
 
 #: ClientCommand.cpp:439
 msgid "Usage: DisableChan <#chans>"
-msgstr ""
+msgstr "Benutzung: DisableChan <#chans>"
 
 #: ClientCommand.cpp:453
 msgid "Disabled {1} channel"
 msgid_plural "Disabled {1} channels"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{1} Kanal deaktiviert"
+msgstr[1] "{1} Kanäle deaktiviert"
 
 #: ClientCommand.cpp:470
 msgid "Usage: ListChans"
