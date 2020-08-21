@@ -278,6 +278,41 @@ class CZNC : private CCoreTranslationMixin {
     bool AddListener(const CString& sLine, CString& sError);
     bool AddListener(CConfig* pConfig, CString& sError);
 
+    bool SSLListenerHelper(bool bTcpListener, bool bSSL, CString& sError) {
+#ifndef HAVE_LIBSSL
+        if (bSSL) {
+            sError = "SSL is not enabled";
+            CUtils::PrintStatus(false, sError);
+            return false;
+        }
+#else
+        CString sPemFile = GetPemLocation();
+
+        if (bSSL && !CFile::Exists(sPemFile)) {
+            sError = "Unable to locate pem file: [" + sPemFile + "]";
+            CUtils::PrintStatus(false, sError);
+
+            // If stdin is e.g. /dev/null and we call GetBoolInput(),
+            // we are stuck in an endless loop!
+            if (isatty(0) &&
+                CUtils::GetBoolInput("Would you like to create a new pem file?",
+                                    true)) {
+                sError.clear();
+                WritePemFile();
+            } else {
+                return false;
+            }
+
+            if (bTcpListener) {
+                CUtils::PrintAction("Binding to port [+" + CString(uPort) + "]" +
+                                    sHostComment + sIPV6Comment);
+            } else
+                CUtils::PrintAction("Binding to path [" + sPath + "]");
+        }
+#endif
+        return true;
+    }
+
   protected:
     time_t m_TimeStarted;
 
