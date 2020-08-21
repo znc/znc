@@ -1623,6 +1623,41 @@ bool CZNC::AddListener(const CString& sLine, CString& sError) {
                        sError);
 }
 
+bool CZNC::SSLListenerHelper(bool bTcpListener, bool bSSL, CString& sError) {
+#ifndef HAVE_LIBSSL
+    if (bSSL) {
+        sError = "SSL is not enabled";
+        CUtils::PrintStatus(false, sError);
+        return false;
+    }
+#else
+    CString sPemFile = GetPemLocation();
+
+    if (bSSL && !CFile::Exists(sPemFile)) {
+        sError = "Unable to locate pem file: [" + sPemFile + "]";
+        CUtils::PrintStatus(false, sError);
+
+        // If stdin is e.g. /dev/null and we call GetBoolInput(),
+        // we are stuck in an endless loop!
+        if (isatty(0) &&
+            CUtils::GetBoolInput("Would you like to create a new pem file?",
+                                 true)) {
+            sError.clear();
+            WritePemFile();
+        } else {
+            return false;
+        }
+
+        if (bTcpListener) {
+            CUtils::PrintAction("Binding to port [+" + CString(uPort) + "]" +
+                                sHostComment + sIPV6Comment);
+        } else
+            CUtils::PrintAction("Binding to path [" + sPath + "]");
+    }
+#endif
+    return true;
+}
+
 bool CZNC::AddTCPListener(unsigned short uPort, const CString& sBindHost,
                        const CString& sURIPrefixRaw, bool bSSL, EAddrType eAddr,
                        CListener::EAcceptType eAccept, CString& sError) {
@@ -1656,34 +1691,8 @@ bool CZNC::AddTCPListener(unsigned short uPort, const CString& sBindHost,
     }
 #endif
 
-#ifndef HAVE_LIBSSL
-    if (bSSL) {
-        sError = "SSL is not enabled";
-        CUtils::PrintStatus(false, sError);
-        return false;
-    }
-#else
-    CString sPemFile = GetPemLocation();
+    if (!SSLListenerHelper(true, bSSL, sError)) return false;
 
-    if (bSSL && !CFile::Exists(sPemFile)) {
-        sError = "Unable to locate pem file: [" + sPemFile + "]";
-        CUtils::PrintStatus(false, sError);
-
-        // If stdin is e.g. /dev/null and we call GetBoolInput(),
-        // we are stuck in an endless loop!
-        if (isatty(0) &&
-            CUtils::GetBoolInput("Would you like to create a new pem file?",
-                                 true)) {
-            sError.clear();
-            WritePemFile();
-        } else {
-            return false;
-        }
-
-        CUtils::PrintAction("Binding to port [+" + CString(uPort) + "]" +
-                            sHostComment + sIPV6Comment);
-    }
-#endif
     if (!uPort) {
         sError = "Invalid port";
         CUtils::PrintStatus(false, sError);
@@ -1722,33 +1731,7 @@ bool CZNC::AddUnixListener(const CString& sPath, const CString& sURIPrefixRaw,
                            CString& sError) {
     CUtils::PrintAction("Binding to path [" + sPath + "]");
 
-#ifndef HAVE_LIBSSL
-    if (bSSL) {
-        sError = "SSL is not enabled";
-        CUtils::PrintStatus(false, sError);
-        return false;
-    }
-#else
-    CString sPemFile = GetPemLocation();
-
-    if (bSSL && !CFile::Exists(sPemFile)) {
-        sError = "Unable to locate pem file: [" + sPemFile + "]";
-        CUtils::PrintStatus(false, sError);
-
-        // If stdin is e.g. /dev/null and we call GetBoolInput(),
-        // we are stuck in an endless loop!
-        if (isatty(0) &&
-            CUtils::GetBoolInput("Would you like to create a new pem file?",
-                                 true)) {
-            sError.clear();
-            WritePemFile();
-        } else {
-            return false;
-        }
-
-        CUtils::PrintAction("Binding to path [" + sPath + "]");
-    }
-#endif
+    if (!SSLListenerHelper(false, bSSL, sError)) return false;
 
     // URIPrefix must start with a slash and end without one.
     CString sURIPrefix = CString(sURIPrefixRaw);
