@@ -1,0 +1,21 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: it\n"
+"X-Crowdin-File: /master/modules/po/imapauth.pot\n"
+"X-Crowdin-File-ID: 175\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Italian\n"
+"Language: it_IT\n"
+
+#: imapauth.cpp:168
+msgid "[ server [+]port [ UserFormatString ] ]"
+msgstr "[ server [+]porta [ UserFormatString ] ]"
+
+#: imapauth.cpp:171
+msgid "Allow users to authenticate via IMAP."
+msgstr "Permette agli utenti di autenticarsi tramite IMAP."

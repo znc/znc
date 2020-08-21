@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,6 +62,8 @@ class ZNC_EXPORT_LIB_EXPORT CPyModule : public CModule {
     bool OnWebPreRequest(CWebSock& WebSock, const CString& sPageName) override;
     bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
                       CTemplate& Tmpl) override;
+    bool ValidateWebRequestCSRFCheck(CWebSock& WebSock,
+                                     const CString& sPageName) override;
     VWebSubPages& GetSubPages() override;
     void OnPreRehash() override;
     void OnPostRehash() override;

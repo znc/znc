@@ -11,11 +11,11 @@ addons:
       name: "znc/coverity"
       description: "Build submitted via Travis CI"
     notification_email: coverity@znc.in
-    build_command_prepend: "./bootstrap.sh; ./configure --enable-perl --enable-python --enable-tcl --enable-cyrus"
+    build_command_prepend: "./configure --enable-perl --enable-python --enable-tcl --enable-cyrus"
     build_command: "make VERBOSE=1"
     branch_pattern: coverity_scan
 
 script:
   - /bin/true
 sudo: required
-dist: trusty
+dist: bionic

@@ -1,0 +1,95 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: nl\n"
+"X-Crowdin-File: /master/modules/po/flooddetach.pot\n"
+"X-Crowdin-File-ID: 173\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Dutch\n"
+"Language: nl_NL\n"
+
+#: flooddetach.cpp:30
+msgid "Show current limits"
+msgstr "Laat huidige limieten zien"
+
+#: flooddetach.cpp:32 flooddetach.cpp:35
+msgid "[<limit>]"
+msgstr "[<limiet>]"
+
+#: flooddetach.cpp:33
+msgid "Show or set number of seconds in the time interval"
+msgstr "Laat zien of pas aan het aantal seconden in de tijdsinterval"
+
+#: flooddetach.cpp:36
+msgid "Show or set number of lines in the time interval"
+msgstr "Laat zien of pas aan het aantal regels in de tijdsinterval"
+
+#: flooddetach.cpp:39
+msgid "Show or set whether to notify you about detaching and attaching back"
+msgstr ""
+"Laat zien of pas aan of je een melding wil krijgen van het los en terug "
+"aankoppelen"
+
+#: flooddetach.cpp:93
+msgid "Flood in {1} is over, reattaching..."
+msgstr "Overstroming in {1} is voorbij, opnieuw aan het aankoppelen..."
+
+#: flooddetach.cpp:150
+msgid "Channel {1} was flooded, you've been detached"
+msgstr "Kanaal {1} was overstroomd, je bent losgekoppeld"
+
+#: flooddetach.cpp:187
+msgid "1 line"
+msgid_plural "{1} lines"
+msgstr[0] "1 regel"
+msgstr[1] "{1} regels"
+
+#: flooddetach.cpp:188
+msgid "every second"
+msgid_plural "every {1} seconds"
+msgstr[0] "elke seconde"
+msgstr[1] "elke {1} seconden"
+
+#: flooddetach.cpp:190
+msgid "Current limit is {1} {2}"
+msgstr "Huidige limiet is {1} {2}"
+
+#: flooddetach.cpp:197
+msgid "Seconds limit is {1}"
+msgstr "Seconden limiet is {1}"
+
+#: flooddetach.cpp:202
+msgid "Set seconds limit to {1}"
+msgstr "Seconden limiet ingesteld op {1}"
+
+#: flooddetach.cpp:211
+msgid "Lines limit is {1}"
+msgstr "Regellimiet is {1}"
+
+#: flooddetach.cpp:216
+msgid "Set lines limit to {1}"
+msgstr "Regellimiet ingesteld op {1}"
+
+#: flooddetach.cpp:229
+msgid "Module messages are disabled"
+msgstr "Module berichten zijn uitgeschakeld"
+
+#: flooddetach.cpp:231
+msgid "Module messages are enabled"
+msgstr "Module berichten zijn ingeschakeld"
+
+#: flooddetach.cpp:247
+msgid ""
+"This user module takes up to two arguments. Arguments are numbers of "
+"messages and seconds."
+msgstr ""
+"Deze gebruikersmodule accepteert tot en met twee argumenten. Argumenten zijn "
+"het aantal berichten en seconden."
+
+#: flooddetach.cpp:251
+msgid "Detach channels when flooded"
+msgstr "Loskoppelen van kanalen wanneer overstroomd"

@@ -1,0 +1,61 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: de\n"
+"X-Crowdin-File: /master/modules/po/admindebug.pot\n"
+"X-Crowdin-File-ID: 273\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+
+#: admindebug.cpp:30
+msgid "Enable Debug Mode"
+msgstr "Debugmodus aktivieren"
+
+#: admindebug.cpp:32
+msgid "Disable Debug Mode"
+msgstr "Debugmodus deaktivieren"
+
+#: admindebug.cpp:34
+msgid "Show the Debug Mode status"
+msgstr "Zeige den Debugstatus an"
+
+#: admindebug.cpp:40 admindebug.cpp:49
+msgid "Access denied!"
+msgstr "Zugriff verweigert!"
+
+#: admindebug.cpp:58
+msgid ""
+"Failure. We need to be running with a TTY. (is ZNC running with --"
+"foreground?)"
+msgstr ""
+"Fehler: Der Prozess muss in einem TTY laufen (läuft ZNC mit dem Parameter --"
+"foreground?)"
+
+#: admindebug.cpp:66
+msgid "Already enabled."
+msgstr "Bereits aktiviert."
+
+#: admindebug.cpp:68
+msgid "Already disabled."
+msgstr "Bereits deaktiviert."
+
+#: admindebug.cpp:92
+msgid "Debugging mode is on."
+msgstr "Debuggingmodus ist an."
+
+#: admindebug.cpp:94
+msgid "Debugging mode is off."
+msgstr "Debuggingmodus ist aus."
+
+#: admindebug.cpp:96
+msgid "Logging to: stdout."
+msgstr "Logge nach: stdout."
+
+#: admindebug.cpp:105
+msgid "Enable Debug mode dynamically."
+msgstr "Aktiviere den Debugmodus dynamisch."

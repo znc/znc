@@ -1,0 +1,150 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-File: /master/modules/po/log.pot\n"
+"X-Crowdin-File-ID: 180\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Spanish\n"
+"Language: es_ES\n"
+
+#: log.cpp:59
+msgid "<rules>"
+msgstr "<reglas>"
+
+#: log.cpp:60
+msgid "Set logging rules, use !#chan or !query to negate and * "
+msgstr "Establece reglas de log, utiliza !#canal o !privado para negar y * "
+
+#: log.cpp:62
+msgid "Clear all logging rules"
+msgstr "Borrar todas las reglas de logueo"
+
+#: log.cpp:64
+msgid "List all logging rules"
+msgstr "Mostrar todas las reglas de logueo"
+
+#: log.cpp:67
+msgid "<var> true|false"
+msgstr "<var> true|false"
+
+#: log.cpp:68
+msgid "Set one of the following options: joins, quits, nickchanges"
+msgstr "Establece una de las siguientes opciones: joins, quits, nickchanges"
+
+#: log.cpp:71
+msgid "Show current settings set by Set command"
+msgstr "Muestra ajustes puestos con el comando Set"
+
+#: log.cpp:143
+msgid "Usage: SetRules <rules>"
+msgstr "Uso: SetRules <reglas>"
+
+#: log.cpp:144
+msgid "Wildcards are allowed"
+msgstr "Se permiten comodines"
+
+#: log.cpp:156 log.cpp:179
+msgid "No logging rules. Everything is logged."
+msgstr "No hay reglas de logueo. Se registra todo."
+
+#: log.cpp:161
+msgid "1 rule removed: {2}"
+msgid_plural "{1} rules removed: {2}"
+msgstr[0] "Borrada regla: {2}"
+msgstr[1] "Borradas {1} reglas: {2}"
+
+#: log.cpp:168 log.cpp:174
+msgctxt "listrules"
+msgid "Rule"
+msgstr "Regla"
+
+#: log.cpp:169 log.cpp:175
+msgctxt "listrules"
+msgid "Logging enabled"
+msgstr "Registro habilitado"
+
+#: log.cpp:190
+msgid ""
+"Usage: Set <var> true|false, where <var> is one of: joins, quits, nickchanges"
+msgstr "Uso: Set <var> true|false, donde <var> es: joins, quits, nickchanges"
+
+#: log.cpp:197
+msgid "Will log joins"
+msgstr "Registrar entradas"
+
+#: log.cpp:197
+msgid "Will not log joins"
+msgstr "No registrar entradas"
+
+#: log.cpp:198
+msgid "Will log quits"
+msgstr "Registrar desconexiones (quits)"
+
+#: log.cpp:198
+msgid "Will not log quits"
+msgstr "No registrar desconexiones (quits)"
+
+#: log.cpp:200
+msgid "Will log nick changes"
+msgstr "Registrar cambios de nick"
+
+#: log.cpp:200
+msgid "Will not log nick changes"
+msgstr "No registrar cambios de nick"
+
+#: log.cpp:204
+msgid "Unknown variable. Known variables: joins, quits, nickchanges"
+msgstr "Variable desconocida. Variables conocidas: joins, quits, nickchanges"
+
+#: log.cpp:212
+msgid "Logging joins"
+msgstr "Registrando entradas"
+
+#: log.cpp:212
+msgid "Not logging joins"
+msgstr "Sin registrar entradas"
+
+#: log.cpp:213
+msgid "Logging quits"
+msgstr "Registrando desconexiones (quits)"
+
+#: log.cpp:213
+msgid "Not logging quits"
+msgstr "Sin registrar desconexiones (quits)"
+
+#: log.cpp:214
+msgid "Logging nick changes"
+msgstr "Registrando cambios de nick"
+
+#: log.cpp:215
+msgid "Not logging nick changes"
+msgstr "Sin registrar cambios de nick"
+
+#: log.cpp:352
+msgid ""
+"Invalid args [{1}]. Only one log path allowed.  Check that there are no "
+"spaces in the path."
+msgstr ""
+"Argumentos inválidos [{1}]. Solo se permite una ruta de logueo. Comprueba "
+"que no tiene espacios."
+
+#: log.cpp:402
+msgid "Invalid log path [{1}]"
+msgstr "Ruta de log no válida [{1}]"
+
+#: log.cpp:405
+msgid "Logging to [{1}]. Using timestamp format '{2}'"
+msgstr "Registrando a [{1}]. Usando marca de tiempo '{2}'"
+
+#: log.cpp:560
+msgid "[-sanitize] Optional path where to store logs."
+msgstr "[-sanitize] ruta opcional donde almacenar registros."
+
+#: log.cpp:564
+msgid "Writes IRC logs."
+msgstr "Guarda registros de IRC."

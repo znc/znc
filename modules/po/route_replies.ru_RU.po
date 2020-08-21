@@ -1,0 +1,61 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 "
+"&& n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 "
+"&& n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: ru\n"
+"X-Crowdin-File: /master/modules/po/route_replies.pot\n"
+"X-Crowdin-File-ID: 194\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+
+#: route_replies.cpp:215
+msgid "[yes|no]"
+msgstr ""
+
+#: route_replies.cpp:216
+msgid "Decides whether to show the timeout messages or not"
+msgstr ""
+
+#: route_replies.cpp:356
+msgid "This module hit a timeout which is probably a connectivity issue."
+msgstr ""
+
+#: route_replies.cpp:359
+msgid ""
+"However, if you can provide steps to reproduce this issue, please do report "
+"a bug."
+msgstr ""
+
+#: route_replies.cpp:362
+msgid "To disable this message, do \"/msg {1} silent yes\""
+msgstr ""
+
+#: route_replies.cpp:364
+msgid "Last request: {1}"
+msgstr ""
+
+#: route_replies.cpp:365
+msgid "Expected replies:"
+msgstr ""
+
+#: route_replies.cpp:369
+msgid "{1} (last)"
+msgstr ""
+
+#: route_replies.cpp:441
+msgid "Timeout messages are disabled."
+msgstr ""
+
+#: route_replies.cpp:442
+msgid "Timeout messages are enabled."
+msgstr ""
+
+#: route_replies.cpp:463
+msgid "Send replies (e.g. to /who) to the right client only"
+msgstr ""

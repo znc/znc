@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -335,7 +335,7 @@ CModule* TModLoad(ModHandle p, CUser* pUser, CIRCNetwork* pNetwork,
 }
 
 /** A helper class for handling commands in modules. */
-class CModCommand {
+class CModCommand : private CCoreTranslationMixin {
   public:
     /// Type for the callback function that handles the actual command.
     typedef void (CModule::*ModCmdFunc)(const CString& sLine);
@@ -575,16 +575,21 @@ class CModule {
      *  @param pOpNick The nick who sent the mode change, or nullptr if set by server.
      *  @param Nick The nick whose channel mode changes.
      *  @param Channel The channel on which the user mode is changed.
-     *  @param uMode The mode character that is changed, e.g. '@' for op.
+     *  @param cMode The mode character that is changed, e.g. '@' for op.
      *  @param bAdded True if the mode is added, else false.
      *  @param bNoChange true if this mode change doesn't change anything
      *                   because the nick already had this permission.
      *  @see CIRCSock::GetModeType() for converting uMode into a mode (e.g.
      *       'o' for op).
      */
+    virtual void OnChanPermission3(const CNick* pOpNick, const CNick& Nick,
+                                   CChan& Channel, char cMode,
+                                   bool bAdded, bool bNoChange);
+    /// @deprecated. Use OnChanPermission3.
     virtual void OnChanPermission2(const CNick* pOpNick, const CNick& Nick,
                                    CChan& Channel, unsigned char uMode,
                                    bool bAdded, bool bNoChange);
+    /// @deprecated. Use OnChanPermission3.
     virtual void OnChanPermission(const CNick& OpNick, const CNick& Nick,
                                   CChan& Channel, unsigned char uMode,
                                   bool bAdded, bool bNoChange);
@@ -800,7 +805,6 @@ class CModule {
 
     /** This module hook is called when a client sends a raw traffic line to ZNC.
      *  @param sLine The raw traffic line sent.
-     *  @note The line does not include message tags. Use OnUserRawMessage() to access them.
      *  @return See CModule::EModRet.
      */
     virtual EModRet OnUserRaw(CString& sLine);
@@ -1048,12 +1052,18 @@ class CModule {
 
     ModHandle GetDLL() { return m_pDLL; }
 
-    /** This function sends a given raw IRC line to the IRC server, if we
+    /** This function sends a given IRC line to the IRC server, if we
      *  are connected to one. Else this line is discarded.
      *  @param sLine The line which should be sent.
      *  @return true if the line was queued for sending.
      */
     virtual bool PutIRC(const CString& sLine);
+    /** This function sends a given IRC message to the IRC server, if we
+     *  are connected to one. Else this message is discarded.
+     *  @param Message The message which should be sent.
+     *  @return true if the message was queued for sending.
+     */
+    virtual bool PutIRC(const CMessage& Message);
     /** This function sends a given raw IRC line to a client.
      *  If we are in a module hook which is called for a specific client,
      *  only that client will get the line, else all connected clients will
@@ -1376,7 +1386,7 @@ class CModule {
     std::map<CString, CModCommand> m_mCommands;
 };
 
-class CModules : public std::vector<CModule*> {
+class CModules : public std::vector<CModule*>, private CCoreTranslationMixin {
   public:
     CModules();
     ~CModules();
@@ -1404,6 +1414,9 @@ class CModules : public std::vector<CModule*> {
                            CString& sRealName);
     bool OnBroadcast(CString& sMessage);
 
+    bool OnChanPermission3(const CNick* pOpNick, const CNick& Nick,
+                           CChan& Channel, char cMode, bool bAdded,
+                           bool bNoChange);
     bool OnChanPermission2(const CNick* pOpNick, const CNick& Nick,
                            CChan& Channel, unsigned char uMode, bool bAdded,
                            bool bNoChange);
@@ -1587,6 +1600,7 @@ class CModules : public std::vector<CModule*> {
   private:
     static ModHandle OpenModule(const CString& sModule, const CString& sModPath,
                                 CModInfo& Info, CString& sRetMsg);
+    static bool ValidateModuleName(const CString& sModule, CString& sRetMsg);
 
   protected:
     CUser* m_pUser;

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ execute_process(COMMAND "${brew}" --prefix python3
 if(brew_python_f EQUAL 0)
 	find_package_message(brew_python "Python via Homebrew: ${brew_python}"
 		"${brew_python}")
-	list(APPEND Python_FRAMEWORKS_ADDITIONAL
+	list(APPEND Python3_FRAMEWORKS_ADDITIONAL
 		"${brew_python}/Frameworks/Python.framework")
 endif()
 

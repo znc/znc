@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -254,196 +254,196 @@ TEST_F(ModulesTest, Hooks) {
     CCTCPMessage UserCTCPReply;
     LegacyMod.eAction = CModule::HALT;
     Modules.OnUserCTCPReplyMessage(UserCTCPReply);
-    EXPECT_EQ("#legacy", UserCTCPReply.GetTarget());
-    EXPECT_EQ("CLegacyModule::OnUserCTCPReply", UserCTCPReply.GetText());
+    EXPECT_EQ(UserCTCPReply.GetTarget(), "#legacy");
+    EXPECT_EQ(UserCTCPReply.GetText(), "CLegacyModule::OnUserCTCPReply");
     LegacyMod.eAction = CModule::CONTINUE;
     Modules.OnUserCTCPReplyMessage(UserCTCPReply);
-    EXPECT_EQ("#target", UserCTCPReply.GetTarget());
-    EXPECT_EQ("CMessageModule::OnUserCTCPReplyMessage",
-              UserCTCPReply.GetText());
+    EXPECT_EQ(UserCTCPReply.GetTarget(), "#target");
+    EXPECT_EQ(UserCTCPReply.GetText(),
+              "CMessageModule::OnUserCTCPReplyMessage");
 
     CCTCPMessage UserCTCPMsg;
     LegacyMod.eAction = CModule::HALT;
     Modules.OnUserCTCPMessage(UserCTCPMsg);
-    EXPECT_EQ("#legacy", UserCTCPMsg.GetTarget());
-    EXPECT_EQ("CLegacyModule::OnUserCTCP", UserCTCPMsg.GetText());
+    EXPECT_EQ(UserCTCPMsg.GetTarget(), "#legacy");
+    EXPECT_EQ(UserCTCPMsg.GetText(), "CLegacyModule::OnUserCTCP");
     LegacyMod.eAction = CModule::CONTINUE;
     Modules.OnUserCTCPMessage(UserCTCPMsg);
-    EXPECT_EQ("#target", UserCTCPMsg.GetTarget());
-    EXPECT_EQ("CMessageModule::OnUserCTCPMessage", UserCTCPMsg.GetText());
+    EXPECT_EQ(UserCTCPMsg.GetTarget(), "#target");
+    EXPECT_EQ(UserCTCPMsg.GetText(), "CMessageModule::OnUserCTCPMessage");
 
     CActionMessage UserActionMsg;
     LegacyMod.eAction = CModule::HALT;
     Modules.OnUserActionMessage(UserActionMsg);
-    EXPECT_EQ("#legacy", UserActionMsg.GetTarget());
-    EXPECT_EQ("CLegacyModule::OnUserAction", UserActionMsg.GetText());
+    EXPECT_EQ(UserActionMsg.GetTarget(), "#legacy");
+    EXPECT_EQ(UserActionMsg.GetText(), "CLegacyModule::OnUserAction");
     LegacyMod.eAction = CModule::CONTINUE;
     Modules.OnUserActionMessage(UserActionMsg);
-    EXPECT_EQ("#target", UserActionMsg.GetTarget());
-    EXPECT_EQ("CMessageModule::OnUserActionMessage", UserActionMsg.GetText());
+    EXPECT_EQ(UserActionMsg.GetTarget(), "#target");
+    EXPECT_EQ(UserActionMsg.GetText(), "CMessageModule::OnUserActionMessage");
 
     CTextMessage UserTextMsg;
     LegacyMod.eAction = CModule::HALT;
     Modules.OnUserTextMessage(UserTextMsg);
-    EXPECT_EQ("#legacy", UserTextMsg.GetTarget());
-    EXPECT_EQ("CLegacyModule::OnUserMsg", UserTextMsg.GetText());
+    EXPECT_EQ(UserTextMsg.GetTarget(), "#legacy");
+    EXPECT_EQ(UserTextMsg.GetText(), "CLegacyModule::OnUserMsg");
     LegacyMod.eAction = CModule::CONTINUE;
     Modules.OnUserTextMessage(UserTextMsg);
-    EXPECT_EQ("#target", UserTextMsg.GetTarget());
-    EXPECT_EQ("CMessageModule::OnUserTextMessage", UserTextMsg.GetText());
+    EXPECT_EQ(UserTextMsg.GetTarget(), "#target");
+    EXPECT_EQ(UserTextMsg.GetText(), "CMessageModule::OnUserTextMessage");
 
     CNoticeMessage UserNoticeMsg;
     LegacyMod.eAction = CModule::HALT;
     Modules.OnUserNoticeMessage(UserNoticeMsg);
-    EXPECT_EQ("#legacy", UserNoticeMsg.GetTarget());
-    EXPECT_EQ("CLegacyModule::OnUserNotice", UserNoticeMsg.GetText());
+    EXPECT_EQ(UserNoticeMsg.GetTarget(), "#legacy");
+    EXPECT_EQ(UserNoticeMsg.GetText(), "CLegacyModule::OnUserNotice");
     LegacyMod.eAction = CModule::CONTINUE;
     Modules.OnUserNoticeMessage(UserNoticeMsg);
-    EXPECT_EQ("#target", UserNoticeMsg.GetTarget());
-    EXPECT_EQ("CMessageModule::OnUserNoticeMessage", UserNoticeMsg.GetText());
+    EXPECT_EQ(UserNoticeMsg.GetTarget(), "#target");
+    EXPECT_EQ(UserNoticeMsg.GetText(), "CMessageModule::OnUserNoticeMessage");
 
     CJoinMessage UserJoinMsg;
     LegacyMod.eAction = CModule::HALT;
     Modules.OnUserJoinMessage(UserJoinMsg);
-    EXPECT_EQ("#legacy", UserJoinMsg.GetTarget());
-    EXPECT_EQ("CLegacyModule::OnUserJoin", UserJoinMsg.GetKey());
+    EXPECT_EQ(UserJoinMsg.GetTarget(), "#legacy");
+    EXPECT_EQ(UserJoinMsg.GetKey(), "CLegacyModule::OnUserJoin");
     LegacyMod.eAction = CModule::CONTINUE;
     Modules.OnUserJoinMessage(UserJoinMsg);
-    EXPECT_EQ("#target", UserJoinMsg.GetTarget());
-    EXPECT_EQ("CMessageModule::OnUserJoinMessage", UserJoinMsg.GetKey());
+    EXPECT_EQ(UserJoinMsg.GetTarget(), "#target");
+    EXPECT_EQ(UserJoinMsg.GetKey(), "CMessageModule::OnUserJoinMessage");
 
     CPartMessage UserPartMsg;
     LegacyMod.eAction = CModule::HALT;
     Modules.OnUserPartMessage(UserPartMsg);
-    EXPECT_EQ("#legacy", UserPartMsg.GetTarget());
-    EXPECT_EQ("CLegacyModule::OnUserPart", UserPartMsg.GetReason());
+    EXPECT_EQ(UserPartMsg.GetTarget(), "#legacy");
+    EXPECT_EQ(UserPartMsg.GetReason(), "CLegacyModule::OnUserPart");
     LegacyMod.eAction = CModule::CONTINUE;
     Modules.OnUserPartMessage(UserPartMsg);
-    EXPECT_EQ("#target", UserPartMsg.GetTarget());
-    EXPECT_EQ("CMessageModule::OnUserPartMessage", UserPartMsg.GetReason());
+    EXPECT_EQ(UserPartMsg.GetTarget(), "#target");
+    EXPECT_EQ(UserPartMsg.GetReason(), "CMessageModule::OnUserPartMessage");
 
     CTopicMessage UserTopicMsg;
     LegacyMod.eAction = CModule::HALT;
     Modules.OnUserTopicMessage(UserTopicMsg);
-    EXPECT_EQ("#legacy", UserTopicMsg.GetTarget());
-    EXPECT_EQ("CLegacyModule::OnUserTopic", UserTopicMsg.GetTopic());
+    EXPECT_EQ(UserTopicMsg.GetTarget(), "#legacy");
+    EXPECT_EQ(UserTopicMsg.GetTopic(), "CLegacyModule::OnUserTopic");
     LegacyMod.eAction = CModule::CONTINUE;
     Modules.OnUserTopicMessage(UserTopicMsg);
-    EXPECT_EQ("#target", UserTopicMsg.GetTarget());
-    EXPECT_EQ("CMessageModule::OnUserTopicMessage", UserTopicMsg.GetTopic());
+    EXPECT_EQ(UserTopicMsg.GetTarget(), "#target");
+    EXPECT_EQ(UserTopicMsg.GetTopic(), "CMessageModule::OnUserTopicMessage");
 
     CQuitMessage UserQuitMsg;
     LegacyMod.eAction = CModule::HALT;
     Modules.OnUserQuitMessage(UserQuitMsg);
-    EXPECT_EQ("CLegacyModule::OnUserQuit", UserQuitMsg.GetReason());
+    EXPECT_EQ(UserQuitMsg.GetReason(), "CLegacyModule::OnUserQuit");
     LegacyMod.eAction = CModule::CONTINUE;
     Modules.OnUserQuitMessage(UserQuitMsg);
-    EXPECT_EQ("CMessageModule::OnUserQuitMessage", UserQuitMsg.GetReason());
+    EXPECT_EQ(UserQuitMsg.GetReason(), "CMessageModule::OnUserQuitMessage");
 
     CCTCPMessage CTCPReply;
     LegacyMod.eAction = CModule::HALT;
     Modules.OnCTCPReplyMessage(CTCPReply);
-    EXPECT_EQ("legacy", CTCPReply.GetNick().GetNick());
-    EXPECT_EQ("CLegacyModule::OnCTCPReply", CTCPReply.GetText());
+    EXPECT_EQ(CTCPReply.GetNick().GetNick(), "legacy");
+    EXPECT_EQ(CTCPReply.GetText(), "CLegacyModule::OnCTCPReply");
     LegacyMod.eAction = CModule::CONTINUE;
     Modules.OnCTCPReplyMessage(CTCPReply);
-    EXPECT_EQ("nick", CTCPReply.GetNick().GetNick());
-    EXPECT_EQ("CMessageModule::OnCTCPReplyMessage", CTCPReply.GetText());
+    EXPECT_EQ(CTCPReply.GetNick().GetNick(), "nick");
+    EXPECT_EQ(CTCPReply.GetText(), "CMessageModule::OnCTCPReplyMessage");
 
     CCTCPMessage PrivCTCP;
     LegacyMod.eAction = CModule::HALT;
     Modules.OnPrivCTCPMessage(PrivCTCP);
-    EXPECT_EQ("legacy", PrivCTCP.GetNick().GetNick());
-    EXPECT_EQ("CLegacyModule::OnPrivCTCP", PrivCTCP.GetText());
+    EXPECT_EQ(PrivCTCP.GetNick().GetNick(), "legacy");
+    EXPECT_EQ(PrivCTCP.GetText(), "CLegacyModule::OnPrivCTCP");
     LegacyMod.eAction = CModule::CONTINUE;
     Modules.OnPrivCTCPMessage(PrivCTCP);
-    EXPECT_EQ("nick", PrivCTCP.GetNick().GetNick());
-    EXPECT_EQ("CMessageModule::OnPrivCTCPMessage", PrivCTCP.GetText());
+    EXPECT_EQ(PrivCTCP.GetNick().GetNick(), "nick");
+    EXPECT_EQ(PrivCTCP.GetText(), "CMessageModule::OnPrivCTCPMessage");
 
     CCTCPMessage ChanCTCP;
     LegacyMod.eAction = CModule::HALT;
     Modules.OnChanCTCPMessage(ChanCTCP);
-    EXPECT_EQ("legacy", ChanCTCP.GetNick().GetNick());
-    EXPECT_EQ("CLegacyModule::OnChanCTCP", ChanCTCP.GetText());
+    EXPECT_EQ(ChanCTCP.GetNick().GetNick(), "legacy");
+    EXPECT_EQ(ChanCTCP.GetText(), "CLegacyModule::OnChanCTCP");
     LegacyMod.eAction = CModule::CONTINUE;
     Modules.OnChanCTCPMessage(ChanCTCP);
-    EXPECT_EQ("nick", ChanCTCP.GetNick().GetNick());
-    EXPECT_EQ("CMessageModule::OnChanCTCPMessage", ChanCTCP.GetText());
+    EXPECT_EQ(ChanCTCP.GetNick().GetNick(), "nick");
+    EXPECT_EQ(ChanCTCP.GetText(), "CMessageModule::OnChanCTCPMessage");
 
     CActionMessage PrivAction;
     LegacyMod.eAction = CModule::HALT;
     Modules.OnPrivActionMessage(PrivAction);
-    EXPECT_EQ("legacy", PrivAction.GetNick().GetNick());
-    EXPECT_EQ("CLegacyModule::OnPrivAction", PrivAction.GetText());
+    EXPECT_EQ(PrivAction.GetNick().GetNick(), "legacy");
+    EXPECT_EQ(PrivAction.GetText(), "CLegacyModule::OnPrivAction");
     LegacyMod.eAction = CModule::CONTINUE;
     Modules.OnPrivActionMessage(PrivAction);
-    EXPECT_EQ("nick", PrivAction.GetNick().GetNick());
-    EXPECT_EQ("CMessageModule::OnPrivActionMessage", PrivAction.GetText());
+    EXPECT_EQ(PrivAction.GetNick().GetNick(), "nick");
+    EXPECT_EQ(PrivAction.GetText(), "CMessageModule::OnPrivActionMessage");
 
     CActionMessage ChanAction;
     LegacyMod.eAction = CModule::HALT;
     Modules.OnChanActionMessage(ChanAction);
-    EXPECT_EQ("legacy", ChanAction.GetNick().GetNick());
-    EXPECT_EQ("CLegacyModule::OnChanAction", ChanAction.GetText());
+    EXPECT_EQ(ChanAction.GetNick().GetNick(), "legacy");
+    EXPECT_EQ(ChanAction.GetText(), "CLegacyModule::OnChanAction");
     LegacyMod.eAction = CModule::CONTINUE;
     Modules.OnChanActionMessage(ChanAction);
-    EXPECT_EQ("nick", ChanAction.GetNick().GetNick());
-    EXPECT_EQ("CMessageModule::OnChanActionMessage", ChanAction.GetText());
+    EXPECT_EQ(ChanAction.GetNick().GetNick(), "nick");
+    EXPECT_EQ(ChanAction.GetText(), "CMessageModule::OnChanActionMessage");
 
     CTextMessage PrivMsg;
     LegacyMod.eAction = CModule::HALT;
     Modules.OnPrivTextMessage(PrivMsg);
-    EXPECT_EQ("legacy", PrivMsg.GetNick().GetNick());
-    EXPECT_EQ("CLegacyModule::OnPrivMsg", PrivMsg.GetText());
+    EXPECT_EQ(PrivMsg.GetNick().GetNick(), "legacy");
+    EXPECT_EQ(PrivMsg.GetText(), "CLegacyModule::OnPrivMsg");
     LegacyMod.eAction = CModule::CONTINUE;
     Modules.OnPrivTextMessage(PrivMsg);
-    EXPECT_EQ("nick", PrivMsg.GetNick().GetNick());
-    EXPECT_EQ("CMessageModule::OnPrivTextMessage", PrivMsg.GetText());
+    EXPECT_EQ(PrivMsg.GetNick().GetNick(), "nick");
+    EXPECT_EQ(PrivMsg.GetText(), "CMessageModule::OnPrivTextMessage");
 
     CTextMessage ChanMsg;
     LegacyMod.eAction = CModule::HALT;
     Modules.OnChanTextMessage(ChanMsg);
-    EXPECT_EQ("legacy", ChanMsg.GetNick().GetNick());
-    EXPECT_EQ("CLegacyModule::OnChanMsg", ChanMsg.GetText());
+    EXPECT_EQ(ChanMsg.GetNick().GetNick(), "legacy");
+    EXPECT_EQ(ChanMsg.GetText(), "CLegacyModule::OnChanMsg");
     LegacyMod.eAction = CModule::CONTINUE;
     Modules.OnChanTextMessage(ChanMsg);
-    EXPECT_EQ("nick", ChanMsg.GetNick().GetNick());
-    EXPECT_EQ("CMessageModule::OnChanTextMessage", ChanMsg.GetText());
+    EXPECT_EQ(ChanMsg.GetNick().GetNick(), "nick");
+    EXPECT_EQ(ChanMsg.GetText(), "CMessageModule::OnChanTextMessage");
 
     CNoticeMessage PrivNotice;
     LegacyMod.eAction = CModule::HALT;
     Modules.OnPrivNoticeMessage(PrivNotice);
-    EXPECT_EQ("legacy", PrivNotice.GetNick().GetNick());
-    EXPECT_EQ("CLegacyModule::OnPrivNotice", PrivNotice.GetText());
+    EXPECT_EQ(PrivNotice.GetNick().GetNick(), "legacy");
+    EXPECT_EQ(PrivNotice.GetText(), "CLegacyModule::OnPrivNotice");
     LegacyMod.eAction = CModule::CONTINUE;
     Modules.OnPrivNoticeMessage(PrivNotice);
-    EXPECT_EQ("nick", PrivNotice.GetNick().GetNick());
-    EXPECT_EQ("CMessageModule::OnPrivNoticeMessage", PrivNotice.GetText());
+    EXPECT_EQ(PrivNotice.GetNick().GetNick(), "nick");
+    EXPECT_EQ(PrivNotice.GetText(), "CMessageModule::OnPrivNoticeMessage");
 
     CNoticeMessage ChanNotice;
     LegacyMod.eAction = CModule::HALT;
     Modules.OnChanNoticeMessage(ChanNotice);
-    EXPECT_EQ("legacy", ChanNotice.GetNick().GetNick());
-    EXPECT_EQ("CLegacyModule::OnChanNotice", ChanNotice.GetText());
+    EXPECT_EQ(ChanNotice.GetNick().GetNick(), "legacy");
+    EXPECT_EQ(ChanNotice.GetText(), "CLegacyModule::OnChanNotice");
     LegacyMod.eAction = CModule::CONTINUE;
     Modules.OnChanNoticeMessage(ChanNotice);
-    EXPECT_EQ("nick", ChanNotice.GetNick().GetNick());
-    EXPECT_EQ("CMessageModule::OnChanNoticeMessage", ChanNotice.GetText());
+    EXPECT_EQ(ChanNotice.GetNick().GetNick(), "nick");
+    EXPECT_EQ(ChanNotice.GetText(), "CMessageModule::OnChanNoticeMessage");
 
     CTopicMessage TopicMsg;
     LegacyMod.eAction = CModule::HALT;
     Modules.OnTopicMessage(TopicMsg);
-    EXPECT_EQ("legacy", TopicMsg.GetNick().GetNick());
-    EXPECT_EQ("CLegacyModule::OnTopic", TopicMsg.GetTopic());
+    EXPECT_EQ(TopicMsg.GetNick().GetNick(), "legacy");
+    EXPECT_EQ(TopicMsg.GetTopic(), "CLegacyModule::OnTopic");
     LegacyMod.eAction = CModule::CONTINUE;
     Modules.OnTopicMessage(TopicMsg);
-    EXPECT_EQ("nick", TopicMsg.GetNick().GetNick());
-    EXPECT_EQ("CMessageModule::OnTopicMessage", TopicMsg.GetTopic());
+    EXPECT_EQ(TopicMsg.GetNick().GetNick(), "nick");
+    EXPECT_EQ(TopicMsg.GetTopic(), "CMessageModule::OnTopicMessage");
 
     CNumericMessage NumericMsg;
     Modules.OnNumericMessage(NumericMsg);
-    EXPECT_EQ("nick", TopicMsg.GetNick().GetNick());
-    EXPECT_EQ(123u, NumericMsg.GetCode());
+    EXPECT_EQ(TopicMsg.GetNick().GetNick(), "nick");
+    EXPECT_EQ(NumericMsg.GetCode(), 123u);
 
     Modules.clear();
 }

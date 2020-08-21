@@ -1,0 +1,81 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: nl\n"
+"X-Crowdin-File: /master/modules/po/cert.pot\n"
+"X-Crowdin-File-ID: 161\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Dutch\n"
+"Language: nl_NL\n"
+
+#  this text is inserted into `click here` in the other string
+#: modules/po/../data/cert/tmpl/index.tmpl:5
+msgid "here"
+msgstr "hier"
+
+#  {1} is `here`, translateable in the other string
+#: modules/po/../data/cert/tmpl/index.tmpl:6
+msgid ""
+"You already have a certificate set, use the form below to overwrite the "
+"current certificate. Alternatively click {1} to delete your certificate."
+msgstr ""
+"Je hebt al een certificaat ingesteld, gebruik het onderstaande formulier om "
+"deze te overschrijven. Of klik op {1} om je certificaat te verwijderen."
+
+#: modules/po/../data/cert/tmpl/index.tmpl:8
+msgid "You do not have a certificate yet."
+msgstr "Je hebt nog geen certificaat."
+
+#: modules/po/../data/cert/tmpl/index.tmpl:14 cert.cpp:72
+msgid "Certificate"
+msgstr "Certificaat"
+
+#: modules/po/../data/cert/tmpl/index.tmpl:18
+msgid "PEM File:"
+msgstr "PEM Bestand:"
+
+#: modules/po/../data/cert/tmpl/index.tmpl:22
+msgid "Update"
+msgstr "Bijwerken"
+
+#: cert.cpp:28
+msgid "Pem file deleted"
+msgstr "PEM bestand verwijderd"
+
+#: cert.cpp:31
+msgid "The pem file doesn't exist or there was a error deleting the pem file."
+msgstr ""
+"Het PEM bestand bestsaat niet of er was een foutmelding tijdens het "
+"verwijderen van het PEM bestand."
+
+#: cert.cpp:38
+msgid "You have a certificate in {1}"
+msgstr "Je hebt een certificaat in {1}"
+
+#: cert.cpp:41
+msgid ""
+"You do not have a certificate. Please use the web interface to add a "
+"certificate"
+msgstr ""
+"Je hebt geen certificaat. Gebruik de webomgeving om een certificaat toe te "
+"voegen"
+
+#: cert.cpp:44
+msgid "Alternatively you can either place one at {1}"
+msgstr "In plaats daarvan kan je deze ook plaatsen in {1}"
+
+#: cert.cpp:52
+msgid "Delete the current certificate"
+msgstr "Verwijder het huidige certificaat"
+
+#: cert.cpp:54
+msgid "Show the current certificate"
+msgstr "Laat het huidige certificaat zien"
+
+#: cert.cpp:105
+msgid "Use a ssl certificate to connect to a server"
+msgstr "Gebruik een SSL certificaat om te verbinden naar de server"

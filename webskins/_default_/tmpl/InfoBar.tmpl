@@ -1,7 +1,12 @@
 <? I18N znc ?>
-<? SETBLOCK InfoBar_GuestNameStr ?><? FORMAT "-Guest-" ?><? ENDSETBLOCK ?>
-<? SETBLOCK InfoBar_UserNameSpan ?><span class="user_name"><? VAR SessionUser DEFAULT=*InfoBar_GuestNameStr ?></span><? ENDSETBLOCK ?>
+<? SETBLOCK InfoBar_UserNameSpan ?><span class="user_name"><? VAR SessionUser ?></span><? ENDSETBLOCK ?>
 <div id="infobar">
-	<span id="infobar_ident"><? FORMAT "Logged in as: {1} (from {2})" "InfoBar_UserNameSpan ESC=" SessionIP ?></span>
+	<span id="infobar_ident">
+		<? IF SessionUser ?>
+			<span id="logged_in_yes"><? FORMAT "Logged in as: {1}" "InfoBar_UserNameSpan ESC=" ?></span>
+		<? ELSE ?>
+			<span id="logged_in_no"><? FORMAT "Not logged in" ?></span>
+		<? ENDIF ?>
+	</span>
 	<? INC LoginBar.tmpl ?>
 </div>

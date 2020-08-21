@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  * Author: imaginos <imaginos@imaginos.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -283,7 +283,7 @@ class CSaveBuff : public CModule {
     }
 
     CString GetPath(const CString& sTarget) const {
-        CString sBuffer = GetUser()->GetUserName() + sTarget.AsLower();
+        CString sBuffer = GetUser()->GetUsername() + sTarget.AsLower();
         CString sRet = GetSavePath();
         sRet += "/" + CBlowfish::MD5(sBuffer, true);
         return (sRet);

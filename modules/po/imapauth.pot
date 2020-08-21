@@ -1,0 +1,12 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: imapauth.cpp:168
+msgid "[ server [+]port [ UserFormatString ] ]"
+msgstr ""
+
+#: imapauth.cpp:171
+msgid "Allow users to authenticate via IMAP."
+msgstr ""

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 #include <znc/Chan.h>
 #include <znc/IRCNetwork.h>
+#include <znc/Query.h>
 
 using std::list;
 using std::vector;
@@ -173,28 +174,76 @@ class CWatchEntry {
 class CWatcherMod : public CModule {
   public:
     MODCONSTRUCTOR(CWatcherMod) {
-        m_Buffer.SetLineCount(500);
-        Load();
+        AddHelpCommand();
+        AddCommand("Add", t_d("<HostMask> [Target] [Pattern]"), t_d("Used to add an entry to watch for."),
+                   [=](const CString& sLine) { Watch(sLine); });
+        AddCommand("List", "", t_d("List all entries being watched."),
+                   [=](const CString& sLine) { List(); });
+        AddCommand("Dump", "", t_d("Dump a list of all current entries to be used later."),
+                   [=](const CString& sLine) { Dump(); });
+        AddCommand("Del", t_d("<Id>"), t_d("Deletes Id from the list of watched entries."),
+                   [=](const CString& sLine) { Remove(sLine); });
+        AddCommand("Clear", "", t_d("Delete all entries."),
+                   [=](const CString& sLine) { Clear(); });
+        AddCommand("Enable", t_d("<Id | *>"), t_d("Enable a disabled entry."),
+                   [=](const CString& sLine) { Enable(sLine); });
+        AddCommand("Disable", t_d("<Id | *>"), t_d("Disable (but don't delete) an entry."),
+                   [=](const CString& sLine) { Disable(sLine); });
+        AddCommand("SetDetachedClientOnly", t_d("<Id | *> <True | False>"), t_d("Enable or disable detached client only for an entry."),
+                   [=](const CString& sLine) { SetDetachedClientOnly(sLine); });
+        AddCommand("SetDetachedChannelOnly", t_d("<Id | *> <True | False>"), t_d("Enable or disable detached channel only for an entry."),
+                   [=](const CString& sLine) { SetDetachedChannelOnly(sLine); });
+        AddCommand("SetSources", t_d("<Id> [#chan priv #foo* !#bar]"), t_d("Set the source channels that you care about."),
+                   [=](const CString& sLine) { SetSources(sLine); });
     }
 
     ~CWatcherMod() override {}
 
+
+    bool OnLoad(const CString& sArgs, CString& sMessage) override {
+        // Just to make sure we don't mess up badly
+        m_lsWatchers.clear();
+
+        bool bWarn = false;
+
+        for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
+            VCString vList;
+            it->first.Split("\n", vList);
+
+            // Backwards compatibility with the old save format
+            if (vList.size() != 5 && vList.size() != 7) {
+                bWarn = true;
+                continue;
+            }
+
+            CWatchEntry WatchEntry(vList[0], vList[1], vList[2]);
+            if (vList[3].Equals("disabled"))
+                WatchEntry.SetDisabled(true);
+            else
+                WatchEntry.SetDisabled(false);
+
+            // Backwards compatibility with the old save format
+            if (vList.size() == 5) {
+                WatchEntry.SetSources(vList[4]);
+            } else {
+                WatchEntry.SetDetachedClientOnly(vList[4].ToBool());
+                WatchEntry.SetDetachedChannelOnly(vList[5].ToBool());
+                WatchEntry.SetSources(vList[6]);
+            }
+            m_lsWatchers.push_back(WatchEntry);
+        }
+
+        if (bWarn)
+            sMessage = t_s("WARNING: malformed entry found while loading");
+        
+        return true;
+    }
+    
     void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes,
                    const CString& sArgs) override {
         Process(OpNick, "* " + OpNick.GetNick() + " sets mode: " + sModes +
                             " " + sArgs + " on " + Channel.GetName(),
                 Channel.GetName());
-    }
-
-    void OnClientLogin() override {
-        MCString msParams;
-        msParams["target"] = GetNetwork()->GetCurNick();
-
-        size_t uSize = m_Buffer.Size();
-        for (unsigned int uIdx = 0; uIdx < uSize; uIdx++) {
-            PutUser(m_Buffer.GetLine(uIdx, *GetClient(), msParams));
-        }
-        m_Buffer.Clear();
     }
 
     void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel,
@@ -282,73 +331,6 @@ class CWatcherMod : public CModule {
         return CONTINUE;
     }
 
-    void OnModCommand(const CString& sCommand) override {
-        CString sCmdName = sCommand.Token(0);
-        if (sCmdName.Equals("ADD") || sCmdName.Equals("WATCH")) {
-            Watch(sCommand.Token(1), sCommand.Token(2),
-                  sCommand.Token(3, true));
-        } else if (sCmdName.Equals("HELP")) {
-            Help();
-        } else if (sCmdName.Equals("LIST")) {
-            List();
-        } else if (sCmdName.Equals("DUMP")) {
-            Dump();
-        } else if (sCmdName.Equals("ENABLE")) {
-            CString sTok = sCommand.Token(1);
-
-            if (sTok == "*") {
-                SetDisabled(~0, false);
-            } else {
-                SetDisabled(sTok.ToUInt(), false);
-            }
-        } else if (sCmdName.Equals("DISABLE")) {
-            CString sTok = sCommand.Token(1);
-
-            if (sTok == "*") {
-                SetDisabled(~0, true);
-            } else {
-                SetDisabled(sTok.ToUInt(), true);
-            }
-        } else if (sCmdName.Equals("SETDETACHEDCLIENTONLY")) {
-            CString sTok = sCommand.Token(1);
-            bool bDetachedClientOnly = sCommand.Token(2).ToBool();
-
-            if (sTok == "*") {
-                SetDetachedClientOnly(~0, bDetachedClientOnly);
-            } else {
-                SetDetachedClientOnly(sTok.ToUInt(), bDetachedClientOnly);
-            }
-        } else if (sCmdName.Equals("SETDETACHEDCHANNELONLY")) {
-            CString sTok = sCommand.Token(1);
-            bool bDetachedchannelOnly = sCommand.Token(2).ToBool();
-
-            if (sTok == "*") {
-                SetDetachedChannelOnly(~0, bDetachedchannelOnly);
-            } else {
-                SetDetachedChannelOnly(sTok.ToUInt(), bDetachedchannelOnly);
-            }
-        } else if (sCmdName.Equals("SETSOURCES")) {
-            SetSources(sCommand.Token(1).ToUInt(), sCommand.Token(2, true));
-        } else if (sCmdName.Equals("CLEAR")) {
-            m_lsWatchers.clear();
-            PutModule(t_s("All entries cleared."));
-            Save();
-        } else if (sCmdName.Equals("BUFFER")) {
-            CString sCount = sCommand.Token(1);
-
-            if (sCount.size()) {
-                m_Buffer.SetLineCount(sCount.ToUInt());
-            }
-
-            PutModule(
-                t_f("Buffer count is set to {1}")(m_Buffer.GetLineCount()));
-        } else if (sCmdName.Equals("DEL")) {
-            Remove(sCommand.Token(1).ToUInt());
-        } else {
-            PutModule(t_f("Unknown command: {1}")(sCmdName));
-        }
-    }
-
   private:
     void Process(const CNick& Nick, const CString& sMessage,
                  const CString& sSource) {
@@ -377,10 +359,13 @@ class CWatcherMod : public CModule {
                                       "!watch@znc.in PRIVMSG " +
                                       pNetwork->GetCurNick() + " :" + sMessage);
                 } else {
-                    m_Buffer.AddLine(
-                        ":" + _NAMEDFMT(WatchEntry.GetTarget()) +
-                            "!watch@znc.in PRIVMSG {target} :{text}",
-                        sMessage);
+                    CQuery* pQuery = pNetwork->AddQuery(WatchEntry.GetTarget());
+                    if (pQuery) {
+                        
+                        pQuery->AddBuffer(":" + _NAMEDFMT(WatchEntry.GetTarget()) +
+                                          "!watch@znc.in PRIVMSG {target} :{text}",
+                                          sMessage);
+                    }
                 }
                 sHandledTargets.insert(WatchEntry.GetTarget());
             }
@@ -417,7 +402,17 @@ class CWatcherMod : public CModule {
         Save();
     }
 
-    void SetDetachedClientOnly(unsigned int uIdx, bool bDetachedClientOnly) {
+    void SetDetachedClientOnly(const CString& sLine) {
+        bool bDetachedClientOnly = sLine.Token(2).ToBool();
+        CString sTok = sLine.Token(1);
+        unsigned int uIdx;
+        
+        if (sTok == "*") {
+            uIdx = ~0;
+        } else {
+            uIdx = sTok.ToUInt();
+        }
+        
         if (uIdx == (unsigned int)~0) {
             for (list<CWatchEntry>::iterator it = m_lsWatchers.begin();
                  it != m_lsWatchers.end(); ++it) {
@@ -449,7 +444,17 @@ class CWatcherMod : public CModule {
         Save();
     }
 
-    void SetDetachedChannelOnly(unsigned int uIdx, bool bDetachedChannelOnly) {
+    void SetDetachedChannelOnly(const CString& sLine) {
+        bool bDetachedChannelOnly = sLine.Token(2).ToBool();
+        CString sTok = sLine.Token(1);
+        unsigned int uIdx;
+
+        if (sTok == "*") {
+            uIdx = ~0;
+        } else {
+            uIdx = sTok.ToUInt();
+        }
+        
         if (uIdx == (unsigned int)~0) {
             for (list<CWatchEntry>::iterator it = m_lsWatchers.begin();
                  it != m_lsWatchers.end(); ++it) {
@@ -457,8 +462,7 @@ class CWatcherMod : public CModule {
             }
 
             if (bDetachedChannelOnly)
-                PutModule(
-                    t_s("Set DetachedChannelOnly for all entries to Yes"));
+                PutModule(t_s("Set DetachedChannelOnly for all entries to Yes"));
             else
                 PutModule(t_s("Set DetachedChannelOnly for all entries to No"));
             Save();
@@ -564,7 +568,10 @@ class CWatcherMod : public CModule {
         PutModule("---------------");
     }
 
-    void SetSources(unsigned int uIdx, const CString& sSources) {
+    void SetSources(const CString& sLine) {
+        unsigned int uIdx = sLine.Token(1).ToUInt();
+        CString sSources = sLine.Token(2, true);
+        
         uIdx--;  // "convert" index to zero based
         if (uIdx >= m_lsWatchers.size()) {
             PutModule(t_s("Invalid Id"));
@@ -579,7 +586,34 @@ class CWatcherMod : public CModule {
         Save();
     }
 
-    void Remove(unsigned int uIdx) {
+    void Enable(const CString& sLine) {
+        CString sTok = sLine.Token(1);
+        if (sTok == "*") {
+            SetDisabled(~0, false);
+        } else {
+            SetDisabled(sTok.ToUInt(), false);
+        }
+    }
+    
+    void Disable(const CString& sLine) {
+        CString sTok = sLine.Token(1);
+        if (sTok == "*") {
+            SetDisabled(~0, true);
+        } else {
+            SetDisabled(sTok.ToUInt(), true);
+        }
+    }
+
+    void Clear() {
+        m_lsWatchers.clear();
+        PutModule(t_s("All entries cleared."));
+        Save();
+    }
+
+    void Remove(const CString& sLine) {
+        
+        unsigned int uIdx = sLine.Token(1).ToUInt();
+        
         uIdx--;  // "convert" index to zero based
         if (uIdx >= m_lsWatchers.size()) {
             PutModule(t_s("Invalid Id"));
@@ -594,81 +628,12 @@ class CWatcherMod : public CModule {
         Save();
     }
 
-    void Help() {
-        CTable Table;
+    void Watch(const CString& sLine) {
+    
+        CString sHostMask = sLine.Token(1);
+        CString sTarget = sLine.Token(2);
+        CString sPattern = sLine.Token(3);
 
-        Table.AddColumn(t_s("Command"));
-        Table.AddColumn(t_s("Description"));
-
-        Table.AddRow();
-        Table.SetCell(t_s("Command"), t_s("Add <HostMask> [Target] [Pattern]"));
-        Table.SetCell(t_s("Description"),
-                      t_s("Used to add an entry to watch for."));
-
-        Table.AddRow();
-        Table.SetCell(t_s("Command"), t_s("List"));
-        Table.SetCell(t_s("Description"),
-                      t_s("List all entries being watched."));
-
-        Table.AddRow();
-        Table.SetCell(t_s("Command"), t_s("Dump"));
-        Table.SetCell(
-            t_s("Description"),
-            t_s("Dump a list of all current entries to be used later."));
-
-        Table.AddRow();
-        Table.SetCell(t_s("Command"), t_s("Del <Id>"));
-        Table.SetCell(t_s("Description"),
-                      t_s("Deletes Id from the list of watched entries."));
-
-        Table.AddRow();
-        Table.SetCell(t_s("Command"), t_s("Clear"));
-        Table.SetCell(t_s("Description"), t_s("Delete all entries."));
-
-        Table.AddRow();
-        Table.SetCell(t_s("Command"), t_s("Enable <Id | *>"));
-        Table.SetCell(t_s("Description"), t_s("Enable a disabled entry."));
-
-        Table.AddRow();
-        Table.SetCell(t_s("Command"), t_s("Disable <Id | *>"));
-        Table.SetCell(t_s("Description"),
-                      t_s("Disable (but don't delete) an entry."));
-
-        Table.AddRow();
-        Table.SetCell(t_s("Command"),
-                      t_s("SetDetachedClientOnly <Id | *> <True | False>"));
-        Table.SetCell(
-            t_s("Description"),
-            t_s("Enable or disable detached client only for an entry."));
-
-        Table.AddRow();
-        Table.SetCell(t_s("Command"),
-                      t_s("SetDetachedChannelOnly <Id | *> <True | False>"));
-        Table.SetCell(
-            t_s("Description"),
-            t_s("Enable or disable detached channel only for an entry."));
-
-        Table.AddRow();
-        Table.SetCell(t_s("Command"), t_s("Buffer [Count]"));
-        Table.SetCell(
-            t_s("Description"),
-            t_s("Show/Set the amount of buffered lines while detached."));
-
-        Table.AddRow();
-        Table.SetCell(t_s("Command"),
-                      t_s("SetSources <Id> [#chan priv #foo* !#bar]"));
-        Table.SetCell(t_s("Description"),
-                      t_s("Set the source channels that you care about."));
-
-        Table.AddRow();
-        Table.SetCell(t_s("Command"), t_s("Help"));
-        Table.SetCell(t_s("Description"), t_s("This help."));
-
-        PutModule(Table);
-    }
-
-    void Watch(const CString& sHostMask, const CString& sTarget,
-               const CString& sPattern, bool bNotice = false) {
         CString sMessage;
 
         if (sHostMask.size()) {
@@ -695,11 +660,8 @@ class CWatcherMod : public CModule {
             sMessage = t_s("Watch: Not enough arguments.  Try Help");
         }
 
-        if (bNotice) {
-            PutModNotice(sMessage);
-        } else {
-            PutModule(sMessage);
-        }
+        PutModNotice(sMessage);
+
         Save();
     }
 
@@ -727,45 +689,7 @@ class CWatcherMod : public CModule {
         SaveRegistry();
     }
 
-    void Load() {
-        // Just to make sure we don't mess up badly
-        m_lsWatchers.clear();
-
-        bool bWarn = false;
-
-        for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
-            VCString vList;
-            it->first.Split("\n", vList);
-
-            // Backwards compatibility with the old save format
-            if (vList.size() != 5 && vList.size() != 7) {
-                bWarn = true;
-                continue;
-            }
-
-            CWatchEntry WatchEntry(vList[0], vList[1], vList[2]);
-            if (vList[3].Equals("disabled"))
-                WatchEntry.SetDisabled(true);
-            else
-                WatchEntry.SetDisabled(false);
-
-            // Backwards compatibility with the old save format
-            if (vList.size() == 5) {
-                WatchEntry.SetSources(vList[4]);
-            } else {
-                WatchEntry.SetDetachedClientOnly(vList[4].ToBool());
-                WatchEntry.SetDetachedChannelOnly(vList[5].ToBool());
-                WatchEntry.SetSources(vList[6]);
-            }
-            m_lsWatchers.push_back(WatchEntry);
-        }
-
-        if (bWarn)
-            PutModule(t_s("WARNING: malformed entry found while loading"));
-    }
-
     list<CWatchEntry> m_lsWatchers;
-    CBuffer m_Buffer;
 };
 
 template <>

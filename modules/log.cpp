@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  * Copyright (C) 2006-2007, CNU <bshalm@broadpark.no>
  *(http://cnu.dieplz.net/znc)
  *
@@ -167,6 +167,7 @@ void CLogMod::ListRulesCmd(const CString& sLine) {
     CTable Table;
     Table.AddColumn(t_s("Rule", "listrules"));
     Table.AddColumn(t_s("Logging enabled", "listrules"));
+    Table.SetStyle(CTable::ListStyle);
 
     for (const CLogRule& Rule : m_vRules) {
         Table.AddRow();
@@ -271,9 +272,9 @@ void CLogMod::PutLog(const CString& sLine,
     }
 
     CString sPath;
-    time_t curtime;
+    timeval curtime;
 
-    time(&curtime);
+    gettimeofday(&curtime, nullptr);
     // Generate file name
     sPath = CUtils::FormatTime(curtime, m_sLogPath, GetUser()->GetTimezone());
     if (sPath.empty()) {
@@ -284,7 +285,7 @@ void CLogMod::PutLog(const CString& sLine,
     // TODO: Properly handle IRC case mapping
     // $WINDOW has to be handled last, since it can contain %
     sPath.Replace("$USER",
-                  CString((GetUser() ? GetUser()->GetUserName() : "UNKNOWN")));
+                  CString((GetUser() ? GetUser()->GetUsername() : "UNKNOWN")));
     sPath.Replace("$NETWORK",
                   CString((GetNetwork() ? GetNetwork()->GetName() : "znc")));
     sPath.Replace("$WINDOW", CString(sWindow.Replace_n("/", "-")

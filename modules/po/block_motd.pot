@@ -1,3 +1,8 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
 #: block_motd.cpp:26
 msgid "[<server>]"
 msgstr ""
@@ -12,10 +17,10 @@ msgstr ""
 msgid "You are not connected to an IRC Server."
 msgstr ""
 
-#: block_motd.cpp:60
+#: block_motd.cpp:58
 msgid "MOTD blocked by ZNC"
 msgstr ""
 
-#: block_motd.cpp:106
+#: block_motd.cpp:104
 msgid "Block the MOTD from IRC so it's not sent to your client(s)."
 msgstr ""

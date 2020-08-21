@@ -1,3 +1,8 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
 #: clearbufferonmsg.cpp:160
 msgid "Clears all channel and query buffers whenever the user does something"
 msgstr ""

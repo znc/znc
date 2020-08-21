@@ -1,0 +1,112 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
+"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
+"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: /master/modules/po/perform.pot\n"
+"X-Crowdin-File-ID: 189\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Polish\n"
+"Language: pl_PL\n"
+
+#: modules/po/../data/perform/tmpl/index.tmpl:7 perform.cpp:143
+msgid "Perform"
+msgstr "Wykonaj"
+
+#: modules/po/../data/perform/tmpl/index.tmpl:11
+msgid "Perform commands:"
+msgstr "Wykonaj polecenia:"
+
+#: modules/po/../data/perform/tmpl/index.tmpl:15
+msgid "Commands sent to the IRC server on connect, one per line."
+msgstr "Polecenia wysyłane do serwera IRC na połączeniu, jedno na linię."
+
+#: modules/po/../data/perform/tmpl/index.tmpl:18
+msgid "Save"
+msgstr "Zapisz"
+
+#: perform.cpp:24
+msgid "Usage: add <command>"
+msgstr "Użycie: add <polecenie>"
+
+#: perform.cpp:29
+msgid "Added!"
+msgstr "Dodano!"
+
+#: perform.cpp:37 perform.cpp:82
+msgid "Illegal # Requested"
+msgstr "Zażądano niedozwolonego #"
+
+#: perform.cpp:41
+msgid "Command Erased."
+msgstr "Wymazano polecenie."
+
+#: perform.cpp:50 perform.cpp:56
+msgctxt "list"
+msgid "Id"
+msgstr "Id"
+
+#: perform.cpp:51 perform.cpp:57
+msgctxt "list"
+msgid "Perform"
+msgstr "Wykonaj"
+
+#: perform.cpp:52 perform.cpp:62
+msgctxt "list"
+msgid "Expanded"
+msgstr "Podstawienie"
+
+#: perform.cpp:67
+msgid "No commands in your perform list."
+msgstr "Brak poleceń na Twojej liście do wykonania."
+
+#: perform.cpp:73
+msgid "perform commands sent"
+msgstr "wysłano polecenia wykonania"
+
+#: perform.cpp:86
+msgid "Commands Swapped."
+msgstr "Zamieniono polecenia."
+
+#: perform.cpp:95
+msgid "<command>"
+msgstr "<polecenie>"
+
+#: perform.cpp:96
+msgid "Adds perform command to be sent to the server on connect"
+msgstr ""
+"Dodaje polecenie wykonania, które ma zostać wysłane do serwera podczas "
+"łączenia"
+
+#: perform.cpp:98
+msgid "<number>"
+msgstr "<liczba>"
+
+#: perform.cpp:98
+msgid "Delete a perform command"
+msgstr "Usuń polecenie wykonania"
+
+#: perform.cpp:100
+msgid "List the perform commands"
+msgstr "Lista poleceń wykonania"
+
+#: perform.cpp:103
+msgid "Send the perform commands to the server now"
+msgstr "Wyślij teraz polecenia wykonania do serwera"
+
+#: perform.cpp:105
+msgid "<number> <number>"
+msgstr "<liczba> <liczba>"
+
+#: perform.cpp:106
+msgid "Swap two perform commands"
+msgstr "Zamienia dwa polecenia wykonania"
+
+#: perform.cpp:192
+msgid "Keeps a list of commands to be executed when ZNC connects to IRC."
+msgstr "Przechowuje listę poleceń do wykonania, gdy ZNC łączy się z IRC."

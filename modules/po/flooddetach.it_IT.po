@@ -1,0 +1,99 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: it\n"
+"X-Crowdin-File: /master/modules/po/flooddetach.pot\n"
+"X-Crowdin-File-ID: 173\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Italian\n"
+"Language: it_IT\n"
+
+#: flooddetach.cpp:30
+msgid "Show current limits"
+msgstr "Mostra i limiti correnti"
+
+#: flooddetach.cpp:32 flooddetach.cpp:35
+msgid "[<limit>]"
+msgstr "[<limite>]"
+
+#: flooddetach.cpp:33
+msgid "Show or set number of seconds in the time interval"
+msgstr "Mostra o imposta il numero di secondi nell'intervallo di tempo"
+
+#: flooddetach.cpp:36
+msgid "Show or set number of lines in the time interval"
+msgstr "Mostra o imposta il numero di linee nell'intervallo di tempo"
+
+#: flooddetach.cpp:39
+msgid "Show or set whether to notify you about detaching and attaching back"
+msgstr ""
+"Mostra o imposta se essere notificato sullo sgancio (detach) e il ri-"
+"aggancio (attaching)"
+
+#: flooddetach.cpp:93
+msgid "Flood in {1} is over, reattaching..."
+msgstr "Il flood su {1} è finito, ri-aggancio..."
+
+#: flooddetach.cpp:150
+msgid "Channel {1} was flooded, you've been detached"
+msgstr ""
+"Canale{1} è stato \"invaso da messaggi\" (flooded), sei stato sganciato "
+"(detached)"
+
+#: flooddetach.cpp:187
+msgid "1 line"
+msgid_plural "{1} lines"
+msgstr[0] "1 linea"
+msgstr[1] "{1} linee"
+
+#: flooddetach.cpp:188
+msgid "every second"
+msgid_plural "every {1} seconds"
+msgstr[0] "ogni secondo"
+msgstr[1] "ogni {1} secondi"
+
+#: flooddetach.cpp:190
+msgid "Current limit is {1} {2}"
+msgstr "Il limite corrente è {1} {2}"
+
+#: flooddetach.cpp:197
+msgid "Seconds limit is {1}"
+msgstr "Il limite dei secondi è {1}"
+
+#: flooddetach.cpp:202
+msgid "Set seconds limit to {1}"
+msgstr "Imposta il limite in secondi a {1}"
+
+#: flooddetach.cpp:211
+msgid "Lines limit is {1}"
+msgstr "Il limite delle linee è {1}"
+
+#: flooddetach.cpp:216
+msgid "Set lines limit to {1}"
+msgstr "Imposta il limite delle linee a {1}"
+
+#: flooddetach.cpp:229
+msgid "Module messages are disabled"
+msgstr "I messaggi del modulo sono disabilitati"
+
+#: flooddetach.cpp:231
+msgid "Module messages are enabled"
+msgstr "I messaggi del modulo sono abilitati"
+
+#: flooddetach.cpp:247
+msgid ""
+"This user module takes up to two arguments. Arguments are numbers of "
+"messages and seconds."
+msgstr ""
+"Questo modulo utente richiede fino a due argomenti. Gli argomenti sono il "
+"numero di messaggi e dei secondi."
+
+#: flooddetach.cpp:251
+msgid "Detach channels when flooded"
+msgstr ""
+"Sgancia (detach) dai canali quando vengono c'è un flood (invasione di "
+"messaggi)"

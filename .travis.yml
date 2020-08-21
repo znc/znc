@@ -1,68 +1,52 @@
 language: cpp
-env:
-    global:
-          # SECRET_KEY, used to push docs to github and to init coverity scans
-        - secure: "i2f2UVDnyHT/9z0U3XvgTj8eDERvnc1Wk7HpseEjb75JwGzqn/2R+RKHmoSrwK3hFgij2IMxZL19XtHFwMz9t5A/huAAKD74KMMI/QpeZEJ/sjT3CTLcE9HEVDdJOjc7dfLRxb2hZtgvx8clZIMrpeUdPhci8openff30KvXVbg="
 
 # These linux-specific parameters could be moved into matrix.include items, but that's lots of repetition
 sudo: required
-dist: trusty
+dist: bionic
+arch: amd64
+services:
+    - docker
 
-# See https://github.com/google/sanitizers/issues/856
-group: deprecated-2017Q3
-
-# TODO: add Linux LLVM coverage; clang 3.5.0 on ubuntu trusty is too old.
 matrix:
     fast_finish: true
     include:
         - os: linux
+          dist: xenial
           compiler: gcc
-          env: BUILD_TYPE=normal BUILD_WITH=cmake COVERAGE=gcov
-        - os: linux
-          compiler: gcc
-          env: BUILD_TYPE=normal BUILD_WITH=autoconf COVERAGE=gcov
+          env: BUILD_TYPE=normal
         - os: linux
           compiler: clang
-          env: BUILD_TYPE=asan BUILD_WITH=cmake COVERAGE=no
+          env: BUILD_TYPE=asan
         - os: linux
           compiler: clang
-          env: BUILD_TYPE=tsan BUILD_WITH=cmake COVERAGE=no
-        - os: osx
-          osx_image: xcode7.3 # OS X 10.11
-          compiler: clang
-          env: BUILD_TYPE=normal BUILD_WITH=cmake COVERAGE=llvm
-        - os: osx
-          osx_image: xcode7.3 # OS X 10.11
-          compiler: clang
-          env: BUILD_TYPE=normal BUILD_WITH=autoconf COVERAGE=llvm
-        - os: osx
-          osx_image: xcode8.3 # macOS 10.12
-          compiler: clang
-          env: BUILD_TYPE=normal BUILD_WITH=cmake COVERAGE=llvm
-        - os: osx
-          osx_image: xcode8.3 # macOS 10.12
-          compiler: clang
-          env: BUILD_TYPE=normal BUILD_WITH=autoconf COVERAGE=llvm
-        - os: osx
-          osx_image: xcode9.1 # macOS 10.12
-          compiler: clang
-          env: BUILD_TYPE=normal BUILD_WITH=cmake COVERAGE=llvm
-        - os: osx
-          osx_image: xcode9.1 # macOS 10.12
-          compiler: clang
-          env: BUILD_TYPE=normal BUILD_WITH=autoconf COVERAGE=llvm
+          env: BUILD_TYPE=tsan
+          # TODO: enable
+          # - os: linux
+          #   compiler: clang
+          #   env: BUILD_TYPE=msan
+          # - os: linux
+          #   compiler: clang
+          #   env: BUILD_TYPE=ubsan
         - os: linux
           compiler: gcc
-          env: BUILD_TYPE=tarball BUILD_WITH=cmake COVERAGE=gcov
+          env: BUILD_TYPE=normal
+          arch: arm64
+        - os: osx
+          osx_image: xcode9.3 # macOS 10.13
+          compiler: clang
+          env: BUILD_TYPE=normal
         - os: linux
           compiler: gcc
-          env: BUILD_TYPE=tarball BUILD_WITH=autoconf COVERAGE=gcov
+          env: BUILD_TYPE=tarball
         - stage: deploy
           os: linux
+          env:
+              # SECRET_KEY, used to push docs to github and to init coverity scans
+            - secure: "ne14MIcNsUNKjqtgrLHJTHXCUUMKfkV/o4sm2scWYOiIl8s1Hoqnx6mPYIr8qnedIra8fsI7sWVxXLDLd/KMTN9v9WpCwc6Sf45vYtkfrS+rNOr86wOeEbgaxDTsb2UDJhtK0InhhpkipA5jrFzQuMMMEB+JgBQltKV43wmd7Yc="
           before_install:
           install:
             - if [[ "$TRAVIS_REPO_SLUG" == "znc/znc" && "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_BRANCH" == "master" ]]; then ATTEMPT_DEPLOY=yes; else ATTEMPT_DEPLOY=no; fi
-            - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then openssl aes-256-cbc -d -in .travis-github.enc -out ~/znc-github-key -k ${SECRET_KEY}; fi
+            - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then openssl aes-256-cbc -d -salt -pbkdf2 -in .travis-github.enc -out ~/znc-github-key -k ${SECRET_KEY}; fi
             - export SECRET_KEY=no
             - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then sudo apt-get update; fi
             - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then sudo apt-get install -y doxygen graphviz python3-yaml; fi
@@ -78,71 +62,83 @@ matrix:
             - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then ./.travis-generate-docs.sh; fi
             - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then ./.travis-coverity-scan.py; fi
           after_success:
+        - stage: deploy
+          os: linux
+          env:
+              # DOCKER_USERNAME
+            - secure: "kiR372QH5Srye2beHVamOVLIPeXnDipWfzvzGJEZzbpH+aXsiD+CkbtulCR+XnKpnUAXQTmEc5ts1KjI9MGlxvP1ztxW8HMDGUMF4iFAjgZO8GyAZlH5I7pMEw7D5pn3W9y1LuCW5C9IsDcWnNTJkm32D7N34lLBCTQVw68ooDk="
+              # DOCKER_PASSWORD
+            - secure: "FMKQarGQJ/MFXnQQWEnlWMM+XItbDPgm5tzCn4k36AsAB1s1SiQ08wmy2Ys/+kRvnPN3Clpl8P2C8CoRTMJ8WCUYZVmf3HsqvsLdrODyusR5/N1y5eOKWxo+t1qN2Jzt6oIi/ofUZdn5mdzt8yif+ufxoez+2ncZDt5HoB/suHE="
+          before_install:
+          install:
+            - if [[ "$TRAVIS_REPO_SLUG" == "znc/znc" && "$TRAVIS_PULL_REQUEST" == "false" ]]; then ATTEMPT_DEPLOY=yes; else ATTEMPT_DEPLOY=no; fi
+            - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; fi
+            - export DOCKER_PASSWORD=no DOCKER_USERNAME=no
+          script:
+            - echo "$TRAVIS_BRANCH-$(git describe)" > .nightly
+            - docker build --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` --build-arg VCS_REF=`git rev-parse HEAD` --build-arg VERSION_EXTRA=+docker-git- -t "zncbouncer/znc-git:$TRAVIS_BRANCH" -t "zncbouncer/znc-git:$TRAVIS_BRANCH-$(git describe)" .
+            - if [[ "$ATTEMPT_DEPLOY" == "yes" && "$TRAVIS_BRANCH" == "master" ]]; then docker tag "zncbouncer/znc-git:$TRAVIS_BRANCH" zncbouncer/znc-git:latest; fi
+            - if [[ "$ATTEMPT_DEPLOY" == "yes" ]]; then docker push zncbouncer/znc-git; fi
+          after_success:
 before_install:
+    - python -c "import fcntl; fcntl.fcntl(1, fcntl.F_SETFL, 0)"  # https://github.com/travis-ci/travis-ci/issues/8920
     - "echo os: [$TRAVIS_OS_NAME] build: [$BUILD_TYPE]"
-    - export SECRET_KEY=no
     - export CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=
     - if [[ "$BUILD_TYPE" == "tarball" ]]; then CFGFLAGS+=" --with-gtest=$TRAVIS_BUILD_DIR/third_party/googletest/googletest --with-gmock=$TRAVIS_BUILD_DIR/third_party/googletest/googlemock --disable-swig"; fi
     - if [[ "$BUILD_TYPE" == "asan" ]]; then MYCXXFLAGS+=" -fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fPIE" MYLDFLAGS+=" -fsanitize=address -pie"; fi
     - if [[ "$BUILD_TYPE" == "tsan" ]]; then MYCXXFLAGS+=" -fsanitize=thread -O1 -fPIE" MYLDFLAGS+=" -fsanitize=thread"; fi
-    - if [[ "$BUILD_WITH" == "cmake" ]]; then CFGSUFFIX=.sh UNITTEST=unittest INTTEST=inttest; else CFGSUFFIX= UNITTEST=test INTTEST=test2; fi
-    - if [[ "$COVERAGE" == "gcov" ]]; then MYCXXFLAGS+=" --coverage" MYLDFLAGS+=" --coverage"; fi
-    - if [[ "$COVERAGE" == "llvm" ]]; then MYCXXFLAGS+=" -fprofile-instr-generate -fcoverage-mapping" MYLDFLAGS+=" -fprofile-instr-generate"; fi
-      # UBSan randomly crashes clang, and very often :(
-      # CFGFLAGS= MYCXXFLAGS="-fsanitize=undefined -O1 -fPIE -fno-sanitize-recover" MYLDFLAGS="-fsanitize=undefined -pie -fno-sanitize-recover"
+    - if [[ "$BUILD_TYPE" == "msan" ]]; then MYCXXFLAGS+=" -fsanitize=memory -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize-memory-track-origins" MYLDFLAGS+=" -fsanitize=memory"; fi
+    - if [[ "$BUILD_TYPE" == "ubsan" ]]; then MYCXXFLAGS=" -fsanitize=undefined -O1 -fPIE -fno-sanitize-recover" MYLDFLAGS="-fsanitize=undefined -pie -fno-sanitize-recover"; fi
+    - if [[ "$CC" == "gcc" ]]; then MYCXXFLAGS+=" --coverage" MYLDFLAGS+=" --coverage"; fi
+    - if [[ "$CC" == "clang" ]]; then MYCXXFLAGS+=" -fprofile-instr-generate -fcoverage-mapping" MYLDFLAGS+=" -fprofile-instr-generate"; fi
 install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cat /proc/cpuinfo /proc/meminfo; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then lsb_release -a; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:teward/swig3.0; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:beineri/opt-qt551-trusty; fi  # default qt5.2 from trusty doesn't support QByteArray::toStdString()
-    - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_WITH" == "cmake" ]]; then sudo add-apt-repository -y ppa:george-edison55/cmake-3.x; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y libperl-dev tcl-dev libsasl2-dev libicu-dev swig3.0 qt55base libboost-locale-dev; fi
-      # Clang 3.5 TSan is broken on Travis Ubuntu 14.04. Clang 3.8 seems to work, but only without -pie (https://github.com/google/sanitizers/issues/503)
-    - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_TYPE" == "tsan" ]]; then sudo apt-get install -y clang-3.8; export CC=clang-3.8 CXX=clang++-3.8; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then source /opt/qt55/bin/qt55-env.sh; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_WITH" == "cmake" ]]; then sudo apt-get install -y cmake; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then source ~/virtualenv/python3.5/bin/activate; fi  # for pip3
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PKG_CONFIG_PATH="/opt/python/3.5/lib/pkgconfig:$PKG_CONFIG_PATH" LD_LIBRARY_PATH="/opt/python/3.5/lib:$LD_LIBRARY_PATH"; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y libperl-dev tcl-dev libsasl2-dev libicu-dev swig qtbase5-dev libboost-locale-dev python3-pip cpanminus; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y cmake; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cpanm --local-lib=~/perl5 local::lib && eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib); fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cpanm --notest Devel::Cover::Report::Clover; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export ZNC_MODPERL_COVERAGE=1; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sw_vers; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sysctl -a | grep cpu; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sysctl -a | grep mem; fi
+      # Something broke in Travis brew making it impossible to update python versions (complaining about nil:NilClass), so remove preinstalled brew and install from scratch
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then rm -rf /usr/local/Cellar/* /usr/local/opt/* /usr/local/share/aclocal; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"; hash -r; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew config; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew list --versions; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install swig python3 icu4c jq openssl qt5 gettext; fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" && "$BUILD_WITH" == "cmake" ]]; then brew outdated cmake || brew upgrade cmake; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install swig icu4c jq qt5 gettext python cmake openssl pkg-config; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew outdated python || brew upgrade python; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew outdated cmake || brew upgrade cmake; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew info --json=v1 --installed | jq .; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PKG_CONFIG_PATH="$(brew --prefix qt5)/lib/pkgconfig:$PKG_CONFIG_PATH"; fi
-    - pip3 install coverage
+    - pip3 install --user coverage
     - export ZNC_MODPYTHON_COVERAGE=1
     - "echo pkg-config path: [$PKG_CONFIG_PATH]"
 script:
+    - set -v
     - if [[ "$BUILD_TYPE" == "tarball" ]]; then ./make-tarball.sh --nightly znc-git-2015-01-16 /tmp/znc-tarball.tar.gz; fi
     - if [[ "$BUILD_TYPE" == "tarball" ]]; then cd /tmp; tar xvf znc-tarball.tar.gz; fi
     - if [[ "$BUILD_TYPE" == "tarball" ]]; then cd /tmp/znc-git-2015-01-16; fi
-    - if [[ "$BUILD_TYPE" != "tarball" && "$BUILD_WITH" != "cmake" ]]; then ./bootstrap.sh; fi
     - mkdir build
     - cd build
-    - ../configure$CFGSUFFIX --enable-debug --enable-perl --enable-python --enable-tcl --enable-cyrus --enable-charset $CFGFLAGS CXXFLAGS="$CXXFLAGS $MYCXXFLAGS" LDFLAGS="$LDFLAGS $MYLDFLAGS"
-    - if [[ "$BUILD_WITH" == "cmake" ]]; then cmake --system-information; else cat config.log; fi
+    - ../configure.sh --enable-debug --enable-perl --enable-python --enable-tcl --enable-cyrus --enable-charset $CFGFLAGS CXXFLAGS="$CXXFLAGS $MYCXXFLAGS" LDFLAGS="$LDFLAGS $MYLDFLAGS"
+    - cmake --system-information
     - make VERBOSE=1
-    - env LLVM_PROFILE_FILE="$PWD/unittest.profraw" make VERBOSE=1 $UNITTEST
+    - env LLVM_PROFILE_FILE="$PWD/unittest.profraw" make VERBOSE=1 unittest
     - sudo make install
       # TODO: use DEVEL_COVER_OPTIONS for https://metacpan.org/pod/Devel::Cover
-    - env LLVM_PROFILE_FILE="$PWD/inttest.profraw" ZNC_MODPERL_COVERAGE_OPTS="-db,$PWD/cover_db" make VERBOSE=1 $INTTEST
+    - env LLVM_PROFILE_FILE="$PWD/inttest.profraw" ZNC_MODPERL_COVERAGE_OPTS="-db,$PWD/cover_db" PYTHONWARNINGS=error make VERBOSE=1 inttest
     - /usr/local/bin/znc --version
 after_success:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ~/perl5/bin/cover --no-gcov --report=clover; fi
     - |
-         if [[ "$TRAVIS_OS_NAME" == "osx" && "$COVERAGE" == "llvm" ]]; then
+         if [[ "$TRAVIS_OS_NAME" == "osx" && "$CC" == "clang" ]]; then
              xcrun llvm-profdata merge unittest.profraw -o unittest.profdata
              xcrun llvm-profdata merge inttest.profraw -o inttest.profdata
              xcrun llvm-cov show -show-line-counts-or-regions -instr-profile=unittest.profdata test/unittest_bin > unittest-cmake-coverage.txt
-             xcrun llvm-cov show -show-line-counts-or-regions -instr-profile=unittest.profdata unittest > unittest-autoconf-coverage.txt
              xcrun llvm-cov show -show-line-counts-or-regions -instr-profile=inttest.profdata /usr/local/bin/znc > inttest-znc-coverage.txt
              find /usr/local/lib/znc -name '*.so' -or -name '*.bundle' | while read f; do xcrun llvm-cov show -show-line-counts-or-regions -instr-profile=inttest.profdata $f > inttest-$(basename $f)-coverage.txt; done
          fi

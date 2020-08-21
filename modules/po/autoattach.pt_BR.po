@@ -1,0 +1,85 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: pt-BR\n"
+"X-Crowdin-File: /master/modules/po/autoattach.pot\n"
+"X-Crowdin-File-ID: 151\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Portuguese, Brazilian\n"
+"Language: pt_BR\n"
+
+#: autoattach.cpp:94
+msgid "Added to list"
+msgstr "Adicionado à lista"
+
+#: autoattach.cpp:96
+msgid "{1} is already added"
+msgstr "O canal {1} já foi adicionado"
+
+#: autoattach.cpp:100
+msgid "Usage: Add [!]<#chan> <search> <host>"
+msgstr "Sintaxe: Add [!]<#canal> <busca> <host>"
+
+#: autoattach.cpp:101
+msgid "Wildcards are allowed"
+msgstr ""
+
+#: autoattach.cpp:113
+msgid "Removed {1} from list"
+msgstr "O canal {1} foi removido da lista"
+
+#: autoattach.cpp:115
+msgid "Usage: Del [!]<#chan> <search> <host>"
+msgstr "Sintaxe: Del [!]<#canal> <busca> <host>"
+
+#: autoattach.cpp:121 autoattach.cpp:129
+msgid "Neg"
+msgstr ""
+
+#: autoattach.cpp:122 autoattach.cpp:130
+msgid "Chan"
+msgstr "Canal"
+
+#: autoattach.cpp:123 autoattach.cpp:131
+msgid "Search"
+msgstr "Buscar"
+
+#: autoattach.cpp:124 autoattach.cpp:132
+msgid "Host"
+msgstr "Host"
+
+#: autoattach.cpp:138
+msgid "You have no entries."
+msgstr ""
+
+#: autoattach.cpp:146 autoattach.cpp:149
+msgid "[!]<#chan> <search> <host>"
+msgstr "[!]<#canal> <pesquisa> <host>"
+
+#: autoattach.cpp:147
+msgid "Add an entry, use !#chan to negate and * for wildcards"
+msgstr "Adicione uma entrada, use !#canal para negar e * para wildcard"
+
+#: autoattach.cpp:150
+msgid "Remove an entry, needs to be an exact match"
+msgstr "Remove uma entrada, precisa ser exatamente correspondente"
+
+#: autoattach.cpp:152
+msgid "List all entries"
+msgstr "Lista todas as entradas"
+
+#: autoattach.cpp:171
+msgid "Unable to add [{1}]"
+msgstr "Não foi possível adicionar [{1}]"
+
+#: autoattach.cpp:283
+msgid "List of channel masks and channel masks with ! before them."
+msgstr "Lista de máscaras de canais e máscaras de canais com ! antes delas."
+
+#: autoattach.cpp:286
+msgid "Reattaches you to channels on activity."
+msgstr "Reanexa você a canais quando há atividade."

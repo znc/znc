@@ -3,10 +3,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#  this text is inserted into `click here` in the other string
 #: modules/po/../data/cert/tmpl/index.tmpl:5
 msgid "here"
 msgstr ""
 
+#  {1} is `here`, translateable in the other string
 #: modules/po/../data/cert/tmpl/index.tmpl:6
 msgid ""
 "You already have a certificate set, use the form below to overwrite the "

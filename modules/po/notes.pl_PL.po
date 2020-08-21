@@ -1,0 +1,123 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
+"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
+"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: /master/modules/po/notes.pot\n"
+"X-Crowdin-File-ID: 186\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Polish\n"
+"Language: pl_PL\n"
+
+#: modules/po/../data/notes/tmpl/index.tmpl:7
+msgid "Add A Note"
+msgstr "Dodaj notatkę"
+
+#: modules/po/../data/notes/tmpl/index.tmpl:11
+msgid "Key:"
+msgstr "Klucz:"
+
+#: modules/po/../data/notes/tmpl/index.tmpl:15
+msgid "Note:"
+msgstr "Notatka:"
+
+#: modules/po/../data/notes/tmpl/index.tmpl:19
+msgid "Add Note"
+msgstr "Dodaj notatkę"
+
+#: modules/po/../data/notes/tmpl/index.tmpl:27
+msgid "You have no notes to display."
+msgstr "Nie maż żadnych notatek do wyświetlenia."
+
+#: modules/po/../data/notes/tmpl/index.tmpl:34 notes.cpp:164 notes.cpp:170
+msgid "Key"
+msgstr "Klucz"
+
+#: modules/po/../data/notes/tmpl/index.tmpl:35 notes.cpp:165 notes.cpp:171
+msgid "Note"
+msgstr "Notatka"
+
+#: modules/po/../data/notes/tmpl/index.tmpl:41
+msgid "[del]"
+msgstr "[usuń]"
+
+#: notes.cpp:32
+msgid "That note already exists.  Use MOD <key> <note> to overwrite."
+msgstr "Ta notatka już istnieje.  Użyj MOD <klucz> <notatka> aby nadpisać."
+
+#: notes.cpp:35 notes.cpp:137
+msgid "Added note {1}"
+msgstr "Dodano notatkę {1}"
+
+#: notes.cpp:37 notes.cpp:48 notes.cpp:142
+msgid "Unable to add note {1}"
+msgstr "Nie udało się dodać notatki {1}"
+
+#: notes.cpp:46 notes.cpp:139
+msgid "Set note for {1}"
+msgstr "Ustawiono notatkę dla {1}"
+
+#: notes.cpp:56
+msgid "This note doesn't exist."
+msgstr "Taka notatka nie istnieje."
+
+#: notes.cpp:66 notes.cpp:116
+msgid "Deleted note {1}"
+msgstr "Usunięto notatkę {1}"
+
+#: notes.cpp:68 notes.cpp:118
+msgid "Unable to delete note {1}"
+msgstr "Nie można usunąć notatki {1}"
+
+#: notes.cpp:75
+msgid "List notes"
+msgstr "Lista notatek"
+
+#: notes.cpp:77 notes.cpp:81
+msgid "<key> <note>"
+msgstr "<klucz> <notatka>"
+
+#: notes.cpp:77
+msgid "Add a note"
+msgstr "Dodaj notatkę"
+
+#: notes.cpp:79 notes.cpp:83
+msgid "<key>"
+msgstr "<klucz>"
+
+#: notes.cpp:79
+msgid "Delete a note"
+msgstr "Usuń notatkę"
+
+#: notes.cpp:81
+msgid "Modify a note"
+msgstr "Zmodyfikuj notatkę"
+
+#: notes.cpp:94
+msgid "Notes"
+msgstr "Notatki"
+
+#: notes.cpp:133
+msgid "That note already exists.  Use /#+<key> <note> to overwrite."
+msgstr "Ta notatka już istnieje.  Użyj /#+<klucz> <notatka> aby nadpisać."
+
+#: notes.cpp:186 notes.cpp:188
+msgid "You have no entries."
+msgstr "Nie masz wpisów."
+
+#: notes.cpp:224
+msgid ""
+"This user module takes up to one arguments. It can be -disableNotesOnLogin "
+"not to show notes upon client login"
+msgstr ""
+"Ten moduł użytkownika przyjmuje do jednego argumentu. Może być -"
+"disableNotesOnLogin, aby nie wyświetlać notatek podczas logowania klienta"
+
+#: notes.cpp:228
+msgid "Keep and replay notes"
+msgstr "Przechowuje i odtwarza notatki"

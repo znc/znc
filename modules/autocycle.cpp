@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,6 +83,7 @@ class CAutoCycleMod : public CModule {
     void OnListCommand(const CString& sLine) {
         CTable Table;
         Table.AddColumn(t_s("Channel"));
+        Table.SetStyle(CTable::ListStyle);
 
         for (const CString& sChan : m_vsChans) {
             Table.AddRow();

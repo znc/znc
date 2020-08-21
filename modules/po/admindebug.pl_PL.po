@@ -1,0 +1,63 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
+"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
+"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: /master/modules/po/admindebug.pot\n"
+"X-Crowdin-File-ID: 273\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Polish\n"
+"Language: pl_PL\n"
+
+#: admindebug.cpp:30
+msgid "Enable Debug Mode"
+msgstr "Włączono tryb debugowania"
+
+#: admindebug.cpp:32
+msgid "Disable Debug Mode"
+msgstr "Wyłącz tryb debugowania"
+
+#: admindebug.cpp:34
+msgid "Show the Debug Mode status"
+msgstr "Pokaż stan trybu debugowania"
+
+#: admindebug.cpp:40 admindebug.cpp:49
+msgid "Access denied!"
+msgstr "Odmowa dostępu!"
+
+#: admindebug.cpp:58
+msgid ""
+"Failure. We need to be running with a TTY. (is ZNC running with --"
+"foreground?)"
+msgstr ""
+"Porażka. Musimy być uruchomieni na dalekopisie (TTY). (czy ZNC jest "
+"uruchomione z --foreground?)"
+
+#: admindebug.cpp:66
+msgid "Already enabled."
+msgstr "Już jest włączone."
+
+#: admindebug.cpp:68
+msgid "Already disabled."
+msgstr "Już jest wyłączone."
+
+#: admindebug.cpp:92
+msgid "Debugging mode is on."
+msgstr "Tryb debugowania jest WŁączony."
+
+#: admindebug.cpp:94
+msgid "Debugging mode is off."
+msgstr "Tryb debugowania jest WYłączony."
+
+#: admindebug.cpp:96
+msgid "Logging to: stdout."
+msgstr "Zapisywanie do: stdout."
+
+#: admindebug.cpp:105
+msgid "Enable Debug mode dynamically."
+msgstr "Włącz tryb debugowania dynamicznie."

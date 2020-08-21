@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ class CMessage;
 class CChan;
 // !Forward Declarations
 
-class CAuthBase {
+class CAuthBase : private CCoreTranslationMixin {
   public:
     CAuthBase(const CString& sUsername, const CString& sPassword,
               CZNCSock* pSock)
@@ -107,6 +107,7 @@ class CClient : public CIRCSocket {
           m_bCapNotify(false),
           m_bAwayNotify(false),
           m_bAccountNotify(false),
+          m_bAccountTag(false),
           m_bExtendedJoin(false),
           m_bNamesx(false),
           m_bUHNames(false),
@@ -148,6 +149,11 @@ class CClient : public CIRCSocket {
                {true, [this](bool bVal) { m_bAwayNotify = bVal; }}},
               {"account-notify",
                {true, [this](bool bVal) { m_bAccountNotify = bVal; }}},
+              {"account-tag",
+               {true, [this](bool bVal) {
+                m_bAccountTag = bVal;
+                SetTagSupport("account", bVal);
+               }}},
               {"extended-join",
                {true, [this](bool bVal) { m_bExtendedJoin = bVal; }}},
           }) {
@@ -178,6 +184,7 @@ class CClient : public CIRCSocket {
     bool HasCapNotify() const { return m_bCapNotify; }
     bool HasAwayNotify() const { return m_bAwayNotify; }
     bool HasAccountNotify() const { return m_bAccountNotify; }
+    bool HasAccountTag() const { return m_bAccountTag; }
     bool HasExtendedJoin() const { return m_bExtendedJoin; }
     bool HasNamesx() const { return m_bNamesx; }
     bool HasUHNames() const { return m_bUHNames; }
@@ -202,11 +209,18 @@ class CClient : public CIRCSocket {
     /** Sends a raw data line to the client.
      *  @param sLine The line to be sent.
      *
-     *  The line is first passed \e unmodified to the \ref CModule::OnSendToClient()
-     *  module hook. If no module halts the process, the line is then sent to the client.
+     *  The line is first passed \e unmodified to the \ref
+     *  CModule::OnSendToClient() module hook. If no module halts the process,
+     *  the line is then sent to the client.
      *
      *  These lines appear in the debug output in the following syntax:
      *  \code [time] (user/network) ZNC -> CLI [line] \endcode
+     *
+     *  Prefer \l PutClient() instead.
+     */
+    bool PutClientRaw(const CString& sLine);
+    /** Sends a message to the client.
+     *  See \l PutClient(const CMessage&) for details.
      */
     void PutClient(const CString& sLine);
     /** Sends a message to the client.
@@ -245,14 +259,17 @@ class CClient : public CIRCSocket {
      *  ----------- | ----------
      *  \c time     | \l CClient::HasServerTime() (<a href="http://ircv3.net/specs/extensions/server-time-3.2.html">server-time</a>)
      *  \c batch    | \l CClient::HasBatch() (<a href="http://ircv3.net/specs/extensions/batch-3.2.html">batch</a>)
+     *  
+     *  Additional tags can be added via \l CClient::SetTagSupport().
      *
-     *  @warning Bypassing the filter may cause troubles to some older IRC clients.
+     *  @warning Bypassing the filter may cause troubles to some older IRC
+     *  clients.
      *
      *  It is possible to bypass the filter by converting a message to a string
      *  using \l CMessage::ToString(), and passing the resulting raw line to the
-     *  \l CClient::PutClient(const CString& sLine) overload:
+     *  \l CClient::PutClientRaw(const CString& sLine):
      *  \code
-     *  pClient->PutClient(Message.ToString());
+     *  pClient->PutClientRaw(Message.ToString());
      *  \endcode
      */
     bool PutClient(const CMessage& Message);
@@ -269,7 +286,8 @@ class CClient : public CIRCSocket {
     bool IsTagEnabled(const CString& sTag) const {
         return 1 == m_ssSupportedTags.count(sTag);
     }
-    /** Registers a tag as being supported or unsupported by a client.
+    /** Registers a tag as being supported or unsupported by the client.
+     *  This doesn't affect tags which the client sends.
      *  @param sTag The tag to register.
      *  @param bState Whether the client supports the tag.
      */
@@ -335,6 +353,7 @@ class CClient : public CIRCSocket {
     bool m_bCapNotify;
     bool m_bAwayNotify;
     bool m_bAccountNotify;
+    bool m_bAccountTag;
     bool m_bExtendedJoin;
     bool m_bNamesx;
     bool m_bUHNames;

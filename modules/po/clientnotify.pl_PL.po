@@ -1,0 +1,88 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
+"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
+"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: /master/modules/po/clientnotify.pot\n"
+"X-Crowdin-File-ID: 165\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Polish\n"
+"Language: pl_PL\n"
+
+#: clientnotify.cpp:47
+msgid "<message|notice|off>"
+msgstr "<message|notice|off>"
+
+#: clientnotify.cpp:48
+msgid "Sets the notify method"
+msgstr "Ustawia metodę powiadamiania"
+
+#: clientnotify.cpp:50 clientnotify.cpp:54
+msgid "<on|off>"
+msgstr "<on|off>"
+
+#: clientnotify.cpp:51
+msgid "Turns notifications for unseen IP addresses on or off"
+msgstr ""
+"Włącza lub wyłącza powiadomienia dla niespotkanych wcześniej adresów IP"
+
+#: clientnotify.cpp:55
+msgid "Turns notifications for clients disconnecting on or off"
+msgstr "Włącza lub wyłącza powiadomienia rozłączenia pozostałym klientom"
+
+#: clientnotify.cpp:57
+msgid "Shows the current settings"
+msgstr "Pokazuje bieżące ustawienia"
+
+#: clientnotify.cpp:81 clientnotify.cpp:95
+msgid "<This message is impossible for 1 client>"
+msgid_plural ""
+"Another client authenticated as your user. Use the 'ListClients' command to "
+"see all {1} clients."
+msgstr[0] "<Ta wiadomość jest niemożliwa dla 1 klienta>"
+msgstr[1] ""
+"Inny klient uwierzytelnił się jako Twój użytkownik. Uzyj polecenia "
+"'ListClients' aby zobaczyć pozostałych {1} klientów."
+msgstr[2] ""
+"Inny klient uwierzytelnił się jako Twój użytkownik. Uzyj polecenia "
+"'ListClients' aby zobaczyć pozostałych {1} klientów."
+msgstr[3] ""
+"Inny klient uwierzytelnił się jako Twój użytkownik. Uzyj polecenia "
+"'ListClients' aby zobaczyć pozostałych {1} klientów."
+
+#: clientnotify.cpp:108
+msgid "Usage: Method <message|notice|off>"
+msgstr "Użycie: Method <message|notice|off>"
+
+#: clientnotify.cpp:114 clientnotify.cpp:127 clientnotify.cpp:140
+msgid "Saved."
+msgstr "Zapisano."
+
+#: clientnotify.cpp:121
+msgid "Usage: NewOnly <on|off>"
+msgstr "Użycie: NewOnly <on|off>"
+
+#: clientnotify.cpp:134
+msgid "Usage: OnDisconnect <on|off>"
+msgstr "Użycie: OnDisconnect <on|off>"
+
+#: clientnotify.cpp:145
+msgid ""
+"Current settings: Method: {1}, for unseen IP addresses only: {2}, notify on "
+"disconnecting clients: {3}"
+msgstr ""
+"Bieżące ustawienia: Metoda: {1}, tylko dla niespotkanych adresów IP: {2}, "
+"powiadomienie o rozłączających się klientach: {3}"
+
+#: clientnotify.cpp:157
+msgid ""
+"Notifies you when another IRC client logs into or out of your account. "
+"Configurable."
+msgstr ""
+"Powiadamia, gdy inny klient IRC zaloguje się na Twoje konto lub się z niego "
+"wyloguje. Konfigurowalny."

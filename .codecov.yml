@@ -13,3 +13,8 @@ codecov:
     - !appveyor
     # FreeBSD doesn't support C++ coverage yet (can't find libprofile_rt.a)
     - !jenkins.znc.in
+coverage:
+  status:
+    project:
+      default:
+        threshold: 1%

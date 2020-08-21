@@ -1,10 +1,11 @@
-bool OnBoot()=true
-bool WebRequiresLogin()=true
-bool WebRequiresAdmin()=false
+bool OnBoot()
+bool WebRequiresLogin()
+bool WebRequiresAdmin()
 CString GetWebMenuTitle()
-bool OnWebPreRequest(CWebSock& WebSock, const CString& sPageName)=false
-bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl)=false
-VWebSubPages* _GetSubPages()
+bool OnWebPreRequest(CWebSock& WebSock, const CString& sPageName)
+bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl)
+bool ValidateWebRequestCSRFCheck(CWebSock& WebSock, const CString& sPageName)
+VWebSubPages* _GetSubPages()=nullptr
 void OnPreRehash()
 void OnPostRehash()
 void OnIRCDisconnected()
@@ -59,10 +60,10 @@ EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage)
 EModRet OnPrivNotice(CNick& Nick, CString& sMessage)
 EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage)
 EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic)
-bool OnServerCapAvailable(const CString& sCap)=false
+bool OnServerCapAvailable(const CString& sCap)
 void OnServerCapResult(const CString& sCap, bool bSuccess)
 EModRet OnTimerAutoJoin(CChan& Channel)
-bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl)=false
+bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl)
 EModRet OnAddNetwork(CIRCNetwork& Network, CString& sErrorRet)
 EModRet OnDeleteNetwork(CIRCNetwork& Network)
 EModRet OnSendToClient(CString& sLine, CClient& Client)

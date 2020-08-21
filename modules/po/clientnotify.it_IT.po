@@ -1,0 +1,81 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: it\n"
+"X-Crowdin-File: /master/modules/po/clientnotify.pot\n"
+"X-Crowdin-File-ID: 165\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Italian\n"
+"Language: it_IT\n"
+
+#: clientnotify.cpp:47
+msgid "<message|notice|off>"
+msgstr "<message|notice|off>"
+
+#: clientnotify.cpp:48
+msgid "Sets the notify method"
+msgstr "Imposta il metodo di notifica"
+
+#: clientnotify.cpp:50 clientnotify.cpp:54
+msgid "<on|off>"
+msgstr "<on|off>"
+
+#: clientnotify.cpp:51
+msgid "Turns notifications for unseen IP addresses on or off"
+msgstr ""
+"Attiva o disattiva le notifiche per gli indirizzi IP nascosti (ON - OFF)"
+
+#: clientnotify.cpp:55
+msgid "Turns notifications for clients disconnecting on or off"
+msgstr ""
+"Attiva o disattiva le notifiche per i client che si disconnettono (ON - OFF)"
+
+#: clientnotify.cpp:57
+msgid "Shows the current settings"
+msgstr "Mostra le impostazioni correnti"
+
+#: clientnotify.cpp:81 clientnotify.cpp:95
+msgid "<This message is impossible for 1 client>"
+msgid_plural ""
+"Another client authenticated as your user. Use the 'ListClients' command to "
+"see all {1} clients."
+msgstr[0] "<Questo messaggio è impossibile per 1 client>"
+msgstr[1] ""
+"Un altro client si è autenticato con il tuo nome utente. Utilizza il comando "
+"'ListClients' per vedere tutti i {1} clients."
+
+#: clientnotify.cpp:108
+msgid "Usage: Method <message|notice|off>"
+msgstr "Utilizzo: Metodo <message|notice|off>"
+
+#: clientnotify.cpp:114 clientnotify.cpp:127 clientnotify.cpp:140
+msgid "Saved."
+msgstr "Salvato."
+
+#: clientnotify.cpp:121
+msgid "Usage: NewOnly <on|off>"
+msgstr "Usa: NewOnly <on|off>"
+
+#: clientnotify.cpp:134
+msgid "Usage: OnDisconnect <on|off>"
+msgstr "Usa: OnDisconnect <on|off>"
+
+#: clientnotify.cpp:145
+msgid ""
+"Current settings: Method: {1}, for unseen IP addresses only: {2}, notify on "
+"disconnecting clients: {3}"
+msgstr ""
+"Impostazioni correnti: Metodo: {1}, solo per indirizzi IP non visibili: {2}, "
+"notifica la disconnessione dei clients: {3}"
+
+#: clientnotify.cpp:157
+msgid ""
+"Notifies you when another IRC client logs into or out of your account. "
+"Configurable."
+msgstr ""
+"Notifica quando un altro client IRC entra o esce dal tuo account. "
+"Configurabile."

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,22 +91,22 @@ void CNick::SetNick(const CString& s) { m_sNick = s; }
 void CNick::SetIdent(const CString& s) { m_sIdent = s; }
 void CNick::SetHost(const CString& s) { m_sHost = s; }
 
-bool CNick::HasPerm(unsigned char uPerm) const {
-    return (uPerm && m_sChanPerms.find(uPerm) != CString::npos);
+bool CNick::HasPerm(char cPerm) const {
+    return (cPerm && m_sChanPerms.find(cPerm) != CString::npos);
 }
 
-bool CNick::AddPerm(unsigned char uPerm) {
-    if (!uPerm || HasPerm(uPerm)) {
+bool CNick::AddPerm(char cPerm) {
+    if (!cPerm || HasPerm(cPerm)) {
         return false;
     }
 
-    m_sChanPerms.append(1, uPerm);
+    m_sChanPerms.append(1, cPerm);
 
     return true;
 }
 
-bool CNick::RemPerm(unsigned char uPerm) {
-    CString::size_type uPos = m_sChanPerms.find(uPerm);
+bool CNick::RemPerm(char cPerm) {
+    CString::size_type uPos = m_sChanPerms.find(cPerm);
     if (uPos == CString::npos) {
         return false;
     }
@@ -116,12 +116,12 @@ bool CNick::RemPerm(unsigned char uPerm) {
     return true;
 }
 
-unsigned char CNick::GetPermChar() const {
+char CNick::GetPermChar() const {
     CIRCSock* pIRCSock = (!m_pNetwork) ? nullptr : m_pNetwork->GetIRCSock();
     const CString& sChanPerms = (!pIRCSock) ? "@+" : pIRCSock->GetPerms();
 
     for (unsigned int a = 0; a < sChanPerms.size(); a++) {
-        const unsigned char& c = sChanPerms[a];
+        const char& c = sChanPerms[a];
         if (HasPerm(c)) {
             return c;
         }
@@ -136,7 +136,7 @@ CString CNick::GetPermStr() const {
     CString sRet;
 
     for (unsigned int a = 0; a < sChanPerms.size(); a++) {
-        const unsigned char& c = sChanPerms[a];
+        const char& c = sChanPerms[a];
 
         if (HasPerm(c)) {
             sRet += c;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,39 +58,37 @@ class CAdminLogMod : public CModule {
     }
 
     void OnIRCConnected() override {
-        Log("[" + GetUser()->GetUserName() + "/" + GetNetwork()->GetName() +
+        Log("[" + GetUser()->GetUsername() + "/" + GetNetwork()->GetName() +
             "] connected to IRC: " +
             GetNetwork()->GetCurrentServer()->GetName());
     }
 
     void OnIRCDisconnected() override {
-        Log("[" + GetUser()->GetUserName() + "/" + GetNetwork()->GetName() +
+        Log("[" + GetUser()->GetUsername() + "/" + GetNetwork()->GetName() +
             "] disconnected from IRC");
     }
 
-    EModRet OnRaw(CString& sLine) override {
-        if (sLine.StartsWith("ERROR ")) {
+    EModRet OnRawMessage(CMessage& Message) override {
+        if (Message.GetCommand().Equals("ERROR")) {
             // ERROR :Closing Link: nick[24.24.24.24] (Excess Flood)
             // ERROR :Closing Link: nick[24.24.24.24] Killer (Local kill by
             // Killer (reason))
-            CString sError(sLine.substr(6));
-            if (sError.Left(1) == ":") sError.LeftChomp();
-            Log("[" + GetUser()->GetUserName() + "/" + GetNetwork()->GetName() +
+            Log("[" + GetUser()->GetUsername() + "/" + GetNetwork()->GetName() +
                     "] disconnected from IRC: " +
                     GetNetwork()->GetCurrentServer()->GetName() + " [" +
-                    sError + "]",
+                    Message.GetParamsColon(0) + "]",
                 LOG_NOTICE);
         }
         return CONTINUE;
     }
 
     void OnClientLogin() override {
-        Log("[" + GetUser()->GetUserName() + "] connected to ZNC from " +
+        Log("[" + GetUser()->GetUsername() + "] connected to ZNC from " +
             GetClient()->GetRemoteIP());
     }
 
     void OnClientDisconnect() override {
-        Log("[" + GetUser()->GetUserName() + "] disconnected from ZNC from " +
+        Log("[" + GetUser()->GetUsername() + "] disconnected from ZNC from " +
             GetClient()->GetRemoteIP());
     }
 

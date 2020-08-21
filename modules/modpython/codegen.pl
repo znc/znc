@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-# Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ open my $out, ">", $ARGV[1] or die;
 
 print $out <<'EOF';
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -248,14 +248,6 @@ while (<$in>) {
 	my ($type, $name, $args, $default) = /(\S+)\s+(\w+)\((.*)\)(?:=(\w+))?/ or next;
 	$type =~ s/(EModRet)/CModule::$1/;
 	$type =~ s/^\s*(.*?)\s*$/$1/;
-	unless (defined $default) {
-		given ($type) {
-			when ('bool')			 { $default = 'true' }
-			when ('CModule::EModRet') { $default = 'CONTINUE' }
-			when ('CString')		  { $default = '""' }
-			when (/\*$/)			  { $default = "($type)nullptr" }
-		}
-	}
 	my @arg = map {
 		my ($t, $v) = /^\s*(.*\W)\s*(\w+)\s*$/;
 		$t =~ s/^\s*(.*?)\s*$/$1/;
@@ -263,10 +255,13 @@ while (<$in>) {
 		{type=>$t, var=>$v, base=>$tb, mod=>$tm//'', pyvar=>"pyArg_$v", error=>"can't convert parameter '$v' to PyObject"}
 	} split /,/, $args;
 
+	unless (defined $default) {
+		$default = "CModule::$name(" . (join ', ', map { $_->{var} } @arg) . ")";
+	}
+
 	unshift @arg, {type=>'$func$', var=>"", base=>"", mod=>"", pyvar=>"pyName", error=>"can't convert string '$name' to PyObject"};
 
 	my $cleanup = '';
-	$default = '' if $type eq 'void';
 
 	say $out "$type CPyModule::$name($args) {";
 	for my $a (@arg) {
@@ -331,7 +326,7 @@ while (<$in>) {
 		}
 		say $out "\tif (!$a->{pyvar}) {";
 		say $out "\t\tCString sPyErr = m_pModPython->GetPyExceptionStr();";
-		say $out "\t\tDEBUG".'("modpython: " << (GetUser() ? GetUser()->GetUserName() : CString("<no user>")) << "/" << GetModName() << '."\"/$name: $a->{error}: \" << sPyErr);";
+		say $out "\t\tDEBUG".'("modpython: " << (GetUser() ? GetUser()->GetUsername() : CString("<no user>")) << "/" << GetModName() << '."\"/$name: $a->{error}: \" << sPyErr);";
 		print $out $cleanup;
 		say $out "\t\treturn $default;";
 		say $out "\t}";
@@ -347,14 +342,14 @@ while (<$in>) {
 			say $out "\t\tPyObject* pyVecEl = SWIG_NewInstanceObj(*i, SWIG_TypeQuery(\"$sub*\"), 0);";
 			say $out "\t\tif (!pyVecEl) {";
 			say $out "\t\t\tCString sPyErr = m_pModPython->GetPyExceptionStr();";
-			say $out "\t\t\tDEBUG".'("modpython: " << (GetUser() ? GetUser()->GetUserName() : CString("<no user>")) << "/" << GetModName() << '.
+			say $out "\t\t\tDEBUG".'("modpython: " << (GetUser() ? GetUser()->GetUsername() : CString("<no user>")) << "/" << GetModName() << '.
 				"\"/$name: can't convert element of vector '$a->{var}' to PyObject: \" << sPyErr);";
 			print $out $cleanup1;
 			say $out "\t\t\treturn $default;";
 			say $out "\t\t}";
 			say $out "\t\tif (PyList_Append($a->{pyvar}, pyVecEl)) {";
 			say $out "\t\t\tCString sPyErr = m_pModPython->GetPyExceptionStr();";
-			say $out "\t\t\tDEBUG".'("modpython: " << (GetUser() ? GetUser()->GetUserName() : CString("<no user>")) << "/" << GetModName() << '.
+			say $out "\t\t\tDEBUG".'("modpython: " << (GetUser() ? GetUser()->GetUsername() : CString("<no user>")) << "/" << GetModName() << '.
 				"\"/$name: can't add element of vector '$a->{var}' to PyObject: \" << sPyErr);";
 			say $out "\t\t\tPy_CLEAR(pyVecEl);";
 			print $out $cleanup1;
@@ -370,7 +365,7 @@ while (<$in>) {
 	say $out ", nullptr);";
 	say $out "\tif (!pyRes) {";
 	say $out "\t\tCString sPyErr = m_pModPython->GetPyExceptionStr();";
-	say $out "\t\tDEBUG".'("modpython: " << (GetUser() ? GetUser()->GetUserName() : CString("<no user>")) << "/" << GetModName() << '."\"/$name failed: \" << sPyErr);";
+	say $out "\t\tDEBUG".'("modpython: " << (GetUser() ? GetUser()->GetUsername() : CString("<no user>")) << "/" << GetModName() << '."\"/$name failed: \" << sPyErr);";
 	print $out $cleanup;
 	say $out "\t\treturn $default;";
 	say $out "\t}";
@@ -388,7 +383,7 @@ while (<$in>) {
 			when (/^(.*)\*$/) {
 				say $out "\t\tint res = SWIG_ConvertPtr(pyRes, (void**)&result, SWIG_TypeQuery(\"$type\"), 0);";
 				say $out "\t\tif (!SWIG_IsOK(res)) {";
-				say $out "\t\t\tDEBUG(\"modpython: \" << (GetUser() ? GetUser()->GetUserName() : CString(\"<no user>\")) << \"/\" << GetModName() << \"/$name was expected to return '$type' but error=\" << res);";
+				say $out "\t\t\tDEBUG(\"modpython: \" << (GetUser() ? GetUser()->GetUsername() : CString(\"<no user>\")) << \"/\" << GetModName() << \"/$name was expected to return '$type' but error=\" << res);";
 				say $out "\t\t\tresult = $default;";
 				say $out "\t\t}";
 			}
@@ -396,10 +391,10 @@ while (<$in>) {
 				say $out "\t\tCString* p = nullptr;";
 				say $out "\t\tint res = SWIG_AsPtr_CString(pyRes, &p);";
 				say $out "\t\tif (!SWIG_IsOK(res)) {";
-				say $out "\t\t\tDEBUG(\"modpython: \" << (GetUser() ? GetUser()->GetUserName() : CString(\"<no user>\")) << \"/\" << GetModName() << \"/$name was expected to return '$type' but error=\" << res);";
+				say $out "\t\t\tDEBUG(\"modpython: \" << (GetUser() ? GetUser()->GetUsername() : CString(\"<no user>\")) << \"/\" << GetModName() << \"/$name was expected to return '$type' but error=\" << res);";
 				say $out "\t\t\tresult = $default;";
 				say $out "\t\t} else if (!p) {";
-				say $out "\t\t\tDEBUG(\"modpython: \" << (GetUser() ? GetUser()->GetUserName() : CString(\"<no user>\")) << \"/\" << GetModName() << \"/$name was expected to return '$type' but returned nullptr\");";
+				say $out "\t\t\tDEBUG(\"modpython: \" << (GetUser() ? GetUser()->GetUsername() : CString(\"<no user>\")) << \"/\" << GetModName() << \"/$name was expected to return '$type' but returned nullptr\");";
 				say $out "\t\t\tresult = $default;";
 				say $out "\t\t} else result = *p;";
 				say $out "\t\tif (SWIG_IsNewObj(res)) delete p;";
@@ -408,15 +403,15 @@ while (<$in>) {
 				say $out "\t\tlong int x = PyLong_AsLong(pyRes);";
 				say $out "\t\tif (PyErr_Occurred()) {";
 				say $out "\t\t\tCString sPyErr = m_pModPython->GetPyExceptionStr();";
-				say $out "\t\t\tDEBUG".'("modpython: " << (GetUser() ? GetUser()->GetUserName() : CString("<no user>")) << "/" << GetModName() << '."\"/$name was expected to return EModRet but: \" << sPyErr);";
+				say $out "\t\t\tDEBUG".'("modpython: " << (GetUser() ? GetUser()->GetUsername() : CString("<no user>")) << "/" << GetModName() << '."\"/$name was expected to return EModRet but: \" << sPyErr);";
 				say $out "\t\t\tresult = $default;";
 				say $out "\t\t} else { result = (CModule::EModRet)x; }";
 			}
 			when ('bool') {
-  				say $out "\t\tint x = PyObject_IsTrue(pyRes);";
+				say $out "\t\tint x = PyObject_IsTrue(pyRes);";
 				say $out "\t\tif (-1 == x) {";
 				say $out "\t\t\tCString sPyErr = m_pModPython->GetPyExceptionStr();";
-				say $out "\t\t\tDEBUG".'("modpython: " << (GetUser() ? GetUser()->GetUserName() : CString("<no user>")) << "/" << GetModName() << '."\"/$name was expected to return EModRet but: \" << sPyErr);";
+				say $out "\t\t\tDEBUG".'("modpython: " << (GetUser() ? GetUser()->GetUsername() : CString("<no user>")) << "/" << GetModName() << '."\"/$name was expected to return EModRet but: \" << sPyErr);";
 				say $out "\t\t\tresult = $default;";
 				say $out "\t\t} else result = x ? true : false;";
 			}

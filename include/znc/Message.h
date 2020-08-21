@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,12 @@
 #define ZNC_LVREFQUAL
 #endif
 
+#ifdef SWIG
+#define ZNC_MSG_DEPRECATED(msg)
+#else
+#define ZNC_MSG_DEPRECATED(msg) __attribute__((deprecated(msg)))
+#endif
+
 #include <znc/zncconfig.h>
 #include <znc/ZNCString.h>
 #include <znc/Nick.h>
@@ -55,7 +61,8 @@ class CIRCNetwork;
  * - `nick` is the sender, which can be obtained with GetNick()
  * - `cmd` is command, which is obtained via GetCommand()
  * - `0`, `1`, ... are parameters, available via GetParam(n), which removes the
- *   leading colon (:). If you don't want to remove the colon, use GetParams().
+ *   leading colon (:). If you don't want to remove the colon, use
+ *   GetParamsColon().
  *
  * For certain events, like a PRIVMSG, convienience commands like GetChan() and
  * GetNick() are available, this is not true for all CMessage extensions.
@@ -114,8 +121,26 @@ class CMessage {
     void SetCommand(const CString& sCommand);
 
     const VCString& GetParams() const { return m_vsParams; }
-    CString GetParams(unsigned int uIdx, unsigned int uLen = -1) const;
+
+    /**
+     * Get a subset of the message parameters
+     *
+     * This allows accessing a vector of a specific range of parameters,
+     * allowing easy inline use, such as `pChan->SetModes(Message.GetParam(2), Message.GetParamsSplit(3));`
+     *
+     * @param uIdx The index of the first parameter to retrieve
+     * @param uLen How many parameters to retrieve
+     * @return A VCString containing the retrieved parameters
+     */
+    VCString GetParamsSplit(unsigned int uIdx, unsigned int uLen = -1) const;
     void SetParams(const VCString& vsParams);
+
+    /// @deprecated use GetParamsColon() instead.
+    CString GetParams(unsigned int uIdx, unsigned int uLen = -1) const
+        ZNC_MSG_DEPRECATED("Use GetParamsColon() instead") {
+        return GetParamsColon(uIdx, uLen);
+    }
+    CString GetParamsColon(unsigned int uIdx, unsigned int uLen = -1) const;
 
     CString GetParam(unsigned int uIdx) const;
     void SetParam(unsigned int uIdx, const CString& sParam);
@@ -244,7 +269,14 @@ REGISTER_ZNC_MESSAGE(CJoinMessage);
 
 class CModeMessage : public CTargetMessage {
   public:
-    CString GetModes() const { return GetParams(1).TrimPrefix_n(":"); }
+    /// @deprecated Use GetModeList() and GetModeParams()
+    CString GetModes() const { return GetParamsColon(1).TrimPrefix_n(":"); }
+
+    CString GetModeList() const { return GetParam(1); };
+
+    VCString GetModeParams() const { return GetParamsSplit(2); };
+
+    bool HasModes() const { return !GetModeList().empty(); };
 };
 REGISTER_ZNC_MESSAGE(CModeMessage);
 
@@ -275,6 +307,8 @@ class CKickMessage : public CTargetMessage {
     void SetKickedNick(const CString& sNick) { SetParam(1, sNick); }
     CString GetReason() const { return GetParam(2); }
     void SetReason(const CString& sReason) { SetParam(2, sReason); }
+    CString GetText() const { return GetReason(); }
+    void SetText(const CString& sText) { SetReason(sText); }
 };
 REGISTER_ZNC_MESSAGE(CKickMessage);
 
@@ -282,6 +316,8 @@ class CPartMessage : public CTargetMessage {
   public:
     CString GetReason() const { return GetParam(1); }
     void SetReason(const CString& sReason) { SetParam(1, sReason); }
+    CString GetText() const { return GetReason(); }
+    void SetText(const CString& sText) { SetReason(sText); }
 };
 REGISTER_ZNC_MESSAGE(CPartMessage);
 
@@ -289,6 +325,8 @@ class CQuitMessage : public CMessage {
   public:
     CString GetReason() const { return GetParam(0); }
     void SetReason(const CString& sReason) { SetParam(0, sReason); }
+    CString GetText() const { return GetReason(); }
+    void SetText(const CString& sText) { SetReason(sText); }
 };
 REGISTER_ZNC_MESSAGE(CQuitMessage);
 
@@ -303,6 +341,8 @@ class CTopicMessage : public CTargetMessage {
   public:
     CString GetTopic() const { return GetParam(1); }
     void SetTopic(const CString& sTopic) { SetParam(1, sTopic); }
+    CString GetText() const { return GetTopic(); }
+    void SetText(const CString& sText) { SetTopic(sText); }
 };
 REGISTER_ZNC_MESSAGE(CTopicMessage);
 

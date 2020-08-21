@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ class CIdentFileModule : public CModule {
         PutModule("m_pIRCSock = " + CString((long long)m_pIRCSock));
         if (m_pIRCSock) {
             PutModule("user/network - " +
-                      m_pIRCSock->GetNetwork()->GetUser()->GetUserName() + "/" +
+                      m_pIRCSock->GetNetwork()->GetUser()->GetUsername() + "/" +
                       m_pIRCSock->GetNetwork()->GetName());
         } else {
             PutModule(t_s("identfile is free"));
@@ -132,7 +132,7 @@ class CIdentFileModule : public CModule {
 
         DEBUG("Writing [" + sData + "] to ident spoof file [" +
               m_pISpoofLockFile->GetLongName() + "] for user/network [" +
-              GetUser()->GetUserName() + "/" + GetNetwork()->GetName() + "]");
+              GetUser()->GetUsername() + "/" + GetNetwork()->GetName() + "]");
 
         m_pISpoofLockFile->Write(sData + "\n");
 
@@ -142,7 +142,7 @@ class CIdentFileModule : public CModule {
     void ReleaseISpoof() {
         DEBUG("Releasing ident spoof for user/network [" +
               (m_pIRCSock
-                   ? m_pIRCSock->GetNetwork()->GetUser()->GetUserName() + "/" +
+                   ? m_pIRCSock->GetNetwork()->GetUser()->GetUsername() + "/" +
                          m_pIRCSock->GetNetwork()->GetName()
                    : "<no user/network>") +
               "]");

@@ -1,3 +1,8 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
 #: bouncedcc.cpp:101 bouncedcc.cpp:119 bouncedcc.cpp:121
 msgctxt "list"
 msgid "Type"

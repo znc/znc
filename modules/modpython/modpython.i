@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -257,10 +257,10 @@ class CPyRetBool {
 
 %extend CUser {
 	CString __str__() {
-		return $self->GetUserName();
+		return $self->GetUsername();
 	}
 	CString __repr__() {
-		return "<CUser " + $self->GetUserName() + ">";
+		return "<CUser " + $self->GetUsername() + ">";
 	}
 	std::vector<CIRCNetwork*> GetNetworks_() {
 		return $self->GetNetworks();

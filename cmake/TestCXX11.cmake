@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,6 +34,6 @@ if(NOT DEFINED cxx11check)
 			"Error in C++11 check:\n${_CXX11Check_tryout}\n")
 		message(STATUS "Checking for C++11 support - not supported")
 		message(FATAL_ERROR " Upgrade your compiler.\n"
-			" GCC 4.7+ and Clang 3.2+ are known to work.")
+			" GCC 4.8+ and Clang 3.2+ are known to work.")
 	endif()
 endif()

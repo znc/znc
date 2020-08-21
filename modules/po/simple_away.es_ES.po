@@ -1,0 +1,97 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-File: /master/modules/po/simple_away.pot\n"
+"X-Crowdin-File-ID: 201\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Spanish\n"
+"Language: es_ES\n"
+
+#: simple_away.cpp:56
+msgid "[<text>]"
+msgstr "[<texto>]"
+
+#: simple_away.cpp:57
+#, c-format
+msgid ""
+"Prints or sets the away reason (%awaytime% is replaced with the time you "
+"were set away, supports substitutions using ExpandString)"
+msgstr ""
+"Muestra o establece el motivo de ausencia (%awaytime% se reemplaza por el "
+"tiempo que estás ausente, soporta sustituciones ExpandString)"
+
+#: simple_away.cpp:63
+msgid "Prints the current time to wait before setting you away"
+msgstr "Muestra el tiempo a esperar antes de marcarte como ausente"
+
+#: simple_away.cpp:65
+msgid "<seconds>"
+msgstr "<segundos>"
+
+#: simple_away.cpp:66
+msgid "Sets the time to wait before setting you away"
+msgstr "Establece el tiempo a esperar antes de marcarte como ausente"
+
+#: simple_away.cpp:69
+msgid "Disables the wait time before setting you away"
+msgstr "Deshabilita el tiempo a esperar antes de marcarte como ausente"
+
+#: simple_away.cpp:73
+msgid "Get or set the minimum number of clients before going away"
+msgstr "Obtiene o define el mínimo de clientes antes de marcarte como ausente"
+
+#: simple_away.cpp:136
+msgid "Away reason set"
+msgstr "Motivo de ausencia establecido"
+
+#: simple_away.cpp:138
+msgid "Away reason: {1}"
+msgstr "Motivo de ausencia: {1}"
+
+#: simple_away.cpp:139
+msgid "Current away reason would be: {1}"
+msgstr "El motivo de ausencia quedaría como: {1}"
+
+#: simple_away.cpp:144
+msgid "Current timer setting: 1 second"
+msgid_plural "Current timer setting: {1} seconds"
+msgstr[0] "Tiempo establecido: 1 segundo"
+msgstr[1] "Tiempo establecido: {1} segundos"
+
+#: simple_away.cpp:153 simple_away.cpp:161
+msgid "Timer disabled"
+msgstr "Temporizador deshabilitado"
+
+#: simple_away.cpp:155
+msgid "Timer set to 1 second"
+msgid_plural "Timer set to: {1} seconds"
+msgstr[0] "Temporizador establecido a 1 segundo"
+msgstr[1] "Temporizador establecido a {1} segundos"
+
+#: simple_away.cpp:166
+msgid "Current MinClients setting: {1}"
+msgstr "MinClients establecido a: {1}"
+
+#: simple_away.cpp:169
+msgid "MinClients set to {1}"
+msgstr "MinClients establecido a: {1}"
+
+#: simple_away.cpp:248
+msgid ""
+"You might enter up to 3 arguments, like -notimer awaymessage or -timer 5 "
+"awaymessage."
+msgstr ""
+"Puedes poner hasta 3 argumentos, como -notimer mensajeausencia o -timer 5 "
+"mensajeausencia."
+
+#: simple_away.cpp:253
+msgid ""
+"This module will automatically set you away on IRC while you are "
+"disconnected from the bouncer."
+msgstr ""
+"Este módulo te pondrá ausente en el IRC mientras estás desconectado de ZNC."

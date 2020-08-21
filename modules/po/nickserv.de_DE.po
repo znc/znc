@@ -1,0 +1,83 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: de\n"
+"X-Crowdin-File: /master/modules/po/nickserv.pot\n"
+"X-Crowdin-File-ID: 185\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+
+#: nickserv.cpp:31
+msgid "Password set"
+msgstr "Passwort gesetzt"
+
+#: nickserv.cpp:36 nickserv.cpp:46
+msgid "Done"
+msgstr "Erledigt"
+
+#: nickserv.cpp:41
+msgid "NickServ name set"
+msgstr "NickServe-Name gesetzt"
+
+#: nickserv.cpp:60
+msgid "No such editable command. See ViewCommands for list."
+msgstr ""
+"Kein solcher bearbeitbarer Befehl. Sieh dir ViewCommands für eine Liste an."
+
+#: nickserv.cpp:63
+msgid "Ok"
+msgstr "Ok"
+
+#: nickserv.cpp:68
+msgid "password"
+msgstr "Passwort"
+
+#: nickserv.cpp:68
+msgid "Set your nickserv password"
+msgstr "Setzt dein Nickserv-Passwort"
+
+#: nickserv.cpp:70
+msgid "Clear your nickserv password"
+msgstr "Löscht dein Nickserv-Passwort"
+
+#: nickserv.cpp:72
+msgid "nickname"
+msgstr "Nickname"
+
+#: nickserv.cpp:73
+msgid ""
+"Set NickServ name (Useful on networks like EpiKnet, where NickServ is named "
+"Themis"
+msgstr ""
+"Setzt den Nickserv-Namen (Nützlich für Netzwerke wie EpiKnet, wo Nickserv "
+"Themis heißt Themis"
+
+#: nickserv.cpp:77
+msgid "Reset NickServ name to default (NickServ)"
+msgstr "Setzt Nickserv-Name auf Standard zurück (NickServ)"
+
+#: nickserv.cpp:81
+msgid "Show patterns for lines, which are being sent to NickServ"
+msgstr "Zeige Muster für Linien, die an NickServ geschickt werden"
+
+#: nickserv.cpp:83
+msgid "cmd new-pattern"
+msgstr "Befehl neues-Muster"
+
+#: nickserv.cpp:84
+msgid "Set pattern for commands"
+msgstr "Setzt Muster für Befehle"
+
+#: nickserv.cpp:146
+msgid "Please enter your nickserv password."
+msgstr "Bitte gebe dein Nickserv-Passwort ein."
+
+#: nickserv.cpp:150
+msgid "Auths you with NickServ (prefer SASL module instead)"
+msgstr ""
+"Authentifiziert dich mit NickServ (präferiere statt dessen das SASL-Modul)"

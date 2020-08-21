@@ -1,0 +1,63 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: nl\n"
+"X-Crowdin-File: /master/modules/po/kickrejoin.pot\n"
+"X-Crowdin-File-ID: 177\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Dutch\n"
+"Language: nl_NL\n"
+
+#: kickrejoin.cpp:56
+msgid "<secs>"
+msgstr "<seconden>"
+
+#: kickrejoin.cpp:56
+msgid "Set the rejoin delay"
+msgstr "Stel de vertraging voor het opnieuw toetreden in"
+
+#: kickrejoin.cpp:58
+msgid "Show the rejoin delay"
+msgstr "Laat de vertraging voor het opnieuw toetreden zien"
+
+#: kickrejoin.cpp:77
+msgid "Illegal argument, must be a positive number or 0"
+msgstr "Ongeldig argument, moet 0 of een getal boven de 0 zijn"
+
+#: kickrejoin.cpp:90
+msgid "Negative delays don't make any sense!"
+msgstr "Vertragingen van minder dan 0 seconden slaan nergens op!"
+
+#: kickrejoin.cpp:98
+msgid "Rejoin delay set to 1 second"
+msgid_plural "Rejoin delay set to {1} seconds"
+msgstr[0] "Vertraging voor het opnieuw toetreden ingesteld op 1 seconde"
+msgstr[1] "Vertraging voor het opnieuw toetreden ingesteld op {1} seconden"
+
+#: kickrejoin.cpp:101
+msgid "Rejoin delay disabled"
+msgstr "Vertraging voor het opnieuw toetreden uitgeschakeld"
+
+#: kickrejoin.cpp:106
+msgid "Rejoin delay is set to 1 second"
+msgid_plural "Rejoin delay is set to {1} seconds"
+msgstr[0] "Vertraging voor het opnieuw toetreden ingesteld op 1 seconde"
+msgstr[1] "Vertraging voor het opnieuw toetreden ingesteld op {1} seconden"
+
+#: kickrejoin.cpp:109
+msgid "Rejoin delay is disabled"
+msgstr "Vertraging voor het opnieuw toetreden is uitgeschakeld"
+
+#: kickrejoin.cpp:131
+msgid "You might enter the number of seconds to wait before rejoining."
+msgstr ""
+"Je kan het aantal seconden voor het wachten voor het opnieuw toetreden "
+"invoeren."
+
+#: kickrejoin.cpp:134
+msgid "Autorejoins on kick"
+msgstr "Automatisch opnieuw toetreden wanneer geschopt"
