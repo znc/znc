@@ -1,0 +1,154 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: it\n"
+"X-Crowdin-File: /master/modules/po/log.pot\n"
+"X-Crowdin-File-ID: 180\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Italian\n"
+"Language: it_IT\n"
+
+#: log.cpp:59
+msgid "<rules>"
+msgstr "<regole>"
+
+#: log.cpp:60
+msgid "Set logging rules, use !#chan or !query to negate and * "
+msgstr ""
+"Imposta le regole di registrazione (logging), usa !#canale o !query per "
+"negare e * "
+
+#: log.cpp:62
+msgid "Clear all logging rules"
+msgstr "Cancella tutte le regole di registrazione (logging rules)"
+
+#: log.cpp:64
+msgid "List all logging rules"
+msgstr "Elenca tutte le regole di registrazione"
+
+#: log.cpp:67
+msgid "<var> true|false"
+msgstr "<var> vero|falso"
+
+#: log.cpp:68
+msgid "Set one of the following options: joins, quits, nickchanges"
+msgstr "Imposta una delle seguenti opzioni: joins, quits, nickchanges"
+
+#: log.cpp:71
+msgid "Show current settings set by Set command"
+msgstr "Mostra le impostazioni correnti impostate dal comando Set"
+
+#: log.cpp:143
+msgid "Usage: SetRules <rules>"
+msgstr "Utilizzo: SetRules <regole>"
+
+#: log.cpp:144
+msgid "Wildcards are allowed"
+msgstr "Le wildcards (caratteri jolly) sono permesse"
+
+#: log.cpp:156 log.cpp:179
+msgid "No logging rules. Everything is logged."
+msgstr "Nessuna regola di registrazione. Tutto viene loggato."
+
+#: log.cpp:161
+msgid "1 rule removed: {2}"
+msgid_plural "{1} rules removed: {2}"
+msgstr[0] "1 regola rimssa {2}"
+msgstr[1] "{1} regole rimosse: {2}"
+
+#: log.cpp:168 log.cpp:174
+msgctxt "listrules"
+msgid "Rule"
+msgstr "Ruolo"
+
+#: log.cpp:169 log.cpp:175
+msgctxt "listrules"
+msgid "Logging enabled"
+msgstr "Logging abilitato"
+
+#: log.cpp:190
+msgid ""
+"Usage: Set <var> true|false, where <var> is one of: joins, quits, nickchanges"
+msgstr ""
+"Usa: Set <variable> true|false, dove <variabile> è una tra: joins, quits, "
+"nickchanges"
+
+#: log.cpp:197
+msgid "Will log joins"
+msgstr "Loggerà i joins"
+
+#: log.cpp:197
+msgid "Will not log joins"
+msgstr "Non loggerà i joins"
+
+#: log.cpp:198
+msgid "Will log quits"
+msgstr "Loggerà i quits"
+
+#: log.cpp:198
+msgid "Will not log quits"
+msgstr "Non loggerà i quits"
+
+#: log.cpp:200
+msgid "Will log nick changes"
+msgstr "Loggerà i cambi di nick"
+
+#: log.cpp:200
+msgid "Will not log nick changes"
+msgstr "Non registrerà i cambi di nick"
+
+#: log.cpp:204
+msgid "Unknown variable. Known variables: joins, quits, nickchanges"
+msgstr "Variabile sconosciuta. Variabili conosciute: joins, quits, nickchanges"
+
+#: log.cpp:212
+msgid "Logging joins"
+msgstr "Registrazione dei joins"
+
+#: log.cpp:212
+msgid "Not logging joins"
+msgstr "Non si registrano join"
+
+#: log.cpp:213
+msgid "Logging quits"
+msgstr "Registrazione dei quits"
+
+#: log.cpp:213
+msgid "Not logging quits"
+msgstr "Non si registrano i quits"
+
+#: log.cpp:214
+msgid "Logging nick changes"
+msgstr "Registrazione del cambio nick"
+
+#: log.cpp:215
+msgid "Not logging nick changes"
+msgstr "Non si registrano cambi di nick"
+
+#: log.cpp:352
+msgid ""
+"Invalid args [{1}]. Only one log path allowed.  Check that there are no "
+"spaces in the path."
+msgstr ""
+"Argomento non valido [{1}]. È consentito un solo percorso per la "
+"registrazione dei log. Verifica che non ci siano spazi nel percorso."
+
+#: log.cpp:402
+msgid "Invalid log path [{1}]"
+msgstr "Percorso di log non valido [{1}]"
+
+#: log.cpp:405
+msgid "Logging to [{1}]. Using timestamp format '{2}'"
+msgstr "Accesso a [{1}]. Utilizzando il formato timestamp '{2}'"
+
+#: log.cpp:560
+msgid "[-sanitize] Optional path where to store logs."
+msgstr "[-sanitize] Percorso opzionale dove archiviare i registri (logs)."
+
+#: log.cpp:564
+msgid "Writes IRC logs."
+msgstr "Scrive un logs IRC."

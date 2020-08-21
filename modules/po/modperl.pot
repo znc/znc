@@ -1,0 +1,8 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: modperl.cpp:382
+msgid "Loads perl scripts as ZNC modules"
+msgstr ""

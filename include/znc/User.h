@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@
 #include <znc/Utils.h>
 #include <znc/Buffer.h>
 #include <znc/Nick.h>
+#include <znc/Translation.h>
 #include <set>
 #include <vector>
 
@@ -34,9 +35,9 @@ class CIRCSock;
 class CUserTimer;
 class CServer;
 
-class CUser {
+class CUser : private CCoreTranslationMixin {
   public:
-    CUser(const CString& sUserName);
+    CUser(const CString& sUsername);
     ~CUser();
 
     CUser(const CUser&) = delete;
@@ -67,8 +68,12 @@ class CUser {
     void ClearAllowedHosts();
     bool IsHostAllowed(const CString& sHost) const;
     bool IsValid(CString& sErrMsg, bool bSkipPass = false) const;
-    static bool IsValidUserName(const CString& sUserName);
-    static CString MakeCleanUserName(const CString& sUserName);
+    static bool IsValidUsername(const CString& sUsername);
+    /** @deprecated Use IsValidUsername() instead. */
+    static bool IsValidUserName(const CString& sUsername);
+    static CString MakeCleanUsername(const CString& sUsername);
+    /** @deprecated Use MakeCleanUsername() instead. */
+    static CString MakeCleanUserName(const CString& sUsername);
 
     // Modules
     CModules& GetModules() { return *m_pModules; }
@@ -110,6 +115,7 @@ class CUser {
 
     CString AddTimestamp(const CString& sStr) const;
     CString AddTimestamp(time_t tm, const CString& sStr) const;
+    CString AddTimestamp(timeval tv, const CString& sStr) const;
 
     void CloneNetworks(const CUser& User);
     bool Clone(const CUser& User, CString& sErrorRet,
@@ -149,6 +155,7 @@ class CUser {
     void SetTimestampFormat(const CString& s) { m_sTimestampFormat = s; }
     void SetTimestampAppend(bool b) { m_bAppendTimestamp = b; }
     void SetTimestampPrepend(bool b) { m_bPrependTimestamp = b; }
+    void SetAuthOnlyViaModule(bool b) { m_bAuthOnlyViaModule = b; }
     void SetTimezone(const CString& s) { m_sTimezone = s; }
     void SetJoinTries(unsigned int i) { m_uMaxJoinTries = i; }
     void SetMaxJoins(unsigned int i) { m_uMaxJoins = i; }
@@ -161,7 +168,9 @@ class CUser {
     // Getters
     const std::vector<CClient*>& GetUserClients() const { return m_vClients; }
     std::vector<CClient*> GetAllClients() const;
+    /** @deprecated Use GetUsername() instead. */
     const CString& GetUserName() const;
+    const CString& GetUsername() const;
     const CString& GetCleanUserName() const;
     const CString& GetNick(bool bAllowDefault = true) const;
     const CString& GetAltNick(bool bAllowDefault = true) const;
@@ -184,6 +193,7 @@ class CUser {
     bool IsAdmin() const;
     bool DenySetBindHost() const;
     bool MultiClients() const;
+    bool AuthOnlyViaModule() const;
     const CString& GetStatusPrefix() const;
     const CString& GetDefaultChanModes() const;
     /** How long must an IRC connection be idle before ZNC sends a ping */
@@ -216,8 +226,8 @@ class CUser {
     // !Getters
 
   protected:
-    const CString m_sUserName;
-    const CString m_sCleanUserName;
+    const CString m_sUsername;
+    const CString m_sCleanUsername;
     CString m_sNick;
     CString m_sAltNick;
     CString m_sIdent;
@@ -249,6 +259,7 @@ class CUser {
     bool m_bBeingDeleted;
     bool m_bAppendTimestamp;
     bool m_bPrependTimestamp;
+    bool m_bAuthOnlyViaModule;
 
     CUserTimer* m_pUserTimer;
 

@@ -1,0 +1,125 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: nl\n"
+"X-Crowdin-File: /master/modules/po/alias.pot\n"
+"X-Crowdin-File-ID: 150\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Dutch\n"
+"Language: nl_NL\n"
+
+#: alias.cpp:141
+msgid "missing required parameter: {1}"
+msgstr "verplichte parameter ontbreekt: {1}"
+
+#: alias.cpp:201
+msgid "Created alias: {1}"
+msgstr "Alias aangemaakt: {1}"
+
+#: alias.cpp:203
+msgid "Alias already exists."
+msgstr "Alias bestaat al."
+
+#: alias.cpp:210
+msgid "Deleted alias: {1}"
+msgstr "Alias verwijderd: {1}"
+
+#: alias.cpp:213 alias.cpp:224 alias.cpp:246 alias.cpp:265 alias.cpp:276
+#: alias.cpp:333
+msgid "Alias does not exist."
+msgstr "Alias bestaat niet."
+
+#: alias.cpp:222 alias.cpp:244 alias.cpp:263 alias.cpp:274
+msgid "Modified alias."
+msgstr "Alias aangepast."
+
+#: alias.cpp:236 alias.cpp:256
+msgid "Invalid index."
+msgstr "Ongeldige index."
+
+#: alias.cpp:282 alias.cpp:298
+msgid "There are no aliases."
+msgstr "Er zijn geen aliassen."
+
+#: alias.cpp:289
+msgid "The following aliases exist: {1}"
+msgstr "De volgende aliassen bestaan: {1}"
+
+#: alias.cpp:290
+msgctxt "list|separator"
+msgid ", "
+msgstr ", "
+
+#: alias.cpp:324
+msgid "Actions for alias {1}:"
+msgstr "Acties voor alias {1}:"
+
+#: alias.cpp:331
+msgid "End of actions for alias {1}."
+msgstr "Einde van acties voor alias {1}."
+
+#: alias.cpp:338 alias.cpp:341 alias.cpp:352 alias.cpp:357
+msgid "<name>"
+msgstr "<naam>"
+
+#: alias.cpp:339
+msgid "Creates a new, blank alias called name."
+msgstr "Maakt een nieuwe, lege alias aan genaamd naam."
+
+#: alias.cpp:341
+msgid "Deletes an existing alias."
+msgstr "Verwijdert een bestaande alias."
+
+#: alias.cpp:343
+msgid "<name> <action ...>"
+msgstr "<naam> <actie ...>"
+
+#: alias.cpp:344
+msgid "Adds a line to an existing alias."
+msgstr "Voegt een regel toe aan een bestaande alias."
+
+#: alias.cpp:346
+msgid "<name> <pos> <action ...>"
+msgstr "<naam> <positie> <actie ...>"
+
+#: alias.cpp:347
+msgid "Inserts a line into an existing alias."
+msgstr "Voegt een regel in bij een bestaande alias."
+
+#: alias.cpp:349
+msgid "<name> <pos>"
+msgstr "<naam> <positie>"
+
+#: alias.cpp:350
+msgid "Removes a line from an existing alias."
+msgstr "Verwijdert een regel van een bestaande alias."
+
+#: alias.cpp:353
+msgid "Removes all lines from an existing alias."
+msgstr "Verwijdert alle regels van een bestaande alias."
+
+#: alias.cpp:355
+msgid "Lists all aliases by name."
+msgstr "Somt alle aliassen op bij naam."
+
+#: alias.cpp:358
+msgid "Reports the actions performed by an alias."
+msgstr "Laat de acties zien die uitgevoerd worden door een alias."
+
+#: alias.cpp:362
+msgid "Generate a list of commands to copy your alias config."
+msgstr ""
+"Genereert een lijst van commando's die je naar je alias configuratie kan "
+"kopieëren."
+
+#: alias.cpp:374
+msgid "Clearing all of them!"
+msgstr "Alle verwijderen!"
+
+#: alias.cpp:409
+msgid "Provides bouncer-side command alias support."
+msgstr "Voorziet alias ondersteuning aan de kant van de bouncer."

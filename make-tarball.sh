@@ -16,6 +16,7 @@ if [ "x$1" = "x--nightly" ]; then
 	TARGZ=$3
 	SIGN=0
 	DESC=-nightly-`date +%Y%m%d`-`git $GITDIR rev-parse HEAD | cut -b-8`
+	NIGHTLY=1
 else
 	VERSION=$1
 	if [ "x$VERSION" = "x" ] ; then
@@ -32,8 +33,8 @@ else
 	ZNCDIR=znc-$VERSION
 	TARGZ=$ZNCDIR.tar.gz
 	SIGN=1
-	DESC=""
-	# DESC="-rc1"
+	DESC="$(sed -En 's/set\(alpha_version "(.*)"\).*/\1/p' CMakeLists.txt)"
+	NIGHTLY=0
 fi
 
 TARGZ=`readlink -f -- $TARGZ`
@@ -49,17 +50,12 @@ cp -p third_party/Csocket/Csocket.cc third_party/Csocket/Csocket.h $TMPDIR/$ZNCD
 )
 (
 	cd $TMPDIR/$ZNCDIR
-	AUTOMAKE_FLAGS="--add-missing --copy" ./autogen.sh
-	rm -r autom4te.cache/
-	rm .travis* .appveyor*
+	rm -rf .travis* .appveyor* .ci/
 	rm make-tarball.sh
-	# For autoconf
-	sed -e "s/THIS_IS_NOT_TARBALL//" -i Makefile.in
-	echo '#include <znc/version.h>' > src/version.cpp
-	echo "const char* ZNC_VERSION_EXTRA = VERSION_EXTRA \"$DESC\";" >> src/version.cpp
-	# For cmake
 	if [ "x$DESC" != "x" ]; then
-		echo $DESC > .nightly
+		if [ $NIGHTLY = 1 ]; then
+			echo $DESC > .nightly
+		fi
 	fi
 )
 (

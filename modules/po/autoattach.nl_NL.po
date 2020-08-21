@@ -1,0 +1,87 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: nl\n"
+"X-Crowdin-File: /master/modules/po/autoattach.pot\n"
+"X-Crowdin-File-ID: 151\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Dutch\n"
+"Language: nl_NL\n"
+
+#: autoattach.cpp:94
+msgid "Added to list"
+msgstr "Toegevoegd aan lijst"
+
+#: autoattach.cpp:96
+msgid "{1} is already added"
+msgstr "{1} is al toegevoegd"
+
+#: autoattach.cpp:100
+msgid "Usage: Add [!]<#chan> <search> <host>"
+msgstr "Gebruik: Add [!]<#kanaal> <zoek> <host>"
+
+#: autoattach.cpp:101
+msgid "Wildcards are allowed"
+msgstr "Jokers zijn toegestaan"
+
+#: autoattach.cpp:113
+msgid "Removed {1} from list"
+msgstr "{1} van lijst verwijderd"
+
+#: autoattach.cpp:115
+msgid "Usage: Del [!]<#chan> <search> <host>"
+msgstr "Gebruik: Del [!]<#kanaal> <zoek> <host>"
+
+#: autoattach.cpp:121 autoattach.cpp:129
+msgid "Neg"
+msgstr "Verwijderd"
+
+#: autoattach.cpp:122 autoattach.cpp:130
+msgid "Chan"
+msgstr "Kanaal"
+
+#: autoattach.cpp:123 autoattach.cpp:131
+msgid "Search"
+msgstr "Zoek"
+
+#: autoattach.cpp:124 autoattach.cpp:132
+msgid "Host"
+msgstr "Host"
+
+#: autoattach.cpp:138
+msgid "You have no entries."
+msgstr "Je hebt geen kanalen toegevoegd."
+
+#: autoattach.cpp:146 autoattach.cpp:149
+msgid "[!]<#chan> <search> <host>"
+msgstr "[!]<#kanaal> <zoek> <host>"
+
+#: autoattach.cpp:147
+msgid "Add an entry, use !#chan to negate and * for wildcards"
+msgstr ""
+"Voeg een kanaal toe, gebruik !#kanaal om te verwijderen en gebruik * voor "
+"jokers"
+
+#: autoattach.cpp:150
+msgid "Remove an entry, needs to be an exact match"
+msgstr "Verwijder een kanaal, moet een exacte overeenkomst zijn"
+
+#: autoattach.cpp:152
+msgid "List all entries"
+msgstr "Laat alle kanalen zien"
+
+#: autoattach.cpp:171
+msgid "Unable to add [{1}]"
+msgstr "Kan [{1}] niet toevoegen"
+
+#: autoattach.cpp:283
+msgid "List of channel masks and channel masks with ! before them."
+msgstr "Lijst van kanaal maskers en kanaal maskers met ! er voor."
+
+#: autoattach.cpp:286
+msgid "Reattaches you to channels on activity."
+msgstr "Verbind je met kanalen als er activiteit is."

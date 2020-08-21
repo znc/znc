@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 #
 
 cmake_minimum_required(VERSION 3.1)
-project(ZNC VERSION 1.7.0)
-set(ZNC_VERSION 1.7.x)
+project(ZNC VERSION 1.9.0 LANGUAGES CXX)
+set(ZNC_VERSION 1.9.x)
 set(append_git_version true)
 set(alpha_version "") # e.g. "-rc1"
 set(VERSION_EXTRA "" CACHE STRING
@@ -171,8 +171,54 @@ if(WANT_PERL)
 	find_package(PerlLibs 5.10 REQUIRED)
 endif()
 if (WANT_PYTHON)
+	set (_MIN_PYTHON_VERSION 3.4)
 	find_package(Perl 5.10 REQUIRED)
-	pkg_check_modules(PYTHON "${WANT_PYTHON_VERSION}" REQUIRED)
+	# VERSION_GREATER_EQUAL is available only since 3.7
+	if (CMAKE_VERSION VERSION_LESS 3.12)
+	else()
+		# Even if FindPython3 is available (since CMake 3.12) we still use
+		# pkg-config, because FindPython has a hardcoded list of python
+		# versions, which may become outdated when new pythons are released,
+		# but when cmake in the distro is old.
+		#
+		# Why FindPython3 is useful at all? Because sometimes there is no
+		# python3.pc, but only python-3.5.pc and python-3.6.pc; which would
+		# force user to provide the version explicitly via
+		# WANT_PYTHON_VERSION. This is the case on Gentoo when NOT building
+		# via emerge.
+		if (WANT_PYTHON_VERSION STREQUAL "python3")
+			find_package(Python3 COMPONENTS Development)
+		else()
+			# We used to pass value like "python-3.5" to the variable.
+			if (WANT_PYTHON_VERSION MATCHES "^(python-)?(.*)$")
+				find_package(Python3 COMPONENTS Development
+					EXACT "${CMAKE_MATCH_2}")
+			else()
+				message(FATAL_ERROR "Invalid value of WANT_PYTHON_VERSION")
+			endif()
+		endif()
+		if (Python3_FOUND AND Python3_VERSION VERSION_LESS
+				${_MIN_PYTHON_VERSION})
+			message(STATUS
+				"Python too old, need at least ${_MIN_PYTHON_VERSION}")
+			set(Python3_FOUND OFF)
+		else()
+			# Compatibility with pkg-config variables
+			set(Python3_LDFLAGS "${Python3_LIBRARIES}")
+		endif()
+	endif()
+	if (NOT Python3_FOUND AND WANT_PYTHON_VERSION MATCHES "^python")
+		# Since python 3.8, -embed is required for embedding.
+		pkg_check_modules(Python3
+			"${WANT_PYTHON_VERSION}-embed >= ${_MIN_PYTHON_VERSION}")
+		if (NOT Python3_FOUND)
+			pkg_check_modules(Python3
+				"${WANT_PYTHON_VERSION} >= ${_MIN_PYTHON_VERSION}")
+		endif()
+	endif()
+	if (NOT Python3_FOUND)
+		message(FATAL_ERROR "Python 3 is not found. Try disabling it.")
+	endif()
 endif()
 
 set(WANT_TCL false CACHE BOOL "Support Tcl modules")
@@ -192,6 +238,7 @@ if(Boost_LOCALE_FOUND AND GETTEXT_MSGFMT_EXECUTABLE)
 	set(HAVE_I18N true)
 else()
 	set(HAVE_I18N false)
+	message(STATUS "Boost.Locale or gettext (msgfmt) is not found, disabling i18n support")
 endif()
 
 if(HAVE_I18N AND GETTEXT_MSGMERGE_EXECUTABLE)
@@ -241,8 +288,21 @@ endif()
 file(GLOB csocket_files LIST_DIRECTORIES FALSE
 	"${PROJECT_SOURCE_DIR}/third_party/Csocket/Csocket.*")
 if(csocket_files STREQUAL "")
-	message(FATAL_ERROR " It looks like git submodules are not initialized.\n"
-		" Run: git submodule update --init --recursive")
+	execute_process(COMMAND git status
+		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+		RESULT_VARIABLE git_status_var
+		OUTPUT_QUIET
+		ERROR_QUIET)
+	if(git_status_var)
+		message(FATAL_ERROR
+			" It looks like git submodules are not initialized.\n"
+			" Either this is not a git clone, or you don't have git installed.\n"
+			" Fetch the tarball from the website: https://znc.in/releases/ ")
+	else()
+		message(FATAL_ERROR
+			" It looks like git submodules are not initialized.\n"
+			" Run: git submodule update --init --recursive")
+	endif()
 endif()
 
 install(DIRECTORY webskins
@@ -344,7 +404,7 @@ summary_line("SSL      " "${OPENSSL_FOUND}")
 summary_line("IPv6     " "${WANT_IPV6}")
 summary_line("Async DNS" "${HAVE_THREADED_DNS}")
 summary_line("Perl     " "${PERLLIBS_FOUND}")
-summary_line("Python   " "${PYTHON_FOUND}")
+summary_line("Python   " "${Python3_FOUND}")
 summary_line("Tcl      " "${TCL_FOUND}")
 summary_line("Cyrus    " "${CYRUS_FOUND}")
 summary_line("Charset  " "${ICU_FOUND}")

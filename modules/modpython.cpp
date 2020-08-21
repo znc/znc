@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
 #include <znc/Chan.h>
@@ -455,7 +456,7 @@ CBSOCK(ConnectionRefused);
 void CPySocket::ReadData(const char* data, size_t len) {
     PyObject* pyRes =
         PyObject_CallMethod(m_pyObj, const_cast<char*>("OnReadData"),
-                            const_cast<char*>("y#"), data, (int)len);
+                            const_cast<char*>("y#"), data, (Py_ssize_t)len);
     CHECKCLEARSOCK("OnReadData");
 }
 

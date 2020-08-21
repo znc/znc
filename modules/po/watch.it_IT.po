@@ -1,0 +1,193 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: it\n"
+"X-Crowdin-File: /master/modules/po/watch.pot\n"
+"X-Crowdin-File-ID: 204\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Italian\n"
+"Language: it_IT\n"
+
+#: watch.cpp:178
+msgid "<HostMask> [Target] [Pattern]"
+msgstr ""
+
+#: watch.cpp:178
+msgid "Used to add an entry to watch for."
+msgstr "Utilizzato per aggiungere una voce da tenere d'occhio."
+
+#: watch.cpp:180
+msgid "List all entries being watched."
+msgstr "Elenca tutte le voci che si stanno guardando"
+
+#: watch.cpp:182
+msgid "Dump a list of all current entries to be used later."
+msgstr "Scarica un elenco di tutte le voci correnti da utilizzare in seguito."
+
+#: watch.cpp:184
+msgid "<Id>"
+msgstr ""
+
+#: watch.cpp:184
+msgid "Deletes Id from the list of watched entries."
+msgstr "Elimina l'ID dall'elenco delle voci osservate."
+
+#: watch.cpp:186
+msgid "Delete all entries."
+msgstr "Elimina tutte le voci."
+
+#: watch.cpp:188 watch.cpp:190
+msgid "<Id | *>"
+msgstr ""
+
+#: watch.cpp:188
+msgid "Enable a disabled entry."
+msgstr "Abilita una voce disabilitata"
+
+#: watch.cpp:190
+msgid "Disable (but don't delete) an entry."
+msgstr "Disabilita (ma non elimina) una voce."
+
+#: watch.cpp:192 watch.cpp:194
+msgid "<Id | *> <True | False>"
+msgstr ""
+
+#: watch.cpp:192
+msgid "Enable or disable detached client only for an entry."
+msgstr "Abilita o disabilita il client separato (detached) solo per una voce."
+
+#: watch.cpp:194
+msgid "Enable or disable detached channel only for an entry."
+msgstr "Abilita o disabilita il canale separato (detached) solo per una voce."
+
+#: watch.cpp:196
+msgid "<Id> [#chan priv #foo* !#bar]"
+msgstr ""
+
+#: watch.cpp:196
+msgid "Set the source channels that you care about."
+msgstr "Imposta i canali sorgente che ti interessano."
+
+#: watch.cpp:237
+msgid "WARNING: malformed entry found while loading"
+msgstr "ATTENZIONE: rilevata immissione errata durante il caricamento"
+
+#: watch.cpp:382
+msgid "Disabled all entries."
+msgstr "Disabilitate tutte le voci"
+
+#: watch.cpp:383
+msgid "Enabled all entries."
+msgstr "Abilitate tutte le voci"
+
+#: watch.cpp:390 watch.cpp:432 watch.cpp:474 watch.cpp:577 watch.cpp:619
+msgid "Invalid Id"
+msgstr "Id non valido"
+
+#: watch.cpp:399
+msgid "Id {1} disabled"
+msgstr "Id {1} disabilitato"
+
+#: watch.cpp:401
+msgid "Id {1} enabled"
+msgstr "Id {1} abilitato"
+
+#: watch.cpp:423
+msgid "Set DetachedClientOnly for all entries to Yes"
+msgstr "Imposta il DetachedClientOnly per tutte le voci su Sì"
+
+#: watch.cpp:425
+msgid "Set DetachedClientOnly for all entries to No"
+msgstr "Imposta il DetachedClientOnly per tutte le voci su No"
+
+#: watch.cpp:441 watch.cpp:483
+msgid "Id {1} set to Yes"
+msgstr "Id {1} impostato a Si"
+
+#: watch.cpp:443 watch.cpp:485
+msgid "Id {1} set to No"
+msgstr "Id {1} impostato a No"
+
+#: watch.cpp:465
+msgid "Set DetachedChannelOnly for all entries to Yes"
+msgstr "Imposta il DetachedChannelOnly per tutte le voci su Yes"
+
+#: watch.cpp:467
+msgid "Set DetachedChannelOnly for all entries to No"
+msgstr "Imposta il DetachedChannelOnly per teutte le voci a No"
+
+#: watch.cpp:491 watch.cpp:507
+msgid "Id"
+msgstr "Id"
+
+#: watch.cpp:492 watch.cpp:508
+msgid "HostMask"
+msgstr "HostMask"
+
+#: watch.cpp:493 watch.cpp:509
+msgid "Target"
+msgstr "Target"
+
+#: watch.cpp:494 watch.cpp:510
+msgid "Pattern"
+msgstr "Modello"
+
+#: watch.cpp:495 watch.cpp:511
+msgid "Sources"
+msgstr "Sorgenti"
+
+#: watch.cpp:496 watch.cpp:512 watch.cpp:513
+msgid "Off"
+msgstr "Off"
+
+#: watch.cpp:497 watch.cpp:515
+msgid "DetachedClientOnly"
+msgstr "DetachedClientOnly"
+
+#: watch.cpp:498 watch.cpp:518
+msgid "DetachedChannelOnly"
+msgstr "DetachedChannelOnly"
+
+#: watch.cpp:516 watch.cpp:519
+msgid "Yes"
+msgstr "Si"
+
+#: watch.cpp:516 watch.cpp:519
+msgid "No"
+msgstr "No"
+
+#: watch.cpp:525 watch.cpp:531
+msgid "You have no entries."
+msgstr "Non hai voci"
+
+#: watch.cpp:585
+msgid "Sources set for Id {1}."
+msgstr "Sorgenti impostate per Id {1}."
+
+#: watch.cpp:609
+msgid "All entries cleared."
+msgstr "Tutte le voci cancellate."
+
+#: watch.cpp:627
+msgid "Id {1} removed."
+msgstr "Id {1} rimosso."
+
+#: watch.cpp:646
+msgid "Entry for {1} already exists."
+msgstr "La voce per {1} esiste già."
+
+#: watch.cpp:654
+msgid "Adding entry: {1} watching for [{2}] -> {3}"
+msgstr "Aggiunta voce: {1} in cerca di [{2}] -> {3}"
+
+#: watch.cpp:660
+msgid "Watch: Not enough arguments.  Try Help"
+msgstr "Guarda: argomenti insufficienti. Prova aiuto"
+
+#: watch.cpp:702
+msgid "Copy activity from a specific user into a separate window"
+msgstr "Copia l'attività di uno specifico utente in una finestra separata"

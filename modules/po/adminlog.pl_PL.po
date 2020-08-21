@@ -1,0 +1,71 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
+"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
+"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: /master/modules/po/adminlog.pot\n"
+"X-Crowdin-File-ID: 149\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Polish\n"
+"Language: pl_PL\n"
+
+#: adminlog.cpp:29
+msgid "Show the logging target"
+msgstr "Pokaż miejsce docelowe zapisywania dziennika"
+
+#: adminlog.cpp:31
+msgid "<file|syslog|both> [path]"
+msgstr "<file|syslog|both> [ścieżka]"
+
+#: adminlog.cpp:32
+msgid "Set the logging target"
+msgstr "Ustaw miejsce docelowe dziennika"
+
+#: adminlog.cpp:142
+msgid "Access denied"
+msgstr "Odmowa dostępu"
+
+#: adminlog.cpp:156
+msgid "Now logging to file"
+msgstr "Dziennik będzie odtąd zapisywany do pliku"
+
+#: adminlog.cpp:160
+msgid "Now only logging to syslog"
+msgstr "Dziennik będzie odtąd zapisywany tylko w syslog"
+
+#: adminlog.cpp:164
+msgid "Now logging to syslog and file"
+msgstr "Dziennik będzie teraz zapisywany do pliku i syslog"
+
+#: adminlog.cpp:168
+msgid "Usage: Target <file|syslog|both> [path]"
+msgstr "Użycie: Target <file|syslog|both> [ścieżka]"
+
+#: adminlog.cpp:170
+msgid "Unknown target"
+msgstr "Nieznany cel"
+
+#: adminlog.cpp:192
+msgid "Logging is enabled for file"
+msgstr "Dziennik jest ustawiony do zapisu do pliku"
+
+#: adminlog.cpp:195
+msgid "Logging is enabled for syslog"
+msgstr "Dziennik jest ustawiony do zapisu w syslog"
+
+#: adminlog.cpp:198
+msgid "Logging is enabled for both, file and syslog"
+msgstr "Dziennik jest ustawiony do zapisu do obu: do pliku i syslog"
+
+#: adminlog.cpp:204
+msgid "Log file will be written to {1}"
+msgstr "Plik dziennika zostanie zapisany w {1}"
+
+#: adminlog.cpp:222
+msgid "Log ZNC events to file and/or syslog."
+msgstr "Dziennikuj zdarzenia ZNC do pliku i/lub syslog."

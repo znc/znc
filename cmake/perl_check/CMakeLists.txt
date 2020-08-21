@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 #
 
 cmake_minimum_required(VERSION 3.0)
-project(perl_check)
+project(perl_check LANGUAGES CXX)
 set(CMAKE_VERBOSE_MAKEFILE true)
 
 if(APPLE)

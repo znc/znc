@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  * Copyright (C) 2008 by Stefan Rado
  * based on admin.cpp by Sebastian Ramacher
  * based on admin.cpp in crox branch
@@ -50,6 +50,7 @@ class CAdminMod : public CModule {
         CTable VarTable;
         VarTable.AddColumn(t_s("Type", "helptable"));
         VarTable.AddColumn(t_s("Variables", "helptable"));
+        VarTable.SetStyle(CTable::ListStyle);
         std::map<CString, VCString> mvsTypedVariables;
         for (unsigned int i = 0; i != uSize; ++i) {
             CString sVar = CString(vars[i].name).AsLower();
@@ -77,7 +78,7 @@ class CAdminMod : public CModule {
         const CString str = t_s("String");
         const CString boolean = t_s("Boolean (true/false)");
         const CString integer = t_s("Integer");
-        const CString doublenum = t_s("Double");
+        const CString number = t_s("Number");
 
         const CString sCmdFilter = sLine.Token(1, false);
         const CString sVarFilter = sLine.Token(2, true).AsLower();
@@ -108,9 +109,11 @@ class CAdminMod : public CModule {
                 {"Admin", boolean},
                 {"AppendTimestamp", boolean},
                 {"PrependTimestamp", boolean},
+                {"AuthOnlyViaModule", boolean},
                 {"TimestampFormat", str},
                 {"DCCBindHost", str},
                 {"StatusPrefix", str},
+                {"NoTrafficTimeout", integer},
 #ifdef HAVE_I18N
                 {"Language", str},
 #endif
@@ -118,6 +121,7 @@ class CAdminMod : public CModule {
                 {"ClientEncoding", str},
 #endif
             };
+            PutModule("");
             PrintVarsHelp(sVarFilter, vars, ARRAY_SIZE(vars),
                           t_s("The following variables are available when "
                               "using the Set/Get commands:"));
@@ -131,7 +135,7 @@ class CAdminMod : public CModule {
                 {"Ident", str},
                 {"RealName", str},
                 {"BindHost", str},
-                {"FloodRate", doublenum},
+                {"FloodRate", number},
                 {"FloodBurst", integer},
                 {"JoinDelay", integer},
 #ifdef HAVE_ICU
@@ -141,6 +145,7 @@ class CAdminMod : public CModule {
                 {"TrustAllCerts", boolean},
                 {"TrustPKI", boolean},
             };
+            PutModule("");
             PrintVarsHelp(sVarFilter, nvars, ARRAY_SIZE(nvars),
                           t_s("The following variables are available when "
                               "using the SetNetwork/GetNetwork commands:"));
@@ -154,12 +159,14 @@ class CAdminMod : public CModule {
                                {"InConfig", boolean},
                                {"AutoClearChanBuffer", boolean},
                                {"Detached", boolean}};
+            PutModule("");
             PrintVarsHelp(sVarFilter, cvars, ARRAY_SIZE(cvars),
                           t_s("The following variables are available when "
                               "using the SetChan/GetChan commands:"));
         }
 
         if (sCmdFilter.empty())
+            PutModule("");
             PutModule(
                 t_s("You can use $user as the user name and $network as the "
                     "network name for modifying your own user and network."));
@@ -194,7 +201,7 @@ class CAdminMod : public CModule {
         if (!pNetwork) {
             PutModule(
                 t_f("Error: User {1} does not have a network named [{2}].")(
-                    pUser->GetUserName(), sNetwork));
+                    pUser->GetUsername(), sNetwork));
         }
         return pNetwork;
     }
@@ -273,6 +280,9 @@ class CAdminMod : public CModule {
         else if (sVar == "prependtimestamp")
             PutModule("PrependTimestamp = " +
                       CString(pUser->GetTimestampPrepend()));
+        else if (sVar == "authonlyviamodule")
+            PutModule("AuthOnlyViaModule = " +
+                      CString(pUser->AuthOnlyViaModule()));
         else if (sVar == "timestampformat")
             PutModule("TimestampFormat = " + pUser->GetTimestampFormat());
         else if (sVar == "dccbindhost")
@@ -297,7 +307,7 @@ class CAdminMod : public CModule {
 
     void Set(const CString& sLine) {
         const CString sVar = sLine.Token(1).AsLower();
-        CString sUserName = sLine.Token(2);
+        CString sUsername = sLine.Token(2);
         CString sValue = sLine.Token(3, true);
 
         if (sValue.empty()) {
@@ -305,7 +315,7 @@ class CAdminMod : public CModule {
             return;
         }
 
-        CUser* pUser = FindUser(sUserName);
+        CUser* pUser = FindUser(sUsername);
         if (!pUser) return;
 
         if (sVar == "nick") {
@@ -442,6 +452,14 @@ class CAdminMod : public CModule {
             bool b = sValue.ToBool();
             pUser->SetTimestampAppend(b);
             PutModule("AppendTimestamp = " + CString(b));
+        } else if (sVar == "authonlyviamodule") {
+            if (GetUser()->IsAdmin()) {
+                bool b = sValue.ToBool();
+                pUser->SetAuthOnlyViaModule(b);
+                PutModule("AuthOnlyViaModule = " + CString(b));
+            } else {
+                PutModule(t_s("Access denied!"));
+            }
         } else if (sVar == "timestampformat") {
             pUser->SetTimestampFormat(sValue);
             PutModule("TimestampFormat = " + sValue);
@@ -483,7 +501,7 @@ class CAdminMod : public CModule {
 #ifdef HAVE_ICU
         else if (sVar == "clientencoding") {
             pUser->SetClientEncoding(sValue);
-            PutModule("ClientEncoding = " + sValue);
+            PutModule("ClientEncoding = " + pUser->GetClientEncoding());
         }
 #endif
         else
@@ -711,7 +729,7 @@ class CAdminMod : public CModule {
         }
 
         PutModule(t_p("Channel {1} is deleted from network {2} of user {3}",
-                      "Channels {2} are deleted from network {2} of user {3}",
+                      "Channels {1} are deleted from network {2} of user {3}",
                       vsNames.size())(
             CString(", ").Join(vsNames.begin(), vsNames.end()),
             pNetwork->GetName(), sUsername));
@@ -955,7 +973,7 @@ class CAdminMod : public CModule {
             return;
         }
 
-        if (!CZNC::Get().DeleteUser(pUser->GetUserName())) {
+        if (!CZNC::Get().DeleteUser(pUser->GetUsername())) {
             // This can't happen, because we got the user from FindUser()
             PutModule(t_s("Error: Internal error!"));
             return;
@@ -1035,18 +1053,18 @@ class CAdminMod : public CModule {
         if (pUser->FindNetwork(sNetwork)) {
             PutModule(
                 t_f("Error: User {1} already has a network with the name {2}")(
-                    pUser->GetUserName(), sNetwork));
+                    pUser->GetUsername(), sNetwork));
             return;
         }
 
         CString sNetworkAddError;
         if (pUser->AddNetwork(sNetwork, sNetworkAddError)) {
             PutModule(t_f("Network {1} added to user {2}.")(
-                sNetwork, pUser->GetUserName()));
+                sNetwork, pUser->GetUsername()));
         } else {
             PutModule(t_f(
                 "Error: Network [{1}] could not be added for user {2}: {3}")(
-                sNetwork, pUser->GetUserName(), sNetworkAddError));
+                sNetwork, pUser->GetUsername(), sNetworkAddError));
         }
     }
 
@@ -1083,11 +1101,11 @@ class CAdminMod : public CModule {
 
         if (pUser->DeleteNetwork(sNetwork)) {
             PutModule(t_f("Network {1} deleted for user {2}.")(
-                sNetwork, pUser->GetUserName()));
+                sNetwork, pUser->GetUsername()));
         } else {
             PutModule(
                 t_f("Error: Network {1} could not be deleted for user {2}.")(
-                    sNetwork, pUser->GetUserName()));
+                    sNetwork, pUser->GetUsername()));
         }
     }
 
@@ -1154,11 +1172,11 @@ class CAdminMod : public CModule {
 
         if (pNetwork->AddServer(sServer))
             PutModule(t_f("Added IRC Server {1} to network {2} for user {3}.")(
-                sServer, pNetwork->GetName(), pUser->GetUserName()));
+                sServer, pNetwork->GetName(), pUser->GetUsername()));
         else
             PutModule(t_f(
                 "Error: Could not add IRC server {1} to network {2} for user "
-                "{3}.")(sServer, pNetwork->GetName(), pUser->GetUserName()));
+                "{3}.")(sServer, pNetwork->GetName(), pUser->GetUsername()));
     }
 
     void DelServer(const CString& sLine) {
@@ -1186,16 +1204,16 @@ class CAdminMod : public CModule {
         if (pNetwork->DelServer(sServer, uPort, sPass))
             PutModule(
                 t_f("Deleted IRC Server {1} from network {2} for user {3}.")(
-                    sServer, pNetwork->GetName(), pUser->GetUserName()));
+                    sServer, pNetwork->GetName(), pUser->GetUsername()));
         else
             PutModule(
                 t_f("Error: Could not delete IRC server {1} from network {2} "
                     "for user {3}.")(sServer, pNetwork->GetName(),
-                                     pUser->GetUserName()));
+                                     pUser->GetUsername()));
     }
 
     void ReconnectUser(const CString& sLine) {
-        CString sUserName = sLine.Token(1);
+        CString sUsername = sLine.Token(1);
         CString sNetwork = sLine.Token(2);
 
         if (sNetwork.empty()) {
@@ -1203,7 +1221,7 @@ class CAdminMod : public CModule {
             return;
         }
 
-        CUser* pUser = FindUser(sUserName);
+        CUser* pUser = FindUser(sUsername);
         if (!pUser) {
             return;
         }
@@ -1227,11 +1245,11 @@ class CAdminMod : public CModule {
         pNetwork->SetIRCConnectEnabled(true);
 
         PutModule(t_f("Queued network {1} of user {2} for a reconnect.")(
-            pNetwork->GetName(), pUser->GetUserName()));
+            pNetwork->GetName(), pUser->GetUsername()));
     }
 
     void DisconnectUser(const CString& sLine) {
-        CString sUserName = sLine.Token(1);
+        CString sUsername = sLine.Token(1);
         CString sNetwork = sLine.Token(2);
 
         if (sNetwork.empty()) {
@@ -1239,7 +1257,7 @@ class CAdminMod : public CModule {
             return;
         }
 
-        CUser* pUser = FindUser(sUserName);
+        CUser* pUser = FindUser(sUsername);
         if (!pUser) {
             return;
         }
@@ -1251,22 +1269,23 @@ class CAdminMod : public CModule {
 
         pNetwork->SetIRCConnectEnabled(false);
         PutModule(t_f("Closed IRC connection for network {1} of user {2}.")(
-            pNetwork->GetName(), pUser->GetUserName()));
+            pNetwork->GetName(), pUser->GetUsername()));
     }
 
     void ListCTCP(const CString& sLine) {
-        CString sUserName = sLine.Token(1, true);
+        CString sUsername = sLine.Token(1, true);
 
-        if (sUserName.empty()) {
-            sUserName = GetUser()->GetUserName();
+        if (sUsername.empty()) {
+            sUsername = GetUser()->GetUsername();
         }
-        CUser* pUser = FindUser(sUserName);
+        CUser* pUser = FindUser(sUsername);
         if (!pUser) return;
 
         const MCString& msCTCPReplies = pUser->GetCTCPReplies();
         CTable Table;
         Table.AddColumn(t_s("Request", "listctcp"));
         Table.AddColumn(t_s("Reply", "listctcp"));
+        Table.SetStyle(CTable::ListStyle);
         for (const auto& it : msCTCPReplies) {
             Table.AddRow();
             Table.SetCell(t_s("Request", "listctcp"), it.first);
@@ -1275,22 +1294,22 @@ class CAdminMod : public CModule {
 
         if (Table.empty()) {
             PutModule(t_f("No CTCP replies for user {1} are configured")(
-                pUser->GetUserName()));
+                pUser->GetUsername()));
         } else {
-            PutModule(t_f("CTCP replies for user {1}:")(pUser->GetUserName()));
+            PutModule(t_f("CTCP replies for user {1}:")(pUser->GetUsername()));
             PutModule(Table);
         }
     }
 
     void AddCTCP(const CString& sLine) {
-        CString sUserName = sLine.Token(1);
+        CString sUsername = sLine.Token(1);
         CString sCTCPRequest = sLine.Token(2);
         CString sCTCPReply = sLine.Token(3, true);
 
         if (sCTCPRequest.empty()) {
-            sCTCPRequest = sUserName;
+            sCTCPRequest = sUsername;
             sCTCPReply = sLine.Token(2, true);
-            sUserName = GetUser()->GetUserName();
+            sUsername = GetUser()->GetUsername();
         }
         if (sCTCPRequest.empty()) {
             PutModule(t_s("Usage: AddCTCP [user] [request] [reply]"));
@@ -1302,29 +1321,29 @@ class CAdminMod : public CModule {
             return;
         }
 
-        CUser* pUser = FindUser(sUserName);
+        CUser* pUser = FindUser(sUsername);
         if (!pUser) return;
 
         pUser->AddCTCPReply(sCTCPRequest, sCTCPReply);
         if (sCTCPReply.empty()) {
             PutModule(t_f("CTCP requests {1} to user {2} will now be blocked.")(
-                sCTCPRequest.AsUpper(), pUser->GetUserName()));
+                sCTCPRequest.AsUpper(), pUser->GetUsername()));
         } else {
             PutModule(
                 t_f("CTCP requests {1} to user {2} will now get reply: {3}")(
-                    sCTCPRequest.AsUpper(), pUser->GetUserName(), sCTCPReply));
+                    sCTCPRequest.AsUpper(), pUser->GetUsername(), sCTCPReply));
         }
     }
 
     void DelCTCP(const CString& sLine) {
-        CString sUserName = sLine.Token(1);
+        CString sUsername = sLine.Token(1);
         CString sCTCPRequest = sLine.Token(2, true);
 
         if (sCTCPRequest.empty()) {
-            sCTCPRequest = sUserName;
-            sUserName = GetUser()->GetUserName();
+            sCTCPRequest = sUsername;
+            sUsername = GetUser()->GetUsername();
         }
-        CUser* pUser = FindUser(sUserName);
+        CUser* pUser = FindUser(sUsername);
         if (!pUser) return;
 
         if (sCTCPRequest.empty()) {
@@ -1335,12 +1354,12 @@ class CAdminMod : public CModule {
         if (pUser->DelCTCPReply(sCTCPRequest)) {
             PutModule(t_f(
                 "CTCP requests {1} to user {2} will now be sent to IRC clients")(
-                sCTCPRequest.AsUpper(), pUser->GetUserName()));
+                sCTCPRequest.AsUpper(), pUser->GetUsername()));
         } else {
             PutModule(
                 t_f("CTCP requests {1} to user {2} will be sent to IRC clients "
                     "(nothing has changed)")(sCTCPRequest.AsUpper(),
-                                             pUser->GetUserName()));
+                                             pUser->GetUsername()));
         }
     }
 
@@ -1481,6 +1500,7 @@ class CAdminMod : public CModule {
         CTable Table;
         Table.AddColumn(t_s("Name", "listmodules"));
         Table.AddColumn(t_s("Arguments", "listmodules"));
+        Table.SetStyle(CTable::ListStyle);
 
         for (const CModule* pMod : Modules) {
             Table.AddRow();
@@ -1504,11 +1524,11 @@ class CAdminMod : public CModule {
 
         if (pUser->GetModules().empty()) {
             PutModule(
-                t_f("User {1} has no modules loaded.")(pUser->GetUserName()));
+                t_f("User {1} has no modules loaded.")(pUser->GetUsername()));
             return;
         }
 
-        PutModule(t_f("Modules loaded for user {1}:")(pUser->GetUserName()));
+        PutModule(t_f("Modules loaded for user {1}:")(pUser->GetUsername()));
         ListModulesFor(pUser->GetModules());
     }
 
@@ -1528,12 +1548,13 @@ class CAdminMod : public CModule {
         if (!pNetwork) return;
 
         if (pNetwork->GetModules().empty()) {
-            PutModule(t_f("Network {1} of user {2} hasno modules loaded.")(
-                pNetwork->GetName(), pUser->GetUserName()));
+            PutModule(t_f("Network {1} of user {2} has no modules loaded.")(
+                pNetwork->GetName(), pUser->GetUsername()));
+            return;
         }
 
         PutModule(t_f("Modules loaded for network {1} of user {2}:")(
-            pNetwork->GetName(), pUser->GetUserName()));
+            pNetwork->GetName(), pUser->GetUsername()));
         ListModulesFor(pNetwork->GetModules());
     }
 

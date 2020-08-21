@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -221,14 +221,9 @@ sub ModInfoByPath {
 sub CallModFunc {
 	my $pmod = shift;
 	my $func = shift;
-	my $default = shift;
 	my @arg = @_;
 	my $res = $pmod->$func(@arg);
-#	print "Returned from $func(@_): $res, (@arg)\n";
-	unless (defined $res) {
-		$res = $default if defined $default;
-	}
-	($res, @arg)
+	(defined $res, $res//0, @arg)
 }
 
 sub CallTimer {
@@ -646,7 +641,7 @@ sub CreateTimer {
 			$self->{_cmod},
 			$a{interval}//10,
 			$a{cycles}//1,
-			"perl-timer",
+			$a{label}//"perl-timer",
 			$a{description}//'Just Another Perl Timer',
 			$ptimer);
 	$ptimer->{_ctimer} = $ctimer;

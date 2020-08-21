@@ -1,0 +1,52 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: kickrejoin.cpp:56
+msgid "<secs>"
+msgstr ""
+
+#: kickrejoin.cpp:56
+msgid "Set the rejoin delay"
+msgstr ""
+
+#: kickrejoin.cpp:58
+msgid "Show the rejoin delay"
+msgstr ""
+
+#: kickrejoin.cpp:77
+msgid "Illegal argument, must be a positive number or 0"
+msgstr ""
+
+#: kickrejoin.cpp:90
+msgid "Negative delays don't make any sense!"
+msgstr ""
+
+#: kickrejoin.cpp:98
+msgid "Rejoin delay set to 1 second"
+msgid_plural "Rejoin delay set to {1} seconds"
+msgstr[0] ""
+msgstr[1] ""
+
+#: kickrejoin.cpp:101
+msgid "Rejoin delay disabled"
+msgstr ""
+
+#: kickrejoin.cpp:106
+msgid "Rejoin delay is set to 1 second"
+msgid_plural "Rejoin delay is set to {1} seconds"
+msgstr[0] ""
+msgstr[1] ""
+
+#: kickrejoin.cpp:109
+msgid "Rejoin delay is disabled"
+msgstr ""
+
+#: kickrejoin.cpp:131
+msgid "You might enter the number of seconds to wait before rejoining."
+msgstr ""
+
+#: kickrejoin.cpp:134
+msgid "Autorejoins on kick"
+msgstr ""

@@ -1,0 +1,119 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: de\n"
+"X-Crowdin-File: /master/modules/po/sample.pot\n"
+"X-Crowdin-File-ID: 195\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+
+#: sample.cpp:31
+msgid "Sample job cancelled"
+msgstr "Beispielauftrag abgebrochen"
+
+#: sample.cpp:33
+msgid "Sample job destroyed"
+msgstr "Beispielauftrag zerstört"
+
+#: sample.cpp:50
+msgid "Sample job done"
+msgstr "Beispielauftrag erledigt"
+
+#: sample.cpp:65
+msgid "TEST!!!!"
+msgstr "TEST!!!!"
+
+#: sample.cpp:74
+msgid "I'm being loaded with the arguments: {1}"
+msgstr "Ich werde mit diesen Argumenten geladen: {1}"
+
+#: sample.cpp:85
+msgid "I'm being unloaded!"
+msgstr "Ich bin entladen!"
+
+#: sample.cpp:94
+msgid "You got connected BoyOh."
+msgstr "Du wurdest verbunden BoyOh."
+
+#: sample.cpp:98
+msgid "You got disconnected BoyOh."
+msgstr "Du wurdest getrennt BoyOh."
+
+#: sample.cpp:116
+msgid "{1} {2} set mode on {3} {4}{5} {6}"
+msgstr "{1} {2} setzt Modus in {3} {4}{5} {6}"
+
+#: sample.cpp:123
+msgid "{1} {2} opped {3} on {4}"
+msgstr "{1} {2} opped {3} in {4}"
+
+#: sample.cpp:129
+msgid "{1} {2} deopped {3} on {4}"
+msgstr "{1} {2} deopped {3} in {4}"
+
+#: sample.cpp:135
+msgid "{1} {2} voiced {3} on {4}"
+msgstr "{1} {2} voiced {3} in {4}"
+
+#: sample.cpp:141
+msgid "{1} {2} devoiced {3} on {4}"
+msgstr "{1} {2} devoiced {3} in {4}"
+
+#: sample.cpp:147
+msgid "* {1} sets mode: {2} {3} on {4}"
+msgstr "* {1} setzt Modus: {2} {3} in {4}"
+
+#: sample.cpp:163
+msgid "{1} kicked {2} from {3} with the msg {4}"
+msgstr "{1} kicked {2} aus {3} mit der Nachricht {4}"
+
+#: sample.cpp:169
+msgid "* {1} ({2}@{3}) quits ({4}) from channel: {6}"
+msgid_plural "* {1} ({2}@{3}) quits ({4}) from {5} channels: {6}"
+msgstr[0] "* {1} ({2}@{3}) verlässt ({4}) den Kanal: {6}"
+msgstr[1] "* {1} ({2}@{3}) verlässt ({4}) {5} Kanäle: {6}"
+
+#: sample.cpp:177
+msgid "Attempting to join {1}"
+msgstr "Versuche {1} beizutreten"
+
+#: sample.cpp:182
+msgid "* {1} ({2}@{3}) joins {4}"
+msgstr "* {1} ({2}@{3}) joins {4}"
+
+#: sample.cpp:189
+msgid "* {1} ({2}@{3}) parts {4}"
+msgstr "* {1} ({2}@{3}) parts {4}"
+
+#: sample.cpp:196
+msgid "{1} invited us to {2}, ignoring invites to {2}"
+msgstr "{1} lädt uns ein zu {2}, ignoriere Einladungen zu {2}"
+
+#: sample.cpp:201
+msgid "{1} invited us to {2}"
+msgstr "{1} hat uns zu {2} eingeladen"
+
+#: sample.cpp:207
+msgid "{1} is now known as {2}"
+msgstr "{1} ist jetzt als {2} bekannt"
+
+#: sample.cpp:269 sample.cpp:276
+msgid "{1} changes topic on {2} to {3}"
+msgstr "{1} hat das Thema von {2} auf {3} geändert"
+
+#: sample.cpp:317
+msgid "Hi, I'm your friendly sample module."
+msgstr "Hallo, ich bin dein freundliches Beispiel-Module."
+
+#: sample.cpp:330
+msgid "Description of module arguments goes here."
+msgstr "Modulbeschreibung kommt hier hin."
+
+#: sample.cpp:333
+msgid "To be used as a sample for writing modules"
+msgstr "Als Muster zum Schreiben von Modulen zu verwenden"

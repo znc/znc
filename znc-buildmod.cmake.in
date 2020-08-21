@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ args = parser.parse_args()
 with tempfile.TemporaryDirectory() as cmdir:
     with open(os.path.join(cmdir, 'CMakeLists.txt'), 'w') as cm:
         print('cmake_minimum_required(VERSION 3.1)', file=cm)
-        print('project(ExternalModules)', file=cm)
+        print('project(ExternalModules LANGUAGES CXX)', file=cm)
         print('find_package(ZNC @ZNC_VERSION_MAJOR@.@ZNC_VERSION_MINOR@ HINTS '
             '@CMAKE_INSTALL_FULL_DATADIR@/znc REQUIRED)', file=cm)
         if args.verbose > 0:
@@ -78,14 +78,7 @@ with tempfile.TemporaryDirectory() as cmdir:
             print(cm.read())
 
     with tempfile.TemporaryDirectory() as build:
-        command = ['cmake', '-G@CMAKE_GENERATOR@',
-            '-DCMAKE_C_COMPILER=@CMAKE_C_COMPILER@',
-            '-DCMAKE_CXX_COMPILER=@CMAKE_CXX_COMPILER@',
-            '-DCMAKE_CXX_FLAGS={} @CMAKE_CXX_FLAGS@'.format(
-                os.environ.get('CXXFLAGS', '')),
-            '-DCMAKE_MODULE_LINKER_FLAGS={} @CMAKE_MODULE_LINKER_FLAGS@'.format(
-                os.environ.get('LDFLAGS', '')),
-            cmdir]
+        command = ['cmake', cmdir]
         if args.verbose > 1:
             cmd.append('--debug-output')
         if args.verbose > 2:
@@ -96,4 +89,8 @@ with tempfile.TemporaryDirectory() as cmdir:
         subprocess.check_call(['cmake', '--build', '.'], cwd=build)
 
         for so in glob.iglob(os.path.join(build, '*.so')):
+            try:
+                os.remove(os.path.basename(so))
+            except OSError:
+                pass
             shutil.copy(so, os.getcwd())

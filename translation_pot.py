@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,14 +36,16 @@ pot_list = []
 tmpl_pot = args.tmp_prefix + '_tmpl.pot'
 tmpl_uniq_pot = args.tmp_prefix + '_tmpl_uniq.pot'
 tmpl = []
-pattern = re.compile(r'<\?\s*(?:FORMAT|(PLURAL))\s+(?:CTX="([^"]+?)"\s+)?"([^"]+?)"(?(1)\s+"([^"]+?)"|).*?\?>')
+pattern = re.compile(r'<\?\s*(?:FORMAT|(PLURAL))\s+(?:CTX="([^"]+?)"\s+)?"([^"]+?)"(?(1)\s+"([^"]+?)"|).*?(?:"TRANSLATORS:\s*([^"]+?)")?\s*\?>')
 for tmpl_dir in args.tmpl_dirs:
     for fname in glob.iglob(tmpl_dir + '/*.tmpl'):
         fbase = fname[len(args.strip_prefix):]
-        with open(fname) as f:
+        with open(fname, 'rt', encoding='utf8') as f:
             for linenum, line in enumerate(f):
                 for x in pattern.finditer(line):
-                    text, plural, context = x.group(3), x.group(4), x.group(2)
+                    text, plural, context, comment = x.group(3), x.group(4), x.group(2), x.group(5)
+                    if comment:
+                        tmpl.append('#  {}'.format(comment))
                     tmpl.append('#: {}:{}'.format(fbase, linenum + 1))
                     if context:
                         tmpl.append('msgctxt "{}"'.format(context))
@@ -55,17 +57,20 @@ for tmpl_dir in args.tmpl_dirs:
                     else:
                         tmpl.append('msgstr ""')
                     tmpl.append('')
-if tmpl:
-    with open(tmpl_pot, 'w') as f:
-        print('msgid ""', file=f)
-        print('msgstr ""', file=f)
-        print(r'"Content-Type: text/plain; charset=UTF-8\n"', file=f)
-        print(r'"Content-Transfer-Encoding: 8bit\n"', file=f)
-        print(file=f)
-        for line in tmpl:
-            print(line, file=f)
-    subprocess.check_call(['msguniq', '-o', tmpl_uniq_pot, tmpl_pot])
-    pot_list.append(tmpl_uniq_pot)
+
+# Bundle header to .tmpl, even if there were no .tmpl files.
+# Some .tmpl files contain non-ASCII characters, and the header is needed
+# anyway, because it's omitted from xgettext call below.
+with open(tmpl_pot, 'wt', encoding='utf8') as f:
+    print('msgid ""', file=f)
+    print('msgstr ""', file=f)
+    print(r'"Content-Type: text/plain; charset=UTF-8\n"', file=f)
+    print(r'"Content-Transfer-Encoding: 8bit\n"', file=f)
+    print(file=f)
+    for line in tmpl:
+        print(line, file=f)
+subprocess.check_call(['msguniq', '--force-po', '-o', tmpl_uniq_pot, tmpl_pot])
+pot_list.append(tmpl_uniq_pot)
 
 # .cpp
 main_pot = args.tmp_prefix + '_main.pot'

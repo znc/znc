@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -177,7 +177,7 @@ void CWebAuth::AcceptedLogin(CUser& User) {
             m_pWebSock->Redirect("/?cookie_check=true");
         }
 
-        DEBUG("Successful login attempt ==> USER [" + User.GetUserName() +
+        DEBUG("Successful login attempt ==> USER [" + User.GetUsername() +
               "] ==> SESSION [" + spSession->GetId() + "]");
     }
 }
@@ -446,7 +446,7 @@ bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module,
         }
 
         if (Module.GetUser()) {
-            Row["Username"] = Module.GetUser()->GetUserName();
+            Row["Username"] = Module.GetUser()->GetUsername();
         }
 
         VWebSubPages& vSubPages = Module.GetSubPages();
@@ -557,13 +557,15 @@ CWebSock::EPageReqResult CWebSock::PrintTemplate(const CString& sPageName,
 }
 
 CString CWebSock::GetSkinPath(const CString& sSkinName) {
-    CString sRet = CZNC::Get().GetZNCPath() + "/webskins/" + sSkinName;
+    const CString sSkin = sSkinName.Replace_n("/", "_").Replace_n(".", "_");
+
+    CString sRet = CZNC::Get().GetZNCPath() + "/webskins/" + sSkin;
 
     if (!CFile::IsDir(sRet)) {
-        sRet = CZNC::Get().GetCurPath() + "/webskins/" + sSkinName;
+        sRet = CZNC::Get().GetCurPath() + "/webskins/" + sSkin;
 
         if (!CFile::IsDir(sRet)) {
-            sRet = CString(_SKINDIR_) + "/" + sSkinName;
+            sRet = CString(_SKINDIR_) + "/" + sSkin;
         }
     }
 
@@ -670,7 +672,7 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI,
     SendCookie("SessionId", GetSession()->GetId());
 
     if (GetSession()->IsLoggedIn()) {
-        m_sUser = GetSession()->GetUser()->GetUserName();
+        m_sUser = GetSession()->GetUser()->GetUsername();
         m_bLoggedIn = true;
     }
     CLanguageScope user_language(
@@ -830,7 +832,7 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI,
                    pModule->GetUser() != GetSession()->GetUser()) {
             PrintErrorPage(403, "Forbidden",
                            "You must login as " +
-                               pModule->GetUser()->GetUserName() +
+                               pModule->GetUser()->GetUsername() +
                                " in order to view this page");
             return PAGE_DONE;
         } else if (pModule->OnWebPreRequest(*this, m_sPage)) {
@@ -942,7 +944,7 @@ std::shared_ptr<CWebSession> CWebSock::GetSession() {
         DEBUG("Found existing session from cookie: [" + sCookieSessionId +
               "] IsLoggedIn(" +
               CString((*pSession)->IsLoggedIn()
-                          ? "true, " + ((*pSession)->GetUser()->GetUserName())
+                          ? "true, " + ((*pSession)->GetUser()->GetUsername())
                           : "false") +
               ")");
         return *pSession;

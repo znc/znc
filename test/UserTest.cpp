@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,7 +115,37 @@ TEST_F(UserTest, IsHostAllowed) {
     for (const hostTest& h : aHostTests) {
         CUser user("user");
         user.AddAllowedHost(h.sMask);
-        EXPECT_EQ(h.bExpectedResult, user.IsHostAllowed(h.sIP))
+        EXPECT_EQ(user.IsHostAllowed(h.sIP), h.bExpectedResult)
             << "Allow-host is " << h.sMask;
     }
+}
+
+TEST_F(UserTest, TestAuthOnlyViaModule) {
+    CUser user("user");
+    user.SetPass("password", CUser::HASH_NONE);
+
+    bool bAuthOnlyViaModuleDefault = CZNC::Get().GetAuthOnlyViaModule();
+
+    CZNC::Get().SetAuthOnlyViaModule(false);
+    user.SetAuthOnlyViaModule(false);
+
+    EXPECT_TRUE(user.CheckPass("password"));
+
+    // user-level only
+    user.SetAuthOnlyViaModule(true);
+    EXPECT_FALSE(user.CheckPass("password"));
+
+    // re-enabling built-in authentication
+    user.SetAuthOnlyViaModule(false);
+    EXPECT_TRUE(user.CheckPass("password"));
+
+    // on at global level, off at user level
+    CZNC::Get().SetAuthOnlyViaModule(true);
+    EXPECT_FALSE(user.CheckPass("password"));
+
+    // on at both levels
+    user.SetAuthOnlyViaModule(true);
+    EXPECT_FALSE(user.CheckPass("password"));
+
+    CZNC::Get().SetAuthOnlyViaModule(bAuthOnlyViaModuleDefault);
 }

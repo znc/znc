@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,15 +65,15 @@ TEST_F(IRCSockTest, OnActionMessage) {
 
     CMessage msg(":nick PRIVMSG #chan :\001ACTION hello\001");
     auto CON = Invoke([&](CMessage& m) {
-        EXPECT_EQ(msg.ToString(), m.ToString());
-        EXPECT_EQ(m_pTestNetwork, m.GetNetwork());
-        EXPECT_EQ(pExpectedChan, m.GetChan());
+        EXPECT_EQ(m.ToString(), msg.ToString());
+        EXPECT_EQ(m.GetNetwork(), m_pTestNetwork);
+        EXPECT_EQ(m.GetChan(), pExpectedChan);
         return CModule::CONTINUE;
     });
     auto HAL = Invoke([&](CMessage& m) {
-        EXPECT_EQ(msg.ToString(), m.ToString());
-        EXPECT_EQ(m_pTestNetwork, m.GetNetwork());
-        EXPECT_EQ(pExpectedChan, m.GetChan());
+        EXPECT_EQ(m.ToString(), msg.ToString());
+        EXPECT_EQ(m.GetNetwork(), m_pTestNetwork);
+        EXPECT_EQ(m.GetChan(), pExpectedChan);
         return CModule::HALT;
     });
     auto Reset = [&]() {
@@ -211,7 +211,7 @@ TEST_F(IRCSockTest, OnErrorMessage) {
     EXPECT_THAT(
         m_pTestClient->vsLines,
         ElementsAre(
-            ":*status!znc@znc.in PRIVMSG me :Error from Server [foo bar]"));
+            ":*status!znc@znc.in PRIVMSG me :Error from server: foo bar"));
 }
 
 TEST_F(IRCSockTest, OnInviteMessage) {
@@ -328,6 +328,24 @@ TEST_F(IRCSockTest, OnPartMessage) {
     EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
     EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(m_pTestNetwork));
     EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(m_pTestChan));
+}
+
+TEST_F(IRCSockTest, StatusModes) {
+    m_pTestSock->ReadLine(
+        ":server 005 user PREFIX=(Yohv)!@%+ :are supported by this server");
+
+    EXPECT_TRUE(m_pTestSock->IsPermMode('Y'));
+    EXPECT_TRUE(m_pTestSock->IsPermMode('o'));
+    EXPECT_TRUE(m_pTestSock->IsPermMode('h'));
+    EXPECT_TRUE(m_pTestSock->IsPermMode('v'));
+
+    m_pTestChan->SetModes("+sp");
+    m_pTestChan->ModeChange("+Y :nick");
+    EXPECT_EQ(m_pTestChan->GetModeString(), "+ps");
+
+    const CNick& pNick = m_pTestChan->GetNicks().at("nick");
+    EXPECT_TRUE(pNick.HasPerm('!'));
+    EXPECT_FALSE(pNick.HasPerm('@'));
 }
 
 TEST_F(IRCSockTest, OnPingMessage) {
@@ -458,7 +476,7 @@ TEST_F(IRCSockTest, ISupport) {
         ":are supported by this server");
     EXPECT_THAT(m_pTestSock->GetISupport(), ContainerEq(m1));
     for (const auto& it : m1) {
-        EXPECT_EQ(it.second, m_pTestSock->GetISupport(it.first));
+        EXPECT_EQ(m_pTestSock->GetISupport(it.first), it.second);
     }
 
     MCString m2 = {
@@ -489,7 +507,7 @@ TEST_F(IRCSockTest, ISupport) {
         "MONITOR: :are supported by this server");
     EXPECT_THAT(m_pTestSock->GetISupport(), ContainerEq(m12));
     for (const auto& it : m2) {
-        EXPECT_EQ(it.second, m_pTestSock->GetISupport(it.first));
+        EXPECT_EQ(m_pTestSock->GetISupport(it.first), it.second);
     }
 
     MCString m3 = {
@@ -506,12 +524,12 @@ TEST_F(IRCSockTest, ISupport) {
         "ELIST=CTU :are supported by this server");
     EXPECT_THAT(m_pTestSock->GetISupport(), ContainerEq(m123));
     for (const auto& it : m3) {
-        EXPECT_EQ(it.second, m_pTestSock->GetISupport(it.first));
+        EXPECT_EQ(m_pTestSock->GetISupport(it.first), it.second);
     }
 
-    EXPECT_EQ("default", m_pTestSock->GetISupport("FOOBAR", "default"));
-    EXPECT_EQ("3.0", m_pTestSock->GetISupport("CLIENTVER", "default"));
-    EXPECT_EQ("", m_pTestSock->GetISupport("SAFELIST", "default"));
+    EXPECT_EQ(m_pTestSock->GetISupport("FOOBAR", "default"), "default");
+    EXPECT_EQ(m_pTestSock->GetISupport("CLIENTVER", "default"), "3.0");
+    EXPECT_EQ(m_pTestSock->GetISupport("SAFELIST", "default"), "");
 }
 
 TEST_F(IRCSockTest, StatusMsg) {
@@ -524,9 +542,19 @@ TEST_F(IRCSockTest, StatusMsg) {
     m_pTestUser->SetAutoClearChanBuffer(false);
     m_pTestSock->ReadLine(":someone PRIVMSG @#chan :hello ops");
 
-    EXPECT_EQ(1u, m_pTestChan->GetBuffer().Size());
+    EXPECT_EQ(m_pTestChan->GetBuffer().Size(), 1u);
 
     m_pTestUser->SetTimestampPrepend(false);
-    EXPECT_EQ(":someone PRIVMSG @#chan :hello ops",
-              m_pTestChan->GetBuffer().GetLine(0, *m_pTestClient));
+    EXPECT_EQ(m_pTestChan->GetBuffer().GetLine(0, *m_pTestClient),
+              ":someone PRIVMSG @#chan :hello ops");
+}
+
+TEST_F(IRCSockTest, ChanMode) {
+    // https://github.com/znc/znc/issues/1684
+    m_pTestSock->ReadLine(
+        ":irc.znc.in 001 me :Welcome to the Internet Relay Network me");
+    m_pTestSock->ReadLine(
+        ":irc.znc.in 005 me CHANMODES=be,f,lj,nti "
+        ":are supported by this server");
+	m_pTestSock->ReadLine(":irc.znc.in 324 me #chan +ntf ");
 }

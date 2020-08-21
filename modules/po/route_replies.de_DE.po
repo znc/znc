@@ -1,0 +1,65 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: de\n"
+"X-Crowdin-File: /master/modules/po/route_replies.pot\n"
+"X-Crowdin-File-ID: 194\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+
+#: route_replies.cpp:215
+msgid "[yes|no]"
+msgstr "[ja|nein]"
+
+#: route_replies.cpp:216
+msgid "Decides whether to show the timeout messages or not"
+msgstr ""
+"Entscheidet ob eine Zeitüberschreitungsnachricht angezeigt werden soll oder "
+"nicht"
+
+#: route_replies.cpp:356
+msgid "This module hit a timeout which is probably a connectivity issue."
+msgstr ""
+"Dieses Modul hatte eine Zeitüberschreitung, was wahrscheinlich ein "
+"Verbindungsproblem ist."
+
+#: route_replies.cpp:359
+msgid ""
+"However, if you can provide steps to reproduce this issue, please do report "
+"a bug."
+msgstr ""
+"Falls du allerdings die Schritte zum Reproduzieren dieses Problems angeben "
+"kannst, dann erstelle bitte einen Fehlerbericht."
+
+#: route_replies.cpp:362
+msgid "To disable this message, do \"/msg {1} silent yes\""
+msgstr "Um diese Nachricht zu deaktivieren, mache \"/msg {1} silent yes\""
+
+#: route_replies.cpp:364
+msgid "Last request: {1}"
+msgstr "Letzte Anfrage: {1}"
+
+#: route_replies.cpp:365
+msgid "Expected replies:"
+msgstr "Erwartete Antworten:"
+
+#: route_replies.cpp:369
+msgid "{1} (last)"
+msgstr "{1} (letzte)"
+
+#: route_replies.cpp:441
+msgid "Timeout messages are disabled."
+msgstr "Zeitüberschreitungsnachrichten sind deaktiviert."
+
+#: route_replies.cpp:442
+msgid "Timeout messages are enabled."
+msgstr "Zeitüberschreitungsnachrichten sind aktiviert."
+
+#: route_replies.cpp:463
+msgid "Send replies (e.g. to /who) to the right client only"
+msgstr "Sende Antworten (z.B. auf /who) nur zum richtigen Klienten"

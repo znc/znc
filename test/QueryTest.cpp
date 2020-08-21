@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ TEST_F(QueryTest, Name) {
     CIRCNetwork network(&user, "network");
 
     CQuery query("query", &network);
-    EXPECT_EQ("query", query.GetName());
+    EXPECT_EQ(query.GetName(), "query");
 }
 
 TEST_F(QueryTest, AddClearBuffer) {
@@ -44,9 +44,9 @@ TEST_F(QueryTest, AddClearBuffer) {
     CQuery query("query", &network);
     EXPECT_TRUE(query.GetBuffer().IsEmpty());
     query.AddBuffer("foo");
-    EXPECT_EQ(1u, query.GetBuffer().Size());
+    EXPECT_EQ(query.GetBuffer().Size(), 1u);
     query.AddBuffer("bar");
-    EXPECT_EQ(2u, query.GetBuffer().Size());
+    EXPECT_EQ(query.GetBuffer().Size(), 2u);
     query.ClearBuffer();
     EXPECT_TRUE(query.GetBuffer().IsEmpty());
 }
@@ -56,16 +56,16 @@ TEST_F(QueryTest, BufferSize) {
     CIRCNetwork network(&user, "network");
 
     CQuery query("query", &network);
-    EXPECT_EQ(50u, user.GetQueryBufferSize());
-    EXPECT_EQ(50u, query.GetBufferCount());
+    EXPECT_EQ(user.GetQueryBufferSize(), 50u);
+    EXPECT_EQ(query.GetBufferCount(), 50u);
 
-    EXPECT_EQ(500u, CZNC::Get().GetMaxBufferSize());
+    EXPECT_EQ(CZNC::Get().GetMaxBufferSize(), 500u);
     EXPECT_FALSE(query.SetBufferCount(1000, false));
-    EXPECT_EQ(50u, query.GetBufferCount());
+    EXPECT_EQ(query.GetBufferCount(), 50u);
     EXPECT_TRUE(query.SetBufferCount(500, false));
-    EXPECT_EQ(500u, query.GetBufferCount());
+    EXPECT_EQ(query.GetBufferCount(), 500u);
     EXPECT_TRUE(query.SetBufferCount(1000, true));
-    EXPECT_EQ(1000u, query.GetBufferCount());
+    EXPECT_EQ(query.GetBufferCount(), 1000u);
 }
 
 TEST_F(QueryTest, SendBuffer) {

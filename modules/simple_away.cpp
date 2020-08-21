@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -170,16 +170,11 @@ class CSimpleAway : public CModule {
         }
     }
 
-    EModRet OnUserRaw(CString& sLine) override {
-        if (!sLine.Token(0).Equals("AWAY")) return CONTINUE;
+    EModRet OnUserRawMessage(CMessage& msg) override {
+        if (!msg.GetCommand().Equals("AWAY")) return CONTINUE;
 
         // If a client set us away, we don't touch that away message
-        const CString sArg = sLine.Token(1, true).Trim_n(" ");
-        if (sArg.empty() || sArg == ":")
-            m_bClientSetAway = false;
-        else
-            m_bClientSetAway = true;
-
+        m_bClientSetAway = !msg.GetParam(0).Trim_n(" ").empty();
         m_bWeSetAway = false;
 
         return CONTINUE;
@@ -216,7 +211,7 @@ class CSimpleAway : public CModule {
         if (sReason.empty()) sReason = SIMPLE_AWAY_DEFAULT_REASON;
 
         time_t iTime = time(nullptr);
-        CString sTime = CUtils::CTime(iTime, GetUser()->GetTimezone());
+        CString sTime = CUtils::CTime(iTime, "Etc/UTC") + " UTC";
         sReason.Replace("%awaytime%", sTime);
         sReason = ExpandString(sReason);
         sReason.Replace("%s", sTime);  // Backwards compatibility with previous

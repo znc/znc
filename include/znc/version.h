@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,19 +16,9 @@ limitations under the License.
 #ifndef ZNC_VERSION_H
 #define ZNC_VERSION_H
 
-#ifndef BUILD_WITH_CMAKE
-// The following defines are for #if comparison (preprocessor only likes ints)
-#define VERSION_MAJOR 1
-#define VERSION_MINOR 7
-#define VERSION_PATCH -1
-// This one is for display purpose and to check ABI compatibility of modules
-#define VERSION_STR "1.7.x"
-#endif
-
 // Don't use this one
 #define VERSION (VERSION_MAJOR + VERSION_MINOR / 10.0)
 
-// autoconf: You can add -DVERSION_EXTRA="stuff" to your CXXFLAGS!
 // CMake: You can add -DVERSION_EXTRA=stuff to cmake!
 #ifndef VERSION_EXTRA
 #define VERSION_EXTRA ""

@@ -1,0 +1,69 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
+"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
+"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: /master/modules/po/lastseen.pot\n"
+"X-Crowdin-File-ID: 178\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Polish\n"
+"Language: pl_PL\n"
+
+#: modules/po/../data/lastseen/tmpl/index.tmpl:8
+msgid "User"
+msgstr "Użytkownik"
+
+#: modules/po/../data/lastseen/tmpl/index.tmpl:9 lastseen.cpp:99
+msgid "Last Seen"
+msgstr "Ostatnio widziany"
+
+#: modules/po/../data/lastseen/tmpl/index.tmpl:10
+msgid "Info"
+msgstr "Info"
+
+#: modules/po/../data/lastseen/tmpl/index.tmpl:11
+msgid "Action"
+msgstr "Działanie"
+
+#: modules/po/../data/lastseen/tmpl/index.tmpl:21
+msgid "Edit"
+msgstr "Edytuj"
+
+#: modules/po/../data/lastseen/tmpl/index.tmpl:22
+msgid "Delete"
+msgstr "Usuń"
+
+#: modules/po/../data/lastseen/tmpl/lastseen_WebadminUser.tmpl:6
+msgid "Last login time:"
+msgstr "Czas ostatniego logowania:"
+
+#: lastseen.cpp:53
+msgid "Access denied"
+msgstr "Odmowa dostępu"
+
+#: lastseen.cpp:61 lastseen.cpp:67
+msgctxt "show"
+msgid "User"
+msgstr "Użytkownik"
+
+#: lastseen.cpp:62 lastseen.cpp:68
+msgctxt "show"
+msgid "Last Seen"
+msgstr "Ostatnio widziany"
+
+#: lastseen.cpp:69 lastseen.cpp:125
+msgid "never"
+msgstr "nigdy"
+
+#: lastseen.cpp:79
+msgid "Shows list of users and when they last logged in"
+msgstr "Pokazuje listę użytkowników i kiedy się ostatni raz logowali"
+
+#: lastseen.cpp:154
+msgid "Collects data about when a user last logged in."
+msgstr "Zbiera dane o tym, kiedy użytkownik był ostatnio zalogowany."

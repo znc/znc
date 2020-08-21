@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,14 @@
 #include <znc/Message.h>
 #ifdef HAVE_LIBSSL
 #include <openssl/ssl.h>
-#include <memory>
+#include <openssl/bn.h>
+#include <openssl/rsa.h>
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L) || (defined(LIBRESSL_VERSION_NUMBER) && (LIBRESSL_VERSION_NUMBER < 0x20700000L))
+#define X509_getm_notBefore X509_get_notBefore
+#define X509_getm_notAfter X509_get_notAfter
+#endif
 #endif /* HAVE_LIBSSL */
+#include <memory>
 #include <unistd.h>
 #include <time.h>
 
@@ -93,8 +99,8 @@ void CUtils::GenerateCert(FILE* pOut, const CString& sHost) {
 
     X509_set_version(pCert.get(), 2);
     ASN1_INTEGER_set(X509_get_serialNumber(pCert.get()), serial);
-    X509_gmtime_adj(X509_get_notBefore(pCert.get()), 0);
-    X509_gmtime_adj(X509_get_notAfter(pCert.get()),
+    X509_gmtime_adj(X509_getm_notBefore(pCert.get()), 0);
+    X509_gmtime_adj(X509_getm_notAfter(pCert.get()),
                     (long)60 * 60 * 24 * days * years);
     X509_set_pubkey(pCert.get(), pKey.get());
 
@@ -121,7 +127,6 @@ void CUtils::GenerateCert(FILE* pOut, const CString& sHost) {
     X509_NAME_add_entry_by_txt(pName, "emailAddress", MBSTRING_ASC,
                                (unsigned char*)sEmailAddr.c_str(), -1, -1, 0);
 
-    X509_set_subject_name(pCert.get(), pName);
     X509_set_issuer_name(pCert.get(), pName);
 
     if (!X509_sign(pCert.get(), pKey.get(), EVP_sha256())) return;
@@ -499,6 +504,64 @@ CString CUtils::FormatTime(time_t t, const CString& sFormat,
     return s;
 }
 
+CString CUtils::FormatTime(const timeval& tv, const CString& sFormat,
+                           const CString& sTimezone) {
+    // Parse additional format specifiers before passing them to
+    // strftime, since the way strftime treats unknown format
+    // specifiers is undefined.
+    CString sFormat2;
+
+    // Make sure %% is parsed correctly, i.e. %%f is passed through to
+    // strftime to become %f, and not 123.
+    bool bInFormat = false;
+    int iDigits;
+    CString::size_type uLastCopied = 0, uFormatStart;
+
+    for (CString::size_type i = 0; i < sFormat.length(); i++) {
+        if (!bInFormat) {
+            if (sFormat[i] == '%') {
+                uFormatStart = i;
+                bInFormat = true;
+                iDigits = 3;
+            }
+        } else {
+            switch (sFormat[i]) {
+                case '0': case '1': case '2': case '3': case '4':
+                case '5': case '6': case '7': case '8': case '9':
+                    iDigits = sFormat[i] - '0';
+                    break;
+                case 'f': {
+                    int iVal = tv.tv_usec;
+                    int iDigitDelta = iDigits - 6; // tv_user is in 10^-6 seconds
+                    for (; iDigitDelta > 0; iDigitDelta--)
+                        iVal *= 10;
+                    for (; iDigitDelta < 0; iDigitDelta++)
+                        iVal /= 10;
+                    sFormat2 += sFormat.substr(uLastCopied,
+                        uFormatStart - uLastCopied);
+                    CString sVal = CString(iVal);
+                    sFormat2 += CString(iDigits - sVal.length(), '0');
+                    sFormat2 += sVal;
+                    uLastCopied = i + 1;
+                    bInFormat = false;
+                    break;
+                }
+                default:
+                    bInFormat = false;
+            }
+        }
+    }
+
+    if (uLastCopied) {
+        sFormat2 += sFormat.substr(uLastCopied);
+        return FormatTime(tv.tv_sec, sFormat2, sTimezone);
+    } else {
+        // If there are no extended format specifiers, avoid doing any
+        // memory allocations entirely.
+        return FormatTime(tv.tv_sec, sFormat, sTimezone);
+    }
+}
+
 CString CUtils::FormatServerTime(const timeval& tv) {
     CString s_msec(tv.tv_usec / 1000);
     while (s_msec.length() < 3) {
@@ -697,6 +760,8 @@ void CUtils::SetMessageTags(CString& sLine, const MCString& mssTags) {
 }
 
 bool CTable::AddColumn(const CString& sName) {
+    if (eStyle == ListStyle && m_vsHeaders.size() >= 2)
+        return false;
     for (const CString& sHeader : m_vsHeaders) {
         if (sHeader.Equals(sName)) {
             return false;
@@ -706,6 +771,19 @@ bool CTable::AddColumn(const CString& sName) {
     m_vsHeaders.push_back(sName);
     m_msuWidths[sName] = sName.size();
 
+    return true;
+}
+
+bool CTable::SetStyle(EStyle eNewStyle) {
+    switch (eNewStyle) {
+    case GridStyle:
+        break;
+    case ListStyle:
+        if (m_vsHeaders.size() > 2) return false;
+        break;
+    }
+
+    eStyle = eNewStyle;
     return true;
 }
 
@@ -747,6 +825,20 @@ bool CTable::GetLine(unsigned int uIdx, CString& sLine) const {
 
     if (empty()) {
         return false;
+    }
+
+    if (eStyle == ListStyle) {
+        if (m_vsHeaders.size() > 2) return false; // definition list mode can only do up to two columns
+        if (uIdx >= size()) return false;
+
+        const std::vector<CString>& mRow = (*this)[uIdx];
+        ssRet << "\x02" << mRow[0] << "\x0f"; //bold first column
+        if (m_vsHeaders.size() >= 2 && mRow[1] != "") {
+            ssRet << ": " << mRow[1];
+        }
+
+        sLine = ssRet.str();
+        return true;
     }
 
     if (uIdx == 1) {

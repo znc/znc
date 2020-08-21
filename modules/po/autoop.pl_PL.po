@@ -1,0 +1,181 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
+"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
+"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: /master/modules/po/autoop.pot\n"
+"X-Crowdin-File-ID: 153\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Polish\n"
+"Language: pl_PL\n"
+
+#: autoop.cpp:154
+msgid "List all users"
+msgstr "Lista wszystkich użytkowników"
+
+#: autoop.cpp:156 autoop.cpp:159
+msgid "<user> <channel> [channel] ..."
+msgstr "<użytkownik> <kanał> [kanał] ..."
+
+#: autoop.cpp:157
+msgid "Adds channels to a user"
+msgstr "Dodaje kanały do użytkownika"
+
+#: autoop.cpp:160
+msgid "Removes channels from a user"
+msgstr "Usuwa kanały z użytkownika"
+
+#: autoop.cpp:162 autoop.cpp:165
+msgid "<user> <mask>,[mask] ..."
+msgstr "<użytkownik> <maska>,[maska] ..."
+
+#: autoop.cpp:163
+msgid "Adds masks to a user"
+msgstr "Dodaje maski do użytkownika"
+
+#: autoop.cpp:166
+msgid "Removes masks from a user"
+msgstr "Usuwa maski użytkownika"
+
+#: autoop.cpp:169
+msgid "<user> <hostmask>[,<hostmasks>...] <key> [channels]"
+msgstr "<użytkownik> <maska_hosta>[,<maski_hosta>...] <klucz> [kanały]"
+
+#: autoop.cpp:170
+msgid "Adds a user"
+msgstr "Dodaje użytkownika"
+
+#: autoop.cpp:172
+msgid "<user>"
+msgstr "<użytkownik>"
+
+#: autoop.cpp:172
+msgid "Removes a user"
+msgstr "Usuwa użytkownika"
+
+#: autoop.cpp:275
+msgid "Usage: AddUser <user> <hostmask>[,<hostmasks>...] <key> [channels]"
+msgstr ""
+"Użycie: AddUser <użytkownik> <maska_hosta>[,<maski_hosta>...] <klucz> "
+"[kanały]"
+
+#: autoop.cpp:291
+msgid "Usage: DelUser <user>"
+msgstr "Użycie: DelUser <użytkownik>"
+
+#: autoop.cpp:300
+msgid "There are no users defined"
+msgstr "Brak zdefiniowanych użytkowników"
+
+#: autoop.cpp:306 autoop.cpp:317 autoop.cpp:321 autoop.cpp:323
+msgid "User"
+msgstr "Użytkownik"
+
+#: autoop.cpp:307 autoop.cpp:325
+msgid "Hostmasks"
+msgstr "Maski hosta"
+
+#: autoop.cpp:308 autoop.cpp:318
+msgid "Key"
+msgstr "Klucz"
+
+#: autoop.cpp:309 autoop.cpp:319
+msgid "Channels"
+msgstr "Kanały"
+
+#: autoop.cpp:337
+msgid "Usage: AddChans <user> <channel> [channel] ..."
+msgstr "Użycie: AddChans <użytkownik> <kanał> [kanał] ..."
+
+#: autoop.cpp:344 autoop.cpp:365 autoop.cpp:387 autoop.cpp:408 autoop.cpp:472
+msgid "No such user"
+msgstr "Nie ma takiego użytkownika"
+
+#: autoop.cpp:349
+msgid "Channel(s) added to user {1}"
+msgstr "Kanał(y) został(y) dodane/y do użytkownika {1}"
+
+#: autoop.cpp:358
+msgid "Usage: DelChans <user> <channel> [channel] ..."
+msgstr "Użycie: DelChans <użytkownik> <kanał> [kanał] ..."
+
+#: autoop.cpp:371
+msgid "Channel(s) Removed from user {1}"
+msgstr "Kanał(y) został(y) usunięte/y od użytkownika {1}"
+
+#: autoop.cpp:380
+msgid "Usage: AddMasks <user> <mask>,[mask] ..."
+msgstr "Użycie: AddMasks <użytkownik> <maska>,[maska] ..."
+
+#: autoop.cpp:392
+msgid "Hostmasks(s) added to user {1}"
+msgstr "Dodano maskę/i hosta do użytkownika {1}"
+
+#: autoop.cpp:401
+msgid "Usage: DelMasks <user> <mask>,[mask] ..."
+msgstr "Użycie: DelMasks <użytkownik> <maska>,[maska] ..."
+
+#: autoop.cpp:413
+msgid "Removed user {1} with key {2} and channels {3}"
+msgstr "Usunięto użytkownika {1} z kluczem {2} i kanałami {3}"
+
+#: autoop.cpp:419
+msgid "Hostmasks(s) Removed from user {1}"
+msgstr "Usunięto maski hosta użytkownikowi {1}"
+
+#: autoop.cpp:478
+msgid "User {1} removed"
+msgstr "Użytkownik {1} usunięty"
+
+#: autoop.cpp:484
+msgid "That user already exists"
+msgstr "Ten użytkownik już istnieje"
+
+#: autoop.cpp:490
+msgid "User {1} added with hostmask(s) {2}"
+msgstr "Użytkownik {1} został dodany z maską/maskami {2}"
+
+#: autoop.cpp:532
+msgid ""
+"[{1}] sent us a challenge but they are not opped in any defined channels."
+msgstr ""
+"[{1}] wysłał nam wyzwanie, ale nie są operatorami w żadnych zdefiniowanych "
+"kanałach."
+
+#: autoop.cpp:536
+msgid "[{1}] sent us a challenge but they do not match a defined user."
+msgstr ""
+"[{1}] wysłał nam wyzwanie, ale nie pasuje do zdefiniowanego użytkownika."
+
+#: autoop.cpp:544
+msgid "WARNING! [{1}] sent an invalid challenge."
+msgstr "OSTRZEŻENIE! [{1}] wysłał nieprawidłowe wyzwanie."
+
+#: autoop.cpp:560
+msgid "[{1}] sent an unchallenged response.  This could be due to lag."
+msgstr ""
+"[{1}] wysłał nieprawidłową odpowiedź na wyzwanie. Może to być spowodowane "
+"opóźnieniem."
+
+#: autoop.cpp:577
+msgid ""
+"WARNING! [{1}] sent a bad response.  Please verify that you have their "
+"correct password."
+msgstr ""
+"OSTRZEŻENIE! [{1}] wysłał złą odpowiedź. Zweryfikuj, czy masz ich poprawne "
+"hasło."
+
+#: autoop.cpp:586
+msgid "WARNING! [{1}] sent a response but did not match any defined users."
+msgstr ""
+"OSTRZEŻENIE! [{1}] wysłał odpowiedź, ale nie pasował do żadnego "
+"zdefiniowanego użytkownika."
+
+#: autoop.cpp:644
+msgid "Auto op the good people"
+msgstr "Automatyczne przydzielanie operatora dobrym ludziom"

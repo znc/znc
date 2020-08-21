@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  * Author: imaginos <imaginos@imaginos.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -141,18 +141,18 @@ class CSChat : public CModule {
         }
     }
 
-    EModRet OnUserRaw(CString& sLine) override {
-        if (sLine.StartsWith("schat ")) {
-            OnModCommand("chat " + sLine.substr(6));
-            return (HALT);
+    EModRet OnUserRawMessage(CMessage& msg) override {
+        if (!msg.GetCommand().Equals("schat")) return CONTINUE;
 
-        } else if (sLine.Equals("schat")) {
+        const CString sParams = msg.GetParamsColon(0);
+        if (sParams.empty()) {
             PutModule("SChat User Area ...");
             OnModCommand("help");
-            return (HALT);
+        } else {
+            OnModCommand("chat " + sParams);
         }
 
-        return (CONTINUE);
+        return HALT;
     }
 
     void OnModCommand(const CString& sCommand) override {

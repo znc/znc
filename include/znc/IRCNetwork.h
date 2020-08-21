@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ class CIRCNetworkPingTimer;
 class CIRCNetworkJoinTimer;
 class CMessage;
 
-class CIRCNetwork {
+class CIRCNetwork : private CCoreTranslationMixin {
   public:
     static bool IsValidNetwork(const CString& sNetwork);
 
@@ -155,6 +155,7 @@ class CIRCNetwork {
     void CheckIRCConnect();
 
     bool PutIRC(const CString& sLine);
+    bool PutIRC(const CMessage& Message);
 
     // Buffers
     void AddRawBuffer(const CMessage& Format, const CString& sText = "") {

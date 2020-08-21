@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ class CConfigErrorTest : public CConfigTest {
         CString sError;
         EXPECT_FALSE(conf.Parse(File, sError));
 
-        EXPECT_EQ(sExpectError, sError);
+        EXPECT_EQ(sError, sExpectError);
     }
 };
 
@@ -66,7 +66,7 @@ class CConfigSuccessTest : public CConfigTest {
         CString sOutput;
         ToString(sOutput, conf);
 
-        EXPECT_EQ(sExpectedOutput, sOutput);
+        EXPECT_EQ(sOutput, sExpectedOutput);
     }
 
     void ToString(CString& sRes, CConfig& conf) {

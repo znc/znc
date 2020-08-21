@@ -1,65 +1,64 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
 #: cyrusauth.cpp:42
-msgid "[yes|no]"
+msgid "Shows current settings"
 msgstr ""
 
-#: cyrusauth.cpp:43
-msgid "Create ZNC user upon first successful login"
+#: cyrusauth.cpp:44
+msgid "yes|clone <username>|no"
 msgstr ""
 
 #: cyrusauth.cpp:45
-msgid "[username]"
+msgid ""
+"Create ZNC users upon first successful login, optionally from a template"
 msgstr ""
 
-#: cyrusauth.cpp:46
-msgid "User to be used as the template for new users"
-msgstr ""
-
-#: cyrusauth.cpp:59
+#: cyrusauth.cpp:56
 msgid "Access denied"
 msgstr ""
 
-#: cyrusauth.cpp:73
+#: cyrusauth.cpp:70
 msgid "Ignoring invalid SASL pwcheck method: {1}"
 msgstr ""
 
-#: cyrusauth.cpp:74
+#: cyrusauth.cpp:71
 msgid "Ignored invalid SASL pwcheck method"
 msgstr ""
 
-#: cyrusauth.cpp:82
+#: cyrusauth.cpp:79
 msgid "Need a pwcheck method as argument (saslauthd, auxprop)"
 msgstr ""
 
-#: cyrusauth.cpp:87
+#: cyrusauth.cpp:84
 msgid "SASL Could Not Be Initialized - Halting Startup"
 msgstr ""
 
-#: cyrusauth.cpp:180
-msgid "We will create users on their first login"
-msgstr ""
-
-#: cyrusauth.cpp:182
+#: cyrusauth.cpp:171 cyrusauth.cpp:186
 msgid "We will not create users on their first login"
 msgstr ""
 
-#: cyrusauth.cpp:194
-msgid "We will clone {1}"
+#: cyrusauth.cpp:174 cyrusauth.cpp:195
+msgid ""
+"We will create users on their first login, using user [{1}] as a template"
 msgstr ""
 
-#: cyrusauth.cpp:196
-msgid "We will not clone a user"
+#: cyrusauth.cpp:177 cyrusauth.cpp:190
+msgid "We will create users on their first login"
 msgstr ""
 
-#: cyrusauth.cpp:202
-msgid "Clone user disabled"
+#: cyrusauth.cpp:199
+msgid "Usage: CreateUsers yes, CreateUsers no, or CreateUsers clone <username>"
 msgstr ""
 
-#: cyrusauth.cpp:233
+#: cyrusauth.cpp:232
 msgid ""
 "This global module takes up to two arguments - the methods of authentication "
 "- auxprop and saslauthd"
 msgstr ""
 
-#: cyrusauth.cpp:239
+#: cyrusauth.cpp:238
 msgid "Allow users to authenticate via SASL password verification method"
 msgstr ""

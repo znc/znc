@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ class TestClient : public CClient {
     }
     void Reset() { vsLines.clear(); }
     void SetAccountNotify(bool bEnabled) { m_bAccountNotify = bEnabled; }
+    void SetAccountTag(bool bEnabled) { m_bAccountTag = bEnabled; }
     void SetAwayNotify(bool bEnabled) { m_bAwayNotify = bEnabled; }
     void SetExtendedJoin(bool bEnabled) { m_bExtendedJoin = bEnabled; }
     void SetNamesx(bool bEnabled) { m_bNamesx = bEnabled; }

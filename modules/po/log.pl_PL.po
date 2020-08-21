@@ -1,0 +1,158 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
+"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
+"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: /master/modules/po/log.pot\n"
+"X-Crowdin-File-ID: 180\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Polish\n"
+"Language: pl_PL\n"
+
+#: log.cpp:59
+msgid "<rules>"
+msgstr "<reguły>"
+
+#: log.cpp:60
+msgid "Set logging rules, use !#chan or !query to negate and * "
+msgstr ""
+"Ustaw reguły kronikowania, możesz użyć !#kanał lub !rozmowa, aby zanegować i "
+"wieloznacznika * "
+
+#: log.cpp:62
+msgid "Clear all logging rules"
+msgstr "Wyczyść wszystkie reguły kronikowania"
+
+#: log.cpp:64
+msgid "List all logging rules"
+msgstr "Lista wszystkich reguł kronikowania"
+
+#: log.cpp:67
+msgid "<var> true|false"
+msgstr "<var> true|false"
+
+#: log.cpp:68
+msgid "Set one of the following options: joins, quits, nickchanges"
+msgstr "Ustaw jedną z następujących opcji: joins, quits, nickchanges"
+
+#: log.cpp:71
+msgid "Show current settings set by Set command"
+msgstr "Pokaż bieżące ustawienia ustawione poleceniem Set"
+
+#: log.cpp:143
+msgid "Usage: SetRules <rules>"
+msgstr "Użycie: SetRules <reguły>"
+
+#: log.cpp:144
+msgid "Wildcards are allowed"
+msgstr "Wieloznaczniki są dozwolone"
+
+#: log.cpp:156 log.cpp:179
+msgid "No logging rules. Everything is logged."
+msgstr "Brak reguł kronikowania. Wszystko jest kronikowane."
+
+#: log.cpp:161
+msgid "1 rule removed: {2}"
+msgid_plural "{1} rules removed: {2}"
+msgstr[0] "1 reguła usunięta: {2}"
+msgstr[1] "{1} reguły usunięte: {2}"
+msgstr[2] "{1} reguł usunięto: {2}"
+msgstr[3] "{1} reguł usunięto: {2}"
+
+#: log.cpp:168 log.cpp:174
+msgctxt "listrules"
+msgid "Rule"
+msgstr "Reguła"
+
+#: log.cpp:169 log.cpp:175
+msgctxt "listrules"
+msgid "Logging enabled"
+msgstr "Włączono kronikowanie"
+
+#: log.cpp:190
+msgid ""
+"Usage: Set <var> true|false, where <var> is one of: joins, quits, nickchanges"
+msgstr ""
+"Użycie: Set <zmienna> true|false, gdzie <zmienna> jest jedną z: joins, "
+"quits, nickchanges"
+
+#: log.cpp:197
+msgid "Will log joins"
+msgstr "Będą kronikowane dołączenia"
+
+#: log.cpp:197
+msgid "Will not log joins"
+msgstr "Nie będą kronikowane dołączenia"
+
+#: log.cpp:198
+msgid "Will log quits"
+msgstr "Będą kronikowane wyjścia"
+
+#: log.cpp:198
+msgid "Will not log quits"
+msgstr "Nie będą kronikowane wyjścia"
+
+#: log.cpp:200
+msgid "Will log nick changes"
+msgstr "Będą kronikowane zmiany pseudonimu"
+
+#: log.cpp:200
+msgid "Will not log nick changes"
+msgstr "Nie będą kronikowane zmiany pseudonimu"
+
+#: log.cpp:204
+msgid "Unknown variable. Known variables: joins, quits, nickchanges"
+msgstr "Nieznana zmienna. Znane zmienne to: joins, quits, nickchanges"
+
+#: log.cpp:212
+msgid "Logging joins"
+msgstr "Kronikowanie dołączeń"
+
+#: log.cpp:212
+msgid "Not logging joins"
+msgstr "Nie są kronikowane dołączenia"
+
+#: log.cpp:213
+msgid "Logging quits"
+msgstr "Kronikowanie wyjść"
+
+#: log.cpp:213
+msgid "Not logging quits"
+msgstr "Nie są kronikowane wyjścia"
+
+#: log.cpp:214
+msgid "Logging nick changes"
+msgstr "Kronikowanie zmian pseudonimów"
+
+#: log.cpp:215
+msgid "Not logging nick changes"
+msgstr "Nie są kronikowane zmiany pseudonimów"
+
+#: log.cpp:352
+msgid ""
+"Invalid args [{1}]. Only one log path allowed.  Check that there are no "
+"spaces in the path."
+msgstr ""
+"Niepoprawne argumenty [{1}]. Dozwolona jest tylko jedna ścieżka "
+"kronikowania. Sprawdź, czy na ścieżce nie ma spacji."
+
+#: log.cpp:402
+msgid "Invalid log path [{1}]"
+msgstr "Niepoprawna ścieżka kronikowania [{1}]"
+
+#: log.cpp:405
+msgid "Logging to [{1}]. Using timestamp format '{2}'"
+msgstr "Kronikowanie do [{1}]. Używanie formatu znacznika czasu '{2}'"
+
+#: log.cpp:560
+msgid "[-sanitize] Optional path where to store logs."
+msgstr "[-sanitize] Opcjonalna ścieżka gdzie przechowywać kronikę."
+
+#: log.cpp:564
+msgid "Writes IRC logs."
+msgstr "Zapisuje kroniki IRC."

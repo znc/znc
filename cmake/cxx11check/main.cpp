@@ -10,6 +10,7 @@
 // and this notice are preserved. This file is offered as-is, without any
 // warranty.
 
+#include <map>
 
 template <typename T>
 struct check {
@@ -55,4 +56,8 @@ void test();
 void test() { func<foo>(0); }
 }
 
-int main() { return 0; }
+int main() {
+    std::map<int, int> m;
+    m.emplace(2, 4);
+    return 0;
+}

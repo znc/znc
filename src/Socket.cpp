@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2020 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@
 #ifdef HAVE_LIBSSL
 // Copypasted from
 // https://wiki.mozilla.org/Security/Server_Side_TLS#Intermediate_compatibility_.28default.29
-// at 2016-06-03
+// at 2018-04-01
 static CString ZNC_DefaultCipher() {
     return "ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-"
            "ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-"
@@ -76,11 +76,9 @@ CZNCSock::CZNCSock(const CString& sHost, u_short port, int timeout)
 }
 
 unsigned int CSockManager::GetAnonConnectionCount(const CString& sIP) const {
-    const_iterator it;
     unsigned int ret = 0;
 
-    for (it = begin(); it != end(); ++it) {
-        Csock* pSock = *it;
+    for (const Csock* pSock : *this) {
         // Logged in CClients have "USR::<username>" as their sockname
         if (pSock->GetType() == Csock::INBOUND && pSock->GetRemoteIP() == sIP &&
             !pSock->GetSockName().StartsWith("USR::")) {
@@ -111,55 +109,63 @@ int CZNCSock::VerifyPeerCertificate(int iPreVerify, X509_STORE_CTX* pStoreCTX) {
 }
 
 void CZNCSock::SSLHandShakeFinished() {
+    X509* pCert = GetX509();
+    if (!CheckSSLCert(pCert)) {
+        Close();
+    }
+    X509_free(pCert);
+}
+
+bool CZNCSock::CheckSSLCert(X509* pCert) {
     if (GetType() != ETConn::OUTBOUND) {
-        return;
+        return true;
     }
 
-    X509* pCert = GetX509();
     if (!pCert) {
         DEBUG(GetSockName() + ": No cert");
         CallSockError(errnoBadSSLCert, "Anonymous SSL cert is not allowed");
-        Close();
-        return;
+        return false;
     }
     if (GetTrustAllCerts()) {
         DEBUG(GetSockName() + ": Verification disabled, trusting all.");
-        return;
+        return true;
     }
     CString sHostVerifyError;
     if (!ZNC_SSLVerifyHost(m_sHostToVerifySSL, pCert, sHostVerifyError)) {
         m_ssCertVerificationErrors.insert(sHostVerifyError);
     }
-    X509_free(pCert);
     if (GetTrustPKI() && m_ssCertVerificationErrors.empty()) {
         DEBUG(GetSockName() + ": Good cert (PKI valid)");
-        return;
+        return true;
     }
-    CString sFP = GetSSLPeerFingerprint();
+    CString sFP = GetSSLPeerFingerprint(pCert);
     if (m_ssTrustedFingerprints.count(sFP) != 0) {
         DEBUG(GetSockName() + ": Cert explicitly trusted by user: " << sFP);
-        return;
+        return true;
     }
     DEBUG(GetSockName() + ": Bad cert");
     CString sErrorMsg = "Invalid SSL certificate: ";
     sErrorMsg += CString(", ").Join(begin(m_ssCertVerificationErrors),
                                     end(m_ssCertVerificationErrors));
+    SSLCertError(pCert);
     CallSockError(errnoBadSSLCert, sErrorMsg);
-    Close();
+    return false;
 }
 
 bool CZNCSock::SNIConfigureClient(CString& sHostname) {
     sHostname = m_sHostToVerifySSL;
     return true;
 }
-#endif
 
-CString CZNCSock::GetSSLPeerFingerprint() const {
-#ifdef HAVE_LIBSSL
+CString CZNCSock::GetSSLPeerFingerprint(X509* pCert) const {
     // Csocket's version returns insecure SHA-1
     // This one is SHA-256
     const EVP_MD* evp = EVP_sha256();
-    X509* pCert = GetX509();
+    bool bOwned = false;
+    if (!pCert) {
+        pCert = GetX509();
+        bOwned = true;
+    }
     if (!pCert) {
         DEBUG(GetSockName() + ": GetSSLPeerFingerprint: Anonymous cert");
         return "";
@@ -167,17 +173,17 @@ CString CZNCSock::GetSSLPeerFingerprint() const {
     unsigned char buf[256 / 8];
     unsigned int _32 = 256 / 8;
     int iSuccess = X509_digest(pCert, evp, buf, &_32);
-    X509_free(pCert);
+    if (bOwned) {
+        X509_free(pCert);
+    }
     if (!iSuccess) {
         DEBUG(GetSockName() + ": GetSSLPeerFingerprint: Couldn't find digest");
         return "";
     }
     return CString(reinterpret_cast<const char*>(buf), sizeof buf)
         .Escape_n(CString::EASCII, CString::EHEXCOLON);
-#else
-    return "";
-#endif
 }
+#endif
 
 void CZNCSock::SetEncoding(const CString& sEncoding) {
 #ifdef HAVE_ICU
@@ -225,7 +231,7 @@ void CSockManager::CDNSJob::runThread() {
 
 void CSockManager::CDNSJob::runMain() {
     if (0 != this->iRes) {
-        DEBUG("Error in threaded DNS: " << gai_strerror(this->iRes));
+        DEBUG("Error in threaded DNS: " << gai_strerror(this->iRes) << " while trying to resolve " << this->sHostname);
         if (this->aiResult) {
             DEBUG("And aiResult is not nullptr...");
         }
@@ -333,16 +339,19 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind,
 
     try {
         if (ssTargets4.empty() && ssTargets6.empty()) {
-            throw "Can't resolve server hostname";
+            throw t_s("Can't resolve server hostname");
         } else if (task->sBindhost.empty()) {
             // Choose random target
             std::tie(sTargetHost, std::ignore) =
                 RandomFrom2SetsWithBias(ssTargets4, ssTargets6, gen);
         } else if (ssBinds4.empty() && ssBinds6.empty()) {
-            throw "Can't resolve bind hostname. Try /znc ClearBindHost and /znc ClearUserBindHost";
+            throw t_s(
+                "Can't resolve bind hostname. Try /znc ClearBindHost and /znc "
+                "ClearUserBindHost");
         } else if (ssBinds4.empty()) {
             if (ssTargets6.empty()) {
-                throw "Server address is IPv4-only, but bindhost is IPv6-only";
+                throw t_s(
+                    "Server address is IPv4-only, but bindhost is IPv6-only");
             } else {
                 // Choose random target and bindhost from IPv6-only sets
                 sTargetHost = RandomFromSet(ssTargets6, gen);
@@ -350,7 +359,8 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind,
             }
         } else if (ssBinds6.empty()) {
             if (ssTargets4.empty()) {
-                throw "Server address is IPv6-only, but bindhost is IPv4-only";
+                throw t_s(
+                    "Server address is IPv6-only, but bindhost is IPv4-only");
             } else {
                 // Choose random target and bindhost from IPv4-only sets
                 sTargetHost = RandomFromSet(ssTargets4, gen);
@@ -370,7 +380,7 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind,
                        << "] using bindhost [" << sBindhost << "]");
         FinishConnect(sTargetHost, task->iPort, task->sSockName, task->iTimeout,
                       task->bSSL, sBindhost, task->pcSock);
-    } catch (const char* s) {
+    } catch (const CString& s) {
         DEBUG(task->sSockName << ", dns resolving error: " << s);
         task->pcSock->SetSockName(task->sSockName);
         task->pcSock->SockError(-1, s);
@@ -508,7 +518,7 @@ void CSocket::ReachedMaxBuffer() {
     DEBUG(GetSockName() << " == ReachedMaxBuffer()");
     if (m_pModule)
         m_pModule->PutModule(
-            "Some socket reached its max buffer limit and was closed!");
+            t_s("Some socket reached its max buffer limit and was closed!"));
     Close();
 }
 
@@ -539,7 +549,7 @@ bool CSocket::Connect(const CString& sHostname, unsigned short uPort, bool bSSL,
     CString sBindHost;
 
     if (pUser) {
-        sSockName += "::" + pUser->GetUserName();
+        sSockName += "::" + pUser->GetUsername();
         sBindHost = pUser->GetBindHost();
         CIRCNetwork* pNetwork = m_pModule->GetNetwork();
         if (pNetwork) {
@@ -570,7 +580,7 @@ bool CSocket::Listen(unsigned short uPort, bool bSSL, unsigned int uTimeout) {
     CString sSockName = "MOD::L::" + m_pModule->GetModName();
 
     if (pUser) {
-        sSockName += "::" + pUser->GetUserName();
+        sSockName += "::" + pUser->GetUsername();
     }
     // Don't overwrite the socket name if one is already set
     if (!GetSockName().empty()) {

@@ -1,0 +1,74 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: it\n"
+"X-Crowdin-File: /master/modules/po/ctcpflood.pot\n"
+"X-Crowdin-File-ID: 168\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Italian\n"
+"Language: it_IT\n"
+
+#: ctcpflood.cpp:25 ctcpflood.cpp:27
+msgid "<limit>"
+msgstr "<limite>"
+
+#: ctcpflood.cpp:25
+msgid "Set seconds limit"
+msgstr "Imposta il limite in secondi"
+
+#: ctcpflood.cpp:27
+msgid "Set lines limit"
+msgstr "Imposta il limite delle linee"
+
+#: ctcpflood.cpp:29
+msgid "Show the current limits"
+msgstr "Mostra i limiti correnti"
+
+#: ctcpflood.cpp:76
+msgid "Limit reached by {1}, blocking all CTCP"
+msgstr "Limite raggiunto da {1}, blocco tutti i CTCP"
+
+#: ctcpflood.cpp:98
+msgid "Usage: Secs <limit>"
+msgstr "Utilizzo: Secs <limite>"
+
+#: ctcpflood.cpp:113
+msgid "Usage: Lines <limit>"
+msgstr "Utilizzo: Lines <limite>"
+
+#: ctcpflood.cpp:125
+msgid "1 CTCP message"
+msgid_plural "{1} CTCP messages"
+msgstr[0] "1 messaggio CTCP"
+msgstr[1] "{1} Messaggi CTCP"
+
+#: ctcpflood.cpp:127
+msgid "every second"
+msgid_plural "every {1} seconds"
+msgstr[0] "ogni secondo"
+msgstr[1] "ogni {1} secondi"
+
+#: ctcpflood.cpp:129
+msgid "Current limit is {1} {2}"
+msgstr "Il limite corrente è {1} {2}"
+
+#: ctcpflood.cpp:145
+msgid ""
+"This user module takes none to two arguments. The first argument is the "
+"number of lines after which the flood-protection is triggered. The second "
+"argument is the time (sec) to in which the number of lines is reached. The "
+"default setting is 4 CTCPs in 2 seconds"
+msgstr ""
+"Questo modulo utente accetta da zero a due argomenti. Il primo argomento è "
+"il numero di linee dopo le quali viene attivata la protezione contro i flood "
+"(flood-protection). Il secondo argomento è il tempo (in secondi) in cui il "
+"numero di linee viene raggiunto. L'impostazione predefinita è 4 CTCP in 2 "
+"secondi"
+
+#: ctcpflood.cpp:151
+msgid "Don't forward CTCP floods to clients"
+msgstr "Non inoltrare i flussi CTCP (floods) ai client"
