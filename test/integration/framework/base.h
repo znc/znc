@@ -20,6 +20,7 @@
 
 #include <QCoreApplication>
 #include <QDateTime>
+#include <QLocalSocket>
 #include <QProcess>
 #include <QTcpSocket>
 
@@ -49,6 +50,7 @@ class IO {
     // Need to flush QTcpSocket, and QIODevice doesn't have flush at all...
     static void FlushIfCan(QIODevice*) {}
     static void FlushIfCan(QTcpSocket* sock) { sock->flush(); }
+    static void FlushIfCan(QLocalSocket* sock) { sock->flush(); }
 
     Device* m_device;
     bool m_verbose;
