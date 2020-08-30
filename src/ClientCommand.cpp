@@ -496,6 +496,7 @@ void CClient::UserCommand(CString& sLine) {
         }
 
         CTable Table;
+        Table.AddColumn(t_s("Index", "listchans"));
         Table.AddColumn(t_s("Name", "listchans"));
         Table.AddColumn(t_s("Status", "listchans"));
         Table.AddColumn(t_s("In config", "listchans"));
@@ -508,10 +509,12 @@ void CClient::UserCommand(CString& sLine) {
             Table.AddColumn(CString(cPerm));
         }
 
-        unsigned int uNumDetached = 0, uNumDisabled = 0, uNumJoined = 0;
+        unsigned int uNumDetached = 0, uNumDisabled = 0, uNumJoined = 0,
+                     uChanIndex = 1;
 
         for (const CChan* pChan : vChans) {
             Table.AddRow();
+            Table.SetCell(t_s("Index", "listchans"), CString(uChanIndex));
             Table.SetCell(t_s("Name", "listchans"),
                           pChan->GetPermStr() + pChan->GetName());
             Table.SetCell(
@@ -545,6 +548,8 @@ void CClient::UserCommand(CString& sLine) {
             if (pChan->IsDetached()) uNumDetached++;
             if (pChan->IsOn()) uNumJoined++;
             if (pChan->IsDisabled()) uNumDisabled++;
+
+            uChanIndex++;
         }
 
         PutStatus(Table);
