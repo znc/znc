@@ -453,6 +453,46 @@ void CClient::UserCommand(CString& sLine) {
             PutStatus(t_p("Disabled {1} channel", "Disabled {1} channels",
                           uDisabled)(uDisabled));
         }
+    } else if (sCommand.Equals("MOVECHAN")) {
+        if (!m_pNetwork) {
+            PutStatus(t_s(
+                "You must be connected with a network to use this command"));
+            return;
+        }
+
+        const auto sChan = sLine.Token(1);
+        const auto sTarget = sLine.Token(2);
+        if (sChan.empty() || sTarget.empty()) {
+            PutStatus(t_s("Usage: MoveChan <#chan> <index>"));
+            return;
+        }
+
+        unsigned int uIndex = sTarget.ToUInt();
+
+        CString sError;
+        if (m_pNetwork->MoveChan(sChan, uIndex - 1, sError))
+            PutStatus(t_f("Moved channel {1} to index {2}")(sChan, uIndex));
+        else
+            PutStatus(sError);
+    } else if (sCommand.Equals("SWAPCHANS")) {
+        if (!m_pNetwork) {
+            PutStatus(t_s(
+                "You must be connected with a network to use this command"));
+            return;
+        }
+
+        const auto sChan1 = sLine.Token(1);
+        const auto sChan2 = sLine.Token(2);
+        if (sChan1.empty() || sChan2.empty()) {
+            PutStatus(t_s("Usage: SwapChans <#chan1> <#chan2>"));
+            return;
+        }
+
+        CString sError;
+        if (m_pNetwork->SwapChans(sChan1, sChan2, sError))
+            PutStatus(t_f("Swapped channels {1} and {2}")(sChan1, sChan2));
+        else
+            PutStatus(sError);
     } else if (sCommand.Equals("LISTCHANS")) {
         if (!m_pNetwork) {
             PutStatus(t_s(
@@ -1786,6 +1826,11 @@ void CClient::HelpUser(const CString& sFilter) {
                    t_s("Enable channels", "helpcmd|EnableChan|desc"));
     AddCommandHelp("DisableChan", t_s("<#chans>", "helpcmd|DisableChan|args"),
                    t_s("Disable channels", "helpcmd|DisableChan|desc"));
+    AddCommandHelp("MoveChan", t_s("<#chan> <index>", "helpcmd|MoveChan|args"),
+                   t_s("Move channel in sort order", "helpcmd|MoveChan|desc"));
+    AddCommandHelp(
+        "SwapChans", t_s("<#chan1> <#chan2>", "helpcmd|SwapChans|args"),
+        t_s("Swap channels in sort order", "helpcmd|SwapChans|desc"));
     AddCommandHelp("Attach", t_s("<#chans>", "helpcmd|Attach|args"),
                    t_s("Attach to channels", "helpcmd|Attach|desc"));
     AddCommandHelp("Detach", t_s("<#chans>", "helpcmd|Detach|args"),

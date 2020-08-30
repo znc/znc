@@ -942,6 +942,49 @@ bool CIRCNetwork::DelChan(const CString& sName) {
     return false;
 }
 
+bool CIRCNetwork::MoveChan(const CString& sChan, unsigned int uIndex,
+                           CString& sError) {
+    if (uIndex >= m_vChans.size()) {
+        sError = t_s("Invalid index");
+        return false;
+    }
+
+    auto it = m_vChans.begin();
+    for (; it != m_vChans.end(); ++it)
+        if ((*it)->GetName().Equals(sChan)) break;
+    if (it == m_vChans.end()) {
+        sError = t_f("You are not on {1}")(sChan);
+        return false;
+    }
+
+    const auto pChan = *it;
+    m_vChans.erase(it);
+    m_vChans.insert(m_vChans.begin() + uIndex, pChan);
+    return true;
+}
+
+bool CIRCNetwork::SwapChans(const CString& sChan1, const CString& sChan2,
+                            CString& sError) {
+    auto it1 = m_vChans.begin();
+    for (; it1 != m_vChans.end(); ++it1)
+        if ((*it1)->GetName().Equals(sChan1)) break;
+    if (it1 == m_vChans.end()) {
+        sError = t_f("You are not on {1}")(sChan1);
+        return false;
+    }
+
+    auto it2 = m_vChans.begin();
+    for (; it2 != m_vChans.end(); ++it2)
+        if ((*it2)->GetName().Equals(sChan2)) break;
+    if (it2 == m_vChans.end()) {
+        sError = t_f("You are not on {1}")(sChan2);
+        return false;
+    }
+
+    std::swap(*it1, *it2);
+    return true;
+}
+
 void CIRCNetwork::JoinChans() {
     // Avoid divsion by zero, it's bad!
     if (m_vChans.empty()) return;

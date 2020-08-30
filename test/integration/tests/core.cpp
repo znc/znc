@@ -307,5 +307,41 @@ TEST_F(ZNCTest, StatusEchoMessage) {
     client3.ReadUntil(":*status!znc@znc.in PRIVMSG nick :Unknown command");
 }
 
+TEST_F(ZNCTest, MoveChannels) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+
+    auto client = LoginClient();
+    client.Write("JOIN #foo,#bar");
+    client.Close();
+
+    ircd.Write(":server 001 nick :Hello");
+    ircd.ReadUntil("JOIN #foo,#bar");
+    ircd.Write(":nick JOIN :#foo");
+    ircd.Write(":server 353 nick #foo :nick");
+    ircd.Write(":server 366 nick #foo :End of /NAMES list");
+    ircd.Write(":nick JOIN :#bar");
+    ircd.Write(":server 353 nick #bar :nick");
+    ircd.Write(":server 366 nick #bar :End of /NAMES list");
+
+    client = LoginClient();
+    client.ReadUntil(":nick JOIN :#foo");
+    client.ReadUntil(":nick JOIN :#bar");
+    client.Write("znc movechan #foo 2");
+    client.ReadUntil("Moved channel #foo to index 2");
+    client.Close();
+
+    client = LoginClient();
+    client.ReadUntil(":nick JOIN :#bar");
+    client.ReadUntil(":nick JOIN :#foo");
+    client.Write("znc swapchans #foo #bar");
+    client.ReadUntil("Swapped channels #foo and #bar");
+    client.Close();
+
+    client = LoginClient();
+    client.ReadUntil(":nick JOIN :#foo");
+    client.ReadUntil(":nick JOIN :#bar");
+}
+
 }  // namespace
 }  // namespace znc_inttest
