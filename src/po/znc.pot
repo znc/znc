@@ -62,7 +62,11 @@ msgstr ""
 msgid "Invalid port"
 msgstr ""
 
+<<<<<<< HEAD
 #: znc.cpp:1813 ClientCommand.cpp:1655
+=======
+#: znc.cpp:1821 ClientCommand.cpp:1655
+>>>>>>> 1.8.x
 msgid "Unable to bind: {1}"
 msgstr ""
 
@@ -234,7 +238,11 @@ msgstr ""
 msgid "Usage: /attach <#chans>"
 msgstr ""
 
+<<<<<<< HEAD
 #: Client.cpp:1345 Client.cpp:1367 ClientCommand.cpp:129 ClientCommand.cpp:151
+=======
+#: Client.cpp:1344 Client.cpp:1366 ClientCommand.cpp:129 ClientCommand.cpp:151
+>>>>>>> 1.8.x
 #: ClientCommand.cpp:423 ClientCommand.cpp:450
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
