@@ -1,106 +1,113 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: znc-bouncer\n"
-"Language-Team: German\n"
-"Language: de_DE\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: de\n"
-"X-Crowdin-File: /master/modules/po/perform.pot\n"
+"X-Crowdin-File: /1.8.x/modules/po/perform.pot\n"
+"X-Crowdin-File-ID: 372\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
 
 #: modules/po/../data/perform/tmpl/index.tmpl:7 perform.cpp:143
 msgid "Perform"
-msgstr ""
+msgstr "Perform"
 
 #: modules/po/../data/perform/tmpl/index.tmpl:11
 msgid "Perform commands:"
-msgstr ""
+msgstr "Perform Befehle:"
 
 #: modules/po/../data/perform/tmpl/index.tmpl:15
 msgid "Commands sent to the IRC server on connect, one per line."
 msgstr ""
+"Befehle die zum IRC-Server beim verbinden gesendet werden, einer pro Zeile."
 
 #: modules/po/../data/perform/tmpl/index.tmpl:18
 msgid "Save"
-msgstr ""
+msgstr "Speichern"
 
 #: perform.cpp:24
 msgid "Usage: add <command>"
-msgstr ""
+msgstr "Benutzung: add <command>"
 
 #: perform.cpp:29
 msgid "Added!"
-msgstr ""
+msgstr "Hinzugefügt!"
 
 #: perform.cpp:37 perform.cpp:82
 msgid "Illegal # Requested"
-msgstr ""
+msgstr "Ungültige # angefragt"
 
 #: perform.cpp:41
 msgid "Command Erased."
-msgstr ""
+msgstr "Befehl gelöscht."
 
 #: perform.cpp:50 perform.cpp:56
 msgctxt "list"
 msgid "Id"
-msgstr ""
+msgstr "Id"
 
 #: perform.cpp:51 perform.cpp:57
 msgctxt "list"
 msgid "Perform"
-msgstr ""
+msgstr "Perform"
 
 #: perform.cpp:52 perform.cpp:62
 msgctxt "list"
 msgid "Expanded"
-msgstr ""
+msgstr "Erweitert"
 
 #: perform.cpp:67
 msgid "No commands in your perform list."
-msgstr ""
+msgstr "Keine Befehle in deiner Perform-Liste."
 
 #: perform.cpp:73
 msgid "perform commands sent"
-msgstr ""
+msgstr "Perform Befehle gesendet"
 
 #: perform.cpp:86
 msgid "Commands Swapped."
-msgstr ""
+msgstr "Befehle getauscht."
 
 #: perform.cpp:95
 msgid "<command>"
-msgstr ""
+msgstr "<command>"
 
 #: perform.cpp:96
 msgid "Adds perform command to be sent to the server on connect"
 msgstr ""
+"Fügt einen Perform-Befehl hinzu, der bei der Verbindung zum Server gesendet "
+"wird"
 
 #: perform.cpp:98
 msgid "<number>"
-msgstr ""
+msgstr "<number>"
 
 #: perform.cpp:98
 msgid "Delete a perform command"
-msgstr ""
+msgstr "Einen Perform-Befehl löschen"
 
 #: perform.cpp:100
 msgid "List the perform commands"
-msgstr ""
+msgstr "Perform-Befehle auflisten"
 
 #: perform.cpp:103
 msgid "Send the perform commands to the server now"
-msgstr ""
+msgstr "Sende die Perform-Befehle jetzt an den Server"
 
 #: perform.cpp:105
 msgid "<number> <number>"
-msgstr ""
+msgstr "<number> <number>"
 
 #: perform.cpp:106
 msgid "Swap two perform commands"
-msgstr ""
+msgstr "Tausche zwei Perform-Befehle"
 
 #: perform.cpp:192
 msgid "Keeps a list of commands to be executed when ZNC connects to IRC."
 msgstr ""
+"Speichert eine Anzahl an Befehlen die bei der Verbindung von ZNC zum IRC-"
+"Server gesendet werden."

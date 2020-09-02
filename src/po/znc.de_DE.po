@@ -1,14 +1,16 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: znc-bouncer\n"
-"Language-Team: German\n"
-"Language: de_DE\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: de\n"
-"X-Crowdin-File: /master/src/po/znc.pot\n"
+"X-Crowdin-File: /1.8.x/src/po/znc.pot\n"
+"X-Crowdin-File-ID: 284\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
 
 #: webskins/_default_/tmpl/InfoBar.tmpl:6
 msgid "Logged in as: {1}"
@@ -488,63 +490,54 @@ msgid "Error while trying to write config."
 msgstr "Fehler beim Schreiben der Konfiguration."
 
 #: ClientCommand.cpp:183
-#, fuzzy
 msgid "Usage: ListClients"
-msgstr "Verwendung: ListChans"
+msgstr "Benutzung: ListClients"
 
 #: ClientCommand.cpp:190
-#, fuzzy
 msgid "No such user: {1}"
-msgstr "Kein solcher Benutzer [{1}]"
+msgstr "Kein Benutzer gefunden: {1}"
 
 #: ClientCommand.cpp:198
 msgid "No clients are connected"
-msgstr ""
+msgstr "Keine Klienten verbunden"
 
 #: ClientCommand.cpp:203 ClientCommand.cpp:209
-#, fuzzy
 msgctxt "listclientscmd"
 msgid "Host"
 msgstr "Host"
 
 #: ClientCommand.cpp:204 ClientCommand.cpp:212
-#, fuzzy
 msgctxt "listclientscmd"
 msgid "Network"
 msgstr "Netzwerk"
 
 #: ClientCommand.cpp:205 ClientCommand.cpp:215
-#, fuzzy
 msgctxt "listclientscmd"
 msgid "Identifier"
-msgstr "Ident"
+msgstr "Kennung"
 
 #: ClientCommand.cpp:223 ClientCommand.cpp:229
-#, fuzzy
 msgctxt "listuserscmd"
 msgid "Username"
 msgstr "Benutzername"
 
 #: ClientCommand.cpp:224 ClientCommand.cpp:230
-#, fuzzy
 msgctxt "listuserscmd"
 msgid "Networks"
-msgstr "Netzwerk"
+msgstr "Netzwerke"
 
 #: ClientCommand.cpp:225 ClientCommand.cpp:232
 msgctxt "listuserscmd"
 msgid "Clients"
-msgstr ""
+msgstr "Klienten"
 
 #: ClientCommand.cpp:240 ClientCommand.cpp:250 ClientCommand.cpp:260
 #: ClientCommand.cpp:263
-#, fuzzy
 msgctxt "listallusernetworkscmd"
 msgid "Username"
 msgstr "Benutzername"
 
 #: ClientCommand.cpp:241 ClientCommand.cpp:251 ClientCommand.cpp:266
-#, fuzzy
 msgctxt "listallusernetworkscmd"
 msgid "Network"
 msgstr "Netzwerk"
@@ -552,128 +545,114 @@ msgstr "Netzwerk"
 #: ClientCommand.cpp:242 ClientCommand.cpp:252 ClientCommand.cpp:268
 msgctxt "listallusernetworkscmd"
 msgid "Clients"
-msgstr ""
+msgstr "Klienten"
 
 #: ClientCommand.cpp:243 ClientCommand.cpp:271 ClientCommand.cpp:280
-#, fuzzy
 msgctxt "listallusernetworkscmd"
 msgid "On IRC"
 msgstr "Im IRC"
 
 #: ClientCommand.cpp:244 ClientCommand.cpp:273
-#, fuzzy
 msgctxt "listallusernetworkscmd"
 msgid "IRC Server"
-msgstr "IRC-Server"
+msgstr "IRC Server"
 
 #: ClientCommand.cpp:245 ClientCommand.cpp:275
-#, fuzzy
 msgctxt "listallusernetworkscmd"
 msgid "IRC User"
-msgstr "IRC-Benutzer"
+msgstr "IRC Benutzer"
 
 #: ClientCommand.cpp:246 ClientCommand.cpp:277
-#, fuzzy
 msgctxt "listallusernetworkscmd"
 msgid "Channels"
 msgstr "Kanäle"
 
 #: ClientCommand.cpp:251
 msgid "N/A"
-msgstr ""
+msgstr "N/A"
 
 #: ClientCommand.cpp:272
-#, fuzzy
 msgctxt "listallusernetworkscmd"
 msgid "Yes"
 msgstr "Ja"
 
 #: ClientCommand.cpp:281
-#, fuzzy
 msgctxt "listallusernetworkscmd"
 msgid "No"
 msgstr "Nein"
 
 #: ClientCommand.cpp:291
 msgid "Usage: SetMOTD <message>"
-msgstr ""
+msgstr "Benutzung: SetMOTD <message>"
 
 #: ClientCommand.cpp:294
 msgid "MOTD set to: {1}"
-msgstr ""
+msgstr "MOTD gesetzt auf: {1}"
 
 #: ClientCommand.cpp:300
-#, fuzzy
 msgid "Usage: AddMOTD <message>"
-msgstr "Verwendung: AddNetwork <name>"
+msgstr "Benutzung: AddMOTD <message>"
 
 #: ClientCommand.cpp:303
 msgid "Added [{1}] to MOTD"
-msgstr ""
+msgstr "[{1}] zur MOTD hinzugefügt"
 
 #: ClientCommand.cpp:307
-#, fuzzy
 msgid "Cleared MOTD"
-msgstr "Lösche ZNCs MOTD"
+msgstr "MOTD geleert"
 
 #: ClientCommand.cpp:329
 msgid ""
 "ERROR: Writing config file to disk failed! Aborting. Use {1} FORCE to ignore."
 msgstr ""
+"FEHLER: Konnte Konfigurations-Datei nicht schreiben. Abbruch. Benutzer {1} "
+"FORCE um den Fehler zu ignorieren."
 
 #: ClientCommand.cpp:344 ClientCommand.cpp:797 ClientCommand.cpp:838
 msgid "You don't have any servers added."
 msgstr "Du hast keine Server hinzugefügt."
 
 #: ClientCommand.cpp:355
-#, fuzzy
 msgid "Server [{1}] not found"
-msgstr "Benutzer {1} nicht gefunden"
+msgstr "Server [{1}] nicht gefunden"
 
 #: ClientCommand.cpp:375 ClientCommand.cpp:380
-#, fuzzy
 msgid "Connecting to {1}..."
-msgstr "Laufe seit {1}"
+msgstr "Verbinde zu {1}..."
 
 #: ClientCommand.cpp:377
-#, fuzzy
 msgid "Jumping to the next server in the list..."
-msgstr "Springe zum nächsten oder dem angegebenen Server"
+msgstr "Springe zum nächsten Server in der Liste..."
 
 #: ClientCommand.cpp:382
 msgid "Connecting..."
-msgstr ""
+msgstr "Verbinde..."
 
 #: ClientCommand.cpp:400
-#, fuzzy
 msgid "Disconnected from IRC. Use 'connect' to reconnect."
 msgstr ""
 "Du bist zur Zeit nicht mit dem IRC verbunden. Verwende 'connect' zum "
 "Verbinden."
 
 #: ClientCommand.cpp:412
-#, fuzzy
 msgid "Usage: EnableChan <#chans>"
-msgstr "Verwendung: Attach <#Kanäle>"
+msgstr "Benutzung: EnableChan <#chans>"
 
 #: ClientCommand.cpp:426
-#, fuzzy
 msgid "Enabled {1} channel"
 msgid_plural "Enabled {1} channels"
-msgstr[0] "Aktivierte Kanäle"
-msgstr[1] "Aktivierte Kanäle"
+msgstr[0] "{1} Kanal aktiviert"
+msgstr[1] "{1} Kanäle aktiviert"
 
 #: ClientCommand.cpp:439
-#, fuzzy
 msgid "Usage: DisableChan <#chans>"
-msgstr "Verwendung: Detach <#Kanäle>"
+msgstr "Benutzung: DisableChan <#chans>"
 
 #: ClientCommand.cpp:453
-#, fuzzy
 msgid "Disabled {1} channel"
 msgid_plural "Disabled {1} channels"
-msgstr[0] "Deaktiviere Kanäle"
-msgstr[1] "Deaktiviere Kanäle"
+msgstr[0] "{1} Kanal deaktiviert"
+msgstr[1] "{1} Kanäle deaktiviert"
 
 #: ClientCommand.cpp:470
 msgid "Usage: ListChans"

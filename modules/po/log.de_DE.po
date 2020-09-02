@@ -1,14 +1,16 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: znc-bouncer\n"
-"Language-Team: German\n"
-"Language: de_DE\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: de\n"
-"X-Crowdin-File: /master/modules/po/log.pot\n"
+"X-Crowdin-File: /1.8.x/modules/po/log.pot\n"
+"X-Crowdin-File-ID: 314\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
 
 #: log.cpp:59
 msgid "<rules>"
@@ -53,7 +55,7 @@ msgstr "Keine Logging-Regeln - alles wird geloggt."
 #: log.cpp:161
 msgid "1 rule removed: {2}"
 msgid_plural "{1} rules removed: {2}"
-msgstr[0] ""
+msgstr[0] "1 Regel entfernt: {2}"
 msgstr[1] "{1} Regeln entfernt: {2}"
 
 #: log.cpp:168 log.cpp:174
