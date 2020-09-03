@@ -165,6 +165,31 @@ function serverlist_init($) {
 	})();
 }
 
+function channellist_init($) {
+    function update_rows() {
+        $("#channels > tr").each(function(i) {
+            $(this).toggleClass("evenrow", i % 2 === 1).toggleClass("oddrow", i % 2 === 0);
+            $(this).find(".channel_index").val(i + 1);
+        });
+    }
+    $("#channels").sortable({
+        axis: "y",
+        update: update_rows
+    });
+    $(".channel_index").change(function() {
+        var src = $(this).closest("tr").detach();
+        var rows = $("#channels > tr");
+        var dst = rows[this.value - 1];
+
+        if (dst)
+            src.insertBefore(dst);
+        else
+            src.insertAfter(rows.last());
+
+        update_rows();
+    });
+}
+
 function ctcpreplies_init($) {
 	function serialize() {
 		var text = "";
