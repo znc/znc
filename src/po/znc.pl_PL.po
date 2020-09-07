@@ -489,25 +489,25 @@ msgstr "Błąd podczas próby zapisu konfiguracji."
 
 #: ClientCommand.cpp:183
 msgid "Usage: ListClients"
-msgstr ""
+msgstr "Użycie: ListClients"
 
 #: ClientCommand.cpp:190
 msgid "No such user: {1}"
-msgstr ""
+msgstr "Nie ma takiego użytkownika: {1}"
 
 #: ClientCommand.cpp:198
 msgid "No clients are connected"
-msgstr ""
+msgstr "Żaden klient nie jest połączony"
 
 #: ClientCommand.cpp:203 ClientCommand.cpp:209
 msgctxt "listclientscmd"
 msgid "Host"
-msgstr ""
+msgstr "Host"
 
 #: ClientCommand.cpp:204 ClientCommand.cpp:212
 msgctxt "listclientscmd"
 msgid "Network"
-msgstr ""
+msgstr "Sieć"
 
 #: ClientCommand.cpp:205 ClientCommand.cpp:215
 msgctxt "listclientscmd"
@@ -517,53 +517,53 @@ msgstr ""
 #: ClientCommand.cpp:223 ClientCommand.cpp:229
 msgctxt "listuserscmd"
 msgid "Username"
-msgstr ""
+msgstr "Nazwa użytkownika"
 
 #: ClientCommand.cpp:224 ClientCommand.cpp:230
 msgctxt "listuserscmd"
 msgid "Networks"
-msgstr ""
+msgstr "Sieci"
 
 #: ClientCommand.cpp:225 ClientCommand.cpp:232
 msgctxt "listuserscmd"
 msgid "Clients"
-msgstr ""
+msgstr "Klienci"
 
 #: ClientCommand.cpp:240 ClientCommand.cpp:250 ClientCommand.cpp:260
 #: ClientCommand.cpp:263
 msgctxt "listallusernetworkscmd"
 msgid "Username"
-msgstr ""
+msgstr "Nazwa użytkownika"
 
 #: ClientCommand.cpp:241 ClientCommand.cpp:251 ClientCommand.cpp:266
 msgctxt "listallusernetworkscmd"
 msgid "Network"
-msgstr ""
+msgstr "Sieć"
 
 #: ClientCommand.cpp:242 ClientCommand.cpp:252 ClientCommand.cpp:268
 msgctxt "listallusernetworkscmd"
 msgid "Clients"
-msgstr ""
+msgstr "Klienci"
 
 #: ClientCommand.cpp:243 ClientCommand.cpp:271 ClientCommand.cpp:280
 msgctxt "listallusernetworkscmd"
 msgid "On IRC"
-msgstr ""
+msgstr "Na IRC?"
 
 #: ClientCommand.cpp:244 ClientCommand.cpp:273
 msgctxt "listallusernetworkscmd"
 msgid "IRC Server"
-msgstr ""
+msgstr "Serwer IRC"
 
 #: ClientCommand.cpp:245 ClientCommand.cpp:275
 msgctxt "listallusernetworkscmd"
 msgid "IRC User"
-msgstr ""
+msgstr "Użytkownik IRC"
 
 #: ClientCommand.cpp:246 ClientCommand.cpp:277
 msgctxt "listallusernetworkscmd"
 msgid "Channels"
-msgstr ""
+msgstr "Kanały"
 
 #: ClientCommand.cpp:251
 msgid "N/A"
@@ -572,32 +572,32 @@ msgstr ""
 #: ClientCommand.cpp:272
 msgctxt "listallusernetworkscmd"
 msgid "Yes"
-msgstr ""
+msgstr "Tak"
 
 #: ClientCommand.cpp:281
 msgctxt "listallusernetworkscmd"
 msgid "No"
-msgstr ""
+msgstr "Nie"
 
 #: ClientCommand.cpp:291
 msgid "Usage: SetMOTD <message>"
-msgstr ""
+msgstr "Użycie: SetMOTD <wiadomość>"
 
 #: ClientCommand.cpp:294
 msgid "MOTD set to: {1}"
-msgstr ""
+msgstr "MOTD ustawiony na: {1}"
 
 #: ClientCommand.cpp:300
 msgid "Usage: AddMOTD <message>"
-msgstr ""
+msgstr "Użycie: AddMOTD <wiadomość>"
 
 #: ClientCommand.cpp:303
 msgid "Added [{1}] to MOTD"
-msgstr ""
+msgstr "Dodano [{1}] do MOTD"
 
 #: ClientCommand.cpp:307
 msgid "Cleared MOTD"
-msgstr ""
+msgstr "Wyczyszczono MOTD"
 
 #: ClientCommand.cpp:329
 msgid ""
@@ -610,27 +610,27 @@ msgstr "Nie dodano żadnych serwerów."
 
 #: ClientCommand.cpp:355
 msgid "Server [{1}] not found"
-msgstr ""
+msgstr "Serwer [{1}] nie znaleziony"
 
 #: ClientCommand.cpp:375 ClientCommand.cpp:380
 msgid "Connecting to {1}..."
-msgstr ""
+msgstr "Łączenie się z {1}..."
 
 #: ClientCommand.cpp:377
 msgid "Jumping to the next server in the list..."
-msgstr ""
+msgstr "Przeskakiwanie do następnego serwera na liście..."
 
 #: ClientCommand.cpp:382
 msgid "Connecting..."
-msgstr ""
+msgstr "Łączenie..."
 
 #: ClientCommand.cpp:400
 msgid "Disconnected from IRC. Use 'connect' to reconnect."
-msgstr ""
+msgstr "Rozłączono z IRC. Użyj 'connect', aby połączyć się ponownie."
 
 #: ClientCommand.cpp:412
 msgid "Usage: EnableChan <#chans>"
-msgstr ""
+msgstr "Użycie: EnableChan <#kanały>"
 
 #: ClientCommand.cpp:426
 msgid "Enabled {1} channel"
@@ -642,15 +642,15 @@ msgstr[3] ""
 
 #: ClientCommand.cpp:439
 msgid "Usage: DisableChan <#chans>"
-msgstr ""
+msgstr "Użycie: DisableChan <#kanały>"
 
 #: ClientCommand.cpp:453
 msgid "Disabled {1} channel"
 msgid_plural "Disabled {1} channels"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Wyłączono {1} kanał"
+msgstr[1] "Wyłączono {1} kanały"
+msgstr[2] "Wyłączono {1} kanałów"
+msgstr[3] "Wyłączono {1} kanałów/y"
 
 #: ClientCommand.cpp:470
 msgid "Usage: ListChans"

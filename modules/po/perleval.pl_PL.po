@@ -25,9 +25,9 @@ msgstr ""
 #: perleval.pm:44
 #, perl-format
 msgid "Error: %s"
-msgstr ""
+msgstr "Błąd: %s"
 
 #: perleval.pm:46
 #, perl-format
 msgid "Result: %s"
-msgstr ""
+msgstr "Wynik: %s"
