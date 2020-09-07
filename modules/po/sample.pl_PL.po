@@ -84,7 +84,7 @@ msgstr[3] "* {1} ({2}@{3}) opuszcza IRC ({4}) z kanałów: {6}"
 
 #: sample.cpp:177
 msgid "Attempting to join {1}"
-msgstr ""
+msgstr "Próbowanie dołączenia do {1}"
 
 #: sample.cpp:182
 msgid "* {1} ({2}@{3}) joins {4}"
