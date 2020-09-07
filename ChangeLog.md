@@ -1,3 +1,16 @@
+# ZNC 1.8.2 (2020-07-07)
+
+## New
+* Polish translation
+* List names of translators in TRANSLATORS.md file in source, as this contribution isn't directly reflected in git log
+* During --makeconf warn about listening on port 6697 too, not only about 6667
+
+## Fixes
+* webadmin: When confirming deletion of a network and selecting No, redirect to the edituser page instead of listusers page
+* Make more client command results translateable, which were missed before
+
+
+
 # ZNC 1.8.1 (2020-05-07)
 
 Fixed bug introduced in ZNC 1.8.0:
