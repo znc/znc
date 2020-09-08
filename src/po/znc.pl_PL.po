@@ -246,7 +246,8 @@ msgstr "Twoje CTCP do {1} zostało zgubione, nie jesteś połączony z IRC!"
 
 #: Client.cpp:1147
 msgid "Your notice to {1} got lost, you are not connected to IRC!"
-msgstr "Twoje powiadomienie do {1} zostało zgubione, nie połączono z IRC!"
+msgstr ""
+"Twoje powiadomienie do {1} zostało zgubione, nie jesteś połączony z IRC!"
 
 #: Client.cpp:1186
 msgid "Removing channel {1}"
