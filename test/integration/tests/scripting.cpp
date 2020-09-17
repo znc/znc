@@ -279,5 +279,22 @@ TEST_F(ZNCTest, ModpythonPackage) {
     client.ReadUntil("value = b");
 }
 
+TEST_F(ZNCTest, ModpythonModperl) {
+    if (QProcessEnvironment::systemEnvironment().value(
+            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
+        return;
+    }
+    auto znc = Run();
+    znc->CanLeak();
+
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    // https://github.com/znc/znc/issues/1757
+    client.Write("znc loadmod modpython");
+    client.ReadUntil("Loaded module modpython");
+    client.Write("znc loadmod modperl");
+    client.ReadUntil("Loaded module modperl");
+}
+
 }  // namespace
 }  // namespace znc_inttest

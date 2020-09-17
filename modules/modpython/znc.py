@@ -768,6 +768,11 @@ def find_open(modname):
         module = importlib.import_module(fullname)
     except ImportError:
         return (None, None)
+    if not isinstance(module.__loader__, ZNCModuleLoader):
+        # If modname/ is a directory, it was "loaded" using _NamespaceLoader.
+        # This is the case for e.g. modperl.
+        # https://github.com/znc/znc/issues/1757
+        return (None, None)
     return (module, os.path.join(module.__loader__._datadir, modname))
 
 def load_module(modname, args, module_type, user, network, retmsg, modpython):
