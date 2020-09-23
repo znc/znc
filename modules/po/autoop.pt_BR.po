@@ -12,154 +12,154 @@ msgstr ""
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
 
-#: autoop.cpp:154
+#: autoop.cpp:155
 msgid "List all users"
 msgstr "Lista todos os usuários"
 
-#: autoop.cpp:156 autoop.cpp:159
+#: autoop.cpp:157 autoop.cpp:160
 msgid "<user> <channel> [channel] ..."
 msgstr "<usuário> <canal> [channel] ..."
 
-#: autoop.cpp:157
+#: autoop.cpp:158
 msgid "Adds channels to a user"
 msgstr "Adiciona canais a um usuário"
 
-#: autoop.cpp:160
+#: autoop.cpp:161
 msgid "Removes channels from a user"
 msgstr "Remove canais de um usuário"
 
-#: autoop.cpp:162 autoop.cpp:165
+#: autoop.cpp:163 autoop.cpp:166
 msgid "<user> <mask>,[mask] ..."
 msgstr "<usuário> <máscara>,[mask] ..."
 
-#: autoop.cpp:163
+#: autoop.cpp:164
 msgid "Adds masks to a user"
 msgstr "Adiciona uma máscara a um usuário"
 
-#: autoop.cpp:166
+#: autoop.cpp:167
 msgid "Removes masks from a user"
 msgstr "Remove máscaras de um usuário"
 
-#: autoop.cpp:169
+#: autoop.cpp:170
 msgid "<user> <hostmask>[,<hostmasks>...] <key> [channels]"
 msgstr "<usuário> <hostmask>[,<hostmasks>...] <chave> [channels]"
 
-#: autoop.cpp:170
+#: autoop.cpp:171
 msgid "Adds a user"
 msgstr "Adiciona um usuário"
 
-#: autoop.cpp:172
+#: autoop.cpp:173
 msgid "<user>"
 msgstr "<usuário>"
 
-#: autoop.cpp:172
+#: autoop.cpp:173
 msgid "Removes a user"
 msgstr "Remove um usuário"
 
-#: autoop.cpp:275
+#: autoop.cpp:276
 msgid "Usage: AddUser <user> <hostmask>[,<hostmasks>...] <key> [channels]"
 msgstr ""
 "Sintaxe: AddUser <usuário> <máscara de host>[,<máscaras de hosts>...] "
 "<chave> [canais]"
 
-#: autoop.cpp:291
+#: autoop.cpp:292
 msgid "Usage: DelUser <user>"
 msgstr "Sintaxe: DelUser <usuário>"
 
-#: autoop.cpp:300
+#: autoop.cpp:301
 msgid "There are no users defined"
 msgstr "Não há usuários definidos"
 
-#: autoop.cpp:306 autoop.cpp:317 autoop.cpp:321 autoop.cpp:323
+#: autoop.cpp:307 autoop.cpp:318 autoop.cpp:322 autoop.cpp:324
 msgid "User"
 msgstr "Usuário"
 
-#: autoop.cpp:307 autoop.cpp:325
+#: autoop.cpp:308 autoop.cpp:326
 msgid "Hostmasks"
 msgstr "Máscaras de Host"
 
-#: autoop.cpp:308 autoop.cpp:318
+#: autoop.cpp:309 autoop.cpp:319
 msgid "Key"
 msgstr "Chave"
 
-#: autoop.cpp:309 autoop.cpp:319
+#: autoop.cpp:310 autoop.cpp:320
 msgid "Channels"
 msgstr "Canais"
 
-#: autoop.cpp:337
+#: autoop.cpp:338
 msgid "Usage: AddChans <user> <channel> [channel] ..."
 msgstr "Sintaxe: AddChans <usuário> <canal> [canal] ..."
 
-#: autoop.cpp:344 autoop.cpp:365 autoop.cpp:387 autoop.cpp:408 autoop.cpp:472
+#: autoop.cpp:345 autoop.cpp:366 autoop.cpp:388 autoop.cpp:409 autoop.cpp:473
 msgid "No such user"
 msgstr "Nenhum usuário encontrado"
 
-#: autoop.cpp:349
+#: autoop.cpp:350
 msgid "Channel(s) added to user {1}"
 msgstr "Canal(ais) adicionado(s) ao usuário {1}"
 
-#: autoop.cpp:358
+#: autoop.cpp:359
 msgid "Usage: DelChans <user> <channel> [channel] ..."
 msgstr "Sintaxe: DelChans <usuário> <canal> [canal] ..."
 
-#: autoop.cpp:371
+#: autoop.cpp:372
 msgid "Channel(s) Removed from user {1}"
 msgstr "Canal(ais) removido(s) do usuário {1}"
 
-#: autoop.cpp:380
+#: autoop.cpp:381
 msgid "Usage: AddMasks <user> <mask>,[mask] ..."
 msgstr "Sintaxe: AddMasks <usuário> <máscara>,[máscara] ..."
 
-#: autoop.cpp:392
+#: autoop.cpp:393
 msgid "Hostmasks(s) added to user {1}"
 msgstr "Máscara(s) de host adicionada(s) ao usuário {1}"
 
-#: autoop.cpp:401
+#: autoop.cpp:402
 msgid "Usage: DelMasks <user> <mask>,[mask] ..."
 msgstr "Sintaxe: DelMasks <usuário> <máscara>,[máscara] ..."
 
-#: autoop.cpp:413
+#: autoop.cpp:414
 msgid "Removed user {1} with key {2} and channels {3}"
 msgstr "Usuário {1} com chave {2} e {3} canais foi removido"
 
-#: autoop.cpp:419
+#: autoop.cpp:420
 msgid "Hostmasks(s) Removed from user {1}"
 msgstr "Máscara(s) de host removida(s) do usuário {1}"
 
-#: autoop.cpp:478
+#: autoop.cpp:479
 msgid "User {1} removed"
 msgstr "Usuário {1} removido"
 
-#: autoop.cpp:484
+#: autoop.cpp:485
 msgid "That user already exists"
 msgstr "Esse usuário já existe"
 
-#: autoop.cpp:490
+#: autoop.cpp:491
 msgid "User {1} added with hostmask(s) {2}"
 msgstr "Usuário {1} adicionado com a(s) máscara(s) de host {2}"
 
-#: autoop.cpp:532
+#: autoop.cpp:533
 msgid ""
 "[{1}] sent us a challenge but they are not opped in any defined channels."
 msgstr ""
 "[{1}] enviou um desafio, mas não possui status de operador em qualquer canal "
 "definido."
 
-#: autoop.cpp:536
+#: autoop.cpp:537
 msgid "[{1}] sent us a challenge but they do not match a defined user."
 msgstr ""
 "[{1}] enviou um desafio, mas não corresponde a qualquer usuário definido."
 
-#: autoop.cpp:544
+#: autoop.cpp:545
 msgid "WARNING! [{1}] sent an invalid challenge."
 msgstr "AVISO! [{1}] enviou um desafio inválido."
 
-#: autoop.cpp:560
+#: autoop.cpp:561
 msgid "[{1}] sent an unchallenged response.  This could be due to lag."
 msgstr ""
 "[{1}] enviou uma resposta sem desafio.  Isso pode ocorrer devido a um lag."
 
-#: autoop.cpp:577
+#: autoop.cpp:578
 msgid ""
 "WARNING! [{1}] sent a bad response.  Please verify that you have their "
 "correct password."
@@ -167,12 +167,12 @@ msgstr ""
 "AVISO! [{1}] enviou uma má resposta.  Por favor, verifique se você tem a "
 "senha correta."
 
-#: autoop.cpp:586
+#: autoop.cpp:587
 msgid "WARNING! [{1}] sent a response but did not match any defined users."
 msgstr ""
 "WARNING! [{1}] enviou uma resposta mas não corresponde a qualquer usuário "
 "definido."
 
-#: autoop.cpp:644
+#: autoop.cpp:645
 msgid "Auto op the good people"
 msgstr "Automaticamente torna operador as pessoas boas"
