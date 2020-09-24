@@ -132,7 +132,8 @@ class CAutoOpUser {
 
     bool FromString(const CString& sLine) {
         m_sUsername = sLine.Token(0, false, "\t");
-        sLine.Token(1, false, "\t").Split(",", m_ssHostmasks);
+        // Trim because there was a bug which caused spaces in the hostname
+        sLine.Token(1, false, "\t").Trim_n().Split(",", m_ssHostmasks);
         m_sUserKey = sLine.Token(2, false, "\t");
         sLine.Token(3, false, "\t").Split(" ", m_ssChans);
 
@@ -374,7 +375,7 @@ class CAutoOpMod : public CModule {
 
     void OnAddMasksCommand(const CString& sLine) {
         CString sUser = sLine.Token(1);
-        CString sHostmasks = sLine.Token(2, true);
+        CString sHostmasks = sLine.Token(2);
 
         if (sHostmasks.empty()) {
             PutModule(t_s("Usage: AddMasks <user> <mask>,[mask] ..."));
@@ -395,7 +396,7 @@ class CAutoOpMod : public CModule {
 
     void OnDelMasksCommand(const CString& sLine) {
         CString sUser = sLine.Token(1);
-        CString sHostmasks = sLine.Token(2, true);
+        CString sHostmasks = sLine.Token(2);
 
         if (sHostmasks.empty()) {
             PutModule(t_s("Usage: DelMasks <user> <mask>,[mask] ..."));

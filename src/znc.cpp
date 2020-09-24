@@ -59,7 +59,7 @@ CZNC::CZNC()
       m_uiConnectDelay(5),
       m_uiAnonIPLimit(10),
       m_uiMaxBufferSize(500),
-      m_uDisabledSSLProtocols(Csock::EDP_SSL),
+      m_uDisabledSSLProtocols(Csock::EDP_SSL | Csock::EDP_TLSv1 | Csock::EDP_TLSv1_1),
       m_pModules(new CModules),
       m_uBytesRead(0),
       m_uBytesWritten(0),
