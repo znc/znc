@@ -12,7 +12,7 @@ msgstr ""
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
 
-#: modules/po/../data/sasl/tmpl/index.tmpl:7 sasl.cpp:301
+#: modules/po/../data/sasl/tmpl/index.tmpl:7 sasl.cpp:303
 msgid "SASL"
 msgstr "SASL"
 
@@ -171,7 +171,7 @@ msgstr "Mecanismo {1} conseguido."
 msgid "{1} mechanism failed."
 msgstr "Mecanismo {1} fallido."
 
-#: sasl.cpp:346
+#: sasl.cpp:348
 msgid ""
 "Adds support for sasl authentication capability to authenticate to an IRC "
 "server"
