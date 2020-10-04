@@ -12,7 +12,7 @@ msgstr ""
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
 
-#: modules/po/../data/sasl/tmpl/index.tmpl:7 sasl.cpp:301
+#: modules/po/../data/sasl/tmpl/index.tmpl:7 sasl.cpp:303
 msgid "SASL"
 msgstr "SASL"
 
@@ -172,7 +172,7 @@ msgstr "{1} mechanisme gelukt."
 msgid "{1} mechanism failed."
 msgstr "{1} mechanisme gefaalt."
 
-#: sasl.cpp:346
+#: sasl.cpp:348
 msgid ""
 "Adds support for sasl authentication capability to authenticate to an IRC "
 "server"

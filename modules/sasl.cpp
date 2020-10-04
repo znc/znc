@@ -283,6 +283,8 @@ class CSASLMod : public CModule {
             m_bAuthenticated = true;
             GetNetwork()->GetIRCSock()->ResumeCap();
             DEBUG("sasl: Received 907 -- We are already registered");
+        } else if (msg.GetCode() == 908) {
+            return HALT;
         } else {
             return CONTINUE;
         }
