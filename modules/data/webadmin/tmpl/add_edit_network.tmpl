@@ -184,6 +184,7 @@
 					<tr>
 						<td>[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>addchan?user=<? VAR Username ESC=URL ?>&amp;network=<? VAR Name ESC=URL ?>"><? FORMAT "Add" ?></a>]</td>
 				<? IF ChannelLoop ?>
+						<th><? FORMAT "Index" ?></th>
 						<th><? FORMAT "Save" ?></th>
 						<th><? FORMAT "Name" ?></th>
 						<th><? FORMAT "CurModes" ?></th>
@@ -196,13 +197,14 @@
 					</tr>
 					</thead>
 
-					<tbody>
-			<? LOOP ChannelLoop SORTASC=Name ?>
+					<tbody id="channels">
+			<? LOOP ChannelLoop ?>
 					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
 						<td>
 							<input type="hidden" name="channel" value="<? VAR Name ?>" />
 							[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>editchan?user=<? VAR Username ESC=URL ?>&amp;network=<? VAR Network ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>"><? FORMAT "Edit" ?></a>] [<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>delchan?user=<? VAR Username ESC=URL ?>&amp;network=<? VAR Network ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>"><? FORMAT "Del" ?></a>]
 						</td>
+						<td><input class="channel_index" type="number" name="index_<? VAR Name ?>" min="1" max="<? VAR MaxIndex ?>" value="<? VAR Index ?>"/></td>
 						<td><input type="checkbox" name="save_<? VAR Name ?>"<? IF InConfig ?> checked="checked"<? ENDIF ?> /></td>
 						<td><? VAR Name ?></td>
 						<td><? VAR CurModes ?></td>
@@ -213,6 +215,7 @@
 			<? ENDLOOP ?>
 					</tbody>
 				</table>
+				<script>channellist_init(jQuery);</script>
 			</div>
 		</div>
 		<? ENDIF ?>

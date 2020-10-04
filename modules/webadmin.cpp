@@ -1001,6 +1001,7 @@ class CWebAdminMod : public CModule {
             }
 
             const vector<CChan*>& Channels = pNetwork->GetChans();
+            unsigned int uIndex = 1;
             for (const CChan* pChan : Channels) {
                 CTemplate& l = Tmpl.AddRow("ChannelLoop");
 
@@ -1021,6 +1022,9 @@ class CWebAdminMod : public CModule {
                 if (pChan->InConfig()) {
                     l["InConfig"] = "true";
                 }
+
+                l["MaxIndex"] = CString(Channels.size());
+                l["Index"] = CString(uIndex++);
             }
             for (const CString& sFP : pNetwork->GetTrustedFingerprints()) {
                 CTemplate& l = Tmpl.AddRow("TrustedFingerprints");
@@ -1157,6 +1161,13 @@ class CWebAdminMod : public CModule {
         for (const CString& sChan : vsArgs) {
             CChan* pChan = pNetwork->FindChan(sChan.TrimRight_n("\r"));
             if (pChan) {
+                CString sError;
+                if (!pNetwork->MoveChan(
+                        sChan, WebSock.GetParam("index_" + sChan).ToUInt() - 1,
+                        sError)) {
+                    WebSock.PrintErrorPage(sError);
+                    return true;
+                }
                 pChan->SetInConfig(WebSock.GetParam("save_" + sChan).ToBool());
             }
         }

@@ -93,6 +93,9 @@ class CIRCNetwork : private CCoreTranslationMixin {
     bool AddChan(CChan* pChan);
     bool AddChan(const CString& sName, bool bInConfig);
     bool DelChan(const CString& sName);
+    bool MoveChan(const CString& sChan, unsigned int index, CString& sError);
+    bool SwapChans(const CString& sChan1, const CString& sChan2,
+                   CString& sError);
     void JoinChans();
     void JoinChans(std::set<CChan*>& sChans);
 
