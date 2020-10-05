@@ -62,7 +62,7 @@ msgstr ""
 msgid "Invalid port"
 msgstr ""
 
-#: znc.cpp:1813 ClientCommand.cpp:1655
+#: znc.cpp:1813 ClientCommand.cpp:1700
 msgid "Unable to bind: {1}"
 msgstr ""
 
@@ -82,19 +82,28 @@ msgstr ""
 msgid "This network is being deleted or moved to another user."
 msgstr ""
 
-#: IRCNetwork.cpp:1016
+#: IRCNetwork.cpp:948
+msgid "Invalid index"
+msgstr ""
+
+#: IRCNetwork.cpp:956 IRCNetwork.cpp:972 IRCNetwork.cpp:980
+#: ClientCommand.cpp:1405
+msgid "You are not on {1}"
+msgstr ""
+
+#: IRCNetwork.cpp:1059
 msgid "The channel {1} could not be joined, disabling it."
 msgstr ""
 
-#: IRCNetwork.cpp:1145
+#: IRCNetwork.cpp:1188
 msgid "Your current server was removed, jumping..."
 msgstr ""
 
-#: IRCNetwork.cpp:1308
+#: IRCNetwork.cpp:1351
 msgid "Cannot connect to {1}, because ZNC is not compiled with SSL support."
 msgstr ""
 
-#: IRCNetwork.cpp:1329
+#: IRCNetwork.cpp:1372
 msgid "Some module aborted the connection attempt"
 msgstr ""
 
@@ -275,7 +284,7 @@ msgctxt "modhelpcmd"
 msgid "Generate this output"
 msgstr ""
 
-#: Modules.cpp:573 ClientCommand.cpp:1922
+#: Modules.cpp:573 ClientCommand.cpp:1972
 msgid "No matches for '{1}'"
 msgstr ""
 
@@ -381,11 +390,12 @@ msgstr ""
 
 #: ClientCommand.cpp:51 ClientCommand.cpp:115 ClientCommand.cpp:137
 #: ClientCommand.cpp:339 ClientCommand.cpp:390 ClientCommand.cpp:405
-#: ClientCommand.cpp:432 ClientCommand.cpp:459 ClientCommand.cpp:764
-#: ClientCommand.cpp:783 ClientCommand.cpp:809 ClientCommand.cpp:843
-#: ClientCommand.cpp:856 ClientCommand.cpp:869 ClientCommand.cpp:884
-#: ClientCommand.cpp:1345 ClientCommand.cpp:1393 ClientCommand.cpp:1425
-#: ClientCommand.cpp:1436 ClientCommand.cpp:1445 ClientCommand.cpp:1457
+#: ClientCommand.cpp:432 ClientCommand.cpp:459 ClientCommand.cpp:480
+#: ClientCommand.cpp:499 ClientCommand.cpp:809 ClientCommand.cpp:828
+#: ClientCommand.cpp:854 ClientCommand.cpp:888 ClientCommand.cpp:901
+#: ClientCommand.cpp:914 ClientCommand.cpp:929 ClientCommand.cpp:1390
+#: ClientCommand.cpp:1438 ClientCommand.cpp:1470 ClientCommand.cpp:1481
+#: ClientCommand.cpp:1490 ClientCommand.cpp:1502
 msgid "You must be connected with a network to use this command"
 msgstr ""
 
@@ -562,7 +572,7 @@ msgid ""
 "ERROR: Writing config file to disk failed! Aborting. Use {1} FORCE to ignore."
 msgstr ""
 
-#: ClientCommand.cpp:344 ClientCommand.cpp:797 ClientCommand.cpp:838
+#: ClientCommand.cpp:344 ClientCommand.cpp:842 ClientCommand.cpp:883
 msgid "You don't have any servers added."
 msgstr ""
 
@@ -606,1205 +616,1242 @@ msgid_plural "Disabled {1} channels"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ClientCommand.cpp:470
+#: ClientCommand.cpp:466
+msgid "Usage: MoveChan <#chan> <index>"
+msgstr ""
+
+#: ClientCommand.cpp:474
+msgid "Moved channel {1} to index {2}"
+msgstr ""
+
+#: ClientCommand.cpp:487
+msgid "Usage: SwapChans <#chan1> <#chan2>"
+msgstr ""
+
+#: ClientCommand.cpp:493
+msgid "Swapped channels {1} and {2}"
+msgstr ""
+
+#: ClientCommand.cpp:510
 msgid "Usage: ListChans"
 msgstr ""
 
-#: ClientCommand.cpp:477
+#: ClientCommand.cpp:517
 msgid "No such user [{1}]"
 msgstr ""
 
-#: ClientCommand.cpp:483
+#: ClientCommand.cpp:523
 msgid "User [{1}] doesn't have network [{2}]"
 msgstr ""
 
-#: ClientCommand.cpp:494
+#: ClientCommand.cpp:534
 msgid "There are no channels defined."
 msgstr ""
 
-#: ClientCommand.cpp:499 ClientCommand.cpp:515
+#: ClientCommand.cpp:539 ClientCommand.cpp:557
+msgctxt "listchans"
+msgid "Index"
+msgstr ""
+
+#: ClientCommand.cpp:540 ClientCommand.cpp:558
 msgctxt "listchans"
 msgid "Name"
 msgstr ""
 
-#: ClientCommand.cpp:500 ClientCommand.cpp:518
+#: ClientCommand.cpp:541 ClientCommand.cpp:561
 msgctxt "listchans"
 msgid "Status"
 msgstr ""
 
-#: ClientCommand.cpp:501 ClientCommand.cpp:525
+#: ClientCommand.cpp:542 ClientCommand.cpp:568
 msgctxt "listchans"
 msgid "In config"
 msgstr ""
 
-#: ClientCommand.cpp:502 ClientCommand.cpp:527
+#: ClientCommand.cpp:543 ClientCommand.cpp:570
 msgctxt "listchans"
 msgid "Buffer"
 msgstr ""
 
-#: ClientCommand.cpp:503 ClientCommand.cpp:531
+#: ClientCommand.cpp:544 ClientCommand.cpp:574
 msgctxt "listchans"
 msgid "Clear"
 msgstr ""
 
-#: ClientCommand.cpp:504 ClientCommand.cpp:536
+#: ClientCommand.cpp:545 ClientCommand.cpp:579
 msgctxt "listchans"
 msgid "Modes"
 msgstr ""
 
-#: ClientCommand.cpp:505 ClientCommand.cpp:537
+#: ClientCommand.cpp:546 ClientCommand.cpp:580
 msgctxt "listchans"
 msgid "Users"
 msgstr ""
 
-#: ClientCommand.cpp:520
+#: ClientCommand.cpp:563
 msgctxt "listchans"
 msgid "Detached"
 msgstr ""
 
-#: ClientCommand.cpp:521
+#: ClientCommand.cpp:564
 msgctxt "listchans"
 msgid "Joined"
 msgstr ""
 
-#: ClientCommand.cpp:522
+#: ClientCommand.cpp:565
 msgctxt "listchans"
 msgid "Disabled"
 msgstr ""
 
-#: ClientCommand.cpp:523
+#: ClientCommand.cpp:566
 msgctxt "listchans"
 msgid "Trying"
 msgstr ""
 
-#: ClientCommand.cpp:526 ClientCommand.cpp:534
+#: ClientCommand.cpp:569 ClientCommand.cpp:577
 msgctxt "listchans"
 msgid "yes"
 msgstr ""
 
-#: ClientCommand.cpp:551
+#: ClientCommand.cpp:596
 msgid "Total: {1}, Joined: {2}, Detached: {3}, Disabled: {4}"
 msgstr ""
 
-#: ClientCommand.cpp:556
+#: ClientCommand.cpp:601
 msgid ""
 "Network number limit reached. Ask an admin to increase the limit for you, or "
 "delete unneeded networks using /znc DelNetwork <name>"
 msgstr ""
 
-#: ClientCommand.cpp:565
+#: ClientCommand.cpp:610
 msgid "Usage: AddNetwork <name>"
 msgstr ""
 
-#: ClientCommand.cpp:569
+#: ClientCommand.cpp:614
 msgid "Network name should be alphanumeric"
 msgstr ""
 
-#: ClientCommand.cpp:576
+#: ClientCommand.cpp:621
 msgid ""
 "Network added. Use /znc JumpNetwork {1}, or connect to ZNC with username {2} "
 "(instead of just {3}) to connect to it."
 msgstr ""
 
-#: ClientCommand.cpp:581
+#: ClientCommand.cpp:626
 msgid "Unable to add that network"
 msgstr ""
 
-#: ClientCommand.cpp:588
+#: ClientCommand.cpp:633
 msgid "Usage: DelNetwork <name>"
 msgstr ""
 
-#: ClientCommand.cpp:597
+#: ClientCommand.cpp:642
 msgid "Network deleted"
 msgstr ""
 
-#: ClientCommand.cpp:600
+#: ClientCommand.cpp:645
 msgid "Failed to delete network, perhaps this network doesn't exist"
 msgstr ""
 
-#: ClientCommand.cpp:610
+#: ClientCommand.cpp:655
 msgid "User {1} not found"
 msgstr ""
 
-#: ClientCommand.cpp:618 ClientCommand.cpp:626
+#: ClientCommand.cpp:663 ClientCommand.cpp:671
 msgctxt "listnetworks"
 msgid "Network"
 msgstr ""
 
-#: ClientCommand.cpp:619 ClientCommand.cpp:628 ClientCommand.cpp:637
+#: ClientCommand.cpp:664 ClientCommand.cpp:673 ClientCommand.cpp:682
 msgctxt "listnetworks"
 msgid "On IRC"
 msgstr ""
 
-#: ClientCommand.cpp:620 ClientCommand.cpp:630
+#: ClientCommand.cpp:665 ClientCommand.cpp:675
 msgctxt "listnetworks"
 msgid "IRC Server"
 msgstr ""
 
-#: ClientCommand.cpp:621 ClientCommand.cpp:632
+#: ClientCommand.cpp:666 ClientCommand.cpp:677
 msgctxt "listnetworks"
 msgid "IRC User"
 msgstr ""
 
-#: ClientCommand.cpp:622 ClientCommand.cpp:634
+#: ClientCommand.cpp:667 ClientCommand.cpp:679
 msgctxt "listnetworks"
 msgid "Channels"
 msgstr ""
 
-#: ClientCommand.cpp:629
+#: ClientCommand.cpp:674
 msgctxt "listnetworks"
 msgid "Yes"
 msgstr ""
 
-#: ClientCommand.cpp:638
+#: ClientCommand.cpp:683
 msgctxt "listnetworks"
 msgid "No"
 msgstr ""
 
-#: ClientCommand.cpp:643
+#: ClientCommand.cpp:688
 msgctxt "listnetworks"
 msgid "No networks"
 msgstr ""
 
-#: ClientCommand.cpp:647 ClientCommand.cpp:952
+#: ClientCommand.cpp:692 ClientCommand.cpp:997
 msgid "Access denied."
 msgstr ""
 
-#: ClientCommand.cpp:658
+#: ClientCommand.cpp:703
 msgid "Usage: MoveNetwork <old user> <old network> <new user> [new network]"
 msgstr ""
 
-#: ClientCommand.cpp:668
+#: ClientCommand.cpp:713
 msgid "Old user {1} not found."
 msgstr ""
 
-#: ClientCommand.cpp:674
+#: ClientCommand.cpp:719
 msgid "Old network {1} not found."
 msgstr ""
 
-#: ClientCommand.cpp:680
+#: ClientCommand.cpp:725
 msgid "New user {1} not found."
 msgstr ""
 
-#: ClientCommand.cpp:685
+#: ClientCommand.cpp:730
 msgid "User {1} already has network {2}."
 msgstr ""
 
-#: ClientCommand.cpp:691
+#: ClientCommand.cpp:736
 msgid "Invalid network name [{1}]"
 msgstr ""
 
-#: ClientCommand.cpp:707
+#: ClientCommand.cpp:752
 msgid "Some files seem to be in {1}. You might want to move them to {2}"
 msgstr ""
 
-#: ClientCommand.cpp:721
+#: ClientCommand.cpp:766
 msgid "Error adding network: {1}"
 msgstr ""
 
-#: ClientCommand.cpp:733
+#: ClientCommand.cpp:778
 msgid "Success."
 msgstr ""
 
-#: ClientCommand.cpp:736
+#: ClientCommand.cpp:781
 msgid "Copied the network to new user, but failed to delete old network"
 msgstr ""
 
-#: ClientCommand.cpp:743
+#: ClientCommand.cpp:788
 msgid "No network supplied."
 msgstr ""
 
-#: ClientCommand.cpp:748
+#: ClientCommand.cpp:793
 msgid "You are already connected with this network."
 msgstr ""
 
-#: ClientCommand.cpp:754
+#: ClientCommand.cpp:799
 msgid "Switched to {1}"
 msgstr ""
 
-#: ClientCommand.cpp:757
+#: ClientCommand.cpp:802
 msgid "You don't have a network named {1}"
 msgstr ""
 
-#: ClientCommand.cpp:769
+#: ClientCommand.cpp:814
 msgid "Usage: AddServer <host> [[+]port] [pass]"
 msgstr ""
 
-#: ClientCommand.cpp:774
+#: ClientCommand.cpp:819
 msgid "Server added"
 msgstr ""
 
-#: ClientCommand.cpp:777
+#: ClientCommand.cpp:822
 msgid ""
 "Unable to add that server. Perhaps the server is already added or openssl is "
 "disabled?"
 msgstr ""
 
-#: ClientCommand.cpp:792
+#: ClientCommand.cpp:837
 msgid "Usage: DelServer <host> [port] [pass]"
 msgstr ""
 
-#: ClientCommand.cpp:802
+#: ClientCommand.cpp:847
 msgid "Server removed"
 msgstr ""
 
-#: ClientCommand.cpp:804
+#: ClientCommand.cpp:849
 msgid "No such server"
 msgstr ""
 
-#: ClientCommand.cpp:817 ClientCommand.cpp:825
+#: ClientCommand.cpp:862 ClientCommand.cpp:870
 msgctxt "listservers"
 msgid "Host"
 msgstr ""
 
-#: ClientCommand.cpp:818 ClientCommand.cpp:827
+#: ClientCommand.cpp:863 ClientCommand.cpp:872
 msgctxt "listservers"
 msgid "Port"
 msgstr ""
 
-#: ClientCommand.cpp:819 ClientCommand.cpp:830
+#: ClientCommand.cpp:864 ClientCommand.cpp:875
 msgctxt "listservers"
 msgid "SSL"
 msgstr ""
 
-#: ClientCommand.cpp:820 ClientCommand.cpp:832
+#: ClientCommand.cpp:865 ClientCommand.cpp:877
 msgctxt "listservers"
 msgid "Password"
 msgstr ""
 
-#: ClientCommand.cpp:831
+#: ClientCommand.cpp:876
 msgctxt "listservers|cell"
 msgid "SSL"
 msgstr ""
 
-#: ClientCommand.cpp:848
+#: ClientCommand.cpp:893
 msgid "Usage: AddTrustedServerFingerprint <fi:ng:er>"
 msgstr ""
 
-#: ClientCommand.cpp:852 ClientCommand.cpp:865
+#: ClientCommand.cpp:897 ClientCommand.cpp:910
 msgid "Done."
 msgstr ""
 
-#: ClientCommand.cpp:861
+#: ClientCommand.cpp:906
 msgid "Usage: DelTrustedServerFingerprint <fi:ng:er>"
 msgstr ""
 
-#: ClientCommand.cpp:874
+#: ClientCommand.cpp:919
 msgid "No fingerprints added."
 msgstr ""
 
-#: ClientCommand.cpp:890 ClientCommand.cpp:896
+#: ClientCommand.cpp:935 ClientCommand.cpp:941
 msgctxt "topicscmd"
 msgid "Channel"
 msgstr ""
 
-#: ClientCommand.cpp:891 ClientCommand.cpp:897
+#: ClientCommand.cpp:936 ClientCommand.cpp:942
 msgctxt "topicscmd"
 msgid "Set By"
 msgstr ""
 
-#: ClientCommand.cpp:892 ClientCommand.cpp:898
+#: ClientCommand.cpp:937 ClientCommand.cpp:943
 msgctxt "topicscmd"
 msgid "Topic"
 msgstr ""
 
-#: ClientCommand.cpp:905 ClientCommand.cpp:910
+#: ClientCommand.cpp:950 ClientCommand.cpp:955
 msgctxt "listmods"
 msgid "Name"
 msgstr ""
 
-#: ClientCommand.cpp:906 ClientCommand.cpp:911
+#: ClientCommand.cpp:951 ClientCommand.cpp:956
 msgctxt "listmods"
 msgid "Arguments"
 msgstr ""
 
-#: ClientCommand.cpp:920
+#: ClientCommand.cpp:965
 msgid "No global modules loaded."
 msgstr ""
 
-#: ClientCommand.cpp:922 ClientCommand.cpp:986
+#: ClientCommand.cpp:967 ClientCommand.cpp:1031
 msgid "Global modules:"
 msgstr ""
 
-#: ClientCommand.cpp:931
+#: ClientCommand.cpp:976
 msgid "Your user has no modules loaded."
 msgstr ""
 
-#: ClientCommand.cpp:933 ClientCommand.cpp:998
+#: ClientCommand.cpp:978 ClientCommand.cpp:1043
 msgid "User modules:"
 msgstr ""
 
-#: ClientCommand.cpp:941
+#: ClientCommand.cpp:986
 msgid "This network has no modules loaded."
 msgstr ""
 
-#: ClientCommand.cpp:943 ClientCommand.cpp:1010
+#: ClientCommand.cpp:988 ClientCommand.cpp:1055
 msgid "Network modules:"
 msgstr ""
 
-#: ClientCommand.cpp:958 ClientCommand.cpp:965
+#: ClientCommand.cpp:1003 ClientCommand.cpp:1010
 msgctxt "listavailmods"
 msgid "Name"
 msgstr ""
 
-#: ClientCommand.cpp:959 ClientCommand.cpp:970
+#: ClientCommand.cpp:1004 ClientCommand.cpp:1015
 msgctxt "listavailmods"
 msgid "Description"
 msgstr ""
 
-#: ClientCommand.cpp:984
+#: ClientCommand.cpp:1029
 msgid "No global modules available."
 msgstr ""
 
-#: ClientCommand.cpp:996
+#: ClientCommand.cpp:1041
 msgid "No user modules available."
 msgstr ""
 
-#: ClientCommand.cpp:1008
+#: ClientCommand.cpp:1053
 msgid "No network modules available."
 msgstr ""
 
-#: ClientCommand.cpp:1036
+#: ClientCommand.cpp:1081
 msgid "Unable to load {1}: Access denied."
 msgstr ""
 
-#: ClientCommand.cpp:1042
+#: ClientCommand.cpp:1087
 msgid "Usage: LoadMod [--type=global|user|network] <module> [args]"
 msgstr ""
 
-#: ClientCommand.cpp:1049
+#: ClientCommand.cpp:1094
 msgid "Unable to load {1}: {2}"
 msgstr ""
 
-#: ClientCommand.cpp:1059
+#: ClientCommand.cpp:1104
 msgid "Unable to load global module {1}: Access denied."
 msgstr ""
 
-#: ClientCommand.cpp:1065
+#: ClientCommand.cpp:1110
 msgid "Unable to load network module {1}: Not connected with a network."
 msgstr ""
 
-#: ClientCommand.cpp:1087
+#: ClientCommand.cpp:1132
 msgid "Unknown module type"
 msgstr ""
 
-#: ClientCommand.cpp:1092
+#: ClientCommand.cpp:1137
 msgid "Loaded module {1}"
 msgstr ""
 
-#: ClientCommand.cpp:1094
+#: ClientCommand.cpp:1139
 msgid "Loaded module {1}: {2}"
 msgstr ""
 
-#: ClientCommand.cpp:1097
+#: ClientCommand.cpp:1142
 msgid "Unable to load module {1}: {2}"
 msgstr ""
 
-#: ClientCommand.cpp:1120
+#: ClientCommand.cpp:1165
 msgid "Unable to unload {1}: Access denied."
 msgstr ""
 
-#: ClientCommand.cpp:1126
+#: ClientCommand.cpp:1171
 msgid "Usage: UnloadMod [--type=global|user|network] <module>"
 msgstr ""
 
-#: ClientCommand.cpp:1135
+#: ClientCommand.cpp:1180
 msgid "Unable to determine type of {1}: {2}"
 msgstr ""
 
-#: ClientCommand.cpp:1143
+#: ClientCommand.cpp:1188
 msgid "Unable to unload global module {1}: Access denied."
 msgstr ""
 
-#: ClientCommand.cpp:1150
+#: ClientCommand.cpp:1195
 msgid "Unable to unload network module {1}: Not connected with a network."
 msgstr ""
 
-#: ClientCommand.cpp:1169
+#: ClientCommand.cpp:1214
 msgid "Unable to unload module {1}: Unknown module type"
 msgstr ""
 
-#: ClientCommand.cpp:1182
+#: ClientCommand.cpp:1227
 msgid "Unable to reload modules. Access denied."
 msgstr ""
 
-#: ClientCommand.cpp:1203
+#: ClientCommand.cpp:1248
 msgid "Usage: ReloadMod [--type=global|user|network] <module> [args]"
 msgstr ""
 
-#: ClientCommand.cpp:1212
+#: ClientCommand.cpp:1257
 msgid "Unable to reload {1}: {2}"
 msgstr ""
 
-#: ClientCommand.cpp:1220
+#: ClientCommand.cpp:1265
 msgid "Unable to reload global module {1}: Access denied."
 msgstr ""
 
-#: ClientCommand.cpp:1227
+#: ClientCommand.cpp:1272
 msgid "Unable to reload network module {1}: Not connected with a network."
 msgstr ""
 
-#: ClientCommand.cpp:1249
+#: ClientCommand.cpp:1294
 msgid "Unable to reload module {1}: Unknown module type"
 msgstr ""
 
-#: ClientCommand.cpp:1260
+#: ClientCommand.cpp:1305
 msgid "Usage: UpdateMod <module>"
 msgstr ""
 
-#: ClientCommand.cpp:1264
+#: ClientCommand.cpp:1309
 msgid "Reloading {1} everywhere"
 msgstr ""
 
-#: ClientCommand.cpp:1266
+#: ClientCommand.cpp:1311
 msgid "Done"
 msgstr ""
 
-#: ClientCommand.cpp:1269
+#: ClientCommand.cpp:1314
 msgid ""
 "Done, but there were errors, module {1} could not be reloaded everywhere."
 msgstr ""
 
-#: ClientCommand.cpp:1277
+#: ClientCommand.cpp:1322
 msgid ""
 "You must be connected with a network to use this command. Try "
 "SetUserBindHost instead"
 msgstr ""
 
-#: ClientCommand.cpp:1284
+#: ClientCommand.cpp:1329
 msgid "Usage: SetBindHost <host>"
 msgstr ""
 
-#: ClientCommand.cpp:1289 ClientCommand.cpp:1306
+#: ClientCommand.cpp:1334 ClientCommand.cpp:1351
 msgid "You already have this bind host!"
 msgstr ""
 
-#: ClientCommand.cpp:1294
+#: ClientCommand.cpp:1339
 msgid "Set bind host for network {1} to {2}"
 msgstr ""
 
-#: ClientCommand.cpp:1301
+#: ClientCommand.cpp:1346
 msgid "Usage: SetUserBindHost <host>"
 msgstr ""
 
-#: ClientCommand.cpp:1311
+#: ClientCommand.cpp:1356
 msgid "Set default bind host to {1}"
 msgstr ""
 
-#: ClientCommand.cpp:1317
+#: ClientCommand.cpp:1362
 msgid ""
 "You must be connected with a network to use this command. Try "
 "ClearUserBindHost instead"
 msgstr ""
 
-#: ClientCommand.cpp:1322
+#: ClientCommand.cpp:1367
 msgid "Bind host cleared for this network."
 msgstr ""
 
-#: ClientCommand.cpp:1326
+#: ClientCommand.cpp:1371
 msgid "Default bind host cleared for your user."
 msgstr ""
 
-#: ClientCommand.cpp:1329
+#: ClientCommand.cpp:1374
 msgid "This user's default bind host not set"
 msgstr ""
 
-#: ClientCommand.cpp:1331
+#: ClientCommand.cpp:1376
 msgid "This user's default bind host is {1}"
 msgstr ""
 
-#: ClientCommand.cpp:1336
+#: ClientCommand.cpp:1381
 msgid "This network's bind host not set"
 msgstr ""
 
-#: ClientCommand.cpp:1338
+#: ClientCommand.cpp:1383
 msgid "This network's default bind host is {1}"
 msgstr ""
 
-#: ClientCommand.cpp:1352
+#: ClientCommand.cpp:1397
 msgid "Usage: PlayBuffer <#chan|query>"
 msgstr ""
 
-#: ClientCommand.cpp:1360
-msgid "You are not on {1}"
-msgstr ""
-
-#: ClientCommand.cpp:1365
+#: ClientCommand.cpp:1410
 msgid "You are not on {1} (trying to join)"
 msgstr ""
 
-#: ClientCommand.cpp:1370
+#: ClientCommand.cpp:1415
 msgid "The buffer for channel {1} is empty"
 msgstr ""
 
-#: ClientCommand.cpp:1379
+#: ClientCommand.cpp:1424
 msgid "No active query with {1}"
 msgstr ""
 
-#: ClientCommand.cpp:1384
+#: ClientCommand.cpp:1429
 msgid "The buffer for {1} is empty"
 msgstr ""
 
-#: ClientCommand.cpp:1400
+#: ClientCommand.cpp:1445
 msgid "Usage: ClearBuffer <#chan|query>"
 msgstr ""
 
-#: ClientCommand.cpp:1419
+#: ClientCommand.cpp:1464
 msgid "{1} buffer matching {2} has been cleared"
 msgid_plural "{1} buffers matching {2} have been cleared"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ClientCommand.cpp:1432
+#: ClientCommand.cpp:1477
 msgid "All channel buffers have been cleared"
 msgstr ""
 
-#: ClientCommand.cpp:1441
+#: ClientCommand.cpp:1486
 msgid "All query buffers have been cleared"
 msgstr ""
 
-#: ClientCommand.cpp:1453
+#: ClientCommand.cpp:1498
 msgid "All buffers have been cleared"
 msgstr ""
 
-#: ClientCommand.cpp:1464
+#: ClientCommand.cpp:1509
 msgid "Usage: SetBuffer <#chan|query> [linecount]"
 msgstr ""
 
-#: ClientCommand.cpp:1485
+#: ClientCommand.cpp:1530
 msgid "Setting buffer size failed for {1} buffer"
 msgid_plural "Setting buffer size failed for {1} buffers"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ClientCommand.cpp:1488
+#: ClientCommand.cpp:1533
 msgid "Maximum buffer size is {1} line"
 msgid_plural "Maximum buffer size is {1} lines"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ClientCommand.cpp:1493
+#: ClientCommand.cpp:1538
 msgid "Size of every buffer was set to {1} line"
 msgid_plural "Size of every buffer was set to {1} lines"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ClientCommand.cpp:1503 ClientCommand.cpp:1510 ClientCommand.cpp:1521
-#: ClientCommand.cpp:1530 ClientCommand.cpp:1538
+#: ClientCommand.cpp:1548 ClientCommand.cpp:1555 ClientCommand.cpp:1566
+#: ClientCommand.cpp:1575 ClientCommand.cpp:1583
 msgctxt "trafficcmd"
 msgid "Username"
 msgstr ""
 
-#: ClientCommand.cpp:1504 ClientCommand.cpp:1511 ClientCommand.cpp:1523
-#: ClientCommand.cpp:1532 ClientCommand.cpp:1540
+#: ClientCommand.cpp:1549 ClientCommand.cpp:1556 ClientCommand.cpp:1568
+#: ClientCommand.cpp:1577 ClientCommand.cpp:1585
 msgctxt "trafficcmd"
 msgid "In"
 msgstr ""
 
-#: ClientCommand.cpp:1505 ClientCommand.cpp:1513 ClientCommand.cpp:1524
-#: ClientCommand.cpp:1533 ClientCommand.cpp:1541
+#: ClientCommand.cpp:1550 ClientCommand.cpp:1558 ClientCommand.cpp:1569
+#: ClientCommand.cpp:1578 ClientCommand.cpp:1586
 msgctxt "trafficcmd"
 msgid "Out"
 msgstr ""
 
-#: ClientCommand.cpp:1506 ClientCommand.cpp:1516 ClientCommand.cpp:1526
-#: ClientCommand.cpp:1534 ClientCommand.cpp:1543
+#: ClientCommand.cpp:1551 ClientCommand.cpp:1561 ClientCommand.cpp:1571
+#: ClientCommand.cpp:1579 ClientCommand.cpp:1588
 msgctxt "trafficcmd"
 msgid "Total"
 msgstr ""
 
-#: ClientCommand.cpp:1522
+#: ClientCommand.cpp:1567
 msgctxt "trafficcmd"
 msgid "<Users>"
 msgstr ""
 
-#: ClientCommand.cpp:1531
+#: ClientCommand.cpp:1576
 msgctxt "trafficcmd"
 msgid "<ZNC>"
 msgstr ""
 
-#: ClientCommand.cpp:1539
+#: ClientCommand.cpp:1584
 msgctxt "trafficcmd"
 msgid "<Total>"
 msgstr ""
 
-#: ClientCommand.cpp:1548
+#: ClientCommand.cpp:1593
 msgid "Running for {1}"
 msgstr ""
 
-#: ClientCommand.cpp:1554
+#: ClientCommand.cpp:1599
 msgid "Unknown command, try 'Help'"
 msgstr ""
 
-#: ClientCommand.cpp:1563 ClientCommand.cpp:1574
+#: ClientCommand.cpp:1608 ClientCommand.cpp:1619
 msgctxt "listports"
 msgid "Port"
 msgstr ""
 
-#: ClientCommand.cpp:1564 ClientCommand.cpp:1577
+#: ClientCommand.cpp:1609 ClientCommand.cpp:1622
 msgctxt "listports"
 msgid "BindHost"
 msgstr ""
 
-#: ClientCommand.cpp:1565 ClientCommand.cpp:1580
+#: ClientCommand.cpp:1610 ClientCommand.cpp:1625
 msgctxt "listports"
 msgid "SSL"
 msgstr ""
 
-#: ClientCommand.cpp:1566 ClientCommand.cpp:1585
+#: ClientCommand.cpp:1611 ClientCommand.cpp:1630
 msgctxt "listports"
 msgid "Protocol"
 msgstr ""
 
-#: ClientCommand.cpp:1567 ClientCommand.cpp:1592
+#: ClientCommand.cpp:1612 ClientCommand.cpp:1637
 msgctxt "listports"
 msgid "IRC"
 msgstr ""
 
-#: ClientCommand.cpp:1568 ClientCommand.cpp:1597
+#: ClientCommand.cpp:1613 ClientCommand.cpp:1642
 msgctxt "listports"
 msgid "Web"
 msgstr ""
 
-#: ClientCommand.cpp:1581
+#: ClientCommand.cpp:1626
 msgctxt "listports|ssl"
 msgid "yes"
 msgstr ""
 
-#: ClientCommand.cpp:1582
+#: ClientCommand.cpp:1627
 msgctxt "listports|ssl"
 msgid "no"
 msgstr ""
 
-#: ClientCommand.cpp:1586
+#: ClientCommand.cpp:1631
 msgctxt "listports"
 msgid "IPv4 and IPv6"
 msgstr ""
 
-#: ClientCommand.cpp:1588
+#: ClientCommand.cpp:1633
 msgctxt "listports"
 msgid "IPv4"
 msgstr ""
 
-#: ClientCommand.cpp:1589
+#: ClientCommand.cpp:1634
 msgctxt "listports"
 msgid "IPv6"
 msgstr ""
 
-#: ClientCommand.cpp:1595
+#: ClientCommand.cpp:1640
 msgctxt "listports|irc"
 msgid "yes"
 msgstr ""
 
-#: ClientCommand.cpp:1596
+#: ClientCommand.cpp:1641
 msgctxt "listports|irc"
 msgid "no"
 msgstr ""
 
-#: ClientCommand.cpp:1600
+#: ClientCommand.cpp:1645
 msgctxt "listports|irc"
 msgid "yes, on {1}"
 msgstr ""
 
-#: ClientCommand.cpp:1602
+#: ClientCommand.cpp:1647
 msgctxt "listports|web"
 msgid "no"
 msgstr ""
 
-#: ClientCommand.cpp:1642
+#: ClientCommand.cpp:1687
 msgid ""
 "Usage: AddPort <[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost [uriprefix]]"
 msgstr ""
 
-#: ClientCommand.cpp:1658
+#: ClientCommand.cpp:1703
 msgid "Port added"
 msgstr ""
 
-#: ClientCommand.cpp:1660
+#: ClientCommand.cpp:1705
 msgid "Couldn't add port"
 msgstr ""
 
-#: ClientCommand.cpp:1666
+#: ClientCommand.cpp:1711
 msgid "Usage: DelPort <port> <ipv4|ipv6|all> [bindhost]"
 msgstr ""
 
-#: ClientCommand.cpp:1675
+#: ClientCommand.cpp:1720
 msgid "Deleted Port"
 msgstr ""
 
-#: ClientCommand.cpp:1677
+#: ClientCommand.cpp:1722
 msgid "Unable to find a matching port"
 msgstr ""
 
-#: ClientCommand.cpp:1685 ClientCommand.cpp:1700
+#: ClientCommand.cpp:1730 ClientCommand.cpp:1745
 msgctxt "helpcmd"
 msgid "Command"
 msgstr ""
 
-#: ClientCommand.cpp:1686 ClientCommand.cpp:1702
+#: ClientCommand.cpp:1731 ClientCommand.cpp:1747
 msgctxt "helpcmd"
 msgid "Description"
 msgstr ""
 
-#: ClientCommand.cpp:1691
+#: ClientCommand.cpp:1736
 msgid ""
 "In the following list all occurrences of <#chan> support wildcards (* and ?) "
 "except ListNicks"
 msgstr ""
 
-#: ClientCommand.cpp:1708
+#: ClientCommand.cpp:1753
 msgctxt "helpcmd|Version|desc"
 msgid "Print which version of ZNC this is"
 msgstr ""
 
-#: ClientCommand.cpp:1711
+#: ClientCommand.cpp:1756
 msgctxt "helpcmd|ListMods|desc"
 msgid "List all loaded modules"
 msgstr ""
 
-#: ClientCommand.cpp:1714
+#: ClientCommand.cpp:1759
 msgctxt "helpcmd|ListAvailMods|desc"
 msgid "List all available modules"
 msgstr ""
 
-#: ClientCommand.cpp:1718 ClientCommand.cpp:1904
+#: ClientCommand.cpp:1763 ClientCommand.cpp:1954
 msgctxt "helpcmd|ListChans|desc"
 msgid "List all channels"
 msgstr ""
 
-#: ClientCommand.cpp:1721
+#: ClientCommand.cpp:1766
 msgctxt "helpcmd|ListNicks|args"
 msgid "<#chan>"
 msgstr ""
 
-#: ClientCommand.cpp:1722
+#: ClientCommand.cpp:1767
 msgctxt "helpcmd|ListNicks|desc"
 msgid "List all nicks on a channel"
 msgstr ""
 
-#: ClientCommand.cpp:1725
+#: ClientCommand.cpp:1770
 msgctxt "helpcmd|ListClients|desc"
 msgid "List all clients connected to your ZNC user"
 msgstr ""
 
-#: ClientCommand.cpp:1729
+#: ClientCommand.cpp:1774
 msgctxt "helpcmd|ListServers|desc"
 msgid "List all servers of current IRC network"
 msgstr ""
 
-#: ClientCommand.cpp:1733
+#: ClientCommand.cpp:1778
 msgctxt "helpcmd|AddNetwork|args"
 msgid "<name>"
 msgstr ""
 
-#: ClientCommand.cpp:1734
+#: ClientCommand.cpp:1779
 msgctxt "helpcmd|AddNetwork|desc"
 msgid "Add a network to your user"
 msgstr ""
 
-#: ClientCommand.cpp:1736
+#: ClientCommand.cpp:1781
 msgctxt "helpcmd|DelNetwork|args"
 msgid "<name>"
 msgstr ""
 
-#: ClientCommand.cpp:1737
+#: ClientCommand.cpp:1782
 msgctxt "helpcmd|DelNetwork|desc"
 msgid "Delete a network from your user"
 msgstr ""
 
-#: ClientCommand.cpp:1739
+#: ClientCommand.cpp:1784
 msgctxt "helpcmd|ListNetworks|desc"
 msgid "List all networks"
 msgstr ""
 
-#: ClientCommand.cpp:1742
+#: ClientCommand.cpp:1787
 msgctxt "helpcmd|MoveNetwork|args"
 msgid "<old user> <old network> <new user> [new network]"
 msgstr ""
 
-#: ClientCommand.cpp:1744
+#: ClientCommand.cpp:1789
 msgctxt "helpcmd|MoveNetwork|desc"
 msgid "Move an IRC network from one user to another"
 msgstr ""
 
-#: ClientCommand.cpp:1748
+#: ClientCommand.cpp:1793
 msgctxt "helpcmd|JumpNetwork|args"
 msgid "<network>"
 msgstr ""
 
-#: ClientCommand.cpp:1749
+#: ClientCommand.cpp:1794
 msgctxt "helpcmd|JumpNetwork|desc"
 msgid ""
 "Jump to another network (Alternatively, you can connect to ZNC several "
 "times, using `user/network` as username)"
 msgstr ""
 
-#: ClientCommand.cpp:1754
+#: ClientCommand.cpp:1799
 msgctxt "helpcmd|AddServer|args"
 msgid "<host> [[+]port] [pass]"
 msgstr ""
 
-#: ClientCommand.cpp:1755
+#: ClientCommand.cpp:1800
 msgctxt "helpcmd|AddServer|desc"
 msgid ""
 "Add a server to the list of alternate/backup servers of current IRC network."
 msgstr ""
 
-#: ClientCommand.cpp:1759
+#: ClientCommand.cpp:1804
 msgctxt "helpcmd|DelServer|args"
 msgid "<host> [port] [pass]"
 msgstr ""
 
-#: ClientCommand.cpp:1760
+#: ClientCommand.cpp:1805
 msgctxt "helpcmd|DelServer|desc"
 msgid ""
 "Remove a server from the list of alternate/backup servers of current IRC "
 "network"
 msgstr ""
 
-#: ClientCommand.cpp:1766
+#: ClientCommand.cpp:1811
 msgctxt "helpcmd|AddTrustedServerFingerprint|args"
 msgid "<fi:ng:er>"
 msgstr ""
 
-#: ClientCommand.cpp:1767
+#: ClientCommand.cpp:1812
 msgctxt "helpcmd|AddTrustedServerFingerprint|desc"
 msgid ""
 "Add a trusted server SSL certificate fingerprint (SHA-256) to current IRC "
 "network."
 msgstr ""
 
-#: ClientCommand.cpp:1772
+#: ClientCommand.cpp:1817
 msgctxt "helpcmd|DelTrustedServerFingerprint|args"
 msgid "<fi:ng:er>"
 msgstr ""
 
-#: ClientCommand.cpp:1773
+#: ClientCommand.cpp:1818
 msgctxt "helpcmd|DelTrustedServerFingerprint|desc"
 msgid "Delete a trusted server SSL certificate from current IRC network."
 msgstr ""
 
-#: ClientCommand.cpp:1777
+#: ClientCommand.cpp:1822
 msgctxt "helpcmd|ListTrustedServerFingerprints|desc"
 msgid "List all trusted server SSL certificates of current IRC network."
 msgstr ""
 
-#: ClientCommand.cpp:1780
+#: ClientCommand.cpp:1825
 msgctxt "helpcmd|EnableChan|args"
 msgid "<#chans>"
 msgstr ""
 
-#: ClientCommand.cpp:1781
+#: ClientCommand.cpp:1826
 msgctxt "helpcmd|EnableChan|desc"
 msgid "Enable channels"
 msgstr ""
 
-#: ClientCommand.cpp:1782
+#: ClientCommand.cpp:1827
 msgctxt "helpcmd|DisableChan|args"
 msgid "<#chans>"
 msgstr ""
 
-#: ClientCommand.cpp:1783
+#: ClientCommand.cpp:1828
 msgctxt "helpcmd|DisableChan|desc"
 msgid "Disable channels"
 msgstr ""
 
-#: ClientCommand.cpp:1784
+#: ClientCommand.cpp:1829
+msgctxt "helpcmd|MoveChan|args"
+msgid "<#chan> <index>"
+msgstr ""
+
+#: ClientCommand.cpp:1830
+msgctxt "helpcmd|MoveChan|desc"
+msgid "Move channel in sort order"
+msgstr ""
+
+#: ClientCommand.cpp:1832
+msgctxt "helpcmd|SwapChans|args"
+msgid "<#chan1> <#chan2>"
+msgstr ""
+
+#: ClientCommand.cpp:1833
+msgctxt "helpcmd|SwapChans|desc"
+msgid "Swap channels in sort order"
+msgstr ""
+
+#: ClientCommand.cpp:1834
 msgctxt "helpcmd|Attach|args"
 msgid "<#chans>"
 msgstr ""
 
-#: ClientCommand.cpp:1785
+#: ClientCommand.cpp:1835
 msgctxt "helpcmd|Attach|desc"
 msgid "Attach to channels"
 msgstr ""
 
-#: ClientCommand.cpp:1786
+#: ClientCommand.cpp:1836
 msgctxt "helpcmd|Detach|args"
 msgid "<#chans>"
 msgstr ""
 
-#: ClientCommand.cpp:1787
+#: ClientCommand.cpp:1837
 msgctxt "helpcmd|Detach|desc"
 msgid "Detach from channels"
 msgstr ""
 
-#: ClientCommand.cpp:1790
+#: ClientCommand.cpp:1840
 msgctxt "helpcmd|Topics|desc"
 msgid "Show topics in all your channels"
 msgstr ""
 
-#: ClientCommand.cpp:1793
+#: ClientCommand.cpp:1843
 msgctxt "helpcmd|PlayBuffer|args"
 msgid "<#chan|query>"
 msgstr ""
 
-#: ClientCommand.cpp:1794
+#: ClientCommand.cpp:1844
 msgctxt "helpcmd|PlayBuffer|desc"
 msgid "Play back the specified buffer"
 msgstr ""
 
-#: ClientCommand.cpp:1796
+#: ClientCommand.cpp:1846
 msgctxt "helpcmd|ClearBuffer|args"
 msgid "<#chan|query>"
 msgstr ""
 
-#: ClientCommand.cpp:1797
+#: ClientCommand.cpp:1847
 msgctxt "helpcmd|ClearBuffer|desc"
 msgid "Clear the specified buffer"
 msgstr ""
 
-#: ClientCommand.cpp:1799
+#: ClientCommand.cpp:1849
 msgctxt "helpcmd|ClearAllBuffers|desc"
 msgid "Clear all channel and query buffers"
 msgstr ""
 
-#: ClientCommand.cpp:1802
+#: ClientCommand.cpp:1852
 msgctxt "helpcmd|ClearAllChannelBuffers|desc"
 msgid "Clear the channel buffers"
 msgstr ""
 
-#: ClientCommand.cpp:1806
+#: ClientCommand.cpp:1856
 msgctxt "helpcmd|ClearAllQueryBuffers|desc"
 msgid "Clear the query buffers"
 msgstr ""
 
-#: ClientCommand.cpp:1808
+#: ClientCommand.cpp:1858
 msgctxt "helpcmd|SetBuffer|args"
 msgid "<#chan|query> [linecount]"
 msgstr ""
 
-#: ClientCommand.cpp:1809
+#: ClientCommand.cpp:1859
 msgctxt "helpcmd|SetBuffer|desc"
 msgid "Set the buffer count"
 msgstr ""
 
-#: ClientCommand.cpp:1813
+#: ClientCommand.cpp:1863
 msgctxt "helpcmd|SetBindHost|args"
 msgid "<host (IP preferred)>"
 msgstr ""
 
-#: ClientCommand.cpp:1814
+#: ClientCommand.cpp:1864
 msgctxt "helpcmd|SetBindHost|desc"
 msgid "Set the bind host for this network"
 msgstr ""
 
-#: ClientCommand.cpp:1818
+#: ClientCommand.cpp:1868
 msgctxt "helpcmd|SetUserBindHost|args"
 msgid "<host (IP preferred)>"
 msgstr ""
 
-#: ClientCommand.cpp:1819
+#: ClientCommand.cpp:1869
 msgctxt "helpcmd|SetUserBindHost|desc"
 msgid "Set the default bind host for this user"
 msgstr ""
 
-#: ClientCommand.cpp:1822
+#: ClientCommand.cpp:1872
 msgctxt "helpcmd|ClearBindHost|desc"
 msgid "Clear the bind host for this network"
 msgstr ""
 
-#: ClientCommand.cpp:1825
+#: ClientCommand.cpp:1875
 msgctxt "helpcmd|ClearUserBindHost|desc"
 msgid "Clear the default bind host for this user"
 msgstr ""
 
-#: ClientCommand.cpp:1831
+#: ClientCommand.cpp:1881
 msgctxt "helpcmd|ShowBindHost|desc"
 msgid "Show currently selected bind host"
 msgstr ""
 
-#: ClientCommand.cpp:1833
+#: ClientCommand.cpp:1883
 msgctxt "helpcmd|Jump|args"
 msgid "[server]"
 msgstr ""
 
-#: ClientCommand.cpp:1834
+#: ClientCommand.cpp:1884
 msgctxt "helpcmd|Jump|desc"
 msgid "Jump to the next or the specified server"
 msgstr ""
 
-#: ClientCommand.cpp:1835
+#: ClientCommand.cpp:1885
 msgctxt "helpcmd|Disconnect|args"
 msgid "[message]"
 msgstr ""
 
-#: ClientCommand.cpp:1836
+#: ClientCommand.cpp:1886
 msgctxt "helpcmd|Disconnect|desc"
 msgid "Disconnect from IRC"
 msgstr ""
 
-#: ClientCommand.cpp:1838
+#: ClientCommand.cpp:1888
 msgctxt "helpcmd|Connect|desc"
 msgid "Reconnect to IRC"
 msgstr ""
 
-#: ClientCommand.cpp:1841
+#: ClientCommand.cpp:1891
 msgctxt "helpcmd|Uptime|desc"
 msgid "Show for how long ZNC has been running"
 msgstr ""
 
-#: ClientCommand.cpp:1845
+#: ClientCommand.cpp:1895
 msgctxt "helpcmd|LoadMod|args"
 msgid "[--type=global|user|network] <module> [args]"
 msgstr ""
 
-#: ClientCommand.cpp:1847
+#: ClientCommand.cpp:1897
 msgctxt "helpcmd|LoadMod|desc"
 msgid "Load a module"
 msgstr ""
 
-#: ClientCommand.cpp:1849
+#: ClientCommand.cpp:1899
 msgctxt "helpcmd|UnloadMod|args"
 msgid "[--type=global|user|network] <module>"
 msgstr ""
 
-#: ClientCommand.cpp:1851
+#: ClientCommand.cpp:1901
 msgctxt "helpcmd|UnloadMod|desc"
 msgid "Unload a module"
 msgstr ""
 
-#: ClientCommand.cpp:1853
+#: ClientCommand.cpp:1903
 msgctxt "helpcmd|ReloadMod|args"
 msgid "[--type=global|user|network] <module> [args]"
 msgstr ""
 
-#: ClientCommand.cpp:1855
+#: ClientCommand.cpp:1905
 msgctxt "helpcmd|ReloadMod|desc"
 msgid "Reload a module"
 msgstr ""
 
-#: ClientCommand.cpp:1858
+#: ClientCommand.cpp:1908
 msgctxt "helpcmd|UpdateMod|args"
 msgid "<module>"
 msgstr ""
 
-#: ClientCommand.cpp:1859
+#: ClientCommand.cpp:1909
 msgctxt "helpcmd|UpdateMod|desc"
 msgid "Reload a module everywhere"
 msgstr ""
 
-#: ClientCommand.cpp:1865
+#: ClientCommand.cpp:1915
 msgctxt "helpcmd|ShowMOTD|desc"
 msgid "Show ZNC's message of the day"
 msgstr ""
 
-#: ClientCommand.cpp:1869
+#: ClientCommand.cpp:1919
 msgctxt "helpcmd|SetMOTD|args"
 msgid "<message>"
 msgstr ""
 
-#: ClientCommand.cpp:1870
+#: ClientCommand.cpp:1920
 msgctxt "helpcmd|SetMOTD|desc"
 msgid "Set ZNC's message of the day"
 msgstr ""
 
-#: ClientCommand.cpp:1872
+#: ClientCommand.cpp:1922
 msgctxt "helpcmd|AddMOTD|args"
 msgid "<message>"
 msgstr ""
 
-#: ClientCommand.cpp:1873
+#: ClientCommand.cpp:1923
 msgctxt "helpcmd|AddMOTD|desc"
 msgid "Append <message> to ZNC's MOTD"
 msgstr ""
 
-#: ClientCommand.cpp:1875
+#: ClientCommand.cpp:1925
 msgctxt "helpcmd|ClearMOTD|desc"
 msgid "Clear ZNC's MOTD"
 msgstr ""
 
-#: ClientCommand.cpp:1878
+#: ClientCommand.cpp:1928
 msgctxt "helpcmd|ListPorts|desc"
 msgid "Show all active listeners"
 msgstr ""
 
-#: ClientCommand.cpp:1880
+#: ClientCommand.cpp:1930
 msgctxt "helpcmd|AddPort|args"
 msgid "<[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost [uriprefix]]"
 msgstr ""
 
-#: ClientCommand.cpp:1883
+#: ClientCommand.cpp:1933
 msgctxt "helpcmd|AddPort|desc"
 msgid "Add another port for ZNC to listen on"
 msgstr ""
 
-#: ClientCommand.cpp:1887
+#: ClientCommand.cpp:1937
 msgctxt "helpcmd|DelPort|args"
 msgid "<port> <ipv4|ipv6|all> [bindhost]"
 msgstr ""
 
-#: ClientCommand.cpp:1888
+#: ClientCommand.cpp:1938
 msgctxt "helpcmd|DelPort|desc"
 msgid "Remove a port from ZNC"
 msgstr ""
 
-#: ClientCommand.cpp:1891
+#: ClientCommand.cpp:1941
 msgctxt "helpcmd|Rehash|desc"
 msgid "Reload global settings, modules, and listeners from znc.conf"
 msgstr ""
 
-#: ClientCommand.cpp:1894
+#: ClientCommand.cpp:1944
 msgctxt "helpcmd|SaveConfig|desc"
 msgid "Save the current settings to disk"
 msgstr ""
 
-#: ClientCommand.cpp:1897
+#: ClientCommand.cpp:1947
 msgctxt "helpcmd|ListUsers|desc"
 msgid "List all ZNC users and their connection status"
 msgstr ""
 
-#: ClientCommand.cpp:1900
+#: ClientCommand.cpp:1950
 msgctxt "helpcmd|ListAllUserNetworks|desc"
 msgid "List all ZNC users and their networks"
 msgstr ""
 
-#: ClientCommand.cpp:1903
+#: ClientCommand.cpp:1953
 msgctxt "helpcmd|ListChans|args"
 msgid "[user <network>]"
 msgstr ""
 
-#: ClientCommand.cpp:1906
+#: ClientCommand.cpp:1956
 msgctxt "helpcmd|ListClients|args"
 msgid "[user]"
 msgstr ""
 
-#: ClientCommand.cpp:1907
+#: ClientCommand.cpp:1957
 msgctxt "helpcmd|ListClients|desc"
 msgid "List all connected clients"
 msgstr ""
 
-#: ClientCommand.cpp:1909
+#: ClientCommand.cpp:1959
 msgctxt "helpcmd|Traffic|desc"
 msgid "Show basic traffic stats for all ZNC users"
 msgstr ""
 
-#: ClientCommand.cpp:1911
+#: ClientCommand.cpp:1961
 msgctxt "helpcmd|Broadcast|args"
 msgid "[message]"
 msgstr ""
 
-#: ClientCommand.cpp:1912
+#: ClientCommand.cpp:1962
 msgctxt "helpcmd|Broadcast|desc"
 msgid "Broadcast a message to all ZNC users"
 msgstr ""
 
-#: ClientCommand.cpp:1915
+#: ClientCommand.cpp:1965
 msgctxt "helpcmd|Shutdown|args"
 msgid "[message]"
 msgstr ""
 
-#: ClientCommand.cpp:1916
+#: ClientCommand.cpp:1966
 msgctxt "helpcmd|Shutdown|desc"
 msgid "Shut down ZNC completely"
 msgstr ""
 
-#: ClientCommand.cpp:1917
+#: ClientCommand.cpp:1967
 msgctxt "helpcmd|Restart|args"
 msgid "[message]"
 msgstr ""
 
-#: ClientCommand.cpp:1918
+#: ClientCommand.cpp:1968
 msgctxt "helpcmd|Restart|desc"
 msgid "Restart ZNC"
 msgstr ""
