@@ -1077,7 +1077,7 @@ class CWebAdminMod : public CModule {
             WebSock.PrintErrorPage(t_s("Network name is a required argument"));
             return true;
         }
-        if (!pNetwork || pNetwork->GetName() != sName) {
+        if (!pNetwork || !pNetwork->GetName().Equals(sName)) {
             CString sNetworkAddError;
             CIRCNetwork* pOldNetwork = pNetwork;
             pNetwork = pUser->AddNetwork(sName, sNetworkAddError);
@@ -1094,6 +1094,8 @@ class CWebAdminMod : public CModule {
                 pNetwork->Clone(*pOldNetwork, false);
                 pUser->DeleteNetwork(pOldNetwork->GetName());
             }
+        } else {
+            pNetwork->SetName(sName);
         }
 
         CString sArg;
