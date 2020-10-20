@@ -125,6 +125,10 @@ class CLogMod : public CModule {
     EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override;
     EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override;
 
+    /* web */
+    CString GetWebMenuTitle() override { return t_s("Logs"); }
+    bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override;
+
   private:
     bool NeedJoins() const;
     bool NeedQuits() const;
@@ -549,6 +553,74 @@ CModule::EModRet CLogMod::OnChanMsg(CNick& Nick, CChan& Channel,
                                     CString& sMessage) {
     PutLog("<" + Nick.GetNick() + "> " + sMessage, Channel);
     return CONTINUE;
+}
+
+bool CLogMod::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
+    if(GetType() == CModInfo::EModuleType::GlobalModule) {
+        return true;
+    }
+
+    CString sPath(WebSock.GetParam("path", false));
+    CString sFullPath(CDir::CheckPathPrefix(GetSavePath(), sPath));
+
+    if (sFullPath.empty()) {
+        sPath = "";
+        sFullPath = GetSavePath();
+    }
+
+    CFile File(sFullPath);
+    CString sDir(File.IsDir() ? sFullPath : File.GetDir());
+    CDir Dir(sDir);
+    CString sPrefix(sDir);
+
+    sPrefix.TrimPrefix(GetSavePath());
+    sPrefix.TrimPrefix("/");
+    if (!sPrefix.empty() && !sPrefix.EndsWith("/"))
+        sPrefix += "/";
+
+    if (!sPath.empty()) {
+        CTemplate& Row = Tmpl.AddRow("Files");
+        Row["Short"] = "..";
+        Row["Long"] = sPrefix + "..";
+        Row["Dir"] = "true";
+    }
+
+    for (const CFile* pFile : Dir) {
+        CTemplate& Row = Tmpl.AddRow("Files");
+        Row["Short"] = pFile->GetShortName();
+        Row["Long"] = sPrefix + pFile->GetShortName();
+        if(pFile->IsDir()) {
+            Row["Dir"] = "true";
+        } else {
+            Row["File"] = "true";
+        }
+    }
+
+    const size_t LINES_PER_PAGE = 512;
+    size_t Page = 0;
+    WebSock.GetParam("page", false).Convert(&Page);
+    const size_t Lines = Page * LINES_PER_PAGE;
+
+    if (File.IsReg()) {
+        CString Line;
+        File.Open();
+        for (size_t i = 0; i < Lines && File.ReadLine(Line); i++)
+            ;
+        if (Page != 0)
+            Tmpl["PrevPage"] = CString(Page - 1);
+        Tmpl["Page"] = CString(Page + 1);
+        Tmpl["Path"] = sPrefix + File.GetShortName();
+        for (size_t i = 0; i < LINES_PER_PAGE && File.ReadLine(Line); i++) {
+            CTemplate& Row = Tmpl.AddRow("Log");
+            Row["Line"] = Line;
+        }
+        if(File.ReadLine(Line)) {
+            Tmpl["NextPage"] = CString(Page + 1);
+        }
+        File.Close();
+    }
+
+    return true;
 }
 
 template <>

@@ -1,0 +1,27 @@
+<? I18N znc-log ?>
+<? INC Header.tmpl ?>
+
+<? IF Files ?>
+<ul>
+<? LOOP Files ?>
+<li><a href="<? VAR ModPath TOP ?>?path=<? VAR Long ESC=HTML,URL ?>"><? VAR Short ?></a></li>
+<? ENDLOOP ?>
+</ul>
+<? ENDIF ?>
+
+<? IF Log ?>
+<p>Page <? VAR Page ?></p>
+<code>
+<? LOOP Log ?>
+<? VAR Line ?><br>
+<? ENDLOOP ?>
+</code>
+<a <? IF PrevPage || PrevPage == 0 ?>href="<? VAR ModPath TOP ?>?path=<? VAR Path ESC=HTML,URL ?>&page=<? VAR PrevPage ESC=HTML,URL ?>"<? ENDIF ?>>Previous Page</a>
+<a <? IF NextPage || NextPage == 0 ?>href="<? VAR ModPath TOP ?>?path=<? VAR Path ESC=HTML,URL ?>&page=<? VAR NextPage ESC=HTML,URL ?>"<? ENDIF ?>>Next Page</a>
+<? ENDIF ?>
+
+<? IF !Files && !Log ?>
+<p>Logs cannot be accessed from the Global Module.</p>
+<? ENDIF ?>
+
+<? INC Footer.tmpl ?>
