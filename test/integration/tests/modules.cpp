@@ -268,5 +268,59 @@ INSTANTIATE_TEST_CASE_P(SaslInst, SaslModuleTest,
                                 99,
                                 {SaslModuleTest::Prefix() + "YmJi", "Yg=="}}));
 
+TEST_F(ZNCTest, HTTPNetworkCaseSensitivity) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    ircd.Write(":server 001 nick :Hello");
+    ircd.Write(":server 005 nick CHANTYPES=# :supports");
+    ircd.Write(":server PING :1");
+    ircd.ReadUntil("PONG 1");
+
+    QNetworkRequest request;
+    request.setRawHeader("Authorization",
+                         "Basic " + QByteArray("user:hunter2").toBase64());
+    request.setUrl(
+        QUrl("http://127.0.0.1:12345/mods/global/webadmin/editnetwork"));
+    HttpPost(request, {
+                          {"user", "user"},
+                          {"network", "test"},
+                          {"submitted", "1"},
+                          {"name", "znc"},
+                      });
+    EXPECT_THAT(HttpPost(request,
+                         {
+                             {"user", "user"},
+                             {"network", "znc"},
+                             {"submitted", "1"},
+                             {"name", "ZNC"},
+                         })
+                    ->readAll()
+                    .toStdString(),
+                Not(HasSubstr("Network ZNC already exists")));
+
+    // Try to overwrite a network. This should fail.
+    QNetworkRequest add_request;
+    add_request.setRawHeader("Authorization",
+                             "Basic " + QByteArray("user:hunter2").toBase64());
+    add_request.setUrl(
+        QUrl("http://127.0.0.1:12345/mods/global/webadmin/addnetwork"));
+    HttpPost(add_request, {
+                              {"user", "user"},
+                              {"network", "test2"},
+                              {"submitted", "1"},
+                              {"name", "test"},
+                          });
+    EXPECT_THAT(HttpPost(request,
+                         {
+                             {"user", "user"},
+                             {"network", "test"},
+                             {"submitted", "1"},
+                             {"name", "znc"},
+                         })
+                    ->readAll()
+                    .toStdString(),
+                HasSubstr("Network znc already exists"));
+}
+
 }  // namespace
 }  // namespace znc_inttest
