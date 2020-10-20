@@ -726,7 +726,8 @@ void CClient::UserCommand(CString& sLine) {
             return;
         }
 
-        if (pNewUser->FindNetwork(sNewNetwork)) {
+        if (pNewUser->FindNetwork(sNewNetwork) && (!sOldUser.Equals(sNewUser) ||
+            !sOldNetwork.Equals(sNewNetwork))) {
             PutStatus(t_f("User {1} already has network {2}.")(sNewUser,
                                                                sNewNetwork));
             return;
@@ -758,29 +759,36 @@ void CClient::UserCommand(CString& sLine) {
             pMod->MoveRegistry(sNewModPath);
         }
 
-        CString sNetworkAddError;
-        CIRCNetwork* pNewNetwork =
-            pNewUser->AddNetwork(sNewNetwork, sNetworkAddError);
+        if (!sOldUser.Equals(sNewUser) || !pOldNetwork->GetName().Equals(sNewNetwork)) {
+            CString sNetworkAddError;
+            CIRCNetwork* pNewNetwork =
+                pNewUser->AddNetwork(sNewNetwork, sNetworkAddError);
 
-        if (!pNewNetwork) {
-            PutStatus(t_f("Error adding network: {1}")(sNetworkAddError));
-            return;
+            if (!pNewNetwork) {
+                PutStatus(t_f("Error adding network: {1}")(sNetworkAddError));
+                return;
+            }
+
+            pNewNetwork->Clone(*pOldNetwork, false);
+        } else {
+            CIRCNetwork* pOldNetwork = pNewUser->FindNetwork(sOldNetwork);
+            pOldNetwork->SetName(sNewNetwork);
         }
-
-        pNewNetwork->Clone(*pOldNetwork, false);
 
         if (m_pNetwork && m_pNetwork->GetName().Equals(sOldNetwork) &&
             m_pUser == pOldUser) {
             SetNetwork(nullptr);
         }
 
-        if (pOldUser->DeleteNetwork(sOldNetwork)) {
-            PutStatus(t_s("Success."));
-        } else {
-            PutStatus(
-                t_s("Copied the network to new user, but failed to delete old "
-                    "network"));
+        if (!sOldUser.Equals(sNewUser) || !pOldNetwork->GetName().Equals(sNewNetwork)) {
+            if (!pOldUser->DeleteNetwork(sOldNetwork)){
+                PutStatus(
+                    t_s("Copied the network to new user, but failed to delete old "
+                        "network"));
+            }
         }
+
+        PutStatus(t_s("Success."));
     } else if (sCommand.Equals("JUMPNETWORK")) {
         CString sNetwork = sLine.Token(1);
 
