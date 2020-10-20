@@ -2,26 +2,39 @@
 <? INC Header.tmpl ?>
 
 <? IF Files ?>
-<ul>
+<h3>File Browser</h3>
+<div class="sectionbg">
+<div class="sectionbody">
+<ul style="list-style: none;">
 <? LOOP Files ?>
 <li><a href="<? VAR ModPath TOP ?>?path=<? VAR Long ESC=HTML,URL ?>"><? VAR Short ?></a></li>
 <? ENDLOOP ?>
 </ul>
+</div>
+</div>
 <? ENDIF ?>
 
 <? IF Log ?>
-<p>Page <? VAR Page ?></p>
-<code>
+<h3>Log Viewer (Page <? VAR Page ?>)</h3>
+<div class="sectionbg">
+<div class="sectionbody">
+<code style="display: block; margin-bottom: 0.5em;">
 <? LOOP Log ?>
 <? VAR Line ?><br>
 <? ENDLOOP ?>
 </code>
-<a <? IF PrevPage || PrevPage == 0 ?>href="<? VAR ModPath TOP ?>?path=<? VAR Path ESC=HTML,URL ?>&page=<? VAR PrevPage ESC=HTML,URL ?>"<? ENDIF ?>>Previous Page</a>
-<a <? IF NextPage || NextPage == 0 ?>href="<? VAR ModPath TOP ?>?path=<? VAR Path ESC=HTML,URL ?>&page=<? VAR NextPage ESC=HTML,URL ?>"<? ENDIF ?>>Next Page</a>
+<? IF PrevPage || PrevPage == 0 ?>
+<button><a style="text-decoration: none;" href="<? VAR ModPath TOP ?>?path=<? VAR Path ESC=HTML,URL ?>&page=<? VAR PrevPage ESC=HTML,URL ?>">Prev</a></button>
+<? ENDIF ?>
+<? IF NextPage || NextPage == 0 ?>
+<button><a style="text-decoration: none;" href="<? VAR ModPath TOP ?>?path=<? VAR Path ESC=HTML,URL ?>&page=<? VAR NextPage ESC=HTML,URL ?>">Next</a></button>
+<? ENDIF ?>
+</div>
+</div>
 <? ENDIF ?>
 
 <? IF !Files && !Log ?>
-<p>Logs cannot be accessed from the Global Module.</p>
+<p><b>Logs cannot be accessed from the Global Module.</b></p>
 <? ENDIF ?>
 
 <? INC Footer.tmpl ?>
