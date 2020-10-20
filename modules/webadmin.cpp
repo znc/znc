@@ -1077,7 +1077,10 @@ class CWebAdminMod : public CModule {
             WebSock.PrintErrorPage(t_s("Network name is a required argument"));
             return true;
         }
-        if (!pNetwork || !pNetwork->GetName().Equals(sName)) {
+        if (pNetwork && pNetwork->GetName().Equals(sName)) {
+            // Set the network name to pickup changes to capitalization.
+            pNetwork->SetName(sName);
+        } else {
             CString sNetworkAddError;
             CIRCNetwork* pOldNetwork = pNetwork;
             pNetwork = pUser->AddNetwork(sName, sNetworkAddError);
@@ -1094,8 +1097,6 @@ class CWebAdminMod : public CModule {
                 pNetwork->Clone(*pOldNetwork, false);
                 pUser->DeleteNetwork(pOldNetwork->GetName());
             }
-        } else {
-            pNetwork->SetName(sName);
         }
 
         CString sArg;
