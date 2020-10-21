@@ -589,7 +589,7 @@ bool CLogMod::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplat
         CTemplate& Row = Tmpl.AddRow("Files");
         Row["Short"] = pFile->GetShortName();
         Row["Long"] = sPrefix + pFile->GetShortName();
-        if(pFile->IsDir()) {
+        if (pFile->IsDir()) {
             Row["Dir"] = "true";
         } else {
             Row["File"] = "true";
@@ -614,7 +614,7 @@ bool CLogMod::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplat
             CTemplate& Row = Tmpl.AddRow("Log");
             Row["Line"] = Line;
         }
-        if(File.ReadLine(Line)) {
+        if (File.ReadLine(Line)) {
             Tmpl["NextPage"] = CString(Page + 1);
         }
         File.Close();
