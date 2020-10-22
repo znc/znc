@@ -556,7 +556,19 @@ CModule::EModRet CLogMod::OnChanMsg(CNick& Nick, CChan& Channel,
 }
 
 bool CLogMod::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
-    if(GetType() == CModInfo::EModuleType::GlobalModule) {
+    switch (GetType()) {
+        case CModInfo::EModuleType::GlobalModule:
+            Tmpl["Module"] = "Global";
+            break;
+        case CModInfo::EModuleType::UserModule:
+            Tmpl["Module"] = "User";
+            break;
+        case CModInfo::EModuleType::NetworkModule:
+            Tmpl["Module"] = "Network";
+            break;
+    }
+
+    if (GetType() == CModInfo::EModuleType::GlobalModule) {
         return true;
     }
 
