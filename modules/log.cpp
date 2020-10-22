@@ -594,18 +594,16 @@ bool CLogMod::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplat
         CTemplate& Row = Tmpl.AddRow("Files");
         Row["Short"] = "..";
         Row["Long"] = sPrefix + "..";
-        Row["Dir"] = "true";
+        Row["Dir"] = CString(true);
+        Row["File"] = CString(false);
     }
 
     for (const CFile* pFile : Dir) {
         CTemplate& Row = Tmpl.AddRow("Files");
         Row["Short"] = pFile->GetShortName();
         Row["Long"] = sPrefix + pFile->GetShortName();
-        if (pFile->IsDir()) {
-            Row["Dir"] = "true";
-        } else {
-            Row["File"] = "true";
-        }
+        Row["Dir"] = CString(pFile->IsDir());
+        Row["File"] = CString(!pFile->IsDir());
     }
 
     const size_t LINES_PER_PAGE = 512;
