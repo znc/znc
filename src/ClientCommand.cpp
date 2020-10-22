@@ -759,8 +759,12 @@ void CClient::UserCommand(CString& sLine) {
             pMod->MoveRegistry(sNewModPath);
         }
 
-        if (!sOldUser.Equals(sNewUser) ||
-            !pOldNetwork->GetName().Equals(sNewNetwork)) {
+        if (sOldUser.Equals(sNewUser) &&
+            pOldNetwork->GetName().Equals(sNewNetwork)) {
+            // Set the network name to pick up capitalization changes.
+            CIRCNetwork* pOldNetwork = pNewUser->FindNetwork(sOldNetwork);
+            pOldNetwork->SetName(sNewNetwork);
+        } else {
             CString sNetworkAddError;
             CIRCNetwork* pNewNetwork =
                 pNewUser->AddNetwork(sNewNetwork, sNetworkAddError);
@@ -771,9 +775,6 @@ void CClient::UserCommand(CString& sLine) {
             }
 
             pNewNetwork->Clone(*pOldNetwork, false);
-        } else {
-            CIRCNetwork* pOldNetwork = pNewUser->FindNetwork(sOldNetwork);
-            pOldNetwork->SetName(sNewNetwork);
         }
 
         if (m_pNetwork && m_pNetwork->GetName().Equals(sOldNetwork) &&
