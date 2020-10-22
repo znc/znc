@@ -782,16 +782,17 @@ void CClient::UserCommand(CString& sLine) {
             SetNetwork(nullptr);
         }
 
-        if (!sOldUser.Equals(sNewUser) ||
-            !pOldNetwork->GetName().Equals(sNewNetwork)) {
-            if (!pOldUser->DeleteNetwork(sOldNetwork)) {
-                PutStatus(t_s(
-                    "Copied the network to new user, but failed to delete old "
-                    "network"));
-            }
+        if (sOldUser.Equals(sNewUser) &&
+            pOldNetwork->GetName().Equals(sNewNetwork)) {
+            PutStatus(t_s("Success."));
+        } else if (pOldUser->DeleteNetwork(sOldNetwork)) {
+            PutStatus(t_s("Success."));
+        } else {
+            PutStatus(t_s(
+                "Copied the network to new user, but failed to delete old "
+                "network"));
         }
 
-        PutStatus(t_s("Success."));
     } else if (sCommand.Equals("JUMPNETWORK")) {
         CString sNetwork = sLine.Token(1);
 
