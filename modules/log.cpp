@@ -560,8 +560,8 @@ bool CLogMod::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplat
         return true;
     }
 
-    CString sPath(WebSock.GetParam("path", false));
-    CString sFullPath(CDir::CheckPathPrefix(GetSavePath(), sPath));
+    CString sPath = WebSock.GetParam("path", false);
+    CString sFullPath = CDir::CheckPathPrefix(GetSavePath(), sPath);
 
     if (sFullPath.empty()) {
         sPath = "";
@@ -569,9 +569,9 @@ bool CLogMod::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplat
     }
 
     CFile File(sFullPath);
-    CString sDir(File.IsDir() ? sFullPath : File.GetDir());
+    CString sDir = File.IsDir() ? sFullPath : File.GetDir();
     CDir Dir(sDir);
-    CString sPrefix(sDir);
+    CString sPrefix = sDir;
 
     sPrefix.TrimPrefix(GetSavePath());
     sPrefix.TrimPrefix("/");
