@@ -572,7 +572,7 @@ bool CLogMod::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplat
         return true;
     }
 
-    CString sPath = WebSock.GetParam("path", false);
+    CString sPath = WebSock.GetParam("path", true);
     CString sFullPath = CDir::CheckPathPrefix(GetSavePath(), sPath);
 
     if (sFullPath.empty()) {
@@ -603,12 +603,12 @@ bool CLogMod::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplat
         Row["Short"] = pFile->GetShortName();
         Row["Long"] = sPrefix + pFile->GetShortName();
         Row["Dir"] = CString(pFile->IsDir());
-        Row["File"] = CString(!pFile->IsDir());
+        Row["File"] = CString(pFile->IsReg());
     }
 
     const size_t LINES_PER_PAGE = 512;
     size_t Page = 0;
-    WebSock.GetParam("page", false).Convert(&Page);
+    WebSock.GetParam("page", true).Convert(&Page);
     const size_t Lines = Page * LINES_PER_PAGE;
 
     if (File.IsReg()) {

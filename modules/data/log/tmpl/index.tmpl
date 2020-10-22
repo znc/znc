@@ -11,9 +11,11 @@
                 <ul style="list-style: none;">
                     <? LOOP Files ?>
                         <li>
-                            <a href="<? VAR ModPath TOP ?>?path=<? VAR Long ESC=HTML,URL ?>">
-                                <? VAR Short ?>
-                            </a>
+                            <form action="<? VAR ModPath TOP ?>" method="post">
+                                <? INC _csrf_check.tmpl ?>
+                                <input type="hidden" name="path" value="<? VAR Long ?>">
+                                <button type="submit"><? VAR Short ?></button>
+                            </form>
                         </li>
                     <? ENDLOOP ?>
                 </ul>
@@ -30,18 +32,20 @@
                     <? ENDLOOP ?>
                 </code>
                 <? IF PrevPage || PrevPage == 0 ?>
-                    <button>
-                        <a style="text-decoration: none;" href="<? VAR ModPath TOP ?>?path=<? VAR Path ESC=HTML,URL ?>&page=<? VAR PrevPage ESC=HTML,URL ?>">
-                            Prev
-                        </a>
-                    </button>
+                    <form action="<? VAR ModPath TOP ?>" method="post">
+                        <? INC _csrf_check.tmpl ?>
+                        <input type="hidden" name="path" value="<? VAR Path ?>">
+                        <input type="hidden" name="page" value="<? Var PrevPage ?>">
+                        <button type="submit">Prev</button>
+                    </form>
                 <? ENDIF ?>
                 <? IF NextPage || NextPage == 0 ?>
-                    <button>
-                        <a style="text-decoration: none;" href="<? VAR ModPath TOP ?>?path=<? VAR Path ESC=HTML,URL ?>&page=<? VAR NextPage ESC=HTML,URL ?>">
-                            Next
-                        </a>
-                    </button>
+                    <form action="<? VAR ModPath TOP ?>" method="post">
+                        <? INC _csrf_check.tmpl ?>
+                        <input type="hidden" name="path" value="<? VAR Path ?>">
+                        <input type="hidden" name="page" value="<? Var NextPage ?>">
+                        <button type="submit">Next</button>
+                    </form>
                 <? ENDIF ?>
             </div>
         </div>
