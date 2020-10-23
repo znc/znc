@@ -637,7 +637,7 @@ bool CLogMod::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplat
             Offsets.push_back(Offset);
         }
         for (size_t i = 0; i < Offsets.size(); i++) {
-            if (i < Offsets.size() - 2) {
+            if (i < Offsets.size() - (1 + (Done ? 0 : 1))) {
                 CTemplate& Row = Tmpl.AddRow("PrevOffsets");
                 Row["Offset"] = CString(Offsets[i]);
             }
