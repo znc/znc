@@ -609,41 +609,41 @@ bool CLogMod::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplat
     if (File.IsReg()) {
         const size_t MAX_BYTES = 512 * 1024;
         VCString vsValues;
-        vector<size_t> Offsets;
+        vector<size_t> vOffsets;
         CString sLine;
         size_t Bytes = 0;
         WebSock.GetParamValues("offsets", vsValues, true);
         for (const CString& sValue : vsValues) {
             size_t Offset = 0;
             sValue.Convert(&Offset);
-            Offsets.push_back(Offset);
+            vOffsets.push_back(Offset);
         }
         File.Open();
-        if (!Offsets.empty()) {
-            File.Seek(Offsets.back());
+        if (!vOffsets.empty()) {
+            File.Seek(vOffsets.back());
         } else {
-            Offsets.push_back(0);
+            vOffsets.push_back(0);
         }
         Tmpl["Path"] = sPrefix + File.GetShortName();
-        Tmpl["Page"] = CString(Offsets.size());
+        Tmpl["Page"] = CString(vOffsets.size());
         while (File.ReadLine(sLine) && Bytes + sLine.size() <= MAX_BYTES) {
             CTemplate& Row = Tmpl.AddRow("Log");
             Row["Line"] = sLine;
             Bytes += sLine.size();
         }
-        size_t Offset = Bytes + (Offsets.empty() ? 0 : Offsets.back());
+        size_t Offset = Bytes + (vOffsets.empty() ? 0 : vOffsets.back());
         bool Done = Offset >= File.GetSize();
         if (!Done) {
-            Offsets.push_back(Offset);
+            vOffsets.push_back(Offset);
         }
-        for (size_t i = 0; i < Offsets.size(); i++) {
-            if (i < Offsets.size() - (1 + (Done ? 0 : 1))) {
+        for (size_t i = 0; i < vOffsets.size(); i++) {
+            if (i < vOffsets.size() - (1 + (Done ? 0 : 1))) {
                 CTemplate& Row = Tmpl.AddRow("PrevOffsets");
-                Row["Offset"] = CString(Offsets[i]);
+                Row["Offset"] = CString(vOffsets[i]);
             }
             if (!Done) {
                 CTemplate& Row = Tmpl.AddRow("NextOffsets");
-                Row["Offset"] = CString(Offsets[i]);
+                Row["Offset"] = CString(vOffsets[i]);
             }
         }
         File.Close();
