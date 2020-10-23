@@ -608,14 +608,14 @@ bool CLogMod::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplat
 
     if (File.IsReg()) {
         const size_t MAX_BYTES = 512 * 1024;
-        VCString Values;
+        VCString vsValues;
         vector<size_t> Offsets;
-        CString Line;
+        CString sLine;
         size_t Bytes = 0;
-        WebSock.GetParamValues("offsets", Values, true);
-        for (const CString& Value : Values) {
+        WebSock.GetParamValues("offsets", vsValues, true);
+        for (const CString& sValue : vsValues) {
             size_t Offset = 0;
-            Value.Convert(&Offset);
+            sValue.Convert(&Offset);
             Offsets.push_back(Offset);
         }
         File.Open();
@@ -626,10 +626,10 @@ bool CLogMod::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplat
         }
         Tmpl["Path"] = sPrefix + File.GetShortName();
         Tmpl["Page"] = CString(Offsets.size());
-        while (File.ReadLine(Line) && Bytes + Line.size() <= MAX_BYTES) {
+        while (File.ReadLine(sLine) && Bytes + sLine.size() <= MAX_BYTES) {
             CTemplate& Row = Tmpl.AddRow("Log");
-            Row["Line"] = Line;
-            Bytes += Line.size();
+            Row["Line"] = sLine;
+            Bytes += sLine.size();
         }
         size_t Offset = Bytes + (Offsets.empty() ? 0 : Offsets.back());
         bool Done = Offset >= File.GetSize();
