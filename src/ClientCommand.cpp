@@ -726,8 +726,8 @@ void CClient::UserCommand(CString& sLine) {
             return;
         }
 
-        if (pNewUser->FindNetwork(sNewNetwork) &&
-            (!sOldUser.Equals(sNewUser) || !sOldNetwork.Equals(sNewNetwork))) {
+        CIRCNetwork* pNewNetwork = pNewUser->FindNetwork(sNewNetwork);
+        if (pNewNetwork && pOldNetwork != pNewNetwork) {
             PutStatus(t_f("User {1} already has network {2}.")(sNewUser,
                                                                sNewNetwork));
             return;
@@ -759,11 +759,9 @@ void CClient::UserCommand(CString& sLine) {
             pMod->MoveRegistry(sNewModPath);
         }
 
-        if (sOldUser.Equals(sNewUser) &&
-            pOldNetwork->GetName().Equals(sNewNetwork)) {
+        if (pOldNetwork == pNewNetwork) {
             // Set the network name to pick up capitalization changes.
-            CIRCNetwork* pOldNetwork = pNewUser->FindNetwork(sOldNetwork);
-            pOldNetwork->SetName(sNewNetwork);
+            pNewNetwork->SetName(sNewNetwork);
         } else {
             CString sNetworkAddError;
             CIRCNetwork* pNewNetwork =
@@ -782,8 +780,7 @@ void CClient::UserCommand(CString& sLine) {
             SetNetwork(nullptr);
         }
 
-        if (sOldUser.Equals(sNewUser) &&
-            pOldNetwork->GetName().Equals(sNewNetwork)) {
+        if (pOldNetwork == pNewNetwork) {
             PutStatus(t_s("Success."));
         } else if (pOldUser->DeleteNetwork(sOldNetwork)) {
             PutStatus(t_s("Success."));
