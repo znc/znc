@@ -606,26 +606,45 @@ bool CLogMod::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplat
         Row["File"] = CString(pFile->IsReg());
     }
 
-    const size_t LINES_PER_PAGE = 512;
-    size_t Page = 0;
-    WebSock.GetParam("page", true).Convert(&Page);
-    const size_t Lines = Page * LINES_PER_PAGE;
-
     if (File.IsReg()) {
+        const size_t MAX_BYTES = 512 * 1024;
+        VCString Values;
+        vector<size_t> Offsets;
         CString Line;
+        size_t Bytes = 0;
+        WebSock.GetParamValues("offsets", Values, true);
+        for (const CString& Value : Values) {
+            size_t Offset = 0;
+            Value.Convert(&Offset);
+            Offsets.push_back(Offset);
+        }
         File.Open();
-        for (size_t i = 0; i < Lines && File.ReadLine(Line); i++)
-            ;
-        if (Page != 0)
-            Tmpl["PrevPage"] = CString(Page - 1);
-        Tmpl["Page"] = CString(Page + 1);
+        if (!Offsets.empty()) {
+            File.Seek(Offsets.back());
+        } else {
+            Offsets.push_back(0);
+        }
         Tmpl["Path"] = sPrefix + File.GetShortName();
-        for (size_t i = 0; i < LINES_PER_PAGE && File.ReadLine(Line); i++) {
+        Tmpl["Page"] = CString(Offsets.size());
+        while (File.ReadLine(Line) && Bytes + Line.size() <= MAX_BYTES) {
             CTemplate& Row = Tmpl.AddRow("Log");
             Row["Line"] = Line;
+            Bytes += Line.size();
         }
-        if (File.ReadLine(Line)) {
-            Tmpl["NextPage"] = CString(Page + 1);
+        size_t Offset = Bytes + (Offsets.empty() ? 0 : Offsets.back());
+        bool Done = Offset >= File.GetSize();
+        if (!Done) {
+            Offsets.push_back(Offset);
+        }
+        for (size_t i = 0; i < Offsets.size(); i++) {
+            if (i < Offsets.size() - 2) {
+                CTemplate& Row = Tmpl.AddRow("PrevOffsets");
+                Row["Offset"] = CString(Offsets[i]);
+            }
+            if (!Done) {
+                CTemplate& Row = Tmpl.AddRow("NextOffsets");
+                Row["Offset"] = CString(Offsets[i]);
+            }
         }
         File.Close();
     }

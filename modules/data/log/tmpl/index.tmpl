@@ -31,19 +31,23 @@
                         <? VAR Line ?><br>
                     <? ENDLOOP ?>
                 </code>
-                <? IF PrevPage || PrevPage == 0 ?>
+                <? IF PrevOffsets ?>
                     <form action="<? VAR ModPath TOP ?>" method="post">
                         <? INC _csrf_check.tmpl ?>
                         <input type="hidden" name="path" value="<? VAR Path ?>">
-                        <input type="hidden" name="page" value="<? Var PrevPage ?>">
+                        <? LOOP PrevOffsets ?>
+                            <input type="hidden" name="offsets" value="<? VAR Offset ?>">
+                        <? ENDLOOP ?>
                         <button type="submit">Prev</button>
                     </form>
                 <? ENDIF ?>
-                <? IF NextPage || NextPage == 0 ?>
+                <? IF NextOffsets ?>
                     <form action="<? VAR ModPath TOP ?>" method="post">
                         <? INC _csrf_check.tmpl ?>
                         <input type="hidden" name="path" value="<? VAR Path ?>">
-                        <input type="hidden" name="page" value="<? Var NextPage ?>">
+                        <? LOOP NextOffsets ?>
+                            <input type="hidden" name="offsets" value="<? VAR Offset ?>">
+                        <? ENDLOOP ?>
                         <button type="submit">Next</button>
                     </form>
                 <? ENDIF ?>
