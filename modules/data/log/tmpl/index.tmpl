@@ -1,9 +1,7 @@
 <? I18N znc-log ?>
 <? INC Header.tmpl ?>
 
-<? IF Module == "Global" ?>
-    <h3>Logs cannot be accessed from the Global Module.</h3>
-<? ELSE ?>
+<? IF Module !== "Global" ?>
     <? IF Files ?>
         <h3>File Browser</h3>
         <div class="sectionbg">
