@@ -61,32 +61,32 @@
         </div>
     <? ENDIF ?>
     <? IF Log ?>
-        <h3><? FORMAT "Log Viewer" ?>(<? FORMAT "Page" ?> <? VAR Page ?>)</h3>
+        <h3><? FORMAT "Log Viewer" ?> (<? FORMAT "Page" ?> <? VAR Page ?>)</h3>
         <div class="sectionbg">
             <div class="sectionbody">
-                <code style="display: block; margin-bottom: 0.5em;">
+                <code style="display: block; margin-bottom: 1em;">
                     <? LOOP Log ?>
                         <? VAR Line ?><br>
                     <? ENDLOOP ?>
                 </code>
                 <? IF PrevOffsets ?>
-                    <form action="<? VAR ModPath TOP ?>" method="post">
+                    <form style="display: inline-block;" action="<? VAR ModPath TOP ?>" method="post">
                         <? INC _csrf_check.tmpl ?>
                         <input type="hidden" name="path" value="<? VAR Path ?>">
                         <? LOOP PrevOffsets ?>
                             <input type="hidden" name="offsets" value="<? VAR Offset ?>">
                         <? ENDLOOP ?>
-                        <button type="submit"><? FORMAT "Prev" ?></button>
+                        <input type="submit" value="<? FORMAT "Prev" ?>">
                     </form>
                 <? ENDIF ?>
                 <? IF NextOffsets ?>
-                    <form action="<? VAR ModPath TOP ?>" method="post">
+                    <form style="display: inline-block;" action="<? VAR ModPath TOP ?>" method="post">
                         <? INC _csrf_check.tmpl ?>
                         <input type="hidden" name="path" value="<? VAR Path ?>">
                         <? LOOP NextOffsets ?>
                             <input type="hidden" name="offsets" value="<? VAR Offset ?>">
                         <? ENDLOOP ?>
-                        <button type="submit"><? FORMAT "Next" ?></button>
+                        <input type="submit" value="<? FORMAT "Next" ?>">
                     </form>
                 <? ENDIF ?>
             </div>
