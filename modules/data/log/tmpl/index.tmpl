@@ -46,17 +46,19 @@
         <h3><? FORMAT "File Browser" ?></h3>
         <div class="sectionbg">
             <div class="sectionbody">
-                <ul style="list-style: none;">
+                <div class="subsection">
                     <? LOOP Files ?>
-                        <li>
-                            <form action="<? VAR ModPath TOP ?>" method="post">
-                                <? INC _csrf_check.tmpl ?>
-                                <input type="hidden" name="path" value="<? VAR Long ?>">
-                                <button type="submit"><? VAR Short ?></button>
-                            </form>
-                        </li>
+                        <form action="<? VAR ModPath TOP ?>" method="post">
+                            <? INC _csrf_check.tmpl ?>
+                            <input type="hidden" name="path" value="<? VAR Long ?>">
+                            <label>
+                                <img src="<? VAR ModFilesPath TOP ?>/<? IF Dir ?>dir<? ELSE ?>file<? ENDIF ?>.png">
+                                <? VAR Short ?>
+                                <input type="submit" hidden>
+                            </label>
+                        </form>
                     <? ENDLOOP ?>
-                </ul>
+                </div>
             </div>
         </div>
     <? ENDIF ?>
