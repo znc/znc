@@ -617,7 +617,7 @@ bool CLogMod::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplat
     if (!sPrefix.empty() && !sPrefix.EndsWith("/"))
         sPrefix += "/";
 
-    if (!sPath.empty()) {
+    if (!sPath.empty() && (sPath.Contains("/") || File.IsDir())) {
         CTemplate& Row = Tmpl.AddRow("Files");
         Row["Short"] = "..";
         Row["Long"] = sPrefix + "..";
