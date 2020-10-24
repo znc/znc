@@ -568,6 +568,18 @@ bool CLogMod::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplat
             break;
     }
 
+    if (WebSock.HasParam("configuration")) {
+        SCString ssSettings;
+        WebSock.GetParamValues("settings", ssSettings, true);
+        SetNV("joins", CString(ssSettings.find("joins") != ssSettings.end()));
+        SetNV("quits", CString(ssSettings.find("quits") != ssSettings.end()));
+        SetNV("nickchanges", CString(ssSettings.find("nickchanges") != ssSettings.end()));
+    }
+
+    Tmpl["Joins"] = CString(NeedJoins());
+    Tmpl["Quits"] = CString(NeedQuits());
+    Tmpl["NickChanges"] = CString(NeedNickChanges());
+
     if (GetType() == CModInfo::EModuleType::GlobalModule) {
         return true;
     }

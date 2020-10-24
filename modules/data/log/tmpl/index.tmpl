@@ -1,6 +1,39 @@
 <? I18N znc-log ?>
 <? INC Header.tmpl ?>
 
+<h3><? FORMAT "Configuration" ?></h3>
+<div class="sectionbg">
+    <div class="sectionbody">
+        <form action="<? VAR ModPath TOP ?>" method="post">
+            <? INC _csrf_check.tmpl ?>
+            <h4><? FORMAT "Settings"?></h4>
+            <div class="sectionbody">
+                <div class="subsection">
+                    <label>
+                        <input type="checkbox" name="settings" value="joins" <? IF Joins ?>checked<? ENDIF ?>>
+                        <? FORMAT "Log joins" ?>
+                    </label>
+                </div>
+                <div class="subsection">
+                    <label>
+                        <input type="checkbox" name="settings" value="quits" <? IF Quits ?>checked<? ENDIF ?>>
+                        <? FORMAT "Log quits" ?>
+                    </label>
+                </div>
+                <div class="subsection">
+                    <label>
+                        <input type="checkbox" name="settings" value="nickchanges" <? IF NickChanges ?>checked<? ENDIF ?>>
+                        <? FORMAT "Log nick changes" ?>
+                    </label>
+                </div>
+            </div>
+            <div class="subsection">
+                <input type="submit" name="configuration" value="<? FORMAT "Save" ?>">
+            </div>
+        </form>
+    </div>
+</div>
+
 <? IF Module !== "Global" ?>
     <? IF Files ?>
         <h3>File Browser</h3>
