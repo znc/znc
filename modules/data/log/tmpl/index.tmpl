@@ -41,9 +41,9 @@
     </div>
 </div>
 
-<? IF Module !== "Global" ?>
+<? IF Module != "Global" ?>
     <? IF Files ?>
-        <h3>File Browser</h3>
+        <h3><? FORMAT "File Browser" ?></h3>
         <div class="sectionbg">
             <div class="sectionbody">
                 <ul style="list-style: none;">
@@ -61,7 +61,7 @@
         </div>
     <? ENDIF ?>
     <? IF Log ?>
-        <h3>Log Viewer (Page <? VAR Page ?>)</h3>
+        <h3><? FORMAT "Log Viewer" ?>(<? FORMAT "Page" ?> <? VAR Page ?>)</h3>
         <div class="sectionbg">
             <div class="sectionbody">
                 <code style="display: block; margin-bottom: 0.5em;">
@@ -76,7 +76,7 @@
                         <? LOOP PrevOffsets ?>
                             <input type="hidden" name="offsets" value="<? VAR Offset ?>">
                         <? ENDLOOP ?>
-                        <button type="submit">Prev</button>
+                        <button type="submit"><? FORMAT "Prev" ?></button>
                     </form>
                 <? ENDIF ?>
                 <? IF NextOffsets ?>
@@ -86,7 +86,7 @@
                         <? LOOP NextOffsets ?>
                             <input type="hidden" name="offsets" value="<? VAR Offset ?>">
                         <? ENDLOOP ?>
-                        <button type="submit">Next</button>
+                        <button type="submit"><? FORMAT "Next" ?></button>
                     </form>
                 <? ENDIF ?>
             </div>
