@@ -6,6 +6,13 @@
     <div class="sectionbody">
         <form action="<? VAR ModPath TOP ?>" method="post">
             <? INC _csrf_check.tmpl ?>
+            <h4><? FORMAT "Rules" ?></h4>
+            <div class="sectionbody">
+                <div class="subsection">
+                    <textarea name="rules"><? LOOP Rules ?><? VAR Rule ?>
+<? ENDLOOP ?></textarea>
+                </div>
+            </div>
             <h4><? FORMAT "Settings"?></h4>
             <div class="sectionbody">
                 <div class="subsection">

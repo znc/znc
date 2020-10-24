@@ -569,11 +569,26 @@ bool CLogMod::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplat
     }
 
     if (WebSock.HasParam("configuration")) {
+        CString sRules = WebSock.GetParam("rules", true);
+        sRules.Replace("\r\n", "");
+        sRules.Replace("\n", "");
+        VCString vsRules = SplitRules(sRules.Token(0, true));
+        SetRules(vsRules);
+        if (vsRules.empty()) {
+            DelNV("rules");
+        } else {
+            SetNV("rules", JoinRules(","));
+        }
         SCString ssSettings;
         WebSock.GetParamValues("settings", ssSettings, true);
         SetNV("joins", CString(ssSettings.find("joins") != ssSettings.end()));
         SetNV("quits", CString(ssSettings.find("quits") != ssSettings.end()));
         SetNV("nickchanges", CString(ssSettings.find("nickchanges") != ssSettings.end()));
+    }
+
+    for (const CLogRule& Rule : m_vRules) {
+        CTemplate& Row = Tmpl.AddRow("Rules");
+        Row["Rule"] = Rule.ToString();
     }
 
     Tmpl["Joins"] = CString(NeedJoins());
