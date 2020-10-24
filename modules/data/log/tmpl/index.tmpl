@@ -7,14 +7,21 @@
         <form action="<? VAR ModPath TOP ?>" method="post">
             <? INC _csrf_check.tmpl ?>
             <h4><? FORMAT "Rules" ?></h4>
-            <div class="sectionbody">
+            <div class="sectionbody" style="margin-bottom: 0.5em;">
                 <div class="subsection">
                     <textarea name="rules"><? LOOP Rules ?><? VAR Rule ?>
 <? ENDLOOP ?></textarea>
+                    <br>
+                    <span class="info">
+                        <? FORMAT "Leave empty to clear all rules." ?><br>
+                        <? FORMAT "Otherwise, separate rules by lines or spaces." ?><br>
+                        <? FORMAT "Use !#chan or !query to negate the rule." ?><br>
+                        <? FORMAT "The wildcard * is available." ?>
+                    </span>
                 </div>
             </div>
             <h4><? FORMAT "Settings"?></h4>
-            <div class="sectionbody">
+            <div class="sectionbody" style="margin-bottom: 0.5em;">
                 <div class="subsection">
                     <label>
                         <input type="checkbox" name="settings" value="joins" <? IF Joins ?>checked<? ENDIF ?>>
@@ -43,7 +50,7 @@
 
 <? IF Module != "Global" ?>
     <? IF Files ?>
-        <h3><? FORMAT "File Browser" ?></h3>
+        <h3><? FORMAT "Log Browser" ?></h3>
         <div class="sectionbg">
             <div class="sectionbody">
                 <div class="subsection">
