@@ -183,6 +183,18 @@ static const struct {
         {"502", true}, /* rfc1459 ERR_USERSDONTMATCH */
         {nullptr, true},
        }},
+       {"TOPIC",
+        {
+         {"461", true}, /* rfc1459 ERR_NEEDMOREPARAMS */
+         {"403", true}, /* rfc1459 ERR_NOSUCHCHANNEL */
+         {"442", true}, /* rfc1459 ERR_NOTONCHANNEL */
+         {"482", true}, /* rfc1459 ERR_CHANOPRIVSNEEDED */
+         {"331", true}, /* rfc1459 RPL_NOTOPIC */
+         {"332", false}, /* rfc1459 RPL_TOPIC */
+         {"333", true}, /* ircu? RPL_TOPICWHOTIME */
+         {nullptr, true},
+       }},
+
       // END (last item!)
       {nullptr, {{nullptr, true}}}};
 
@@ -333,6 +345,12 @@ class CRouteRepliesMod : public CModule {
 
             // Ok, this looks like we should route it.
             // Fall through to the next loop
+        } else if (Message.GetType() == CMessage::Type::Topic) {
+            // Check if this is a topic request that needs to be handled
+
+            // If there are arguments to a topic we must not route it.
+            // Topic change message may result in TOPIC change to go to every client
+            if (!Message.GetParamsColon(1).empty()) return CONTINUE;
         }
 
         for (size_t i = 0; vRouteReplies[i].szRequest != nullptr; i++) {
