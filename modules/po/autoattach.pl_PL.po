@@ -84,4 +84,4 @@ msgstr "Lista masek kanałów i masek kanałów z ! (negującym) przed nimi."
 
 #: autoattach.cpp:286
 msgid "Reattaches you to channels on activity."
-msgstr "Przypina do kanałów przy aktywności."
+msgstr "Przypina do kanałów gdy pojawi się na nich jakaś aktywność."

@@ -20,7 +20,7 @@ msgstr ""
 
 #: perleval.pm:33
 msgid "Only admin can load this module"
-msgstr ""
+msgstr "Tylko administrator może załadować ten moduł"
 
 #: perleval.pm:44
 #, perl-format

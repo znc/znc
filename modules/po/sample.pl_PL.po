@@ -40,11 +40,11 @@ msgstr "Jestem wyładowany!"
 
 #: sample.cpp:94
 msgid "You got connected BoyOh."
-msgstr ""
+msgstr "Połączyłeś się BoyOh."
 
 #: sample.cpp:98
 msgid "You got disconnected BoyOh."
-msgstr ""
+msgstr "Rozłączyłeś się BoyOh."
 
 #: sample.cpp:116
 msgid "{1} {2} set mode on {3} {4}{5} {6}"
