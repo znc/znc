@@ -16,7 +16,7 @@ msgstr ""
 
 #: identfile.cpp:30
 msgid "Show file name"
-msgstr ""
+msgstr "Pokaż nazwę pliku"
 
 #: identfile.cpp:32
 msgid "<file>"
@@ -36,11 +36,11 @@ msgstr ""
 
 #: identfile.cpp:36
 msgid "Set file format"
-msgstr ""
+msgstr "Ustaw format pliku"
 
 #: identfile.cpp:38
 msgid "Show current state"
-msgstr ""
+msgstr "Pokaż bieżący stan"
 
 #: identfile.cpp:48
 msgid "File is set to: {1}"
@@ -52,7 +52,7 @@ msgstr ""
 
 #: identfile.cpp:58
 msgid "Format has been set to: {1}"
-msgstr ""
+msgstr "Format został ustawiony na: {1}"
 
 #: identfile.cpp:59 identfile.cpp:65
 msgid "Format would be expanded to: {1}"
@@ -68,7 +68,7 @@ msgstr ""
 
 #: identfile.cpp:86
 msgid "Access denied"
-msgstr ""
+msgstr "Odmowa dostępu"
 
 #: identfile.cpp:181
 msgid ""

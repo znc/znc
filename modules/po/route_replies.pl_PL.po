@@ -34,7 +34,7 @@ msgstr ""
 
 #: route_replies.cpp:362
 msgid "To disable this message, do \"/msg {1} silent yes\""
-msgstr ""
+msgstr "Aby wyłączyć tą wiadomość, zrób \"/msg {1} silent yes\""
 
 #: route_replies.cpp:364
 msgid "Last request: {1}"

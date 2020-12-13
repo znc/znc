@@ -523,7 +523,7 @@ msgstr "Sieć"
 #: ClientCommand.cpp:205 ClientCommand.cpp:215
 msgctxt "listclientscmd"
 msgid "Identifier"
-msgstr ""
+msgstr "Identyfikator"
 
 #: ClientCommand.cpp:223 ClientCommand.cpp:229
 msgctxt "listuserscmd"
@@ -578,7 +578,7 @@ msgstr "Kanały"
 
 #: ClientCommand.cpp:251
 msgid "N/A"
-msgstr ""
+msgstr "nd."
 
 #: ClientCommand.cpp:272
 msgctxt "listallusernetworkscmd"
@@ -614,6 +614,8 @@ msgstr "Wyczyszczono MOTD"
 msgid ""
 "ERROR: Writing config file to disk failed! Aborting. Use {1} FORCE to ignore."
 msgstr ""
+"BŁĄD: Zapisywanie pliku konfiguracyjnego na dysku nie powiodło się! "
+"Przerywanie. Użyj {1} FORCE aby zignorować."
 
 #: ClientCommand.cpp:344 ClientCommand.cpp:842 ClientCommand.cpp:883
 msgid "You don't have any servers added."
@@ -646,10 +648,10 @@ msgstr "Użycie: EnableChan <#kanały>"
 #: ClientCommand.cpp:426
 msgid "Enabled {1} channel"
 msgid_plural "Enabled {1} channels"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Włączono {1} kanał"
+msgstr[1] "Włączono {1} kanały"
+msgstr[2] "Włączono {1} kanałów"
+msgstr[3] "Włączono {1} kanałów"
 
 #: ClientCommand.cpp:439
 msgid "Usage: DisableChan <#chans>"
@@ -1245,9 +1247,9 @@ msgstr "Użycie: ClearBuffer <#kanał|rozmowa>"
 msgid "{1} buffer matching {2} has been cleared"
 msgid_plural "{1} buffers matching {2} have been cleared"
 msgstr[0] "{1} bufor pasujący do {2} został wyczyszczony"
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[1] "{1} bufory pasujący do {2} zostały wyczyszczone"
+msgstr[2] "{1} buforów pasujących do {2} zostało wyczyszczone"
+msgstr[3] "{1} buforów pasujących do {2} zostało wyczyszczone"
 
 #: ClientCommand.cpp:1477
 msgid "All channel buffers have been cleared"

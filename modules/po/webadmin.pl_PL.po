@@ -345,7 +345,7 @@ msgstr "Dodaj"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:187
 msgid "Index"
-msgstr ""
+msgstr "Indeks"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:188
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:430
@@ -673,6 +673,9 @@ msgid ""
 "network or declares the connection timeout. This happens after attempts to "
 "ping the peer."
 msgstr ""
+"Jak długo czasu ZNC oczekuje (w sekundach) zanim otrzyma coś z sieci lub "
+"zadeklaruje wygaśnięcie czasu oczekiwania na połączenie. To się dzieje po "
+"próbach wysłania pakietu początkowego zdalnej stronie."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:327
 msgid "Max IRC Networks Number:"

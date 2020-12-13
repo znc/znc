@@ -40,6 +40,10 @@ msgid ""
 "the appropriate pass and things should start working, or setpass to a new "
 "pass and save to reinstantiate"
 msgstr ""
+"Hasło jest nieustawione, oznacza to zazwyczaj błąd rozszyfrowania. Możesz "
+"użyć polecenia \"setpass\" zawierającego właściwe hasło i wszystko powinno "
+"zacząć działać z powrotem, lub użyć polecenia \"setpass\" z nowym hasłem aby "
+"utworzyć nową instancję."
 
 #: savebuff.cpp:232
 msgid "Password set to [{1}]"
