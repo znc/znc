@@ -405,12 +405,12 @@ msgstr ""
 #: controlpanel.cpp:1286 controlpanel.cpp:1291
 msgctxt "listctcp"
 msgid "Request"
-msgstr ""
+msgstr "Demander"
 
 #: controlpanel.cpp:1287 controlpanel.cpp:1292
 msgctxt "listctcp"
 msgid "Reply"
-msgstr ""
+msgstr "Répondre"
 
 #: controlpanel.cpp:1296
 msgid "No CTCP replies for user {1} are configured"
@@ -469,61 +469,64 @@ msgstr ""
 
 #: controlpanel.cpp:1387
 msgid "Error: Unable to reload module {1}: {2}"
-msgstr ""
+msgstr "Erreur : Impossible de recharger le module {1} : {2}"
 
 #: controlpanel.cpp:1390
 msgid "Reloaded module {1}"
-msgstr ""
+msgstr "Module {1} rechargé"
 
 #: controlpanel.cpp:1394
 msgid "Error: Unable to load module {1} because it is already loaded"
-msgstr ""
+msgstr "Erreur : Impossible de charger le module {1} car il est déjà chargé"
 
 #: controlpanel.cpp:1405
 msgid "Usage: LoadModule <username> <modulename> [args]"
-msgstr ""
+msgstr "Utilisation : LoadModule <nom d'utilisateur> <nom du module> [args]"
 
 #: controlpanel.cpp:1424
 msgid "Usage: LoadNetModule <username> <network> <modulename> [args]"
 msgstr ""
+"Utilisation : LoadNetModule <nom d'utilisateur> <réseau> <nom du module> "
+"[args]"
 
 #: controlpanel.cpp:1449
 msgid "Please use /znc unloadmod {1}"
-msgstr ""
+msgstr "Veuillez utiliser /znc unloadmod {1}"
 
 #: controlpanel.cpp:1455
 msgid "Error: Unable to unload module {1}: {2}"
-msgstr ""
+msgstr "Erreur : Impossible de décharger le module {1} : {2}"
 
 #: controlpanel.cpp:1458
 msgid "Unloaded module {1}"
-msgstr ""
+msgstr "Module {1} déchargé"
 
 #: controlpanel.cpp:1467
 msgid "Usage: UnloadModule <username> <modulename>"
-msgstr ""
+msgstr "Utilisation : UnloadModule <nom d'utilisateur> <nom du module>"
 
 #: controlpanel.cpp:1484
 msgid "Usage: UnloadNetModule <username> <network> <modulename>"
 msgstr ""
+"Utilisation : UnloadNetModule <nom d'utilisateur> <réseau> <nom du module>"
 
 #: controlpanel.cpp:1501 controlpanel.cpp:1507
 msgctxt "listmodules"
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 #: controlpanel.cpp:1502 controlpanel.cpp:1508
 msgctxt "listmodules"
 msgid "Arguments"
-msgstr ""
+msgstr "Arguments"
 
 #: controlpanel.cpp:1527
 msgid "User {1} has no modules loaded."
-msgstr ""
+msgstr "L'utilisateur {1} n'a chargé aucun module."
 
 #: controlpanel.cpp:1531
 msgid "Modules loaded for user {1}:"
-msgstr ""
+msgstr "Modules chargés pour l'utilisateur {1} :"
 
 #: controlpanel.cpp:1551
 msgid "Network {1} of user {2} has no modules loaded."
@@ -535,7 +538,7 @@ msgstr ""
 
 #: controlpanel.cpp:1563
 msgid "[command] [variable]"
-msgstr ""
+msgstr "[command] [variable]"
 
 #: controlpanel.cpp:1564
 msgid "Prints help for matching commands and variables"
@@ -543,7 +546,7 @@ msgstr ""
 
 #: controlpanel.cpp:1567
 msgid "<variable> [username]"
-msgstr ""
+msgstr "<variable> [username]"
 
 #: controlpanel.cpp:1568
 msgid "Prints the variable's value for the given or current user"
@@ -603,7 +606,7 @@ msgstr ""
 
 #: controlpanel.cpp:1592
 msgid "Lists users"
-msgstr ""
+msgstr "Liste les utilisateurs"
 
 #: controlpanel.cpp:1594
 msgid "<username> <password>"
@@ -611,7 +614,7 @@ msgstr ""
 
 #: controlpanel.cpp:1595
 msgid "Adds a new user"
-msgstr ""
+msgstr "Ajoute un nouvel utilisateur"
 
 #: controlpanel.cpp:1597 controlpanel.cpp:1620 controlpanel.cpp:1634
 msgid "<username>"
@@ -619,7 +622,7 @@ msgstr ""
 
 #: controlpanel.cpp:1597
 msgid "Deletes a user"
-msgstr ""
+msgstr "Supprime un utilisateur"
 
 #: controlpanel.cpp:1599
 msgid "<old username> <new username>"
@@ -627,7 +630,7 @@ msgstr ""
 
 #: controlpanel.cpp:1600
 msgid "Clones a user"
-msgstr ""
+msgstr "Clone un utilisateur"
 
 #: controlpanel.cpp:1602 controlpanel.cpp:1605
 msgid "<username> <network> <server>"
@@ -659,7 +662,7 @@ msgstr ""
 
 #: controlpanel.cpp:1615
 msgid "Loads a Module for a user"
-msgstr ""
+msgstr "Charge un module pour un utilisateur"
 
 #: controlpanel.cpp:1617
 msgid "<username> <modulename>"
@@ -671,7 +674,7 @@ msgstr ""
 
 #: controlpanel.cpp:1621
 msgid "Get the list of modules for a user"
-msgstr ""
+msgstr "Obtenir la liste des modules pour un utilisateur"
 
 #: controlpanel.cpp:1624
 msgid "<username> <network> <modulename> [args]"
@@ -703,38 +706,40 @@ msgstr ""
 
 #: controlpanel.cpp:1638
 msgid "Configure a new CTCP reply"
-msgstr ""
+msgstr "Configurer une nouvelle réponse CTCP"
 
 #: controlpanel.cpp:1640
 msgid "<username> <ctcp>"
-msgstr ""
+msgstr "<nom d'utilisateur> <ctcp>"
 
 #: controlpanel.cpp:1641
 msgid "Remove a CTCP reply"
-msgstr ""
+msgstr "Retirer une réponse CTCP"
 
 #: controlpanel.cpp:1645 controlpanel.cpp:1648
 msgid "[username] <network>"
-msgstr ""
+msgstr "[username] <réseau>"
 
 #: controlpanel.cpp:1646
 msgid "Add a network for a user"
-msgstr ""
+msgstr "Ajouter un réseau pour un utilisateur"
 
 #: controlpanel.cpp:1649
 msgid "Delete a network for a user"
-msgstr ""
+msgstr "Supprimer un réseau d'un utilisateur"
 
 #: controlpanel.cpp:1651
 msgid "[username]"
-msgstr ""
+msgstr "[username]"
 
 #: controlpanel.cpp:1652
 msgid "List all networks for a user"
-msgstr ""
+msgstr "Liste tous les réseaux d'un utilisateur"
 
 #: controlpanel.cpp:1665
 msgid ""
 "Dynamic configuration through IRC. Allows editing only yourself if you're "
 "not ZNC admin."
 msgstr ""
+"Configuration dynamique à travers IRC. Permet d'éditer seulement votre "
+"utilisateur si vous n'êtes pas administrateur de ZNC."

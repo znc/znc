@@ -487,15 +487,15 @@ msgstr "Erreur lors de la sauvegarde de la configuration."
 
 #: ClientCommand.cpp:183
 msgid "Usage: ListClients"
-msgstr ""
+msgstr "Utilisation : ListClients"
 
 #: ClientCommand.cpp:190
 msgid "No such user: {1}"
-msgstr ""
+msgstr "Utilisateur {1} inconnu"
 
 #: ClientCommand.cpp:198
 msgid "No clients are connected"
-msgstr ""
+msgstr "Aucun client connecté"
 
 #: ClientCommand.cpp:203 ClientCommand.cpp:209
 msgctxt "listclientscmd"
@@ -510,7 +510,7 @@ msgstr ""
 #: ClientCommand.cpp:205 ClientCommand.cpp:215
 msgctxt "listclientscmd"
 msgid "Identifier"
-msgstr ""
+msgstr "Identifiant"
 
 #: ClientCommand.cpp:223 ClientCommand.cpp:229
 msgctxt "listuserscmd"
@@ -520,12 +520,12 @@ msgstr ""
 #: ClientCommand.cpp:224 ClientCommand.cpp:230
 msgctxt "listuserscmd"
 msgid "Networks"
-msgstr ""
+msgstr "Réseaux"
 
 #: ClientCommand.cpp:225 ClientCommand.cpp:232
 msgctxt "listuserscmd"
 msgid "Clients"
-msgstr ""
+msgstr "Clients"
 
 #: ClientCommand.cpp:240 ClientCommand.cpp:250 ClientCommand.cpp:260
 #: ClientCommand.cpp:263
@@ -541,7 +541,7 @@ msgstr ""
 #: ClientCommand.cpp:242 ClientCommand.cpp:252 ClientCommand.cpp:268
 msgctxt "listallusernetworkscmd"
 msgid "Clients"
-msgstr ""
+msgstr "Clients"
 
 #: ClientCommand.cpp:243 ClientCommand.cpp:271 ClientCommand.cpp:280
 msgctxt "listallusernetworkscmd"
@@ -565,7 +565,7 @@ msgstr ""
 
 #: ClientCommand.cpp:251
 msgid "N/A"
-msgstr ""
+msgstr "N/D"
 
 #: ClientCommand.cpp:272
 msgctxt "listallusernetworkscmd"
@@ -579,28 +579,30 @@ msgstr ""
 
 #: ClientCommand.cpp:291
 msgid "Usage: SetMOTD <message>"
-msgstr ""
+msgstr "Utilisation : SetMOTD <message>"
 
 #: ClientCommand.cpp:294
 msgid "MOTD set to: {1}"
-msgstr ""
+msgstr "MOTD défini à : {1}"
 
 #: ClientCommand.cpp:300
 msgid "Usage: AddMOTD <message>"
-msgstr ""
+msgstr "Utilisation : AddMOTD <message>"
 
 #: ClientCommand.cpp:303
 msgid "Added [{1}] to MOTD"
-msgstr ""
+msgstr "[{1}] ajouté au MOTD"
 
 #: ClientCommand.cpp:307
 msgid "Cleared MOTD"
-msgstr ""
+msgstr "MOTD effacé"
 
 #: ClientCommand.cpp:329
 msgid ""
 "ERROR: Writing config file to disk failed! Aborting. Use {1} FORCE to ignore."
 msgstr ""
+"ERREUR : Échec de l'écriture du fichier de configuration sur le disque ! "
+"Abandon. Utilisez {1} FORCE pour ignorer."
 
 #: ClientCommand.cpp:344 ClientCommand.cpp:797 ClientCommand.cpp:838
 msgid "You don't have any servers added."
@@ -608,43 +610,43 @@ msgstr "Vous n'avez aucun serveur."
 
 #: ClientCommand.cpp:355
 msgid "Server [{1}] not found"
-msgstr ""
+msgstr "Serveur [{1}] introuvable"
 
 #: ClientCommand.cpp:375 ClientCommand.cpp:380
 msgid "Connecting to {1}..."
-msgstr ""
+msgstr "Connection à {1}..."
 
 #: ClientCommand.cpp:377
 msgid "Jumping to the next server in the list..."
-msgstr ""
+msgstr "Saut au serveur suivant dans la liste..."
 
 #: ClientCommand.cpp:382
 msgid "Connecting..."
-msgstr ""
+msgstr "Connexion..."
 
 #: ClientCommand.cpp:400
 msgid "Disconnected from IRC. Use 'connect' to reconnect."
-msgstr ""
+msgstr "Déconnecté d'IRC. Utilisez 'connect' pour vous reconnecter."
 
 #: ClientCommand.cpp:412
 msgid "Usage: EnableChan <#chans>"
-msgstr ""
+msgstr "Utilisation : EnableChan <#chans>"
 
 #: ClientCommand.cpp:426
 msgid "Enabled {1} channel"
 msgid_plural "Enabled {1} channels"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{1} canal activé"
+msgstr[1] "{1} canaux activés"
 
 #: ClientCommand.cpp:439
 msgid "Usage: DisableChan <#chans>"
-msgstr ""
+msgstr "Utilisation : DisableChan <#chans>"
 
 #: ClientCommand.cpp:453
 msgid "Disabled {1} channel"
 msgid_plural "Disabled {1} channels"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{1} canal désactivé"
+msgstr[1] "{1} canaux désactivés"
 
 #: ClientCommand.cpp:470
 msgid "Usage: ListChans"
@@ -1885,11 +1887,11 @@ msgctxt "helpcmd|Restart|desc"
 msgid "Restart ZNC"
 msgstr "Redémarre ZNC"
 
-#: Socket.cpp:342
+#: Socket.cpp:336
 msgid "Can't resolve server hostname"
 msgstr "Impossible de résoudre le nom de domaine"
 
-#: Socket.cpp:349
+#: Socket.cpp:343
 msgid ""
 "Can't resolve bind hostname. Try /znc ClearBindHost and /znc "
 "ClearUserBindHost"
@@ -1897,17 +1899,17 @@ msgstr ""
 "Impossible de résoudre le nom de domaine de l'hôte. Essayez /znc "
 "ClearBindHost et /znc ClearUserBindHost"
 
-#: Socket.cpp:354
+#: Socket.cpp:348
 msgid "Server address is IPv4-only, but bindhost is IPv6-only"
 msgstr ""
 "L'adresse du serveur est IPv4 uniquement, mais l'hôte lié est IPv6 seulement"
 
-#: Socket.cpp:363
+#: Socket.cpp:357
 msgid "Server address is IPv6-only, but bindhost is IPv4-only"
 msgstr ""
 "L'adresse du serveur est IPv6 uniquement, mais l'hôte lié est IPv4 seulement"
 
-#: Socket.cpp:521
+#: Socket.cpp:515
 msgid "Some socket reached its max buffer limit and was closed!"
 msgstr "Un socket a atteint sa limite maximale de tampon et s'est fermé !"
 
