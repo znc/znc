@@ -89,6 +89,7 @@ with tempfile.TemporaryDirectory() as cmdir:
         subprocess.check_call(['cmake', '--build', '.'], cwd=build)
 
         for so in glob.iglob(os.path.join(build, '*.so')):
+            print('Writing {}'.format(os.path.join(os.getcwd(), os.path.basename(so))))
             try:
                 os.remove(os.path.basename(so))
             except OSError:
