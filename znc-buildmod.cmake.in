@@ -80,9 +80,9 @@ with tempfile.TemporaryDirectory() as cmdir:
     with tempfile.TemporaryDirectory() as build:
         command = ['cmake', cmdir]
         if args.verbose > 1:
-            cmd.append('--debug-output')
+            command.append('--debug-output')
         if args.verbose > 2:
-            cmd.append('--trace')
+            command.append('--trace')
         if args.verbose > 0:
             print(command)
         subprocess.check_call(command, cwd=build)
