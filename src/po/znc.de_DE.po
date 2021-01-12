@@ -101,7 +101,7 @@ msgstr ""
 
 #: IRCNetwork.cpp:948
 msgid "Invalid index"
-msgstr ""
+msgstr "Ungültiger Index"
 
 #: IRCNetwork.cpp:956 IRCNetwork.cpp:972 IRCNetwork.cpp:980
 #: ClientCommand.cpp:1405
@@ -666,19 +666,19 @@ msgstr[1] "{1} Kanäle deaktiviert"
 
 #: ClientCommand.cpp:466
 msgid "Usage: MoveChan <#chan> <index>"
-msgstr ""
+msgstr "Benutzung: MoveChan <#chan> <index>"
 
 #: ClientCommand.cpp:474
 msgid "Moved channel {1} to index {2}"
-msgstr ""
+msgstr "Channel {1} zu Index {2} verschoben"
 
 #: ClientCommand.cpp:487
 msgid "Usage: SwapChans <#chan1> <#chan2>"
-msgstr ""
+msgstr "Benutzung: SwapChans <#chan1> <#chan2>"
 
 #: ClientCommand.cpp:493
 msgid "Swapped channels {1} and {2}"
-msgstr ""
+msgstr "Channel {1} und {2} getauscht"
 
 #: ClientCommand.cpp:510
 msgid "Usage: ListChans"
@@ -699,7 +699,7 @@ msgstr "Es wurden noch keine Kanäle definiert."
 #: ClientCommand.cpp:539 ClientCommand.cpp:557
 msgctxt "listchans"
 msgid "Index"
-msgstr ""
+msgstr "Index"
 
 #: ClientCommand.cpp:540 ClientCommand.cpp:558
 msgctxt "listchans"
@@ -1624,22 +1624,22 @@ msgstr "Deaktiviere Kanäle"
 #: ClientCommand.cpp:1829
 msgctxt "helpcmd|MoveChan|args"
 msgid "<#chan> <index>"
-msgstr ""
+msgstr "<#chan> <index>"
 
 #: ClientCommand.cpp:1830
 msgctxt "helpcmd|MoveChan|desc"
 msgid "Move channel in sort order"
-msgstr ""
+msgstr "Verschiebe Kanäle in Sortierung"
 
 #: ClientCommand.cpp:1832
 msgctxt "helpcmd|SwapChans|args"
 msgid "<#chan1> <#chan2>"
-msgstr ""
+msgstr "<#chan1> <#chan2>"
 
 #: ClientCommand.cpp:1833
 msgctxt "helpcmd|SwapChans|desc"
 msgid "Swap channels in sort order"
-msgstr ""
+msgstr "Tausche Kanäle in Sortierung"
 
 #: ClientCommand.cpp:1834
 msgctxt "helpcmd|Attach|args"

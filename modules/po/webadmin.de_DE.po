@@ -348,7 +348,7 @@ msgstr "Hinzufügen"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:187
 msgid "Index"
-msgstr ""
+msgstr "Index"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:188
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:430
