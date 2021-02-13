@@ -1,0 +1,169 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n"
+"%100<20)) ? 1 : 2);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: ro\n"
+"X-Crowdin-File: /1.8.x/modules/po/autoop.pot\n"
+"X-Crowdin-File-ID: 296\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Romanian\n"
+"Language: ro_RO\n"
+
+#: autoop.cpp:155
+msgid "List all users"
+msgstr ""
+
+#: autoop.cpp:157 autoop.cpp:160
+msgid "<user> <channel> [channel] ..."
+msgstr ""
+
+#: autoop.cpp:158
+msgid "Adds channels to a user"
+msgstr ""
+
+#: autoop.cpp:161
+msgid "Removes channels from a user"
+msgstr ""
+
+#: autoop.cpp:163 autoop.cpp:166
+msgid "<user> <mask>,[mask] ..."
+msgstr ""
+
+#: autoop.cpp:164
+msgid "Adds masks to a user"
+msgstr ""
+
+#: autoop.cpp:167
+msgid "Removes masks from a user"
+msgstr ""
+
+#: autoop.cpp:170
+msgid "<user> <hostmask>[,<hostmasks>...] <key> [channels]"
+msgstr ""
+
+#: autoop.cpp:171
+msgid "Adds a user"
+msgstr ""
+
+#: autoop.cpp:173
+msgid "<user>"
+msgstr ""
+
+#: autoop.cpp:173
+msgid "Removes a user"
+msgstr ""
+
+#: autoop.cpp:276
+msgid "Usage: AddUser <user> <hostmask>[,<hostmasks>...] <key> [channels]"
+msgstr ""
+
+#: autoop.cpp:292
+msgid "Usage: DelUser <user>"
+msgstr ""
+
+#: autoop.cpp:301
+msgid "There are no users defined"
+msgstr ""
+
+#: autoop.cpp:307 autoop.cpp:318 autoop.cpp:322 autoop.cpp:324
+msgid "User"
+msgstr ""
+
+#: autoop.cpp:308 autoop.cpp:326
+msgid "Hostmasks"
+msgstr ""
+
+#: autoop.cpp:309 autoop.cpp:319
+msgid "Key"
+msgstr ""
+
+#: autoop.cpp:310 autoop.cpp:320
+msgid "Channels"
+msgstr ""
+
+#: autoop.cpp:338
+msgid "Usage: AddChans <user> <channel> [channel] ..."
+msgstr ""
+
+#: autoop.cpp:345 autoop.cpp:366 autoop.cpp:388 autoop.cpp:409 autoop.cpp:473
+msgid "No such user"
+msgstr ""
+
+#: autoop.cpp:350
+msgid "Channel(s) added to user {1}"
+msgstr ""
+
+#: autoop.cpp:359
+msgid "Usage: DelChans <user> <channel> [channel] ..."
+msgstr ""
+
+#: autoop.cpp:372
+msgid "Channel(s) Removed from user {1}"
+msgstr ""
+
+#: autoop.cpp:381
+msgid "Usage: AddMasks <user> <mask>,[mask] ..."
+msgstr ""
+
+#: autoop.cpp:393
+msgid "Hostmasks(s) added to user {1}"
+msgstr ""
+
+#: autoop.cpp:402
+msgid "Usage: DelMasks <user> <mask>,[mask] ..."
+msgstr ""
+
+#: autoop.cpp:414
+msgid "Removed user {1} with key {2} and channels {3}"
+msgstr ""
+
+#: autoop.cpp:420
+msgid "Hostmasks(s) Removed from user {1}"
+msgstr ""
+
+#: autoop.cpp:479
+msgid "User {1} removed"
+msgstr ""
+
+#: autoop.cpp:485
+msgid "That user already exists"
+msgstr ""
+
+#: autoop.cpp:491
+msgid "User {1} added with hostmask(s) {2}"
+msgstr ""
+
+#: autoop.cpp:533
+msgid ""
+"[{1}] sent us a challenge but they are not opped in any defined channels."
+msgstr ""
+
+#: autoop.cpp:537
+msgid "[{1}] sent us a challenge but they do not match a defined user."
+msgstr ""
+
+#: autoop.cpp:545
+msgid "WARNING! [{1}] sent an invalid challenge."
+msgstr ""
+
+#: autoop.cpp:561
+msgid "[{1}] sent an unchallenged response.  This could be due to lag."
+msgstr ""
+
+#: autoop.cpp:578
+msgid ""
+"WARNING! [{1}] sent a bad response.  Please verify that you have their "
+"correct password."
+msgstr ""
+
+#: autoop.cpp:587
+msgid "WARNING! [{1}] sent a response but did not match any defined users."
+msgstr ""
+
+#: autoop.cpp:645
+msgid "Auto op the good people"
+msgstr ""
