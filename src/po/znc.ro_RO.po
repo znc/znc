@@ -265,55 +265,55 @@ msgstr "Salut. Cu ce te pot ajuta?"
 
 #: Client.cpp:1338
 msgid "Usage: /attach <#chans>"
-msgstr ""
+msgstr "Utilizează: /attach <#canale>"
 
 #: Client.cpp:1345 Client.cpp:1367 ClientCommand.cpp:129 ClientCommand.cpp:151
 #: ClientCommand.cpp:423 ClientCommand.cpp:450
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
-msgstr[0] ""
+msgstr[0] "A existat {1} canal care se potrivește cu [{2}]"
 msgstr[1] ""
-msgstr[2] ""
+msgstr[2] "Au existat {1} canale care se potrivesc cu [{2}]"
 
 #: Client.cpp:1348 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
-msgstr[0] ""
+msgstr[0] "Am atașat {1} canal"
 msgstr[1] ""
-msgstr[2] ""
+msgstr[2] "Am atașat {1} canale"
 
 #: Client.cpp:1360
 msgid "Usage: /detach <#chans>"
-msgstr ""
+msgstr "Utilizează: /detach <#canale>"
 
 #: Client.cpp:1370 ClientCommand.cpp:154
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
-msgstr[0] ""
+msgstr[0] "Detașează {1} canal"
 msgstr[1] ""
-msgstr[2] ""
+msgstr[2] "Detașează {1} canale"
 
 #: Chan.cpp:678
 msgid "Buffer Playback..."
-msgstr ""
+msgstr "Redare buffer..."
 
 #: Chan.cpp:716
 msgid "Playback Complete."
-msgstr ""
+msgstr "Redare completă."
 
 #: Modules.cpp:528
 msgctxt "modhelpcmd"
 msgid "<search>"
-msgstr ""
+msgstr "<search>"
 
 #: Modules.cpp:529
 msgctxt "modhelpcmd"
 msgid "Generate this output"
-msgstr ""
+msgstr "Generați această ieșire"
 
 #: Modules.cpp:573 ClientCommand.cpp:1972
 msgid "No matches for '{1}'"
-msgstr ""
+msgstr "Nu există potriviri pentru „{1}”"
 
 #: Modules.cpp:691
 msgid "This module doesn't implement any commands."
@@ -444,15 +444,15 @@ msgstr ""
 
 #: ClientCommand.cpp:91 ClientCommand.cpp:106
 msgid "Nick"
-msgstr ""
+msgstr "Nume"
 
 #: ClientCommand.cpp:92 ClientCommand.cpp:107
 msgid "Ident"
-msgstr ""
+msgstr "Ident"
 
 #: ClientCommand.cpp:93 ClientCommand.cpp:108
 msgid "Host"
-msgstr ""
+msgstr "Host"
 
 #: ClientCommand.cpp:122
 msgid "Usage: Attach <#chans>"
@@ -464,7 +464,7 @@ msgstr ""
 
 #: ClientCommand.cpp:161
 msgid "There is no MOTD set."
-msgstr ""
+msgstr "Nu există nici un MOTD setat."
 
 #: ClientCommand.cpp:167
 msgid "Rehashing succeeded!"
@@ -497,12 +497,12 @@ msgstr ""
 #: ClientCommand.cpp:203 ClientCommand.cpp:209
 msgctxt "listclientscmd"
 msgid "Host"
-msgstr ""
+msgstr "Host"
 
 #: ClientCommand.cpp:204 ClientCommand.cpp:212
 msgctxt "listclientscmd"
 msgid "Network"
-msgstr ""
+msgstr "Rețea"
 
 #: ClientCommand.cpp:205 ClientCommand.cpp:215
 msgctxt "listclientscmd"
@@ -512,7 +512,7 @@ msgstr ""
 #: ClientCommand.cpp:223 ClientCommand.cpp:229
 msgctxt "listuserscmd"
 msgid "Username"
-msgstr ""
+msgstr "Utilizator"
 
 #: ClientCommand.cpp:224 ClientCommand.cpp:230
 msgctxt "listuserscmd"
@@ -528,12 +528,12 @@ msgstr ""
 #: ClientCommand.cpp:263
 msgctxt "listallusernetworkscmd"
 msgid "Username"
-msgstr ""
+msgstr "Utilizator"
 
 #: ClientCommand.cpp:241 ClientCommand.cpp:251 ClientCommand.cpp:266
 msgctxt "listallusernetworkscmd"
 msgid "Network"
-msgstr ""
+msgstr "Rețea"
 
 #: ClientCommand.cpp:242 ClientCommand.cpp:252 ClientCommand.cpp:268
 msgctxt "listallusernetworkscmd"
@@ -543,17 +543,17 @@ msgstr ""
 #: ClientCommand.cpp:243 ClientCommand.cpp:271 ClientCommand.cpp:280
 msgctxt "listallusernetworkscmd"
 msgid "On IRC"
-msgstr ""
+msgstr "Pe IRC"
 
 #: ClientCommand.cpp:244 ClientCommand.cpp:273
 msgctxt "listallusernetworkscmd"
 msgid "IRC Server"
-msgstr ""
+msgstr "Server IRC"
 
 #: ClientCommand.cpp:245 ClientCommand.cpp:275
 msgctxt "listallusernetworkscmd"
 msgid "IRC User"
-msgstr ""
+msgstr "Utilizator IRC"
 
 #: ClientCommand.cpp:246 ClientCommand.cpp:277
 msgctxt "listallusernetworkscmd"
