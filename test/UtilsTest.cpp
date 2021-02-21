@@ -85,10 +85,43 @@ TEST(IRC32, SetMessageTags) {
     EXPECT_EQ(sLine, R"(@a=\:\s\\\r\n :rest)");
 }
 
-TEST(UtilsTest, ServerTime) {
+TEST(UtilsTest, ServerTimeWithUTCSystemTime) {
     char* oldTZ = getenv("TZ");
     if (oldTZ) oldTZ = strdup(oldTZ);
     setenv("TZ", "UTC", 1);
+    tzset();
+
+    timeval tv1 = CUtils::ParseServerTime("2011-10-19T16:40:51.620Z");
+    CString str1 = CUtils::FormatServerTime(tv1);
+    EXPECT_EQ(str1, "2011-10-19T16:40:51.620Z");
+
+    timeval now = CUtils::GetTime();
+
+    // Strip microseconds, server time is ms only
+    now.tv_usec = (now.tv_usec / 1000) * 1000;
+
+    CString str2 = CUtils::FormatServerTime(now);
+    timeval tv2 = CUtils::ParseServerTime(str2);
+    EXPECT_EQ(tv2.tv_sec, now.tv_sec);
+    EXPECT_EQ(tv2.tv_usec, now.tv_usec);
+
+    timeval tv3 = CUtils::ParseServerTime("invalid");
+    CString str3 = CUtils::FormatServerTime(tv3);
+    EXPECT_EQ(str3, "1970-01-01T00:00:00.000Z");
+
+    if (oldTZ) {
+        setenv("TZ", oldTZ, 1);
+        free(oldTZ);
+    } else {
+        unsetenv("TZ");
+    }
+    tzset();
+}
+
+TEST(UtilsTest, ServerTimeWithNonUTCSystemTime) {
+    char* oldTZ = getenv("TZ");
+    if (oldTZ) oldTZ = strdup(oldTZ);
+    setenv("TZ", "Europe/Prague", 1);
     tzset();
 
     timeval tv1 = CUtils::ParseServerTime("2011-10-19T16:40:51.620Z");
