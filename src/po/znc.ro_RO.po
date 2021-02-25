@@ -308,25 +308,27 @@ msgstr "Nu există potriviri pentru „{1}”"
 
 #: Modules.cpp:691
 msgid "This module doesn't implement any commands."
-msgstr ""
+msgstr "Acest modul nu implementează nicio comandă."
 
 #: Modules.cpp:693
 msgid "Unknown command!"
-msgstr ""
+msgstr "Comandă necunoscută!"
 
 #: Modules.cpp:1633
 msgid ""
 "Module names can only contain letters, numbers and underscores, [{1}] is "
 "invalid"
 msgstr ""
+"Numele modulelor pot conține doar litere, cifre și sublinieri, [{1}] este "
+"invalid"
 
 #: Modules.cpp:1652
 msgid "Module {1} already loaded."
-msgstr ""
+msgstr "Modulul {1} a fost deja încărcat."
 
 #: Modules.cpp:1666
 msgid "Unable to find module {1}"
-msgstr ""
+msgstr "Imposibil de găsit modulul {1}"
 
 #: Modules.cpp:1678
 msgid "Module {1} does not support module type {2}."
@@ -374,7 +376,7 @@ msgstr ""
 
 #: Modules.cpp:1963
 msgid "Unknown error"
-msgstr ""
+msgstr "Eroare necunoscută"
 
 #: Modules.cpp:1964
 msgid "Unable to open module {1}: {2}"
@@ -399,12 +401,12 @@ msgstr ""
 #: Modules.cpp:2023 Modules.cpp:2029
 msgctxt "modhelpcmd"
 msgid "Command"
-msgstr ""
+msgstr "Comandă"
 
 #: Modules.cpp:2024 Modules.cpp:2031
 msgctxt "modhelpcmd"
 msgid "Description"
-msgstr ""
+msgstr "Descriere"
 
 #: ClientCommand.cpp:51 ClientCommand.cpp:115 ClientCommand.cpp:137
 #: ClientCommand.cpp:339 ClientCommand.cpp:390 ClientCommand.cpp:405
