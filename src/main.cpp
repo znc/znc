@@ -472,7 +472,7 @@ int main(int argc, char** argv) {
 
     if (bForeground) {
         int iPid = getpid();
-        CUtils::PrintMessage("Staying open for debugging [pid: " +
+        CUtils::PrintMessage("Running in foreground [pid: " +
                              CString(iPid) + "]");
 
         pZNC->WritePidFile(iPid);
