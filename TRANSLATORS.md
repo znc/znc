@@ -21,6 +21,7 @@ These people helped translating ZNC to various languages:
 * PauloHeaven (Paul)
 * psychon
 * rockytvbr (Alexandre Oliveira)
+* shillos5 (Nicholas Kyriakides)
 * simos (filippo.cortigiani)
 * sukien
 * SunOS
