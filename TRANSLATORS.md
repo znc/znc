@@ -20,6 +20,7 @@ These people helped translating ZNC to various languages:
 * natinaum (natinaum)
 * PauloHeaven (Paul)
 * psychon
+* remhaze
 * rockytvbr (Alexandre Oliveira)
 * shillos5 (Nicholas Kyriakides)
 * simos (filippo.cortigiani)
