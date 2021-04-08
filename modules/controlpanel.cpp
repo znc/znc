@@ -165,11 +165,12 @@ class CAdminMod : public CModule {
                               "using the SetChan/GetChan commands:"));
         }
 
-        if (sCmdFilter.empty())
+        if (sCmdFilter.empty()) {
             PutModule("");
             PutModule(
                 t_s("You can use $user as the user name and $network as the "
                     "network name for modifying your own user and network."));
+        }
     }
 
     CUser* FindUser(const CString& sUsername) {
