@@ -149,14 +149,18 @@ class MCString : public std::map<CString, CString> {};
 
 #define u_short unsigned short
 #define u_int unsigned int
-#include "znc/zncconfig.h"
+%include "znc/zncconfig.h"
 #include "znc/ZNCString.h"
 %include "znc/defines.h"
 %include "znc/Translation.h"
 %include "znc/Utils.h"
 %include "znc/Threads.h"
 %include "znc/Config.h"
+#if ZNC_USE_ASIO
+%include "znc/Asio.h"
+#else
 %include "znc/Csocket.h"
+#endif
 %template(ZNCSocketManager) TSocketManager<CZNCSock>;
 %include "znc/Socket.h"
 %include "znc/FileUtils.h"

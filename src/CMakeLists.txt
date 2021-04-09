@@ -14,6 +14,10 @@
 # limitations under the License.
 #
 
+copy_csocket(copy_csocket_cc
+	"${PROJECT_SOURCE_DIR}/third_party/Csocket/Csocket.cc"
+	"${CMAKE_CURRENT_BINARY_DIR}/Csocket.cpp")
+
 if(CMAKE_VERSION VERSION_LESS 3.2)
 	# Since 3.2 it does this automatically from BYPRODUCTS
 	set_source_files_properties("versionc.cpp" PROPERTIES GENERATED true)
@@ -25,13 +29,17 @@ set(znc_cpp "ZNCString.cpp" "znc.cpp" "IRCNetwork.cpp" "Translation.cpp"
 	"HTTPSock.cpp" "Template.cpp" "ClientCommand.cpp" "Socket.cpp"
 	"SHA256.cpp" "WebModules.cpp" "Listener.cpp" "Config.cpp" "ZNCDebug.cpp"
 	"Threads.cpp" "Query.cpp" "SSLVerifyHost.cpp" "Message.cpp" "User.cpp")
-znc_add_library(znclib ${lib_type} ${znc_cpp} "Csocket.cpp" "versionc.cpp")
+if(ZNC_USE_ASIO)
+	set(znc_cpp ${znc_cpp} "Asio.cpp")
+else()
+	set(znc_cpp ${znc_cpp} "Csocket.cpp")
+endif()
+znc_add_library(znclib ${lib_type} ${znc_cpp} "versionc.cpp")
 znc_add_executable(znc "main.cpp")
 target_link_libraries(znc PRIVATE znclib)
-
-copy_csocket(copy_csocket_cc
-	"${PROJECT_SOURCE_DIR}/third_party/Csocket/Csocket.cc"
-	"${CMAKE_CURRENT_BINARY_DIR}/Csocket.cpp")
+if(NOT ZNC_USE_ASIO)
+	add_dependencies(znclib copy_csocket_h copy_csocket_cc)
+endif()
 
 # make-tarball.sh can create this file, it'll contain -nightly-20151221-71eaf94
 if(EXISTS "${PROJECT_SOURCE_DIR}/.nightly")
@@ -57,11 +65,12 @@ add_custom_target(version
 	WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
 	VERBATIM)
 
-add_dependencies(znclib copy_csocket_h copy_csocket_cc version)
+add_dependencies(znclib version)
 
 set(znc_include_dirs
 	"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
 	"$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>"
+	"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/third_party/asio/asio/include>"
 	"$<INSTALL_INTERFACE:${CMAKE_INSTALL_FULL_INCLUDEDIR}>")
 target_link_libraries(znclib ${CMAKE_DL_LIBS} Threads::Threads)
 if(OPENSSL_FOUND)

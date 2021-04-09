@@ -57,7 +57,7 @@ if(SWIG_FOUND)
 		-outdir "${CMAKE_CURRENT_BINARY_DIR}"
 		-o "${CMAKE_CURRENT_BINARY_DIR}/modperl_biglib.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/modperl.i"
-		DEPENDS "modperl.i" copy_csocket_h
+		DEPENDS "modperl.i" ${maybe_copy_csocket_h}
 		IMPLICIT_DEPENDS CXX "${CMAKE_CURRENT_SOURCE_DIR}/modperl.i"
 		VERBATIM)
 else()
@@ -112,4 +112,6 @@ add_custom_target(modperl_dist
 	"swigperlrun.h" "ZNC.pm" "modperl_biglib.cpp" "perlfunctions.cpp"
 	DEPENDS swigperlrun.h ZNC.pm modperl_biglib.cpp perlfunctions.cpp
 	VERBATIM)
-add_dependencies(modperl_dist copy_csocket_h)
+if (NOT WANT_ASIO)
+	add_dependencies(modperl_dist copy_csocket_h)
+endif()

@@ -19,7 +19,12 @@
 
 #ifdef HAVE_LIBSSL
 
+#if ZNC_USE_ASIO
+#include <znc/Asio.h>
+#else
 #include <znc/Csocket.h>
+#endif
+
 #include <znc/ZNCString.h>
 
 bool ZNC_SSLVerifyHost(const CString& sHost, const X509* pCert,

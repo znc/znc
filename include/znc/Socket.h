@@ -18,7 +18,15 @@
 #define ZNC_SOCKET_H
 
 #include <znc/zncconfig.h>
+#if ZNC_USE_ASIO
+#include <znc/Asio.h>
+//for addrinfo
+#include <netdb.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#else
 #include <znc/Csocket.h>
+#endif
 #include <znc/Threads.h>
 #include <znc/Translation.h>
 
@@ -30,15 +38,17 @@ class CZNCSock : public Csock, protected CCoreTranslationMixin {
     CZNCSock(const CString& sHost, u_short port, int timeout = 60);
     ~CZNCSock() {}
 
+#ifndef ZNC_USE_ASIO
     int ConvertAddress(const struct sockaddr_storage* pAddr, socklen_t iAddrLen,
                        CString& sIP, u_short* piPort) const override;
+#endif
 #ifdef HAVE_LIBSSL
     int VerifyPeerCertificate(int iPreVerify,
                               X509_STORE_CTX* pStoreCTX) override;
     void SSLHandShakeFinished() override;
     bool CheckSSLCert(X509* pCert);
-    virtual void SSLCertError(X509* pCert) {}
     bool SNIConfigureClient(CString& sHostname) override;
+    virtual void SSLCertError(X509* pCert) {}
     CString GetSSLPeerFingerprint(X509* pCert = nullptr) const;
 #else
     CString GetSSLPeerFingerprint() const { return ""; }
