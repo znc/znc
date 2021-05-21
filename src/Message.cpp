@@ -16,6 +16,7 @@
 
 #include <znc/Message.h>
 #include <znc/Utils.h>
+#include "bpstd/string_view.hpp"
 
 CMessage::CMessage(const CString& sMessage) {
     Parse(sMessage);
@@ -157,19 +158,43 @@ CString CMessage::ToString(unsigned int uFlags) const {
     return sMessage;
 }
 
-void CMessage::Parse(CString sMessage) {
+void CMessage::Parse(const CString& sMessage) {
+    const char* begin = sMessage.c_str();
+    const char* const end = begin + sMessage.size();
+    auto next_word = [&]() {
+        // Find the end of the first word
+        const char* p = begin;
+        while (p < end && *p != ' ') ++p;
+        bpstd::string_view result(begin, p - begin);
+        begin = p;
+        // Prepare for the following word
+        while (begin < end && *begin == ' ') ++begin;
+        return result;
+    };
+
     // <tags>
     m_mssTags.clear();
-    if (sMessage.StartsWith("@")) {
-        VCString vsTags;
-        sMessage.Token(0).TrimPrefix_n("@").Split(";", vsTags, false);
-        for (const CString& sTag : vsTags) {
-            CString sKey = sTag.Token(0, false, "=", true);
-            CString sValue = sTag.Token(1, true, "=", true);
+    if (begin < end && *begin == '@') {
+        bpstd::string_view svTags = next_word().substr(1);
+        std::vector<bpstd::string_view> vsTags;
+        // Split by ';'
+        while (true) {
+            auto delim = svTags.find_first_of(';');
+            if (delim == bpstd::string_view::npos) {
+                vsTags.push_back(svTags);
+                break;
+            }
+            vsTags.push_back(svTags.substr(0, delim));
+            svTags = svTags.substr(delim + 1);
+        }
+        // Save key and value
+        for (bpstd::string_view svTag : vsTags) {
+            auto delim = svTag.find_first_of('=');
+            CString sKey = std::string(delim == bpstd::string_view::npos ? svTag : svTag.substr(0, delim));
+            CString sValue = delim == bpstd::string_view::npos ? std::string() : std::string(svTag.substr(delim + 1));
             m_mssTags[sKey] =
                 sValue.Escape(CString::EMSGTAG, CString::CString::EASCII);
         }
-        sMessage = sMessage.Token(1, true);
     }
 
     //  <message>  ::= [':' <prefix> <SPACE> ] <command> <params> <crlf>
@@ -183,26 +208,24 @@ void CMessage::Parse(CString sMessage) {
     //                   NUL or CR or LF>
 
     // <prefix>
-    if (sMessage.TrimPrefix(":")) {
-        m_Nick.Parse(sMessage.Token(0));
-        sMessage = sMessage.Token(1, true);
+    if (begin < end && *begin == ':') {
+        m_Nick.Parse(std::string(next_word().substr(1)));
     }
 
     // <command>
-    m_sCommand = sMessage.Token(0);
-    sMessage = sMessage.Token(1, true);
+    m_sCommand = std::string(next_word());
 
     // <params>
     m_bColon = false;
     m_vsParams.clear();
-    while (!sMessage.empty()) {
-        m_bColon = sMessage.TrimPrefix(":");
+    while (begin < end) {
+        m_bColon = *begin == ':';
         if (m_bColon) {
-            m_vsParams.push_back(sMessage);
-            sMessage.clear();
+            ++begin;
+            m_vsParams.push_back(std::string(begin, end - begin));
+	    begin = end;
         } else {
-            m_vsParams.push_back(sMessage.Token(0));
-            sMessage = sMessage.Token(1, true);
+            m_vsParams.push_back(std::string(next_word()));
         }
     }
 

@@ -284,7 +284,6 @@ if(append_git_version)
 endif()
 
 
-
 file(GLOB csocket_files LIST_DIRECTORIES FALSE
 	"${PROJECT_SOURCE_DIR}/third_party/Csocket/Csocket.*")
 if(csocket_files STREQUAL "")

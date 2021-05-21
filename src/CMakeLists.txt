@@ -60,6 +60,7 @@ add_custom_target(version
 add_dependencies(znclib copy_csocket_h copy_csocket_cc version)
 
 set(znc_include_dirs
+	"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/third_party/bpstd>"
 	"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
 	"$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>"
 	"$<INSTALL_INTERFACE:${CMAKE_INSTALL_FULL_INCLUDEDIR}>")
