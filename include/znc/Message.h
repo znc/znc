@@ -161,7 +161,7 @@ class CMessage {
     };
 
     CString ToString(unsigned int uFlags = IncludeAll) const;
-    void Parse(CString sMessage);
+    void Parse(const CString& sMessage);
 
 // Implicit and explicit conversion to a subclass reference.
 #ifndef SWIG

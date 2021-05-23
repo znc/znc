@@ -22,6 +22,7 @@
 using ::testing::IsEmpty;
 using ::testing::ContainerEq;
 using ::testing::ElementsAre;
+using ::testing::SizeIs;
 
 TEST(MessageTest, SetParam) {
     CMessage msg;
@@ -608,4 +609,13 @@ TEST(MessageTest, ParseWithoutSourceAndTags) {
     EXPECT_EQ(msg.GetNick().GetNick(), "");
     EXPECT_EQ(msg.GetCommand(), "COMMAND");
     EXPECT_EQ(msg.GetParams(), VCString());
+}
+
+TEST(MessageTest, HugeParse) {
+    CString line;
+    for (int i = 0; i < 1000000; ++i) {
+        line += "a ";
+    }
+    CMessage msg(line);
+    EXPECT_THAT(msg.GetParams(), SizeIs(999999));
 }
