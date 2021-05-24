@@ -173,9 +173,8 @@ Python modules are loaded through the global module
 
 ## Further information
 
-Please visit https://znc.in/ or #znc on freenode if you still have questions:
-- [freenode webchat](https://webchat.freenode.net/?nick=znc_....&channels=znc) 
-- [ircs://irc.freenode.net:6697/znc](ircs://irc.freenode.net:6697/znc)
+Please visit https://znc.in/ or #znc on Libera.Chat if you still have questions:
+- [ircs://irc.libera.chat:6697/#znc](ircs://irc.libera.chat:6697/#znc)
 
 You can get the latest development version with git:
 `git clone https://github.com/znc/znc.git --recursive`
