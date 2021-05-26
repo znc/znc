@@ -778,7 +778,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
         CUtils::PrintMessage("");
 
         do {
-            CUtils::GetInput("Name", sNetwork, "freenode");
+            CUtils::GetInput("Name", sNetwork, "libera");
         } while (!CIRCNetwork::IsValidNetwork(sNetwork));
 
         vsLines.push_back("\t<Network " + sNetwork + ">");
@@ -795,8 +795,8 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
         bool bSSL = false;
         unsigned int uServerPort = 0;
 
-        if (sNetwork.Equals("freenode")) {
-            sHost = "chat.freenode.net";
+        if (sNetwork.Equals("libera")) {
+            sHost = "irc.libera.chat";
 #ifdef HAVE_LIBSSL
             bSSL = true;
 #endif
