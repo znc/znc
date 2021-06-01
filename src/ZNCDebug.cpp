@@ -29,11 +29,16 @@ CString CDebug::Filter(const CString& sUnfilteredLine) {
 
     // If the line is a PASS command to authenticate to a server / znc
     if (sUnfilteredLine.StartsWith("PASS ")) {
+        CString sPrefix = sUnfilteredLine.substr(0, sUnfilteredLine[5] == ':' ? 6 : 5);
+        CString sRest = sUnfilteredLine.substr(sPrefix.length());
+
         VCString vsSafeCopy;
-        sUnfilteredLine.Split(":", vsSafeCopy);
+        sRest.Split(":", vsSafeCopy);
 
         if (vsSafeCopy.size() > 1) {
-            sFilteredLine = vsSafeCopy[0] + ":<censored>";
+            sFilteredLine = sPrefix + vsSafeCopy[0] + ":<censored>";
+        } else {
+            sFilteredLine = sPrefix + "<censored>";
         }
     }
 
