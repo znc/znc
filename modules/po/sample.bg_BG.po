@@ -26,7 +26,7 @@ msgstr ""
 
 #: sample.cpp:65
 msgid "TEST!!!!"
-msgstr ""
+msgstr "ПРОБА!!!!"
 
 #: sample.cpp:74
 msgid "I'm being loaded with the arguments: {1}"

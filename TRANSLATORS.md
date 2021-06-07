@@ -9,6 +9,7 @@ These people helped translating ZNC to various languages:
 * DarthGandalf
 * dgw
 * Dreiundachzig
+* Dremski
 * eggoez (Baguz Ach)
 * hypech
 * Jay2k1

@@ -14,35 +14,35 @@ msgstr ""
 
 #: modules/po/../data/notes/tmpl/index.tmpl:7
 msgid "Add A Note"
-msgstr ""
+msgstr "Добавяне на бележка"
 
 #: modules/po/../data/notes/tmpl/index.tmpl:11
 msgid "Key:"
-msgstr ""
+msgstr "Ключ:"
 
 #: modules/po/../data/notes/tmpl/index.tmpl:15
 msgid "Note:"
-msgstr ""
+msgstr "Бележка:"
 
 #: modules/po/../data/notes/tmpl/index.tmpl:19
 msgid "Add Note"
-msgstr ""
+msgstr "Добавяне на бележка"
 
 #: modules/po/../data/notes/tmpl/index.tmpl:27
 msgid "You have no notes to display."
-msgstr ""
+msgstr "Нямате бележки за показване."
 
 #: modules/po/../data/notes/tmpl/index.tmpl:34 notes.cpp:164 notes.cpp:170
 msgid "Key"
-msgstr ""
+msgstr "Ключ"
 
 #: modules/po/../data/notes/tmpl/index.tmpl:35 notes.cpp:165 notes.cpp:171
 msgid "Note"
-msgstr ""
+msgstr "Бележка"
 
 #: modules/po/../data/notes/tmpl/index.tmpl:41
 msgid "[del]"
-msgstr ""
+msgstr "[del]"
 
 #: notes.cpp:32
 msgid "That note already exists.  Use MOD <key> <note> to overwrite."
@@ -86,7 +86,7 @@ msgstr ""
 
 #: notes.cpp:79 notes.cpp:83
 msgid "<key>"
-msgstr ""
+msgstr "<key>"
 
 #: notes.cpp:79
 msgid "Delete a note"
@@ -98,7 +98,7 @@ msgstr ""
 
 #: notes.cpp:94
 msgid "Notes"
-msgstr ""
+msgstr "Бележки"
 
 #: notes.cpp:133
 msgid "That note already exists.  Use /#+<key> <note> to overwrite."

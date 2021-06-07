@@ -30,7 +30,7 @@ msgstr ""
 
 #: log.cpp:67
 msgid "<var> true|false"
-msgstr ""
+msgstr "<var> истина|лъжа"
 
 #: log.cpp:68
 msgid "Set one of the following options: joins, quits, nickchanges"
@@ -61,7 +61,7 @@ msgstr[1] ""
 #: log.cpp:168 log.cpp:174
 msgctxt "listrules"
 msgid "Rule"
-msgstr ""
+msgstr "Правило"
 
 #: log.cpp:169 log.cpp:175
 msgctxt "listrules"
