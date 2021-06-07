@@ -138,7 +138,7 @@ msgstr ""
 
 #: watch.cpp:495 watch.cpp:511
 msgid "Sources"
-msgstr ""
+msgstr "Източници"
 
 #: watch.cpp:496 watch.cpp:512 watch.cpp:513
 msgid "Off"
@@ -154,11 +154,11 @@ msgstr ""
 
 #: watch.cpp:516 watch.cpp:519
 msgid "Yes"
-msgstr ""
+msgstr "Да"
 
 #: watch.cpp:516 watch.cpp:519
 msgid "No"
-msgstr ""
+msgstr "Не"
 
 #: watch.cpp:525 watch.cpp:531
 msgid "You have no entries."
