@@ -11,7 +11,7 @@
 		<? SETBLOCK ClientConnectHint_Password ?><? VAR Username ?>/<? FORMAT "&lt;network&gt;" ?>:<? FORMAT "&lt;password&gt;" ?><? ENDSETBLOCK ?>
 		<? SETBLOCK ClientConnectHint_Username ?><? VAR Username ?>/<? FORMAT "&lt;network&gt;" ?><? ENDSETBLOCK ?>
 	<? ENDIF ?>
-	<p><? FORMAT "To connect to this network from your IRC client, you can set the server password field as <code>{1}</code> or username field as <code>{2}</code>" "ClientConnectHint_Password ESC=" "ClientConnectHint_Username ESC=" ?>
+	<p><? FORMAT "To connect to this network from your IRC client, you can set the server password field as <code>{1}</code> or username field as <code>{2}</code>" "ClientConnectHint_Password ESC=" "ClientConnectHint_Username ESC=" ?></p>
 </div>
 
 <form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?><? IF Edit ?>editnetwork<? ELSE ?>addnetwork<? ENDIF ?>" method="post">
