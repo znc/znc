@@ -39,7 +39,7 @@ void WriteConfig(QString path) {
     p.ReadUntil("Real name");               p.Write();
     p.ReadUntil("Bind host");               p.Write();
     p.ReadUntil("Set up a network?");       p.Write();
-    p.ReadUntil("Name [freenode]");         p.Write("test");
+    p.ReadUntil("Name [libera]");           p.Write("test");
     p.ReadUntil("Server host (host only)"); p.Write("127.0.0.1");
     p.ReadUntil("Server uses SSL?");        p.Write();
     p.ReadUntil("6667");                    p.Write();
