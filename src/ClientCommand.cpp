@@ -596,6 +596,11 @@ void CClient::UserCommand(CString& sLine) {
         PutStatus(t_f("Total: {1}, Joined: {2}, Detached: {3}, Disabled: {4}")(
             vChans.size(), uNumJoined, uNumDetached, uNumDisabled));
     } else if (sCommand.Equals("ADDNETWORK")) {
+        if (!m_pUser->IsAdmin() && m_pUser->DenySetNetwork()) {
+            PutStatus(t_s("Access denied!"));
+            return;
+        }
+
         if (!m_pUser->IsAdmin() && !m_pUser->HasSpaceForNewNetwork()) {
             PutStatus(t_s(
                 "Network number limit reached. Ask an admin to increase the "
@@ -627,6 +632,11 @@ void CClient::UserCommand(CString& sLine) {
             PutStatus(sNetworkAddError);
         }
     } else if (sCommand.Equals("DELNETWORK")) {
+        if (!m_pUser->IsAdmin() && m_pUser->DenySetNetwork()) {
+            PutStatus(t_s("Access denied!"));
+            return;
+        }
+
         CString sNetwork = sLine.Token(1);
 
         if (sNetwork.empty()) {
@@ -802,6 +812,11 @@ void CClient::UserCommand(CString& sLine) {
             PutStatus(t_f("You don't have a network named {1}")(sNetwork));
         }
     } else if (sCommand.Equals("ADDSERVER")) {
+        if (!m_pUser->IsAdmin() && m_pUser->DenySetNetwork()) {
+            PutStatus(t_s("Access denied!"));
+            return;
+        }
+
         CString sServer = sLine.Token(1);
 
         if (!m_pNetwork) {
@@ -823,6 +838,11 @@ void CClient::UserCommand(CString& sLine) {
                     "added or openssl is disabled?"));
         }
     } else if (sCommand.Equals("REMSERVER") || sCommand.Equals("DELSERVER")) {
+        if (!m_pUser->IsAdmin() && m_pUser->DenySetNetwork()) {
+            PutStatus(t_s("Access denied!"));
+            return;
+        }
+
         if (!m_pNetwork) {
             PutStatus(t_s(
                 "You must be connected with a network to use this command"));

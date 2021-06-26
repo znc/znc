@@ -231,9 +231,11 @@ class CWebAdminMod : public CModule {
         }
 
         WebSock.GetRawParam("ctcpreplies").Split("\n", vsArgs);
-        for (const CString& sReply : vsArgs) {
-            pNewUser->AddCTCPReply(sReply.Token(0).Trim_n(),
-                                   sReply.Token(1, true).Trim_n());
+        if (spSession->IsAdmin() || !spSession->GetUser()->DenySetCTCPReplies()) {
+            for (const CString& sReply : vsArgs) {
+                pNewUser->AddCTCPReply(sReply.Token(0).Trim_n(),
+                                    sReply.Token(1, true).Trim_n());
+            }
         }
 
         sArg = WebSock.GetParam("nick");
@@ -249,16 +251,28 @@ class CWebAdminMod : public CModule {
             pNewUser->SetStatusPrefix(sArg);
         }
         sArg = WebSock.GetParam("ident");
-        if (!sArg.empty()) {
-            pNewUser->SetIdent(sArg);
+        if (spSession->IsAdmin() || !spSession->GetUser()->DenySetIdent()) {
+            if (!sArg.empty()) {
+                pNewUser->SetIdent(sArg);
+            }
+        } else if (pUser) {
+            pNewUser->SetIdent(pUser->GetIdent());
         }
         sArg = WebSock.GetParam("realname");
-        if (!sArg.empty()) {
-            pNewUser->SetRealName(sArg);
+        if (spSession->IsAdmin() || !spSession->GetUser()->DenySetRealName()) {
+            if (!sArg.empty()) {
+                pNewUser->SetRealName(sArg);
+            }
+        } else if (pUser) {
+            pNewUser->SetRealName(pUser->GetRealName());
         }
         sArg = WebSock.GetParam("quitmsg");
-        if (!sArg.empty()) {
-            pNewUser->SetQuitMsg(sArg);
+        if (spSession->IsAdmin() || !spSession->GetUser()->DenySetQuitMsg()) {
+            if (!sArg.empty()) {
+                pNewUser->SetQuitMsg(sArg);
+            }
+        } else if (pUser) {
+            pNewUser->SetQuitMsg(pUser->GetQuitMsg());
         }
         sArg = WebSock.GetParam("chanmodes");
         if (!sArg.empty()) {
@@ -353,6 +367,16 @@ class CWebAdminMod : public CModule {
             pNewUser->SetDenyLoadMod(WebSock.GetParam("denyloadmod").ToBool());
             pNewUser->SetDenySetBindHost(
                 WebSock.GetParam("denysetbindhost").ToBool());
+            pNewUser->SetDenySetIdent(
+                WebSock.GetParam("denysetident").ToBool());
+            pNewUser->SetDenySetNetwork(
+                WebSock.GetParam("denysetnetwork").ToBool());
+            pNewUser->SetDenySetRealName(
+                WebSock.GetParam("denysetrealname").ToBool());
+            pNewUser->SetDenySetQuitMsg(
+                WebSock.GetParam("denysetquitmsg").ToBool());
+            pNewUser->SetDenySetCTCPReplies(
+                WebSock.GetParam("denysetctcpreplies").ToBool());
             pNewUser->SetAuthOnlyViaModule(
                 WebSock.GetParam("authonlyviamodule").ToBool());
             sArg = WebSock.GetParam("maxnetworks");
@@ -360,6 +384,11 @@ class CWebAdminMod : public CModule {
         } else if (pUser) {
             pNewUser->SetDenyLoadMod(pUser->DenyLoadMod());
             pNewUser->SetDenySetBindHost(pUser->DenySetBindHost());
+            pNewUser->SetDenySetIdent(pUser->DenySetIdent());
+            pNewUser->SetDenySetNetwork(pUser->DenySetNetwork());
+            pNewUser->SetDenySetRealName(pUser->DenySetRealName());
+            pNewUser->SetDenySetQuitMsg(pUser->DenySetQuitMsg());
+            pNewUser->SetDenySetCTCPReplies(pUser->DenySetCTCPReplies());
             pNewUser->SetAuthOnlyViaModule(pUser->AuthOnlyViaModule());
             pNewUser->SetMaxNetworks(pUser->MaxNetworks());
         }
@@ -514,11 +543,16 @@ class CWebAdminMod : public CModule {
                 return false;
             }
 
-            if (pUser) {
+            if (!pUser) {
+                WebSock.PrintErrorPage(t_s("No such user"));
+                return true;
+            }
+
+            if (spSession->IsAdmin() || !spSession->GetUser()->DenySetNetwork()) {
                 return NetworkPage(WebSock, Tmpl, pUser);
             }
 
-            WebSock.PrintErrorPage(t_s("No such user"));
+            WebSock.PrintErrorPage(t_s("Permission denied"));
             return true;
         } else if (sPageName == "editnetwork") {
             CIRCNetwork* pNetwork = SafeGetNetworkFromParam(WebSock);
@@ -551,7 +585,12 @@ class CWebAdminMod : public CModule {
                 return false;
             }
 
-            return DelNetwork(WebSock, pUser, Tmpl);
+            if (spSession->IsAdmin() || !spSession->GetUser()->DenySetNetwork()) {
+                return DelNetwork(WebSock, pUser, Tmpl);
+            }
+
+            WebSock.PrintErrorPage(t_s("Permission denied"));
+            return true;
         } else if (sPageName == "editchan") {
             CIRCNetwork* pNetwork = SafeGetNetworkFromParam(WebSock);
 
@@ -882,6 +921,11 @@ class CWebAdminMod : public CModule {
         std::shared_ptr<CWebSession> spSession = WebSock.GetSession();
         Tmpl.SetFile("add_edit_network.tmpl");
 
+        if (!pNetwork && !spSession->IsAdmin() && pUser->DenySetNetwork()) {
+            WebSock.PrintErrorPage(t_s("Permission denied"));
+            return true;
+        }
+
         if (!pNetwork && !spSession->IsAdmin() &&
             !pUser->HasSpaceForNewNetwork()) {
             WebSock.PrintErrorPage(t_s(
@@ -973,14 +1017,36 @@ class CWebAdminMod : public CModule {
             breadUser["URL"] =
                 GetWebPath() + "edituser?user=" + pUser->GetUsername();
 
-            Tmpl["Name"] = pNetwork->GetName();
+            if (spSession->IsAdmin() ||
+                !spSession->GetUser()->DenySetNetwork()) {
+                Tmpl["NameEdit"] = "true";
+            }
 
+            Tmpl["Name"] = pNetwork->GetName();
             Tmpl["Nick"] = pNetwork->GetNick();
             Tmpl["AltNick"] = pNetwork->GetAltNick();
-            Tmpl["Ident"] = pNetwork->GetIdent();
-            Tmpl["RealName"] = pNetwork->GetRealName();
 
-            Tmpl["QuitMsg"] = pNetwork->GetQuitMsg();
+            if (spSession->IsAdmin() ||
+                !spSession->GetUser()->DenySetIdent()) {
+                Tmpl["IdentEdit"] = "true";
+                Tmpl["Ident"] = pNetwork->GetIdent();
+            }
+
+            if (spSession->IsAdmin() ||
+                !spSession->GetUser()->DenySetRealName()) {
+                Tmpl["RealNameEdit"] = "true";
+                Tmpl["RealName"] = pNetwork->GetRealName();
+            }
+
+            if (spSession->IsAdmin() ||
+                !spSession->GetUser()->DenySetQuitMsg()) {
+                Tmpl["QuitMsgEdit"] = "true";
+                Tmpl["QuitMsg"] = pNetwork->GetQuitMsg();
+            }
+
+            Tmpl["NetworkEdit"] =
+                spSession->IsAdmin() || !spSession->GetUser()->DenySetNetwork()
+                ? "true" : "false";
 
             Tmpl["FloodProtection"] =
                 CString(CIRCSock::IsFloodProtected(pNetwork->GetFloodRate()));
@@ -1077,22 +1143,24 @@ class CWebAdminMod : public CModule {
             WebSock.PrintErrorPage(t_s("Network name is a required argument"));
             return true;
         }
-        if (!pNetwork || pNetwork->GetName() != sName) {
-            CString sNetworkAddError;
-            CIRCNetwork* pOldNetwork = pNetwork;
-            pNetwork = pUser->AddNetwork(sName, sNetworkAddError);
-            if (!pNetwork) {
-                WebSock.PrintErrorPage(sNetworkAddError);
-                return true;
-            }
-            if (pOldNetwork) {
-                for (CModule* pModule : pOldNetwork->GetModules()) {
-                    CString sPath = pUser->GetUserPath() + "/networks/" +
-                                    sName + "/moddata/" + pModule->GetModName();
-                    pModule->MoveRegistry(sPath);
+        if (spSession->IsAdmin() || !spSession->GetUser()->DenySetNetwork()) {
+            if (!pNetwork || pNetwork->GetName() != sName) {
+                CString sNetworkAddError;
+                CIRCNetwork* pOldNetwork = pNetwork;
+                pNetwork = pUser->AddNetwork(sName, sNetworkAddError);
+                if (!pNetwork) {
+                    WebSock.PrintErrorPage(sNetworkAddError);
+                    return true;
                 }
-                pNetwork->Clone(*pOldNetwork, false);
-                pUser->DeleteNetwork(pOldNetwork->GetName());
+                if (pOldNetwork) {
+                    for (CModule* pModule : pOldNetwork->GetModules()) {
+                        CString sPath = pUser->GetUserPath() + "/networks/" +
+                                        sName + "/moddata/" + pModule->GetModName();
+                        pModule->MoveRegistry(sPath);
+                    }
+                    pNetwork->Clone(*pOldNetwork, false);
+                    pUser->DeleteNetwork(pOldNetwork->GetName());
+                }
             }
         }
 
@@ -1100,10 +1168,18 @@ class CWebAdminMod : public CModule {
 
         pNetwork->SetNick(WebSock.GetParam("nick"));
         pNetwork->SetAltNick(WebSock.GetParam("altnick"));
-        pNetwork->SetIdent(WebSock.GetParam("ident"));
-        pNetwork->SetRealName(WebSock.GetParam("realname"));
 
-        pNetwork->SetQuitMsg(WebSock.GetParam("quitmsg"));
+        if (spSession->IsAdmin() || !spSession->GetUser()->DenySetIdent()) {
+            pNetwork->SetIdent(WebSock.GetParam("ident"));
+        }
+
+        if (spSession->IsAdmin() || !spSession->GetUser()->DenySetRealName()) {
+            pNetwork->SetRealName(WebSock.GetParam("realname"));
+        }
+
+        if (spSession->IsAdmin() || !spSession->GetUser()->DenySetQuitMsg()) {
+            pNetwork->SetQuitMsg(WebSock.GetParam("quitmsg"));
+        }
 
         pNetwork->SetIRCConnectEnabled(WebSock.GetParam("doconnect").ToBool());
 
@@ -1145,10 +1221,12 @@ class CWebAdminMod : public CModule {
 
         VCString vsArgs;
 
-        pNetwork->DelServers();
-        WebSock.GetRawParam("servers").Split("\n", vsArgs);
-        for (const CString& sServer : vsArgs) {
-            pNetwork->AddServer(sServer.Trim_n());
+        if (spSession->IsAdmin() || !spSession->GetUser()->DenySetNetwork()) {
+            pNetwork->DelServers();
+            WebSock.GetRawParam("servers").Split("\n", vsArgs);
+            for (const CString& sServer : vsArgs) {
+                pNetwork->AddServer(sServer.Trim_n());
+            }
         }
 
         WebSock.GetRawParam("fingerprints").Split("\n", vsArgs);
@@ -1347,9 +1425,33 @@ class CWebAdminMod : public CModule {
             Tmpl["Nick"] = pUser->GetNick();
             Tmpl["AltNick"] = pUser->GetAltNick();
             Tmpl["StatusPrefix"] = pUser->GetStatusPrefix();
-            Tmpl["Ident"] = pUser->GetIdent();
-            Tmpl["RealName"] = pUser->GetRealName();
-            Tmpl["QuitMsg"] = pUser->GetQuitMsg();
+
+            if (spSession->IsAdmin() ||
+                !spSession->GetUser()->DenySetIdent()) {
+                Tmpl["IdentEdit"] = "true";
+                Tmpl["Ident"] = pUser->GetIdent();
+            }
+
+            if (spSession->IsAdmin() ||
+                !spSession->GetUser()->DenySetRealName()) {
+                Tmpl["RealNameEdit"] = "true";
+                Tmpl["RealName"] = pUser->GetRealName();
+            }
+
+            if (spSession->IsAdmin() ||
+                !spSession->GetUser()->DenySetQuitMsg()) {
+                Tmpl["QuitMsgEdit"] = "true";
+                Tmpl["QuitMsg"] = pUser->GetQuitMsg();
+            }
+
+            Tmpl["NetworkEdit"] =
+                spSession->IsAdmin() || !spSession->GetUser()->DenySetNetwork()
+                ? "true" : "false";
+
+            Tmpl["CTCPEdit"] =
+                spSession->IsAdmin() || !spSession->GetUser()->DenySetCTCPReplies()
+                ? "true" : "false";
+
             Tmpl["DefaultChanModes"] = pUser->GetDefaultChanModes();
             Tmpl["ChanBufferSize"] = CString(pUser->GetChanBufferSize());
             Tmpl["QueryBufferSize"] = CString(pUser->GetQueryBufferSize());
@@ -1569,19 +1671,56 @@ class CWebAdminMod : public CModule {
 
                 CTemplate& o11 = Tmpl.AddRow("OptionLoop");
                 o11["Name"] = "denysetbindhost";
-                o11["DisplayName"] = t_s("Deny SetBindHost");
+                o11["DisplayName"] = t_s("Deny Setting BindHost");
                 if (pUser->DenySetBindHost()) {
                     o11["Checked"] = "true";
                 }
+
+                CTemplate& o12 = Tmpl.AddRow("OptionLoop");
+                o12["Name"] = "denysetident";
+                o12["DisplayName"] = t_s("Deny Setting Ident");
+                if (pUser->DenySetIdent()) {
+                    o12["Checked"] = "true";
+                }
+
+                CTemplate& o13 = Tmpl.AddRow("OptionLoop");
+                o13["Name"] = "denysetnetwork";
+                o13["DisplayName"] = t_s("Deny Editing Networks/Servers");
+                o13["Tooltip"] =
+                    t_s("Deny adding/deleting networks, setting network name and editing the server list");
+                if (pUser->DenySetNetwork()) {
+                    o13["Checked"] = "true";
+                }
+
+                CTemplate& o14 = Tmpl.AddRow("OptionLoop");
+                o14["Name"] = "denysetrealname";
+                o14["DisplayName"] = t_s("Deny Setting RealName");
+                if (pUser->DenySetRealName()) {
+                    o14["Checked"] = "true";
+                }
+
+                CTemplate& o15 = Tmpl.AddRow("OptionLoop");
+                o15["Name"] = "denysetquitmsg";
+                o15["DisplayName"] = t_s("Deny Setting Quit Message");
+                if (pUser->DenySetQuitMsg()) {
+                    o15["Checked"] = "true";
+                }
+
+                CTemplate& o16 = Tmpl.AddRow("OptionLoop");
+                o16["Name"] = "denysetctcpreplies";
+                o16["DisplayName"] = t_s("Deny Setting CTCP Replies");
+                if (pUser->DenySetCTCPReplies()) {
+                    o16["Checked"] = "true";
+                }
             }
 
-            CTemplate& o12 = Tmpl.AddRow("OptionLoop");
-            o12["Name"] = "autoclearquerybuffer";
-            o12["DisplayName"] = t_s("Auto Clear Query Buffer");
-            o12["Tooltip"] =
+            CTemplate& o17 = Tmpl.AddRow("OptionLoop");
+            o17["Name"] = "autoclearquerybuffer";
+            o17["DisplayName"] = t_s("Auto Clear Query Buffer");
+            o17["Tooltip"] =
                 t_s("Automatically Clear Query Buffer After Playback");
             if (pUser->AutoClearQueryBuffer()) {
-                o12["Checked"] = "true";
+                o17["Checked"] = "true";
             }
 
             FOR_EACH_MODULE(i, pUser) {
