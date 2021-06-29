@@ -1,0 +1,138 @@
+name: Test
+on:
+  - push
+  - pull_request
+
+jobs:
+  gcc:
+    name: GCC
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - run: source .github/ubuntu_deps.sh
+      - run: source .github/build.sh
+      - uses: codecov/codecov-action@v1
+
+  tarball:
+    name: Tarball
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - run: source .github/ubuntu_deps.sh
+      - run: |
+          ./make-tarball.sh --nightly znc-git-2015-01-16 /tmp/znc-tarball.tar.gz
+          tar xvf /tmp/znc-tarball.tar.gz
+          cd znc-git-2015-01-16
+          export CFGFLAGS="--with-gtest=$GITHUB_WORKSPACE/third_party/googletest/googletest --with-gmock=$GITHUB_WORKSPACE/third_party/googletest/googlemock --disable-swig"
+          source .github/build.sh
+      - uses: codecov/codecov-action@v1
+
+  # can be removed when asan below is fixed
+  clang:
+    name: Clang
+    runs-on: ubuntu-20.04
+    env:
+      CXX: clang++
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - run: source .github/ubuntu_deps.sh
+      - run: source .github/build.sh
+      - uses: codecov/codecov-action@v1
+
+ 
+  #clang_asan:
+    #name: Clang ASAN
+    #runs-on: ubuntu-20.04
+    #env:
+      #CXX: clang++
+      #CXXFLAGS: "-fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fPIE"
+      #LDFLAGS: "-fsanitize=address -pie"
+    #steps:
+      #- uses: actions/checkout@v2
+        #with:
+          #submodules: true
+      #- run: source .github/ubuntu_deps.sh
+      #- run: source .github/build.sh
+      #- uses: codecov/codecov-action@v1
+
+  #clang_tsan:
+    #name: Clang TSAN
+    #runs-on: ubuntu-20.04
+    #env:
+      #CXX: clang++
+      #CXXFLAGS: "-fsanitize=thread -O1 -fPIE"
+      #LDFLAGS: "-fsanitize=thread"
+    #steps:
+      #- uses: actions/checkout@v2
+        #with:
+          #submodules: true
+      #- run: source .github/ubuntu_deps.sh
+      #- run: source .github/build.sh
+      #- uses: codecov/codecov-action@v1
+
+      # TODO: enable
+      #CXXFLAGS: "-fsanitize=memory -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize-memory-track-origins"
+      #LDFLAGS: "-fsanitize=memory"
+
+      #CXXFLAGS: "-fsanitize=undefined -O1 -fPIE -fno-sanitize-recover"
+      #LDFLAGS: "-fsanitize=undefined -pie -fno-sanitize-recover"
+
+  #macos:
+    #name: macOS
+    #runs-on: macos-latest
+    #steps:
+      #- uses: actions/checkout@v2
+        #with:
+          #submodules: true
+      #- run: |
+          #brew update
+          #brew install icu4c qt5 gettext pkg-config cpanminus boost
+      #- run: source .github/build.sh
+      #- uses: codecov/codecov-action@v1
+
+  docker:
+    name: Docker push
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    needs:
+      - gcc
+      - tarball
+      - clang
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - id: tagger
+        run: |
+          git fetch --unshallow
+          echo "::set-output name=describe::$(git describe)"
+          if [[ "$GITHUB_REF" == refs/heads/master ]]; then
+            echo "::set-output name=latest::type=raw,latest"
+          fi
+      - uses: docker/metadata-action@v3
+        id: meta
+        with:
+          images: zncbouncer/znc-git
+          tags: |
+            type=ref,event=branch
+            type=ref,event=branch,suffix=-${{steps.tagger.outputs.describe}}'
+            ${{steps.tagger.outputs.latest}}
+      - run: echo "${GITHUB_REF#refs/heads/}-${{steps.tagger.outputs.describe}}" > .nightly
+      - run: cat .nightly
+      - uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VERSION_EXTRA=+docker-git-
