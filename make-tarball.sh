@@ -50,7 +50,7 @@ cp -p third_party/Csocket/Csocket.cc third_party/Csocket/Csocket.h $TMPDIR/$ZNCD
 )
 (
 	cd $TMPDIR/$ZNCDIR
-	rm -rf .travis* .appveyor* .ci/
+	rm -rf .travis* .appveyor* .ci/ .github/
 	rm make-tarball.sh
 	if [ "x$DESC" != "x" ]; then
 		if [ $NIGHTLY = 1 ]; then
