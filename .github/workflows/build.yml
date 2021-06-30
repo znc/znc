@@ -28,7 +28,7 @@ jobs:
           tar xvf /tmp/znc-tarball.tar.gz
           cd znc-git-2015-01-16
           export CFGFLAGS="--with-gtest=$GITHUB_WORKSPACE/third_party/googletest/googletest --with-gmock=$GITHUB_WORKSPACE/third_party/googletest/googlemock --disable-swig"
-          source .github/build.sh
+          source $GITHUB_WORKSPACE/.github/build.sh
       - uses: codecov/codecov-action@v1
 
   # can be removed when asan below is fixed
