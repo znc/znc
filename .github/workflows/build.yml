@@ -121,7 +121,7 @@ jobs:
           images: zncbouncer/znc-git
           tags: |
             type=ref,event=branch
-            type=ref,event=branch,suffix=-${{steps.tagger.outputs.describe}}'
+            type=ref,event=branch,suffix=-${{steps.tagger.outputs.describe}}
             ${{steps.tagger.outputs.latest}}
       - run: echo "${GITHUB_REF#refs/heads/}-${{steps.tagger.outputs.describe}}" > .nightly
       - run: cat .nightly
