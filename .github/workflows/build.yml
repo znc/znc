@@ -1,6 +1,5 @@
-# lower case name, because it's used as the label on badge on top of readme.
-# other badges also use lower case name, so this is for consistency
-name: linux
+# the name is used by the shields.io at top of readme
+name: build
 on:
   - push
   - pull_request
