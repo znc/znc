@@ -15,6 +15,12 @@ jobs:
       - run: source .github/ubuntu_deps.sh
       - run: source .github/build.sh
       - uses: codecov/codecov-action@v1
+        with:
+          name: ${{ github.job }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: codecov debug results ${{ github.job }}
+          path: "/tmp/codecov.*.gz"
 
   tarball:
     name: Tarball
@@ -31,6 +37,8 @@ jobs:
           export CFGFLAGS="--with-gtest=$GITHUB_WORKSPACE/third_party/googletest/googletest --with-gmock=$GITHUB_WORKSPACE/third_party/googletest/googlemock --disable-swig"
           source $GITHUB_WORKSPACE/.github/build.sh
       - uses: codecov/codecov-action@v1
+        with:
+          name: ${{ github.job }}
 
   # can be removed when asan below is fixed
   clang:
@@ -38,6 +46,7 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       CXX: clang++
+      CC: clang
     steps:
       - uses: actions/checkout@v2
         with:
@@ -45,6 +54,12 @@ jobs:
       - run: source .github/ubuntu_deps.sh
       - run: source .github/build.sh
       - uses: codecov/codecov-action@v1
+        with:
+          name: ${{ github.job }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: codecov debug results ${{ github.job }}
+          path: "/tmp/codecov.*.gz"
 
  
   #clang_asan:
@@ -52,6 +67,7 @@ jobs:
     #runs-on: ubuntu-20.04
     #env:
       #CXX: clang++
+      #CC: clang
       #CXXFLAGS: "-fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fPIE"
       #LDFLAGS: "-fsanitize=address -pie"
     #steps:
@@ -67,6 +83,7 @@ jobs:
     #runs-on: ubuntu-20.04
     #env:
       #CXX: clang++
+      #CC: clang
       #CXXFLAGS: "-fsanitize=thread -O1 -fPIE"
       #LDFLAGS: "-fsanitize=thread"
     #steps:
