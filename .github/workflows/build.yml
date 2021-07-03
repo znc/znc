@@ -100,7 +100,7 @@ jobs:
   docker:
     name: Docker push
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
+    if: github.event_name == 'push'
     needs:
       - gcc
       - tarball
@@ -138,3 +138,24 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             VERSION_EXTRA=+docker-git-
+
+  docs:
+    name: Docs push
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - run: sudo apt-get update
+      - run: sudo apt-get install -y doxygen graphviz python3-yaml
+      - run: echo "$KEY" > ~/znc-github-key
+        env:
+          KEY: ${{ secrets.SSH_GITHUB_KEY_FOR_CI_BOT }}
+      - run: chmod 0600 ~/znc-github-key
+      - run: mkdir -p ~/.ssh
+      - run: cp .ci/ssh-config ~/.ssh/config
+        # It's not travis anymore, but oh well. TODO: fix
+      - run: git config --global user.email "travis-ci@znc.in"
+      - run: git config --global user.name "znc-travis"
+      - run: .ci/generate-docs.sh
