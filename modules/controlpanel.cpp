@@ -94,6 +94,11 @@ class CAdminMod : public CModule {
                 {"MultiClients", boolean},
                 {"DenyLoadMod", boolean},
                 {"DenySetBindHost", boolean},
+                {"DenySetIdent", boolean},
+                {"DenySetNetwork", boolean},
+                {"DenySetRealName", boolean},
+                {"DenySetQuitMsg", boolean},
+                {"DenySetCTCPReplies", boolean},
                 {"DefaultChanModes", str},
                 {"QuitMsg", str},
                 {"ChanBufferSize", integer},
@@ -241,6 +246,16 @@ class CAdminMod : public CModule {
             PutModule("DenyLoadMod = " + CString(pUser->DenyLoadMod()));
         else if (sVar == "denysetbindhost")
             PutModule("DenySetBindHost = " + CString(pUser->DenySetBindHost()));
+        else if (sVar == "denysetident")
+            PutModule("DenySetIdent = " + CString(pUser->DenySetIdent()));
+        else if (sVar == "denysetnetwork")
+            PutModule("DenySetNetwork = " + CString(pUser->DenySetNetwork()));
+        else if (sVar == "denysetrealname")
+            PutModule("DenySetRealName = " + CString(pUser->DenySetRealName()));
+        else if (sVar == "denysetquitmsg")
+            PutModule("DenySetQuitMsg = " + CString(pUser->DenySetQuitMsg()));
+        else if (sVar == "denysetctcpreplies")
+            PutModule("DenySetCTCPReplies = " + CString(pUser->DenySetCTCPReplies()));
         else if (sVar == "defaultchanmodes")
             PutModule("DefaultChanModes = " + pUser->GetDefaultChanModes());
         else if (sVar == "quitmsg")
@@ -326,11 +341,19 @@ class CAdminMod : public CModule {
             pUser->SetAltNick(sValue);
             PutModule("AltNick = " + sValue);
         } else if (sVar == "ident") {
-            pUser->SetIdent(sValue);
-            PutModule("Ident = " + sValue);
+            if (!pUser->DenySetIdent() || GetUser()->IsAdmin()) {
+                pUser->SetIdent(sValue);
+                PutModule("Ident = " + sValue);
+            } else {
+                PutModule(t_s("Access denied!"));
+            }
         } else if (sVar == "realname") {
-            pUser->SetRealName(sValue);
-            PutModule("RealName = " + sValue);
+            if (!pUser->DenySetRealName() || GetUser()->IsAdmin()) {
+                pUser->SetRealName(sValue);
+                PutModule("RealName = " + sValue);
+            } else {
+                PutModule(t_s("Access denied!"));
+            }
         } else if (sVar == "bindhost") {
             if (!pUser->DenySetBindHost() || GetUser()->IsAdmin()) {
                 if (sValue.Equals(pUser->GetBindHost())) {
@@ -363,12 +386,56 @@ class CAdminMod : public CModule {
             } else {
                 PutModule(t_s("Access denied!"));
             }
+        } else if (sVar == "denysetident") {
+            if (GetUser()->IsAdmin()) {
+                bool b = sValue.ToBool();
+                pUser->SetDenySetIdent(b);
+                PutModule("DenySetIdent = " + CString(b));
+            } else {
+                PutModule(t_s("Access denied!"));
+            }
+        } else if (sVar == "denysetnetwork") {
+            if (GetUser()->IsAdmin()) {
+                bool b = sValue.ToBool();
+                pUser->SetDenySetNetwork(b);
+                PutModule("DenySetNetwork = " + CString(b));
+            } else {
+                PutModule(t_s("Access denied!"));
+            }
+        } else if (sVar == "denysetrealname") {
+            if (GetUser()->IsAdmin()) {
+                bool b = sValue.ToBool();
+                pUser->SetDenySetRealName(b);
+                PutModule("DenySetRealName = " + CString(b));
+            } else {
+                PutModule(t_s("Access denied!"));
+            }
+        } else if (sVar == "denysetquitmsg") {
+            if (GetUser()->IsAdmin()) {
+                bool b = sValue.ToBool();
+                pUser->SetDenySetQuitMsg(b);
+                PutModule("DenySetQuitMsg = " + CString(b));
+            } else {
+                PutModule(t_s("Access denied!"));
+            }
+        } else if (sVar == "denysetctcpreplies") {
+            if (GetUser()->IsAdmin()) {
+                bool b = sValue.ToBool();
+                pUser->SetDenySetCTCPReplies(b);
+                PutModule("DenySetCTCPReplies = " + CString(b));
+            } else {
+                PutModule(t_s("Access denied!"));
+            }
         } else if (sVar == "defaultchanmodes") {
             pUser->SetDefaultChanModes(sValue);
             PutModule("DefaultChanModes = " + sValue);
         } else if (sVar == "quitmsg") {
-            pUser->SetQuitMsg(sValue);
-            PutModule("QuitMsg = " + sValue);
+            if (!pUser->DenySetQuitMsg() || GetUser()->IsAdmin()) {
+                pUser->SetQuitMsg(sValue);
+                PutModule("QuitMsg = " + sValue);
+            } else {
+                PutModule(t_s("Access denied!"));
+            }
         } else if (sVar == "chanbuffersize" || sVar == "buffercount") {
             unsigned int i = sValue.ToUInt();
             // Admins don't have to honour the buffer limit
@@ -614,11 +681,19 @@ class CAdminMod : public CModule {
             pNetwork->SetAltNick(sValue);
             PutModule("AltNick = " + pNetwork->GetAltNick());
         } else if (sVar.Equals("ident")) {
-            pNetwork->SetIdent(sValue);
-            PutModule("Ident = " + pNetwork->GetIdent());
+            if (!pUser->DenySetIdent() || GetUser()->IsAdmin()) {
+                pNetwork->SetIdent(sValue);
+                PutModule("Ident = " + pNetwork->GetIdent());
+            } else {
+                PutModule(t_s("Access denied!"));
+            }
         } else if (sVar.Equals("realname")) {
-            pNetwork->SetRealName(sValue);
-            PutModule("RealName = " + pNetwork->GetRealName());
+            if (!pUser->DenySetRealName() || GetUser()->IsAdmin()) {
+                pNetwork->SetRealName(sValue);
+                PutModule("RealName = " + pNetwork->GetRealName());
+            } else {
+                PutModule(t_s("Access denied!"));
+            }
         } else if (sVar.Equals("bindhost")) {
             if (!pUser->DenySetBindHost() || GetUser()->IsAdmin()) {
                 if (sValue.Equals(pNetwork->GetBindHost())) {
@@ -646,8 +721,12 @@ class CAdminMod : public CModule {
             PutModule("Encoding = " + pNetwork->GetEncoding());
 #endif
         } else if (sVar.Equals("quitmsg")) {
-            pNetwork->SetQuitMsg(sValue);
-            PutModule("QuitMsg = " + pNetwork->GetQuitMsg());
+            if (!pUser->DenySetQuitMsg() || GetUser()->IsAdmin()) {
+                pNetwork->SetQuitMsg(sValue);
+                PutModule("QuitMsg = " + pNetwork->GetQuitMsg());
+            } else {
+                PutModule(t_s("Access denied!"));
+            }
         } else if (sVar.Equals("trustallcerts")) {
             bool b = sValue.ToBool();
             pNetwork->SetTrustAllCerts(b);
@@ -1043,6 +1122,11 @@ class CAdminMod : public CModule {
             return;
         }
 
+        if (!GetUser()->IsAdmin() && pUser->DenySetNetwork()) {
+            PutModule(t_s("Access denied!"));
+            return;
+        }
+
         if (!GetUser()->IsAdmin() && !pUser->HasSpaceForNewNetwork()) {
             PutStatus(
                 t_s("Network number limit reached. Ask an admin to increase "
@@ -1085,6 +1169,11 @@ class CAdminMod : public CModule {
 
         if (sNetwork.empty()) {
             PutModule(t_s("Usage: DelNetwork [user] network"));
+            return;
+        }
+
+        if (!GetUser()->IsAdmin() && pUser->DenySetNetwork()) {
+            PutModule(t_s("Access denied!"));
             return;
         }
 
@@ -1166,6 +1255,11 @@ class CAdminMod : public CModule {
         CUser* pUser = FindUser(sUsername);
         if (!pUser) return;
 
+        if (!GetUser()->IsAdmin() && pUser->DenySetNetwork()) {
+            PutModule(t_s("Access denied!"));
+            return;
+        }
+
         CIRCNetwork* pNetwork = FindNetwork(pUser, sNetwork);
         if (!pNetwork) {
             return;
@@ -1196,6 +1290,11 @@ class CAdminMod : public CModule {
 
         CUser* pUser = FindUser(sUsername);
         if (!pUser) return;
+
+        if (!GetUser()->IsAdmin() && pUser->DenySetNetwork()) {
+            PutModule(t_s("Access denied!"));
+            return;
+        }
 
         CIRCNetwork* pNetwork = FindNetwork(pUser, sNetwork);
         if (!pNetwork) {
@@ -1325,6 +1424,11 @@ class CAdminMod : public CModule {
         CUser* pUser = FindUser(sUsername);
         if (!pUser) return;
 
+        if (!GetUser()->IsAdmin() && pUser->DenySetCTCPReplies()) {
+            PutModule(t_s("Access denied!"));
+            return;
+        }
+
         pUser->AddCTCPReply(sCTCPRequest, sCTCPReply);
         if (sCTCPReply.empty()) {
             PutModule(t_f("CTCP requests {1} to user {2} will now be blocked.")(
@@ -1346,6 +1450,11 @@ class CAdminMod : public CModule {
         }
         CUser* pUser = FindUser(sUsername);
         if (!pUser) return;
+
+        if (!GetUser()->IsAdmin() && pUser->DenySetCTCPReplies()) {
+            PutModule(t_s("Access denied!"));
+            return;
+        }
 
         if (sCTCPRequest.empty()) {
             PutModule(t_s("Usage: DelCTCP [user] [request]"));

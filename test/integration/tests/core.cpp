@@ -343,5 +343,92 @@ TEST_F(ZNCTest, MoveChannels) {
     client.ReadUntil(":nick JOIN :#bar");
 }
 
+TEST_F(ZNCTest, DenyOptions) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+
+    auto client1 = LoginClient();
+    client1.Write("PRIVMSG *controlpanel :CloneUser user user2");
+    client1.ReadUntil("User user2 added!");
+    client1.Write("PRIVMSG *controlpanel :Set Admin user2 false");
+    client1.ReadUntil("Admin = false");
+    client1.Write("PRIVMSG *controlpanel :Set MaxNetworks user2 5");
+    client1.ReadUntil("MaxNetworks = 5");
+
+    auto client2 = ConnectClient();
+    client2.Write("PASS :hunter2");
+    client2.Write("NICK nick2");
+    client2.Write("USER user2/test x x :x");
+
+    // DenySetNetwork
+    // This is false by default so we should be able to add/delete networks/servers
+    client2.Write("PRIVMSG *controlpanel :AddNetwork user2 test2");
+    client2.ReadUntil("Network test2 added to user user2.");
+    client2.Write("PRIVMSG *controlpanel :AddServer user2 test2 127.0.0.1");
+    client2.ReadUntil("Added IRC Server 127.0.0.1 to network test2 for user user2.");
+    client2.Write("PRIVMSG *controlpanel :DelServer user2 test2 127.0.0.1");
+    client2.ReadUntil("Deleted IRC Server 127.0.0.1 from network test2 for user user2.");
+    client2.Write("PRIVMSG *controlpanel :DelNetwork user2 test2");
+    client2.ReadUntil("Network test2 deleted for user user2.");
+
+    // Set it to true
+    client1.Write("PRIVMSG *controlpanel :Set DenySetNetwork user2 true");
+    client1.ReadUntil("DenySetNetwork = true");
+
+    // Now we should be denied
+    client2.Write("PRIVMSG *controlpanel :AddNetwork user2 test2");
+    client2.ReadUntil("Access denied!");
+    client2.Write("PRIVMSG *controlpanel :AddServer user2 test 127.0.0.2");
+    client2.ReadUntil("Access denied!");
+    client2.Write("PRIVMSG *controlpanel :DelServer user2 test 127.0.0.1");
+    client2.ReadUntil("Access denied!");
+    client2.Write("PRIVMSG *controlpanel :DelNetwork user2 test");
+    client2.ReadUntil("Access denied!");
+
+    // DenySetBindHost
+    client2.Write("PRIVMSG *controlpanel :Set BindHost user2 127.0.0.1");
+    client2.ReadUntil("BindHost = 127.0.0.1");
+    client1.Write("PRIVMSG *controlpanel :Set DenySetBindHost user2 true");
+    client1.ReadUntil("DenySetBindHost = true");
+    client2.Write("PRIVMSG *controlpanel :Set BindHost user2 127.0.0.2");
+    client2.ReadUntil("Access denied!");
+
+    // DenySetIdent
+    client2.Write("PRIVMSG *controlpanel :Set Ident user2 test");
+    client2.ReadUntil("Ident = test");
+    client1.Write("PRIVMSG *controlpanel :Set DenySetIdent user2 true");
+    client1.ReadUntil("DenySetIdent = true");
+    client2.Write("PRIVMSG *controlpanel :Set Ident user2 test2");
+    client2.ReadUntil("Access denied!");
+
+    // DenySetRealName
+    client2.Write("PRIVMSG *controlpanel :Set RealName user2 test");
+    client2.ReadUntil("RealName = test");
+    client1.Write("PRIVMSG *controlpanel :Set DenySetRealName user2 true");
+    client1.ReadUntil("DenySetRealName = true");
+    client2.Write("PRIVMSG *controlpanel :Set RealName user2 test2");
+    client2.ReadUntil("Access denied!");
+
+    // DenySetQuitMsg
+    client2.Write("PRIVMSG *controlpanel :Set QuitMsg user2 test");
+    client2.ReadUntil("QuitMsg = test");
+    client1.Write("PRIVMSG *controlpanel :Set DenySetQuitMsg user2 true");
+    client1.ReadUntil("DenySetQuitMsg = true");
+    client2.Write("PRIVMSG *controlpanel :Set QuitMsg user2 test2");
+    client2.ReadUntil("Access denied!");
+
+    // DenySetCTCPReplies
+    client2.Write("PRIVMSG *controlpanel :AddCTCP user2 FOO BAR");
+    client2.ReadUntil("CTCP requests FOO to user user2 will now get reply: BAR");
+    client2.Write("PRIVMSG *controlpanel :DelCTCP user2 FOO");
+    client2.ReadUntil("CTCP requests FOO to user user2 will now be sent to IRC clients");
+    client1.Write("PRIVMSG *controlpanel :Set DenySetCTCPReplies user2 true");
+    client1.ReadUntil("DenySetCTCPReplies = true");
+    client2.Write("PRIVMSG *controlpanel :AddCTCP user2 FOO BAR");
+    client2.ReadUntil("Access denied!");
+    client2.Write("PRIVMSG *controlpanel :DelCTCP user2 FOO");
+    client2.ReadUntil("Access denied!");
+}
+
 }  // namespace
 }  // namespace znc_inttest
