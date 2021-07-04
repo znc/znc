@@ -1,0 +1,106 @@
+<? I18N znc-log ?>
+<? INC Header.tmpl ?>
+
+<h3><? FORMAT "Configuration" ?></h3>
+<div class="sectionbg">
+    <div class="sectionbody">
+        <form action="<? VAR ModPath TOP ?>" method="post">
+            <? INC _csrf_check.tmpl ?>
+            <h4><? FORMAT "Rules" ?></h4>
+            <div class="sectionbody" style="margin-bottom: 0.5em;">
+                <div class="subsection">
+                    <textarea name="rules"><? LOOP Rules ?><? VAR Rule ?>
+<? ENDLOOP ?></textarea>
+                    <br>
+                    <span class="info">
+                        <? FORMAT "Leave empty to clear all rules." ?><br>
+                        <? FORMAT "Otherwise, separate rules by lines or spaces." ?><br>
+                        <? FORMAT "Use !#chan or !query to negate the rule." ?><br>
+                        <? FORMAT "The wildcard * is available." ?>
+                    </span>
+                </div>
+            </div>
+            <h4><? FORMAT "Settings"?></h4>
+            <div class="sectionbody" style="margin-bottom: 0.5em;">
+                <div class="subsection">
+                    <label>
+                        <input type="checkbox" name="settings" value="joins" <? IF Joins ?>checked<? ENDIF ?>>
+                        <? FORMAT "Log joins" ?>
+                    </label>
+                </div>
+                <div class="subsection">
+                    <label>
+                        <input type="checkbox" name="settings" value="quits" <? IF Quits ?>checked<? ENDIF ?>>
+                        <? FORMAT "Log quits" ?>
+                    </label>
+                </div>
+                <div class="subsection">
+                    <label>
+                        <input type="checkbox" name="settings" value="nickchanges" <? IF NickChanges ?>checked<? ENDIF ?>>
+                        <? FORMAT "Log nick changes" ?>
+                    </label>
+                </div>
+            </div>
+            <div class="subsection">
+                <input type="submit" name="configuration" value="<? FORMAT "Save" ?>">
+            </div>
+        </form>
+    </div>
+</div>
+
+<? IF Module != "Global" ?>
+    <? IF Files ?>
+        <h3><? FORMAT "Log Browser" ?></h3>
+        <div class="sectionbg">
+            <div class="sectionbody">
+                <div class="subsection">
+                    <? LOOP Files ?>
+                        <form action="<? VAR ModPath TOP ?>" method="post">
+                            <? INC _csrf_check.tmpl ?>
+                            <input type="hidden" name="path" value="<? VAR Long ?>">
+                            <label>
+                                <img src="<? VAR ModFilesPath TOP ?>/<? IF Dir ?>dir<? ELSE ?>file<? ENDIF ?>.png">
+                                <? VAR Short ?>
+                                <input type="submit" hidden>
+                            </label>
+                        </form>
+                    <? ENDLOOP ?>
+                </div>
+            </div>
+        </div>
+    <? ENDIF ?>
+    <? IF Log ?>
+        <h3><? FORMAT "Log Viewer" ?> (<? FORMAT "Page" ?> <? VAR Page ?>)</h3>
+        <div class="sectionbg">
+            <div class="sectionbody">
+                <code style="display: block; margin-bottom: 1em;">
+                    <? LOOP Log ?>
+                        <? VAR Line ?><br>
+                    <? ENDLOOP ?>
+                </code>
+                <? IF PrevOffsets ?>
+                    <form style="display: inline-block;" action="<? VAR ModPath TOP ?>" method="post">
+                        <? INC _csrf_check.tmpl ?>
+                        <input type="hidden" name="path" value="<? VAR Path ?>">
+                        <? LOOP PrevOffsets ?>
+                            <input type="hidden" name="offsets" value="<? VAR Offset ?>">
+                        <? ENDLOOP ?>
+                        <input type="submit" value="<? FORMAT "Prev" ?>">
+                    </form>
+                <? ENDIF ?>
+                <? IF NextOffsets ?>
+                    <form style="display: inline-block;" action="<? VAR ModPath TOP ?>" method="post">
+                        <? INC _csrf_check.tmpl ?>
+                        <input type="hidden" name="path" value="<? VAR Path ?>">
+                        <? LOOP NextOffsets ?>
+                            <input type="hidden" name="offsets" value="<? VAR Offset ?>">
+                        <? ENDLOOP ?>
+                        <input type="submit" value="<? FORMAT "Next" ?>">
+                    </form>
+                <? ENDIF ?>
+            </div>
+        </div>
+    <? ENDIF ?>
+<? ENDIF ?>
+
+<? INC Footer.tmpl ?>

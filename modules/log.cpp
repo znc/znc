@@ -125,6 +125,10 @@ class CLogMod : public CModule {
     EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override;
     EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override;
 
+    /* web */
+    CString GetWebMenuTitle() override { return t_s("Logs"); }
+    bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override;
+
   private:
     bool NeedJoins() const;
     bool NeedQuits() const;
@@ -549,6 +553,130 @@ CModule::EModRet CLogMod::OnChanMsg(CNick& Nick, CChan& Channel,
                                     CString& sMessage) {
     PutLog("<" + Nick.GetNick() + "> " + sMessage, Channel);
     return CONTINUE;
+}
+
+bool CLogMod::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
+    switch (GetType()) {
+        case CModInfo::EModuleType::GlobalModule:
+            Tmpl["Module"] = "Global";
+            break;
+        case CModInfo::EModuleType::UserModule:
+            Tmpl["Module"] = "User";
+            break;
+        case CModInfo::EModuleType::NetworkModule:
+            Tmpl["Module"] = "Network";
+            break;
+    }
+
+    if (WebSock.HasParam("configuration")) {
+        CString sRules = WebSock.GetParam("rules", true);
+        sRules.Replace("\r\n", "");
+        sRules.Replace("\n", "");
+        VCString vsRules = SplitRules(sRules.Token(0, true));
+        SetRules(vsRules);
+        if (vsRules.empty()) {
+            DelNV("rules");
+        } else {
+            SetNV("rules", JoinRules(","));
+        }
+        SCString ssSettings;
+        WebSock.GetParamValues("settings", ssSettings, true);
+        SetNV("joins", CString(ssSettings.find("joins") != ssSettings.end()));
+        SetNV("quits", CString(ssSettings.find("quits") != ssSettings.end()));
+        SetNV("nickchanges", CString(ssSettings.find("nickchanges") != ssSettings.end()));
+    }
+
+    for (const CLogRule& Rule : m_vRules) {
+        CTemplate& Row = Tmpl.AddRow("Rules");
+        Row["Rule"] = Rule.ToString();
+    }
+
+    Tmpl["Joins"] = CString(NeedJoins());
+    Tmpl["Quits"] = CString(NeedQuits());
+    Tmpl["NickChanges"] = CString(NeedNickChanges());
+
+    if (GetType() == CModInfo::EModuleType::GlobalModule) {
+        return true;
+    }
+
+    CString sPath = WebSock.GetParam("path", true);
+    CString sFullPath = CDir::CheckPathPrefix(GetSavePath(), sPath);
+
+    if (sFullPath.empty()) {
+        sPath = "";
+        sFullPath = GetSavePath();
+    }
+
+    CFile File(sFullPath);
+    CString sDir = File.IsDir() ? sFullPath : File.GetDir();
+    CDir Dir(sDir);
+    CString sPrefix = sDir;
+
+    sPrefix.TrimPrefix(GetSavePath());
+    sPrefix.TrimPrefix("/");
+    if (!sPrefix.empty() && !sPrefix.EndsWith("/"))
+        sPrefix += "/";
+
+    if (!sPath.empty() && (sPath.Contains("/") || File.IsDir())) {
+        CTemplate& Row = Tmpl.AddRow("Files");
+        Row["Short"] = "..";
+        Row["Long"] = sPrefix + "..";
+        Row["Dir"] = CString(true);
+        Row["File"] = CString(false);
+    }
+
+    for (const CFile* pFile : Dir) {
+        CTemplate& Row = Tmpl.AddRow("Files");
+        Row["Short"] = pFile->GetShortName();
+        Row["Long"] = sPrefix + pFile->GetShortName();
+        Row["Dir"] = CString(pFile->IsDir());
+        Row["File"] = CString(pFile->IsReg());
+    }
+
+    if (File.IsReg()) {
+        const size_t MAX_BYTES = 512 * 1024;
+        VCString vsValues;
+        vector<size_t> vOffsets;
+        CString sLine;
+        size_t Bytes = 0;
+        WebSock.GetParamValues("offsets", vsValues, true);
+        for (const CString& sValue : vsValues) {
+            size_t Offset = 0;
+            sValue.Convert(&Offset);
+            vOffsets.push_back(Offset);
+        }
+        File.Open();
+        if (!vOffsets.empty()) {
+            File.Seek(vOffsets.back());
+        } else {
+            vOffsets.push_back(0);
+        }
+        Tmpl["Path"] = sPrefix + File.GetShortName();
+        Tmpl["Page"] = CString(vOffsets.size());
+        while (File.ReadLine(sLine) && Bytes + sLine.size() <= MAX_BYTES) {
+            CTemplate& Row = Tmpl.AddRow("Log");
+            Row["Line"] = sLine;
+            Bytes += sLine.size();
+        }
+        size_t Offset = Bytes + (vOffsets.empty() ? 0 : vOffsets.back());
+        bool Done = Offset >= File.GetSize();
+        if (!Done) {
+            vOffsets.push_back(Offset);
+        }
+        for (size_t i = 0; i < vOffsets.size(); i++) {
+            if (i < vOffsets.size() - (1 + (Done ? 0 : 1))) {
+                CTemplate& Row = Tmpl.AddRow("PrevOffsets");
+                Row["Offset"] = CString(vOffsets[i]);
+            }
+            if (!Done) {
+                CTemplate& Row = Tmpl.AddRow("NextOffsets");
+                Row["Offset"] = CString(vOffsets[i]);
+            }
+        }
+        File.Close();
+    }
+
+    return true;
 }
 
 template <>
