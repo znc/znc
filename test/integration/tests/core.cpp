@@ -343,5 +343,20 @@ TEST_F(ZNCTest, MoveChannels) {
     client.ReadUntil(":nick JOIN :#bar");
 }
 
+TEST_F(ZNCTest, MoveNetworkCaseSensitivity) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc addnetwork znc");
+    client.ReadUntil("Network added.");
+    client.Write("znc movenetwork user znc user ZNC");
+    client.ReadUntil("Success.");
+    client.Write("znc movenetwork user ZNC user");
+    client.ReadUntil("Success.");
+    client.Write("znc addnetwork test");
+    client.Write("znc movenetwork user test user znc");
+    client.ReadUntil("User user already has network znc.");
+}
+
 }  // namespace
 }  // namespace znc_inttest
