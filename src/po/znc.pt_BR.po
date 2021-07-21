@@ -14,23 +14,23 @@ msgstr ""
 
 #: webskins/_default_/tmpl/InfoBar.tmpl:6
 msgid "Logged in as: {1}"
-msgstr "Sessão iniciada como: {1}"
+msgstr "Logado como: {1}"
 
 #: webskins/_default_/tmpl/InfoBar.tmpl:8
 msgid "Not logged in"
-msgstr "Sessão não iniciada"
+msgstr "Não está logado"
 
 #: webskins/_default_/tmpl/LoginBar.tmpl:3
 msgid "Logout"
-msgstr "Finalizar sessão"
+msgstr "Sair"
 
 #: webskins/_default_/tmpl/Menu.tmpl:4
 msgid "Home"
-msgstr "Página inicial"
+msgstr "Home"
 
 #: webskins/_default_/tmpl/Menu.tmpl:7
 msgid "Global Modules"
-msgstr "Módulos globais"
+msgstr "Módulos Globais"
 
 #: webskins/_default_/tmpl/Menu.tmpl:20
 msgid "User Modules"
@@ -1593,7 +1593,7 @@ msgstr "Desconectar dos canais"
 #: ClientCommand.cpp:1790
 msgctxt "helpcmd|Topics|desc"
 msgid "Show topics in all your channels"
-msgstr "Mostra tópicos em todos os seus canais"
+msgstr "Mostra os tópicos em todos os seus canais"
 
 #: ClientCommand.cpp:1793
 msgctxt "helpcmd|PlayBuffer|args"
@@ -1633,7 +1633,7 @@ msgstr ""
 #: ClientCommand.cpp:1808
 msgctxt "helpcmd|SetBuffer|args"
 msgid "<#chan|query> [linecount]"
-msgstr ""
+msgstr "<#chan|query> [linecount]"
 
 #: ClientCommand.cpp:1809
 msgctxt "helpcmd|SetBuffer|desc"
