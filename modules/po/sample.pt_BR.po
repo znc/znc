@@ -104,7 +104,7 @@ msgstr ""
 
 #: sample.cpp:269 sample.cpp:276
 msgid "{1} changes topic on {2} to {3}"
-msgstr ""
+msgstr "{1} muda o tópico de {2} pra {3}"
 
 #: sample.cpp:317
 msgid "Hi, I'm your friendly sample module."

@@ -42,7 +42,7 @@ msgstr "{1} trocou de apelido: {2}"
 
 #: buffextras.cpp:100
 msgid "{1} changed the topic to: {2}"
-msgstr "{1} alterou o tópico para: {2}"
+msgstr "{1} mudou o tópico pra: {2}"
 
 #: buffextras.cpp:115
 msgid "Adds joins, parts etc. to the playback buffer"
