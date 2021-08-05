@@ -21,12 +21,8 @@
 using std::vector;
 
 CString b2s(const bool b) {
-    switch (b) {
-        case true:
-            return CString("TRUE");
-        case false:
-            return CString("FALSE");
-    }
+    if (b) return CString("TRUE");
+    return CString("FALSE");
 }
 
 #define USERSEND(fn) PutModule(CString(GetUser()->fn));
