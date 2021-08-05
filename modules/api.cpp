@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <znc/IRCNetwork.h>
 #include <znc/Modules.h>
 #include <znc/User.h>
 #include <znc/znc.h>
@@ -75,7 +76,14 @@ class CApi : public CModule {
             USERSEND(MaxJoins());
         } else if (vsTokens[0].Equals("TIMEOUTBEFORERECONNECT")) {
             USERSEND(GetNoTrafficTimeout());
-            // TODO ctcp replies
+        } else if (vsTokens[0].Equals("CTCPREPLIES")) {
+            PutModule("TUPLELIST 2");
+            for (std::pair<CString, CString> key_val :
+                 GetUser()->GetCTCPReplies()) {
+                PutModule(key_val.first);
+                PutModule(key_val.second);
+            }
+            PutModule("TUPLELISTEND");
             // Permissions
         } else if (vsTokens[0].Equals("DENYSETBINDHOST")) {
             USERSEND_BOOL(DenySetBindHost());
@@ -111,8 +119,19 @@ class CApi : public CModule {
             USERSEND(GetTimezone());
         } else if (vsTokens[0].Equals("HAVEI18N")) {
             USERSEND(GetTimezone());
-            /* TODO Allowed IPs */
+        } else if (vsTokens[0].Equals("ALLOWEDIPS")) {
+            PutModule("LIST");
+            for (const CString ip : GetUser()->GetAllowedHosts()) {
+                PutModule(ip);
+            }
+            PutModule("LISTEND");
             // ZNC access-controlled config
+        } else if (vsTokens[0].Equals("NETWORKS")) {
+            PutModule("LIST");
+            for (const CIRCNetwork* network : GetUser()->GetNetworks()) {
+                PutModule(network->GetName());
+            }
+            PutModule("ENDLIST");
         } else if (vsTokens[0].Equals("BINDHOST")) {
             ACCESS_CHECK(GetUser()->DenySetBindHost(),
                          "DENYSETBINDHOST is TRUE");
