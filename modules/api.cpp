@@ -187,6 +187,14 @@ class CApi : public CModule {
             }
         } else if (vsTokens[0].Equals("PING")) {
             PutModule("PONG");
+        } else if (vsTokens[0].Equals("HELP")) {
+            PutModule("Available commands can be listed using COMMANDS.");
+            PutModule(
+                "Available query scopes can be listed using QUERYSCOPES.");
+        } else if (vsTokens[0].Equals("COMMANDS")) {
+            PutModule("QUERY PING HELP COMMANDS QUERYSCOPES");
+        } else if (vsTokens[0].Equals("QUERYSCOPES")) {
+            PutModule("ZNC USER");
         } else {
             PutModule("EINVAL Unknown command");
         }
