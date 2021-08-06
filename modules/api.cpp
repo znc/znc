@@ -24,6 +24,11 @@
 
 /*
 
+Calling conventions: caller consumes the token they used. Callee is responsible
+for ensuring they have enough tokens to proceed.
+
+/*
+
 TODO:
 
 * Allow querying detailed information about network channels, probably by introducing subscopes (e.g. `QUERY libera #znc MODE`)
@@ -66,6 +71,16 @@ class CApi : public CModule {
     MODCONSTRUCTOR(CApi) {}
 
     ~CApi() override {}
+
+    std::map<const CString, std::function<void(CApi*, VCString)>> queryMap = {
+        {"ZNC", &CApi::HandleZNCQuery}, {"USER", &CApi::HandleUserQuery}};
+
+    std::map<const CString, std::function<void(CApi*, VCString)>> commandMap = {
+        {"PING", &CApi::CommandPing},
+        {"QUERY", &CApi::CommandQuery},
+        {"HELP", &CApi::CommandHelp},
+        {"COMMANDS", &CApi::CommandCommands},
+        {"QUERYSCOPES", &CApi::CommandQueryscopes}};
 
     void _WrapValue(CString str) {
         if (str.Equals("")) {
@@ -270,6 +285,65 @@ class CApi : public CModule {
         }
     }
 
+    void CommandHelp(VCString vsTokens) {
+        PutModule("Available commands can be listed using COMMANDS.");
+        PutModule("Available query scopes can be listed using QUERYSCOPES.");
+    }
+
+    void CommandQuery(VCString vsTokens) {
+        if (vsTokens.empty()) {
+            PutModule("EINVAL Empty query");
+            return;
+        }
+
+        if (vsTokens.size() > 2) {
+            PutModule("EINVAL Too many tokens in query");
+            return;
+        }
+
+        const auto queryFn = queryMap.find(vsTokens[0]);
+        if (queryFn != queryMap.end()) {
+            vsTokens.erase(vsTokens.begin());
+
+            if (vsTokens.size() < 1) {
+                PutModule("EINVAL No property specified");
+                return;
+            }
+
+            queryFn->second(this, vsTokens);
+        } else {
+            CIRCNetwork* network = GetUser()->FindNetwork(vsTokens[0]);
+            if (network) {
+                vsTokens.erase(vsTokens.begin());
+                HandleNetworkQuery(vsTokens, network);
+            } else {
+                PutModule("EINVAL Unknown query scope");
+            }
+        }
+    }
+
+    void CommandPing(VCString vsTokens) { PutModule("PONG"); }
+
+    void CommandCommands(VCString vsTokens) {
+        PutModule("LIST");
+        for (const auto& command : commandMap) {
+            PutModule(command.first);
+        }
+        PutModule("LISTEND");
+    }
+
+    void CommandQueryscopes(VCString vsTokens) {
+        PutModule("LIST");
+        for (const auto& query : queryMap) {
+            PutModule(query.first);
+        }
+        // TODO make this dynamically dispatched too
+        for (const CIRCNetwork* network : GetUser()->GetNetworks()) {
+            PutModule(network->GetName());
+        }
+        PutModule("LISTEND");
+    }
+
     void OnModCommand(const CString& sCommand) override {
         VCString vsTokens;
         sCommand.Split(" ", vsTokens, false, "", "", true, true);
@@ -279,58 +353,11 @@ class CApi : public CModule {
             return;
         }
 
-        if (vsTokens[0].Equals("QUERY")) {
+        const auto commandFn = commandMap.find(vsTokens[0]);
+        if (commandFn != commandMap.end()) {
             vsTokens.erase(vsTokens.begin());
 
-            if (vsTokens.empty()) {
-                PutModule("EINVAL Empty query");
-                return;
-            }
-
-            if (vsTokens.size() > 2) {
-                PutModule("EINVAL Too many tokens in query");
-                return;
-            }
-
-            if (vsTokens[0].Equals("USER")) {
-                vsTokens.erase(vsTokens.begin());
-
-                HandleUserQuery(vsTokens);
-            } else if (vsTokens[0].Equals("ZNC")) {
-                vsTokens.erase(vsTokens.begin());
-
-                HandleZNCQuery(vsTokens);
-            } else {
-                CIRCNetwork* network = GetUser()->FindNetwork(vsTokens[0]);
-                if (network) {
-                    vsTokens.erase(vsTokens.begin());
-                    HandleNetworkQuery(vsTokens, network);
-                } else {
-                    PutModule("EINVAL Unknown query scope");
-                }
-            }
-        } else if (vsTokens[0].Equals("PING")) {
-            PutModule("PONG");
-        } else if (vsTokens[0].Equals("HELP")) {
-            PutModule("Available commands can be listed using COMMANDS.");
-            PutModule(
-                "Available query scopes can be listed using QUERYSCOPES.");
-        } else if (vsTokens[0].Equals("COMMANDS")) {
-            PutModule("LIST");
-            PutModule("QUERY");
-            PutModule("PING");
-            PutModule("HELP");
-            PutModule("COMMANDS");
-            PutModule("QUERYSCOPES");
-            PutModule("LISTEND");
-        } else if (vsTokens[0].Equals("QUERYSCOPES")) {
-            PutModule("LIST");
-            PutModule("ZNC");
-            PutModule("USER");
-            for (const CIRCNetwork* network : GetUser()->GetNetworks()) {
-                PutModule(network->GetName());
-            }
-            PutModule("LISTEND");
+            commandFn->second(this, vsTokens);
         } else {
             PutModule("EINVAL Unknown command");
         }
