@@ -26,8 +26,8 @@ CString b2s(const bool b) {
     return CString("FALSE");
 }
 
-#define USERSEND(fn) PutModule(CString(GetUser()->fn));
-#define USERSEND_BOOL(fn) PutModule(b2s(GetUser()->fn));
+#define USERSEND(fn) _WrapValue(CString(GetUser()->fn));
+#define USERSEND_BOOL(fn) _WrapValue(b2s(GetUser()->fn));
 #define ACCESS_CHECK(checkFn, reason) \
     if (checkFn) {                    \
         PutModule("EACCES " reason);  \
@@ -39,6 +39,15 @@ class CApi : public CModule {
     MODCONSTRUCTOR(CApi) {}
 
     ~CApi() override {}
+
+    void _WrapValue(CString str) {
+        if (str.Equals("")) {
+            PutModule("NULL");
+        } else {
+            PutModule("VALUE");
+            PutModule(str);
+        }
+    }
 
     void HandleZNCQuery(VCString vsTokens) {
         if (vsTokens[0].Equals("VERSION")) {
