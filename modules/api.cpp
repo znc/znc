@@ -14,10 +14,23 @@
  * limitations under the License.
  */
 
+#include <znc/Chan.h>
 #include <znc/IRCNetwork.h>
 #include <znc/Modules.h>
+#include <znc/Query.h>
+#include <znc/Server.h>
 #include <znc/User.h>
 #include <znc/znc.h>
+
+/*
+
+TODO:
+
+* Allow querying detailed information about network channels, probably by introducing subscopes (e.g. `QUERY libera #znc MODE`)
+* Ditto module information (`QUERY USER modname DESCRIPTION` for user mods)
+* MODIFY: this should have ADD, DELETE, SET commands for lists/scalars
+
+*/
 
 using std::vector;
 
@@ -28,6 +41,20 @@ CString b2s(const bool b) {
 
 #define USERSEND(fn) _WrapValue(CString(GetUser()->fn));
 #define USERSEND_BOOL(fn) _WrapValue(b2s(GetUser()->fn));
+#define NETWORKSEND(fn) _WrapValue(CString(network->fn));
+#define NETWORKSEND_BOOL(fn) _WrapValue(b2s(network->fn));
+#define NETWORKSEND_LIST_SIMPLE(fn)      \
+    PutModule("LIST");                   \
+    for (const auto val : network->fn) { \
+        PutModule(val);                  \
+    }                                    \
+    PutModule("LISTEND");
+#define NETWORKSEND_LIST_OBJECT(fn, resolveFn) \
+    PutModule("LIST");                         \
+    for (const auto val : network->fn) {       \
+        PutModule(resolveFn);                  \
+    }                                          \
+    PutModule("LISTEND");
 #define ACCESS_CHECK(checkFn, reason) \
     if (checkFn) {                    \
         PutModule("EACCES " reason);  \
@@ -161,6 +188,86 @@ class CApi : public CModule {
         }
     }
 
+    void HandleNetworkQuery(VCString vsTokens, CIRCNetwork* network) {
+        if (vsTokens[0].Equals("NETWORKPATH")) {
+            NETWORKSEND(GetNetworkPath());
+        } else if (vsTokens[0].Equals("NEXTSERVER")) {
+            NETWORKSEND(GetNextServer());
+        } else if (vsTokens[0].Equals("NICK")) {
+            NETWORKSEND(GetNick());
+        } else if (vsTokens[0].Equals("QUERIES")) {
+            NETWORKSEND_LIST_OBJECT(GetQueries(), val->GetName());
+        } else if (vsTokens[0].Equals("QUITMSG")) {
+            NETWORKSEND(GetQuitMsg());
+        } else if (vsTokens[0].Equals("REALNAME")) {
+            NETWORKSEND(GetRealName());
+        } else if (vsTokens[0].Equals("SERVERS")) {
+            // TODO check that server->GetString() is really correct
+            NETWORKSEND_LIST_OBJECT(GetServers(), val->GetString());
+        } else if (vsTokens[0].Equals("TRUSTALLCERTS")) {
+            NETWORKSEND_BOOL(GetTrustAllCerts());
+        } else if (vsTokens[0].Equals("TRUSTEDFINGERPRINTS")) {
+            NETWORKSEND_LIST_SIMPLE(GetTrustedFingerprints());
+        } else if (vsTokens[0].Equals("TRUSTPKI")) {
+            NETWORKSEND_BOOL(GetTrustPKI());
+        } else if (vsTokens[0].Equals("HASSERVERS")) {
+            NETWORKSEND_BOOL(HasServers());
+        } else if (vsTokens[0].Equals("IRCCONNECTED")) {
+            NETWORKSEND_BOOL(IsIRCConnected());
+        } else if (vsTokens[0].Equals("ISIRCAWAY")) {
+            NETWORKSEND_BOOL(IsIRCAway());
+        } else if (vsTokens[0].Equals("ISLASTSERVER")) {
+            NETWORKSEND_BOOL(IsLastServer());
+        } else if (vsTokens[0].Equals("ISNETWORKATTACHED")) {
+            NETWORKSEND_BOOL(IsNetworkAttached());
+        } else if (vsTokens[0].Equals("ISUSERATTACHED")) {
+            NETWORKSEND_BOOL(IsUserAttached());
+        } else if (vsTokens[0].Equals("ISUSERONLINE")) {
+            NETWORKSEND_BOOL(IsUserOnline());
+        } else if (vsTokens[0].Equals("MODULES")) {
+            PutModule("ENOSYS Module querying not implemented");
+            return;
+        } else if (vsTokens[0].Equals("CHANS")) {
+            NETWORKSEND_LIST_OBJECT(GetChans(), val->GetName());
+        } else if (vsTokens[0].Equals("QUERIES")) {
+            NETWORKSEND_LIST_OBJECT(GetQueries(), val->GetName());
+        } else if (vsTokens[0].Equals("CHANPREFIXES")) {
+            NETWORKSEND(GetChanPrefixes());
+        } else if (vsTokens[0].Equals("CURRENTSERVER")) {
+            // TODO REALLY check this is correct
+            NETWORKSEND(GetCurrentServer()->GetString());
+        } else if (vsTokens[0].Equals("IRCCONNECTENABLED")) {
+            NETWORKSEND_BOOL(GetIRCConnectEnabled());
+        } else if (vsTokens[0].Equals("CURNICK")) {
+            NETWORKSEND(GetCurNick());
+        } else if (vsTokens[0].Equals("ALTNICK")) {
+            NETWORKSEND(GetAltNick());
+        } else if (vsTokens[0].Equals("IDENT")) {
+            NETWORKSEND(GetIdent());
+        } else if (vsTokens[0].Equals("ENCODING")) {
+            NETWORKSEND(GetEncoding());
+        } else if (vsTokens[0].Equals("BINDHOST")) {
+            ACCESS_CHECK(GetUser()->DenySetBindHost(),
+                         "DENYSETBINDHOST is TRUE");
+
+            NETWORKSEND(GetBindHost());
+        } else if (vsTokens[0].Equals("ENCODING")) {
+            NETWORKSEND(GetEncoding());
+        } else if (vsTokens[0].Equals("FLOODRATE")) {
+            NETWORKSEND(GetFloodRate());
+        } else if (vsTokens[0].Equals("FLOODBURST")) {
+            NETWORKSEND(GetFloodBurst());
+        } else if (vsTokens[0].Equals("JOINDELAY")) {
+            NETWORKSEND(GetJoinDelay());
+        } else if (vsTokens[0].Equals("BYTESREAD")) {
+            NETWORKSEND(BytesRead());
+        } else if (vsTokens[0].Equals("BYTESWRITTEN")) {
+            NETWORKSEND(BytesWritten());
+        } else {
+            PutModule("EINVAL Unknown query in scope " + network->GetName());
+        }
+    }
+
     void OnModCommand(const CString& sCommand) override {
         VCString vsTokens;
         sCommand.Split(" ", vsTokens, false, "", "", true, true);
@@ -192,7 +299,13 @@ class CApi : public CModule {
 
                 HandleZNCQuery(vsTokens);
             } else {
-                PutModule("EINVAL Unknown query scope");
+                CIRCNetwork* network = GetUser()->FindNetwork(vsTokens[0]);
+                if (network) {
+                    vsTokens.erase(vsTokens.begin());
+                    HandleNetworkQuery(vsTokens, network);
+                } else {
+                    PutModule("EINVAL Unknown query scope");
+                }
             }
         } else if (vsTokens[0].Equals("PING")) {
             PutModule("PONG");
@@ -212,6 +325,9 @@ class CApi : public CModule {
             PutModule("LIST");
             PutModule("ZNC");
             PutModule("USER");
+            for (const CIRCNetwork* network : GetUser()->GetNetworks()) {
+                PutModule(network->GetName());
+            }
             PutModule("LISTEND");
         } else {
             PutModule("EINVAL Unknown command");
