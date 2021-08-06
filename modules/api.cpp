@@ -140,7 +140,7 @@ class CApi : public CModule {
             for (const CIRCNetwork* network : GetUser()->GetNetworks()) {
                 PutModule(network->GetName());
             }
-            PutModule("ENDLIST");
+            PutModule("LISTEND");
         } else if (vsTokens[0].Equals("BINDHOST")) {
             ACCESS_CHECK(GetUser()->DenySetBindHost(),
                          "DENYSETBINDHOST is TRUE");
