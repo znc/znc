@@ -80,8 +80,10 @@ class CApi : public CModule {
         if (vsTokens[0].Equals("VERSION")) {
             ACCESS_CHECK(CZNC::Get().GetHideVersion(), "HIDEVERSION is TRUE");
 
+            PutModule("VALUE");
             PutModule(CZNC::GetVersion());
         } else if (vsTokens[0].Equals("UPTIME")) {
+            PutModule("VALUE");
             PutModule(CZNC::Get().GetUptime());
         } else {
             PutModule("EINVAL Unknown query in scope ZNC");
