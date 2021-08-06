@@ -201,9 +201,18 @@ class CApi : public CModule {
             PutModule(
                 "Available query scopes can be listed using QUERYSCOPES.");
         } else if (vsTokens[0].Equals("COMMANDS")) {
-            PutModule("QUERY PING HELP COMMANDS QUERYSCOPES");
+            PutModule("LIST");
+            PutModule("QUERY");
+            PutModule("PING");
+            PutModule("HELP");
+            PutModule("COMMANDS");
+            PutModule("QUERYSCOPES");
+            PutModule("LISTEND");
         } else if (vsTokens[0].Equals("QUERYSCOPES")) {
-            PutModule("ZNC USER");
+            PutModule("LIST");
+            PutModule("ZNC");
+            PutModule("USER");
+            PutModule("LISTEND");
         } else {
             PutModule("EINVAL Unknown command");
         }
