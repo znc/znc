@@ -1715,7 +1715,10 @@ void CClient::UserPortCommand(CString& sLine) {
             CListener* pListener =
                 CZNC::Get().FindListener(uPort, sBindHost, eAddr);
 
-            if (pListener) {
+            const CString sPortDel = std::to_string(Csock::GetLocalPort());
+            if (sPort.Equals(sPortDel)) {
+               PutStatus(t_f("Port {1} is the active port and cannot be removed")(sPort));
+            } else if (pListener) {
                 CZNC::Get().DelListener(pListener);
                 PutStatus(t_s("Deleted Port"));
             } else {
