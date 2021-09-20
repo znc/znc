@@ -13,6 +13,7 @@ These people helped translating ZNC to various languages:
 * eggoez (Baguz Ach)
 * Felipefpl (Felipe)
 * hypech
+* JakaMedia (Jaka Media Teknologi)
 * Jay2k1
 * kloun (Victor Kukshiev)
 * leon-th (Leon T.)
