@@ -20,6 +20,7 @@ These people helped translating ZNC to various languages:
 * LiteHell
 * lorenzosu
 * MikkelDK
+* moonlightzzz (moonlightz)
 * natinaum (natinaum)
 * PauloHeaven (Paul)
 * psychon
