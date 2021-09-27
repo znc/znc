@@ -1,0 +1,61 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: pt-PT\n"
+"X-Crowdin-File: /1.8.x/modules/po/admindebug.pot\n"
+"X-Crowdin-File-ID: 290\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Portuguese\n"
+"Language: pt_PT\n"
+
+#: admindebug.cpp:30
+msgid "Enable Debug Mode"
+msgstr "Ativar o Modo de Depuração"
+
+#: admindebug.cpp:32
+msgid "Disable Debug Mode"
+msgstr "Desativar o Modo de Depuração"
+
+#: admindebug.cpp:34
+msgid "Show the Debug Mode status"
+msgstr "Mostrar o estado do Modo de Depuração"
+
+#: admindebug.cpp:40 admindebug.cpp:49
+msgid "Access denied!"
+msgstr "Acesso negado!"
+
+#: admindebug.cpp:58
+msgid ""
+"Failure. We need to be running with a TTY. (is ZNC running with --"
+"foreground?)"
+msgstr ""
+"Falha. Precisamos de estar a correr com a TTY. (Está o ZNC a correr com --"
+"foreground?)"
+
+#: admindebug.cpp:66
+msgid "Already enabled."
+msgstr "Já está ativado."
+
+#: admindebug.cpp:68
+msgid "Already disabled."
+msgstr "Já está desativado."
+
+#: admindebug.cpp:92
+msgid "Debugging mode is on."
+msgstr "O modo de depuração está ativado."
+
+#: admindebug.cpp:94
+msgid "Debugging mode is off."
+msgstr "O modo de depuração está desativado."
+
+#: admindebug.cpp:96
+msgid "Logging to: stdout."
+msgstr "A registar para: stdout."
+
+#: admindebug.cpp:105
+msgid "Enable Debug mode dynamically."
+msgstr "Ativar o modo de depuração dinamicamente."
