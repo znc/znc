@@ -14,7 +14,7 @@ msgstr ""
 
 #: autoop.cpp:155
 msgid "List all users"
-msgstr "Listar todos os utilizadores"
+msgstr "Lista todos os utilizadores"
 
 #: autoop.cpp:157 autoop.cpp:160
 msgid "<user> <channel> [channel] ..."
@@ -112,59 +112,66 @@ msgstr "Utilizador: AddMasks <utilizador> <máscara>,[máscara] ..."
 
 #: autoop.cpp:393
 msgid "Hostmasks(s) added to user {1}"
-msgstr ""
+msgstr "Máscara(s) de host adicionada(s) ao utilizador {1}"
 
 #: autoop.cpp:402
 msgid "Usage: DelMasks <user> <mask>,[mask] ..."
-msgstr ""
+msgstr "Utilização: DelMasks <utilizador> <máscara>,[máscara] ..."
 
 #: autoop.cpp:414
 msgid "Removed user {1} with key {2} and channels {3}"
-msgstr ""
+msgstr "Utilizador {1} removido com chave {2} e canais {3}"
 
 #: autoop.cpp:420
 msgid "Hostmasks(s) Removed from user {1}"
-msgstr ""
+msgstr "Máscara(s) de host removida(s) do utilizador {1}"
 
 #: autoop.cpp:479
 msgid "User {1} removed"
-msgstr ""
+msgstr "Utilizador {1} removido"
 
 #: autoop.cpp:485
 msgid "That user already exists"
-msgstr ""
+msgstr "Esse utilizador já existe"
 
 #: autoop.cpp:491
 msgid "User {1} added with hostmask(s) {2}"
-msgstr ""
+msgstr "Utilizador {1} adicionado com a másca(s) de host {2}"
 
 #: autoop.cpp:533
 msgid ""
 "[{1}] sent us a challenge but they are not opped in any defined channels."
 msgstr ""
+"[{1}] enviou-nos um um desafio mas não estão com op em quaisquer canais "
+"definidos."
 
 #: autoop.cpp:537
 msgid "[{1}] sent us a challenge but they do not match a defined user."
 msgstr ""
+"[{1}] enviou-nos um desafio mas não coincidem com um utilizador definido."
 
 #: autoop.cpp:545
 msgid "WARNING! [{1}] sent an invalid challenge."
-msgstr ""
+msgstr "AVISO! [{1}] enviou um desafio inválido."
 
 #: autoop.cpp:561
 msgid "[{1}] sent an unchallenged response.  This could be due to lag."
-msgstr ""
+msgstr "[{1}] enviou uma resposta sem desafio.  Isto pode dever-se a atraso."
 
 #: autoop.cpp:578
 msgid ""
 "WARNING! [{1}] sent a bad response.  Please verify that you have their "
 "correct password."
 msgstr ""
+"AVISO! [{1}] enviou uma resposta incorreta.  Por favor certifique-se que tem "
+"a palavra-passe correta deles."
 
 #: autoop.cpp:587
 msgid "WARNING! [{1}] sent a response but did not match any defined users."
 msgstr ""
+"AVISO! [{1}] enviou uma resposta mas não coincide com quaisquer utilizadores "
+"definidos."
 
 #: autoop.cpp:645
 msgid "Auto op the good people"
-msgstr ""
+msgstr "Auto op as boas pessoas"

@@ -14,60 +14,67 @@ msgstr ""
 
 #: clientnotify.cpp:47
 msgid "<message|notice|off>"
-msgstr ""
+msgstr "<message|notice|off>"
 
 #: clientnotify.cpp:48
 msgid "Sets the notify method"
-msgstr ""
+msgstr "Define o método de notificação"
 
 #: clientnotify.cpp:50 clientnotify.cpp:54
 msgid "<on|off>"
-msgstr ""
+msgstr "<on|off>"
 
 #: clientnotify.cpp:51
 msgid "Turns notifications for unseen IP addresses on or off"
 msgstr ""
+"Ativa ou desativa as notificações para endereços de IP nunca antes vistos"
 
 #: clientnotify.cpp:55
 msgid "Turns notifications for clients disconnecting on or off"
-msgstr ""
+msgstr "Ativa ou desativa as notificações para clientes que desliguem"
 
 #: clientnotify.cpp:57
 msgid "Shows the current settings"
-msgstr ""
+msgstr "Mostra as definições atuais"
 
 #: clientnotify.cpp:81 clientnotify.cpp:95
 msgid "<This message is impossible for 1 client>"
 msgid_plural ""
 "Another client authenticated as your user. Use the 'ListClients' command to "
 "see all {1} clients."
-msgstr[0] ""
+msgstr[0] "<Esta mensagem é impossivel para 1 cliente>"
 msgstr[1] ""
+"Outro cliente autenticou-se como seu utilizador. Utilize o comando "
+"'ListClients' para ver todos os {1} clientes."
 
 #: clientnotify.cpp:108
 msgid "Usage: Method <message|notice|off>"
-msgstr ""
+msgstr "Utilização: Method <message|notice|off>"
 
 #: clientnotify.cpp:114 clientnotify.cpp:127 clientnotify.cpp:140
 msgid "Saved."
-msgstr ""
+msgstr "Guardado."
 
 #: clientnotify.cpp:121
 msgid "Usage: NewOnly <on|off>"
-msgstr ""
+msgstr "Utilização: NewOnly <on|off>"
 
 #: clientnotify.cpp:134
 msgid "Usage: OnDisconnect <on|off>"
-msgstr ""
+msgstr "Utilização: OnDisconnect <on|off>"
 
 #: clientnotify.cpp:145
 msgid ""
 "Current settings: Method: {1}, for unseen IP addresses only: {2}, notify on "
 "disconnecting clients: {3}"
 msgstr ""
+"Definições atuais: Método: {1}, para endereços de IP nunca antes vistos "
+"apenas: {2}, notificar sobre clientes que desligarem: {3}"
 
 #: clientnotify.cpp:157
 msgid ""
 "Notifies you when another IRC client logs into or out of your account. "
 "Configurable."
 msgstr ""
+"Notifica-o quando outro cliente de IRC inicia sessão ou termina a sessão da "
+"sua conta. Configurável."

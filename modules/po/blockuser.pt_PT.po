@@ -14,84 +14,84 @@ msgstr ""
 
 #: modules/po/../data/blockuser/tmpl/blockuser_WebadminUser.tmpl:9
 msgid "Account is blocked"
-msgstr ""
+msgstr "A conta está bloqueada"
 
 #: blockuser.cpp:23
 msgid "Your account has been disabled. Contact your administrator."
-msgstr ""
+msgstr "A sua conta foi desativada. Contacte o seu administrador."
 
 #: blockuser.cpp:29
 msgid "List blocked users"
-msgstr ""
+msgstr "Lista os utilizadores bloqueados"
 
 #: blockuser.cpp:31 blockuser.cpp:33
 msgid "<user>"
-msgstr ""
+msgstr "<utilizador>"
 
 #: blockuser.cpp:31
 msgid "Block a user"
-msgstr ""
+msgstr "Bloqueia um utilizador"
 
 #: blockuser.cpp:33
 msgid "Unblock a user"
-msgstr ""
+msgstr "Desbloqueia um utilizador"
 
 #: blockuser.cpp:55
 msgid "Could not block {1}"
-msgstr ""
+msgstr "Não foi possível bloquear {1}"
 
 #: blockuser.cpp:76
 msgid "Access denied"
-msgstr ""
+msgstr "Acesso negado"
 
 #: blockuser.cpp:85
 msgid "No users are blocked"
-msgstr ""
+msgstr "Não há utilizadores bloqueados"
 
 #: blockuser.cpp:88
 msgid "Blocked users:"
-msgstr ""
+msgstr "Utilizadores bloqueados:"
 
 #: blockuser.cpp:100
 msgid "Usage: Block <user>"
-msgstr ""
+msgstr "Utilização: Block <utilizador>"
 
 #: blockuser.cpp:105 blockuser.cpp:147
 msgid "You can't block yourself"
-msgstr ""
+msgstr "Não se pode bloquear a si próprio(a)"
 
 #: blockuser.cpp:110 blockuser.cpp:152
 msgid "Blocked {1}"
-msgstr ""
+msgstr "{1} bloqueado"
 
 #: blockuser.cpp:112
 msgid "Could not block {1} (misspelled?)"
-msgstr ""
+msgstr "Não foi possível bloquear {1} (mal escrito?)"
 
 #: blockuser.cpp:120
 msgid "Usage: Unblock <user>"
-msgstr ""
+msgstr "Utilização: Unblock <utilizador>"
 
 #: blockuser.cpp:125 blockuser.cpp:161
 msgid "Unblocked {1}"
-msgstr ""
+msgstr "{1} desbloqueado"
 
 #: blockuser.cpp:127
 msgid "This user is not blocked"
-msgstr ""
+msgstr "Este utilizador não está bloqueado"
 
 #: blockuser.cpp:155
 msgid "Couldn't block {1}"
-msgstr ""
+msgstr "Não foi possível bloquear {1}"
 
 #: blockuser.cpp:164
 msgid "User {1} is not blocked"
-msgstr ""
+msgstr "Utilizador {1} não está bloqueado"
 
 #: blockuser.cpp:216
 msgid "Enter one or more user names. Separate them by spaces."
-msgstr ""
+msgstr "Introduza um ou mais nomes de utilizadores. Separe-os com espaços."
 
 #: blockuser.cpp:219
 msgid "Block certain users from logging in."
-msgstr ""
+msgstr "Bloqueia certos utilizadores de iniciarem sessão."

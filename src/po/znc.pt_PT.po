@@ -466,15 +466,15 @@ msgstr ""
 
 #: ClientCommand.cpp:183
 msgid "Usage: ListClients"
-msgstr ""
+msgstr "Utilização: ListClients"
 
 #: ClientCommand.cpp:190
 msgid "No such user: {1}"
-msgstr ""
+msgstr "Não existe esse utilizador: {1}"
 
 #: ClientCommand.cpp:198
 msgid "No clients are connected"
-msgstr ""
+msgstr "Não há clientes ligados"
 
 #: ClientCommand.cpp:203 ClientCommand.cpp:209
 msgctxt "listclientscmd"
@@ -489,7 +489,7 @@ msgstr ""
 #: ClientCommand.cpp:205 ClientCommand.cpp:215
 msgctxt "listclientscmd"
 msgid "Identifier"
-msgstr ""
+msgstr "Identificador"
 
 #: ClientCommand.cpp:223 ClientCommand.cpp:229
 msgctxt "listuserscmd"
@@ -499,12 +499,12 @@ msgstr ""
 #: ClientCommand.cpp:224 ClientCommand.cpp:230
 msgctxt "listuserscmd"
 msgid "Networks"
-msgstr ""
+msgstr "Redes"
 
 #: ClientCommand.cpp:225 ClientCommand.cpp:232
 msgctxt "listuserscmd"
 msgid "Clients"
-msgstr ""
+msgstr "Clientes"
 
 #: ClientCommand.cpp:240 ClientCommand.cpp:250 ClientCommand.cpp:260
 #: ClientCommand.cpp:263
@@ -520,7 +520,7 @@ msgstr ""
 #: ClientCommand.cpp:242 ClientCommand.cpp:252 ClientCommand.cpp:268
 msgctxt "listallusernetworkscmd"
 msgid "Clients"
-msgstr ""
+msgstr "Clientes"
 
 #: ClientCommand.cpp:243 ClientCommand.cpp:271 ClientCommand.cpp:280
 msgctxt "listallusernetworkscmd"
@@ -544,7 +544,7 @@ msgstr ""
 
 #: ClientCommand.cpp:251
 msgid "N/A"
-msgstr ""
+msgstr "N/A"
 
 #: ClientCommand.cpp:272
 msgctxt "listallusernetworkscmd"
@@ -558,28 +558,30 @@ msgstr ""
 
 #: ClientCommand.cpp:291
 msgid "Usage: SetMOTD <message>"
-msgstr ""
+msgstr "Utilização: SetMOTD <mensagem>"
 
 #: ClientCommand.cpp:294
 msgid "MOTD set to: {1}"
-msgstr ""
+msgstr "MOTD definida para: {1}"
 
 #: ClientCommand.cpp:300
 msgid "Usage: AddMOTD <message>"
-msgstr ""
+msgstr "Utilização: AddMOTD <mensagem>"
 
 #: ClientCommand.cpp:303
 msgid "Added [{1}] to MOTD"
-msgstr ""
+msgstr "[{1}] adicionado ao MOTD"
 
 #: ClientCommand.cpp:307
 msgid "Cleared MOTD"
-msgstr ""
+msgstr "MOTD limpa"
 
 #: ClientCommand.cpp:329
 msgid ""
 "ERROR: Writing config file to disk failed! Aborting. Use {1} FORCE to ignore."
 msgstr ""
+"ERRO: Falha ao escrever o ficheiro de config para o disco! A abortar. "
+"Utilize {1} FORCE para ignorar."
 
 #: ClientCommand.cpp:344 ClientCommand.cpp:842 ClientCommand.cpp:883
 msgid "You don't have any servers added."
@@ -587,43 +589,43 @@ msgstr ""
 
 #: ClientCommand.cpp:355
 msgid "Server [{1}] not found"
-msgstr ""
+msgstr "Servidor [{1}] não encontrado"
 
 #: ClientCommand.cpp:375 ClientCommand.cpp:380
 msgid "Connecting to {1}..."
-msgstr ""
+msgstr "A ligar a {1}..."
 
 #: ClientCommand.cpp:377
 msgid "Jumping to the next server in the list..."
-msgstr ""
+msgstr "A saltar para o próximo servidor da lista..."
 
 #: ClientCommand.cpp:382
 msgid "Connecting..."
-msgstr ""
+msgstr "A ligar..."
 
 #: ClientCommand.cpp:400
 msgid "Disconnected from IRC. Use 'connect' to reconnect."
-msgstr ""
+msgstr "Desligado do IRC. Utilize 'connect' para voltar a ligar."
 
 #: ClientCommand.cpp:412
 msgid "Usage: EnableChan <#chans>"
-msgstr ""
+msgstr "Utilização: EnableChan <#canais>"
 
 #: ClientCommand.cpp:426
 msgid "Enabled {1} channel"
 msgid_plural "Enabled {1} channels"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{1} canal ativado"
+msgstr[1] "{1} canais ativados"
 
 #: ClientCommand.cpp:439
 msgid "Usage: DisableChan <#chans>"
-msgstr ""
+msgstr "Utilização: DisableChan <#canais>"
 
 #: ClientCommand.cpp:453
 msgid "Disabled {1} channel"
 msgid_plural "Disabled {1} channels"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{1} canal desativado"
+msgstr[1] "{1} canais desativados"
 
 #: ClientCommand.cpp:466
 msgid "Usage: MoveChan <#chan> <index>"
