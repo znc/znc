@@ -14,4 +14,4 @@ msgstr ""
 
 #: chansaver.cpp:91
 msgid "Keeps config up-to-date when user joins/parts."
-msgstr ""
+msgstr "Mantem a config atualizada quando o utilizador entra/sai."

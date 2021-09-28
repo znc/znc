@@ -15,117 +15,121 @@ msgstr ""
 #: bouncedcc.cpp:101 bouncedcc.cpp:119 bouncedcc.cpp:121
 msgctxt "list"
 msgid "Type"
-msgstr ""
+msgstr "Tipo"
 
 #: bouncedcc.cpp:102 bouncedcc.cpp:132
 msgctxt "list"
 msgid "State"
-msgstr ""
+msgstr "Estado"
 
 #: bouncedcc.cpp:103
 msgctxt "list"
 msgid "Speed"
-msgstr ""
+msgstr "Velocidade"
 
 #: bouncedcc.cpp:104 bouncedcc.cpp:115
 msgctxt "list"
 msgid "Nick"
-msgstr ""
+msgstr "Nick"
 
 #: bouncedcc.cpp:105 bouncedcc.cpp:116
 msgctxt "list"
 msgid "IP"
-msgstr ""
+msgstr "IP"
 
 #: bouncedcc.cpp:106 bouncedcc.cpp:122
 msgctxt "list"
 msgid "File"
-msgstr ""
+msgstr "Ficheiro"
 
 #: bouncedcc.cpp:119
 msgctxt "list"
 msgid "Chat"
-msgstr ""
+msgstr "Chat"
 
 #: bouncedcc.cpp:121
 msgctxt "list"
 msgid "Xfer"
-msgstr ""
+msgstr "Xfer"
 
 #: bouncedcc.cpp:125
 msgid "Waiting"
-msgstr ""
+msgstr "Em espera"
 
 #: bouncedcc.cpp:127
 msgid "Halfway"
-msgstr ""
+msgstr "A meio do caminho"
 
 #: bouncedcc.cpp:129
 msgid "Connected"
-msgstr ""
+msgstr "Ligado"
 
 #: bouncedcc.cpp:137
 msgid "You have no active DCCs."
-msgstr ""
+msgstr "Não tem DCCs ativos."
 
 #: bouncedcc.cpp:148
 msgid "Use client IP: {1}"
-msgstr ""
+msgstr "Usa cliente IP: {1}"
 
 #: bouncedcc.cpp:153
 msgid "List all active DCCs"
-msgstr ""
+msgstr "Lista todas as DCCs ativas"
 
 #: bouncedcc.cpp:156
 msgid "Change the option to use IP of client"
-msgstr ""
+msgstr "Altera a opção para usar o IP do cliente"
 
 #: bouncedcc.cpp:383 bouncedcc.cpp:412 bouncedcc.cpp:436 bouncedcc.cpp:451
 msgctxt "type"
 msgid "Chat"
-msgstr ""
+msgstr "Chat"
 
 #: bouncedcc.cpp:383 bouncedcc.cpp:412 bouncedcc.cpp:436 bouncedcc.cpp:451
 msgctxt "type"
 msgid "Xfer"
-msgstr ""
+msgstr "Xfer"
 
 #: bouncedcc.cpp:385
 msgid "DCC {1} Bounce ({2}): Too long line received"
-msgstr ""
+msgstr "DCC {1} Bounce ({2}): Linha demasiado longa recebida"
 
 #: bouncedcc.cpp:418
 msgid "DCC {1} Bounce ({2}): Timeout while connecting to {3} {4}"
-msgstr ""
+msgstr "DCC {1} Bounce ({2}): O tempo expirou ao ligar a {3} {4}"
 
 #: bouncedcc.cpp:422
 msgid "DCC {1} Bounce ({2}): Timeout while connecting."
-msgstr ""
+msgstr "DCC {1} Bounce ({2}): O tempo expirou ao ligar."
 
 #: bouncedcc.cpp:427
 msgid ""
 "DCC {1} Bounce ({2}): Timeout while waiting for incoming connection on {3} "
 "{4}"
 msgstr ""
+"DCC {1} Bounce ({2}): O tempo expirou enquanto esperava pela ligação a "
+"receber em {3} {4}"
 
 #: bouncedcc.cpp:440
 msgid "DCC {1} Bounce ({2}): Connection refused while connecting to {3} {4}"
-msgstr ""
+msgstr "DCC {1} Bounce ({2}): Ligação recusada enquanto ligava a {3} {4}"
 
 #: bouncedcc.cpp:444
 msgid "DCC {1} Bounce ({2}): Connection refused while connecting."
-msgstr ""
+msgstr "DCC {1} Bounce ({2}): Ligação recusada enquanto ligava."
 
 #: bouncedcc.cpp:457 bouncedcc.cpp:465
 msgid "DCC {1} Bounce ({2}): Socket error on {3} {4}: {5}"
-msgstr ""
+msgstr "DCC {1} Bounce ({2}): Erro de socket error em {3} {4}: {5}"
 
 #: bouncedcc.cpp:460
 msgid "DCC {1} Bounce ({2}): Socket error: {3}"
-msgstr ""
+msgstr "DCC {1} Bounce ({2}): Erro de socket: {3}"
 
 #: bouncedcc.cpp:547
 msgid ""
 "Bounces DCC transfers through ZNC instead of sending them directly to the "
 "user. "
 msgstr ""
+"Põe as transferências DCC através do ZNC em vez de enviá-las diretamente ao "
+"utilizador. "

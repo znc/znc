@@ -15,7 +15,7 @@ msgstr ""
 #  this text is inserted into `click here` in the other string
 #: modules/po/../data/cert/tmpl/index.tmpl:5
 msgid "here"
-msgstr ""
+msgstr "aqui"
 
 #  {1} is `here`, translateable in the other string
 #: modules/po/../data/cert/tmpl/index.tmpl:6
@@ -23,53 +23,59 @@ msgid ""
 "You already have a certificate set, use the form below to overwrite the "
 "current certificate. Alternatively click {1} to delete your certificate."
 msgstr ""
+"Já tem um certificado definido, utilize o formulário abaixo para reescrever "
+"o certificado atual. Em alternativa, clique {1} para eliminar o seu "
+"certificado."
 
 #: modules/po/../data/cert/tmpl/index.tmpl:8
 msgid "You do not have a certificate yet."
-msgstr ""
+msgstr "Não tem um certificado ainda."
 
 #: modules/po/../data/cert/tmpl/index.tmpl:14 cert.cpp:72
 msgid "Certificate"
-msgstr ""
+msgstr "Certificado"
 
 #: modules/po/../data/cert/tmpl/index.tmpl:18
 msgid "PEM File:"
-msgstr ""
+msgstr "Ficheiro PEM:"
 
 #: modules/po/../data/cert/tmpl/index.tmpl:22
 msgid "Update"
-msgstr ""
+msgstr "Atualizar"
 
 #: cert.cpp:28
 msgid "Pem file deleted"
-msgstr ""
+msgstr "Ficheiro PEM eliminado"
 
 #: cert.cpp:31
 msgid "The pem file doesn't exist or there was a error deleting the pem file."
 msgstr ""
+"O ficheiro pem não existe ou houve algum erro ao eliminar o ficheiro pem."
 
 #: cert.cpp:38
 msgid "You have a certificate in {1}"
-msgstr ""
+msgstr "Tem um ceritifcado em {1}"
 
 #: cert.cpp:41
 msgid ""
 "You do not have a certificate. Please use the web interface to add a "
 "certificate"
 msgstr ""
+"Não tem um certificado. Por favor utilize o interface web para adicionar um "
+"certificado"
 
 #: cert.cpp:44
 msgid "Alternatively you can either place one at {1}"
-msgstr ""
+msgstr "Em alternativa, pode colocar um em {1}"
 
 #: cert.cpp:52
 msgid "Delete the current certificate"
-msgstr ""
+msgstr "Eliminar o certificado atual"
 
 #: cert.cpp:54
 msgid "Show the current certificate"
-msgstr ""
+msgstr "Mostrar o certificado atual"
 
 #: cert.cpp:105
 msgid "Use a ssl certificate to connect to a server"
-msgstr ""
+msgstr "Utilizar um certificado ssl para ligar a um servidor"

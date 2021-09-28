@@ -14,56 +14,59 @@ msgstr ""
 
 #: autocycle.cpp:27 autocycle.cpp:30
 msgid "[!]<#chan>"
-msgstr ""
+msgstr "[!]<#canal>"
 
 #: autocycle.cpp:28
 msgid "Add an entry, use !#chan to negate and * for wildcards"
 msgstr ""
+"Adicionar uma entrada, utilize !#canal para negá-lo e * para combinações"
 
 #: autocycle.cpp:31
 msgid "Remove an entry, needs to be an exact match"
-msgstr ""
+msgstr "Remove uma entrada, precisa de coincidir exatamente"
 
 #: autocycle.cpp:33
 msgid "List all entries"
-msgstr ""
+msgstr "Lista todas as entradas"
 
 #: autocycle.cpp:46
 msgid "Unable to add {1}"
-msgstr ""
+msgstr "Não foi possível adicionar {1}"
 
 #: autocycle.cpp:66
 msgid "{1} is already added"
-msgstr ""
+msgstr "{1} já está adicionada"
 
 #: autocycle.cpp:68
 msgid "Added {1} to list"
-msgstr ""
+msgstr "{1} adicionada para a lista"
 
 #: autocycle.cpp:70
 msgid "Usage: Add [!]<#chan>"
-msgstr ""
+msgstr "Utilização: Add [!]<#canal>"
 
 #: autocycle.cpp:78
 msgid "Removed {1} from list"
-msgstr ""
+msgstr "{1} removida da lista"
 
 #: autocycle.cpp:80
 msgid "Usage: Del [!]<#chan>"
-msgstr ""
+msgstr "Utilização: Del [!]<#canal>"
 
 #: autocycle.cpp:85 autocycle.cpp:90 autocycle.cpp:95
 msgid "Channel"
-msgstr ""
+msgstr "Canal"
 
 #: autocycle.cpp:101
 msgid "You have no entries."
-msgstr ""
+msgstr "Não tem entradas."
 
 #: autocycle.cpp:230
 msgid "List of channel masks and channel masks with ! before them."
-msgstr ""
+msgstr "Lista das máscaras de canal e máscaras de canal com ! antes deles."
 
 #: autocycle.cpp:235
 msgid "Rejoins channels to gain Op if you're the only user left"
 msgstr ""
+"Volta a entrar nos canais para ganhar Op se for o único utilizador restante "
+"do canal"
