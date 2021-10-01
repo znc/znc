@@ -22,7 +22,7 @@ RUN apk add --no-cache \
         cyrus-sasl \
         gettext \
         icu-dev \
-        libressl-dev \
+        openssl-dev \
         perl \
         python3 \
         su-exec \
