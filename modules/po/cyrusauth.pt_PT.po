@@ -14,60 +14,70 @@ msgstr ""
 
 #: cyrusauth.cpp:42
 msgid "Shows current settings"
-msgstr ""
+msgstr "Mostra as definições atuais"
 
 #: cyrusauth.cpp:44
 msgid "yes|clone <username>|no"
-msgstr ""
+msgstr "yes|clone <utilizador>|no"
 
 #: cyrusauth.cpp:45
 msgid ""
 "Create ZNC users upon first successful login, optionally from a template"
 msgstr ""
+"Cria utilizadores ZNC após um inicio de sessão bem-sucedido, opcionalmente a "
+"partir de um modelo"
 
 #: cyrusauth.cpp:56
 msgid "Access denied"
-msgstr ""
+msgstr "Acesso negado"
 
 #: cyrusauth.cpp:70
 msgid "Ignoring invalid SASL pwcheck method: {1}"
-msgstr ""
+msgstr "A ignorar método SASL pwcheck inválido: {1}"
 
 #: cyrusauth.cpp:71
 msgid "Ignored invalid SASL pwcheck method"
-msgstr ""
+msgstr "Método SASL pwcheck inválido ignorado"
 
 #: cyrusauth.cpp:79
 msgid "Need a pwcheck method as argument (saslauthd, auxprop)"
-msgstr ""
+msgstr "Precisa de método pwcheck como argumento (saslauthd, auxprops)"
 
 #: cyrusauth.cpp:84
 msgid "SASL Could Not Be Initialized - Halting Startup"
-msgstr ""
+msgstr "SASL não pôde ser iniciado - Arranque parado"
 
 #: cyrusauth.cpp:171 cyrusauth.cpp:186
 msgid "We will not create users on their first login"
-msgstr ""
+msgstr "Não iremos criar utilizadores no primeiro inicio de sessão deles"
 
 #: cyrusauth.cpp:174 cyrusauth.cpp:195
 msgid ""
 "We will create users on their first login, using user [{1}] as a template"
 msgstr ""
+"Iremos criar utilizadores no seu primeiro inicio de sessão, utilizando o "
+"utilizador [{1}] como um modelo"
 
 #: cyrusauth.cpp:177 cyrusauth.cpp:190
 msgid "We will create users on their first login"
-msgstr ""
+msgstr "Iremos criar utilizadores no primeiro inicio de sessão deles"
 
 #: cyrusauth.cpp:199
 msgid "Usage: CreateUsers yes, CreateUsers no, or CreateUsers clone <username>"
 msgstr ""
+"Utilização: CreateUsers yes, CreateUsers no, ou CreateUsers clone "
+"<utilizador>"
 
 #: cyrusauth.cpp:232
 msgid ""
 "This global module takes up to two arguments - the methods of authentication "
 "- auxprop and saslauthd"
 msgstr ""
+"Este módulo global leva até dois argumentos - os métodos de autenticação - "
+"auxprop e saslauthd"
 
 #: cyrusauth.cpp:238
 msgid "Allow users to authenticate via SASL password verification method"
 msgstr ""
+"Permite aos utilizadores autenticarem-se via método de verificação de "
+"palavra-passe SASL"
