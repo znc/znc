@@ -46,6 +46,4 @@ msgstr "{1} alterou o tópico para: {2}"
 
 #: buffextras.cpp:115
 msgid "Adds joins, parts etc. to the playback buffer"
-msgstr ""
-"Adiciona entradas, saídas de canal, etc. para a memória intermédia de "
-"reprodução"
+msgstr "Adiciona entradas, saídas de canal, etc. para a reprodução do buffer"

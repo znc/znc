@@ -14,48 +14,49 @@ msgstr ""
 
 #: kickrejoin.cpp:56
 msgid "<secs>"
-msgstr ""
+msgstr "<segs>"
 
 #: kickrejoin.cpp:56
 msgid "Set the rejoin delay"
-msgstr ""
+msgstr "Define o atraso da reentrada"
 
 #: kickrejoin.cpp:58
 msgid "Show the rejoin delay"
-msgstr ""
+msgstr "Mostra o atraso da reentrada"
 
 #: kickrejoin.cpp:77
 msgid "Illegal argument, must be a positive number or 0"
-msgstr ""
+msgstr "Argumento inválido, tem de ser um número positivo ou 0"
 
 #: kickrejoin.cpp:90
 msgid "Negative delays don't make any sense!"
-msgstr ""
+msgstr "Atrasos negativos não fazem qualquer sentido!"
 
 #: kickrejoin.cpp:98
 msgid "Rejoin delay set to 1 second"
 msgid_plural "Rejoin delay set to {1} seconds"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "O atraso da reentrada foi definido para 1 segundo"
+msgstr[1] "O atraso da reentrada foi definido para {1} segundos"
 
 #: kickrejoin.cpp:101
 msgid "Rejoin delay disabled"
-msgstr ""
+msgstr "O atraso da reentrada foi desativado"
 
 #: kickrejoin.cpp:106
 msgid "Rejoin delay is set to 1 second"
 msgid_plural "Rejoin delay is set to {1} seconds"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "O atraso da reentrada está definido para 1 segundo"
+msgstr[1] "O atraso da reentrada está definido para {1} segundos"
 
 #: kickrejoin.cpp:109
 msgid "Rejoin delay is disabled"
-msgstr ""
+msgstr "O atraso de reentrada está desativado"
 
 #: kickrejoin.cpp:131
 msgid "You might enter the number of seconds to wait before rejoining."
 msgstr ""
+"Poder querer introduzir o número de segundos de espera antes de reentrar."
 
 #: kickrejoin.cpp:134
 msgid "Autorejoins on kick"
-msgstr ""
+msgstr "Entra automaticamente se kickado"
