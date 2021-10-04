@@ -14,18 +14,18 @@ msgstr ""
 
 #: perleval.pm:23
 msgid "Evaluates perl code"
-msgstr ""
+msgstr "Avalia código Perl"
 
 #: perleval.pm:33
 msgid "Only admin can load this module"
-msgstr ""
+msgstr "Só administradores podem carregar este módulo"
 
 #: perleval.pm:44
 #, perl-format
 msgid "Error: %s"
-msgstr ""
+msgstr "Erro: %s"
 
 #: perleval.pm:46
 #, perl-format
 msgid "Result: %s"
-msgstr ""
+msgstr "Resultado: %s"

@@ -14,106 +14,106 @@ msgstr ""
 
 #: sample.cpp:31
 msgid "Sample job cancelled"
-msgstr ""
+msgstr "Tarefa de exemplo cancelada"
 
 #: sample.cpp:33
 msgid "Sample job destroyed"
-msgstr ""
+msgstr "Tarefa de exemplo destruída"
 
 #: sample.cpp:50
 msgid "Sample job done"
-msgstr ""
+msgstr "Tarefa de exemplo concluída"
 
 #: sample.cpp:65
 msgid "TEST!!!!"
-msgstr ""
+msgstr "TESTE!!!!"
 
 #: sample.cpp:74
 msgid "I'm being loaded with the arguments: {1}"
-msgstr ""
+msgstr "Estou a ser carregado com os argumentos: {1}"
 
 #: sample.cpp:85
 msgid "I'm being unloaded!"
-msgstr ""
+msgstr "Estou a ser descarregado!"
 
 #: sample.cpp:94
 msgid "You got connected BoyOh."
-msgstr ""
+msgstr "Está ligado agora BoyOh."
 
 #: sample.cpp:98
 msgid "You got disconnected BoyOh."
-msgstr ""
+msgstr "Estás desligado agora BoyOh."
 
 #: sample.cpp:116
 msgid "{1} {2} set mode on {3} {4}{5} {6}"
-msgstr ""
+msgstr "{1} {2} define modo em {3} {4}{5} {6}"
 
 #: sample.cpp:123
 msgid "{1} {2} opped {3} on {4}"
-msgstr ""
+msgstr "{1} {2} deu op a {3} em {4}"
 
 #: sample.cpp:129
 msgid "{1} {2} deopped {3} on {4}"
-msgstr ""
+msgstr "{1} {2} tirou o op a {3} em {4}"
 
 #: sample.cpp:135
 msgid "{1} {2} voiced {3} on {4}"
-msgstr ""
+msgstr "{1} {2} deu voice a {3} em {4}"
 
 #: sample.cpp:141
 msgid "{1} {2} devoiced {3} on {4}"
-msgstr ""
+msgstr "{1} {2} tirou o voice a {3} em {4}"
 
 #: sample.cpp:147
 msgid "* {1} sets mode: {2} {3} on {4}"
-msgstr ""
+msgstr "* {1} define modo: {2} {3} em {4}"
 
 #: sample.cpp:163
 msgid "{1} kicked {2} from {3} with the msg {4}"
-msgstr ""
+msgstr "{1} kickou {2} de {3} com a mensagem {4}"
 
 #: sample.cpp:169
 msgid "* {1} ({2}@{3}) quits ({4}) from channel: {6}"
 msgid_plural "* {1} ({2}@{3}) quits ({4}) from {5} channels: {6}"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "* {1} ({2}@{3}) saiu ({4}) do canal: {6}"
+msgstr[1] "* {1} ({2}@{3}) saiu ({4}) de {5} canais: {6}"
 
 #: sample.cpp:177
 msgid "Attempting to join {1}"
-msgstr ""
+msgstr "A tentar entrar em {1}"
 
 #: sample.cpp:182
 msgid "* {1} ({2}@{3}) joins {4}"
-msgstr ""
+msgstr "* {1} ({2}@{3}) entra em {4}"
 
 #: sample.cpp:189
 msgid "* {1} ({2}@{3}) parts {4}"
-msgstr ""
+msgstr "* {1} ({2}@{3}) sai {4}"
 
 #: sample.cpp:196
 msgid "{1} invited us to {2}, ignoring invites to {2}"
-msgstr ""
+msgstr "{1} convidou-nos {2}, a ignorar convites para {2}"
 
 #: sample.cpp:201
 msgid "{1} invited us to {2}"
-msgstr ""
+msgstr "{1} convidou-nos para {2}"
 
 #: sample.cpp:207
 msgid "{1} is now known as {2}"
-msgstr ""
+msgstr "{1} é agora conhecido como {2}"
 
 #: sample.cpp:269 sample.cpp:276
 msgid "{1} changes topic on {2} to {3}"
-msgstr ""
+msgstr "{1} mudou o tópico de {2} para {3}"
 
 #: sample.cpp:317
 msgid "Hi, I'm your friendly sample module."
-msgstr ""
+msgstr "Olá. Eu sou o seu módulo de exemplo amigável."
 
 #: sample.cpp:330
 msgid "Description of module arguments goes here."
-msgstr ""
+msgstr "A descrição dos argumentos do módulos é aqui."
 
 #: sample.cpp:333
 msgid "To be used as a sample for writing modules"
-msgstr ""
+msgstr "A ser utilizado como exemplo para escrever módulos"
