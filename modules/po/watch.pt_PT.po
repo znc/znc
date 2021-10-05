@@ -14,7 +14,7 @@ msgstr ""
 
 #: watch.cpp:178
 msgid "<HostMask> [Target] [Pattern]"
-msgstr ""
+msgstr "<MascaraHost> [Alvo] [Padrão]"
 
 #: watch.cpp:178
 msgid "Used to add an entry to watch for."

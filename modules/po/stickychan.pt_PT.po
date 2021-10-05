@@ -14,89 +14,91 @@ msgstr ""
 
 #: modules/po/../data/stickychan/tmpl/index.tmpl:9
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: modules/po/../data/stickychan/tmpl/index.tmpl:10
 msgid "Sticky"
-msgstr ""
+msgstr "Colado"
 
 #: modules/po/../data/stickychan/tmpl/index.tmpl:25
 msgid "Save"
-msgstr ""
+msgstr "Guardar"
 
 #: modules/po/../data/stickychan/tmpl/stickychan_WebadminChan.tmpl:8
 msgid "Channel is sticky"
-msgstr ""
+msgstr "Canal está colado"
 
 #: stickychan.cpp:28
 msgid "<#channel> [key]"
-msgstr ""
+msgstr "<#canal> [chave]"
 
 #: stickychan.cpp:28
 msgid "Sticks a channel"
-msgstr ""
+msgstr "Cola um canal"
 
 #: stickychan.cpp:30
 msgid "<#channel>"
-msgstr ""
+msgstr "<#canal>"
 
 #: stickychan.cpp:30
 msgid "Unsticks a channel"
-msgstr ""
+msgstr "Descola um canal"
 
 #: stickychan.cpp:32
 msgid "Lists sticky channels"
-msgstr ""
+msgstr "Lista os canais colados"
 
 #: stickychan.cpp:75
 msgid "Usage: Stick <#channel> [key]"
-msgstr ""
+msgstr "Utilização: Stick <#canal> [chave]"
 
 #: stickychan.cpp:79
 msgid "Stuck {1}"
-msgstr ""
+msgstr "{1} colado"
 
 #: stickychan.cpp:85
 msgid "Usage: Unstick <#channel>"
-msgstr ""
+msgstr "Utilização: Unstick <#canal>"
 
 #: stickychan.cpp:89
 msgid "Unstuck {1}"
-msgstr ""
+msgstr "{1} descolado"
 
 #: stickychan.cpp:101
 msgid " -- End of List"
-msgstr ""
+msgstr " -- Fim da lista"
 
 #: stickychan.cpp:115
 msgid "Could not join {1} (# prefix missing?)"
-msgstr ""
+msgstr "Não foi possível entrar em {1} (prefixo # em falta?)"
 
 #: stickychan.cpp:128
 msgid "Sticky Channels"
-msgstr ""
+msgstr "Canais Colados"
 
 #: stickychan.cpp:160
 msgid "Changes have been saved!"
-msgstr ""
+msgstr "As alterações foram guardadas!"
 
 #: stickychan.cpp:185
 msgid "Channel became sticky!"
-msgstr ""
+msgstr "O canal tornou-se colado!"
 
 #: stickychan.cpp:189
 msgid "Channel stopped being sticky!"
-msgstr ""
+msgstr "O canal parou de estar colado!"
 
 #: stickychan.cpp:209
 msgid ""
 "Channel {1} cannot be joined, it is an illegal channel name. Unsticking."
 msgstr ""
+"Não é possível entrar no canal {1}, é um nome de canal inválido. A descolar."
 
 #: stickychan.cpp:246
 msgid "List of channels, separated by comma."
-msgstr ""
+msgstr "Lista de canais, separados por vírgula."
 
 #: stickychan.cpp:251
 msgid "configless sticky chans, keeps you there very stickily even"
 msgstr ""
+"canais colados sem configurações, mantém-no(a) lá mesmo bem coladinho(a)"
