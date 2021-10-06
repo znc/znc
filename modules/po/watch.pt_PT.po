@@ -30,7 +30,7 @@ msgstr ""
 
 #: watch.cpp:184
 msgid "<Id>"
-msgstr ""
+msgstr "<Id>"
 
 #: watch.cpp:184
 msgid "Deletes Id from the list of watched entries."
@@ -126,59 +126,59 @@ msgstr ""
 
 #: watch.cpp:492 watch.cpp:508
 msgid "HostMask"
-msgstr ""
+msgstr "MáscaraHost"
 
 #: watch.cpp:493 watch.cpp:509
 msgid "Target"
-msgstr ""
+msgstr "Destino"
 
 #: watch.cpp:494 watch.cpp:510
 msgid "Pattern"
-msgstr ""
+msgstr "Padrão"
 
 #: watch.cpp:495 watch.cpp:511
 msgid "Sources"
-msgstr ""
+msgstr "Origens"
 
 #: watch.cpp:496 watch.cpp:512 watch.cpp:513
 msgid "Off"
-msgstr ""
+msgstr "Desligado"
 
 #: watch.cpp:497 watch.cpp:515
 msgid "DetachedClientOnly"
-msgstr ""
+msgstr "DetachedClientOnly"
 
 #: watch.cpp:498 watch.cpp:518
 msgid "DetachedChannelOnly"
-msgstr ""
+msgstr "DetachedChannelOnly"
 
 #: watch.cpp:516 watch.cpp:519
 msgid "Yes"
-msgstr ""
+msgstr "Sim"
 
 #: watch.cpp:516 watch.cpp:519
 msgid "No"
-msgstr ""
+msgstr "Não"
 
 #: watch.cpp:525 watch.cpp:531
 msgid "You have no entries."
-msgstr ""
+msgstr "Não tem entradas."
 
 #: watch.cpp:585
 msgid "Sources set for Id {1}."
-msgstr ""
+msgstr "Origens definidas para Id {1}."
 
 #: watch.cpp:609
 msgid "All entries cleared."
-msgstr ""
+msgstr "Todas as entradas foram limpas."
 
 #: watch.cpp:627
 msgid "Id {1} removed."
-msgstr ""
+msgstr "Id {1} removido."
 
 #: watch.cpp:646
 msgid "Entry for {1} already exists."
-msgstr ""
+msgstr "Entrada para {1} já existe."
 
 #: watch.cpp:654
 msgid "Adding entry: {1} watching for [{2}] -> {3}"
