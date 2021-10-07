@@ -18,15 +18,15 @@ msgstr "<MascaraHost> [Alvo] [Padrão]"
 
 #: watch.cpp:178
 msgid "Used to add an entry to watch for."
-msgstr ""
+msgstr "É usado para adicionar uma entrada para a lista de observação."
 
 #: watch.cpp:180
 msgid "List all entries being watched."
-msgstr ""
+msgstr "Lista todas as entradas a serem observadas."
 
 #: watch.cpp:182
 msgid "Dump a list of all current entries to be used later."
-msgstr ""
+msgstr "Faz uma lista de todas as entradas atuais para ser usada mais tarde."
 
 #: watch.cpp:184
 msgid "<Id>"
@@ -34,95 +34,95 @@ msgstr "<Id>"
 
 #: watch.cpp:184
 msgid "Deletes Id from the list of watched entries."
-msgstr ""
+msgstr "Elimina um Id da lista de entradas de observação."
 
 #: watch.cpp:186
 msgid "Delete all entries."
-msgstr ""
+msgstr "Elimina todas as entradas."
 
 #: watch.cpp:188 watch.cpp:190
 msgid "<Id | *>"
-msgstr ""
+msgstr "<Id | *>"
 
 #: watch.cpp:188
 msgid "Enable a disabled entry."
-msgstr ""
+msgstr "Ativa uma entrada desativada."
 
 #: watch.cpp:190
 msgid "Disable (but don't delete) an entry."
-msgstr ""
+msgstr "Desativa (mas não elimina) uma entrada."
 
 #: watch.cpp:192 watch.cpp:194
 msgid "<Id | *> <True | False>"
-msgstr ""
+msgstr "<Id | *> <True | False>"
 
 #: watch.cpp:192
 msgid "Enable or disable detached client only for an entry."
-msgstr ""
+msgstr "Ativa ou desativa cliente desunido só por uma entrada."
 
 #: watch.cpp:194
 msgid "Enable or disable detached channel only for an entry."
-msgstr ""
+msgstr "Ativa ou desativa canal desunido só por uma entrada."
 
 #: watch.cpp:196
 msgid "<Id> [#chan priv #foo* !#bar]"
-msgstr ""
+msgstr "<Id> [#canal priv #foo* !#bar]"
 
 #: watch.cpp:196
 msgid "Set the source channels that you care about."
-msgstr ""
+msgstr "Define os canais de origem que te interessam."
 
 #: watch.cpp:237
 msgid "WARNING: malformed entry found while loading"
-msgstr ""
+msgstr "AVISO: Encontrada entrada mal-formada enquanto carregava"
 
 #: watch.cpp:382
 msgid "Disabled all entries."
-msgstr ""
+msgstr "Desativa todas as entradas."
 
 #: watch.cpp:383
 msgid "Enabled all entries."
-msgstr ""
+msgstr "Ativa todas as entradas."
 
 #: watch.cpp:390 watch.cpp:432 watch.cpp:474 watch.cpp:577 watch.cpp:619
 msgid "Invalid Id"
-msgstr ""
+msgstr "Id inválido"
 
 #: watch.cpp:399
 msgid "Id {1} disabled"
-msgstr ""
+msgstr "Id {1} desativado"
 
 #: watch.cpp:401
 msgid "Id {1} enabled"
-msgstr ""
+msgstr "Id {1} ativado"
 
 #: watch.cpp:423
 msgid "Set DetachedClientOnly for all entries to Yes"
-msgstr ""
+msgstr "Define DetachedClientOnly de todas as entradas para Sim"
 
 #: watch.cpp:425
 msgid "Set DetachedClientOnly for all entries to No"
-msgstr ""
+msgstr "Define DetachedClientOnly de todas as entradas para Não"
 
 #: watch.cpp:441 watch.cpp:483
 msgid "Id {1} set to Yes"
-msgstr ""
+msgstr "Id {1} definida para Sim"
 
 #: watch.cpp:443 watch.cpp:485
 msgid "Id {1} set to No"
-msgstr ""
+msgstr "Id {1} definda para Não"
 
 #: watch.cpp:465
 msgid "Set DetachedChannelOnly for all entries to Yes"
-msgstr ""
+msgstr "Define DetachedChannelOnly de todas as entradas para Não"
 
 #: watch.cpp:467
 msgid "Set DetachedChannelOnly for all entries to No"
-msgstr ""
+msgstr "Define DetachedChannelOnly de todas as entradas para Não"
 
 #: watch.cpp:491 watch.cpp:507
 msgid "Id"
-msgstr ""
+msgstr "Id"
 
 #: watch.cpp:492 watch.cpp:508
 msgid "HostMask"
@@ -182,12 +182,13 @@ msgstr "Entrada para {1} já existe."
 
 #: watch.cpp:654
 msgid "Adding entry: {1} watching for [{2}] -> {3}"
-msgstr ""
+msgstr "A adicionar entrada: {1} observando por [{2}] -> {3}"
 
 #: watch.cpp:660
 msgid "Watch: Not enough arguments.  Try Help"
-msgstr ""
+msgstr "Watch: Argumentos insuficientes. Tente Help"
 
 #: watch.cpp:702
 msgid "Copy activity from a specific user into a separate window"
 msgstr ""
+"Copia a atividade de um utilizador especifico para uma janela em separado"

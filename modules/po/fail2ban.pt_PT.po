@@ -14,7 +14,7 @@ msgstr ""
 
 #: fail2ban.cpp:25
 msgid "[minutes]"
-msgstr ""
+msgstr "[minutos]"
 
 #: fail2ban.cpp:26
 msgid "The number of minutes IPs are blocked after a failed login."
