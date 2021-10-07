@@ -1936,59 +1936,65 @@ msgid ""
 "Can't resolve bind hostname. Try /znc ClearBindHost and /znc "
 "ClearUserBindHost"
 msgstr ""
+"Não é possível resolver hostname da ligação. Tente /znc ClearBindHost e /znc "
+"ClearUserBindHost"
 
 #: Socket.cpp:348
 msgid "Server address is IPv4-only, but bindhost is IPv6-only"
-msgstr ""
+msgstr "O endereço do servidor é apenas IPv4, mas bindhost é apenas IPv6"
 
 #: Socket.cpp:357
 msgid "Server address is IPv6-only, but bindhost is IPv4-only"
-msgstr ""
+msgstr "O endereço do servidor é apenas IPv6, mas bindhost apenas IPv4"
 
 #: Socket.cpp:515
 msgid "Some socket reached its max buffer limit and was closed!"
-msgstr ""
+msgstr "Algum socket atingiu o seu limite máximo de buffer e foi fechado!"
 
 #: SSLVerifyHost.cpp:481
 msgid "hostname doesn't match"
-msgstr ""
+msgstr "hostname não coincide"
 
 #: SSLVerifyHost.cpp:485
 msgid "malformed hostname in certificate"
-msgstr ""
+msgstr "hostname mal-formado no certificado"
 
 #: SSLVerifyHost.cpp:489
 msgid "hostname verification error"
-msgstr ""
+msgstr "erro de verificação do hostname"
 
 #: User.cpp:507
 msgid ""
 "Invalid network name. It should be alphanumeric. Not to be confused with "
 "server name"
 msgstr ""
+"Nome da rede inválido. Devia ser alfa-numérico. Não é para confundir com "
+"nome de servidor"
 
 #: User.cpp:511
 msgid "Network {1} already exists"
-msgstr ""
+msgstr "A rede {1} já existe"
 
 #: User.cpp:777
 msgid ""
 "You are being disconnected because your IP is no longer allowed to connect "
 "to this user"
 msgstr ""
+"Está a ser desligado(a) porque o seu IP já não é permitido para ligar a este "
+"utilizador"
 
 #: User.cpp:912
 msgid "Password is empty"
-msgstr ""
+msgstr "A palavra-passe está vazia"
 
 #: User.cpp:917
 msgid "Username is empty"
-msgstr ""
+msgstr "O nome do utilizador está vazio"
 
 #: User.cpp:922
 msgid "Username is invalid"
-msgstr ""
+msgstr "O nome do utilizador é inválido"
 
 #: User.cpp:1199
 msgid "Unable to find modinfo {1}: {2}"
-msgstr ""
+msgstr "Não é possível localizar modinfo {1}: {2}"
