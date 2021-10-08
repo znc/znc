@@ -22,7 +22,7 @@ msgstr "Non sei loggato"
 
 #: webskins/_default_/tmpl/LoginBar.tmpl:3
 msgid "Logout"
-msgstr "Disconnettersi"
+msgstr "Disconnetti"
 
 #: webskins/_default_/tmpl/Menu.tmpl:4
 msgid "Home"
@@ -42,7 +42,7 @@ msgstr "Moduli del Network ({1})"
 
 #: webskins/_default_/tmpl/index.tmpl:6
 msgid "Welcome to ZNC's web interface!"
-msgstr "Benvenuti nell'interfaccia web dello ZNC's!"
+msgstr "Benvenuti nell'interfaccia WEB della ZNC!"
 
 #: webskins/_default_/tmpl/index.tmpl:11
 msgid ""
@@ -50,10 +50,10 @@ msgid ""
 "*status help</code>” and “<code>/msg *status loadmod &lt;module&gt;</"
 "code>”). Once you have loaded some Web-enabled modules, the menu will expand."
 msgstr ""
-"Nessuno dei moduli abilitati al web sono stati caricati. Carica i moduli da "
-"IRC (“<code>/msg *status help</code>” e “<code>/msg *status loadmod &lt;nome "
-"del modulo&gt;</code>”). Dopo aver caricato alcuni moduli abilitati per al "
-"Web, il menù si espanderà."
+"ATTENZIONE: Nessuno dei moduli abilitati per il web è stato caricato. Carica "
+"i moduli da IRC (“<code>/msg *status help</code>” e “<code>/msg *status "
+"loadmod &lt;nome del modulo&gt;</code>”). Dopo aver caricato alcuni moduli "
+"abilitati per il web, il menù si espanderà."
 
 #: znc.cpp:1554
 msgid "User already exists"
@@ -232,8 +232,8 @@ msgstr ""
 msgid ""
 "You have no networks configured. Use /znc AddNetwork <network> to add one."
 msgstr ""
-"Non hai configurato nessun networks. Usa /znc AddNetwork <nome del network> "
-"per aggiungerne uno."
+"ATTENZIONE: Non hai ancora configurato nessun networks. Usa /znc AddNetwork "
+"<nome del network> per aggiungerne uno."
 
 #: Client.cpp:431
 msgid "Closing link: Timeout"
@@ -252,23 +252,31 @@ msgstr ""
 
 #: Client.cpp:1022
 msgid "Your CTCP to {1} got lost, you are not connected to IRC!"
-msgstr "Il tuo CTCP a {1} è andato perso, non sei connesso ad IRC!"
+msgstr ""
+"ATTENZIONE: La richiesta di CTCP verso {1} è andata persa. Ora non sei "
+"connesso ad IRC!"
 
 #: Client.cpp:1148
 msgid "Your notice to {1} got lost, you are not connected to IRC!"
-msgstr "Il tuo NOTICE a {1} è andato perso, non sei connesso ad IRC!"
+msgstr ""
+"ATTENZIONE: L'invio del tuo NOTICE verso {1} è andato perso. Ora non sei "
+"connesso ad IRC!"
 
 #: Client.cpp:1187
 msgid "Removing channel {1}"
-msgstr "Rimozione del canle {1}"
+msgstr "Rimozione del canale {1}"
 
 #: Client.cpp:1265
 msgid "Your message to {1} got lost, you are not connected to IRC!"
-msgstr "Il tuo messaggio a {1} è andato perso, non sei connesso ad IRC!"
+msgstr ""
+"ATTENZIONE: L'invio del tuo messaggio verso {1} è andato perso. Ora non sei "
+"connesso ad IRC!"
 
 #: Client.cpp:1318 Client.cpp:1324
 msgid "Hello. How may I help you?"
-msgstr "Ciao! Come posso aiutarti? Puoi iniziare a scrivere help"
+msgstr ""
+"Ciao! Per ottenere aiuto su questo e tutti i moduli della ZNC digita help "
+"(da questa finestra) oppure /znc help (in qualsiasi altra finestra)."
 
 #: Client.cpp:1338
 msgid "Usage: /attach <#chans>"
@@ -279,13 +287,13 @@ msgstr "Usa: /attach <#canali>"
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
 msgstr[0] "Trovato {1} canale corrispondente a [{2}]"
-msgstr[1] "Trovati {1} canali corrispondenti a [{2}]"
+msgstr[1] "Ho trovato {1} canali corrispondenti a [{2}]"
 
 #: Client.cpp:1348 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] "Agganciato {1} canale (Attached)"
-msgstr[1] "Agganciati {1} canali (Attached)"
+msgstr[1] "Ho agganciato {1} canali (Attached)"
 
 #: Client.cpp:1360
 msgid "Usage: /detach <#chans>"
@@ -295,7 +303,7 @@ msgstr "Usa: /detach <#canali>"
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] "Scollegato {1} canale (Detached)"
-msgstr[1] "Scollegati {1} canali (Detached)"
+msgstr[1] "Ho scollegato {1} canali (Detached)"
 
 #: Chan.cpp:678
 msgid "Buffer Playback..."
@@ -313,7 +321,7 @@ msgstr "<ricerca>"
 #: Modules.cpp:529
 msgctxt "modhelpcmd"
 msgid "Generate this output"
-msgstr "Genera questo output"
+msgstr "Mostra questo elenco"
 
 #: Modules.cpp:573 ClientCommand.cpp:1972
 msgid "No matches for '{1}'"
@@ -325,7 +333,9 @@ msgstr "Questo modulo non implementa nessun comando."
 
 #: Modules.cpp:693
 msgid "Unknown command!"
-msgstr "Comando sconosciuto!"
+msgstr ""
+"ATTENZIONE: Comando non riconosciuto! (Suggerimento: controlla la sintassi e "
+"di averlo digitato correttamente)."
 
 #: Modules.cpp:1633
 msgid ""
@@ -341,7 +351,7 @@ msgstr "Il modulo {1} è già stato caricato."
 
 #: Modules.cpp:1666
 msgid "Unable to find module {1}"
-msgstr "Impossibile trovare il modulo {1}"
+msgstr "ATTENZIONE: Impossibile trovare il modulo {1}"
 
 #: Modules.cpp:1678
 msgid "Module {1} does not support module type {2}."
@@ -474,7 +484,7 @@ msgstr "Usa: Detach <#canali>"
 
 #: ClientCommand.cpp:161
 msgid "There is no MOTD set."
-msgstr "AVVISO: Non è ancora stato impostato il MOTD."
+msgstr "AVVISO: Non è ancora stato impostato il MOTD (Message Of The Day)."
 
 #: ClientCommand.cpp:167
 msgid "Rehashing succeeded!"
@@ -860,27 +870,29 @@ msgstr ""
 
 #: ClientCommand.cpp:713
 msgid "Old user {1} not found."
-msgstr "Vecchio utente {1} non trovato."
+msgstr "ATTENZIONE: Il vecchio utente {1} non è stato trovato."
 
 #: ClientCommand.cpp:719
 msgid "Old network {1} not found."
-msgstr "Vecchio network {1} non trovato."
+msgstr "ATTENZIONE: Il vecchio network {1} non è stato trovato."
 
 #: ClientCommand.cpp:725
 msgid "New user {1} not found."
-msgstr "Nuovo utente {1} non trovato."
+msgstr "ATTENZIONE: Il nuovo utente {1} non è stato trovato."
 
 #: ClientCommand.cpp:730
 msgid "User {1} already has network {2}."
-msgstr "L'utente {1} ha già un network chiamato {2}."
+msgstr "ATTENZIONE: L'utente {1} ha già un network chiamato {2}."
 
 #: ClientCommand.cpp:736
 msgid "Invalid network name [{1}]"
-msgstr "Nome del network [{1}] non valido"
+msgstr "ATTENZIONE: Il nome del network [{1}] non è valido."
 
 #: ClientCommand.cpp:752
 msgid "Some files seem to be in {1}. You might want to move them to {2}"
-msgstr "Alcuni files sembrano essere in {1}. Forse dovresti spostarli in {2}"
+msgstr ""
+"ATTENZIONE: Alcuni files sembrano essere in {1}. Forse dovresti spostarli in "
+"{2}"
 
 #: ClientCommand.cpp:766
 msgid "Error adding network: {1}"
@@ -888,13 +900,13 @@ msgstr "Errore durante l'aggiunta del network: {1}"
 
 #: ClientCommand.cpp:778
 msgid "Success."
-msgstr "Completato."
+msgstr "Operazione completata."
 
 #: ClientCommand.cpp:781
 msgid "Copied the network to new user, but failed to delete old network"
 msgstr ""
-"Il network è stato copiato nel nuovo utente, ma non è stato possibile "
-"eliminare il vecchio network"
+"ATTENZIONE: Il network per il nuovo utente è stato copiato, ma non è stato "
+"possibile eliminare il vecchio network"
 
 #: ClientCommand.cpp:788
 msgid "No network supplied."
@@ -910,7 +922,7 @@ msgstr "Passato a {1}"
 
 #: ClientCommand.cpp:802
 msgid "You don't have a network named {1}"
-msgstr "Non hai un network chiamato {1}"
+msgstr "ATTENZIONE: Non hai un network chiamato {1}"
 
 #: ClientCommand.cpp:814
 msgid "Usage: AddServer <host> [[+]port] [pass]"
