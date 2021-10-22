@@ -1,0 +1,71 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: pt-PT\n"
+"X-Crowdin-File: /master/modules/po/lastseen.pot\n"
+"X-Crowdin-File-ID: 178\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Portuguese\n"
+"Language: pt_PT\n"
+
+#: modules/po/../data/lastseen/tmpl/index.tmpl:8
+msgid "User"
+msgstr "Utilizador"
+
+#: modules/po/../data/lastseen/tmpl/index.tmpl:9 lastseen.cpp:99
+msgid "Last Seen"
+msgstr "Visto à"
+
+#: modules/po/../data/lastseen/tmpl/index.tmpl:10
+msgid "Info"
+msgstr "Info"
+
+#: modules/po/../data/lastseen/tmpl/index.tmpl:11
+msgid "Action"
+msgstr "Ação"
+
+#: modules/po/../data/lastseen/tmpl/index.tmpl:21
+msgid "Edit"
+msgstr "Editar"
+
+#: modules/po/../data/lastseen/tmpl/index.tmpl:22
+msgid "Delete"
+msgstr "Eliminar"
+
+#: modules/po/../data/lastseen/tmpl/lastseen_WebadminUser.tmpl:6
+msgid "Last login time:"
+msgstr "Último início de sessão em:"
+
+#: lastseen.cpp:53
+msgid "Access denied"
+msgstr "Acessonegado"
+
+#: lastseen.cpp:61 lastseen.cpp:67
+msgctxt "show"
+msgid "User"
+msgstr "Utilizador"
+
+#: lastseen.cpp:62 lastseen.cpp:68
+msgctxt "show"
+msgid "Last Seen"
+msgstr "Visto à"
+
+#: lastseen.cpp:69 lastseen.cpp:125
+msgid "never"
+msgstr "nunca"
+
+#: lastseen.cpp:79
+msgid "Shows list of users and when they last logged in"
+msgstr ""
+"Shows list of users and when they last logged in\n"
+"Mostra uma lista de utilizadores e quando foi o último inicio de sessão deles"
+
+#: lastseen.cpp:154
+msgid "Collects data about when a user last logged in."
+msgstr ""
+"Collects data about when a user last logged in.\n"
+"Obtém dados acerca de quando um utilizador iniciou ultimanente a sessão."

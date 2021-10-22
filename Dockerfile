@@ -1,17 +1,12 @@
-FROM alpine:3.12
+FROM alpine:3.13
 
 ARG VERSION_EXTRA=""
 
 ARG CMAKEFLAGS="-DVERSION_EXTRA=${VERSION_EXTRA} -DCMAKE_INSTALL_PREFIX=/opt/znc -DWANT_CYRUS=YES -DWANT_PERL=YES -DWANT_PYTHON=YES"
 ARG MAKEFLAGS=""
 
-ARG BUILD_DATE
-ARG VCS_REF
-
 LABEL org.label-schema.schema-version="1.0"
-LABEL org.label-schema.vcs-ref=$VCS_REF
 LABEL org.label-schema.vcs-url="https://github.com/znc/znc"
-LABEL org.label-schema.build-date=$BUILD_DATE
 LABEL org.label-schema.url="https://znc.in"
 
 COPY . /znc-src
@@ -27,7 +22,7 @@ RUN apk add --no-cache \
         cyrus-sasl \
         gettext \
         icu-dev \
-        libressl-dev \
+        openssl-dev \
         perl \
         python3 \
         su-exec \

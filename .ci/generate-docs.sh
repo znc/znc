@@ -7,7 +7,7 @@ doxygen
 cd "$HOME"
 git clone --depth=1 --branch=gh-pages github:znc/docs.git gh-pages || exit 1
 
-cd "$TRAVIS_BUILD_DIR/doc/html/"
+cd "$GITHUB_WORKSPACE/doc/html/"
 mv ~/gh-pages/.git ./
 echo docs.znc.in > CNAME
 git add -A
@@ -28,9 +28,9 @@ if [[ ! -f ~/docs_need_commit ]]; then
 fi
 
 git commit -F- <<EOF
-Latest docs on successful travis build $TRAVIS_BUILD_NUMBER
+Latest docs on successful CI build $GITHUB_RUN_NUMBER
 
-ZNC commit $TRAVIS_COMMIT
+ZNC commit $GITHUB_SHA
 EOF
 git push origin gh-pages
 

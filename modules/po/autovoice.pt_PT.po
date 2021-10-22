@@ -1,0 +1,113 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: pt-PT\n"
+"X-Crowdin-File: /master/modules/po/autovoice.pot\n"
+"X-Crowdin-File-ID: 155\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Portuguese\n"
+"Language: pt_PT\n"
+
+#: autovoice.cpp:120
+msgid "List all users"
+msgstr "Lista todos os utilizadores"
+
+#: autovoice.cpp:122 autovoice.cpp:125
+msgid "<user> <channel> [channel] ..."
+msgstr "<utilizador> <canal> [canal] ..."
+
+#: autovoice.cpp:123
+msgid "Adds channels to a user"
+msgstr "Adiciona canais para um utilizador"
+
+#: autovoice.cpp:126
+msgid "Removes channels from a user"
+msgstr "Remove canais de um utilizador"
+
+#: autovoice.cpp:128
+msgid "<user> <hostmask> [channels]"
+msgstr "<utilizador> <máscarahost> [canais]"
+
+#: autovoice.cpp:129
+msgid "Adds a user"
+msgstr "Adiciona um utilizador"
+
+#: autovoice.cpp:131
+msgid "<user>"
+msgstr "<utilizador>"
+
+#: autovoice.cpp:131
+msgid "Removes a user"
+msgstr "Remove um utilizador"
+
+#: autovoice.cpp:215
+msgid "Usage: AddUser <user> <hostmask> [channels]"
+msgstr "Utilização: AddUser <utilizador> <máscarahost> [canais]"
+
+#: autovoice.cpp:229
+msgid "Usage: DelUser <user>"
+msgstr "Utilização: DelUser <utilizador>"
+
+#: autovoice.cpp:238
+msgid "There are no users defined"
+msgstr "Não existem utilizadores definidos"
+
+#: autovoice.cpp:244 autovoice.cpp:250
+msgid "User"
+msgstr "Utilizador"
+
+#: autovoice.cpp:245 autovoice.cpp:251
+msgid "Hostmask"
+msgstr "Máscara de host"
+
+#: autovoice.cpp:246 autovoice.cpp:252
+msgid "Channels"
+msgstr "Canais"
+
+#: autovoice.cpp:263
+msgid "Usage: AddChans <user> <channel> [channel] ..."
+msgstr "Utilização: AddChans <utilizador> <canal> [canal] ..."
+
+#: autovoice.cpp:270 autovoice.cpp:292 autovoice.cpp:329
+msgid "No such user"
+msgstr "Não existe esse utilizador"
+
+#: autovoice.cpp:275
+msgid "Channel(s) added to user {1}"
+msgstr "Canal(is) adicionado(s) ao utilizador {1}"
+
+#: autovoice.cpp:285
+msgid "Usage: DelChans <user> <channel> [channel] ..."
+msgstr "Utilização: DelChans <utilizador> <canal> [canal] ..."
+
+#: autovoice.cpp:298
+msgid "Channel(s) Removed from user {1}"
+msgstr "Canal(is) removido(s) do utilizador {1}"
+
+#: autovoice.cpp:335
+msgid "User {1} removed"
+msgstr "Utilizador {1} removido"
+
+#: autovoice.cpp:341
+msgid "That user already exists"
+msgstr "Esse utilizador já existe"
+
+#: autovoice.cpp:347
+msgid "User {1} added with hostmask {2}"
+msgstr "Utilizador {1} adicionado com a máscara de host {2}"
+
+#: autovoice.cpp:360
+msgid ""
+"Each argument is either a channel you want autovoice for (which can include "
+"wildcards) or, if it starts with !, it is an exception for autovoice."
+msgstr ""
+"Cada argumento é um canal onde queira ter voice automático (que pode incluir "
+"asterisco) ou, se começar com !, é uma exceção para voice automático."
+
+#: autovoice.cpp:365
+msgid "Auto voice the good people"
+msgstr "Voice automático para as pessoas boas"
