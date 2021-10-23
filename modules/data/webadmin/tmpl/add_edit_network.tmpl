@@ -32,7 +32,7 @@
 				<div class="subsection">
 					<div class="inputlabel"><label for="name"><? FORMAT "Network Name:" ?></label></div>
 					<input id="name" type="text" name="name" value="<? VAR Name ?>" class="half" maxlength="128"
-						   title="<? FORMAT "The name of the IRC network." ?>" <? IF !NameEdit ?>readonly<? ENDIF ?> />
+						   title="<? FORMAT "The name of the IRC network." ?>" <? IF !NameEdit ?>disabled<? ENDIF ?> />
 				</div>
 
             	<div class="subsection">
@@ -49,12 +49,12 @@
 				<div class="subsection">
 					<div class="inputlabel"><label for="ident"><? FORMAT "Ident:" ?></label></div>
 					<input id="ident" type="text" name="ident" value="<? VAR Ident ?>" class="half" maxlength="128"
-						   title="<? FORMAT "Your ident." ?>" <? IF !IdentEdit ?>readonly<? ENDIF ?> />
+						   title="<? FORMAT "Your ident." ?>" <? IF !IdentEdit ?>disabled<? ENDIF ?> />
 				</div>
                 <div class="subsection">
 					<div class="inputlabel"><label for="realname"><? FORMAT "Realname:" ?></label></div>
 					<input id="realname" type="text" name="realname" value="<? VAR RealName ?>" class="full" maxlength="256"
-						   title="<? FORMAT "Your real name." ?>" <? IF !RealNameEdit ?>readonly<? ENDIF ?> />
+						   title="<? FORMAT "Your real name." ?>" <? IF !RealNameEdit ?>disabled<? ENDIF ?> />
 				</div>
 
 				<? IF BindHostEdit ?>
@@ -69,7 +69,7 @@
 					<div class="inputlabel"><label for="quitmsg"><? FORMAT "Quit Message:" ?></label></div>
 					<input id="quitmsg" type="text" name="quitmsg" value="<? VAR QuitMsg ?>" class="full" maxlength="256"
 						   title="<? FORMAT "You may define a Message shown, when you quit IRC." ?>"
-						   <? IF !QuitMsgEdit ?>readonly<? ENDIF ?> />
+						   <? IF !QuitMsgEdit ?>disabled<? ENDIF ?> />
 				</div>
 
 				<div class="subsection">
@@ -92,7 +92,7 @@
 
 				<div class="subsection half" id="servers_plain">
 					<div class="inputlabel"><label for="servers_text"><? FORMAT "Servers of this IRC network:" ?></servers></div>
-					<div><textarea name="servers" cols="70" rows="5" id="servers_text"><? LOOP ServerLoop ?><? VAR Server ?>
+					<div><textarea name="servers" cols="70" rows="5" id="servers_text" <? IF !NetworkEdit ?>disabled<? ENDIF ?>><? LOOP ServerLoop ?><? VAR Server ?>
 <? ENDLOOP ?>
 </textarea></div>
 					<br/><span class="info"><? FORMAT "One server per line, “host [[+]port] [password]”, + means SSL" ?></span>

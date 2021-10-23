@@ -136,13 +136,13 @@ function serverlist_init($) {
 			);
 		} else {
 			row.append(
-				$("<td/>").append($("<input/>").attr({"type":"text","readonly":true})
+				$("<td/>").append($("<input/>").attr({"type":"text","disabled":true})
 						.addClass("servers_row_host").val(host)),
-				$("<td/>").append($("<input/>").attr({"type":"number","readonly":true})
+				$("<td/>").append($("<input/>").attr({"type":"number","disabled":true})
 						.addClass("servers_row_port").val(port)),
 				$("<td/>").append($("<input/>").attr({"type":"checkbox","disabled":true})
 						.addClass("servers_row_ssl").prop("checked", ssl)),
-				$("<td/>").append($("<input/>").attr({"type":"text","readonly":true})
+				$("<td/>").append($("<input/>").attr({"type":"text","disabled":true})
 						.addClass("servers_row_pass").val(pass))
 			);
 		}
@@ -238,10 +238,10 @@ function ctcpreplies_init($) {
 			row.append(
 				$("<td/>").append($("<input/>").val(request)
 					.addClass("ctcpreplies_row_request")
-					.attr({"type":"text","list":"ctcpreplies_list","readonly":true})),
+					.attr({"type":"text","list":"ctcpreplies_list","disabled":true})),
 				$("<td/>").append($("<input/>").val(response)
 					.addClass("ctcpreplies_row_response")
-					.attr({"type":"text","placeholder":$("#ctcpreplies_js").data("placeholder"),"readonly":true})),
+					.attr({"type":"text","placeholder":$("#ctcpreplies_js").data("placeholder"),"disabled":true})),
 			);
 		}
 		$("input", row).change(serialize);
