@@ -82,6 +82,20 @@ endmacro()
 tristate_option(OPENSSL "Support SSL")
 if(WANT_OPENSSL)
 	find_package(OpenSSL ${TRISTATE_OPENSSL_REQUIRED})
+
+	if(OPENSSL_FOUND)
+		# SSL_SESSION was made opaque in OpenSSL 1.1.0;
+		# LibreSSL gained that function later too.
+		# TODO: maybe remove this check at some point, and stop supporting old
+		# libssl versions
+		function(check_SSL_SESSION_get0_cipher)
+			set(CMAKE_REQUIRED_LIBRARIES ${OPENSSL_LIBRARIES})
+			set(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIR})
+			check_cxx_symbol_exists(SSL_SESSION_get0_cipher openssl/ssl.h
+				HAVE_SSL_SESSION_get0_cipher)
+		endfunction()
+		check_SSL_SESSION_get0_cipher()
+	endif()
 endif()
 set(HAVE_LIBSSL "${OPENSSL_FOUND}")
 

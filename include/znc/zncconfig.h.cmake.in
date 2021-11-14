@@ -31,6 +31,7 @@
 #define HAVE_PTHREAD 1
 #cmakedefine HAVE_THREADED_DNS 1
 #cmakedefine HAVE_LIBSSL 1
+#cmakedefine HAVE_SSL_SESSION_get0_cipher 1
 #cmakedefine HAVE_IPV6 1
 #cmakedefine HAVE_ZLIB 1
 #cmakedefine HAVE_I18N 1

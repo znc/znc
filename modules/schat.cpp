@@ -25,8 +25,7 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 
-#if !defined(OPENSSL_VERSION_NUMBER) || defined(LIBRESSL_VERSION_NUMBER) || \
-    OPENSSL_VERSION_NUMBER < 0x10100007
+#ifndef HAVE_SSL_SESSION_get0_cipher
 /* SSL_SESSION was made opaque in OpenSSL 1.1.0, cipher accessor was added 2
 weeks before the public release.
 See openssl/openssl@e92813234318635639dba0168c7ef5568757449b. */
