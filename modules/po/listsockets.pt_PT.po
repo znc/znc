@@ -15,99 +15,100 @@ msgstr ""
 #: modules/po/../data/listsockets/tmpl/index.tmpl:7 listsockets.cpp:213
 #: listsockets.cpp:229
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: modules/po/../data/listsockets/tmpl/index.tmpl:8 listsockets.cpp:214
 #: listsockets.cpp:230
 msgid "Created"
-msgstr ""
+msgstr "Criado"
 
 #: modules/po/../data/listsockets/tmpl/index.tmpl:9 listsockets.cpp:215
 #: listsockets.cpp:231
 msgid "State"
-msgstr ""
+msgstr "Estado"
 
 #: modules/po/../data/listsockets/tmpl/index.tmpl:10 listsockets.cpp:217
 #: listsockets.cpp:234
 msgid "SSL"
-msgstr ""
+msgstr "SSL"
 
 #: modules/po/../data/listsockets/tmpl/index.tmpl:11 listsockets.cpp:219
 #: listsockets.cpp:239
 msgid "Local"
-msgstr ""
+msgstr "Local"
 
 #: modules/po/../data/listsockets/tmpl/index.tmpl:12 listsockets.cpp:220
 #: listsockets.cpp:241
 msgid "Remote"
-msgstr ""
+msgstr "Remoto"
 
 #: modules/po/../data/listsockets/tmpl/index.tmpl:13
 msgid "Data In"
-msgstr ""
+msgstr "Entrada Dados"
 
 #: modules/po/../data/listsockets/tmpl/index.tmpl:14
 msgid "Data Out"
-msgstr ""
+msgstr "Saída Dados"
 
 #: listsockets.cpp:62
 msgid "[-n]"
-msgstr ""
+msgstr "[-n]"
 
 #: listsockets.cpp:62
 msgid "Shows the list of active sockets. Pass -n to show IP addresses"
 msgstr ""
+"Mostra uma lista de sockets ativos. Use -n para mostrar endereços de IP"
 
 #: listsockets.cpp:70
 msgid "You must be admin to use this module"
-msgstr ""
+msgstr "Tem de ter direitos administrativos para utilizar este módulo"
 
 #: listsockets.cpp:95
 msgid "List sockets"
-msgstr ""
+msgstr "Listar sockets"
 
 #: listsockets.cpp:115 listsockets.cpp:235
 msgctxt "ssl"
 msgid "Yes"
-msgstr ""
+msgstr "Sim"
 
 #: listsockets.cpp:115 listsockets.cpp:236
 msgctxt "ssl"
 msgid "No"
-msgstr ""
+msgstr "Não"
 
 #: listsockets.cpp:141
 msgid "Listener"
-msgstr ""
+msgstr "À escuta"
 
 #: listsockets.cpp:143
 msgid "Inbound"
-msgstr ""
+msgstr "Entrada"
 
 #: listsockets.cpp:146
 msgid "Outbound"
-msgstr ""
+msgstr "Saída"
 
 #: listsockets.cpp:148
 msgid "Connecting"
-msgstr ""
+msgstr "A ligar"
 
 #: listsockets.cpp:151
 msgid "UNKNOWN"
-msgstr ""
+msgstr "DESCONHECIDO"
 
 #: listsockets.cpp:206
 msgid "You have no open sockets."
-msgstr ""
+msgstr "Não tem sockets abertos."
 
 #: listsockets.cpp:221 listsockets.cpp:243
 msgid "In"
-msgstr ""
+msgstr "Entrada"
 
 #: listsockets.cpp:222 listsockets.cpp:245
 msgid "Out"
-msgstr ""
+msgstr "Saída"
 
 #: listsockets.cpp:261
 msgid "Lists active sockets"
-msgstr ""
+msgstr "Lista sockets ativos"

@@ -14,104 +14,111 @@ msgstr ""
 
 #: fail2ban.cpp:25
 msgid "[minutes]"
-msgstr ""
+msgstr "[minutos]"
 
 #: fail2ban.cpp:26
 msgid "The number of minutes IPs are blocked after a failed login."
 msgstr ""
+"O número de minutos que os IPs estão banidos após um inicio de sessão "
+"falhado."
 
 #: fail2ban.cpp:28
 msgid "[count]"
-msgstr ""
+msgstr "[count]"
 
 #: fail2ban.cpp:29
 msgid "The number of allowed failed login attempts."
-msgstr ""
+msgstr "O número de tentativas de inicio de sessão falhadas."
 
 #: fail2ban.cpp:31 fail2ban.cpp:33
 msgid "<hosts>"
-msgstr ""
+msgstr "<hosts>"
 
 #: fail2ban.cpp:31
 msgid "Ban the specified hosts."
-msgstr ""
+msgstr "Banir os hosts especificados."
 
 #: fail2ban.cpp:33
 msgid "Unban the specified hosts."
-msgstr ""
+msgstr "Remover o ban de hosts especificados."
 
 #: fail2ban.cpp:35
 msgid "List banned hosts."
-msgstr ""
+msgstr "Lista de hosts banidos."
 
 #: fail2ban.cpp:55
 msgid ""
 "Invalid argument, must be the number of minutes IPs are blocked after a "
 "failed login and can be followed by number of allowed failed login attempts"
 msgstr ""
+"Argumento inválido, tem de ser número de minutos os IPs estarão bloqueados "
+"após um inicio de sessão falhado e pode seguido do número de tentativas de "
+"inicio de sessão permitidas"
 
 #: fail2ban.cpp:77 fail2ban.cpp:100 fail2ban.cpp:123 fail2ban.cpp:146
 #: fail2ban.cpp:172
 msgid "Access denied"
-msgstr ""
+msgstr "Acesso negado"
 
 #: fail2ban.cpp:86
 msgid "Usage: Timeout [minutes]"
-msgstr ""
+msgstr "Utilização: Timeout [minutos]"
 
 #: fail2ban.cpp:91 fail2ban.cpp:94
 msgid "Timeout: {1} min"
-msgstr ""
+msgstr "Expiração: {1} min"
 
 #: fail2ban.cpp:109
 msgid "Usage: Attempts [count]"
-msgstr ""
+msgstr "Utilização: Attempts [contagem]"
 
 #: fail2ban.cpp:114 fail2ban.cpp:117
 msgid "Attempts: {1}"
-msgstr ""
+msgstr "Tentativas: {1}"
 
 #: fail2ban.cpp:130
 msgid "Usage: Ban <hosts>"
-msgstr ""
+msgstr "Utilização: Ban <hosts>"
 
 #: fail2ban.cpp:140
 msgid "Banned: {1}"
-msgstr ""
+msgstr "Banido: {1}"
 
 #: fail2ban.cpp:153
 msgid "Usage: Unban <hosts>"
-msgstr ""
+msgstr "Utilização: Unban <hosts>"
 
 #: fail2ban.cpp:163
 msgid "Unbanned: {1}"
-msgstr ""
+msgstr "Desbanido: {1}"
 
 #: fail2ban.cpp:165
 msgid "Ignored: {1}"
-msgstr ""
+msgstr "Ignorado: {1}"
 
 #: fail2ban.cpp:177 fail2ban.cpp:183
 msgctxt "list"
 msgid "Host"
-msgstr ""
+msgstr "Host"
 
 #: fail2ban.cpp:178 fail2ban.cpp:184
 msgctxt "list"
 msgid "Attempts"
-msgstr ""
+msgstr "Tentativas"
 
 #: fail2ban.cpp:188
 msgctxt "list"
 msgid "No bans"
-msgstr ""
+msgstr "Sem bans"
 
 #: fail2ban.cpp:245
 msgid ""
 "You might enter the time in minutes for the IP banning and the number of "
 "failed logins before any action is taken."
 msgstr ""
+"Pode querer introduzir o tempo em minutos para o ban de IP e o número de "
+"inícios de sessão antes que qualquer ação seja tomada."
 
 #: fail2ban.cpp:250
 msgid "Block IPs for some time after a failed login."
-msgstr ""
+msgstr "Bloquear IPs por algum tempo depois de um início de sessão falhado."
