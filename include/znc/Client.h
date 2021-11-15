@@ -156,6 +156,18 @@ class CClient : public CIRCSocket {
                }}},
               {"extended-join",
                {true, [this](bool bVal) { m_bExtendedJoin = bVal; }}},
+              {"solanum.chat/oper", {
+                true, [this](bool bVal) {
+                  SetTagSupport("solanum.chat/oper", bVal);
+              }}},
+              {"solanum.chat/realhost", {
+                true, [this](bool bVal) {
+                  SetTagSupport("solanum.chat/ip", bVal);
+                  SetTagSupport("solanum.chat/realhost", bVal);
+              }}},
+              {"solanum.chat/identify-msg", {true, [this](bool bVal){
+                SetTagSupport("solanum.chat/identified", bVal);
+              }}},
           }) {
         EnableReadLine();
         // RFC says a line can have 512 chars max, but we are
