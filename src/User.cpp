@@ -83,6 +83,11 @@ CUser::CUser(const CString& sUsername)
       m_bDenyLoadMod(false),
       m_bAdmin(false),
       m_bDenySetBindHost(false),
+      m_bDenySetIdent(false),
+      m_bDenySetNetwork(false),
+      m_bDenySetRealName(false),
+      m_bDenySetQuitMsg(false),
+      m_bDenySetCTCPReplies(false),
       m_bAutoClearChanBuffer(true),
       m_bAutoClearQueryBuffer(true),
       m_bBeingDeleted(false),
@@ -169,6 +174,11 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
         {"admin", &CUser::SetAdmin},
         {"denysetbindhost", &CUser::SetDenySetBindHost},
         {"denysetvhost", &CUser::SetDenySetBindHost},
+        {"denysetident", &CUser::SetDenySetIdent},
+        {"denysetnetwork", &CUser::SetDenySetNetwork},
+        {"denysetrealname", &CUser::SetDenySetRealName},
+        {"denysetquitmsg", &CUser::SetDenySetQuitMsg},
+        {"denysetctcpreplies", &CUser::SetDenySetCTCPReplies},
         {"appendtimestamp", &CUser::SetTimestampAppend},
         {"prependtimestamp", &CUser::SetTimestampPrepend},
         {"authonlyviamodule", &CUser::SetAuthOnlyViaModule},
@@ -803,6 +813,11 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
     SetDenyLoadMod(User.DenyLoadMod());
     SetAdmin(User.IsAdmin());
     SetDenySetBindHost(User.DenySetBindHost());
+    SetDenySetIdent(User.DenySetIdent());
+    SetDenySetNetwork(User.DenySetNetwork());
+    SetDenySetRealName(User.DenySetRealName());
+    SetDenySetQuitMsg(User.DenySetQuitMsg());
+    SetDenySetCTCPReplies(User.DenySetCTCPReplies());
     SetAuthOnlyViaModule(User.AuthOnlyViaModule());
     SetTimestampAppend(User.GetTimestampAppend());
     SetTimestampPrepend(User.GetTimestampPrepend());
@@ -968,6 +983,11 @@ CConfig CUser::ToConfig() const {
     config.AddKeyValuePair("DenyLoadMod", CString(DenyLoadMod()));
     config.AddKeyValuePair("Admin", CString(IsAdmin()));
     config.AddKeyValuePair("DenySetBindHost", CString(DenySetBindHost()));
+    config.AddKeyValuePair("DenySetIdent", CString(DenySetIdent()));
+    config.AddKeyValuePair("DenySetNetwork", CString(DenySetNetwork()));
+    config.AddKeyValuePair("DenySetRealName", CString(DenySetRealName()));
+    config.AddKeyValuePair("DenySetQuitMsg", CString(DenySetQuitMsg()));
+    config.AddKeyValuePair("DenySetCTCPReplies", CString(DenySetCTCPReplies()));
     config.AddKeyValuePair("TimestampFormat", GetTimestampFormat());
     config.AddKeyValuePair("AppendTimestamp", CString(GetTimestampAppend()));
     config.AddKeyValuePair("PrependTimestamp", CString(GetTimestampPrepend()));
@@ -1262,6 +1282,11 @@ void CUser::SetMultiClients(bool b) { m_bMultiClients = b; }
 void CUser::SetDenyLoadMod(bool b) { m_bDenyLoadMod = b; }
 void CUser::SetAdmin(bool b) { m_bAdmin = b; }
 void CUser::SetDenySetBindHost(bool b) { m_bDenySetBindHost = b; }
+void CUser::SetDenySetIdent(bool b) { m_bDenySetIdent = b; }
+void CUser::SetDenySetNetwork(bool b) { m_bDenySetNetwork = b; }
+void CUser::SetDenySetRealName(bool b) { m_bDenySetRealName = b; }
+void CUser::SetDenySetQuitMsg(bool b) { m_bDenySetQuitMsg = b; }
+void CUser::SetDenySetCTCPReplies(bool b) { m_bDenySetCTCPReplies = b; }
 void CUser::SetDefaultChanModes(const CString& s) { m_sDefaultChanModes = s; }
 void CUser::SetClientEncoding(const CString& s) {
     m_sClientEncoding = CZNC::Get().FixupEncoding(s);
@@ -1395,6 +1420,11 @@ const CString& CUser::GetPassSalt() const { return m_sPassSalt; }
 bool CUser::DenyLoadMod() const { return m_bDenyLoadMod; }
 bool CUser::IsAdmin() const { return m_bAdmin; }
 bool CUser::DenySetBindHost() const { return m_bDenySetBindHost; }
+bool CUser::DenySetIdent() const { return m_bDenySetIdent; }
+bool CUser::DenySetNetwork() const { return m_bDenySetNetwork; }
+bool CUser::DenySetRealName() const { return m_bDenySetRealName; }
+bool CUser::DenySetQuitMsg() const { return m_bDenySetQuitMsg; }
+bool CUser::DenySetCTCPReplies() const { return m_bDenySetCTCPReplies; }
 bool CUser::MultiClients() const { return m_bMultiClients; }
 bool CUser::AuthOnlyViaModule() const { return m_bAuthOnlyViaModule; }
 const CString& CUser::GetStatusPrefix() const { return m_sStatusPrefix; }

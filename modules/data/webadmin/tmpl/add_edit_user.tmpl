@@ -3,6 +3,10 @@
 <? AddRow CSSLoop HREF=/modfiles/global/webadmin/webadmin.css ?>
 <? INC Header.tmpl ?>
 
+<script>
+	var CTCPEdit = <? VAR CTCPEdit ?>;
+</script>
+
 <form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?><? IF Edit ?>edituser<? ELSE ?>adduser<? ENDIF ?>" method="post">
 	<? INC _csrf_check.tmpl ?>
 	<div class="section">
@@ -79,7 +83,8 @@
 				<div class="subsection">
 					<div class="inputlabel"><label for="ident"><? FORMAT "Ident:" ?></label></div>
 					<input id="ident" type="text" name="ident" value="<? VAR Ident ?>" class="half" maxlength="128"
-						   title="<? FORMAT "The Ident is sent to server as username." ?>"/>
+						   title="<? FORMAT "The Ident is sent to server as username." ?>"
+						   <? IF !IdentEdit ?>disabled<? ENDIF ?> />
 				</div>
 				<div class="subsection">
 					<div class="inputlabel"><label for="statusprefix"><? FORMAT "Status Prefix:" ?></label></div>
@@ -90,7 +95,7 @@
 				<div class="subsection">
 					<div class="inputlabel"><label for="realname"><? FORMAT "Realname:" ?></label></div>
 					<input id="realname" type="text" name="realname" value="<? VAR RealName ?>" class="full" maxlength="256"
-						   title="<? FORMAT "Your real name." ?>"/>
+						   title="<? FORMAT "Your real name." ?>" <? IF !RealNameEdit ?>disabled<? ENDIF ?> />
 				</div>
 				<div style="clear: both;"></div>
 
@@ -111,7 +116,8 @@
 				<div class="subsection">
 					<div class="inputlabel"><label for="quitmsg"><? FORMAT "Quit Message:" ?></label></div>
 					<input type="text" name="quitmsg" value="<? VAR QuitMsg ?>" class="full" maxlength="256"
-						   title="<? FORMAT "You may define a Message shown, when you quit IRC." ?>"/>
+						   title="<? FORMAT "You may define a Message shown, when you quit IRC." ?>"
+						   <? IF !QuitMsgEdit ?>disabled<? ENDIF ?> />
 				</div>
 				<div style="clear: both;"></div>
 			</div>
@@ -123,36 +129,47 @@
 		<? IF Edit ?>
 		<div class="sectionbg">
 			<div class="sectionbody">
-				<table class="sortable">
+				<? IF !NetworkEdit && !NetworkLoop ?>
+					<? FORMAT "No networks have been added for you yet." ?>
+				<? ELSE ?>
+				<table class="sortable networks" data-network-edit="<? IF NetworkEdit ?>1<? ELSE ?>0<? ENDIF ?>">
 					<thead>
 					<tr>
-						<td class="ignore-sort">[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>addnetwork?user=<? VAR Username ESC=URL ?>"><? FORMAT "Add" ?></a>]</td>
-				<? IF NetworkLoop ?>
+						<td class="ignore-sort">
+						<? IF NetworkEdit ?>
+							[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>addnetwork?user=<? VAR Username ESC=URL ?>"><? FORMAT "Add" ?></a>]
+						<? ELSE ?>
+							&nbsp;
+						<? ENDIF ?>
+						</td>
+					<? IF NetworkLoop ?>
 						<th><? FORMAT "Name" ?></th>
 						<th><? FORMAT "Clients" ?></th>
 						<th><? FORMAT "Current Server" ?></th>
 						<th><? FORMAT "Nick" ?></th>
 					<? ELSE ?>
 						<td><? FORMAT "← Add a network (opens in same page)" ?></td>
-				<? ENDIF ?>
+					<? ENDIF ?>
 					</tr>
 					</thead>
 
 					<tbody>
-			<? LOOP NetworkLoop SORTASC=Name ?>
+					<? LOOP NetworkLoop SORTASC=Name ?>
 					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
 						<td>
 							<input type="hidden" name="network" value="<? VAR Name ?>" />
-							[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>editnetwork?user=<? VAR Username ESC=URL ?>&amp;network=<? VAR Name ESC=URL ?>"><? FORMAT "Edit" ?></a>] [<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>delnetwork?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>"><? FORMAT "Del" ?></a>]
+							<span class="network_edit">[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>editnetwork?user=<? VAR Username ESC=URL ?>&amp;network=<? VAR Name ESC=URL ?>"><? FORMAT "Edit" ?></a>]</span>
+							<span class="network_delete">[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>delnetwork?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>"><? FORMAT "Del" ?></a>]</span>
 						</td>
 						<td><? VAR Name ?></td>
 						<td><? VAR Clients ?></td>
 						<td><? VAR Server DEFAULT="-N/A-" ?></td>
 						<td><? VAR IRCNick ?></td>
 					</tr>
-			<? ENDLOOP ?>
+					<? ENDLOOP ?>
 					</tbody>
 				</table>
+				<? ENDIF ?>
 			</div>
 		</div>
 		<? ELSE ?>
@@ -202,7 +219,7 @@
 									checked="checked"
 								<? ENDIF ?>
 								disabled="disabled"/>
-							<? ENDIF ?>	
+							<? ENDIF ?>
 						</td>
 						<td class="center">
 							<? IF CanBeLoadedByNetwork ?>
@@ -332,7 +349,7 @@
 				<? SETBLOCK Substitutions_Link ?><a href="https://wiki.znc.in/ExpandString" target="_blank" class="external"><? FORMAT "Substitutions" ?></a><? ENDSETBLOCK ?>
 				<div class="subsection half" id="ctcpreplies_plain">
 					<div class="inputlabel"><label for="ctcpreplies_text"><? FORMAT "CTCP Replies:" ?></label></div>
-					<div><textarea name="ctcpreplies" cols="70" rows="3" id="ctcpreplies_text"><? LOOP CTCPLoop ?><? VAR CTCP ?>
+					<div><textarea name="ctcpreplies" cols="70" rows="3" id="ctcpreplies_text" <? IF !CTCPEdit ?>disabled<? ENDIF ?>><? LOOP CTCPLoop ?><? VAR CTCP ?>
 <? ENDLOOP ?>
 </textarea></div>
 					<br /><span class="info"><? FORMAT "One reply per line. Example: <code>TIME Buy a watch!</code>" ?></span>
@@ -346,12 +363,14 @@
 								<tr>
 									<th><? FORMAT "Request" ?></th>
 									<th><? FORMAT "Response" ?></th>
+									<? IF CTCPEdit ?>
 									<th/>
+									<? ENDIF ?>
 								</tr>
 							</thead>
 							<tbody id="ctcpreplies_tbody"/>
 						</table>
-						<input type="button" value="<? FORMAT "Add" ?>" id="ctcpreplies_add"/>
+						<? IF CTCPEdit ?><input type="button" value="<? FORMAT "Add" ?>" id="ctcpreplies_add"/><? ENDIF ?>
 						<span class="info"><? FORMAT "{1} are available" "Substitutions_Link ESC=" ?></span>
 						<datalist id="ctcpreplies_list">
 							<option value="PING"/>
