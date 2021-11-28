@@ -937,6 +937,12 @@ class CWebAdminMod : public CModule {
 
         if (!WebSock.GetParam("submitted").ToUInt()) {
             Tmpl["Username"] = pUser->GetUsername();
+
+            CTemplate& breadUser = Tmpl.AddRow("BreadCrumbs");
+            breadUser["Text"] = t_f("Edit User [{1}]")(pUser->GetUsername());
+            breadUser["URL"] =
+                GetWebPath() + "edituser?user=" + pUser->GetUsername();
+
             CTemplate& breadNet = Tmpl.AddRow("BreadCrumbs");
 
             CIRCNetwork EmptyNetwork(pUser, "");
@@ -1011,11 +1017,6 @@ class CWebAdminMod : public CModule {
                 Tmpl["BindHostEdit"] = "true";
                 Tmpl["BindHost"] = pNetwork->GetBindHost();
             }
-
-            CTemplate& breadUser = Tmpl.AddRow("BreadCrumbs");
-            breadUser["Text"] = t_f("Edit User [{1}]")(pUser->GetUsername());
-            breadUser["URL"] =
-                GetWebPath() + "edituser?user=" + pUser->GetUsername();
 
             if (spSession->IsAdmin() ||
                 !spSession->GetUser()->DenySetNetwork()) {
