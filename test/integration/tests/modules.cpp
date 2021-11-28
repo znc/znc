@@ -268,5 +268,17 @@ INSTANTIATE_TEST_CASE_P(SaslInst, SaslModuleTest,
                                 99,
                                 {SaslModuleTest::Prefix() + "YmJi", "Yg=="}}));
 
+TEST_F(ZNCTest, SaslMechsNotInit) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod sasl");
+    client.Write("PRIVMSG *sasl :set * *");
+    client.ReadUntil("Password has been set");
+    ircd.Write("AUTHENTICATE +");
+    ircd.Write("PING foo");
+    ircd.ReadUntil("PONG foo");
+}
+
 }  // namespace
 }  // namespace znc_inttest

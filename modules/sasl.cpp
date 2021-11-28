@@ -196,6 +196,7 @@ class CSASLMod : public CModule {
     }
 
     void Authenticate(const CString& sLine) {
+        if (m_Mechanisms.empty()) return;
         /* Send blank authenticate for other mechanisms (like EXTERNAL). */
         CString sAuthLine;
         if (m_Mechanisms.GetCurrent().Equals("PLAIN") && sLine.Equals("+")) {
@@ -249,6 +250,7 @@ class CSASLMod : public CModule {
     }
 
     EModRet OnNumericMessage(CNumericMessage& msg) override {
+        if (m_Mechanisms.empty()) return CONTINUE;
         if (msg.GetCode() == 903) {
             /* SASL success! */
             if (m_bVerbose) {
