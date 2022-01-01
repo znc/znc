@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2021 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2022 ZNC, see the NOTICE file for details.
  * Copyright (C) 2008 Heiko Hund <heiko@ist.eigentlich.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
