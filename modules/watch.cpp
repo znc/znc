@@ -632,7 +632,7 @@ class CWatcherMod : public CModule {
     
         CString sHostMask = sLine.Token(1);
         CString sTarget = sLine.Token(2);
-        CString sPattern = sLine.Token(3);
+        CString sPattern = sLine.Token(3, true);
 
         CString sMessage;
 
