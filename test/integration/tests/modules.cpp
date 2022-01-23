@@ -78,6 +78,11 @@ TEST_F(ZNCTest, WatchModule) {
     ircd.Write(":n!i@h PRIVMSG #znc :\001ACTION foo\001");
     client.ReadUntil(
         ":$*!watch@znc.in PRIVMSG nick :* CTCP: n [ACTION foo] to [#znc]");
+    client.Write("PRIVMSG *watch :add * *spaces *word1 word2*");
+    client.ReadUntil("Adding entry:");
+    ircd.Write(":n!i@h PRIVMSG #znc :SOMETHING word1 word2 SOMETHING");
+    client.ReadUntil(
+        ":*spaces!watch@znc.in PRIVMSG nick :<n:#znc> SOMETHING word1 word2 SOMETHING");
 }
 
 TEST_F(ZNCTest, ModuleCrypt) {
