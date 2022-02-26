@@ -243,7 +243,7 @@ class CAutoHalfOpMod : public CModule {
         return HALTCORE;
     }
 
-    void OnHalfOp2(const CNick* pOpNick, const CNick& Nick, CChan& Channel,
+    void OnHalfOp(const CNick* pOpNick, const CNick& Nick, CChan& Channel,
                // bool bNoChange) override {
                bool bNoChange) {
         if (Nick.GetNick() == GetNetwork()->GetIRCNick().GetNick()) {

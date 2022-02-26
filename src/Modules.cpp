@@ -637,14 +637,6 @@ void CModule::OnDeop2(const CNick* pOpNick, const CNick& Nick, CChan& Channel,
                       bool bNoChange) {
     if (pOpNick) OnDeop(*pOpNick, Nick, Channel, bNoChange);
 }
-void CModule::OnHalfOp2(const CNick* pOpNick, const CNick& Nick, CChan& Channel,
-                    bool bNoChange) {
-    if (pOpNick) OnHalfOp(*pOpNick, Nick, Channel, bNoChange);
-}
-void CModule::OnDeHalfOp2(const CNick* pOpNick, const CNick& Nick, CChan& Channel,
-                      bool bNoChange) {
-    if (pOpNick) OnDeHalfOp(*pOpNick, Nick, Channel, bNoChange);
-}
 void CModule::OnVoice2(const CNick* pOpNick, const CNick& Nick, CChan& Channel,
                        bool bNoChange) {
     if (pOpNick) OnVoice(*pOpNick, Nick, Channel, bNoChange);
@@ -1206,19 +1198,9 @@ bool CModules::OnDeop(const CNick& OpNick, const CNick& Nick, CChan& Channel,
     MODUNLOADCHK(OnDeop(OpNick, Nick, Channel, bNoChange));
     return false;
 }
-bool CModules::OnHalfOp2(const CNick* pOpNick, const CNick& Nick, CChan& Channel,
-                     bool bNoChange) {
-    MODUNLOADCHK(OnHalfOp2(pOpNick, Nick, Channel, bNoChange));
-    return false;
-}
 bool CModules::OnHalfOp(const CNick& OpNick, const CNick& Nick, CChan& Channel,
                     bool bNoChange) {
     MODUNLOADCHK(OnHalfOp(OpNick, Nick, Channel, bNoChange));
-    return false;
-}
-bool CModules::OnDeHalfOp2(const CNick* pOpNick, const CNick& Nick, CChan& Channel,
-                       bool bNoChange) {
-    MODUNLOADCHK(OnDeHalfOp2(pOpNick, Nick, Channel, bNoChange));
     return false;
 }
 bool CModules::OnDeHalfOp(const CNick& OpNick, const CNick& Nick, CChan& Channel,

@@ -377,12 +377,12 @@ void CChan::ModeChange(const CString& sModes, const VCString& vsModes,
                     } else if (cMode == CChan::M_HalfOp) {
                         if (bAdd) {
                             NETWORKMODULECALL(
-                                OnHalfOp2(pOpNick, *pNick, *this, bNoChange),
+                                OnHalfOp(pOpNick, *pNick, *this, bNoChange),
                                 m_pNetwork->GetUser(), m_pNetwork, nullptr,
                                 NOTHING);
                         } else {
                             NETWORKMODULECALL(
-                                OnDeHalfOp2(pOpNick, *pNick, *this, bNoChange),
+                                OnDeHalfOp(pOpNick, *pNick, *this, bNoChange),
                                 m_pNetwork->GetUser(), m_pNetwork, nullptr,
                                 NOTHING);
                         }
