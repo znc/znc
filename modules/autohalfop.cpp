@@ -201,8 +201,8 @@ class CAutoHalfOpMod : public CModule {
     }
 
     void OnJoin(const CNick& Nick, CChan& Channel) override {
-        // If we have ops in this chan
-        if (Channel.HasPerm(CChan::Op)) {
+        // If we have ops or halfops in this chan
+        if (Channel.HasPerm(CChan::Op) || Channel.HasPerm(CChan::HalfOp)) {
             CheckAutoHalfOp(Nick, Channel);
         }
     }
@@ -508,13 +508,14 @@ class CAutoHalfOpMod : public CModule {
                 const vector<CChan*>& Chans = GetNetwork()->GetChans();
                 bMatchedHost = true;
 
-                // Also verify that they are opped in at least one of the user's
-                // chans
+                // Also verify that they are opped or halfopped in at least one
+                // of the user's chans
                 for (CChan* pChan : Chans) {
                     const CNick* pNick = pChan->FindNick(Nick.GetNick());
 
                     if (pNick) {
-                        if (pNick->HasPerm(CChan::HalfOp) &&
+                        if ((pNick->HasPerm(CChan::Op) ||
+                             pNick->HasPerm(CChan::HalfOp)) &&
                             pUser->ChannelMatches(pChan->GetName())) {
                             bValid = true;
                             break;
@@ -531,8 +532,8 @@ class CAutoHalfOpMod : public CModule {
         if (!bValid) {
             if (bMatchedHost) {
                 PutModule(t_f(
-                    "[{1}] sent us a challenge but they are not opped in any "
-                    "defined channels.")(Nick.GetHostMask()));
+                    "[{1}] sent us a challenge but they are not opped or "
+                    "halfopped in any defined channels.")(Nick.GetHostMask()));
             } else {
                 PutModule(
                     t_f("[{1}] sent us a challenge but they do not match a "
@@ -619,7 +620,7 @@ class CAutoHalfOpMod : public CModule {
         const vector<CChan*>& Chans = GetNetwork()->GetChans();
 
         for (CChan* pChan : Chans) {
-            if (pChan->HasPerm(CChan::HalfOp) &&
+            if ((pChan->HasPerm(CChan::Op) || pChan->HasPerm(CChan::HalfOp)) &&
                 User.ChannelMatches(pChan->GetName())) {
                 const CNick* pNick = pChan->FindNick(Nick.GetNick());
 
@@ -643,4 +644,4 @@ void TModInfo<CAutoHalfOpMod>(CModInfo& Info) {
     Info.SetWikiPage("autohalfop");
 }
 
-NETWORKMODULEDEFS(CAutoHalfOpMod, t_s("Auto halfop the good people"))
+NETWORKMODULEDEFS(CAutoHalfOpMod, t_s("Automatically halfop people"))
