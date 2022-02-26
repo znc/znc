@@ -603,6 +603,16 @@ class CModule {
                          CChan& Channel, bool bNoChange);
     virtual void OnDeop(const CNick& OpNick, const CNick& Nick, CChan& Channel,
                         bool bNoChange);
+    /** Called when a nick is halfopped on a channel */
+    virtual void OnHalfOp2(const CNick* pOpNick, const CNick& Nick, CChan& Channel,
+                       bool bNoChange);
+    virtual void OnHalfOp(const CNick& OpNick, const CNick& Nick, CChan& Channel,
+                      bool bNoChange);
+    /** Called when a nick is dehalfopped on a channel */
+    virtual void OnDeHalfOp2(const CNick* pOpNick, const CNick& Nick,
+                         CChan& Channel, bool bNoChange);
+    virtual void OnDeHalfOp(const CNick& OpNick, const CNick& Nick, CChan& Channel,
+                        bool bNoChange);
     /** Called when a nick is voiced on a channel */
     virtual void OnVoice2(const CNick* pOpNick, const CNick& Nick,
                           CChan& Channel, bool bNoChange);
@@ -1430,6 +1440,14 @@ class CModules : public std::vector<CModule*>, private CCoreTranslationMixin {
     bool OnDeop2(const CNick* pOpNick, const CNick& Nick, CChan& Channel,
                  bool bNoChange);
     bool OnDeop(const CNick& OpNick, const CNick& Nick, CChan& Channel,
+                bool bNoChange);
+    bool OnHalfOp2(const CNick* pOpNick, const CNick& Nick, CChan& Channel,
+               bool bNoChange);
+    bool OnHalfOp(const CNick& OpNick, const CNick& Nick, CChan& Channel,
+              bool bNoChange);
+    bool OnDeHalfOp2(const CNick* pOpNick, const CNick& Nick, CChan& Channel,
+                 bool bNoChange);
+    bool OnDeHalfOp(const CNick& OpNick, const CNick& Nick, CChan& Channel,
                 bool bNoChange);
     bool OnVoice2(const CNick* pOpNick, const CNick& Nick, CChan& Channel,
                   bool bNoChange);
