@@ -15,7 +15,7 @@ for user in data['data']:
 
 array.sort(key=lambda x: x.lower())
 
-sys.stdout = open('TRANSLATORS.md', 'wt')
+sys.stdout = open('TRANSLATORS.md', 'wt', encoding='utf-8')
 
 print('These people helped translating ZNC to various languages:')
 print()
