@@ -12,139 +12,139 @@ msgstr ""
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
 
-#: crypt.cpp:198
+#: crypt.cpp:199
 msgid "<#chan|Nick>"
 msgstr "<#kanaal|Naam>"
 
-#: crypt.cpp:199
+#: crypt.cpp:200
 msgid "Remove a key for nick or channel"
 msgstr "Verwijder een sleutel voor een naam of kanaal"
 
-#: crypt.cpp:201
+#: crypt.cpp:202
 msgid "<#chan|Nick> <Key>"
 msgstr "<#kanaal|Naam> <sleutel>"
 
-#: crypt.cpp:202
+#: crypt.cpp:203
 msgid "Set a key for nick or channel"
 msgstr "Stel een sleutel in voor naam of kanaal"
 
-#: crypt.cpp:204
+#: crypt.cpp:205
 msgid "List all keys"
 msgstr "Laat alle sleutels zien"
 
-#: crypt.cpp:206
+#: crypt.cpp:207
 msgid "<Nick>"
 msgstr "<Naam>"
 
-#: crypt.cpp:207
+#: crypt.cpp:208
 msgid "Start a DH1080 key exchange with nick"
 msgstr "Begint een DH1080 sleutel uitwisseling met naam"
 
-#: crypt.cpp:210
+#: crypt.cpp:211
 msgid "Get the nick prefix"
 msgstr "Laat het voorvoegsel van de naam zien"
 
-#: crypt.cpp:213
+#: crypt.cpp:214
 msgid "[Prefix]"
 msgstr "[Voorvoegsel]"
 
-#: crypt.cpp:214
+#: crypt.cpp:215
 msgid "Set the nick prefix, with no argument it's disabled."
 msgstr ""
 "Stel het voorvoegsel voor de naam in, zonder argumenten zal deze "
 "uitgeschakeld worden."
 
-#: crypt.cpp:270
+#: crypt.cpp:271
 msgid "Received DH1080 public key from {1}, sending mine..."
 msgstr "DH1080 publieke sleutel ontvangen van {1}, nu mijne sturen..."
 
-#: crypt.cpp:275 crypt.cpp:296
+#: crypt.cpp:276 crypt.cpp:297
 msgid "Key for {1} successfully set."
 msgstr "Sleutel voor {1} ingesteld."
 
-#: crypt.cpp:278 crypt.cpp:299
+#: crypt.cpp:279 crypt.cpp:300
 msgid "Error in {1} with {2}: {3}"
 msgstr "Fout in {1} met {2}: {3}"
 
-#: crypt.cpp:280 crypt.cpp:301
+#: crypt.cpp:281 crypt.cpp:302
 msgid "no secret key computed"
 msgstr "Geen geheime sleutel berekend"
 
-#: crypt.cpp:395
+#: crypt.cpp:396
 msgid "Target [{1}] deleted"
 msgstr "Doel [{1}] verwijderd"
 
-#: crypt.cpp:397
+#: crypt.cpp:398
 msgid "Target [{1}] not found"
 msgstr "Doel [{1}] niet gevonden"
 
-#: crypt.cpp:400
+#: crypt.cpp:401
 msgid "Usage DelKey <#chan|Nick>"
 msgstr "Gebruik: DelKey <#kanaal|Naam>"
 
-#: crypt.cpp:415
+#: crypt.cpp:416
 msgid "Set encryption key for [{1}] to [{2}]"
 msgstr "Sleutel voor versleuteling ingesteld voor [{1}] op [{2}]"
 
-#: crypt.cpp:417
+#: crypt.cpp:418
 msgid "Usage: SetKey <#chan|Nick> <Key>"
 msgstr "Gebruik: SetKey <#kanaal|Naam> <sleutel>"
 
-#: crypt.cpp:428
+#: crypt.cpp:429
 msgid "Sent my DH1080 public key to {1}, waiting for reply ..."
 msgstr ""
 "Mijn DH1080 publieke sleutel verzonden naar {1}, wachten op antwoord ..."
 
-#: crypt.cpp:430
+#: crypt.cpp:431
 msgid "Error generating our keys, nothing sent."
 msgstr "Fout tijdens genereren van onze sleutels, niets verstuurd."
 
-#: crypt.cpp:433
+#: crypt.cpp:434
 msgid "Usage: KeyX <Nick>"
 msgstr "Gebruik: KeyX <Naam>"
 
-#: crypt.cpp:440
+#: crypt.cpp:441
 msgid "Nick Prefix disabled."
 msgstr "Naam voorvoegsel uit gezet."
 
-#: crypt.cpp:442
+#: crypt.cpp:443
 msgid "Nick Prefix: {1}"
 msgstr "Naam voorvoegsel: {1}"
 
-#: crypt.cpp:451
+#: crypt.cpp:452
 msgid "You cannot use :, even followed by other symbols, as Nick Prefix."
 msgstr ""
 "Je kan : niet gebruiken, ook niet als hierna nog extra symbolen komen, als "
 "Naam voorvoegsel."
 
-#: crypt.cpp:460
+#: crypt.cpp:461
 msgid "Overlap with Status Prefix ({1}), this Nick Prefix will not be used!"
 msgstr ""
 "Overlap met Status voorvoegsel ({1}), deze Naam voorvoegsel zal niet worden "
 "gebruikt!"
 
-#: crypt.cpp:465
+#: crypt.cpp:466
 msgid "Disabling Nick Prefix."
 msgstr "Naam voorvoegsel aan het uitzetten."
 
-#: crypt.cpp:467
+#: crypt.cpp:468
 msgid "Setting Nick Prefix to {1}"
 msgstr "Naam voorvoegsel naar {1} aan het zetten"
 
-#: crypt.cpp:474 crypt.cpp:481
+#: crypt.cpp:475 crypt.cpp:482
 msgctxt "listkeys"
 msgid "Target"
 msgstr "Doel"
 
-#: crypt.cpp:475 crypt.cpp:482
+#: crypt.cpp:476 crypt.cpp:483
 msgctxt "listkeys"
 msgid "Key"
 msgstr "Sleutel"
 
-#: crypt.cpp:486
+#: crypt.cpp:487
 msgid "You have no encryption keys set."
 msgstr "Je hebt geen versleutel sleutels ingesteld."
 
-#: crypt.cpp:508
+#: crypt.cpp:509
 msgid "Encryption for channel/private messages"
 msgstr "Versleuteling voor kanaal/privé berichten"

@@ -12,7 +12,7 @@ msgstr ""
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
 
-#: modules/po/../data/sasl/tmpl/index.tmpl:7 sasl.cpp:303
+#: modules/po/../data/sasl/tmpl/index.tmpl:7 sasl.cpp:305
 msgid "SASL"
 msgstr "SASL"
 
@@ -163,15 +163,15 @@ msgstr "A desativar a rede, requeremos autenticação."
 msgid "Use 'RequireAuth no' to disable."
 msgstr "Utilize 'RequireAuth no' para desativar."
 
-#: sasl.cpp:256
+#: sasl.cpp:258
 msgid "{1} mechanism succeeded."
 msgstr "O mecanismo {1} foi bem-sucedido."
 
-#: sasl.cpp:268
+#: sasl.cpp:270
 msgid "{1} mechanism failed."
 msgstr "O mecanismo {1} falhou."
 
-#: sasl.cpp:348
+#: sasl.cpp:350
 msgid ""
 "Adds support for sasl authentication capability to authenticate to an IRC "
 "server"

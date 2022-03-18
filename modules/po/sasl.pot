@@ -3,7 +3,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: modules/po/../data/sasl/tmpl/index.tmpl:7 sasl.cpp:303
+#: modules/po/../data/sasl/tmpl/index.tmpl:7 sasl.cpp:305
 msgid "SASL"
 msgstr ""
 
@@ -150,15 +150,15 @@ msgstr ""
 msgid "Use 'RequireAuth no' to disable."
 msgstr ""
 
-#: sasl.cpp:256
+#: sasl.cpp:258
 msgid "{1} mechanism succeeded."
 msgstr ""
 
-#: sasl.cpp:268
+#: sasl.cpp:270
 msgid "{1} mechanism failed."
 msgstr ""
 
-#: sasl.cpp:348
+#: sasl.cpp:350
 msgid ""
 "Adds support for sasl authentication capability to authenticate to an IRC "
 "server"
