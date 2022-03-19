@@ -658,7 +658,7 @@ msgstr ""
 #: ClientCommand.cpp:453
 msgid "Disabled {1} channel"
 msgid_plural "Disabled {1} channels"
-msgstr[0] ""
+msgstr[0] "Disabilitato {1} canale"
 msgstr[1] "Disabilitati {1} canali"
 
 #: ClientCommand.cpp:470

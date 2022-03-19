@@ -26,7 +26,7 @@ msgstr "Terminar sessão"
 
 #: webskins/_default_/tmpl/Menu.tmpl:4
 msgid "Home"
-msgstr "Inicio"
+msgstr "Início"
 
 #: webskins/_default_/tmpl/Menu.tmpl:7
 msgid "Global Modules"
@@ -185,7 +185,7 @@ msgstr "O módulo {1} não existe"
 #: Client.cpp:359
 msgid "A client from {1} attempted to login as you, but was rejected: {2}"
 msgstr ""
-"Um cliente a partir de {1} tentou iniciar sessão como você, mas foi "
+"Um cliente a partir de {1} tentou iniciar sessão como sendo você, mas foi "
 "rejeitado: {2}"
 
 #: Client.cpp:394
@@ -1853,17 +1853,17 @@ msgstr ""
 #: ClientCommand.cpp:1911
 msgctxt "helpcmd|Broadcast|args"
 msgid "[message]"
-msgstr "[message]"
+msgstr "[mensagem]"
 
 #: ClientCommand.cpp:1912
 msgctxt "helpcmd|Broadcast|desc"
 msgid "Broadcast a message to all ZNC users"
-msgstr "Envia uma mensagem para todos os utilizadores do ZNC"
+msgstr "Transmite uma mensagem para todos os utilizadores do ZNC"
 
 #: ClientCommand.cpp:1915
 msgctxt "helpcmd|Shutdown|args"
 msgid "[message]"
-msgstr "[message]"
+msgstr "[mensagem]"
 
 #: ClientCommand.cpp:1916
 msgctxt "helpcmd|Shutdown|desc"
@@ -1873,7 +1873,7 @@ msgstr "Encerra o ZNC completamente"
 #: ClientCommand.cpp:1917
 msgctxt "helpcmd|Restart|args"
 msgid "[message]"
-msgstr "[message]"
+msgstr "[mensagem]"
 
 #: ClientCommand.cpp:1918
 msgctxt "helpcmd|Restart|desc"

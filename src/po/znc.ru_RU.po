@@ -486,11 +486,11 @@ msgstr ""
 
 #: ClientCommand.cpp:190
 msgid "No such user: {1}"
-msgstr ""
+msgstr "Нет такого пользователя [{1}]"
 
 #: ClientCommand.cpp:198
 msgid "No clients are connected"
-msgstr ""
+msgstr "Нет подключенных клиентов"
 
 #: ClientCommand.cpp:203 ClientCommand.cpp:209
 msgctxt "listclientscmd"
@@ -505,7 +505,7 @@ msgstr ""
 #: ClientCommand.cpp:205 ClientCommand.cpp:215
 msgctxt "listclientscmd"
 msgid "Identifier"
-msgstr ""
+msgstr "Идентификатор"
 
 #: ClientCommand.cpp:223 ClientCommand.cpp:229
 msgctxt "listuserscmd"
@@ -515,12 +515,12 @@ msgstr ""
 #: ClientCommand.cpp:224 ClientCommand.cpp:230
 msgctxt "listuserscmd"
 msgid "Networks"
-msgstr ""
+msgstr "Сети"
 
 #: ClientCommand.cpp:225 ClientCommand.cpp:232
 msgctxt "listuserscmd"
 msgid "Clients"
-msgstr ""
+msgstr "Клиенты"
 
 #: ClientCommand.cpp:240 ClientCommand.cpp:250 ClientCommand.cpp:260
 #: ClientCommand.cpp:263
@@ -536,7 +536,7 @@ msgstr ""
 #: ClientCommand.cpp:242 ClientCommand.cpp:252 ClientCommand.cpp:268
 msgctxt "listallusernetworkscmd"
 msgid "Clients"
-msgstr ""
+msgstr "Клиенты"
 
 #: ClientCommand.cpp:243 ClientCommand.cpp:271 ClientCommand.cpp:280
 msgctxt "listallusernetworkscmd"
@@ -603,11 +603,11 @@ msgstr "Вы не настроили ни один сервер."
 
 #: ClientCommand.cpp:355
 msgid "Server [{1}] not found"
-msgstr ""
+msgstr "Сервер {1} не найден"
 
 #: ClientCommand.cpp:375 ClientCommand.cpp:380
 msgid "Connecting to {1}..."
-msgstr ""
+msgstr "Подключение к {1}..."
 
 #: ClientCommand.cpp:377
 msgid "Jumping to the next server in the list..."
@@ -615,7 +615,7 @@ msgstr ""
 
 #: ClientCommand.cpp:382
 msgid "Connecting..."
-msgstr ""
+msgstr "Подключение..."
 
 #: ClientCommand.cpp:400
 msgid "Disconnected from IRC. Use 'connect' to reconnect."

@@ -114,7 +114,7 @@ msgid ""
 "Nick, AltNick, Ident, RealName, BindHost can be left empty to use the value "
 "from the user."
 msgstr ""
-"Nick, NickAlt, Ident, RealName, BindHost podem ser deixados vazios para "
+"Nick, NickAlt, Ident, RealName, BindHost podem ser deixados em branco para "
 "depois usar o valor do utilizador."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:29
@@ -179,7 +179,7 @@ msgstr "Mensagem de Saída:"
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:67
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:114
 msgid "You may define a Message shown, when you quit IRC."
-msgstr "Poder querer definir a Mensagem mostrada, quando sair do IRC."
+msgstr "Pode definir a mensagem mostrada, quando sair do IRC."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:71
 msgid "Active:"
@@ -563,7 +563,7 @@ msgstr ""
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:244
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:263
 msgid "Empty = use standard value"
-msgstr "Vazio = utilizar o valor padrão"
+msgstr "Em branco = utilizar o valor por defeito"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:243
 msgid ""
@@ -605,8 +605,8 @@ msgstr "Comportamento do ZNC"
 msgid ""
 "Any of the following text boxes can be left empty to use their default value."
 msgstr ""
-"Quaisquer das seguintes caixas pode ser deixada em branco para utilizar o "
-"valor por defeito."
+"Qualquer das seguintes caixas pode ser deixada em branco para utilizar o "
+"valor por defeito delas."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:290
 msgid "Timestamp Format:"
@@ -707,7 +707,7 @@ msgstr "{1} estão disponíveis"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:341
 msgid "Empty value means this CTCP request will be ignored"
-msgstr "Sem valores significa que este pedido CTCP será ignorado"
+msgstr "Valor em branco significa que este pedido CTCP será ignorado"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:347
 msgid "Request"
@@ -866,7 +866,7 @@ msgstr "HTTP"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:20
 msgid "URIPrefix"
-msgstr "URIPrefix"
+msgstr "PrefixoURI"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:56
 msgid ""
@@ -912,7 +912,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:124
 msgid "Server Throttle:"
-msgstr "Regulador de servidor:"
+msgstr "Atraso de servidor:"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:126
 msgid ""
@@ -937,7 +937,7 @@ msgstr "Sessões Web protegidas:"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:140
 msgid "Disallow IP changing during each web session"
-msgstr "Não permite alteração de IP durante cada sessão web"
+msgstr "Não permitir alteração de IP durante cada sessão web"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:145
 msgid "Hide ZNC Version:"
@@ -945,7 +945,7 @@ msgstr "Ocultar a versão do ZNC:"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:147
 msgid "Hide version number from non-ZNC users"
-msgstr "Oculta o número da versão dos utilizadores não-ZNC"
+msgstr "Ocultar o número da versão dos utilizadores não-ZNC"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:153
 msgid "Allow user authentication by external modules only"
@@ -1044,19 +1044,19 @@ msgstr "Rede"
 
 #: webadmin.cpp:91 webadmin.cpp:1872
 msgid "Global Settings"
-msgstr "Definições Globais"
+msgstr "Definições Globais"
 
 #: webadmin.cpp:93
 msgid "Your Settings"
-msgstr "As suas definições"
+msgstr "As Suas Definições"
 
 #: webadmin.cpp:94 webadmin.cpp:1684
 msgid "Traffic Info"
-msgstr "Informação de Tráfego"
+msgstr "Informação de Tráfego"
 
 #: webadmin.cpp:97 webadmin.cpp:1663
 msgid "Manage Users"
-msgstr "Gerir Utilizadores"
+msgstr "Gerir Utilizadores"
 
 #: webadmin.cpp:188
 msgid "Invalid Submission [Username is required]"
@@ -1121,7 +1121,7 @@ msgstr "Adicionar Canal"
 
 #: webadmin.cpp:756 webadmin.cpp:1510
 msgid "Auto Clear Chan Buffer"
-msgstr "Auto. Limpar Buffer Canais"
+msgstr "Automaticamente limpar buffer de canais"
 
 #: webadmin.cpp:758
 msgid "Automatically Clear Channel Buffer After Playback"
@@ -1211,7 +1211,7 @@ msgid ""
 "Automatically Clear Channel Buffer After Playback (the default value for new "
 "channels)"
 msgstr ""
-"Automaticamente limpara buffers de canal após reprodução (o valor por "
+"Automaticamente limpa os buffers de canal após reprodução (o valor por "
 "defeito para novos canais)"
 
 #: webadmin.cpp:1522
@@ -1240,7 +1240,7 @@ msgstr "Negar SetBindHost"
 
 #: webadmin.cpp:1569
 msgid "Auto Clear Query Buffer"
-msgstr "Auto, Limpar Buffer Privados"
+msgstr "Automaticamente limpar buffer dos privados"
 
 #: webadmin.cpp:1571
 msgid "Automatically Clear Query Buffer After Playback"
