@@ -521,7 +521,7 @@ msgstr "Netzwerke"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:133
 msgid "No networks have been added for you yet."
-msgstr ""
+msgstr "Bisher wurden keine Netzwerke für dich hinzugefügt."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:147
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:18
@@ -1098,7 +1098,7 @@ msgstr "Benutzer existiert nicht"
 
 #: webadmin.cpp:555 webadmin.cpp:592 webadmin.cpp:925
 msgid "Permission denied"
-msgstr ""
+msgstr "Zugriff verweigert"
 
 #: webadmin.cpp:568 webadmin.cpp:605 webadmin.cpp:634 webadmin.cpp:650
 msgid "No such user or network"
@@ -1257,33 +1257,35 @@ msgstr "Admin (gefährlich! Könnte Shell-Zugang erhalten)"
 
 #: webadmin.cpp:1675
 msgid "Deny Setting BindHost"
-msgstr ""
+msgstr "Bearbeitung von BindHost nicht erlaubt"
 
 #: webadmin.cpp:1682
 msgid "Deny Setting Ident"
-msgstr ""
+msgstr "Bearbeitung von Ident nicht erlaubt"
 
 #: webadmin.cpp:1689
 msgid "Deny Editing Networks/Servers"
-msgstr ""
+msgstr "Veränderungen von Servern und Netzwerken nicht erlaubt"
 
 #: webadmin.cpp:1691
 msgid ""
 "Deny adding/deleting networks, setting network name and editing the server "
 "list"
 msgstr ""
+"Verbiete hinzufügen/löschen von Neztwerken, Änderungen von Netzwerknamen und "
+"das Bearbeiten der Serverliste"
 
 #: webadmin.cpp:1698
 msgid "Deny Setting RealName"
-msgstr ""
+msgstr "Bearbeitung von RealName nicht erlaubt"
 
 #: webadmin.cpp:1705
 msgid "Deny Setting Quit Message"
-msgstr ""
+msgstr "Bearbeitung von Quit Message nicht erlaubt"
 
 #: webadmin.cpp:1712
 msgid "Deny Setting CTCP Replies"
-msgstr ""
+msgstr "Bearbeitung von CTCP Antworten nicht erlaubt"
 
 #: webadmin.cpp:1720
 msgid "Auto Clear Query Buffer"

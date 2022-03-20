@@ -768,7 +768,7 @@ msgstr "Gesamt: {1}, Betreten: {2}, Getrennt: {3}, Deaktiviert: {4}"
 #: ClientCommand.cpp:600 ClientCommand.cpp:636 ClientCommand.cpp:816
 #: ClientCommand.cpp:842
 msgid "Access denied!"
-msgstr ""
+msgstr "Zugriff verweigert!"
 
 #: ClientCommand.cpp:606
 msgid ""
