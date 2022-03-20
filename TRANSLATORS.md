@@ -25,6 +25,7 @@ These people helped translating ZNC to various languages:
 * moonlightzzz (moonlightz)
 * natinaum (natinaum)
 * PauloHeaven (Paul)
+* peterstanke (MAGIC)
 * psychon
 * remhaze
 * shillos5 (Nicholas Kyriakides)
