@@ -505,6 +505,25 @@ CPySocket::~CPySocket() {
     Py_CLEAR(m_pyObj);
 }
 
+CPyModule* CPyModCommand::GetModule() {
+    return this->m_pModule;
+}
+
+void CPyModCommand::operator()(const CString& sLine) {
+    PyObject* pyRes = PyObject_CallMethod(
+        m_pyObj, const_cast<char*>("__call__"), const_cast<char*>("s"),
+        sLine.c_str());
+    if (!pyRes) {
+        CString sRetMsg = m_pModPython->GetPyExceptionStr();
+        DEBUG("oops, something went wrong when calling command: " << sRetMsg);
+    }
+    Py_CLEAR(pyRes);
+}
+
+CPyModCommand::~CPyModCommand() {
+    Py_CLEAR(m_pyObj);
+}
+
 template <>
 void TModInfo<CModPython>(CModInfo& Info) {
     Info.SetWikiPage("modpython");

@@ -197,7 +197,9 @@ class Module:
                                         num)
         return fmt.format
 
-    # TODO is "t_d" needed for python? Maybe after AddCommand is implemented
+    @classmethod
+    def t_d(cls, english, context=''):
+        return CDelayedTranslation('znc-' + cls.__name__, context, english)
 
     def OnLoad(self, sArgs, sMessage):
         return True
@@ -295,7 +297,7 @@ class Module:
         pass
 
     def OnModCommand(self, sCommand):
-        pass
+        self.HandleCommand(sCommand)
 
     def OnModNotice(self, sMessage):
         pass
@@ -428,6 +430,16 @@ class Module:
 
     def OnSendToIRC(self, sLine):
         pass
+
+    # Command stuff
+    def AddCommand(self, cls, *args, **kwargs):
+        cmd = cls(*args, **kwargs)
+        cmd._cmodcommand = CreatePyModCommand(self._cmod, cls.cmd,
+                                              COptionalTranslation(cls.args),
+                                              COptionalTranslation(cls.desc),
+                                              cmd)
+
+        return cmd
 
     # Global modules
     def OnAddUser(self, User, sErrorRet):
@@ -672,6 +684,18 @@ class Module:
         pass
 
 
+class Command:
+    cmd = ''
+    args = ''
+    desc = ''
+
+    def __call__(self, sLine):
+        pass
+
+    def GetModule(self):
+        return self._cmodcommand.GetModule().GetNewPyObj()
+
+
 def make_inherit(cl, parent, attr):
     def make_caller(parent, name, attr):
         return lambda self, *a: parent.__dict__[name](self.__dict__[attr], *a)
@@ -688,6 +712,7 @@ def make_inherit(cl, parent, attr):
 make_inherit(Socket, CPySocket, '_csock')
 make_inherit(Module, CPyModule, '_cmod')
 make_inherit(Timer, CPyTimer, '_ctimer')
+make_inherit(Command, CPyModCommand, '_cmodcommand')
 
 
 class ZNCModuleLoader(importlib.abc.SourceLoader):

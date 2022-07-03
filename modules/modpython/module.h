@@ -334,3 +334,35 @@ class CModulesIter {
     CModules* m_pModules;
     CModules::const_iterator m_it;
 };
+
+class ZNC_EXPORT_LIB_EXPORT CPyModCommand : public CModCommand {
+  CPyModule* m_pModule;
+  CModPython* m_pModPython;
+  PyObject* m_pyObj;
+
+  void operator()(const CString& sLine);
+
+  public:
+    CPyModCommand(CPyModule* pModule,
+                  const CString& sCmd, const COptionalTranslation& sArgs,
+                  const COptionalTranslation& sDesc, PyObject *pyObj)
+      : CModCommand(sCmd, [=](const CString& sLine) { (*this)(sLine); }, sArgs,
+                    sDesc),
+        m_pModule(pModule),
+        m_pModPython(pModule->GetModPython()),
+        m_pyObj(pyObj) {
+      Py_INCREF(pyObj);
+      pModule->AddCommand(*this);
+    }
+    virtual ~CPyModCommand();
+
+    CPyModule* GetModule();
+};
+
+inline CPyModCommand* CreatePyModCommand(CPyModule* pModule,
+                                         const CString& sCmd,
+                                         const COptionalTranslation& sArgs,
+                                         const COptionalTranslation& sDesc,
+                                         PyObject* pyObj) {
+    return new CPyModCommand(pModule, sCmd, sArgs, sDesc, pyObj);
+}
