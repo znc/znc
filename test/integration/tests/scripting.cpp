@@ -296,5 +296,37 @@ TEST_F(ZNCTest, ModpythonModperl) {
     client.ReadUntil("Loaded module modperl");
 }
 
+TEST_F(ZNCTest, ModpythonCommand) {
+    if (QProcessEnvironment::systemEnvironment().value(
+            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
+        return;
+    }
+
+    auto znc = Run();
+    znc->CanLeak();
+
+    InstallModule("cmdtest.py", R"(
+        import znc
+
+        class cmdtest(znc.Module):
+            def OnLoad(self, args, message):
+                self.AddCommand(testcmd)
+                return True
+
+        class testcmd(znc.Command):
+            cmd = 'ping'
+
+            def __call__(self, line):
+                self.GetModule().PutModule('pong')
+    )");
+
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod modpython");
+    client.Write("znc loadmod cmdtest");
+    client.Write("PRIVMSG *cmdtest :ping");
+    client.ReadUntil("pong");
+}
+
 }  // namespace
 }  // namespace znc_inttest
