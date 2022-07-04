@@ -310,11 +310,13 @@ TEST_F(ZNCTest, ModpythonCommand) {
 
         class cmdtest(znc.Module):
             def OnLoad(self, args, message):
+                self.AddHelpCommand()
                 self.AddCommand(testcmd)
                 return True
 
         class testcmd(znc.Command):
-            cmd = 'ping'
+            command = 'ping'
+            description = cmdtest.t_d('blah')
 
             def __call__(self, line):
                 self.GetModule().PutModule('pong')
@@ -324,8 +326,9 @@ TEST_F(ZNCTest, ModpythonCommand) {
     auto client = LoginClient();
     client.Write("znc loadmod modpython");
     client.Write("znc loadmod cmdtest");
+    client.Write("PRIVMSG *cmdtest :help");
     client.Write("PRIVMSG *cmdtest :ping");
-    client.ReadUntil("pong");
+    client.ReadUntil(":*cmdtest!znc@znc.in PRIVMSG nick :pong");
 }
 
 }  // namespace
