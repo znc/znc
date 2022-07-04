@@ -171,4 +171,30 @@ void ZNCTest::InstallModule(QString name, QString content) {
     }
 }
 
+void ZNCTest::InstallTranslation(QString module, QString language, QString content) {
+    QDir dir(m_dir.path());
+    for (QString d : std::vector<QString>{"modules", "locale", language, "LC_MESSAGES"}) {
+        ASSERT_TRUE(dir.mkpath(d)) << d.toStdString();
+        ASSERT_TRUE(dir.cd(d)) << d.toStdString();
+    }
+    QTemporaryDir srcdir;
+    QFile file(QDir(srcdir.path()).filePath("foo.po"));
+    ASSERT_TRUE(file.open(QIODevice::WriteOnly | QIODevice::Text));
+    QTextStream out(&file);
+    out << content;
+    file.close();
+    {
+        Process p("msgfmt", QStringList() << "-D" << "." << "-o" << "foo.mo" << "foo.po",
+            [&](QProcess* proc) {
+                proc->setWorkingDirectory(srcdir.path());
+                proc->setProcessChannelMode(QProcess::ForwardedChannels);
+            });
+        p.ShouldFinishItself();
+        p.ShouldFinishInSec(300);
+    }
+    QFile result(QDir(srcdir.path()).filePath("foo.mo"));
+    result.rename(dir.filePath("znc-" + module + ".mo"));
+}
+
+
 }  // namespace znc_inttest

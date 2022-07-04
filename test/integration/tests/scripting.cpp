@@ -316,19 +316,45 @@ TEST_F(ZNCTest, ModpythonCommand) {
 
         class testcmd(znc.Command):
             command = 'ping'
+            args = cmdtest.t_d('ar')
             description = cmdtest.t_d('blah')
 
             def __call__(self, line):
-                self.GetModule().PutModule('pong')
+                self.GetModule().PutModule(line + cmdtest.t_s(' pong'))
     )");
 
     auto ircd = ConnectIRCd();
     auto client = LoginClient();
     client.Write("znc loadmod modpython");
     client.Write("znc loadmod cmdtest");
+    client.Write("PRIVMSG *cmdtest :ping or");
+    client.ReadUntil(":*cmdtest!znc@znc.in PRIVMSG nick :ping or pong");
+
+    InstallTranslation("cmdtest", "ru_RU", R"(
+        msgid ""
+        msgstr ""
+        "Content-Type: text/plain; charset=UTF-8\n"
+        "Content-Transfer-Encoding: 8bit\n"
+        "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 "
+        "&& n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 "
+        "&& n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
+        "Language: ru_RU\n"
+
+        msgid "ar"
+        msgstr "аргумент"
+
+        msgid "blah"
+        msgstr "бла"
+
+        msgid " pong"
+        msgstr " понг"
+    )");
+
+    client.Write("PRIVMSG *controlpanel :set language $me ru-RU");
     client.Write("PRIVMSG *cmdtest :help");
+    client.ReadUntil(":*cmdtest!znc@znc.in PRIVMSG nick :\x02ping аргумент\x0F: бла");
     client.Write("PRIVMSG *cmdtest :ping");
-    client.ReadUntil(":*cmdtest!znc@znc.in PRIVMSG nick :pong");
+    client.ReadUntil(":*cmdtest!znc@znc.in PRIVMSG nick :ping понг");
 }
 
 }  // namespace
