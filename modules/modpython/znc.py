@@ -434,9 +434,9 @@ class Module:
     # Command stuff
     def AddCommand(self, cls, *args, **kwargs):
         cmd = cls(*args, **kwargs)
-        cmd._cmodcommand = CreatePyModCommand(self._cmod, cls.cmd,
+        cmd._cmodcommand = CreatePyModCommand(self._cmod, cls.command,
                                               COptionalTranslation(cls.args),
-                                              COptionalTranslation(cls.desc),
+                                              COptionalTranslation(cls.description),
                                               cmd)
 
         return cmd
@@ -685,9 +685,9 @@ class Module:
 
 
 class Command:
-    cmd = ''
+    command = ''
     args = ''
-    desc = ''
+    description = ''
 
     def __call__(self, sLine):
         pass

@@ -47,6 +47,7 @@ class ZNCTest : public testing::Test {
     std::unique_ptr<QNetworkReply> HandleHttp(QNetworkReply* reply);
 
     void InstallModule(QString name, QString content);
+    void InstallTranslation(QString module, QString language, QString content);
 
     App m_app;
     QNetworkAccessManager m_network;
