@@ -12,6 +12,6 @@ msgstr ""
 "Language-Team: Greek\n"
 "Language: el_GR\n"
 
-#: modpython.cpp:513
+#: modpython.cpp:532
 msgid "Loads python scripts as ZNC modules"
 msgstr ""
