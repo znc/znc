@@ -262,16 +262,16 @@ msgstr "Utilizează: /attach <#canale>"
 #: ClientCommand.cpp:423 ClientCommand.cpp:450
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
-msgstr[0] ""
+msgstr[0] "A existat {1} canal care se potrivește cu [{2}]"
 msgstr[1] ""
-msgstr[2] ""
+msgstr[2] "Au existat {1} canale care se potrivesc cu [{2}]"
 
 #: Client.cpp:1347 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
-msgstr[0] ""
+msgstr[0] "Am atașat {1} canal"
 msgstr[1] ""
-msgstr[2] ""
+msgstr[2] "Am atașat {1} canale"
 
 #: Client.cpp:1359
 msgid "Usage: /detach <#chans>"
@@ -280,9 +280,9 @@ msgstr "Utilizează: /detach <#canale>"
 #: Client.cpp:1369 ClientCommand.cpp:154
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
-msgstr[0] ""
+msgstr[0] "Detașează {1} canal"
 msgstr[1] ""
-msgstr[2] ""
+msgstr[2] "Detașează {1} canale"
 
 #: Chan.cpp:678
 msgid "Buffer Playback..."

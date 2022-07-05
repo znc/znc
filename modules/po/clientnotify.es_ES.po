@@ -44,6 +44,8 @@ msgid_plural ""
 "see all {1} clients."
 msgstr[0] ""
 msgstr[1] ""
+"Otro cliente se ha autenticado con tu usuario. Usa el comando 'ListClients' "
+"para ver todos los clientes de {1}."
 
 #: clientnotify.cpp:108
 msgid "Usage: Method <message|notice|off>"
