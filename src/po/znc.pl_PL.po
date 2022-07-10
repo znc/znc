@@ -52,9 +52,9 @@ msgid ""
 "*status help</code>” and “<code>/msg *status loadmod &lt;module&gt;</"
 "code>”). Once you have loaded some Web-enabled modules, the menu will expand."
 msgstr ""
-"Nie załadowano żadnych modułów WWW. Załaduj moduły z IRCa (“<code>/msg "
-"*status help</code>” i “<code>/msg *status loadmod &lt;moduł&gt;</code>”). "
-"Po załadowaniu niektórych modułów WWW menu się rozwinie."
+"Nie zostały załadowane żadne moduły WWW. Załaduj moduły metodą IRCa (“<code>/"
+"msg *status help</code>” i “<code>/msg *status loadmod &lt;moduł&gt;</"
+"code>”). Jak już załadujesz jakieś moduły WWW to menu się rozwinie."
 
 #: znc.cpp:1562
 msgid "User already exists"
