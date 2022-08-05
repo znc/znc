@@ -363,11 +363,13 @@ CString CIRCNetwork::GetNetworkPath() const {
     return sNetworkPath;
 }
 
+namespace {
 template <class T>
 struct TOption {
     const char* name;
     void (CIRCNetwork::*pSetter)(T);
 };
+}
 
 bool CIRCNetwork::ParseConfig(CConfig* pConfig, CString& sError,
                               bool bUpgrade) {
