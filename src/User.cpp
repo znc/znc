@@ -135,11 +135,13 @@ CUser::~CUser() {
     CZNC::Get().AddBytesWritten(m_uBytesWritten);
 }
 
+namespace {
 template <class T>
 struct TOption {
     const char* name;
     void (CUser::*pSetter)(T);
 };
+}
 
 bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
     TOption<const CString&> StringOptions[] = {
