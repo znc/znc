@@ -83,42 +83,42 @@ msgstr "Impossibile associare: {1}"
 msgid "Jumping servers because this server is no longer in the list"
 msgstr "Salta il server perché non è più in elenco"
 
-#: IRCNetwork.cpp:669 User.cpp:688
+#: IRCNetwork.cpp:671 User.cpp:690
 msgid "Welcome to ZNC"
 msgstr "Benvenuti nello ZNC"
 
-#: IRCNetwork.cpp:757
+#: IRCNetwork.cpp:759
 msgid "You are currently disconnected from IRC. Use 'connect' to reconnect."
 msgstr "Sei attualmente disconnesso da IRC. Usa 'connect' per riconnetterti."
 
-#: IRCNetwork.cpp:787
+#: IRCNetwork.cpp:789
 msgid "This network is being deleted or moved to another user."
 msgstr "Questo network può essere eliminato o spostato ad un altro utente."
 
-#: IRCNetwork.cpp:948
+#: IRCNetwork.cpp:950
 msgid "Invalid index"
 msgstr "Indice non valido"
 
-#: IRCNetwork.cpp:956 IRCNetwork.cpp:972 IRCNetwork.cpp:980
+#: IRCNetwork.cpp:958 IRCNetwork.cpp:974 IRCNetwork.cpp:982
 #: ClientCommand.cpp:1425
 msgid "You are not on {1}"
 msgstr "Non sei su {1}"
 
-#: IRCNetwork.cpp:1059
+#: IRCNetwork.cpp:1061
 msgid "The channel {1} could not be joined, disabling it."
 msgstr "Disabilitandolo, il canale {1} potrebbe non essere più accessibile."
 
-#: IRCNetwork.cpp:1188
+#: IRCNetwork.cpp:1190
 msgid "Your current server was removed, jumping..."
 msgstr "Il server attuale è stato rimosso, salta..."
 
-#: IRCNetwork.cpp:1351
+#: IRCNetwork.cpp:1353
 msgid "Cannot connect to {1}, because ZNC is not compiled with SSL support."
 msgstr ""
 "Non posso collegarmi a {1}, perché lo ZNC non è compilato con il supporto "
 "SSL."
 
-#: IRCNetwork.cpp:1372
+#: IRCNetwork.cpp:1374
 msgid "Some module aborted the connection attempt"
 msgstr "Qualche modulo ha annullato il tentativo di connessione"
 
@@ -1996,7 +1996,7 @@ msgstr "hostname malformato nel certificato"
 msgid "hostname verification error"
 msgstr "errore di verifica dell'hostname"
 
-#: User.cpp:517
+#: User.cpp:519
 msgid ""
 "Invalid network name. It should be alphanumeric. Not to be confused with "
 "server name"
@@ -2004,11 +2004,11 @@ msgstr ""
 "Nome del network non valido. Deve essere alfanumerico. Da non confondere con "
 "il nome del server"
 
-#: User.cpp:521
+#: User.cpp:523
 msgid "Network {1} already exists"
 msgstr "Network {1} già esistente"
 
-#: User.cpp:787
+#: User.cpp:789
 msgid ""
 "You are being disconnected because your IP is no longer allowed to connect "
 "to this user"
@@ -2016,18 +2016,18 @@ msgstr ""
 "Sei stato disconnesso perché il tuo indirizzo IP non è più autorizzato a "
 "connettersi a questo utente"
 
-#: User.cpp:927
+#: User.cpp:929
 msgid "Password is empty"
 msgstr "Password è vuota"
 
-#: User.cpp:932
+#: User.cpp:934
 msgid "Username is empty"
 msgstr "Username è vuoto"
 
-#: User.cpp:937
+#: User.cpp:939
 msgid "Username is invalid"
 msgstr "Username non è valido"
 
-#: User.cpp:1219
+#: User.cpp:1221
 msgid "Unable to find modinfo {1}: {2}"
 msgstr "Impossibile trovare modinfo {1}: {2}"

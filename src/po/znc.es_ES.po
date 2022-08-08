@@ -82,41 +82,41 @@ msgstr "Imposible enlazar: {1}"
 msgid "Jumping servers because this server is no longer in the list"
 msgstr "Cambiando de servidor porque este servidor ya no está en la lista"
 
-#: IRCNetwork.cpp:669 User.cpp:688
+#: IRCNetwork.cpp:671 User.cpp:690
 msgid "Welcome to ZNC"
 msgstr "Bienvenido a ZNC"
 
-#: IRCNetwork.cpp:757
+#: IRCNetwork.cpp:759
 msgid "You are currently disconnected from IRC. Use 'connect' to reconnect."
 msgstr "Estás desconectado del IRC. Usa 'connect' para reconectar."
 
-#: IRCNetwork.cpp:787
+#: IRCNetwork.cpp:789
 msgid "This network is being deleted or moved to another user."
 msgstr "Esta red está siendo eliminada o movida a otro usuario."
 
-#: IRCNetwork.cpp:948
+#: IRCNetwork.cpp:950
 msgid "Invalid index"
 msgstr ""
 
-#: IRCNetwork.cpp:956 IRCNetwork.cpp:972 IRCNetwork.cpp:980
+#: IRCNetwork.cpp:958 IRCNetwork.cpp:974 IRCNetwork.cpp:982
 #: ClientCommand.cpp:1425
 msgid "You are not on {1}"
 msgstr "No estás en {1}"
 
-#: IRCNetwork.cpp:1059
+#: IRCNetwork.cpp:1061
 msgid "The channel {1} could not be joined, disabling it."
 msgstr "El canal {1} no es accesible, deshabilitado."
 
-#: IRCNetwork.cpp:1188
+#: IRCNetwork.cpp:1190
 msgid "Your current server was removed, jumping..."
 msgstr "Tu servidor actual ha sido eliminado. Cambiando de servidor..."
 
-#: IRCNetwork.cpp:1351
+#: IRCNetwork.cpp:1353
 msgid "Cannot connect to {1}, because ZNC is not compiled with SSL support."
 msgstr ""
 "No se puede conectar a {1} porque ZNC no se ha compilado con soporte SSL."
 
-#: IRCNetwork.cpp:1372
+#: IRCNetwork.cpp:1374
 msgid "Some module aborted the connection attempt"
 msgstr "Algún módulo ha abortado el intento de conexión"
 
@@ -1962,7 +1962,7 @@ msgstr "hostname incorrecto en el certificado"
 msgid "hostname verification error"
 msgstr "error de verificación de hostname"
 
-#: User.cpp:517
+#: User.cpp:519
 msgid ""
 "Invalid network name. It should be alphanumeric. Not to be confused with "
 "server name"
@@ -1970,11 +1970,11 @@ msgstr ""
 "Nombre de red no válido. Debe ser alfanumérico. No confundir con el nombre "
 "del servidor"
 
-#: User.cpp:521
+#: User.cpp:523
 msgid "Network {1} already exists"
 msgstr "La red {1} ya existe"
 
-#: User.cpp:787
+#: User.cpp:789
 msgid ""
 "You are being disconnected because your IP is no longer allowed to connect "
 "to this user"
@@ -1982,18 +1982,18 @@ msgstr ""
 "Has sido desconectado porque a tu IP ya no se le permite conectar a este "
 "usuario"
 
-#: User.cpp:927
+#: User.cpp:929
 msgid "Password is empty"
 msgstr "La contraseña está vacía"
 
-#: User.cpp:932
+#: User.cpp:934
 msgid "Username is empty"
 msgstr "El nombre de usuario está vacío"
 
-#: User.cpp:937
+#: User.cpp:939
 msgid "Username is invalid"
 msgstr "El nombre de usuario no es válido"
 
-#: User.cpp:1219
+#: User.cpp:1221
 msgid "Unable to find modinfo {1}: {2}"
 msgstr "No se ha podido encontrar modinfo {1}: {2}"

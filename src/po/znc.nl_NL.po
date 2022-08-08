@@ -84,47 +84,47 @@ msgstr ""
 "We schakelen over naar een andere server omdat deze server niet langer in de "
 "lijst staat"
 
-#: IRCNetwork.cpp:669 User.cpp:688
+#: IRCNetwork.cpp:671 User.cpp:690
 msgid "Welcome to ZNC"
 msgstr "Welkom bij ZNC"
 
-#: IRCNetwork.cpp:757
+#: IRCNetwork.cpp:759
 msgid "You are currently disconnected from IRC. Use 'connect' to reconnect."
 msgstr ""
 "Op dit moment ben je niet verbonden met IRC. Gebruik 'connect' om opnieuw "
 "verbinding te maken."
 
-#: IRCNetwork.cpp:787
+#: IRCNetwork.cpp:789
 msgid "This network is being deleted or moved to another user."
 msgstr ""
 "Dit netwerk wordt op dit moment verwijderd of verplaatst door een andere "
 "gebruiker."
 
-#: IRCNetwork.cpp:948
+#: IRCNetwork.cpp:950
 msgid "Invalid index"
 msgstr "Ongeldige index"
 
-#: IRCNetwork.cpp:956 IRCNetwork.cpp:972 IRCNetwork.cpp:980
+#: IRCNetwork.cpp:958 IRCNetwork.cpp:974 IRCNetwork.cpp:982
 #: ClientCommand.cpp:1425
 msgid "You are not on {1}"
 msgstr "Je bent niet in {1}"
 
-#: IRCNetwork.cpp:1059
+#: IRCNetwork.cpp:1061
 msgid "The channel {1} could not be joined, disabling it."
 msgstr "Het kanaal {1} kan niet toegetreden worden, deze wordt uitgeschakeld."
 
-#: IRCNetwork.cpp:1188
+#: IRCNetwork.cpp:1190
 msgid "Your current server was removed, jumping..."
 msgstr ""
 "Je huidige server was verwijderd, we schakelen over naar een andere server..."
 
-#: IRCNetwork.cpp:1351
+#: IRCNetwork.cpp:1353
 msgid "Cannot connect to {1}, because ZNC is not compiled with SSL support."
 msgstr ""
 "Kan niet verbinden naar {1} omdat ZNC niet gecompileerd is met SSL "
 "ondersteuning."
 
-#: IRCNetwork.cpp:1372
+#: IRCNetwork.cpp:1374
 msgid "Some module aborted the connection attempt"
 msgstr "Een module heeft de verbindingspoging afgebroken"
 
@@ -1979,7 +1979,7 @@ msgstr "misvormde hostnaam in certificaat"
 msgid "hostname verification error"
 msgstr "hostnaam verificatiefout"
 
-#: User.cpp:517
+#: User.cpp:519
 msgid ""
 "Invalid network name. It should be alphanumeric. Not to be confused with "
 "server name"
@@ -1987,11 +1987,11 @@ msgstr ""
 "Ongeldige netwerknaam. Deze moet alfanumeriek zijn. Niet te verwarren met "
 "server naam"
 
-#: User.cpp:521
+#: User.cpp:523
 msgid "Network {1} already exists"
 msgstr "Netwerk {1} bestaat al"
 
-#: User.cpp:787
+#: User.cpp:789
 msgid ""
 "You are being disconnected because your IP is no longer allowed to connect "
 "to this user"
@@ -1999,18 +1999,18 @@ msgstr ""
 "Je verbinding wordt verbroken omdat het niet meer toegestaan is om met jouw "
 "IP-adres naar deze gebruiker te verbinden"
 
-#: User.cpp:927
+#: User.cpp:929
 msgid "Password is empty"
 msgstr "Wachtwoord is leeg"
 
-#: User.cpp:932
+#: User.cpp:934
 msgid "Username is empty"
 msgstr "Gebruikersnaam is leeg"
 
-#: User.cpp:937
+#: User.cpp:939
 msgid "Username is invalid"
 msgstr "Gebruikersnaam is ongeldig"
 
-#: User.cpp:1219
+#: User.cpp:1221
 msgid "Unable to find modinfo {1}: {2}"
 msgstr "Kan modinfo niet vinden {1}: {2}"

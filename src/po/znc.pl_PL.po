@@ -85,44 +85,44 @@ msgid "Jumping servers because this server is no longer in the list"
 msgstr ""
 "Przeskakiwanie na inne serwery, ponieważ tego serwera nie ma już na liście"
 
-#: IRCNetwork.cpp:669 User.cpp:688
+#: IRCNetwork.cpp:671 User.cpp:690
 msgid "Welcome to ZNC"
 msgstr "Witamy w ZNC"
 
-#: IRCNetwork.cpp:757
+#: IRCNetwork.cpp:759
 msgid "You are currently disconnected from IRC. Use 'connect' to reconnect."
 msgstr ""
 "Jesteś aktualnie rozłączony/a z IRC. Użyj 'connect' aby połączyć się "
 "ponownie."
 
-#: IRCNetwork.cpp:787
+#: IRCNetwork.cpp:789
 msgid "This network is being deleted or moved to another user."
 msgstr "Ta sieć jest usuwana lub przenoszona do innego użytkownika."
 
-#: IRCNetwork.cpp:948
+#: IRCNetwork.cpp:950
 msgid "Invalid index"
 msgstr ""
 
-#: IRCNetwork.cpp:956 IRCNetwork.cpp:972 IRCNetwork.cpp:980
+#: IRCNetwork.cpp:958 IRCNetwork.cpp:974 IRCNetwork.cpp:982
 #: ClientCommand.cpp:1425
 msgid "You are not on {1}"
 msgstr "Nie jesteś na {1}"
 
-#: IRCNetwork.cpp:1059
+#: IRCNetwork.cpp:1061
 msgid "The channel {1} could not be joined, disabling it."
 msgstr "Nie można dołączyć do kanału {1} , wyłączanie go."
 
-#: IRCNetwork.cpp:1188
+#: IRCNetwork.cpp:1190
 msgid "Your current server was removed, jumping..."
 msgstr "Twój obecny serwer został usunięty, przeskakiwanie..."
 
-#: IRCNetwork.cpp:1351
+#: IRCNetwork.cpp:1353
 msgid "Cannot connect to {1}, because ZNC is not compiled with SSL support."
 msgstr ""
 "Nie można połączyć się z {1}, ponieważ ZNC nie jest skompilowany z obsługą "
 "SSL."
 
-#: IRCNetwork.cpp:1372
+#: IRCNetwork.cpp:1374
 msgid "Some module aborted the connection attempt"
 msgstr "Jakiś moduł przerwał próbę połączenia"
 
@@ -1985,7 +1985,7 @@ msgstr "zniekształcona nazwa hosta w certyfikacie"
 msgid "hostname verification error"
 msgstr "błąd weryfikacji hosta"
 
-#: User.cpp:517
+#: User.cpp:519
 msgid ""
 "Invalid network name. It should be alphanumeric. Not to be confused with "
 "server name"
@@ -1993,11 +1993,11 @@ msgstr ""
 "Nieprawidłowa nazwa sieci. Powinna być alfanumeryczna. Nie należy mylić jej "
 "z nazwą serwera"
 
-#: User.cpp:521
+#: User.cpp:523
 msgid "Network {1} already exists"
 msgstr "Sieć {1} już istnieje"
 
-#: User.cpp:787
+#: User.cpp:789
 msgid ""
 "You are being disconnected because your IP is no longer allowed to connect "
 "to this user"
@@ -2005,18 +2005,18 @@ msgstr ""
 "Jesteś rozłączany, ponieważ Twój adres IP nie może już łączyć się z tym "
 "użytkownikiem"
 
-#: User.cpp:927
+#: User.cpp:929
 msgid "Password is empty"
 msgstr "Nie podano hasła"
 
-#: User.cpp:932
+#: User.cpp:934
 msgid "Username is empty"
 msgstr "Nazwa użytkownika jest pusta"
 
-#: User.cpp:937
+#: User.cpp:939
 msgid "Username is invalid"
 msgstr "Nazwa użytkownika jest niepoprawna"
 
-#: User.cpp:1219
+#: User.cpp:1221
 msgid "Unable to find modinfo {1}: {2}"
 msgstr "Nie można znaleźć modinfo {1}: {2}"

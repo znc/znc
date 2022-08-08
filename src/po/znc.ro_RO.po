@@ -80,42 +80,42 @@ msgstr "Imposibil de legat: {1}"
 msgid "Jumping servers because this server is no longer in the list"
 msgstr "Alegem alt server deoarece actualul nu mai este în listă"
 
-#: IRCNetwork.cpp:669 User.cpp:688
+#: IRCNetwork.cpp:671 User.cpp:690
 msgid "Welcome to ZNC"
 msgstr "Bine ai venit la ZNC"
 
-#: IRCNetwork.cpp:757
+#: IRCNetwork.cpp:759
 msgid "You are currently disconnected from IRC. Use 'connect' to reconnect."
 msgstr ""
 "În prezent ești deconectat de la IRC. Folosește „connect” pentru a te "
 "reconecta."
 
-#: IRCNetwork.cpp:787
+#: IRCNetwork.cpp:789
 msgid "This network is being deleted or moved to another user."
 msgstr "Această rețea este ștearsă sau mutată la un alt utilizator."
 
-#: IRCNetwork.cpp:948
+#: IRCNetwork.cpp:950
 msgid "Invalid index"
 msgstr "Index invalid"
 
-#: IRCNetwork.cpp:956 IRCNetwork.cpp:972 IRCNetwork.cpp:980
+#: IRCNetwork.cpp:958 IRCNetwork.cpp:974 IRCNetwork.cpp:982
 #: ClientCommand.cpp:1425
 msgid "You are not on {1}"
 msgstr "Nu ești pe {1}"
 
-#: IRCNetwork.cpp:1059
+#: IRCNetwork.cpp:1061
 msgid "The channel {1} could not be joined, disabling it."
 msgstr "Canalul {1} nu a putut fi adăugat, î-l dezactivez."
 
-#: IRCNetwork.cpp:1188
+#: IRCNetwork.cpp:1190
 msgid "Your current server was removed, jumping..."
 msgstr "Serverul curent a fost șters, alegem alt server..."
 
-#: IRCNetwork.cpp:1351
+#: IRCNetwork.cpp:1353
 msgid "Cannot connect to {1}, because ZNC is not compiled with SSL support."
 msgstr "Nu mă pot conecta la {1}, deoarece ZNC nu este compilat cu suport SSL."
 
-#: IRCNetwork.cpp:1372
+#: IRCNetwork.cpp:1374
 msgid "Some module aborted the connection attempt"
 msgstr "Unele module au întrerupt încercarea de conectare"
 
@@ -1930,34 +1930,34 @@ msgstr ""
 msgid "hostname verification error"
 msgstr ""
 
-#: User.cpp:517
+#: User.cpp:519
 msgid ""
 "Invalid network name. It should be alphanumeric. Not to be confused with "
 "server name"
 msgstr ""
 
-#: User.cpp:521
+#: User.cpp:523
 msgid "Network {1} already exists"
 msgstr ""
 
-#: User.cpp:787
+#: User.cpp:789
 msgid ""
 "You are being disconnected because your IP is no longer allowed to connect "
 "to this user"
 msgstr ""
 
-#: User.cpp:927
+#: User.cpp:929
 msgid "Password is empty"
 msgstr ""
 
-#: User.cpp:932
+#: User.cpp:934
 msgid "Username is empty"
 msgstr ""
 
-#: User.cpp:937
+#: User.cpp:939
 msgid "Username is invalid"
 msgstr ""
 
-#: User.cpp:1219
+#: User.cpp:1221
 msgid "Unable to find modinfo {1}: {2}"
 msgstr ""
