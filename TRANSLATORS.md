@@ -14,6 +14,7 @@ These people helped translating ZNC to various languages:
 * eggoez (Baguz Ach)
 * Felipefpl (Felipe)
 * freonesuka (Андрей Вальтер)
+* gremax
 * hypech
 * JakaMedia (Jaka Media Teknologi)
 * Jay2k1
