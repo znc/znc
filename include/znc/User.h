@@ -93,7 +93,10 @@ class CUser : private CCoreTranslationMixin {
     bool PutUser(const CString& sLine, CClient* pClient = nullptr,
                  CClient* pSkipClient = nullptr);
     bool PutAllUser(const CString& sLine, CClient* pClient = nullptr,
-                    CClient* pSkipClient = nullptr);
+                    CClient* pSkipClient = nullptr)
+        ZNC_MSG_DEPRECATED("Use PutUser() instead") {
+        return PutUser(sLine, pClient, pSkipClient);
+    }
     bool PutStatus(const CString& sLine, CClient* pClient = nullptr,
                    CClient* pSkipClient = nullptr);
     bool PutStatusNotice(const CString& sLine, CClient* pClient = nullptr,

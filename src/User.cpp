@@ -1105,13 +1105,6 @@ bool CUser::PutUser(const CString& sLine, CClient* pClient,
         }
     }
 
-    return (pClient == nullptr);
-}
-
-bool CUser::PutAllUser(const CString& sLine, CClient* pClient,
-                       CClient* pSkipClient) {
-    PutUser(sLine, pClient, pSkipClient);
-
     for (CIRCNetwork* pNetwork : m_vIRCNetworks) {
         if (pNetwork->PutUser(sLine, pClient, pSkipClient)) {
             return true;
@@ -1157,7 +1150,7 @@ bool CUser::PutStatusNotice(const CString& sLine, CClient* pClient,
 
 bool CUser::PutModule(const CString& sModule, const CString& sLine,
                       CClient* pClient, CClient* pSkipClient) {
-    for (CClient* pEachClient : m_vClients) {
+    for (CClient* pEachClient : GetAllClients()) {
         if ((!pClient || pClient == pEachClient) &&
             pSkipClient != pEachClient) {
             pEachClient->PutModule(sModule, sLine);
@@ -1173,7 +1166,7 @@ bool CUser::PutModule(const CString& sModule, const CString& sLine,
 
 bool CUser::PutModNotice(const CString& sModule, const CString& sLine,
                          CClient* pClient, CClient* pSkipClient) {
-    for (CClient* pEachClient : m_vClients) {
+    for (CClient* pEachClient : GetAllClients()) {
         if ((!pClient || pClient == pEachClient) &&
             pSkipClient != pEachClient) {
             pEachClient->PutModNotice(sModule, sLine);
