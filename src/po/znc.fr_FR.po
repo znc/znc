@@ -2009,6 +2009,6 @@ msgstr "L'identifiant est vide"
 msgid "Username is invalid"
 msgstr "L'identifiant est invalide"
 
-#: User.cpp:1221
+#: User.cpp:1214
 msgid "Unable to find modinfo {1}: {2}"
 msgstr "Impossible de trouver d'information sur le module {1} : {2}"

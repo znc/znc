@@ -2028,6 +2028,6 @@ msgstr "Username è vuoto"
 msgid "Username is invalid"
 msgstr "Username non è valido"
 
-#: User.cpp:1221
+#: User.cpp:1214
 msgid "Unable to find modinfo {1}: {2}"
 msgstr "Impossibile trovare modinfo {1}: {2}"

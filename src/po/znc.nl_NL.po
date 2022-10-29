@@ -2011,6 +2011,6 @@ msgstr "Gebruikersnaam is leeg"
 msgid "Username is invalid"
 msgstr "Gebruikersnaam is ongeldig"
 
-#: User.cpp:1221
+#: User.cpp:1214
 msgid "Unable to find modinfo {1}: {2}"
 msgstr "Kan modinfo niet vinden {1}: {2}"
