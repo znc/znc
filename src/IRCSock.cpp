@@ -1232,6 +1232,8 @@ void CIRCSock::Connected() {
     PutIRC("USER " + sIdent + " \"" + sIdent + "\" \"" + sIdent + "\" :" +
            sRealName);
 
+    PutIRC("CAP END");
+
     // SendAltNick() needs this
     m_Nick.SetNick(sNick);
 }
