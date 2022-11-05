@@ -173,7 +173,7 @@ if(WANT_PYTHON AND NOT EXISTS
 	endif()
 endif()
 if(search_swig)
-	find_package(SWIG 3.0.0)
+	find_package(SWIG 4.0.1)
 	if(NOT SWIG_FOUND)
 		message(FATAL_ERROR
 			"Can't find SWIG, therefore Perl and Python aren't supported. "

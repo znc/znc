@@ -53,7 +53,6 @@ if(SWIG_FOUND)
 		"-I${PROJECT_SOURCE_DIR}/include"
 		"-I${CMAKE_CURRENT_SOURCE_DIR}/.."
 		"-I${CMAKE_CURRENT_SOURCE_DIR}/include"
-		-DZNC_EXPORT_LIB_EXPORT
 		-outdir "${CMAKE_CURRENT_BINARY_DIR}"
 		-o "${CMAKE_CURRENT_BINARY_DIR}/modperl_biglib.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/modperl.i"
