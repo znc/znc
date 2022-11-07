@@ -22,14 +22,19 @@ using std::set;
 class CClientNotifyMod : public CModule {
   protected:
     CString m_sMethod;
+    CString m_sNewNotifyOn;
     bool m_bNewOnly{};
     bool m_bOnDisconnect{};
+    bool m_bNotifyOnNewIP{};
+    bool m_bNotifyOnNewClientID{};
 
-    set<CString> m_sClientsSeen;
+    set<CString> m_sClientsSeenIP;
+    set<CString> m_sClientsSeenID;
 
     void SaveSettings() {
         SetNV("method", m_sMethod);
         SetNV("newonly", m_bNewOnly ? "1" : "0");
+        SetNV("newnotifyon", m_sNewNotifyOn);
         SetNV("ondisconnect", m_bOnDisconnect ? "1" : "0");
     }
 
@@ -48,8 +53,11 @@ class CClientNotifyMod : public CModule {
                    t_d("Sets the notify method"),
                    [=](const CString& sLine) { OnMethodCommand(sLine); });
         AddCommand("NewOnly", t_d("<on|off>"),
-                   t_d("Turns notifications for unseen IP addresses on or off"),
+                   t_d("Turns notifications for unseen connections on or off"),
                    [=](const CString& sLine) { OnNewOnlyCommand(sLine); });
+        AddCommand("NewNotifyOn", t_d("<ip|clientid|both>"),
+                   t_d("Specifies whether you want to be notified about new connections with new IPs, new ClientIDs connecting or in bot cases"),
+                   [=](const CString& sLine) { OnNewNotifyOn(sLine); });
         AddCommand(
             "OnDisconnect", t_d("<on|off>"),
             t_d("Turns notifications for clients disconnecting on or off"),
@@ -66,6 +74,11 @@ class CClientNotifyMod : public CModule {
             m_sMethod = "message";
         }
 
+        if (m_sNewNotifyOn != "ip" && m_sNewNotifyOn != "clientid" &&
+            m_sNewNotifyOn != "both") {
+            m_sNewNotifyOn = "ip";
+        }
+
         // default = off for these:
 
         m_bNewOnly = (GetNV("newonly") == "1");
@@ -76,18 +89,37 @@ class CClientNotifyMod : public CModule {
 
     void OnClientLogin() override {
         CString sRemoteIP = GetClient()->GetRemoteIP();
-        if (!m_bNewOnly ||
-            m_sClientsSeen.find(sRemoteIP) == m_sClientsSeen.end()) {
+        CString sRemoteClientID = GetClient()->GetIdentifier();
+
+        CString& sClientNameMessage = sRemoteIP;
+        if (m_bNotifyOnNewClientID and sRemoteClientID != "") {
+            sClientNameMessage = sRemoteClientID;
+        }
+
+        auto sendLoginNotification = [&]() {
             SendNotification(t_p("<This message is impossible for 1 client>",
-                                 "Another client authenticated as your user. "
-                                 "Use the 'ListClients' command to see all {1} "
+                                 "Another client ({1}) authenticated as your user. "
+                                 "Use the 'ListClients' command to see all {2} "
                                  "clients.",
                                  GetUser()->GetAllClients().size())(
-                GetUser()->GetAllClients().size()));
+                sClientNameMessage, GetUser()->GetAllClients().size()));
+        };
 
-            // the set<> will automatically disregard duplicates:
-            m_sClientsSeen.insert(sRemoteIP);
+        if (m_bNewOnly) {
+            // see if we actually got a new client
+            // TODO: replace setName.find(...) == setName.end() with !setName.contains() once ZNC uses C++20
+            if ((m_bNotifyOnNewIP       && (m_sClientsSeenIP.find(sRemoteIP)       == m_sClientsSeenIP.end())) ||
+                (m_bNotifyOnNewClientID && (m_sClientsSeenID.find(sRemoteClientID) == m_sClientsSeenID.end()))) {
+                sendLoginNotification();
+            }
         }
+        else {
+            sendLoginNotification();
+        }
+
+        // the set<> will automatically disregard duplicates:
+        m_sClientsSeenIP.insert(sRemoteIP);
+        m_sClientsSeenID.insert(sRemoteClientID);
     }
 
     void OnClientDisconnect() override {
@@ -127,6 +159,28 @@ class CClientNotifyMod : public CModule {
         PutModule(t_s("Saved."));
     }
 
+    void OnNewNotifyOn(const CString& sCommand) {
+        const CString sArg = sCommand.Token(1, true).AsLower();
+
+        if (sArg != "ip" && sArg != "clientid" && sArg != "both") {
+            PutModule(t_s("Usage: NewNotifyOn <ip|clientid|both>"));
+            return;
+        }
+
+        if (sArg == "both") {
+            m_bNotifyOnNewIP = true;
+            m_bNotifyOnNewClientID = true;
+        } else if (sArg == "ip") {
+            m_bNotifyOnNewIP = true;
+        } else if (sArg == "clientid") {
+            m_bNotifyOnNewClientID = true;
+        }
+
+        m_sNewNotifyOn = sArg;
+        SaveSettings();
+        PutModule(t_s("Saved."));
+    }
+
     void OnDisconnectCommand(const CString& sCommand) {
         const CString sArg = sCommand.Token(1, true).AsLower();
 
@@ -142,9 +196,9 @@ class CClientNotifyMod : public CModule {
 
     void OnShowCommand(const CString& sLine) {
         PutModule(
-            t_f("Current settings: Method: {1}, for unseen IP addresses only: "
-                "{2}, notify on disconnecting clients: {3}")(
-                m_sMethod, m_bNewOnly, m_bOnDisconnect));
+            t_f("Current settings: Method: {1}, for unseen only: "
+                "{2}, unseen notify method: {3}, notify on disconnecting clients: {4}")(
+                m_sMethod, m_bNewOnly, m_sNewNotifyOn, m_bOnDisconnect));
     }
 };
 
