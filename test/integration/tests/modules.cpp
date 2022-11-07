@@ -54,6 +54,50 @@ TEST_F(ZNCTest, NotifyConnectModule) {
         "NOTICE nick :*** user@identifier detached from 127.0.0.1");
 }
 
+TEST_F(ZNCTest, ClientNotifyModule) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod clientnotify");
+    client.ReadUntil("Loaded module");
+
+    auto check_not_sent = [](Socket& client, QString wrongAnswer){
+        auto result = client.ReadRemainder();
+        EXPECT_FALSE(result.contains(wrongAnswer.toUtf8())) << "Got an answer even though we didnt want one with the given configuration";
+    };
+
+    auto client2 = LoginClient();
+    client.ReadUntil(":Another client (127.0.0.1) authenticated as your user. Use the 'ListClients' command to see all 2 clients.");
+    auto client3 = LoginClient();
+    client.ReadUntil(":Another client (127.0.0.1) authenticated as your user. Use the 'ListClients' command to see all 3 clients.");
+
+    // disable notifications for every message
+    client.Write("PRIVMSG *clientnotify :NewOnly on");
+
+    // check that we do not ge a notification after connecting from a know ip
+    auto client4 = LoginClient();
+    check_not_sent(client, ":Another client (127.0.0.1) authenticated as your user. Use the 'ListClients' command to see all 4 clients.");
+
+    // choose to notify only on new client ids
+    client.Write("PRIVMSG *clientnotify :NewNotifyOn clientid");
+
+    auto client5 = LoginClient("identifier123");
+    client.ReadUntil(":Another client (identifier123) authenticated as your user. Use the 'ListClients' command to see all 5 clients.");
+    auto client6 = LoginClient("identifier123");
+    check_not_sent(client, ":Another client (identifier123) authenticated as your user. Use the 'ListClients' command to see all 6 clients.");
+
+    auto client7 = LoginClient("not_identifier123");
+    client.ReadUntil(":Another client (not_identifier123) authenticated as your user. Use the 'ListClients' command to see all 7 clients.");
+
+    // choose to notify from both clientids and new IPs
+    client.Write("PRIVMSG *clientnotify :NewNotifyOn both");
+
+    auto client8 = LoginClient();
+    check_not_sent(client, ":Another client (127.0.0.1) authenticated as your user. Use the 'ListClients' command to see all 8 clients.");
+    auto client9 = LoginClient("definitely_not_identifier123");
+    client.ReadUntil(":Another client (definitely_not_identifier123) authenticated as your user. Use the 'ListClients' command to see all 9 clients.");
+}
+
 TEST_F(ZNCTest, ShellModule) {
     auto znc = Run();
     auto ircd = ConnectIRCd();
