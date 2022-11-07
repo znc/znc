@@ -37,7 +37,7 @@ class ZNCTest : public testing::Test {
 
     Socket ConnectIRCd();
     Socket ConnectClient();
-    Socket LoginClient();
+    Socket LoginClient(QString identifier = "");
 
     std::unique_ptr<Process> Run();
 
