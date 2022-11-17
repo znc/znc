@@ -91,9 +91,9 @@ class CClientNotifyMod : public CModule {
         CString sRemoteIP = GetClient()->GetRemoteIP();
         CString sRemoteClientID = GetClient()->GetIdentifier();
 
-        CString& sClientNameMessage = sRemoteIP;
-        if (m_bNotifyOnNewClientID and sRemoteClientID != "") {
-            sClientNameMessage = sRemoteClientID;
+        CString sClientNameMessage{sRemoteIP};
+        if (m_bNotifyOnNewClientID && sRemoteClientID != "") {
+            sClientNameMessage += " / " + sRemoteClientID;
         }
 
         auto sendLoginNotification = [&]() {
