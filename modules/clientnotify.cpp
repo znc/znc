@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include <znc/znc.h>
 #include <znc/User.h>
+#include <znc/znc.h>
 
 using std::set;
 
@@ -57,10 +57,12 @@ class CClientNotifyMod : public CModule {
                    t_d("Turns notifications for unseen connections on or off"),
                    [=](const CString& sLine) { OnNewOnlyCommand(sLine); });
         AddCommand("NotifyOnNewIP", t_d("<on|off>"),
-                   t_d("Specifies whether you want to be notified about new connections with new IPs"),
+                   t_d("Specifies whether you want to be notified about new "
+                       "connections with new IPs"),
                    [=](const CString& sLine) { OnNotifyOnNewIP(sLine); });
         AddCommand("NotifyOnNewID", t_d("<on|off>"),
-                   t_d("Specifies whether you want to be notified about new connections with new IDs"),
+                   t_d("Specifies whether you want to be notified about new "
+                       "connections with new IDs"),
                    [=](const CString& sLine) { OnNotifyOnNewID(sLine); });
         AddCommand(
             "OnDisconnect", t_d("<on|off>"),
@@ -98,23 +100,27 @@ class CClientNotifyMod : public CModule {
         }
 
         auto sendLoginNotification = [&]() {
-            SendNotification(t_p("<This message is impossible for 1 client>",
-                                 "Another client ({1}) authenticated as your user. "
-                                 "Use the 'ListClients' command to see all {2} "
-                                 "clients.",
-                                 GetUser()->GetAllClients().size())(
-                sClientNameMessage, GetUser()->GetAllClients().size()));
+            SendNotification(
+                t_p("<This message is impossible for 1 client>",
+                    "Another client ({1}) authenticated as your user. "
+                    "Use the 'ListClients' command to see all {2} "
+                    "clients.",
+                    GetUser()->GetAllClients().size())(
+                    sClientNameMessage, GetUser()->GetAllClients().size()));
         };
 
         if (m_bNewOnly) {
             // see if we actually got a new client
-            // TODO: replace setName.find(...) == setName.end() with !setName.contains() once ZNC uses C++20
-            if ((m_bNotifyOnNewIP       && (m_sClientsSeenIP.find(sRemoteIP)       == m_sClientsSeenIP.end())) ||
-                (m_bNotifyOnNewClientID && (m_sClientsSeenID.find(sRemoteClientID) == m_sClientsSeenID.end()))) {
+            // TODO: replace setName.find(...) == setName.end() with
+            // !setName.contains() once ZNC uses C++20
+            if ((m_bNotifyOnNewIP && (m_sClientsSeenIP.find(sRemoteIP) ==
+                                      m_sClientsSeenIP.end())) ||
+                (m_bNotifyOnNewClientID &&
+                 (m_sClientsSeenID.find(sRemoteClientID) ==
+                  m_sClientsSeenID.end()))) {
                 sendLoginNotification();
             }
-        }
-        else {
+        } else {
             sendLoginNotification();
         }
 
@@ -204,7 +210,8 @@ class CClientNotifyMod : public CModule {
             t_f("Current settings: Method: {1}, for unseen only: {2}, notify"
                 "for unseen IPs: {3}, notify for unseen IDs: {4}, notify on"
                 "disconnecting clients: {5}")(
-                m_sMethod, m_bNewOnly, m_bNotifyOnNewIP, m_bNotifyOnNewClientID, m_bOnDisconnect));
+                m_sMethod, m_bNewOnly, m_bNotifyOnNewIP, m_bNotifyOnNewClientID,
+                m_bOnDisconnect));
     }
 };
 
