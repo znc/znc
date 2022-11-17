@@ -22,7 +22,7 @@ using std::set;
 class CClientNotifyMod : public CModule {
   protected:
     CString m_sMethod;
-    CString m_sNewNotifyOn;
+
     bool m_bNewOnly{};
     bool m_bOnDisconnect{};
     bool m_bNotifyOnNewIP{};
@@ -34,7 +34,8 @@ class CClientNotifyMod : public CModule {
     void SaveSettings() {
         SetNV("method", m_sMethod);
         SetNV("newonly", m_bNewOnly ? "1" : "0");
-        SetNV("newnotifyon", m_sNewNotifyOn);
+        SetNV("notifyonnewip", m_bNotifyOnNewIP ? "1" : "0");
+        SetNV("notifyonnewclientid", m_bNotifyOnNewClientID ? "1" : "0");
         SetNV("ondisconnect", m_bOnDisconnect ? "1" : "0");
     }
 
@@ -55,9 +56,12 @@ class CClientNotifyMod : public CModule {
         AddCommand("NewOnly", t_d("<on|off>"),
                    t_d("Turns notifications for unseen connections on or off"),
                    [=](const CString& sLine) { OnNewOnlyCommand(sLine); });
-        AddCommand("NewNotifyOn", t_d("<ip|clientid|both>"),
-                   t_d("Specifies whether you want to be notified about new connections with new IPs, new ClientIDs connecting or in bot cases"),
-                   [=](const CString& sLine) { OnNewNotifyOn(sLine); });
+        AddCommand("NotifyOnNewIP", t_d("<on|off>"),
+                   t_d("Specifies whether you want to be notified about new connections with new IPs"),
+                   [=](const CString& sLine) { OnNotifyOnNewIP(sLine); });
+        AddCommand("NotifyOnNewID", t_d("<on|off>"),
+                   t_d("Specifies whether you want to be notified about new connections with new IDs"),
+                   [=](const CString& sLine) { OnNotifyOnNewID(sLine); });
         AddCommand(
             "OnDisconnect", t_d("<on|off>"),
             t_d("Turns notifications for clients disconnecting on or off"),
@@ -74,13 +78,10 @@ class CClientNotifyMod : public CModule {
             m_sMethod = "message";
         }
 
-        if (m_sNewNotifyOn != "ip" && m_sNewNotifyOn != "clientid" &&
-            m_sNewNotifyOn != "both") {
-            m_sNewNotifyOn = "ip";
-        }
-
         // default = off for these:
 
+        m_bNotifyOnNewIP = (GetNV("notifyonnewip") == "1");
+        m_bNotifyOnNewClientID = (GetNV("notifyonnewclientid") == "1");
         m_bNewOnly = (GetNV("newonly") == "1");
         m_bOnDisconnect = (GetNV("ondisconnect") == "1");
 
@@ -159,24 +160,28 @@ class CClientNotifyMod : public CModule {
         PutModule(t_s("Saved."));
     }
 
-    void OnNewNotifyOn(const CString& sCommand) {
+    void OnNotifyOnNewIP(const CString& sCommand) {
         const CString sArg = sCommand.Token(1, true).AsLower();
 
-        if (sArg != "ip" && sArg != "clientid" && sArg != "both") {
-            PutModule(t_s("Usage: NewNotifyOn <ip|clientid|both>"));
+        if (sArg.empty()) {
+            PutModule(t_s("Usage: NotifyOnNewIP <on|off>"));
             return;
         }
 
-        if (sArg == "both") {
-            m_bNotifyOnNewIP = true;
-            m_bNotifyOnNewClientID = true;
-        } else if (sArg == "ip") {
-            m_bNotifyOnNewIP = true;
-        } else if (sArg == "clientid") {
-            m_bNotifyOnNewClientID = true;
+        m_bNotifyOnNewIP = sArg.ToBool();
+        SaveSettings();
+        PutModule(t_s("Saved."));
+    }
+
+    void OnNotifyOnNewID(const CString& sCommand) {
+        const CString sArg = sCommand.Token(1, true).AsLower();
+
+        if (sArg.empty()) {
+            PutModule(t_s("Usage: NotifyOnNewID <on|off>"));
+            return;
         }
 
-        m_sNewNotifyOn = sArg;
+        m_bNotifyOnNewClientID = sArg.ToBool();
         SaveSettings();
         PutModule(t_s("Saved."));
     }
@@ -196,9 +201,10 @@ class CClientNotifyMod : public CModule {
 
     void OnShowCommand(const CString& sLine) {
         PutModule(
-            t_f("Current settings: Method: {1}, for unseen only: "
-                "{2}, unseen notify method: {3}, notify on disconnecting clients: {4}")(
-                m_sMethod, m_bNewOnly, m_sNewNotifyOn, m_bOnDisconnect));
+            t_f("Current settings: Method: {1}, for unseen only: {2}, notify"
+                "for unseen IPs: {3}, notify for unseen IDs: {4}, notify on"
+                "disconnecting clients: {5}")(
+                m_sMethod, m_bNewOnly, m_bNotifyOnNewIP, m_bNotifyOnNewClientID, m_bOnDisconnect));
     }
 };
 

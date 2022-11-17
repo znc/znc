@@ -80,7 +80,7 @@ TEST_F(ZNCTest, ClientNotifyModule) {
     check_not_sent(client, ":Another client (127.0.0.1) authenticated as your user. Use the 'ListClients' command to see all 4 clients.");
 
     // choose to notify only on new client ids
-    client.Write("PRIVMSG *clientnotify :NewNotifyOn clientid");
+    client.Write("PRIVMSG *clientnotify :NotifyOnNewID on");
 
     auto client5 = LoginClient("identifier123");
     client.ReadUntil(":Another client (127.0.0.1 / identifier123) authenticated as your user. Use the 'ListClients' command to see all 5 clients.");
@@ -91,7 +91,7 @@ TEST_F(ZNCTest, ClientNotifyModule) {
     client.ReadUntil(":Another client (127.0.0.1 / not_identifier123) authenticated as your user. Use the 'ListClients' command to see all 7 clients.");
 
     // choose to notify from both clientids and new IPs
-    client.Write("PRIVMSG *clientnotify :NewNotifyOn both");
+    client.Write("PRIVMSG *clientnotify :NotifyOnNewIP on");
 
     auto client8 = LoginClient();
     check_not_sent(client, ":Another client (127.0.0.1 / identifier123) authenticated as your user. Use the 'ListClients' command to see all 8 clients.");
