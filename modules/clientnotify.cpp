@@ -62,7 +62,7 @@ class CClientNotifyMod : public CModule {
                    [=](const CString& sLine) { OnNotifyOnNewIP(sLine); });
         AddCommand("NotifyOnNewID", t_d("<on|off>"),
                    t_d("Specifies whether you want to be notified about new "
-                       "connections with new IDs"),
+                       "connections with new client IDs"),
                    [=](const CString& sLine) { OnNotifyOnNewID(sLine); });
         AddCommand(
             "OnDisconnect", t_d("<on|off>"),
