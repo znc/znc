@@ -1,3 +1,4 @@
+# Fuzzer is configured at https://github.com/google/oss-fuzz/tree/master/projects/znc
 name: CIFuzz
 on: [pull_request]
 jobs:
