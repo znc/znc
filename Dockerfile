@@ -1,4 +1,4 @@
-FROM alpine:3.13
+FROM alpine:3.17
 
 ARG VERSION_EXTRA=""
 
@@ -22,6 +22,7 @@ RUN apk add --no-cache \
         cyrus-sasl \
         gettext \
         icu-dev \
+        icu-data-full \
         openssl-dev \
         perl \
         python3 \
