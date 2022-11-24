@@ -72,11 +72,15 @@ Socket ZNCTest::ConnectClient() {
     return WrapIO(&sock);
 }
 
-Socket ZNCTest::LoginClient() {
+Socket ZNCTest::LoginClient(QString identifier) {
     auto client = ConnectClient();
     client.Write("PASS :hunter2");
     client.Write("NICK nick");
-    client.Write("USER user/test x x :x");
+    if ( identifier.length() == 0 ) {
+        client.Write("USER user/test x x :x");
+    } else {
+        client.Write("USER user@" + identifier.toUtf8() + "/test x x :x");
+    }
     return client;
 }
 
