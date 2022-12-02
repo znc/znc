@@ -12,65 +12,84 @@ msgstr ""
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
 
-#: clientnotify.cpp:47
+#: clientnotify.cpp:53
 msgid "<message|notice|off>"
 msgstr "<message|notice|off>"
 
-#: clientnotify.cpp:48
+#: clientnotify.cpp:54
 msgid "Sets the notify method"
 msgstr "Stelt de notificatiemethode in"
 
-#: clientnotify.cpp:50 clientnotify.cpp:54
+#: clientnotify.cpp:56 clientnotify.cpp:59 clientnotify.cpp:63
+#: clientnotify.cpp:68
 msgid "<on|off>"
 msgstr "<on|off>"
 
-#: clientnotify.cpp:51
-msgid "Turns notifications for unseen IP addresses on or off"
-msgstr "Schakelt notificaties voor ongeziene IP-adressen in of uit"
+#: clientnotify.cpp:57
+msgid "Turns notifications for unseen connections on or off"
+msgstr ""
 
-#: clientnotify.cpp:55
+#: clientnotify.cpp:60
+msgid ""
+"Specifies whether you want to be notified about new connections with new IPs"
+msgstr ""
+
+#: clientnotify.cpp:64
+msgid ""
+"Specifies whether you want to be notified about new connections with new "
+"client IDs"
+msgstr ""
+
+#: clientnotify.cpp:69
 msgid "Turns notifications for clients disconnecting on or off"
 msgstr "Schakelt notificaties voor clients die loskoppelen aan of uit"
 
-#: clientnotify.cpp:57
+#: clientnotify.cpp:71
 msgid "Shows the current settings"
 msgstr "Laat de huidige instellingen zien"
 
-#: clientnotify.cpp:81 clientnotify.cpp:95
+#: clientnotify.cpp:104 clientnotify.cpp:134
 msgid "<This message is impossible for 1 client>"
 msgid_plural ""
-"Another client authenticated as your user. Use the 'ListClients' command to "
-"see all {1} clients."
+"Another client ({1}) authenticated as your user. Use the 'ListClients' "
+"command to see all {2} clients."
 msgstr[0] "<Dit bericht is onmogelijk voor 1 client>"
 msgstr[1] ""
 "Een andere client heeft zich als jouw gebruiker geïdentificeerd. Gebruik het "
 "'ListClients' commando om alle {1} clients te zien."
 
-#: clientnotify.cpp:108
+#: clientnotify.cpp:147
 msgid "Usage: Method <message|notice|off>"
 msgstr "Gebruik: Method <message|notice|off>"
 
-#: clientnotify.cpp:114 clientnotify.cpp:127 clientnotify.cpp:140
+#: clientnotify.cpp:153 clientnotify.cpp:166 clientnotify.cpp:179
+#: clientnotify.cpp:192 clientnotify.cpp:205
 msgid "Saved."
 msgstr "Opgeslagen."
 
-#: clientnotify.cpp:121
+#: clientnotify.cpp:160
 msgid "Usage: NewOnly <on|off>"
 msgstr "Gebruik: NewOnly <on|off>"
 
-#: clientnotify.cpp:134
+#: clientnotify.cpp:173
+msgid "Usage: NotifyOnNewIP <on|off>"
+msgstr ""
+
+#: clientnotify.cpp:186
+msgid "Usage: NotifyOnNewID <on|off>"
+msgstr ""
+
+#: clientnotify.cpp:199
 msgid "Usage: OnDisconnect <on|off>"
 msgstr "Gebruik: OnDisconnect <on|off>"
 
-#: clientnotify.cpp:145
+#: clientnotify.cpp:210
 msgid ""
-"Current settings: Method: {1}, for unseen IP addresses only: {2}, notify on "
-"disconnecting clients: {3}"
+"Current settings: Method: {1}, for unseen only: {2}, notifyfor unseen IPs: "
+"{3}, notify for unseen IDs: {4}, notify ondisconnecting clients: {5}"
 msgstr ""
-"Huidige instellingen: Method: {1}, alleen voor ongeziene IP-addressen: {2}, "
-"notificatie wanneer clients loskoppelen: {3}"
 
-#: clientnotify.cpp:157
+#: clientnotify.cpp:224
 msgid ""
 "Notifies you when another IRC client logs into or out of your account. "
 "Configurable."
