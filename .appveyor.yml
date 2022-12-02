@@ -4,12 +4,8 @@
 # TODO: test msvc
 version: 0.0.0.0.1-branch-{branch}-build-{build}
 clone_depth: 10
-environment:
-    matrix:
-        - cygwin_url: https://cygwin.com/setup-x86_64.exe
-        - cygwin_url: https://cygwin.com/setup-x86.exe
 install:
-    - ps: Invoke-WebRequest $env:cygwin_url -OutFile c:\cygwin-setup.exe
+    - ps: Invoke-WebRequest https://cygwin.com/setup-x86_64.exe -OutFile c:\cygwin-setup.exe
       # libcrypt-devel is needed only on x86_64 and only for modperl... probably some dependency problem.
     - c:\cygwin-setup.exe --quiet-mode --no-shortcuts --no-startmenu --no-desktop --upgrade-also --only-site --site http://cygwin.mirror.constant.com/ --root c:\cygwin-root --local-package-dir c:\cygwin-setup-cache --packages gcc-g++,make,pkg-config,wget,libssl-devel,libicu-devel,zlib-devel,libcrypt-devel,perl,python3-devel,swig,libsasl2-devel,libQt5Core-devel,cmake,libboost-devel,gettext-devel
     - c:\cygwin-root\bin\sh -lc "echo Hi"
