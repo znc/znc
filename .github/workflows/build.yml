@@ -14,7 +14,7 @@ jobs:
           submodules: true
       - run: source .github/ubuntu_deps.sh
       - run: source .github/build.sh
-      - uses: codecov/codecov-action@v1
+      - uses: codecov/codecov-action@v3
         with:
           name: ${{ github.job }}
       - uses: actions/upload-artifact@v2
@@ -36,7 +36,7 @@ jobs:
           cd znc-git-2015-01-16
           export CFGFLAGS="--with-gtest=$GITHUB_WORKSPACE/third_party/googletest/googletest --with-gmock=$GITHUB_WORKSPACE/third_party/googletest/googlemock --disable-swig"
           source $GITHUB_WORKSPACE/.github/build.sh
-      - uses: codecov/codecov-action@v1
+      - uses: codecov/codecov-action@v3
         with:
           name: ${{ github.job }}
 
@@ -53,7 +53,7 @@ jobs:
           submodules: true
       - run: source .github/ubuntu_deps.sh
       - run: source .github/build.sh
-      - uses: codecov/codecov-action@v1
+      - uses: codecov/codecov-action@v3
         with:
           name: ${{ github.job }}
       - uses: actions/upload-artifact@v2
@@ -76,7 +76,7 @@ jobs:
           #submodules: true
       #- run: source .github/ubuntu_deps.sh
       #- run: source .github/build.sh
-      #- uses: codecov/codecov-action@v1
+      #- uses: codecov/codecov-action@v3
 
   #clang_tsan:
     #name: Clang TSAN
@@ -92,7 +92,7 @@ jobs:
           #submodules: true
       #- run: source .github/ubuntu_deps.sh
       #- run: source .github/build.sh
-      #- uses: codecov/codecov-action@v1
+      #- uses: codecov/codecov-action@v3
 
       # TODO: enable
       #CXXFLAGS: "-fsanitize=memory -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize-memory-track-origins"
@@ -112,7 +112,7 @@ jobs:
           #brew update
           #brew install icu4c qt5 gettext pkg-config cpanminus boost
       #- run: source .github/build.sh
-      #- uses: codecov/codecov-action@v1
+      #- uses: codecov/codecov-action@v3
 
   docker:
     name: Docker push
