@@ -9,7 +9,7 @@ jobs:
     name: GCC
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
       - run: source .github/ubuntu_deps.sh
@@ -26,7 +26,7 @@ jobs:
     name: Tarball
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
       - run: source .github/ubuntu_deps.sh
@@ -48,7 +48,7 @@ jobs:
       CXX: clang++
       CC: clang
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
       - run: source .github/ubuntu_deps.sh
@@ -71,7 +71,7 @@ jobs:
       #CXXFLAGS: "-fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fPIE"
       #LDFLAGS: "-fsanitize=address -pie"
     #steps:
-      #- uses: actions/checkout@v2
+      #- uses: actions/checkout@v3
         #with:
           #submodules: true
       #- run: source .github/ubuntu_deps.sh
@@ -87,7 +87,7 @@ jobs:
       #CXXFLAGS: "-fsanitize=thread -O1 -fPIE"
       #LDFLAGS: "-fsanitize=thread"
     #steps:
-      #- uses: actions/checkout@v2
+      #- uses: actions/checkout@v3
         #with:
           #submodules: true
       #- run: source .github/ubuntu_deps.sh
@@ -105,7 +105,7 @@ jobs:
     #name: macOS
     #runs-on: macos-latest
     #steps:
-      #- uses: actions/checkout@v2
+      #- uses: actions/checkout@v3
         #with:
           #submodules: true
       #- run: |
@@ -122,7 +122,7 @@ jobs:
       - tarball
       - clang
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
       - id: tagger
@@ -161,7 +161,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
       - run: sudo apt-get update
