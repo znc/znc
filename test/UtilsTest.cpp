@@ -116,6 +116,27 @@ TEST(UtilsTest, ServerTime) {
         unsetenv("TZ");
     }
     tzset();
+
+}
+
+TEST(UtilsTest, ParseServerTime) {
+    char* oldTZ = getenv("TZ");
+    if (oldTZ) oldTZ = strdup(oldTZ);
+    setenv("TZ", "America/Montreal", 1);
+    tzset();
+
+    timeval tv4 = CUtils::ParseServerTime("2011-10-19T16:40:51.620Z");
+    CString str4 = CUtils::FormatServerTime(tv4);
+    EXPECT_EQ(str4, "2011-10-19T16:40:51.620Z");
+
+
+    if (oldTZ) {
+        setenv("TZ", oldTZ, 1);
+        free(oldTZ);
+    } else {
+        unsetenv("TZ");
+    }
+    tzset();
 }
 
 class TimeTest : public testing::TestWithParam<
