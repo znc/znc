@@ -585,7 +585,22 @@ timeval CUtils::ParseServerTime(const CString& sTime) {
     struct timeval tv;
     memset(&tv, 0, sizeof(tv));
     if (cp) {
+        char* oldTZ = getenv("TZ");
+        if (oldTZ) oldTZ = strdup(oldTZ);
+        setenv("TZ", "UTC", 1);
+        tzset();
+
         tv.tv_sec = mktime(&stm);
+
+        // restore old value
+        if (oldTZ) {
+            setenv("TZ", oldTZ, 1);
+            free(oldTZ);
+        } else {
+            unsetenv("TZ");
+        }
+        tzset();
+
         CString s_usec(cp);
         if (s_usec.TrimPrefix(".") && s_usec.TrimSuffix("Z")) {
             tv.tv_usec = s_usec.ToULong() * 1000;
