@@ -81,6 +81,7 @@ if(Boost_FOUND)
 	target_link_libraries(znclib ${Boost_LIBRARIES})
 	list(APPEND znc_include_dirs ${Boost_INCLUDE_DIRS})
 endif()
+target_link_libraries(znclib cctz::cctz)
 target_include_directories(znc PUBLIC ${znc_include_dirs})
 target_include_directories(znclib PUBLIC ${znc_include_dirs})
 
