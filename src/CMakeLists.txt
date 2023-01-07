@@ -25,7 +25,8 @@ set(znc_cpp "ZNCString.cpp" "znc.cpp" "IRCNetwork.cpp" "Translation.cpp"
 	"HTTPSock.cpp" "Template.cpp" "ClientCommand.cpp" "Socket.cpp"
 	"SHA256.cpp" "WebModules.cpp" "Listener.cpp" "Config.cpp" "ZNCDebug.cpp"
 	"Threads.cpp" "Query.cpp" "SSLVerifyHost.cpp" "Message.cpp" "User.cpp")
-znc_add_library(znclib ${lib_type} ${znc_cpp} "Csocket.cpp" "versionc.cpp")
+znc_add_library(znclib ${lib_type} ${znc_cpp} "Csocket.cpp" "versionc.cpp"
+	${cctz_cc})
 znc_add_executable(znc "main.cpp")
 target_link_libraries(znc PRIVATE znclib)
 
