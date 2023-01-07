@@ -56,6 +56,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <iomanip>
+#include <chrono>
 
 using std::map;
 using std::vector;
@@ -436,11 +437,8 @@ timeval CUtils::GetTime() {
 }
 
 unsigned long long CUtils::GetMillTime() {
-    struct timeval tv = GetTime();
-    unsigned long long iTime = 0;
-    iTime = (unsigned long long)tv.tv_sec * 1000;
-    iTime += ((unsigned long long)tv.tv_usec / 1000);
-    return iTime;
+    std::chrono::time_point<std::chrono::steady_clock> time = std::chrono::steady_clock::now();
+    return std::chrono::duration_cast<std::chrono::milliseconds>(time.time_since_epoch()).count();
 }
 
 CString CUtils::CTime(time_t t, const CString& sTimezone) {
