@@ -85,6 +85,29 @@ TEST(IRC32, SetMessageTags) {
     EXPECT_EQ(sLine, R"(@a=\:\s\\\r\n :rest)");
 }
 
+TEST(UtilsTest, Timezone) {
+    char* oldTZ = getenv("TZ");
+    if (oldTZ) oldTZ = strdup(oldTZ);
+    setenv("TZ", "Europe/Berlin", 1);
+    tzset();
+
+    EXPECT_EQ(CUtils::FormatTime(1673122230, "%Y-%m-%d %H:%M:%S", "UTC"), "2023-01-07 20:10:30");
+    EXPECT_EQ(CUtils::FormatTime(1673122230, "%Y-%m-%d %H:%M:%S", "GMT"), "2023-01-07 20:10:30");
+    EXPECT_EQ(CUtils::FormatTime(1673122230, "%Y-%m-%d %H:%M:%S", "GMT+7"), "2023-01-08 03:10:30");
+    EXPECT_EQ(CUtils::FormatTime(1673122230, "%Y-%m-%d %H:%M:%S", "GMT-7"), "2023-01-07 13:10:30");
+    EXPECT_EQ(CUtils::FormatTime(1673122230, "%Y-%m-%d %H:%M:%S", "Asia/Vladivostok"), "2023-01-08 06:10:30");
+    // Local TZ, set to Berlin in this test
+    EXPECT_EQ(CUtils::FormatTime(1673122230, "%Y-%m-%d %H:%M:%S", ""), "2023-01-07 21:10:30");
+
+    if (oldTZ) {
+        setenv("TZ", oldTZ, 1);
+        free(oldTZ);
+    } else {
+        unsetenv("TZ");
+    }
+    tzset();
+}
+
 TEST(UtilsTest, ServerTime) {
     char* oldTZ = getenv("TZ");
     if (oldTZ) oldTZ = strdup(oldTZ);
@@ -108,6 +131,26 @@ TEST(UtilsTest, ServerTime) {
     timeval tv3 = CUtils::ParseServerTime("invalid");
     CString str3 = CUtils::FormatServerTime(tv3);
     EXPECT_EQ(str3, "1970-01-01T00:00:00.000Z");
+
+    if (oldTZ) {
+        setenv("TZ", oldTZ, 1);
+        free(oldTZ);
+    } else {
+        unsetenv("TZ");
+    }
+    tzset();
+}
+
+TEST(UtilsTest, ParseServerTime) {
+    char* oldTZ = getenv("TZ");
+    if (oldTZ) oldTZ = strdup(oldTZ);
+    setenv("TZ", "America/Montreal", 1);
+    tzset();
+
+    timeval tv4 = CUtils::ParseServerTime("2011-10-19T16:40:51.620Z");
+    CString str4 = CUtils::FormatServerTime(tv4);
+    EXPECT_EQ(str4, "2011-10-19T16:40:51.620Z");
+
 
     if (oldTZ) {
         setenv("TZ", oldTZ, 1);

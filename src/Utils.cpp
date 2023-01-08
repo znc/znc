@@ -56,6 +56,9 @@
 #include <cstring>
 #include <cstdlib>
 #include <iomanip>
+#include <chrono>
+
+#include "cctz/time_zone.h"
 
 using std::map;
 using std::vector;
@@ -395,29 +398,6 @@ void CUtils::PrintStatus(bool bSuccess, const CString& sMessage) {
     fflush(stdout);
 }
 
-namespace {
-/* Switch GMT-X and GMT+X
- *
- * See https://en.wikipedia.org/wiki/Tz_database#Area
- *
- * "In order to conform with the POSIX style, those zone names beginning
- * with "Etc/GMT" have their sign reversed from what most people expect.
- * In this style, zones west of GMT have a positive sign and those east
- * have a negative sign in their name (e.g "Etc/GMT-14" is 14 hours
- * ahead/east of GMT.)"
- */
-inline CString FixGMT(CString sTZ) {
-    if (sTZ.length() >= 4 && sTZ.StartsWith("GMT")) {
-        if (sTZ[3] == '+') {
-            sTZ[3] = '-';
-        } else if (sTZ[3] == '-') {
-            sTZ[3] = '+';
-        }
-    }
-    return sTZ;
-}
-}  // namespace
-
 timeval CUtils::GetTime() {
 #ifdef HAVE_CLOCK_GETTIME
     timespec ts;
@@ -436,72 +416,27 @@ timeval CUtils::GetTime() {
 }
 
 unsigned long long CUtils::GetMillTime() {
-    struct timeval tv = GetTime();
-    unsigned long long iTime = 0;
-    iTime = (unsigned long long)tv.tv_sec * 1000;
-    iTime += ((unsigned long long)tv.tv_usec / 1000);
-    return iTime;
+    std::chrono::time_point<std::chrono::steady_clock> time = std::chrono::steady_clock::now();
+    return std::chrono::duration_cast<std::chrono::milliseconds>(time.time_since_epoch()).count();
 }
 
 CString CUtils::CTime(time_t t, const CString& sTimezone) {
-    char s[30] = {};  // should have at least 26 bytes
-    if (sTimezone.empty()) {
-        ctime_r(&t, s);
-        // ctime() adds a trailing newline
-        return CString(s).Trim_n();
-    }
-    CString sTZ = FixGMT(sTimezone);
-
-    // backup old value
-    char* oldTZ = getenv("TZ");
-    if (oldTZ) oldTZ = strdup(oldTZ);
-    setenv("TZ", sTZ.c_str(), 1);
-    tzset();
-
-    ctime_r(&t, s);
-
-    // restore old value
-    if (oldTZ) {
-        setenv("TZ", oldTZ, 1);
-        free(oldTZ);
-    } else {
-        unsetenv("TZ");
-    }
-    tzset();
-
-    return CString(s).Trim_n();
+    return FormatTime(t, "%c", sTimezone);
 }
 
 CString CUtils::FormatTime(time_t t, const CString& sFormat,
                            const CString& sTimezone) {
-    char s[1024] = {};
-    tm m;
+    cctz::time_zone tz;
     if (sTimezone.empty()) {
-        localtime_r(&t, &m);
-        strftime(s, sizeof(s), sFormat.c_str(), &m);
-        return s;
-    }
-    CString sTZ = FixGMT(sTimezone);
-
-    // backup old value
-    char* oldTZ = getenv("TZ");
-    if (oldTZ) oldTZ = strdup(oldTZ);
-    setenv("TZ", sTZ.c_str(), 1);
-    tzset();
-
-    localtime_r(&t, &m);
-    strftime(s, sizeof(s), sFormat.c_str(), &m);
-
-    // restore old value
-    if (oldTZ) {
-        setenv("TZ", oldTZ, 1);
-        free(oldTZ);
+        tz = cctz::local_time_zone();
+    } else if (sTimezone.StartsWith("GMT")) {
+        int offset = CString(sTimezone.substr(3)).ToInt();
+        tz = cctz::fixed_time_zone(cctz::seconds(offset * 60 * 60));
     } else {
-        unsetenv("TZ");
+        cctz::load_time_zone(sTimezone, &tz);
     }
-    tzset();
 
-    return s;
+    return cctz::format(sFormat, std::chrono::system_clock::from_time_t(t), tz);
 }
 
 CString CUtils::FormatTime(const timeval& tv, const CString& sFormat,
@@ -509,6 +444,7 @@ CString CUtils::FormatTime(const timeval& tv, const CString& sFormat,
     // Parse additional format specifiers before passing them to
     // strftime, since the way strftime treats unknown format
     // specifiers is undefined.
+    // TODO: consider using cctz's %E#f instead.
     CString sFormat2;
 
     // Make sure %% is parsed correctly, i.e. %%f is passed through to
@@ -563,36 +499,21 @@ CString CUtils::FormatTime(const timeval& tv, const CString& sFormat,
 }
 
 CString CUtils::FormatServerTime(const timeval& tv) {
-    CString s_msec(tv.tv_usec / 1000);
-    while (s_msec.length() < 3) {
-        s_msec = "0" + s_msec;
-    }
-    // TODO support leap seconds properly
-    // TODO support message-tags properly
-    struct tm stm;
-    memset(&stm, 0, sizeof(stm));
-    // OpenBSD has tv_sec as int, so explicitly convert it to time_t to make
-    // gmtime_r() happy
-    const time_t secs = tv.tv_sec;
-    gmtime_r(&secs, &stm);
-    char sTime[20] = {};
-    strftime(sTime, sizeof(sTime), "%Y-%m-%dT%H:%M:%S", &stm);
-    return CString(sTime) + "." + s_msec + "Z";
+    using namespace std::chrono;
+    system_clock::time_point time{duration_cast<system_clock::duration>(
+        seconds(tv.tv_sec) + microseconds(tv.tv_usec))};
+    return cctz::format("%Y-%m-%dT%H:%M:%E3SZ", time, cctz::utc_time_zone());
 }
 
 timeval CUtils::ParseServerTime(const CString& sTime) {
-    struct tm stm;
-    memset(&stm, 0, sizeof(stm));
-    const char* cp = strptime(sTime.c_str(), "%Y-%m-%dT%H:%M:%S", &stm);
+    using namespace std::chrono;
+    system_clock::time_point tp;
+    cctz::parse("%Y-%m-%dT%H:%M:%E*SZ", sTime, cctz::utc_time_zone(), &tp);
     struct timeval tv;
     memset(&tv, 0, sizeof(tv));
-    if (cp) {
-        tv.tv_sec = mktime(&stm);
-        CString s_usec(cp);
-        if (s_usec.TrimPrefix(".") && s_usec.TrimSuffix("Z")) {
-            tv.tv_usec = s_usec.ToULong() * 1000;
-        }
-    }
+    microseconds usec = duration_cast<microseconds>(tp.time_since_epoch());
+    tv.tv_sec = usec.count() / 1000000;
+    tv.tv_usec = usec.count() % 1000000;
     return tv;
 }
 

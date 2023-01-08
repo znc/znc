@@ -269,6 +269,29 @@ else()
 	set(CSOCK_USE_POLL true)
 endif()
 
+# TODO: verify that this find_package works; on Gentoo it's not currently (Jan
+# 2023) packaged, so in my tests it always falls back to submodule
+find_package(cctz QUIET)
+set(cctz_cc "")
+if (NOT cctz_FOUND)
+	set(cctz_cc
+		${PROJECT_SOURCE_DIR}/third_party/cctz/src/civil_time_detail.cc
+		${PROJECT_SOURCE_DIR}/third_party/cctz/src/time_zone_fixed.cc
+		${PROJECT_SOURCE_DIR}/third_party/cctz/src/time_zone_format.cc
+		${PROJECT_SOURCE_DIR}/third_party/cctz/src/time_zone_if.cc
+		${PROJECT_SOURCE_DIR}/third_party/cctz/src/time_zone_impl.cc
+		${PROJECT_SOURCE_DIR}/third_party/cctz/src/time_zone_info.cc
+		${PROJECT_SOURCE_DIR}/third_party/cctz/src/time_zone_libc.cc
+		${PROJECT_SOURCE_DIR}/third_party/cctz/src/time_zone_lookup.cc
+		${PROJECT_SOURCE_DIR}/third_party/cctz/src/time_zone_posix.cc
+		${PROJECT_SOURCE_DIR}/third_party/cctz/src/zone_info_source.cc
+	)
+	add_library(cctz INTERFACE EXCLUDE_FROM_ALL)
+	add_library(cctz::cctz ALIAS cctz)
+	target_include_directories(cctz INTERFACE
+		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/third_party/cctz/include>)
+endif()
+
 check_cxx_symbol_exists(getopt_long "getopt.h" HAVE_GETOPT_LONG)
 check_cxx_symbol_exists(lstat "sys/types.h;sys/stat.h;unistd.h" HAVE_LSTAT)
 check_cxx_symbol_exists(getpassphrase "stdlib.h" HAVE_GETPASSPHRASE)
@@ -430,8 +453,3 @@ render_framed_multiline("${summary_lines}")
 message("")
 message("Now you can run 'make' to compile ZNC")
 message("")
-
-# TODO
-# ====
-#
-# remove old configure.ac and Makefile.in

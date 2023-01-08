@@ -25,7 +25,8 @@ set(znc_cpp "ZNCString.cpp" "znc.cpp" "IRCNetwork.cpp" "Translation.cpp"
 	"HTTPSock.cpp" "Template.cpp" "ClientCommand.cpp" "Socket.cpp"
 	"SHA256.cpp" "WebModules.cpp" "Listener.cpp" "Config.cpp" "ZNCDebug.cpp"
 	"Threads.cpp" "Query.cpp" "SSLVerifyHost.cpp" "Message.cpp" "User.cpp")
-znc_add_library(znclib ${lib_type} ${znc_cpp} "Csocket.cpp" "versionc.cpp")
+znc_add_library(znclib ${lib_type} ${znc_cpp} "Csocket.cpp" "versionc.cpp"
+	${cctz_cc})
 znc_add_executable(znc "main.cpp")
 target_link_libraries(znc PRIVATE znclib)
 
@@ -64,23 +65,24 @@ set(znc_include_dirs
 	"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
 	"$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>"
 	"$<INSTALL_INTERFACE:${CMAKE_INSTALL_FULL_INCLUDEDIR}>")
-target_link_libraries(znclib ${CMAKE_DL_LIBS} Threads::Threads)
+target_link_libraries(znclib PRIVATE ${CMAKE_DL_LIBS} Threads::Threads)
 if(OPENSSL_FOUND)
-	target_link_libraries(znclib ${OPENSSL_LIBRARIES})
+	target_link_libraries(znclib PUBLIC ${OPENSSL_LIBRARIES})
 	list(APPEND znc_include_dirs "${OPENSSL_INCLUDE_DIR}")
 endif()
 if(ZLIB_FOUND)
-	target_link_libraries(znclib ${ZLIB_LIBRARIES})
+	target_link_libraries(znclib PRIVATE ${ZLIB_LIBRARIES})
 	list(APPEND znc_include_dirs ${ZLIB_INCLUDE_DIRS})
 endif()
 if(ICU_FOUND)
-	target_link_libraries(znclib ${ICU_LDFLAGS})
+	target_link_libraries(znclib PUBLIC ${ICU_LDFLAGS})
 	list(APPEND znc_include_dirs ${ICU_INCLUDE_DIRS})
 endif()
 if(Boost_FOUND)
-	target_link_libraries(znclib ${Boost_LIBRARIES})
+	target_link_libraries(znclib PRIVATE ${Boost_LIBRARIES})
 	list(APPEND znc_include_dirs ${Boost_INCLUDE_DIRS})
 endif()
+target_link_libraries(znclib PRIVATE cctz::cctz)
 target_include_directories(znc PUBLIC ${znc_include_dirs})
 target_include_directories(znclib PUBLIC ${znc_include_dirs})
 
