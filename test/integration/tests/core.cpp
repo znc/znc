@@ -165,6 +165,7 @@ TEST_F(ZNCTest, InvalidConfigInChan) {
     auto znc = Run();
     znc->ShouldFinishItself(1);
 }
+
 TEST_F(ZNCTest, Encoding) {
     auto znc = Run();
     auto ircd = ConnectIRCd();
@@ -428,6 +429,47 @@ TEST_F(ZNCTest, DenyOptions) {
     client2.ReadUntil("Access denied!");
     client2.Write("PRIVMSG *controlpanel :DelCTCP user2 FOO");
     client2.ReadUntil("Access denied!");
+}
+
+TEST_F(ZNCTest, CAP302MultiLS) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    InstallModule("testmod.cpp", R"(
+        #include <znc/Client.h>
+        #include <znc/Modules.h>
+        class TestModule : public CModule {
+          public:
+            MODCONSTRUCTOR(TestModule) {}
+            void OnClientCapLs(CClient* pClient, SCString& ssCaps) override {
+                for (int i = 0; i < 100; ++i) {
+                    ssCaps.insert("testcap-" + CString(i));
+                }
+            }
+        };
+        GLOBALMODULEDEFS(TestModule, "Test")
+    )");
+    client.Write("znc loadmod testmod");
+    client.ReadUntil("Loaded module testmod");
+
+    auto client2 = ConnectClient();
+    client2.Write("CAP LS");
+    client2.ReadUntil("LS :");
+    auto rem = client2.ReadRemainder();
+    ASSERT_GT(rem.indexOf("testcap-10"), 10);
+    ASSERT_EQ(rem.indexOf("testcap-80"), -1);
+    ASSERT_EQ(rem.indexOf("LS"), -1);
+
+    client2 = ConnectClient();
+    client2.Write("CAP LS 302");
+    client2.ReadUntil("LS * :");
+    rem = client2.ReadRemainder();
+    qsizetype w = 0;
+    ASSERT_GT(w = rem.indexOf("testcap-10"), 1);
+    ASSERT_GT(w = rem.indexOf("testcap-22", w), 1);
+    ASSERT_GT(w = rem.indexOf("LS * :", w), 1);
+    ASSERT_GT(rem.indexOf("testcap-80", w), 1);
+    ASSERT_GT(rem.indexOf("LS :", w), 1);
 }
 
 }  // namespace

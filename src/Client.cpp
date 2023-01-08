@@ -687,6 +687,21 @@ void CClient::RespondCap(const CString& sResponse) {
     PutClient(":irc.znc.in CAP " + GetNick() + " " + sResponse);
 }
 
+static VCString MultiLine(const SCString& ssCaps) {
+    VCString vsRes = {""};
+    for (const CString& sCap : ssCaps) {
+        if (vsRes.back().length() + sCap.length() > 400) {
+            vsRes.push_back(sCap);
+        } else {
+            if (!vsRes.back().empty()) {
+                vsRes.back() += " ";
+            }
+            vsRes.back() += sCap;
+        }
+    }
+    return vsRes;
+}
+
 void CClient::HandleCap(const CMessage& Message) {
     CString sSubCmd = Message.GetParam(0);
 
@@ -699,12 +714,18 @@ void CClient::HandleCap(const CMessage& Message) {
                 ssOfferCaps.insert(it.first);
         }
         GLOBALMODULECALL(OnClientCapLs(this, ssOfferCaps), NOTHING);
-        CString sRes =
-            CString(" ").Join(ssOfferCaps.begin(), ssOfferCaps.end());
-        RespondCap("LS :" + sRes);
+        VCString vsCaps = MultiLine(ssOfferCaps);
         m_bInCap = true;
         if (Message.GetParam(1).ToInt() >= 302) {
+            m_bCap302 = true;
             m_bCapNotify = true;
+            for (int i = 0; i < vsCaps.size() - 1; ++i) {
+                RespondCap("LS * :" + vsCaps[i]);
+            }
+            RespondCap("LS :" + vsCaps.back());
+        } else {
+            // Can't send more than one line of caps :(
+            RespondCap("LS :" + vsCaps.front());
         }
     } else if (sSubCmd.Equals("END")) {
         m_bInCap = false;
@@ -763,9 +784,16 @@ void CClient::HandleCap(const CMessage& Message) {
 
         RespondCap("ACK :" + Message.GetParam(1));
     } else if (sSubCmd.Equals("LIST")) {
-        CString sList =
-            CString(" ").Join(m_ssAcceptedCaps.begin(), m_ssAcceptedCaps.end());
-        RespondCap("LIST :" + sList);
+        VCString vsCaps = MultiLine(m_ssAcceptedCaps);
+        if (m_bCap302) {
+            for (int i = 0; i < vsCaps.size() - 1; ++i) {
+                RespondCap("LIST * :" + vsCaps[i]);
+            }
+            RespondCap("LIST :" + vsCaps.back());
+        } else {
+            // Can't send more than one line of caps :(
+            RespondCap("LISTS :" + vsCaps.front());
+        }
     } else {
         PutClient(":irc.znc.in 410 " + GetNick() + " " + sSubCmd +
                   " :Invalid CAP subcommand");

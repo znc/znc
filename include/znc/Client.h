@@ -103,6 +103,7 @@ class CClient : public CIRCSocket {
           m_bGotPass(false),
           m_bGotNick(false),
           m_bGotUser(false),
+          m_bCap302(false),
           m_bInCap(false),
           m_bCapNotify(false),
           m_bAwayNotify(false),
@@ -349,6 +350,7 @@ class CClient : public CIRCSocket {
     bool m_bGotPass;
     bool m_bGotNick;
     bool m_bGotUser;
+    bool m_bCap302;
     bool m_bInCap;
     bool m_bCapNotify;
     bool m_bAwayNotify;
