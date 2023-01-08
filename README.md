@@ -4,7 +4,6 @@
 [![Jenkins Build Status](https://img.shields.io/jenkins/s/https/jenkins.znc.in/job/znc/job/znc/job/master.svg?label=freebsd)](https://jenkins.znc.in/job/znc/job/znc/job/master/)
 [![AppVeyor Build status](https://img.shields.io/appveyor/ci/DarthGandalf/znc/master.svg?label=windows)](https://ci.appveyor.com/project/DarthGandalf/znc/branch/master)
 [![Coverage Status](https://img.shields.io/codecov/c/github/znc/znc.svg)](https://codecov.io/gh/znc/znc)
-[![Coverity Scan Build Status](https://img.shields.io/coverity/scan/6778.svg)](https://scan.coverity.com/projects/znc-coverity)
 
 ## Table of contents
 
