@@ -706,6 +706,7 @@ void CClient::HandleCap(const CMessage& Message) {
     CString sSubCmd = Message.GetParam(0);
 
     if (sSubCmd.Equals("LS")) {
+        m_uCapVersion = Message.GetParam(1).ToInt();
         SCString ssOfferCaps;
         for (const auto& it : m_mCoreCaps) {
             bool bServerDependent = std::get<0>(it.second);
@@ -716,8 +717,7 @@ void CClient::HandleCap(const CMessage& Message) {
         GLOBALMODULECALL(OnClientCapLs(this, ssOfferCaps), NOTHING);
         VCString vsCaps = MultiLine(ssOfferCaps);
         m_bInCap = true;
-        if (Message.GetParam(1).ToInt() >= 302) {
-            m_bCap302 = true;
+        if (HasCap302()) {
             m_bCapNotify = true;
             for (int i = 0; i < vsCaps.size() - 1; ++i) {
                 RespondCap("LS * :" + vsCaps[i]);
@@ -785,7 +785,7 @@ void CClient::HandleCap(const CMessage& Message) {
         RespondCap("ACK :" + Message.GetParam(1));
     } else if (sSubCmd.Equals("LIST")) {
         VCString vsCaps = MultiLine(m_ssAcceptedCaps);
-        if (m_bCap302) {
+        if (HasCap302()) {
             for (int i = 0; i < vsCaps.size() - 1; ++i) {
                 RespondCap("LIST * :" + vsCaps[i]);
             }

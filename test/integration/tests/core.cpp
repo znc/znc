@@ -472,5 +472,37 @@ TEST_F(ZNCTest, CAP302MultiLS) {
     ASSERT_GT(rem.indexOf("LS :", w), 1);
 }
 
+TEST_F(ZNCTest, CAP302LSValue) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    InstallModule("testmod.cpp", R"(
+        #include <znc/Client.h>
+        #include <znc/Modules.h>
+        class TestModule : public CModule {
+          public:
+            MODCONSTRUCTOR(TestModule) {}
+            void OnClientCapLs(CClient* pClient, SCString& ssCaps) override {
+                if (pClient->HasCap302()) {
+                    ssCaps.insert("testcap=blah");
+                } else {
+                    ssCaps.insert("testcap");
+                }
+            }
+        };
+        GLOBALMODULEDEFS(TestModule, "Test")
+    )");
+    client.Write("znc loadmod testmod");
+    client.ReadUntil("Loaded module testmod");
+
+    auto client2 = ConnectClient();
+    client2.Write("CAP LS");
+    client2.ReadUntil("testcap ");
+
+    client2 = ConnectClient();
+    client2.Write("CAP LS 302");
+    client2.ReadUntil("testcap=");
+}
+
 }  // namespace
 }  // namespace znc_inttest

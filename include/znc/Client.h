@@ -103,7 +103,7 @@ class CClient : public CIRCSocket {
           m_bGotPass(false),
           m_bGotNick(false),
           m_bGotUser(false),
-          m_bCap302(false),
+          m_uCapVersion(0),
           m_bInCap(false),
           m_bCapNotify(false),
           m_bAwayNotify(false),
@@ -182,6 +182,8 @@ class CClient : public CIRCSocket {
     CString GetNick(bool bAllowIRCNick = true) const;
     CString GetNickMask() const;
     CString GetIdentifier() const { return m_sIdentifier; }
+    unsigned short int CapVersion() const { return m_uCapVersion; }
+    bool HasCap302() const { return CapVersion() >= 302; }
     bool HasCapNotify() const { return m_bCapNotify; }
     bool HasAwayNotify() const { return m_bAwayNotify; }
     bool HasAccountNotify() const { return m_bAccountNotify; }
@@ -350,7 +352,7 @@ class CClient : public CIRCSocket {
     bool m_bGotPass;
     bool m_bGotNick;
     bool m_bGotUser;
-    bool m_bCap302;
+    unsigned short int m_uCapVersion;
     bool m_bInCap;
     bool m_bCapNotify;
     bool m_bAwayNotify;
