@@ -1,4 +1,3 @@
-# the name is used by the shields.io at top of readme
 name: build
 on:
   - push
