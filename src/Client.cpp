@@ -852,9 +852,38 @@ void CClient::SetTagSupport(const CString& sTag, bool bState) {
     }
 }
 
+void CClient::NotifyServerDependentCap(const CString& sCap, bool bValue) {
+    auto it = m_mCoreCaps.find(sCap);
+    if (bValue) {
+        if (m_mCoreCaps.end() != it) {
+            bool bServerDependent = std::get<0>(it->second);
+            if (bServerDependent) {
+                if (m_ssServerDependentCaps.count(sCap) == 0) {
+                    m_ssServerDependentCaps.insert(sCap);
+                    if (HasCapNotify()) {
+                        PutClient(":irc.znc.in CAP " + GetNick() + " NEW :" + sCap);
+                    }
+                }
+            }
+        }
+    } else {
+        if (HasCapNotify() && m_ssServerDependentCaps.count(sCap) > 0) {
+            PutClient(":irc.znc.in CAP " + GetNick() + " DEL :" + sCap);
+        }
+        if (m_mCoreCaps.end() != it) {
+            bool bServerDependent = std::get<0>(it->second);
+            const auto& handler = std::get<1>(it->second);
+            if (bServerDependent) {
+                handler(false);
+            }
+        }
+        m_ssServerDependentCaps.erase(sCap);
+    }
+}
+
 void CClient::NotifyServerDependentCaps(const SCString& ssCaps) {
     for (const CString& sCap : ssCaps) {
-        const auto& it = m_mCoreCaps.find(sCap);
+        auto it = m_mCoreCaps.find(sCap);
         if (m_mCoreCaps.end() != it) {
             bool bServerDependent = std::get<0>(it->second);
             if (bServerDependent) {
@@ -864,20 +893,22 @@ void CClient::NotifyServerDependentCaps(const SCString& ssCaps) {
     }
 
     if (HasCapNotify() && !m_ssServerDependentCaps.empty()) {
-        CString sCaps = CString(" ").Join(m_ssServerDependentCaps.begin(),
-                                          m_ssServerDependentCaps.end());
-        PutClient(":irc.znc.in CAP " + GetNick() + " NEW :" + sCaps);
+        VCString vsCaps = MultiLine(m_ssServerDependentCaps);
+        for (const CString& sLine : vsCaps) {
+            PutClient(":irc.znc.in CAP " + GetNick() + " NEW :" + sLine);
+        }
     }
 }
 
 void CClient::ClearServerDependentCaps() {
     if (HasCapNotify() && !m_ssServerDependentCaps.empty()) {
-        CString sCaps = CString(" ").Join(m_ssServerDependentCaps.begin(),
-                                          m_ssServerDependentCaps.end());
-        PutClient(":irc.znc.in CAP " + GetNick() + " DEL :" + sCaps);
+        VCString vsCaps = MultiLine(m_ssServerDependentCaps);
+        for (const CString& sLine : vsCaps) {
+            PutClient(":irc.znc.in CAP " + GetNick() + " DEL :" + sLine);
+        }
 
         for (const CString& sCap : m_ssServerDependentCaps) {
-            const auto& it = m_mCoreCaps.find(sCap);
+            auto it = m_mCoreCaps.find(sCap);
             if (m_mCoreCaps.end() != it) {
                 const auto& handler = std::get<1>(it->second);
                 handler(false);

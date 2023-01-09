@@ -410,6 +410,9 @@ class Module:
     def OnServerCapAvailable(self, sCap):
         pass
 
+    def OnServerCap302Available(self, sCap, sValue):
+        return self.OnServerCapAvailable(sCap)
+
     def OnServerCapResult(self, sCap, bSuccess):
         pass
 

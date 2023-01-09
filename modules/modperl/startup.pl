@@ -405,6 +405,7 @@ sub OnPrivNotice {}
 sub OnChanNotice {}
 sub OnTopic {}
 sub OnServerCapAvailable {}
+sub OnServerCap302Available { my ($self, $cap, $value) = @_; $self->OnServerCapAvailable($cap) }
 sub OnServerCapResult {}
 sub OnTimerAutoJoin {}
 sub OnEmbeddedWebRequest {}

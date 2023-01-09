@@ -270,6 +270,35 @@ TEST_F(ZNCTest, AwayNotify) {
     client.Write("znc shutdown");
 }
 
+TEST_F(ZNCTest, CAP302LSWaitFull) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    ircd.ReadUntil("CAP LS 302");
+    ircd.Write("CAP user LS * :away-notify");
+    ASSERT_THAT(ircd.ReadRemainder().toStdString(), Not(HasSubstr("away-notify")));
+    ircd.Write("CAP user LS :blahblah");
+    ircd.ReadUntil("CAP REQ :away-notify");
+}
+
+TEST_F(ZNCTest, CAP302NewDel) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    ircd.Write("CAP nick LS :blahblah");
+    ircd.ReadUntil("CAP END");
+    ircd.Write(":server 001 nick :Hello");
+    client.Write("CAP REQ :away-notify");
+    client.ReadUntil("NAK :away-notify");
+    client.Write("CAP REQ :cap-notify");
+    client.ReadUntil("ACK :cap-notify");
+    ircd.Write("CAP nick NEW :away-notify");
+    ircd.ReadUntil("CAP REQ :away-notify");
+    ircd.Write("CAP nick ACK :away-notify");
+    client.ReadUntil("CAP nick NEW :away-notify");
+    ircd.Write("CAP nick DEL :away-notify");
+    client.ReadUntil("CAP nick DEL :away-notify");
+}
+
 TEST_F(ZNCTest, JoinKey) {
     QFile conf(m_dir.path() + "/configs/znc.conf");
     ASSERT_TRUE(conf.open(QIODevice::Append | QIODevice::Text));

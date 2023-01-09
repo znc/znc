@@ -192,7 +192,7 @@ class CIRCSock : public CIRCSocket {
     bool OnTextMessage(CTextMessage& Message);
     bool OnTopicMessage(CTopicMessage& Message);
     bool OnWallopsMessage(CMessage& Message);
-    bool OnServerCapAvailable(const CString& sCap);
+    bool OnServerCapAvailable(const CString& sCap, const CString& sValue);
     // !Message Handlers
 
     void SetNick(const CString& sNick);

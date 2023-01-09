@@ -296,6 +296,7 @@ class CClient : public CIRCSocket {
      */
     void SetTagSupport(const CString& sTag, bool bState);
 
+    void NotifyServerDependentCap(const CString& sCap, bool bValue);
     void NotifyServerDependentCaps(const SCString& ssCaps);
     void ClearServerDependentCaps();
 
@@ -384,6 +385,8 @@ class CClient : public CIRCSocket {
         m_mCoreCaps;
     // A subset of CIRCSock::GetAcceptedCaps(), the caps that can be listed
     // in CAP LS and may be notified to the client with CAP NEW (cap-notify).
+    // TODO: come up with a way for modules to work with this, and with
+    // =values in NEW.
     SCString m_ssServerDependentCaps;
 
     friend class ClientTest;

@@ -1417,6 +1417,12 @@ void CIRCNetwork::IRCDisconnected() {
     CheckIRCConnect();
 }
 
+void CIRCNetwork::NotifyServerDependentCap(const CString& sCap, bool bValue) {
+    for (CClient* pClient : m_vClients) {
+        pClient->NotifyServerDependentCap(sCap, bValue);
+    }
+}
+
 void CIRCNetwork::SetIRCConnectEnabled(bool b) {
     m_bIRCConnectEnabled = b;
 

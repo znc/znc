@@ -136,6 +136,7 @@ class ZNC_EXPORT_LIB_EXPORT CPyModule : public CModule {
                          CString& sMessage) override;
     EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) override;
     bool OnServerCapAvailable(const CString& sCap) override;
+    bool OnServerCap302Available(const CString& sCap, const CString& sValue) override;
     void OnServerCapResult(const CString& sCap, bool bSuccess) override;
     EModRet OnTimerAutoJoin(CChan& Channel) override;
     bool OnEmbeddedWebRequest(CWebSock&, const CString&, CTemplate&) override;

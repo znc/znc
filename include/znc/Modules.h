@@ -1003,6 +1003,15 @@ class CModule {
      *          needs to turn it on with CAP REQ.
      */
     virtual bool OnServerCapAvailable(const CString& sCap);
+    /** Called for every CAP received via CAP LS from server.
+     *  By default just calls OnServerCapAvailable() without sValue, so
+     *  overriding one of the two is enough.
+     *  @param sCap capability name supported by server.
+     *  @param sValue value.
+     *  @return true if your module supports this CAP and
+     *          needs to turn it on with CAP REQ.
+     */
+    virtual bool OnServerCap302Available(const CString& sCap, const CString& sValue);
     /** Called for every CAP accepted or rejected by server
      *  (with CAP ACK or CAP NAK after our CAP REQ).
      *  @param sCap capability accepted/rejected by server.
@@ -1542,7 +1551,7 @@ class CModules : public std::vector<CModule*>, private CCoreTranslationMixin {
     bool OnSendToIRC(CString& sLine);
     bool OnSendToIRCMessage(CMessage& Message);
 
-    bool OnServerCapAvailable(const CString& sCap);
+    bool OnServerCapAvailable(const CString& sCap, const CString& sValue);
     bool OnServerCapResult(const CString& sCap, bool bSuccess);
 
     CModule* FindModule(const CString& sModule) const;

@@ -999,6 +999,9 @@ CModule::EModRet CModule::OnSendToIRCMessage(CMessage& Message) {
 }
 
 bool CModule::OnServerCapAvailable(const CString& sCap) { return false; }
+bool CModule::OnServerCap302Available(const CString& sCap, const CString& sValue) {
+    return OnServerCapAvailable(sCap);
+}
 void CModule::OnServerCapResult(const CString& sCap, bool bSuccess) {}
 
 bool CModule::PutIRC(const CString& sLine) {
@@ -1491,7 +1494,7 @@ bool CModules::OnModCTCP(const CString& sMessage) {
 }
 
 // Why MODHALTCHK works only with functions returning EModRet ? :(
-bool CModules::OnServerCapAvailable(const CString& sCap) {
+bool CModules::OnServerCapAvailable(const CString& sCap, const CString& sValue) {
     bool bResult = false;
     for (CModule* pMod : *this) {
         try {
@@ -1500,11 +1503,11 @@ bool CModules::OnServerCapAvailable(const CString& sCap) {
             if (m_pUser) {
                 CUser* pOldUser = pMod->GetUser();
                 pMod->SetUser(m_pUser);
-                bResult |= pMod->OnServerCapAvailable(sCap);
+                bResult |= pMod->OnServerCap302Available(sCap, sValue);
                 pMod->SetUser(pOldUser);
             } else {
                 // WTF? Is that possible?
-                bResult |= pMod->OnServerCapAvailable(sCap);
+                bResult |= pMod->OnServerCap302Available(sCap, sValue);
             }
             pMod->SetClient(pOldClient);
         } catch (const CModule::EModException& e) {
