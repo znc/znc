@@ -493,7 +493,7 @@ TEST_F(ZNCTest, CAP302MultiLS) {
     client2.Write("CAP LS 302");
     client2.ReadUntil("LS * :");
     rem = client2.ReadRemainder();
-    qsizetype w = 0;
+    int w = 0;
     ASSERT_GT(w = rem.indexOf("testcap-10"), 1);
     ASSERT_GT(w = rem.indexOf("testcap-22", w), 1);
     ASSERT_GT(w = rem.indexOf("LS * :", w), 1);
