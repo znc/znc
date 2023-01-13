@@ -286,7 +286,7 @@ if (NOT cctz_FOUND)
 		${PROJECT_SOURCE_DIR}/third_party/cctz/src/time_zone_posix.cc
 		${PROJECT_SOURCE_DIR}/third_party/cctz/src/zone_info_source.cc
 	)
-	add_library(cctz INTERFACE EXCLUDE_FROM_ALL)
+	add_library(cctz INTERFACE)
 	add_library(cctz::cctz ALIAS cctz)
 	target_include_directories(cctz INTERFACE
 		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/third_party/cctz/include>)
