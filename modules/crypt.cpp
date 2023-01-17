@@ -253,13 +253,13 @@ class CCryptMod : public CModule {
         CString sCommand = Message.GetCommand();
         CString sMessage = Message.GetText();
         CNick Nick = Message.GetNick();
-        CString sOtherPubKey = sMessage.Token(1);
+        CString sOtherPubKey = sMessage.Token(0);
 
         if ((sCommand.Equals("DH1080_INIT") ||
              sCommand.Equals("DH1080_INIT_CBC")) &&
             !sOtherPubKey.empty()) {
             CString sSecretKey;
-            CString sTail = sMessage.Token(2); /* For fish10 */
+            CString sTail = sMessage.Token(1); /* For fish10 */
 
             /* remove trailing A */
             if (sOtherPubKey.TrimSuffix("A") && DH1080_gen() &&
@@ -444,8 +444,6 @@ class CCryptMod : public CModule {
         }
 
         if(bInbound && !HasSomethingToDecrypt(sMessage)) return CONTINUE;
-        // Saving a backup of original message. If inbound self message, we can fix buffer.
-        // CString sOriginalMessage = sMessage;
 
         Nick = Message.GetNick();
         CString sNick = Nick.GetNick();
