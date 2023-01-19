@@ -28,17 +28,21 @@ msgstr "<on|off>"
 #: clientnotify.cpp:57
 msgid "Turns notifications for unseen connections on or off"
 msgstr ""
+"Activa ou desactiva as notificações para as ligações nunca antes vistas"
 
 #: clientnotify.cpp:60
 msgid ""
 "Specifies whether you want to be notified about new connections with new IPs"
 msgstr ""
+"Especifica se pertende ser notificado acerca de novas ligações com novos IPs"
 
 #: clientnotify.cpp:64
 msgid ""
 "Specifies whether you want to be notified about new connections with new "
 "client IDs"
 msgstr ""
+"Especifica se pertende ser notificado acerca de novas ligações com novos IDs "
+"de cliente"
 
 #: clientnotify.cpp:69
 msgid "Turns notifications for clients disconnecting on or off"
@@ -73,11 +77,11 @@ msgstr "Utilização: NewOnly <on|off>"
 
 #: clientnotify.cpp:173
 msgid "Usage: NotifyOnNewIP <on|off>"
-msgstr ""
+msgstr "Utilização: NotifyOnNewIP <on|off>"
 
 #: clientnotify.cpp:186
 msgid "Usage: NotifyOnNewID <on|off>"
-msgstr ""
+msgstr "Utilização: NotifyOnNewID <on|off>"
 
 #: clientnotify.cpp:199
 msgid "Usage: OnDisconnect <on|off>"
@@ -88,6 +92,9 @@ msgid ""
 "Current settings: Method: {1}, for unseen only: {2}, notifyfor unseen IPs: "
 "{3}, notify for unseen IDs: {4}, notify ondisconnecting clients: {5}"
 msgstr ""
+"Definições actuais: Método: {1}, por nunca vistos apenas: {2}, notificar por "
+"IPs nunca vistos: {3}, notificar por IDs nunca vistos: {4}, notificar por "
+"clientes a desligar: {5}"
 
 #: clientnotify.cpp:224
 msgid ""
