@@ -273,7 +273,10 @@ endif()
 # 2023) packaged, so in my tests it always falls back to submodule
 find_package(cctz QUIET)
 set(cctz_cc "")
-if (NOT cctz_FOUND)
+if (cctz_FOUND)
+	message(STATUS "Found cctz at ${cctz_DIR}")
+else()
+	message(STATUS "Will build cctz")
 	set(cctz_cc
 		${PROJECT_SOURCE_DIR}/third_party/cctz/src/civil_time_detail.cc
 		${PROJECT_SOURCE_DIR}/third_party/cctz/src/time_zone_fixed.cc
