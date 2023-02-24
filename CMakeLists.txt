@@ -269,8 +269,6 @@ else()
 	set(CSOCK_USE_POLL true)
 endif()
 
-# TODO: verify that this find_package works; on Gentoo it's not currently (Jan
-# 2023) packaged, so in my tests it always falls back to submodule
 find_package(cctz QUIET)
 set(cctz_cc "")
 if (cctz_FOUND)
