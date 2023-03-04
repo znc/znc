@@ -103,47 +103,11 @@ CClient::CClient() : CIRCSocket(),
       m_sIdentifier(""),
       m_spAuth(),
       m_ssAcceptedCaps(),
-      m_ssSupportedTags(),
-      m_mCoreCaps({
-          {"multi-prefix",
-           {false, [this](bool bVal) { m_bNamesx = bVal; }}},
-          {"userhost-in-names",
-           {false, [this](bool bVal) { m_bUHNames = bVal; }}},
-          {"echo-message",
-           {false, [this](bool bVal) { m_bEchoMessage = bVal; }}},
-          {"server-time",
-           {false, [this](bool bVal) {
-            m_bServerTime = bVal;
-            SetTagSupport("time", bVal);
-           }}},
-          {"batch", {false, [this](bool bVal) {
-            m_bBatch = bVal;
-            SetTagSupport("batch", bVal);
-          }}},
-          {"cap-notify",
-           {false, [this](bool bVal) { m_bCapNotify = bVal; }}},
-          {"away-notify",
-           {true, [this](bool bVal) { m_bAwayNotify = bVal; }}},
-          {"account-notify",
-           {true, [this](bool bVal) { m_bAccountNotify = bVal; }}},
-          {"account-tag",
-           {true, [this](bool bVal) {
-            m_bAccountTag = bVal;
-            SetTagSupport("account", bVal);
-           }}},
-          {"extended-join",
-           {true, [this](bool bVal) { m_bExtendedJoin = bVal; }}},
-      }) {
+      m_ssSupportedTags() {
     EnableReadLine();
     // RFC says a line can have 512 chars max, but we are
     // a little more gentle ;)
     SetMaxBufferThreshold(1024);
-
-    // For compatibility with older clients
-    m_mCoreCaps["znc.in/server-time-iso"] = m_mCoreCaps["server-time"];
-    m_mCoreCaps["znc.in/batch"] = m_mCoreCaps["batch"];
-    m_mCoreCaps["znc.in/self-message"] = {
-        false, [this](bool bVal) { m_bSelfMessage = bVal; }};
 }
 
 CClient::~CClient() {
@@ -773,13 +737,58 @@ static VCString MultiLine(const SCString& ssCaps) {
     return vsRes;
 }
 
+const std::map<CString, std::pair<bool, std::function<void(CClient*, bool bVal)>>>&
+CClient::CoreCaps() {
+    static const std::map<CString, std::pair<bool, std::function<void(CClient*, bool bVal)>>> mCoreCaps = []{
+        std::map<CString, std::pair<bool, std::function<void(CClient*, bool bVal)>>> mCoreCaps = {
+          {"multi-prefix",
+           {false, [](CClient* pClient, bool bVal) { pClient->m_bNamesx = bVal; }}},
+          {"userhost-in-names",
+           {false, [](CClient* pClient, bool bVal) { pClient->m_bUHNames = bVal; }}},
+          {"echo-message",
+           {false, [](CClient* pClient, bool bVal) { pClient->m_bEchoMessage = bVal; }}},
+          {"server-time",
+           {false, [](CClient* pClient, bool bVal) {
+            pClient->m_bServerTime = bVal;
+            pClient->SetTagSupport("time", bVal);
+           }}},
+          {"batch", {false, [](CClient* pClient, bool bVal) {
+            pClient->m_bBatch = bVal;
+            pClient->SetTagSupport("batch", bVal);
+          }}},
+          {"cap-notify",
+           {false, [](CClient* pClient, bool bVal) { pClient->m_bCapNotify = bVal; }}},
+          {"away-notify",
+           {true, [](CClient* pClient, bool bVal) { pClient->m_bAwayNotify = bVal; }}},
+          {"account-notify",
+           {true, [](CClient* pClient, bool bVal) { pClient->m_bAccountNotify = bVal; }}},
+          {"account-tag",
+           {true, [](CClient* pClient, bool bVal) {
+            pClient->m_bAccountTag = bVal;
+            pClient->SetTagSupport("account", bVal);
+           }}},
+          {"extended-join",
+           {true, [](CClient* pClient, bool bVal) { pClient->m_bExtendedJoin = bVal; }}},
+        };
+
+        // For compatibility with older clients
+        mCoreCaps["znc.in/server-time-iso"] = mCoreCaps["server-time"];
+        mCoreCaps["znc.in/batch"] = mCoreCaps["batch"];
+        mCoreCaps["znc.in/self-message"] = {
+            false, [](CClient* pClient, bool bVal) { pClient->m_bSelfMessage = bVal; }};
+
+        return mCoreCaps;
+    }();
+    return mCoreCaps;
+}
+
 void CClient::HandleCap(const CMessage& Message) {
     CString sSubCmd = Message.GetParam(0);
 
     if (sSubCmd.Equals("LS")) {
         m_uCapVersion = Message.GetParam(1).ToInt();
         SCString ssOfferCaps;
-        for (const auto& it : m_mCoreCaps) {
+        for (const auto& it : CoreCaps()) {
             bool bServerDependent = std::get<0>(it.second);
             if (!bServerDependent ||
                 m_ssServerDependentCaps.count(it.first) > 0)
@@ -817,8 +826,8 @@ void CClient::HandleCap(const CMessage& Message) {
             if (sCap.TrimPrefix("-")) bVal = false;
 
             bool bAccepted = false;
-            const auto& it = m_mCoreCaps.find(sCap);
-            if (m_mCoreCaps.end() != it) {
+            const auto& it = CoreCaps().find(sCap);
+            if (CoreCaps().end() != it) {
                 bool bServerDependent = std::get<0>(it->second);
                 bAccepted = !bServerDependent ||
                             m_ssServerDependentCaps.count(sCap) > 0;
@@ -839,10 +848,10 @@ void CClient::HandleCap(const CMessage& Message) {
             CString sCap = sToken;
             if (sCap.TrimPrefix("-")) bVal = false;
 
-            auto handler_it = m_mCoreCaps.find(sCap);
-            if (m_mCoreCaps.end() != handler_it) {
+            auto handler_it = CoreCaps().find(sCap);
+            if (CoreCaps().end() != handler_it) {
                 const auto& handler = std::get<1>(handler_it->second);
-                handler(bVal);
+                handler(this, bVal);
             }
             GLOBALMODULECALL(OnClientCapRequest(this, sCap, bVal), NOTHING);
 
@@ -924,9 +933,9 @@ void CClient::SetTagSupport(const CString& sTag, bool bState) {
 }
 
 void CClient::NotifyServerDependentCap(const CString& sCap, bool bValue) {
-    auto it = m_mCoreCaps.find(sCap);
+    auto it = CoreCaps().find(sCap);
     if (bValue) {
-        if (m_mCoreCaps.end() != it) {
+        if (CoreCaps().end() != it) {
             bool bServerDependent = std::get<0>(it->second);
             if (bServerDependent) {
                 if (m_ssServerDependentCaps.count(sCap) == 0) {
@@ -941,11 +950,11 @@ void CClient::NotifyServerDependentCap(const CString& sCap, bool bValue) {
         if (HasCapNotify() && m_ssServerDependentCaps.count(sCap) > 0) {
             PutClient(":irc.znc.in CAP " + GetNick() + " DEL :" + sCap);
         }
-        if (m_mCoreCaps.end() != it) {
+        if (CoreCaps().end() != it) {
             bool bServerDependent = std::get<0>(it->second);
             const auto& handler = std::get<1>(it->second);
             if (bServerDependent) {
-                handler(false);
+                handler(this, false);
             }
         }
         m_ssServerDependentCaps.erase(sCap);
@@ -954,8 +963,8 @@ void CClient::NotifyServerDependentCap(const CString& sCap, bool bValue) {
 
 void CClient::NotifyServerDependentCaps(const SCString& ssCaps) {
     for (const CString& sCap : ssCaps) {
-        auto it = m_mCoreCaps.find(sCap);
-        if (m_mCoreCaps.end() != it) {
+        auto it = CoreCaps().find(sCap);
+        if (CoreCaps().end() != it) {
             bool bServerDependent = std::get<0>(it->second);
             if (bServerDependent) {
                 m_ssServerDependentCaps.insert(sCap);
@@ -979,10 +988,10 @@ void CClient::ClearServerDependentCaps() {
         }
 
         for (const CString& sCap : m_ssServerDependentCaps) {
-            auto it = m_mCoreCaps.find(sCap);
-            if (m_mCoreCaps.end() != it) {
+            auto it = CoreCaps().find(sCap);
+            if (CoreCaps().end() != it) {
                 const auto& handler = std::get<1>(it->second);
-                handler(false);
+                handler(this, false);
             }
             m_ssAcceptedCaps.erase(sCap);
         }

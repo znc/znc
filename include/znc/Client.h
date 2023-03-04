@@ -310,8 +310,8 @@ class CClient : public CIRCSocket {
     // The capabilities supported by the ZNC core - capability names mapped
     // to a pair which contains a bool describing whether the capability is
     // server-dependent, and a capability value change handler.
-    std::map<CString, std::pair<bool, std::function<void(bool bVal)>>>
-        m_mCoreCaps;
+    static const std::map<CString, std::pair<bool, std::function<void(CClient*, bool bVal)>>>&
+        CoreCaps();
     // A subset of CIRCSock::GetAcceptedCaps(), the caps that can be listed
     // in CAP LS and may be notified to the client with CAP NEW (cap-notify).
     // TODO: come up with a way for modules to work with this, and with
