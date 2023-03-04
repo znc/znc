@@ -75,6 +75,77 @@ using std::vector;
         }                                                                     \
     }
 
+CClient::CClient() : CIRCSocket(),
+      m_bGotPass(false),
+      m_bGotNick(false),
+      m_bGotUser(false),
+      m_uCapVersion(0),
+      m_bInCap(false),
+      m_bCapNotify(false),
+      m_bAwayNotify(false),
+      m_bAccountNotify(false),
+      m_bAccountTag(false),
+      m_bExtendedJoin(false),
+      m_bNamesx(false),
+      m_bUHNames(false),
+      m_bAway(false),
+      m_bServerTime(false),
+      m_bBatch(false),
+      m_bEchoMessage(false),
+      m_bSelfMessage(false),
+      m_bPlaybackActive(false),
+      m_pUser(nullptr),
+      m_pNetwork(nullptr),
+      m_sNick("unknown-nick"),
+      m_sPass(""),
+      m_sUser(""),
+      m_sNetwork(""),
+      m_sIdentifier(""),
+      m_spAuth(),
+      m_ssAcceptedCaps(),
+      m_ssSupportedTags(),
+      m_mCoreCaps({
+          {"multi-prefix",
+           {false, [this](bool bVal) { m_bNamesx = bVal; }}},
+          {"userhost-in-names",
+           {false, [this](bool bVal) { m_bUHNames = bVal; }}},
+          {"echo-message",
+           {false, [this](bool bVal) { m_bEchoMessage = bVal; }}},
+          {"server-time",
+           {false, [this](bool bVal) {
+            m_bServerTime = bVal;
+            SetTagSupport("time", bVal);
+           }}},
+          {"batch", {false, [this](bool bVal) {
+            m_bBatch = bVal;
+            SetTagSupport("batch", bVal);
+          }}},
+          {"cap-notify",
+           {false, [this](bool bVal) { m_bCapNotify = bVal; }}},
+          {"away-notify",
+           {true, [this](bool bVal) { m_bAwayNotify = bVal; }}},
+          {"account-notify",
+           {true, [this](bool bVal) { m_bAccountNotify = bVal; }}},
+          {"account-tag",
+           {true, [this](bool bVal) {
+            m_bAccountTag = bVal;
+            SetTagSupport("account", bVal);
+           }}},
+          {"extended-join",
+           {true, [this](bool bVal) { m_bExtendedJoin = bVal; }}},
+      }) {
+    EnableReadLine();
+    // RFC says a line can have 512 chars max, but we are
+    // a little more gentle ;)
+    SetMaxBufferThreshold(1024);
+
+    // For compatibility with older clients
+    m_mCoreCaps["znc.in/server-time-iso"] = m_mCoreCaps["server-time"];
+    m_mCoreCaps["znc.in/batch"] = m_mCoreCaps["batch"];
+    m_mCoreCaps["znc.in/self-message"] = {
+        false, [this](bool bVal) { m_bSelfMessage = bVal; }};
+}
+
 CClient::~CClient() {
     if (m_spAuth) {
         CClientAuth* pAuth = (CClientAuth*)&(*m_spAuth);
