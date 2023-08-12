@@ -463,19 +463,19 @@ void CLogMod::OnJoinMessage(CJoinMessage& Message) {
 
     const CNick& Nick = Message.GetNick();
     CChan& Channel = *Message.GetChan();
-    CString Account = Message.GetTag("account");
+    CString sAccount = Message.GetTag("account");
     const char* s = " ";
 
-    if (Account.empty())
-        Account = Message.GetParam(1);
+    if (sAccount.empty())
+        sAccount = Message.GetParam(1);
 
-    if (Account.empty() || Account == "*") {
-        Account = "";
+    if (sAccount.empty() || sAccount == "*") {
+        sAccount = "";
         s = "";
     }
 
     PutLog("*** Joins: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" +
-           Nick.GetHost() + ")" + s + Account,
+           Nick.GetHost() + ")" + s + sAccount,
            Channel);
 }
 
