@@ -99,7 +99,7 @@ class CLogMod : public CModule {
                 const CString& sMessage) override;
     void OnQuit(const CNick& Nick, const CString& sMessage,
                 const vector<CChan*>& vChans) override;
-    void OnJoin(const CNick& Nick, CChan& Channel) override;
+    void OnJoinMessage(CJoinMessage& Message) override;
     void OnPart(const CNick& Nick, CChan& Channel,
                 const CString& sMessage) override;
     void OnNick(const CNick& OldNick, const CString& sNewNick,
@@ -457,12 +457,28 @@ CModule::EModRet CLogMod::OnSendToIRCMessage(CMessage& Message) {
     return CONTINUE;
 }
 
-void CLogMod::OnJoin(const CNick& Nick, CChan& Channel) {
-    if (NeedJoins()) {
-        PutLog("*** Joins: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" +
-                   Nick.GetHost() + ")",
-               Channel);
+void CLogMod::OnJoinMessage(CJoinMessage& Message) {
+    if (!NeedJoins())
+        return;
+
+    const CNick& Nick = Message.GetNick();
+    CChan& Channel = *Message.GetChan();
+
+    // TODO: Move account logic to a separate Message method.
+    CString sAccount = Message.GetTag("account");
+    const char* s = " ";
+
+    if (sAccount.empty())
+        sAccount = Message.GetParam(1);
+
+    if (sAccount.empty() || sAccount == "*") {
+        sAccount = "";
+        s = "";
     }
+
+    PutLog("*** Joins: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" +
+           Nick.GetHost() + ")" + s + sAccount,
+           Channel);
 }
 
 void CLogMod::OnPart(const CNick& Nick, CChan& Channel,
