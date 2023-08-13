@@ -463,6 +463,8 @@ void CLogMod::OnJoinMessage(CJoinMessage& Message) {
 
     const CNick& Nick = Message.GetNick();
     CChan& Channel = *Message.GetChan();
+
+    // TODO: Move account logic to a separate Message method.
     CString sAccount = Message.GetTag("account");
     const char* s = " ";
 
