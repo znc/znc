@@ -1076,7 +1076,7 @@ bool CModule::IsClientCapSupported(CClient* pClient, const CString& sCap,
 void CModule::OnClientCapRequest(CClient* pClient, const CString& sCap,
                                  bool bState) {}
 
-CModule::EModRet CModule::OnClientSaslAuthenticate(const CString& sMechanism,
+CModule::EModRet CModule::OnClientSASLAuthenticate(const CString& sMechanism,
                                                    const CString& sBuffer,
                                                    CString& sUser,
 												   CString& sMechanismResponse,
@@ -1084,12 +1084,12 @@ CModule::EModRet CModule::OnClientSaslAuthenticate(const CString& sMechanism,
     return CONTINUE;
 }
 
-CModule::EModRet CModule::OnSaslServerChallenge(const CString& sMechanism,
+CModule::EModRet CModule::OnSASLServerChallenge(const CString& sMechanism,
                                                 CString& sResponse) {
     return CONTINUE;
 }
 
-void CModule::OnGetSaslMechanisms(SCString& ssMechanisms) {}
+void CModule::OnGetSASLMechanisms(SCString& ssMechanisms) {}
 
 CModule::EModRet CModule::OnModuleLoading(const CString& sModName,
                                           const CString& sArgs,
@@ -1608,22 +1608,22 @@ bool CModules::OnClientCapRequest(CClient* pClient, const CString& sCap,
     return false;
 }
 
-bool CModules::OnClientSaslAuthenticate(const CString& sMechanism,
+bool CModules::OnClientSASLAuthenticate(const CString& sMechanism,
                                         const CString& sBuffer,
                                         CString& sUser,
                                         CString& sResponse,
                                         bool& bAuthenticationSuccess) {
-    MODHALTCHK(OnClientSaslAuthenticate(sMechanism, sBuffer, sUser,
+    MODHALTCHK(OnClientSASLAuthenticate(sMechanism, sBuffer, sUser,
                                         sResponse, bAuthenticationSuccess));
 }
 
-bool CModules::OnSaslServerChallenge(const CString& sMechanism,
+bool CModules::OnSASLServerChallenge(const CString& sMechanism,
                                      CString& sResponse) {
-    MODHALTCHK(OnSaslServerChallenge(sMechanism, sResponse));
+    MODHALTCHK(OnSASLServerChallenge(sMechanism, sResponse));
 }
 
-bool CModules::OnGetSaslMechanisms(SCString& ssMechanisms) {
-    MODUNLOADCHK(OnGetSaslMechanisms(ssMechanisms));
+bool CModules::OnGetSASLMechanisms(SCString& ssMechanisms) {
+    MODUNLOADCHK(OnGetSASLMechanisms(ssMechanisms));
     return false;
 }
 

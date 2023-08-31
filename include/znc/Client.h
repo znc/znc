@@ -116,10 +116,8 @@ class CClient : public CIRCSocket {
           m_bBatch(false),
           m_bEchoMessage(false),
           m_bSelfMessage(false),
-          m_bSasl(false),
-          m_bSaslAuthenticating(false),
-          m_bSaslAuthenticated(false),
-          m_bSaslMultipart(false),
+          m_bSASL(false),
+          m_bSASLAuthenticating(false),
           m_bPlaybackActive(false),
           m_pUser(nullptr),
           m_pNetwork(nullptr),
@@ -128,8 +126,9 @@ class CClient : public CIRCSocket {
           m_sUser(""),
           m_sNetwork(""),
           m_sIdentifier(""),
-          m_sSaslBuffer(""),
-          m_sSaslMechanism(""),
+          m_sSASLBuffer(""),
+          m_sSASLMechanism(""),
+          m_sSASLUser(""),
           m_spAuth(),
           m_ssAcceptedCaps(),
           m_ssSupportedTags(),
@@ -162,7 +161,7 @@ class CClient : public CIRCSocket {
                }}},
               {"extended-join",
                {true, [this](bool bVal) { m_bExtendedJoin = bVal; }}},
-              {"sasl", {false, [this](bool bVal) { m_bSasl = bVal; m_bSaslAuthenticating = bVal; }}},
+              {"sasl", {false, [this](bool bVal) { m_bSASL = bVal; m_bSASLAuthenticating = bVal; }}},
           }) {
         EnableReadLine();
         // RFC says a line can have 512 chars max, but we are
@@ -342,7 +341,12 @@ class CClient : public CIRCSocket {
     bool OnActionMessage(CActionMessage& Message);
     void OnAuthenticateMessage(CAuthenticateMessage& Message);
 
-    CString EnumerateSaslMechanisms(SCString& ssMechanisms);
+    /**
+     * Fills all available SASL mechanisms in the passed set, and returns a comma-joined string of those mechanisms.
+     * @param ssMechanisms Set of supported mechanisms, filled by this method.
+     * @return A comma-joined string of supported mechanisms.
+     */
+    CString EnumerateSASLMechanisms(SCString& ssMechanisms);
 
     bool OnCTCPMessage(CCTCPMessage& Message);
     bool OnJoinMessage(CJoinMessage& Message);
@@ -373,10 +377,8 @@ class CClient : public CIRCSocket {
     bool m_bBatch;
     bool m_bEchoMessage;
     bool m_bSelfMessage;
-    bool m_bSasl;
-    bool m_bSaslAuthenticating;
-    bool m_bSaslAuthenticated;
-    bool m_bSaslMultipart;
+    bool m_bSASL;
+    bool m_bSASLAuthenticating;
     bool m_bPlaybackActive;
     CUser* m_pUser;
     CIRCNetwork* m_pNetwork;
@@ -385,8 +387,9 @@ class CClient : public CIRCSocket {
     CString m_sUser;
     CString m_sNetwork;
     CString m_sIdentifier;
-    CString m_sSaslBuffer;
-    CString m_sSaslMechanism;
+    CString m_sSASLBuffer;
+    CString m_sSASLMechanism;
+    CString m_sSASLUser;
     std::shared_ptr<CAuthBase> m_spAuth;
     SCString m_ssAcceptedCaps;
     SCString m_ssSupportedTags;

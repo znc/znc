@@ -21,7 +21,7 @@ class CSASLMechanismPlain : public CModule {
   public:
     MODCONSTRUCTOR(CSASLMechanismPlain) { AddHelpCommand(); }
 
-    EModRet OnClientSaslAuthenticate(const CString& sMechanism,
+    EModRet OnClientSASLAuthenticate(const CString& sMechanism,
                                      const CString& sBuffer, CString& sUser,
                                      CString& sMechanismResponse,
                                      bool& bAuthenticationSuccess) override {
@@ -32,11 +32,14 @@ class CSASLMechanismPlain : public CModule {
         bAuthenticationSuccess = false;
 
         CString sNullSeparator = std::string("\0", 1);
-        auto sAuthzId = sBuffer.Token(0, false, sNullSeparator);
-        auto sAuthcId = sBuffer.Token(1, false, sNullSeparator);
-        auto sPassword = sBuffer.Token(2, false, sNullSeparator);
+        auto sAuthzId = sBuffer.Token(0, false, sNullSeparator, true);
+        auto sAuthcId = sBuffer.Token(1, false, sNullSeparator, true);
+        auto sPassword = sBuffer.Token(2, false, sNullSeparator, true);
 
-        if (sAuthzId.empty()) sAuthzId = sAuthcId;
+        if (!sAuthzId.empty() && sAuthzId != sAuthcId) {
+            // Reject custom SASL plain authorization identifiers
+            return HALTMODS;
+        }
 
 		auto pUser = CZNC::Get().FindUser(sAuthcId);
 
@@ -50,7 +53,7 @@ class CSASLMechanismPlain : public CModule {
 		return HALTMODS;
 	}
 
-    void OnGetSaslMechanisms(SCString& ssMechanisms) override {
+    void OnGetSASLMechanisms(SCString& ssMechanisms) override {
         ssMechanisms.insert("PLAIN");
 	}
 };

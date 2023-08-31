@@ -330,5 +330,25 @@ TEST_F(ZNCTest, SaslMechsNotInit) {
     ircd.ReadUntil("PONG foo");
 }
 
+TEST_F(ZNCTest, SaslPlainModule) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod saslplain");
+    client.ReadUntil("Loaded module");
+    client.Close();
+
+    auto client2 = ConnectClient();
+    client2.Write("NICK foo");
+    client2.Write("CAP LS");
+    client2.Write("CAP REQ :sasl");
+    client2.ReadUntil(":irc.znc.in CAP foo ACK :sasl");
+    client2.Write("USER bar");
+    client2.Write("AUTHENTICATE PLAIN");
+    client2.ReadUntil("AUTHENTICATE +");
+    client2.Write("AUTHENTICATE AHVzZXIAaHVudGVyMg=="); // \0user\0hunter2
+    client2.ReadUntil(":irc.znc.in 903 foo :SASL authentication successful");
+}
+
 }  // namespace
 }  // namespace znc_inttest
