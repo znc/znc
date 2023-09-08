@@ -31,7 +31,7 @@ TEST_F(ZNCTest, Modperl) {
     client.Write("znc loadmod modperl");
     client.Write("znc loadmod perleval");
     client.Write("PRIVMSG *perleval :2+2");
-    client.ReadUntil(":*perleval!znc@znc.in PRIVMSG nick :Result: 4");
+    client.ReadUntil(":*perleval!perleval@znc.in PRIVMSG nick :Result: 4");
     client.Write("PRIVMSG *perleval :$self->GetUser->GetUsername");
     client.ReadUntil("Result: user");
 }
@@ -48,7 +48,7 @@ TEST_F(ZNCTest, Modpython) {
     client.Write("znc loadmod modpython");
     client.Write("znc loadmod pyeval");
     client.Write("PRIVMSG *pyeval :2+2");
-    client.ReadUntil(":*pyeval!znc@znc.in PRIVMSG nick :4");
+    client.ReadUntil(":*pyeval!pyeval@znc.in PRIVMSG nick :4");
     client.Write("PRIVMSG *pyeval :module.GetUser().GetUsername()");
     client.ReadUntil("nick :'user'");
     ircd.Write(":server 001 nick :Hello");
@@ -60,7 +60,7 @@ TEST_F(ZNCTest, Modpython) {
     client.Write("PRIVMSG *controlpanel :Set ClientEncoding $me Western");
     client.Write("JOIN #a\342");
     client.ReadUntil(
-        ":*controlpanel!znc@znc.in PRIVMSG nick :ClientEncoding = UTF-8");
+        ":*controlpanel!controlpanel@znc.in PRIVMSG nick :ClientEncoding = UTF-8");
     ircd.ReadUntil("JOIN #a\xEF\xBF\xBD");
 }
 
@@ -328,7 +328,7 @@ TEST_F(ZNCTest, ModpythonCommand) {
     client.Write("znc loadmod modpython");
     client.Write("znc loadmod cmdtest");
     client.Write("PRIVMSG *cmdtest :ping or");
-    client.ReadUntil(":*cmdtest!znc@znc.in PRIVMSG nick :ping or pong");
+    client.ReadUntil(":*cmdtest!cmdtest@znc.in PRIVMSG nick :ping or pong");
 
     InstallTranslation("cmdtest", "ru_RU", R"(
         msgid ""
@@ -352,9 +352,9 @@ TEST_F(ZNCTest, ModpythonCommand) {
 
     client.Write("PRIVMSG *controlpanel :set language $me ru-RU");
     client.Write("PRIVMSG *cmdtest :help");
-    client.ReadUntil(":*cmdtest!znc@znc.in PRIVMSG nick :\x02ping аргумент\x0F: бла");
+    client.ReadUntil(":*cmdtest!cmdtest@znc.in PRIVMSG nick :\x02ping аргумент\x0F: бла");
     client.Write("PRIVMSG *cmdtest :ping");
-    client.ReadUntil(":*cmdtest!znc@znc.in PRIVMSG nick :ping понг");
+    client.ReadUntil(":*cmdtest!cmdtest@znc.in PRIVMSG nick :ping понг");
 }
 
 }  // namespace

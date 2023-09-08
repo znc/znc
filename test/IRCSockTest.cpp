@@ -211,7 +211,7 @@ TEST_F(IRCSockTest, OnErrorMessage) {
     EXPECT_THAT(
         m_pTestClient->vsLines,
         ElementsAre(
-            ":*status!znc@znc.in PRIVMSG me :Error from server: foo bar"));
+            ":*status!status@znc.in PRIVMSG me :Error from server: foo bar"));
 }
 
 TEST_F(IRCSockTest, OnInviteMessage) {
