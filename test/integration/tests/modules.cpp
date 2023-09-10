@@ -234,7 +234,7 @@ TEST_F(ZNCTest, KeepNickModule) {
     ircd.ReadUntil("NICK user");
     ircd.Write(":server 435 user_ user #error :Nope :-P");
     client.ReadUntil(
-        ":*keepnick!znc@znc.in PRIVMSG user_ "
+        ":*keepnick!keepnick@znc.in PRIVMSG user_ "
         ":Unable to obtain nick user: Nope :-P, #error");
 }
 
