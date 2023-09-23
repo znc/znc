@@ -14,11 +14,11 @@ msgstr ""
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:8
 msgid "User"
-msgstr ""
+msgstr "Usuário"
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:9 lastseen.cpp:99
 msgid "Last Seen"
-msgstr ""
+msgstr "Visto por último"
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:10
 msgid "Info"
@@ -30,11 +30,11 @@ msgstr ""
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:21
 msgid "Edit"
-msgstr ""
+msgstr "Editar"
 
 #: modules/po/../data/lastseen/tmpl/index.tmpl:22
 msgid "Delete"
-msgstr ""
+msgstr "Excluir"
 
 #: modules/po/../data/lastseen/tmpl/lastseen_WebadminUser.tmpl:6
 msgid "Last login time:"
@@ -47,16 +47,16 @@ msgstr ""
 #: lastseen.cpp:61 lastseen.cpp:67
 msgctxt "show"
 msgid "User"
-msgstr ""
+msgstr "Usuário"
 
 #: lastseen.cpp:62 lastseen.cpp:68
 msgctxt "show"
 msgid "Last Seen"
-msgstr ""
+msgstr "Visto por último"
 
 #: lastseen.cpp:69 lastseen.cpp:125
 msgid "never"
-msgstr ""
+msgstr "nunca"
 
 #: lastseen.cpp:79
 msgid "Shows list of users and when they last logged in"

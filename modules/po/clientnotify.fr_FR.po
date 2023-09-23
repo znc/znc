@@ -14,19 +14,19 @@ msgstr ""
 
 #: clientnotify.cpp:47
 msgid "<message|notice|off>"
-msgstr ""
+msgstr "<message|notice|off>"
 
 #: clientnotify.cpp:48
 msgid "Sets the notify method"
-msgstr ""
+msgstr "Définit la méthode de notification"
 
 #: clientnotify.cpp:50 clientnotify.cpp:54
 msgid "<on|off>"
-msgstr ""
+msgstr "<on|off>"
 
 #: clientnotify.cpp:51
 msgid "Turns notifications for unseen IP addresses on or off"
-msgstr ""
+msgstr "Active ou désactive les notifications pour les adresses IP non vues"
 
 #: clientnotify.cpp:55
 msgid "Turns notifications for clients disconnecting on or off"
@@ -41,7 +41,7 @@ msgid "<This message is impossible for 1 client>"
 msgid_plural ""
 "Another client authenticated as your user. Use the 'ListClients' command to "
 "see all {1} clients."
-msgstr[0] ""
+msgstr[0] "<Ce message est impossible pour 1 client>"
 msgstr[1] ""
 
 #: clientnotify.cpp:108
@@ -65,6 +65,8 @@ msgid ""
 "Current settings: Method: {1}, for unseen IP addresses only: {2}, notify on "
 "disconnecting clients: {3}"
 msgstr ""
+"Paramètres actuels : Méthode : {1}, pour les adresses IP non vues "
+"uniquement : {2}, notifier les clients déconnectés : {3}"
 
 #: clientnotify.cpp:157
 msgid ""

@@ -132,7 +132,7 @@ msgstr ""
 #: crypt.cpp:475 crypt.cpp:482
 msgctxt "listkeys"
 msgid "Key"
-msgstr ""
+msgstr "Chave"
 
 #: crypt.cpp:486
 msgid "You have no encryption keys set."

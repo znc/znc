@@ -3,6 +3,7 @@ These people helped translating ZNC to various languages:
 * Alcahest ([X] Alcahest)
 * Altay
 * bashgeek (Daniel)
+* CaPaCuL
 * casmo (Casper)
 * ChaosEngine (Andrzej Pauli)
 * cirinho (Ciro Moniz)
@@ -21,6 +22,7 @@ These people helped translating ZNC to various languages:
 * leon-th (Leon T.)
 * LiteHell
 * lorenzosu
+* M0onshadow (Maelan)
 * MikkelDK
 * mkgeeky (mkgeeky)
 * moonlightzzz (moonlightz)

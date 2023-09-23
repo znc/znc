@@ -1,0 +1,114 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: tr\n"
+"X-Crowdin-File: /1.8.x/modules/po/autovoice.pot\n"
+"X-Crowdin-File-ID: 304\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Turkish\n"
+"Language: tr_TR\n"
+
+#: autovoice.cpp:120
+msgid "List all users"
+msgstr "Tüm kullanıcıları listele"
+
+#: autovoice.cpp:122 autovoice.cpp:125
+msgid "<user> <channel> [channel] ..."
+msgstr "<kullanıcı> <kanal> [kanal] ..."
+
+#: autovoice.cpp:123
+msgid "Adds channels to a user"
+msgstr "Bir kullanıcıya kanal ekler"
+
+#: autovoice.cpp:126
+msgid "Removes channels from a user"
+msgstr "Bir kullanıcıdan kanalları kaldırır"
+
+#: autovoice.cpp:128
+msgid "<user> <hostmask> [channels]"
+msgstr "<kullanıcı> <host_maskesi> [kanallar]"
+
+#: autovoice.cpp:129
+msgid "Adds a user"
+msgstr "Bir kullanıcı ekler"
+
+#: autovoice.cpp:131
+msgid "<user>"
+msgstr "<kullanıcı>"
+
+#: autovoice.cpp:131
+msgid "Removes a user"
+msgstr "Bir kullanıcıyı kaldırır"
+
+#: autovoice.cpp:215
+msgid "Usage: AddUser <user> <hostmask> [channels]"
+msgstr "Kullanımı: AddUser <kullanıcı> <host_maskesi> [kanallar]"
+
+#: autovoice.cpp:229
+msgid "Usage: DelUser <user>"
+msgstr "Kullanımı: DelUser <kullanıcı>"
+
+#: autovoice.cpp:238
+msgid "There are no users defined"
+msgstr "Tanımlanmış kullanıcı yok"
+
+#: autovoice.cpp:244 autovoice.cpp:250
+msgid "User"
+msgstr "Kullanıcı"
+
+#: autovoice.cpp:245 autovoice.cpp:251
+msgid "Hostmask"
+msgstr "Host Maskesi"
+
+#: autovoice.cpp:246 autovoice.cpp:252
+msgid "Channels"
+msgstr "Kanallar"
+
+#: autovoice.cpp:263
+msgid "Usage: AddChans <user> <channel> [channel] ..."
+msgstr "Kullanımı: AddChans <kullanıcı> <kanal> [kanal] ..."
+
+#: autovoice.cpp:270 autovoice.cpp:292 autovoice.cpp:329
+msgid "No such user"
+msgstr "Böyle bir kullanıcı yok"
+
+#: autovoice.cpp:275
+msgid "Channel(s) added to user {1}"
+msgstr "Kanal(lar) {1} kullanıcısına eklendi"
+
+#: autovoice.cpp:285
+msgid "Usage: DelChans <user> <channel> [channel] ..."
+msgstr "Kullanımı: DelChans <kullanıcı> <kanal> [kanal] ..."
+
+#: autovoice.cpp:298
+msgid "Channel(s) Removed from user {1}"
+msgstr "Kanal(lar) {1} kullanıcısından silindi"
+
+#: autovoice.cpp:335
+msgid "User {1} removed"
+msgstr "{1} kullanıcısı kaldırıldı"
+
+#: autovoice.cpp:341
+msgid "That user already exists"
+msgstr "Bu kullanıcı zaten mevcut"
+
+#: autovoice.cpp:347
+msgid "User {1} added with hostmask {2}"
+msgstr "{1} kullanıcısı {2} host maskeleriyle eklendi"
+
+#: autovoice.cpp:360
+msgid ""
+"Each argument is either a channel you want autovoice for (which can include "
+"wildcards) or, if it starts with !, it is an exception for autovoice."
+msgstr ""
+"Her bağımsız değişken otomatik voice istediğiniz bir kanaldır (joker "
+"karakterler içerebilir) ya da ! ile başlıyorsa, otomatik voice için bir "
+"istisnadır."
+
+#: autovoice.cpp:365
+msgid "Auto voice the good people"
+msgstr "İyi insanlara otomatik olarak voice verir"

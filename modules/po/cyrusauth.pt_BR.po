@@ -27,7 +27,7 @@ msgstr ""
 
 #: cyrusauth.cpp:56
 msgid "Access denied"
-msgstr ""
+msgstr "Acesso negado"
 
 #: cyrusauth.cpp:70
 msgid "Ignoring invalid SASL pwcheck method: {1}"

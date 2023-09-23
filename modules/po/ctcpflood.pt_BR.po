@@ -50,7 +50,7 @@ msgstr[1] ""
 msgid "every second"
 msgid_plural "every {1} seconds"
 msgstr[0] ""
-msgstr[1] ""
+msgstr[1] "a cada {1} segundos"
 
 #: ctcpflood.cpp:129
 msgid "Current limit is {1} {2}"

@@ -14,7 +14,7 @@ msgstr ""
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:7 sasl.cpp:301
 msgid "SASL"
-msgstr ""
+msgstr "SASL"
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:11
 msgid "Username:"
@@ -26,7 +26,7 @@ msgstr ""
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:16
 msgid "Password:"
-msgstr ""
+msgstr "Senha:"
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:18
 msgid "Please enter a password."
@@ -34,7 +34,7 @@ msgstr ""
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:22
 msgid "Options"
-msgstr ""
+msgstr "Opções"
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:25
 msgid "Connect only if SASL authentication succeeds."
@@ -50,11 +50,11 @@ msgstr ""
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:42
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:43 sasl.cpp:89 sasl.cpp:95
 msgid "Description"
-msgstr ""
+msgstr "Descrição"
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:57
 msgid "Selected mechanisms and their order:"
@@ -62,7 +62,7 @@ msgstr ""
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:74
 msgid "Save"
-msgstr ""
+msgstr "Salvar"
 
 #: sasl.cpp:54
 msgid "TLS certificate, for use with the *cert module"

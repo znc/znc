@@ -154,11 +154,11 @@ msgstr ""
 
 #: watch.cpp:516 watch.cpp:519
 msgid "Yes"
-msgstr ""
+msgstr "Sim"
 
 #: watch.cpp:516 watch.cpp:519
 msgid "No"
-msgstr ""
+msgstr "Não"
 
 #: watch.cpp:525 watch.cpp:531
 msgid "You have no entries."

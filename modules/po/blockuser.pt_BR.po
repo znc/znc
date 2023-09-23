@@ -14,7 +14,7 @@ msgstr ""
 
 #: modules/po/../data/blockuser/tmpl/blockuser_WebadminUser.tmpl:9
 msgid "Account is blocked"
-msgstr ""
+msgstr "Conta bloqueada"
 
 #: blockuser.cpp:23
 msgid "Your account has been disabled. Contact your administrator."
@@ -28,7 +28,7 @@ msgstr "Listar usuários bloqueados"
 
 #: blockuser.cpp:31 blockuser.cpp:33
 msgid "<user>"
-msgstr ""
+msgstr "<usuário>"
 
 #: blockuser.cpp:31
 msgid "Block a user"
@@ -48,7 +48,7 @@ msgstr "Acesso negado"
 
 #: blockuser.cpp:85
 msgid "No users are blocked"
-msgstr ""
+msgstr "Nenhum usuário bloqueado"
 
 #: blockuser.cpp:88
 msgid "Blocked users:"
@@ -64,7 +64,7 @@ msgstr ""
 
 #: blockuser.cpp:110 blockuser.cpp:152
 msgid "Blocked {1}"
-msgstr ""
+msgstr "O usuário {1} foi bloqueado"
 
 #: blockuser.cpp:112
 msgid "Could not block {1} (misspelled?)"
@@ -92,7 +92,7 @@ msgstr "O usuário {1} não está bloqueado"
 
 #: blockuser.cpp:216
 msgid "Enter one or more user names. Separate them by spaces."
-msgstr ""
+msgstr "Insira um ou mais usuários, separados por espaços."
 
 #: blockuser.cpp:219
 msgid "Block certain users from logging in."

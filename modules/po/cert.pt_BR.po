@@ -15,7 +15,7 @@ msgstr ""
 #  this text is inserted into `click here` in the other string
 #: modules/po/../data/cert/tmpl/index.tmpl:5
 msgid "here"
-msgstr ""
+msgstr "aqui"
 
 #  {1} is `here`, translateable in the other string
 #: modules/po/../data/cert/tmpl/index.tmpl:6
@@ -26,7 +26,7 @@ msgstr ""
 
 #: modules/po/../data/cert/tmpl/index.tmpl:8
 msgid "You do not have a certificate yet."
-msgstr ""
+msgstr "Você não possui um certificado."
 
 #: modules/po/../data/cert/tmpl/index.tmpl:14 cert.cpp:72
 msgid "Certificate"

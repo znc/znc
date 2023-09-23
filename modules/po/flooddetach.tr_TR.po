@@ -1,0 +1,95 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: tr\n"
+"X-Crowdin-File: /1.8.x/modules/po/flooddetach.pot\n"
+"X-Crowdin-File-ID: 346\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Turkish\n"
+"Language: tr_TR\n"
+
+#: flooddetach.cpp:30
+msgid "Show current limits"
+msgstr "Mevcut sınırları göster"
+
+#: flooddetach.cpp:32 flooddetach.cpp:35
+msgid "[<limit>]"
+msgstr "[<sınır>]"
+
+#: flooddetach.cpp:33
+msgid "Show or set number of seconds in the time interval"
+msgstr "Zaman aralığındaki saniye sayısını gösterin veya ayarlayın"
+
+#: flooddetach.cpp:36
+msgid "Show or set number of lines in the time interval"
+msgstr "Zaman aralığındaki satır sayısını gösterin veya ayarlayın"
+
+#: flooddetach.cpp:39
+msgid "Show or set whether to notify you about detaching and attaching back"
+msgstr ""
+"Katılma ve ayrılma konusunda size bilgi verilip verilmeyeceğini gösterin "
+"veya ayarlayın"
+
+#: flooddetach.cpp:93
+msgid "Flood in {1} is over, reattaching..."
+msgstr "{1} bölgesindeki flood bitti, yeniden bağlanıyor..."
+
+#: flooddetach.cpp:150
+msgid "Channel {1} was flooded, you've been detached"
+msgstr "Kanal {1} ​​floodlandı, koptunuz"
+
+#: flooddetach.cpp:187
+msgid "1 line"
+msgid_plural "{1} lines"
+msgstr[0] "1 satır"
+msgstr[1] "{1} satır"
+
+#: flooddetach.cpp:188
+msgid "every second"
+msgid_plural "every {1} seconds"
+msgstr[0] "her saniye"
+msgstr[1] "her {1} saniye"
+
+#: flooddetach.cpp:190
+msgid "Current limit is {1} {2}"
+msgstr "Mevcut sınır: {1} {2}"
+
+#: flooddetach.cpp:197
+msgid "Seconds limit is {1}"
+msgstr "Saniye sınırı: {1}"
+
+#: flooddetach.cpp:202
+msgid "Set seconds limit to {1}"
+msgstr "Saniye sınırını {1} olarak ayarla"
+
+#: flooddetach.cpp:211
+msgid "Lines limit is {1}"
+msgstr "Satır sınırı: {1}"
+
+#: flooddetach.cpp:216
+msgid "Set lines limit to {1}"
+msgstr "Satır sınırını {1} olarak ayarla"
+
+#: flooddetach.cpp:229
+msgid "Module messages are disabled"
+msgstr "Modül mesajları devre dışı bırakıldı"
+
+#: flooddetach.cpp:231
+msgid "Module messages are enabled"
+msgstr "Modül mesajları etkinleştirildi"
+
+#: flooddetach.cpp:247
+msgid ""
+"This user module takes up to two arguments. Arguments are numbers of "
+"messages and seconds."
+msgstr ""
+"Bu kullanıcı modülü en fazla iki argüman alır. Bağımsız değişkenler mesaj "
+"sayısı ve saniyedir."
+
+#: flooddetach.cpp:251
+msgid "Detach channels when flooded"
+msgstr "Floodlandığında kanalları ayırın"

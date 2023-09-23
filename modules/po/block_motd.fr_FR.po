@@ -14,19 +14,19 @@ msgstr ""
 
 #: block_motd.cpp:26
 msgid "[<server>]"
-msgstr ""
+msgstr "[<server>]"
 
 #: block_motd.cpp:27
 msgid ""
 "Override the block with this command. Can optionally specify which server to "
 "query."
 msgstr ""
-"Écrase le bloc avec cette commande. Un serveur peut-être optionnellement "
+"Écrase le bloc avec cette commande. Un serveur peut être optionnellement "
 "spécifié pour la requête."
 
 #: block_motd.cpp:36
 msgid "You are not connected to an IRC Server."
-msgstr "Vous n'êtes pas connecté à un serveur RIC."
+msgstr "Vous n'êtes pas connecté à un serveur IRC."
 
 #: block_motd.cpp:58
 msgid "MOTD blocked by ZNC"

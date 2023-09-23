@@ -18,7 +18,7 @@ msgstr "Servidor"
 
 #: buffextras.cpp:47
 msgid "{1} set mode: {2} {3}"
-msgstr ""
+msgstr "{1} definiu o(s) modo(s): {2} {3}"
 
 #: buffextras.cpp:55
 msgid "{1} kicked {2} with reason: {3}"

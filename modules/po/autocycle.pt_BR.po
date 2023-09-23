@@ -54,7 +54,7 @@ msgstr "Sintaxe: Del [!]<#canal>"
 
 #: autocycle.cpp:85 autocycle.cpp:90 autocycle.cpp:95
 msgid "Channel"
-msgstr ""
+msgstr "Canal"
 
 #: autocycle.cpp:101
 msgid "You have no entries."

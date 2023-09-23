@@ -15,7 +15,7 @@ msgstr ""
 #: modules/po/../data/listsockets/tmpl/index.tmpl:7 listsockets.cpp:213
 #: listsockets.cpp:229
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: modules/po/../data/listsockets/tmpl/index.tmpl:8 listsockets.cpp:214
 #: listsockets.cpp:230
@@ -30,17 +30,17 @@ msgstr ""
 #: modules/po/../data/listsockets/tmpl/index.tmpl:10 listsockets.cpp:217
 #: listsockets.cpp:234
 msgid "SSL"
-msgstr ""
+msgstr "SSL"
 
 #: modules/po/../data/listsockets/tmpl/index.tmpl:11 listsockets.cpp:219
 #: listsockets.cpp:239
 msgid "Local"
-msgstr ""
+msgstr "Local"
 
 #: modules/po/../data/listsockets/tmpl/index.tmpl:12 listsockets.cpp:220
 #: listsockets.cpp:241
 msgid "Remote"
-msgstr ""
+msgstr "Remoto"
 
 #: modules/po/../data/listsockets/tmpl/index.tmpl:13
 msgid "Data In"
@@ -69,12 +69,12 @@ msgstr ""
 #: listsockets.cpp:115 listsockets.cpp:235
 msgctxt "ssl"
 msgid "Yes"
-msgstr ""
+msgstr "Sim"
 
 #: listsockets.cpp:115 listsockets.cpp:236
 msgctxt "ssl"
 msgid "No"
-msgstr ""
+msgstr "Não"
 
 #: listsockets.cpp:141
 msgid "Listener"
