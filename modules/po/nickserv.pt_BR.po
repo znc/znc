@@ -30,11 +30,11 @@ msgstr ""
 
 #: nickserv.cpp:63
 msgid "Ok"
-msgstr ""
+msgstr "OK"
 
 #: nickserv.cpp:68
 msgid "password"
-msgstr ""
+msgstr "senha"
 
 #: nickserv.cpp:68
 msgid "Set your nickserv password"
@@ -46,7 +46,7 @@ msgstr ""
 
 #: nickserv.cpp:72
 msgid "nickname"
-msgstr ""
+msgstr "apelido"
 
 #: nickserv.cpp:73
 msgid ""

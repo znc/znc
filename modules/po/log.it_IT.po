@@ -145,10 +145,10 @@ msgstr "Percorso di log non valido [{1}]"
 msgid "Logging to [{1}]. Using timestamp format '{2}'"
 msgstr "Accesso a [{1}]. Utilizzando il formato timestamp '{2}'"
 
-#: log.cpp:560
+#: log.cpp:576
 msgid "[-sanitize] Optional path where to store logs."
 msgstr "[-sanitize] Percorso opzionale dove archiviare i registri (logs)."
 
-#: log.cpp:564
+#: log.cpp:580
 msgid "Writes IRC logs."
 msgstr "Scrive un logs IRC."

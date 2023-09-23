@@ -250,56 +250,56 @@ msgstr ""
 "Stai per essere disconnesso perché un altro utente si è appena autenticato "
 "come te."
 
-#: Client.cpp:1022
+#: Client.cpp:1026
 msgid "Your CTCP to {1} got lost, you are not connected to IRC!"
 msgstr ""
 "ATTENZIONE: La richiesta di CTCP verso {1} è andata persa. Ora non sei "
 "connesso ad IRC!"
 
-#: Client.cpp:1148
+#: Client.cpp:1152
 msgid "Your notice to {1} got lost, you are not connected to IRC!"
 msgstr ""
 "ATTENZIONE: L'invio del tuo NOTICE verso {1} è andato perso. Ora non sei "
 "connesso ad IRC!"
 
-#: Client.cpp:1187
+#: Client.cpp:1191
 msgid "Removing channel {1}"
 msgstr "Rimozione del canale {1}"
 
-#: Client.cpp:1265
+#: Client.cpp:1269
 msgid "Your message to {1} got lost, you are not connected to IRC!"
 msgstr ""
 "ATTENZIONE: L'invio del tuo messaggio verso {1} è andato perso. Ora non sei "
 "connesso ad IRC!"
 
-#: Client.cpp:1318 Client.cpp:1324
+#: Client.cpp:1322 Client.cpp:1328
 msgid "Hello. How may I help you?"
 msgstr ""
 "Ciao! Per ottenere aiuto su questo e tutti i moduli della ZNC digita help "
 "(da questa finestra) oppure /znc help (in qualsiasi altra finestra)."
 
-#: Client.cpp:1338
+#: Client.cpp:1342
 msgid "Usage: /attach <#chans>"
 msgstr "Usa: /attach <#canali>"
 
-#: Client.cpp:1345 Client.cpp:1367 ClientCommand.cpp:129 ClientCommand.cpp:151
+#: Client.cpp:1349 Client.cpp:1371 ClientCommand.cpp:129 ClientCommand.cpp:151
 #: ClientCommand.cpp:423 ClientCommand.cpp:450
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
 msgstr[0] "Trovato {1} canale corrispondente a [{2}]"
 msgstr[1] "Ho trovato {1} canali corrispondenti a [{2}]"
 
-#: Client.cpp:1348 ClientCommand.cpp:132
+#: Client.cpp:1352 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] "Agganciato {1} canale (Attached)"
 msgstr[1] "Ho agganciato {1} canali (Attached)"
 
-#: Client.cpp:1360
+#: Client.cpp:1364
 msgid "Usage: /detach <#chans>"
 msgstr "Usa: /detach <#canali>"
 
-#: Client.cpp:1370 ClientCommand.cpp:154
+#: Client.cpp:1374 ClientCommand.cpp:154
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] "Scollegato {1} canale (Detached)"

@@ -1,0 +1,84 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: tr\n"
+"X-Crowdin-File: /master/modules/po/cyrusauth.pot\n"
+"X-Crowdin-File-ID: 169\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Turkish\n"
+"Language: tr_TR\n"
+
+#: cyrusauth.cpp:42
+msgid "Shows current settings"
+msgstr "Mevcut ayarları gösterir"
+
+#: cyrusauth.cpp:44
+msgid "yes|clone <username>|no"
+msgstr "evet|klon <kullanıcıadı>|hayır"
+
+#: cyrusauth.cpp:45
+msgid ""
+"Create ZNC users upon first successful login, optionally from a template"
+msgstr ""
+"İlk başarılı oturum açma işleminden sonra isteğe bağlı olarak bir ZNC "
+"kullanıcısı oluşturun, bir şablondan olabilir"
+
+#: cyrusauth.cpp:56
+msgid "Access denied"
+msgstr "Erişim reddedildi"
+
+#: cyrusauth.cpp:70
+msgid "Ignoring invalid SASL pwcheck method: {1}"
+msgstr "Geçersiz SASL pwcheck yöntemi yoksayılıyor: {1}"
+
+#: cyrusauth.cpp:71
+msgid "Ignored invalid SASL pwcheck method"
+msgstr "Geçersiz SASL pwcheck yöntemi yoksayıldı"
+
+#: cyrusauth.cpp:79
+msgid "Need a pwcheck method as argument (saslauthd, auxprop)"
+msgstr ""
+"Argüman olarak bir pwcheck yöntemine ihtiyacınız var (saslauthd, auxprop)"
+
+#: cyrusauth.cpp:84
+msgid "SASL Could Not Be Initialized - Halting Startup"
+msgstr "SASL Başlatılamadı - Başlatma Durduruluyor"
+
+#: cyrusauth.cpp:171 cyrusauth.cpp:186
+msgid "We will not create users on their first login"
+msgstr "İlk oturum açma işleminde kullanıcılar oluşturmayacağız"
+
+#: cyrusauth.cpp:174 cyrusauth.cpp:195
+msgid ""
+"We will create users on their first login, using user [{1}] as a template"
+msgstr ""
+"[{1}] kullanıcısını şablon olarak kullanarak ilk girişlerinde kullanıcılar "
+"oluşturacağız"
+
+#: cyrusauth.cpp:177 cyrusauth.cpp:190
+msgid "We will create users on their first login"
+msgstr "Kullanıcıları ilk girişlerinde oluşturacağız"
+
+#: cyrusauth.cpp:199
+msgid "Usage: CreateUsers yes, CreateUsers no, or CreateUsers clone <username>"
+msgstr ""
+"Kullanımı: CreateUsers yes, CreateUsers no, or CreateUsers clone "
+"<kullanıcı_adı>"
+
+#: cyrusauth.cpp:232
+msgid ""
+"This global module takes up to two arguments - the methods of authentication "
+"- auxprop and saslauthd"
+msgstr ""
+"Bu global modül en fazla iki argüman alır - kimlik doğrulama yöntemleri - "
+"auxprop ve saslauthd"
+
+#: cyrusauth.cpp:238
+msgid "Allow users to authenticate via SASL password verification method"
+msgstr ""
+"Kullanıcıların SASL şifre doğrulama yöntemiyle kimlik doğrulaması yapmasına "
+"izin ver"

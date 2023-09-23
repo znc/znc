@@ -26,7 +26,7 @@ msgstr ""
 
 #: sample.cpp:65
 msgid "TEST!!!!"
-msgstr ""
+msgstr "TESTE!!!!"
 
 #: sample.cpp:74
 msgid "I'm being loaded with the arguments: {1}"
@@ -100,7 +100,7 @@ msgstr ""
 
 #: sample.cpp:207
 msgid "{1} is now known as {2}"
-msgstr ""
+msgstr "{1} trocou de apelido para {2}"
 
 #: sample.cpp:269 sample.cpp:276
 msgid "{1} changes topic on {2} to {3}"

@@ -14,7 +14,7 @@ msgstr ""
 
 #: disconkick.cpp:32
 msgid "You have been disconnected from the IRC server"
-msgstr ""
+msgstr "Você foi desconectado(a) do servidor."
 
 #: disconkick.cpp:45
 msgid ""

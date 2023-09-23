@@ -49,8 +49,8 @@ msgstr[1] ""
 #: flooddetach.cpp:188
 msgid "every second"
 msgid_plural "every {1} seconds"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "a cada segundo"
+msgstr[1] "a cada {1} segundos"
 
 #: flooddetach.cpp:190
 msgid "Current limit is {1} {2}"

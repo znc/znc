@@ -26,7 +26,7 @@ msgstr "Liste des utilisateurs bloqués"
 
 #: blockuser.cpp:31 blockuser.cpp:33
 msgid "<user>"
-msgstr ""
+msgstr "<user>"
 
 #: blockuser.cpp:31
 msgid "Block a user"
