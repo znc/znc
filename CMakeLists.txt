@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.13)
 project(ZNC VERSION 1.9.0 LANGUAGES CXX)
 set(ZNC_VERSION 1.9.x)
 set(append_git_version true)
@@ -134,6 +134,12 @@ if(WANT_CYRUS)
 		message(FATAL_ERROR "Can't find Cyrus SASL 2")
 	endif()
 endif()
+
+tristate_option(ARGON "Store password hashes using Argon2id instead of SHA-256")
+if(WANT_ARGON)
+	pkg_check_modules(ARGON ${TRISTATE_ARGON_REQUIRED} IMPORTED_TARGET libargon2)
+endif()
+set(ZNC_HAVE_ARGON "${ARGON_FOUND}")
 
 tristate_option(ICU "Support character encodings")
 if(WANT_ICU)
@@ -447,6 +453,7 @@ summary_line("Cyrus    " "${CYRUS_FOUND}")
 summary_line("Charset  " "${ICU_FOUND}")
 summary_line("Zlib     " "${ZLIB_FOUND}")
 summary_line("i18n     " "${HAVE_I18N}")
+summary_line("Argon2   " "${ZNC_HAVE_ARGON}")
 
 include(render_framed_multiline)
 render_framed_multiline("${summary_lines}")

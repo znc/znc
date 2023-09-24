@@ -45,24 +45,27 @@ class CUser : private CCoreTranslationMixin {
 
     bool ParseConfig(CConfig* Config, CString& sError);
 
-    // TODO refactor this
     enum eHashType {
         HASH_NONE,
         HASH_MD5,
         HASH_SHA256,
+        HASH_ARGON2ID,
 
-        HASH_DEFAULT = HASH_SHA256
+        // This should be kept in sync with CUtils::SaltedHash
+#if ZNC_HAVE_ARGON
+        HASH_DEFAULT = HASH_ARGON2ID,
+#else
+        HASH_DEFAULT = HASH_SHA256,
+#endif
     };
 
-    // If you change the default hash here and in HASH_DEFAULT,
-    // don't forget CUtils::sDefaultHash!
-    // TODO refactor this
     static CString SaltedHash(const CString& sPass, const CString& sSalt) {
-        return CUtils::SaltedSHA256Hash(sPass, sSalt);
+        return CUtils::SaltedHash(sPass, sSalt);
     }
 
     CConfig ToConfig() const;
-    bool CheckPass(const CString& sPass) const;
+    /** Checks password, may upgrade the hash method. */
+    bool CheckPass(const CString& sPass);
     bool AddAllowedHost(const CString& sHostMask);
     bool RemAllowedHost(const CString& sHostMask);
     void ClearAllowedHosts();

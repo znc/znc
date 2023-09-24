@@ -25,6 +25,10 @@
 #include <time.h>
 #include <algorithm>
 
+#ifdef ZNC_HAVE_ARGON
+#include <argon2.h>
+#endif
+
 using std::vector;
 using std::set;
 
@@ -346,7 +350,12 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
             method = CUser::HASH_MD5;
         else if (sMethod.Equals("sha256"))
             method = CUser::HASH_SHA256;
-        else {
+        else if (sMethod.Equals("Argon2id")) {
+            method = CUser::HASH_ARGON2ID;
+#ifndef ZNC_HAVE_ARGON
+            CUtils::PrintError("ZNC is built without Argon2 support, " + GetUsername() + " won't be able to authenticate");
+#endif
+        } else {
             sError = "Invalid hash method";
             CUtils::PrintError(sError);
             return false;
@@ -958,6 +967,9 @@ CConfig CUser::ToConfig() const {
         case HASH_SHA256:
             sHash = "SHA256";
             break;
+        case HASH_ARGON2ID:
+            sHash = "Argon2id";
+            break;
     }
     passConfig.AddKeyValuePair("Salt", m_sPassSalt);
     passConfig.AddKeyValuePair("Method", sHash);
@@ -1042,20 +1054,43 @@ CConfig CUser::ToConfig() const {
     return config;
 }
 
-bool CUser::CheckPass(const CString& sPass) const {
+bool CUser::CheckPass(const CString& sPass) {
     if(AuthOnlyViaModule() || CZNC::Get().GetAuthOnlyViaModule()) {
         return false;
     }
 
+    bool bResult = false;
+    bool bUpgrade = false;
     switch (m_eHashType) {
         case HASH_MD5:
-            return m_sPass.Equals(CUtils::SaltedMD5Hash(sPass, m_sPassSalt));
+            bResult = m_sPass.Equals(CUtils::SaltedMD5Hash(sPass, m_sPassSalt));
+            bUpgrade = true;
+            break;
         case HASH_SHA256:
-            return m_sPass.Equals(CUtils::SaltedSHA256Hash(sPass, m_sPassSalt));
+            bResult = m_sPass.Equals(CUtils::SaltedSHA256Hash(sPass, m_sPassSalt));
+#if ZNC_HAVE_ARGON
+            bUpgrade = true;
+#endif
+            break;
+        case HASH_ARGON2ID:
+#if ZNC_HAVE_ARGON
+            return argon2id_verify(m_sPass.c_str(), sPass.data(), sPass.length()) == ARGON2_OK;
+#else
+            CUtils::PrintError("ZNC is built without Argon2 support, " + GetUsername() + " cannot authenticate");
+            return false;
+#endif
         case HASH_NONE:
-        default:
+            // Don't upgrade hash, since the only valid use case for plain are
+            // manual tests, where it's simpler this way
             return (sPass == m_sPass);
     }
+
+    if (bResult && bUpgrade) {
+        CString sSalt = CUtils::GetSalt();
+        CString sHash = CUser::SaltedHash(sPass, sSalt);
+        SetPass(sHash, CUser::HASH_DEFAULT, sSalt);
+    }
+    return bResult;
 }
 
 /*CClient* CUser::GetClient() {
@@ -1271,7 +1306,17 @@ void CUser::SetDCCBindHost(const CString& s) { m_sDCCBindHost = s; }
 void CUser::SetPass(const CString& s, eHashType eHash, const CString& sSalt) {
     m_sPass = s;
     m_eHashType = eHash;
-    m_sPassSalt = sSalt;
+    switch (eHash) {
+        case HASH_NONE:
+        case HASH_ARGON2ID:
+            // Salt is embedded in the encoded "hash" in argon
+            m_sPassSalt = "";
+            break;
+        case HASH_MD5:
+        case HASH_SHA256:
+            m_sPassSalt = sSalt;
+            break;
+    }
 }
 void CUser::SetMultiClients(bool b) { m_bMultiClients = b; }
 void CUser::SetDenyLoadMod(bool b) { m_bDenyLoadMod = b; }
