@@ -225,8 +225,20 @@ class CClient : public CIRCSocket {
      */
     void SetTagSupport(const CString& sTag, bool bState);
 
+    /** Notifies client about one specific cap which server has just notified us about.
+     */
     void NotifyServerDependentCap(const CString& sCap, bool bValue);
+    /** Notifies client that all these caps are now available.
+     *
+     * This function will internally filter only those which are server-dependent.
+     * This is when new client connects to an already connected server, and
+     * when server has just connected and finished negotiating caps.
+     */
     void NotifyServerDependentCaps(const SCString& ssCaps);
+    /** Notifies client that all server-dependent caps are not available anymore.
+     *
+     * Called when server disconnects.
+     */
     void ClearServerDependentCaps();
 
     void ReadLine(const CString& sData) override;
