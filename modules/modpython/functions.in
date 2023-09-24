@@ -99,6 +99,7 @@ EModRet OnPrivNoticeMessage(CNoticeMessage& Message)
 EModRet OnChanNoticeMessage(CNoticeMessage& Message)
 EModRet OnTopicMessage(CTopicMessage& Message)
 EModRet OnSendToClientMessage(CMessage& Message)
+EModRet OnSentToClientMessage(CMessage& Message)
 EModRet OnSendToIRCMessage(CMessage& Message)
 
 EModRet OnAddUser(CUser& User, CString& sErrorRet)

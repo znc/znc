@@ -588,6 +588,7 @@ sub OnTopicMessage {
 	return $ret;
 }
 sub OnSendToClientMessage {}
+sub OnSentToClientMessage {}
 sub OnSendToIRCMessage {}
 
 # In Perl "undefined" is allowed value, so perl modules may continue using OnMode and not OnMode2

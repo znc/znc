@@ -680,6 +680,9 @@ class Module:
     def OnSendToClientMessage(self, msg):
         pass
 
+    def OnSentToClientMessage(self, msg):
+        pass
+
     def OnSendToIRCMessage(self, msg):
         pass
 

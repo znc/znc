@@ -156,6 +156,7 @@ class ZNC_EXPORT_LIB_EXPORT CPerlModule : public CModule {
     EModRet OnChanNoticeMessage(CNoticeMessage& Message) override;
     EModRet OnTopicMessage(CTopicMessage& Message) override;
     EModRet OnSendToClientMessage(CMessage& Message) override;
+    EModRet OnSentToClientMessage(CMessage& Message) override;
     EModRet OnSendToIRCMessage(CMessage& Message) override;
 };
 

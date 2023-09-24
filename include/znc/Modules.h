@@ -1039,6 +1039,7 @@ class CModule {
     virtual EModRet OnSendToClientMessage(CMessage& Message);
     /// @deprecated Use OnSendToClientMessage() instead.
     virtual EModRet OnSendToClient(CString& sLine, CClient& Client);
+    virtual EModRet OnSentToClientMessage(CMessage& Message);
 
     /** Called immediately before ZNC sends a raw traffic line to the IRC server.
      *  @since 1.7.0
@@ -1539,6 +1540,7 @@ class CModules : public std::vector<CModule*>, private CCoreTranslationMixin {
 
     bool OnSendToClient(CString& sLine, CClient& Client);
     bool OnSendToClientMessage(CMessage& Message);
+    bool OnSentToClientMessage(CMessage& Message);
     bool OnSendToIRC(CString& sLine);
     bool OnSendToIRCMessage(CMessage& Message);
 

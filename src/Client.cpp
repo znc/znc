@@ -573,7 +573,13 @@ bool CClient::PutClient(const CMessage& Message) {
                       &bReturn);
     if (bReturn) return false;
 
-    return PutClientRaw(Msg.ToString());
+    if (PutClientRaw(Msg.ToString())) {
+	NETWORKMODULECALL(OnSentToClientMessage(Msg), m_pUser, m_pNetwork, this,
+			  &bReturn);
+	if (bReturn) return false;
+	return true;
+    }
+    return false;
 }
 
 bool CClient::PutClientRaw(const CString& sLine) {
@@ -585,8 +591,7 @@ bool CClient::PutClientRaw(const CString& sLine) {
 
     DEBUG("(" << GetFullName() << ") ZNC -> CLI ["
         << CDebug::Filter(sCopy) << "]");
-    Write(sCopy + "\r\n");
-    return true;
+    return Write(sCopy + "\r\n");
 }
 
 void CClient::PutStatusNotice(const CString& sLine) {

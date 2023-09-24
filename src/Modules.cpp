@@ -992,6 +992,9 @@ CModule::EModRet CModule::OnSendToClient(CString& sLine, CClient& Client) {
 CModule::EModRet CModule::OnSendToClientMessage(CMessage& Message) {
     return CONTINUE;
 }
+CModule::EModRet CModule::OnSentToClientMessage(CMessage& Message) {
+    return CONTINUE;
+}
 
 CModule::EModRet CModule::OnSendToIRC(CString& sLine) { return CONTINUE; }
 CModule::EModRet CModule::OnSendToIRCMessage(CMessage& Message) {
@@ -1469,6 +1472,9 @@ bool CModules::OnSendToClient(CString& sLine, CClient& Client) {
 }
 bool CModules::OnSendToClientMessage(CMessage& Message) {
     MODHALTCHK(OnSendToClientMessage(Message));
+}
+bool CModules::OnSentToClientMessage(CMessage& Message) {
+    MODHALTCHK(OnSentToClientMessage(Message));
 }
 bool CModules::OnSendToIRC(CString& sLine) { MODHALTCHK(OnSendToIRC(sLine)); }
 bool CModules::OnSendToIRCMessage(CMessage& Message) {
