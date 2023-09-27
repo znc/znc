@@ -52,6 +52,10 @@
 #include <unicode/errorcode.h>
 #endif
 
+#ifdef ZNC_HAVE_ARGON
+#include <argon2.h>
+#endif
+
 // Required with GCC 4.3+ if openssl is disabled
 #include <cstring>
 #include <cstdlib>
@@ -176,12 +180,24 @@ unsigned long CUtils::GetLongIP(const CString& sIP) {
     return ret;
 }
 
-// If you change this here and in GetSaltedHashPass(),
-// don't forget CUser::HASH_DEFAULT!
-// TODO refactor this
-const CString CUtils::sDefaultHash = "sha256";
-CString CUtils::GetSaltedHashPass(CString& sSalt) {
-    sSalt = GetSalt();
+#ifdef ZNC_HAVE_ARGON
+static CString SaltedArgonHash(const CString& sPass, const CString& sSalt) {
+#define ZNC_ARGON_PARAMS /* iterations */ 6, /* memory */ 6144, /* parallelism */ 1
+    constexpr int iHashLen = 32;
+    CString sOut;
+    sOut.resize(argon2_encodedlen(ZNC_ARGON_PARAMS, sSalt.length(), iHashLen, Argon2_id) + 1);
+    int err = argon2id_hash_encoded(ZNC_ARGON_PARAMS, sPass.data(), sPass.length(), sSalt.data(), sSalt.length(), iHashLen, &sOut[0], sOut.length());
+    if (err) {
+        CUtils::PrintError(argon2_error_message(err));
+        sOut.clear();
+    }
+    return sOut;
+}
+#undef ZNC_ARGON_PARAMS
+#endif
+
+CString CUtils::AskSaltedHashPassForConfig() {
+    CString sSalt = GetSalt();
 
     while (true) {
         CString pass1;
@@ -195,7 +211,18 @@ CString CUtils::GetSaltedHashPass(CString& sSalt) {
             CUtils::PrintError("The supplied passwords did not match");
         } else {
             // Construct the salted pass
-            return SaltedSHA256Hash(pass1, sSalt);
+            VCString vsLines;
+            vsLines.push_back("<Pass password>");
+#if ZNC_HAVE_ARGON
+            vsLines.push_back("\tMethod = Argon2id");
+            vsLines.push_back("\tHash = " + SaltedArgonHash(pass1, sSalt));
+#else
+            vsLines.push_back("\tMethod = SHA256");
+            vsLines.push_back("\tHash = " + SaltedSHA256Hash(pass1, sSalt));
+            vsLines.push_back("\tSalt = " + sSalt);
+#endif
+            vsLines.push_back("</Pass>");
+            return CString("\n").Join(vsLines.begin(), vsLines.end());
         }
     }
 }
@@ -208,6 +235,14 @@ CString CUtils::SaltedMD5Hash(const CString& sPass, const CString& sSalt) {
 
 CString CUtils::SaltedSHA256Hash(const CString& sPass, const CString& sSalt) {
     return CString(sPass + sSalt).SHA256();
+}
+
+CString CUtils::SaltedHash(const CString& sPass, const CString& sSalt) {
+#ifdef ZNC_HAVE_ARGON
+    return SaltedArgonHash(sPass, sSalt);
+#else
+    return SaltedSHA256Hash(sPass, sSalt);
+#endif
 }
 
 CString CUtils::GetPass(const CString& sPrompt) {

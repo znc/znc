@@ -734,10 +734,8 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
     } while (!CUser::IsValidUsername(sUser));
 
     vsLines.push_back("<User " + sUser + ">");
-    CString sSalt;
-    sAnswer = CUtils::GetSaltedHashPass(sSalt);
-    vsLines.push_back("\tPass       = " + CUtils::sDefaultHash + "#" + sAnswer +
-                      "#" + sSalt + "#");
+    sAnswer = CUtils::AskSaltedHashPassForConfig();
+	vsLines.push_back(sAnswer);
 
     vsLines.push_back("\tAdmin      = true");
 

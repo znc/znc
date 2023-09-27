@@ -19,6 +19,7 @@
 #include "znctest.h"
 
 using testing::HasSubstr;
+using testing::ContainsRegex;
 
 namespace znc_inttest {
 namespace {
@@ -428,6 +429,50 @@ TEST_F(ZNCTest, DenyOptions) {
     client2.ReadUntil("Access denied!");
     client2.Write("PRIVMSG *controlpanel :DelCTCP user2 FOO");
     client2.ReadUntil("Access denied!");
+}
+
+TEST_F(ZNCTest, HashUpgrade) {
+    QFile conf(m_dir.path() + "/configs/znc.conf");
+    ASSERT_TRUE(conf.open(QIODevice::Append | QIODevice::Text));
+    QTextStream out(&conf);
+    out << R"(
+        <User foo>
+            <Pass pass>
+                Method = MD5
+                Salt = abc
+                Hash = defdf93cef7fa7a8ee88e65d0e277b99
+            </Pass>
+        </User>
+    )";
+    out.flush();
+    conf.close();
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+
+    auto client = ConnectClient();
+    client.Write("PASS :hunter2");
+    client.Write("NICK nick");
+    client.Write("USER foo x x :x");
+    client.ReadUntil("Welcome");
+    client.Close();
+
+    client = LoginClient();
+    client.Write("znc saveconfig");
+    client.ReadUntil("Wrote config");
+
+    ASSERT_TRUE(conf.open(QIODevice::ReadOnly | QIODevice::Text));
+    QTextStream in(&conf);
+    QString config = in.readAll();
+    // It was upgraded to either Argon2 or SHA256
+    EXPECT_THAT(config.toStdString(), Not(ContainsRegex("Method.*MD5")));
+
+    // Check that still can login after the upgrade
+    client = ConnectClient();
+    client.Write("PASS :hunter2");
+    client.Write("NICK nick");
+    client.Write("USER foo x x :x");
+    client.ReadUntil("Welcome");
+    client.Close();
 }
 
 }  // namespace
