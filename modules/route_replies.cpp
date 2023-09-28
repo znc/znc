@@ -70,6 +70,7 @@ static const struct {
         {"276", false}, /* oftc-hybrid RPL_WHOISCERTFP */
         {"330", false}, /* ratbox RPL_WHOISLOGGEDIN
                            aka ircu RPL_WHOISACCOUNT */
+        {"337", false}, /* solanum RPL_WHOISTEXT -- "is hiding their idle time" */
         {"338", false}, /* ircu RPL_WHOISACTUALLY -- "actually using host" */
         {"378", false}, /* RPL_WHOISHOST -- real address of vhosts */
         {"671", false}, /* RPL_WHOISSECURE */
