@@ -297,6 +297,10 @@ else()
 	add_library(cctz::cctz ALIAS cctz)
 	target_include_directories(cctz INTERFACE
 		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/third_party/cctz/include>)
+	if (APPLE)
+		find_library(CoreFoundation CoreFoundation REQUIRED)
+		target_link_libraries(cctz INTERFACE ${CoreFoundation})
+	endif()
 endif()
 
 check_cxx_symbol_exists(getopt_long "getopt.h" HAVE_GETOPT_LONG)
