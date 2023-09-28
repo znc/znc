@@ -110,7 +110,7 @@ set(HAVE_ZLIB "${ZLIB_FOUND}")
 
 tristate_option(CYRUS "Support authentication with Cyrus")
 if(WANT_CYRUS)
-	pkg_check_modules(CYRUS libsasl2)
+	pkg_check_modules(CYRUS IMPORTED_TARGET libsasl2)
 	if(NOT CYRUS_FOUND)
 		# libsasl2.pc is missing on 2.1.25 which is on ubuntu 14.04
 		# next ubuntu version has 2.1.26 which has libsasl2.pc
@@ -143,7 +143,7 @@ set(ZNC_HAVE_ARGON "${ARGON_FOUND}")
 
 tristate_option(ICU "Support character encodings")
 if(WANT_ICU)
-	pkg_check_modules(ICU ${TRISTATE_ICU_REQUIRED} icu-uc)
+	pkg_check_modules(ICU ${TRISTATE_ICU_REQUIRED} IMPORTED_TARGET icu-uc)
 endif()
 set(HAVE_ICU "${ICU_FOUND}")
 
