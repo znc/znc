@@ -25,7 +25,7 @@ struct reply {
 // TODO this list is far from complete, no errors are handled
 static const struct {
     const char* szRequest;
-    struct reply vReplies[20];
+    struct reply vReplies[21];
 } vRouteReplies[] = {
       {"WHO",
        {{"402", true},   /* rfc1459 ERR_NOSUCHSERVER */
