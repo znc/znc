@@ -51,27 +51,27 @@ msgid ""
 "code>”). Once you have loaded some Web-enabled modules, the menu will expand."
 msgstr ""
 
-#: znc.cpp:1554
+#: znc.cpp:1552
 msgid "User already exists"
 msgstr ""
 
-#: znc.cpp:1662
+#: znc.cpp:1660
 msgid "IPv6 is not enabled"
 msgstr ""
 
-#: znc.cpp:1670
+#: znc.cpp:1668
 msgid "SSL is not enabled"
 msgstr ""
 
-#: znc.cpp:1678
+#: znc.cpp:1676
 msgid "Unable to locate pem file: {1}"
 msgstr ""
 
-#: znc.cpp:1697
+#: znc.cpp:1695
 msgid "Invalid port"
 msgstr ""
 
-#: znc.cpp:1813 ClientCommand.cpp:1720
+#: znc.cpp:1811 ClientCommand.cpp:1720
 msgid "Unable to bind: {1}"
 msgstr ""
 
@@ -79,7 +79,7 @@ msgstr ""
 msgid "Jumping servers because this server is no longer in the list"
 msgstr ""
 
-#: IRCNetwork.cpp:671 User.cpp:690
+#: IRCNetwork.cpp:671 User.cpp:699
 msgid "Welcome to ZNC"
 msgstr ""
 
@@ -1904,34 +1904,34 @@ msgstr ""
 msgid "hostname verification error"
 msgstr ""
 
-#: User.cpp:519
+#: User.cpp:528
 msgid ""
 "Invalid network name. It should be alphanumeric. Not to be confused with "
 "server name"
 msgstr ""
 
-#: User.cpp:523
+#: User.cpp:532
 msgid "Network {1} already exists"
 msgstr ""
 
-#: User.cpp:789
+#: User.cpp:798
 msgid ""
 "You are being disconnected because your IP is no longer allowed to connect "
 "to this user"
 msgstr ""
 
-#: User.cpp:929
+#: User.cpp:938
 msgid "Password is empty"
 msgstr ""
 
-#: User.cpp:934
+#: User.cpp:943
 msgid "Username is empty"
 msgstr ""
 
-#: User.cpp:939
+#: User.cpp:948
 msgid "Username is invalid"
 msgstr ""
 
-#: User.cpp:1214
+#: User.cpp:1249
 msgid "Unable to find modinfo {1}: {2}"
 msgstr ""

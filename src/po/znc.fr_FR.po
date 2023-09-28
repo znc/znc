@@ -55,27 +55,27 @@ msgstr ""
 "loadmod &lt;module&gt;</code>”). Les modules avec des capacités web "
 "apparaîtront ci-dessous."
 
-#: znc.cpp:1554
+#: znc.cpp:1552
 msgid "User already exists"
 msgstr "Cet utilisateur existe déjà"
 
-#: znc.cpp:1662
+#: znc.cpp:1660
 msgid "IPv6 is not enabled"
 msgstr "IPv6 n'est pas activé"
 
-#: znc.cpp:1670
+#: znc.cpp:1668
 msgid "SSL is not enabled"
 msgstr "SSL n'est pas activé"
 
-#: znc.cpp:1678
+#: znc.cpp:1676
 msgid "Unable to locate pem file: {1}"
 msgstr "Impossible de trouver le fichier pem : {1}"
 
-#: znc.cpp:1697
+#: znc.cpp:1695
 msgid "Invalid port"
 msgstr "Port invalide"
 
-#: znc.cpp:1813 ClientCommand.cpp:1720
+#: znc.cpp:1811 ClientCommand.cpp:1720
 msgid "Unable to bind: {1}"
 msgstr "Impossible d'utiliser le port : {1}"
 
@@ -84,7 +84,7 @@ msgid "Jumping servers because this server is no longer in the list"
 msgstr ""
 "Connexion au serveur suivant, le serveur actuel n'est plus dans la liste"
 
-#: IRCNetwork.cpp:671 User.cpp:690
+#: IRCNetwork.cpp:671 User.cpp:699
 msgid "Welcome to ZNC"
 msgstr "Bienvenue sur ZNC"
 
@@ -1977,7 +1977,7 @@ msgstr "le nom d'hôte du certificat est incorrect"
 msgid "hostname verification error"
 msgstr "erreur de vérification du nom d'hôte"
 
-#: User.cpp:519
+#: User.cpp:528
 msgid ""
 "Invalid network name. It should be alphanumeric. Not to be confused with "
 "server name"
@@ -1985,11 +1985,11 @@ msgstr ""
 "Nom de réseau invalide. Il devrait être alphanumérique. Ne pas confondre "
 "avec le nom du serveur"
 
-#: User.cpp:523
+#: User.cpp:532
 msgid "Network {1} already exists"
 msgstr "Le réseau {1} existe déjà"
 
-#: User.cpp:789
+#: User.cpp:798
 msgid ""
 "You are being disconnected because your IP is no longer allowed to connect "
 "to this user"
@@ -1997,18 +1997,18 @@ msgstr ""
 "Vous avez été déconnecté car votre adresse IP n'est plus autorisée à se "
 "connecter à cet utilisateur"
 
-#: User.cpp:929
+#: User.cpp:938
 msgid "Password is empty"
 msgstr "Le mot de passe est vide"
 
-#: User.cpp:934
+#: User.cpp:943
 msgid "Username is empty"
 msgstr "L'identifiant est vide"
 
-#: User.cpp:939
+#: User.cpp:948
 msgid "Username is invalid"
 msgstr "L'identifiant est invalide"
 
-#: User.cpp:1214
+#: User.cpp:1249
 msgid "Unable to find modinfo {1}: {2}"
 msgstr "Impossible de trouver d'information sur le module {1} : {2}"
