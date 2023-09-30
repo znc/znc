@@ -37,8 +37,7 @@ function(add_cxx_module mod modpath)
 	if(moddepend_${mod})
 		add_dependencies("module_${mod}" ${moddepend_${mod}})
 	endif()
-	target_link_libraries("module_${mod}" PRIVATE ZNC ${modlink_${mod}}
-		${zncpubdeps})
+	target_link_libraries("module_${mod}" PRIVATE ZNC ${modlink_${mod}})
 	set_target_properties("module_${mod}" PROPERTIES "" "" ${modprop_${mod}})
 	install(TARGETS "module_${mod}"
 		LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/znc")

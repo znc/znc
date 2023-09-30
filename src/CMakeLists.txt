@@ -100,7 +100,7 @@ target_compile_features(znc PUBLIC ${required_cxx11_features})
 target_compile_features(znclib PUBLIC ${required_cxx11_features})
 
 add_library(ZNC INTERFACE)
-target_link_libraries(ZNC INTERFACE ${znc_link})
+target_link_libraries(ZNC INTERFACE ${znc_link} ${zncpubdeps})
 target_compile_definitions(ZNC INTERFACE "znc_export_lib_EXPORTS")
 
 if(HAVE_I18N)
