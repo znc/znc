@@ -103,6 +103,10 @@ jobs:
   macos:
     name: macOS
     runs-on: macos-latest
+    env:
+      # This doesn't make big difference, since it's the same compiler, but we also use this variable to select lcov vs llvm-cov
+      CXX: clang++
+      CC: clang
     steps:
       - uses: actions/checkout@v3
         with:

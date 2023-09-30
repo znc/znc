@@ -43,6 +43,9 @@ case "${CC:-gcc}" in
 		lcov --list lcov-coverage.txt
 		;;
 	clang)
+		if [[ x$(uname) == xDarwin ]]; then
+			export PATH=$PATH:/Library/Developer/CommandLineTools/usr/bin
+		fi
 		llvm-profdata merge unittest.profraw -o unittest.profdata
 		llvm-profdata merge inttest.profraw -o inttest.profdata
 		llvm-cov show -show-line-counts-or-regions -instr-profile=unittest.profdata test/unittest_bin > unittest-cmake-coverage.txt
