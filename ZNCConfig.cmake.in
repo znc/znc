@@ -14,6 +14,10 @@
 # limitations under the License.
 #
 
+include(CMakeFindDependencyMacro)
+include("${CMAKE_CURRENT_LIST_DIR}/CMakeFindDependencyMacroPC.cmake")
+@ZNC_CMAKE_FIND_DEPS@
+
 include("${CMAKE_CURRENT_LIST_DIR}/znc_internal.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/znc_public.cmake")
 include(CMakeParseArguments)

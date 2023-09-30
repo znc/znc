@@ -79,6 +79,8 @@ macro(tristate_option opt help)
 	endif()
 endmacro()
 
+set(ZNC_CMAKE_FIND_DEPS "")
+
 tristate_option(OPENSSL "Support SSL")
 if(WANT_OPENSSL)
 	find_package(OpenSSL ${TRISTATE_OPENSSL_REQUIRED})
@@ -95,6 +97,8 @@ if(WANT_OPENSSL)
 				HAVE_SSL_SESSION_get0_cipher)
 		endfunction()
 		check_SSL_SESSION_get0_cipher()
+		set(ZNC_CMAKE_FIND_DEPS
+			"${ZNC_CMAKE_FIND_DEPS}\nfind_dependency(OpenSSL)")
 	endif()
 endif()
 set(HAVE_LIBSSL "${OPENSSL_FOUND}")
@@ -110,7 +114,7 @@ set(HAVE_ZLIB "${ZLIB_FOUND}")
 
 tristate_option(CYRUS "Support authentication with Cyrus")
 if(WANT_CYRUS)
-	pkg_check_modules(CYRUS libsasl2)
+	pkg_check_modules(CYRUS IMPORTED_TARGET libsasl2)
 	if(NOT CYRUS_FOUND)
 		# libsasl2.pc is missing on 2.1.25 which is on ubuntu 14.04
 		# next ubuntu version has 2.1.26 which has libsasl2.pc
@@ -143,9 +147,12 @@ set(ZNC_HAVE_ARGON "${ARGON_FOUND}")
 
 tristate_option(ICU "Support character encodings")
 if(WANT_ICU)
-	pkg_check_modules(ICU ${TRISTATE_ICU_REQUIRED} icu-uc)
+	pkg_check_modules(ICU ${TRISTATE_ICU_REQUIRED} IMPORTED_TARGET icu-uc)
 endif()
 set(HAVE_ICU "${ICU_FOUND}")
+if(ICU_FOUND)
+	set(ZNC_CMAKE_FIND_DEPS "${ZNC_CMAKE_FIND_DEPS}\nfind_dependency_pc(ICU icu-uc)")
+endif()
 
 set(WANT_PERL false CACHE BOOL "Support Perl modules")
 set(WANT_PYTHON false CACHE BOOL "Support Python modules")
@@ -425,6 +432,7 @@ include(CMakePackageConfigHelpers)
 write_basic_package_version_file("ZNCConfigVersion.cmake"
 	COMPATIBILITY AnyNewerVersion)
 install(FILES
+	"${PROJECT_SOURCE_DIR}/cmake/CMakeFindDependencyMacroPC.cmake"
 	"${PROJECT_BINARY_DIR}/ZNCConfig.cmake"
 	"${PROJECT_BINARY_DIR}/ZNCConfigVersion.cmake"
 	DESTINATION "${CMAKE_INSTALL_DATADIR}/znc/cmake")
