@@ -79,6 +79,9 @@ macro(tristate_option opt help)
 	endif()
 endmacro()
 
+set(ZNC_CMAKE_FIND_DEPS "")
+set(zncpubdeps)
+
 tristate_option(OPENSSL "Support SSL")
 if(WANT_OPENSSL)
 	find_package(OpenSSL ${TRISTATE_OPENSSL_REQUIRED})
@@ -95,6 +98,9 @@ if(WANT_OPENSSL)
 				HAVE_SSL_SESSION_get0_cipher)
 		endfunction()
 		check_SSL_SESSION_get0_cipher()
+		set(ZNC_CMAKE_FIND_DEPS
+			"${ZNC_CMAKE_FIND_DEPS}\nfind_dependency(OpenSSL)")
+		list(APPEND zncpubdeps OpenSSL::SSL)
 	endif()
 endif()
 set(HAVE_LIBSSL "${OPENSSL_FOUND}")
@@ -110,7 +116,7 @@ set(HAVE_ZLIB "${ZLIB_FOUND}")
 
 tristate_option(CYRUS "Support authentication with Cyrus")
 if(WANT_CYRUS)
-	pkg_check_modules(CYRUS libsasl2)
+	pkg_check_modules(CYRUS IMPORTED_TARGET libsasl2)
 	if(NOT CYRUS_FOUND)
 		# libsasl2.pc is missing on 2.1.25 which is on ubuntu 14.04
 		# next ubuntu version has 2.1.26 which has libsasl2.pc
@@ -126,7 +132,9 @@ if(WANT_CYRUS)
 			CYRUS_HARDCODED)
 		set(CMAKE_REQUIRED_LIBRARIES "${_old_cmake_required_libraries}")
 		if(CYRUS_HARDCODED)
-			set(CYRUS_LDFLAGS -lsasl2)
+			add_library(HardcodedCyrusDep INTERFACE)
+			add_library(PkgConfig::CYRUS ALIAS HardcodedCyrusDep)
+			target_link_libraries(HardcodedCyrusDep INTERFACE sasl2)
 			set(CYRUS_FOUND true)
 		endif()
 	endif()
@@ -143,9 +151,13 @@ set(ZNC_HAVE_ARGON "${ARGON_FOUND}")
 
 tristate_option(ICU "Support character encodings")
 if(WANT_ICU)
-	pkg_check_modules(ICU ${TRISTATE_ICU_REQUIRED} icu-uc)
+	pkg_check_modules(ICU ${TRISTATE_ICU_REQUIRED} IMPORTED_TARGET icu-uc)
 endif()
 set(HAVE_ICU "${ICU_FOUND}")
+if(ICU_FOUND)
+	set(ZNC_CMAKE_FIND_DEPS "${ZNC_CMAKE_FIND_DEPS}\nfind_dependency_pc(ICU icu-uc)")
+	list(APPEND zncpubdeps PkgConfig::ICU)
+endif()
 
 set(WANT_PERL false CACHE BOOL "Support Perl modules")
 set(WANT_PYTHON false CACHE BOOL "Support Python modules")
@@ -297,6 +309,10 @@ else()
 	add_library(cctz::cctz ALIAS cctz)
 	target_include_directories(cctz INTERFACE
 		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/third_party/cctz/include>)
+	if (APPLE)
+		find_library(CoreFoundation CoreFoundation REQUIRED)
+		target_link_libraries(cctz INTERFACE ${CoreFoundation})
+	endif()
 endif()
 
 check_cxx_symbol_exists(getopt_long "getopt.h" HAVE_GETOPT_LONG)
@@ -421,6 +437,8 @@ include(CMakePackageConfigHelpers)
 write_basic_package_version_file("ZNCConfigVersion.cmake"
 	COMPATIBILITY AnyNewerVersion)
 install(FILES
+	"${PROJECT_SOURCE_DIR}/cmake/CMakeFindDependencyMacroPC.cmake"
+	"${PROJECT_SOURCE_DIR}/cmake/use_homebrew.cmake"
 	"${PROJECT_BINARY_DIR}/ZNCConfig.cmake"
 	"${PROJECT_BINARY_DIR}/ZNCConfigVersion.cmake"
 	DESTINATION "${CMAKE_INSTALL_DATADIR}/znc/cmake")
