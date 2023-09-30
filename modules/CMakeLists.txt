@@ -37,11 +37,8 @@ function(add_cxx_module mod modpath)
 	if(moddepend_${mod})
 		add_dependencies("module_${mod}" ${moddepend_${mod}})
 	endif()
-	# ${znclib_LIB_DEPENDS} is to overcome OSX's need for -undefined suppress
-	# when accessing symbols exported by dependencies of znclib (e.g.
-	# openssl), but not used in znclib itself
 	target_link_libraries("module_${mod}" PRIVATE ZNC ${modlink_${mod}}
-		${znclib_LIB_DEPENDS})
+		${zncpubdeps})
 	set_target_properties("module_${mod}" PROPERTIES "" "" ${modprop_${mod}})
 	install(TARGETS "module_${mod}"
 		LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/znc")

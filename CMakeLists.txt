@@ -80,6 +80,7 @@ macro(tristate_option opt help)
 endmacro()
 
 set(ZNC_CMAKE_FIND_DEPS "")
+set(zncpubdeps)
 
 tristate_option(OPENSSL "Support SSL")
 if(WANT_OPENSSL)
@@ -99,6 +100,7 @@ if(WANT_OPENSSL)
 		check_SSL_SESSION_get0_cipher()
 		set(ZNC_CMAKE_FIND_DEPS
 			"${ZNC_CMAKE_FIND_DEPS}\nfind_dependency(OpenSSL)")
+		list(APPEND zncpubdeps OpenSSL::SSL)
 	endif()
 endif()
 set(HAVE_LIBSSL "${OPENSSL_FOUND}")
@@ -152,6 +154,7 @@ endif()
 set(HAVE_ICU "${ICU_FOUND}")
 if(ICU_FOUND)
 	set(ZNC_CMAKE_FIND_DEPS "${ZNC_CMAKE_FIND_DEPS}\nfind_dependency_pc(ICU icu-uc)")
+	list(APPEND zncpubdeps PkgConfig::ICU)
 endif()
 
 set(WANT_PERL false CACHE BOOL "Support Perl modules")
