@@ -82,7 +82,7 @@ target_include_directories(modperl_lib PRIVATE
 	"${CMAKE_CURRENT_BINARY_DIR}/.."
 	"${CMAKE_CURRENT_SOURCE_DIR}/.."
 	${PERL_INCLUDE_DIRS})
-target_link_libraries(modperl_lib ${znc_link})
+target_link_libraries(modperl_lib ${znc_link} ${zncpubdeps})
 set_target_properties(modperl_lib PROPERTIES
 	PREFIX ""
 	SUFFIX ".${perl_ext}"
