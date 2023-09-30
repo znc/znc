@@ -47,7 +47,7 @@ function(znc_setup_module)
 		SUFFIX ".so"
 		NO_SONAME true
 		CXX_VISIBILITY_PRESET "hidden")
-	target_link_libraries("${znc_mod_TARGET}" PRIVATE ZNC::ZNC)
+	target_link_libraries("${znc_mod_TARGET}" PRIVATE ZNC::ZNC @zncpubdeps@)
 endfunction()
 
 message(STATUS "Found ZNC @ZNC_VERSION@")
