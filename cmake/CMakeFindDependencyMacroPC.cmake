@@ -1,3 +1,5 @@
+# This is directly based on CMake's CMakeFindDependencyMacro from 3.26.5, the only change is that it uses pkg_check_modules instead of find_package
+
 # Distributed under the OSI-approved BSD 3-Clause License.  See accompanying
 # file Copyright.txt or https://cmake.org/licensing for details.
 
