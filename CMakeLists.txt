@@ -438,6 +438,7 @@ write_basic_package_version_file("ZNCConfigVersion.cmake"
 	COMPATIBILITY AnyNewerVersion)
 install(FILES
 	"${PROJECT_SOURCE_DIR}/cmake/CMakeFindDependencyMacroPC.cmake"
+	"${PROJECT_SOURCE_DIR}/cmake/use_homebrew.cmake"
 	"${PROJECT_BINARY_DIR}/ZNCConfig.cmake"
 	"${PROJECT_BINARY_DIR}/ZNCConfigVersion.cmake"
 	DESTINATION "${CMAKE_INSTALL_DATADIR}/znc/cmake")
