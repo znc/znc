@@ -2,6 +2,7 @@ These people helped translating ZNC to various languages:
 
 * Alcahest ([X] Alcahest)
 * Altay
+* aycanuAydemir
 * bashgeek (Daniel)
 * CaPaCuL
 * casmo (Casper)
