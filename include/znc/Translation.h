@@ -19,6 +19,7 @@
 
 #include <znc/ZNCString.h>
 #include <unordered_map>
+#include <variant>
 
 struct CTranslationInfo {
     static std::map<CString, CTranslationInfo> GetTranslations();
@@ -83,20 +84,18 @@ class CDelayedTranslation {
 
 class COptionalTranslation {
   public:
-    COptionalTranslation(const CString& sText)
-        : m_bTranslating(false), m_sText(sText) {}
+    COptionalTranslation(const CString& sText) : m_text(sText) {}
     COptionalTranslation(const char* s) : COptionalTranslation(CString(s)) {}
-    COptionalTranslation(const CDelayedTranslation& dTranslation)
-        : m_bTranslating(true), m_dTranslation(dTranslation) {}
+    COptionalTranslation(const CDelayedTranslation& dTranslation) : m_text(dTranslation) {}
     CString Resolve() const {
-        return m_bTranslating ? m_dTranslation.Resolve() : m_sText;
+        if (m_text.index() == 0) {
+            return std::get<0>(m_text);
+        }
+        return std::get<1>(m_text).Resolve();
     }
 
   private:
-    bool m_bTranslating;
-    // TODO switch to std::variant<CString, CDelayedTranslation> after C++17
-    CString m_sText;
-    CDelayedTranslation m_dTranslation;
+    std::variant<CString, CDelayedTranslation> m_text;
 };
 
 // Used by everything except modules.
