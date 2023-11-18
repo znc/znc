@@ -42,8 +42,6 @@ endfunction()
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 include(TestCXX17)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED true)
 if(NOT CYGWIN)
 	# We don't want to use -std=gnu++17 instead of -std=c++17, but among other
 	# things, -std=c++17 on cygwin defines __STRICT_ANSI__ which makes cygwin
