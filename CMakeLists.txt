@@ -41,12 +41,12 @@ endfunction()
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
-include(TestCXX11)
-set(CMAKE_CXX_STANDARD 11)
+include(TestCXX17)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 if(NOT CYGWIN)
-	# We don't want to use -std=gnu++11 instead of -std=c++11, but among other
-	# things, -std=c++11 on cygwin defines __STRICT_ANSI__ which makes cygwin
+	# We don't want to use -std=gnu++17 instead of -std=c++17, but among other
+	# things, -std=c++17 on cygwin defines __STRICT_ANSI__ which makes cygwin
 	# not to compile: undefined references to strerror_r, to fdopen, to
 	# strcasecmp, etc (their declarations in system headers are between ifdef)
 	set(CMAKE_CXX_EXTENSIONS false)
