@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
+#include <string_view>
+
 #include <znc/Message.h>
 #include <znc/Utils.h>
-#include "bpstd/string_view.hpp"
 
 CMessage::CMessage(const CString& sMessage) {
     Parse(sMessage);
@@ -165,7 +166,7 @@ void CMessage::Parse(const CString& sMessage) {
         // Find the end of the first word
         const char* p = begin;
         while (p < end && *p != ' ') ++p;
-        bpstd::string_view result(begin, p - begin);
+        std::string_view result(begin, p - begin);
         begin = p;
         // Prepare for the following word
         while (begin < end && *begin == ' ') ++begin;
@@ -175,12 +176,12 @@ void CMessage::Parse(const CString& sMessage) {
     // <tags>
     m_mssTags.clear();
     if (begin < end && *begin == '@') {
-        bpstd::string_view svTags = next_word().substr(1);
-        std::vector<bpstd::string_view> vsTags;
+        std::string_view svTags = next_word().substr(1);
+        std::vector<std::string_view> vsTags;
         // Split by ';'
         while (true) {
             auto delim = svTags.find_first_of(';');
-            if (delim == bpstd::string_view::npos) {
+            if (delim == std::string_view::npos) {
                 vsTags.push_back(svTags);
                 break;
             }
@@ -188,10 +189,10 @@ void CMessage::Parse(const CString& sMessage) {
             svTags = svTags.substr(delim + 1);
         }
         // Save key and value
-        for (bpstd::string_view svTag : vsTags) {
+        for (std::string_view svTag : vsTags) {
             auto delim = svTag.find_first_of('=');
-            CString sKey = std::string(delim == bpstd::string_view::npos ? svTag : svTag.substr(0, delim));
-            CString sValue = delim == bpstd::string_view::npos ? std::string() : std::string(svTag.substr(delim + 1));
+            CString sKey = std::string(delim == std::string_view::npos ? svTag : svTag.substr(0, delim));
+            CString sValue = delim == std::string_view::npos ? std::string() : std::string(svTag.substr(delim + 1));
             m_mssTags[sKey] =
                 sValue.Escape(CString::EMSGTAG, CString::CString::EASCII);
         }

@@ -56,7 +56,6 @@ add_custom_target(version
 add_dependencies(znclib copy_csocket_h copy_csocket_cc version)
 
 set(znc_include_dirs
-	"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/third_party/bpstd>"
 	"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
 	"$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>"
 	"$<INSTALL_INTERFACE:${CMAKE_INSTALL_FULL_INCLUDEDIR}>")
@@ -87,16 +86,11 @@ set_target_properties(znclib PROPERTIES
 	OUTPUT_NAME "znc"
 	SOVERSION "${ZNC_VERSION}")
 
-# CMake started supporting metafeature cxx_std_11 only in 3.8
-set(required_cxx11_features
-	cxx_range_for cxx_nullptr cxx_override
-	cxx_lambdas cxx_auto_type)
-target_compile_features(znc PUBLIC ${required_cxx11_features})
-target_compile_features(znclib PUBLIC ${required_cxx11_features})
-
 add_library(ZNC INTERFACE)
 target_link_libraries(ZNC INTERFACE ${znc_link} ${zncpubdeps})
 target_compile_definitions(ZNC INTERFACE "znc_export_lib_EXPORTS")
+target_compile_features(ZNC INTERFACE cxx_std_17)
+target_compile_features(znclib PUBLIC cxx_std_17)
 
 if(HAVE_I18N)
 	add_subdirectory(po)
