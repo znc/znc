@@ -23,7 +23,7 @@ esac
 
 mkdir build
 cd build
-../configure --enable-debug --enable-perl --enable-python --enable-tcl --enable-cyrus --enable-charset $CFGFLAGS
+../configure --enable-debug --enable-perl --enable-python --enable-tcl --enable-cyrus --enable-charset --enable-argon $CFGFLAGS
 cmake --system-information
 
 make -j2 VERBOSE=1

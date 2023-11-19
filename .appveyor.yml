@@ -18,7 +18,7 @@ install:
 build_script:
     - git submodule update --init
     - mkdir build
-    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; ../configure --enable-charset --enable-zlib --enable-openssl --enable-perl --enable-python --enable-cyrus < /dev/null; result=$?; cmake --system-information > config.log; appveyor PushArtifact config.log; exit $result"
+    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; ../configure --enable-charset --enable-zlib --enable-openssl --enable-perl --enable-python --enable-cyrus --enable-argon < /dev/null; result=$?; cmake --system-information > config.log; appveyor PushArtifact config.log; exit $result"
     - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make VERBOSE=1 -j2 < /dev/null"
     - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make install < /dev/null"
     - c:\cygwin-root\bin\sh -lc "znc --version"
