@@ -34,11 +34,11 @@ msgstr ""
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:34
 msgid "Client"
-msgstr ""
+msgstr "Cliente"
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:35
 msgid "Server"
-msgstr ""
+msgstr "Servidor"
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:40
 msgid "Line:"

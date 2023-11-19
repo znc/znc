@@ -14,11 +14,11 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:12
 msgid "Channel Info"
-msgstr ""
+msgstr "Informações do canal"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:17
 msgid "Channel Name:"
-msgstr ""
+msgstr "Nome do canal:"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:19
 msgid "The channel name."
@@ -70,13 +70,13 @@ msgstr ""
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:302
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:438
 msgid "Save and return"
-msgstr ""
+msgstr "Salvar e voltar"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:76
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:303
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:439
 msgid "Save and continue"
-msgstr ""
+msgstr "Salvar e continuar"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:78
 msgid "Add Channel and return"
@@ -89,12 +89,12 @@ msgstr ""
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:12
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:15
 msgid "&lt;password&gt;"
-msgstr ""
+msgstr "&lt;senha&gt;"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:15
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:16
 msgid "&lt;network&gt;"
-msgstr ""
+msgstr "&lt;rede&gt;"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:18
 msgid ""
@@ -104,7 +104,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:28
 msgid "Network Info"
-msgstr ""
+msgstr "Informações da rede"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:29
 msgid ""
@@ -114,7 +114,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:33
 msgid "Network Name:"
-msgstr ""
+msgstr "Nome da rede:"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:35
 msgid "The name of the IRC network."
@@ -204,7 +204,7 @@ msgstr ""
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:94
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:101
 msgid "Servers of this IRC network:"
-msgstr ""
+msgstr "Servidores da rede:"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:98
 msgid "One server per line, “host [[+]port] [password]”, + means SSL"
@@ -217,16 +217,16 @@ msgstr ""
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:107
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:13
 msgid "Port"
-msgstr ""
+msgstr "Porta"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:108
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:15
 msgid "SSL"
-msgstr ""
+msgstr "SSL"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:109
 msgid "Password"
-msgstr ""
+msgstr "Senha"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:125
 msgid "SHA-256 fingerprints of trusted SSL certificates of this IRC network:"
@@ -265,7 +265,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:149
 msgid "{1} seconds per line"
-msgstr ""
+msgstr "{1} segundos por linha"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:153
 msgid "Flood protection burst:"
@@ -293,7 +293,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:169
 msgid "{1} seconds"
-msgstr ""
+msgstr "{1} segundos"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:174
 msgid "Character encoding used between ZNC and IRC server."
@@ -306,7 +306,7 @@ msgstr ""
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:185
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:248
 msgid "Channels"
-msgstr ""
+msgstr "Canais"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:187
 msgid ""
@@ -319,7 +319,7 @@ msgstr ""
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:15
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:72
 msgid "Add"
-msgstr ""
+msgstr "Adicionar"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:196
 msgid "Index"
@@ -329,7 +329,7 @@ msgstr ""
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:449
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:237
 msgid "Save"
-msgstr ""
+msgstr "Salvar"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:198
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:240
@@ -337,7 +337,7 @@ msgstr ""
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:191
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:176
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:199
 msgid "CurModes"
@@ -353,7 +353,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:202
 msgid "Options"
-msgstr ""
+msgstr "Opções"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:204
 msgid "← Add a channel (opens in same page)"
@@ -363,7 +363,7 @@ msgstr ""
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:161
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:27
 msgid "Edit"
-msgstr ""
+msgstr "Editar"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:214
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:162
@@ -374,19 +374,19 @@ msgstr ""
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:234
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:185
 msgid "Modules"
-msgstr ""
+msgstr "Módulos"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:241
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:192
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:177
 msgid "Arguments"
-msgstr ""
+msgstr "Parâmetros"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:242
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:193
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:178
 msgid "Description"
-msgstr ""
+msgstr "Descrição"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:243
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:194
@@ -399,15 +399,15 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:305
 msgid "Add Network and return"
-msgstr ""
+msgstr "Adicionar rede e voltar"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:306
 msgid "Add Network and continue"
-msgstr ""
+msgstr "Adicionar rede e continuar"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:19
 msgid "Authentication"
-msgstr ""
+msgstr "Autenticação"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:23
 msgid "Username:"
@@ -419,7 +419,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:38
 msgid "Password:"
-msgstr ""
+msgstr "Senha:"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:40
 msgid "Please enter a password."
@@ -446,7 +446,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:54
 msgid "Allowed IPs:"
-msgstr ""
+msgstr "IPs permitidos:"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:58
 msgid ""
@@ -486,7 +486,7 @@ msgstr ""
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:17
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:39
 msgid "Networks"
-msgstr ""
+msgstr "Redes"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:133
 msgid "No networks have been added for you yet."
@@ -495,15 +495,15 @@ msgstr ""
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:147
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:18
 msgid "Clients"
-msgstr ""
+msgstr "Clientes"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:148
 msgid "Current Server"
-msgstr ""
+msgstr "Servidor atual"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:149
 msgid "Nick"
-msgstr ""
+msgstr "Apelido"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:151
 msgid "← Add a network (opens in same page)"
@@ -565,7 +565,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:302
 msgid "ZNC Behavior"
-msgstr ""
+msgstr "Comportamento do ZNC"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:303
 msgid ""
@@ -585,7 +585,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:312
 msgid "Timezone:"
-msgstr ""
+msgstr "Fuso horário:"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:315
 msgid "E.g. <code>Europe/Berlin</code>, or <code>GMT-6</code>"
@@ -688,7 +688,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:408
 msgid "Language:"
-msgstr ""
+msgstr "Idioma:"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:441
 msgid "Clone and return"
@@ -713,7 +713,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:453
 msgid "Create"
-msgstr ""
+msgstr "Criar"
 
 #: modules/po/../data/webadmin/tmpl/del_network.tmpl:5
 msgid "Confirm Network Deletion"
@@ -726,12 +726,12 @@ msgstr ""
 #: modules/po/../data/webadmin/tmpl/del_network.tmpl:14
 #: modules/po/../data/webadmin/tmpl/del_user.tmpl:14
 msgid "Yes"
-msgstr ""
+msgstr "Sim"
 
 #: modules/po/../data/webadmin/tmpl/del_network.tmpl:17
 #: modules/po/../data/webadmin/tmpl/del_user.tmpl:17
 msgid "No"
-msgstr ""
+msgstr "Não"
 
 #: modules/po/../data/webadmin/tmpl/del_user.tmpl:5
 msgid "Confirm User Deletion"
@@ -797,19 +797,19 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:16
 msgid "IPv4"
-msgstr ""
+msgstr "IPv4"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:17
 msgid "IPv6"
-msgstr ""
+msgstr "IPv6"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:18
 msgid "IRC"
-msgstr ""
+msgstr "IRC"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:19
 msgid "HTTP"
-msgstr ""
+msgstr "HTTP"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:20
 msgid "URIPrefix"
@@ -880,7 +880,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:145
 msgid "Hide ZNC Version:"
-msgstr ""
+msgstr "Ocultar versão do ZNC:"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:147
 msgid "Hide version number from non-ZNC users"
@@ -948,7 +948,7 @@ msgstr ""
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:89
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:117
 msgid "Total"
-msgstr ""
+msgstr "Total"
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:70
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:115
@@ -965,27 +965,27 @@ msgstr ""
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:77
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:104
 msgid "Users"
-msgstr ""
+msgstr "Usuários"
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:106
 msgid "Traffic"
-msgstr ""
+msgstr "Tráfego"
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:113
 msgid "User"
-msgstr ""
+msgstr "Usuário"
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:114
 msgid "Network"
-msgstr ""
+msgstr "Rede"
 
 #: webadmin.cpp:91 webadmin.cpp:2023
 msgid "Global Settings"
-msgstr ""
+msgstr "Configurações globais"
 
 #: webadmin.cpp:93
 msgid "Your Settings"
-msgstr ""
+msgstr "Suas configurações"
 
 #: webadmin.cpp:94 webadmin.cpp:1835
 msgid "Traffic Info"
@@ -993,7 +993,7 @@ msgstr ""
 
 #: webadmin.cpp:97 webadmin.cpp:1814
 msgid "Manage Users"
-msgstr ""
+msgstr "Gerenciar usuários"
 
 #: webadmin.cpp:188
 msgid "Invalid Submission [Username is required]"
@@ -1038,11 +1038,11 @@ msgstr ""
 
 #: webadmin.cpp:754 webadmin.cpp:942 webadmin.cpp:1404
 msgid "Edit User [{1}]"
-msgstr ""
+msgstr "Editar usuário [{1}]"
 
 #: webadmin.cpp:758 webadmin.cpp:956
 msgid "Edit Network [{1}]"
-msgstr ""
+msgstr "Editar rede [{1}]"
 
 #: webadmin.cpp:768
 msgid "Edit Channel [{1}] of Network [{2}] of User [{3}]"
@@ -1050,7 +1050,7 @@ msgstr ""
 
 #: webadmin.cpp:775
 msgid "Edit Channel [{1}]"
-msgstr ""
+msgstr "Editar canal [{1}]"
 
 #: webadmin.cpp:783
 msgid "Add Channel to Network [{1}] of User [{2}]"
@@ -1058,7 +1058,7 @@ msgstr ""
 
 #: webadmin.cpp:788
 msgid "Add Channel"
-msgstr ""
+msgstr "Adicionar canal"
 
 #: webadmin.cpp:795 webadmin.cpp:1624
 msgid "Auto Clear Chan Buffer"
@@ -1108,7 +1108,7 @@ msgstr ""
 
 #: webadmin.cpp:961
 msgid "Add Network"
-msgstr ""
+msgstr "Adicionar rede"
 
 #: webadmin.cpp:1144
 msgid "Network name is a required argument"

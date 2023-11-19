@@ -149,10 +149,10 @@ msgstr "Niepoprawna ścieżka kronikowania [{1}]"
 msgid "Logging to [{1}]. Using timestamp format '{2}'"
 msgstr "Kronikowanie do [{1}]. Używanie formatu znacznika czasu '{2}'"
 
-#: log.cpp:560
+#: log.cpp:576
 msgid "[-sanitize] Optional path where to store logs."
 msgstr "[-sanitize] Opcjonalna ścieżka gdzie przechowywać kronikę."
 
-#: log.cpp:564
+#: log.cpp:580
 msgid "Writes IRC logs."
 msgstr "Zapisuje kroniki IRC."

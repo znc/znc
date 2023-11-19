@@ -644,11 +644,13 @@ void CClient::PutModNotice(const CString& sModule, const CString& sLine) {
 
     DEBUG("(" << GetFullName()
               << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() +
+                     ((sModule.empty()) ? "status" : sModule) + "!" +
                      ((sModule.empty()) ? "status" : sModule) +
-                     "!znc@znc.in NOTICE " << GetNick() << " :" << sLine
-              << "]");
+                     "@znc.in NOTICE "
+              << GetNick() << " :" << sLine << "]");
     Write(":" + m_pUser->GetStatusPrefix() +
-          ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in NOTICE " +
+          ((sModule.empty()) ? "status" : sModule) + "!" +
+          ((sModule.empty()) ? "status" : sModule) + "@znc.in NOTICE " +
           GetNick() + " :" + sLine + "\r\n");
 }
 
@@ -659,16 +661,18 @@ void CClient::PutModule(const CString& sModule, const CString& sLine) {
 
     DEBUG("(" << GetFullName()
               << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() +
+                     ((sModule.empty()) ? "status" : sModule) + "!" +
                      ((sModule.empty()) ? "status" : sModule) +
-                     "!znc@znc.in PRIVMSG " << GetNick() << " :" << sLine
-              << "]");
+                     "@znc.in PRIVMSG "
+              << GetNick() << " :" << sLine << "]");
 
     VCString vsLines;
     sLine.Split("\n", vsLines);
     for (const CString& s : vsLines) {
         Write(":" + m_pUser->GetStatusPrefix() +
-              ((sModule.empty()) ? "status" : sModule) +
-              "!znc@znc.in PRIVMSG " + GetNick() + " :" + s + "\r\n");
+              ((sModule.empty()) ? "status" : sModule) + "!" +
+              ((sModule.empty()) ? "status" : sModule) + "@znc.in PRIVMSG " +
+              GetNick() + " :" + s + "\r\n");
     }
 }
 

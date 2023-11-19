@@ -14,7 +14,7 @@ msgstr ""
 
 #: modules/po/../data/stickychan/tmpl/index.tmpl:9
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: modules/po/../data/stickychan/tmpl/index.tmpl:10
 msgid "Sticky"
@@ -22,11 +22,11 @@ msgstr ""
 
 #: modules/po/../data/stickychan/tmpl/index.tmpl:25
 msgid "Save"
-msgstr ""
+msgstr "Salvar"
 
 #: modules/po/../data/stickychan/tmpl/stickychan_WebadminChan.tmpl:8
 msgid "Channel is sticky"
-msgstr ""
+msgstr "Canal afixado"
 
 #: stickychan.cpp:28
 msgid "<#channel> [key]"
@@ -34,7 +34,7 @@ msgstr ""
 
 #: stickychan.cpp:28
 msgid "Sticks a channel"
-msgstr ""
+msgstr "Afixa um canal"
 
 #: stickychan.cpp:30
 msgid "<#channel>"
@@ -42,11 +42,11 @@ msgstr ""
 
 #: stickychan.cpp:30
 msgid "Unsticks a channel"
-msgstr ""
+msgstr "Desafixa um canal"
 
 #: stickychan.cpp:32
 msgid "Lists sticky channels"
-msgstr ""
+msgstr "Listar canais afixados"
 
 #: stickychan.cpp:75
 msgid "Usage: Stick <#channel> [key]"
@@ -74,7 +74,7 @@ msgstr ""
 
 #: stickychan.cpp:128
 msgid "Sticky Channels"
-msgstr ""
+msgstr "Canais afixados"
 
 #: stickychan.cpp:160
 msgid "Changes have been saved!"

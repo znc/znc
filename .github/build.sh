@@ -23,7 +23,7 @@ esac
 
 mkdir build
 cd build
-../configure --enable-debug --enable-perl --enable-python --enable-tcl --enable-cyrus --enable-charset $CFGFLAGS
+../configure --enable-debug --enable-perl --enable-python --enable-tcl --enable-cyrus --enable-charset --enable-argon $CFGFLAGS
 cmake --system-information
 
 make -j2 VERBOSE=1
@@ -43,6 +43,9 @@ case "${CC:-gcc}" in
 		lcov --list lcov-coverage.txt
 		;;
 	clang)
+		if [[ x$(uname) == xDarwin ]]; then
+			export PATH=$PATH:/Library/Developer/CommandLineTools/usr/bin
+		fi
 		llvm-profdata merge unittest.profraw -o unittest.profdata
 		llvm-profdata merge inttest.profraw -o inttest.profdata
 		llvm-cov show -show-line-counts-or-regions -instr-profile=unittest.profdata test/unittest_bin > unittest-cmake-coverage.txt

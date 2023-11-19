@@ -139,7 +139,7 @@ msgstr ""
 
 #: controlpanel.cpp:619
 msgid "Error: Invalid network."
-msgstr ""
+msgstr "Erro: Rede inválida"
 
 #: controlpanel.cpp:663
 msgid "Usage: SetNetwork <variable> <username> <network> <value>"
@@ -151,7 +151,7 @@ msgstr "Sintaxe: AddChan <usuário> <rede> <canal>"
 
 #: controlpanel.cpp:762
 msgid "Error: User {1} already has a channel named {2}."
-msgstr ""
+msgstr "Erro: O usuário {1} já possui o canal {2}"
 
 #: controlpanel.cpp:769
 msgid "Channel {1} for user {2} added to network {3}."
@@ -265,11 +265,11 @@ msgstr ""
 
 #: controlpanel.cpp:1058
 msgid "Error: Internal error!"
-msgstr ""
+msgstr "Erro: Erro interno!"
 
 #: controlpanel.cpp:1062
 msgid "User {1} deleted!"
-msgstr ""
+msgstr "O usuário {1} foi excluído"
 
 #: controlpanel.cpp:1077
 msgid "Usage: CloneUser <old username> <new username>"
@@ -320,7 +320,7 @@ msgstr ""
 #: controlpanel.cpp:1216 controlpanel.cpp:1224
 msgctxt "listnetworks"
 msgid "Network"
-msgstr ""
+msgstr "Rede"
 
 #: controlpanel.cpp:1217 controlpanel.cpp:1226 controlpanel.cpp:1234
 msgctxt "listnetworks"
@@ -340,11 +340,11 @@ msgstr ""
 #: controlpanel.cpp:1220 controlpanel.cpp:1231
 msgctxt "listnetworks"
 msgid "Channels"
-msgstr ""
+msgstr "Canais"
 
 #: controlpanel.cpp:1239
 msgid "No networks"
-msgstr ""
+msgstr "Não há redes disponíveis."
 
 #: controlpanel.cpp:1250
 msgid "Usage: AddServer <username> <network> <server> [[+]port] [password]"
@@ -352,7 +352,7 @@ msgstr "Sintaxe: AddServer <usuário> <rede> <servidor> [[+]porta] [senha]"
 
 #: controlpanel.cpp:1269
 msgid "Added IRC Server {1} to network {2} for user {3}."
-msgstr ""
+msgstr "O servidor {1} foi adicionado à rede {2} para o usuário {3}"
 
 #: controlpanel.cpp:1273
 msgid "Error: Could not add IRC server {1} to network {2} for user {3}."
@@ -449,7 +449,7 @@ msgstr ""
 
 #: controlpanel.cpp:1492
 msgid "Loaded module {1}"
-msgstr ""
+msgstr "Módulo {1} carregado"
 
 #: controlpanel.cpp:1497
 msgid "Error: Unable to reload module {1}: {2}"
@@ -494,7 +494,7 @@ msgstr "Sintaxe: UnloadNetModule <usuário> <rede> <nome do módulo>"
 #: controlpanel.cpp:1611 controlpanel.cpp:1617
 msgctxt "listmodules"
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: controlpanel.cpp:1612 controlpanel.cpp:1618
 msgctxt "listmodules"
@@ -503,11 +503,11 @@ msgstr ""
 
 #: controlpanel.cpp:1637
 msgid "User {1} has no modules loaded."
-msgstr ""
+msgstr "O usuário {1} não possui módulos carregados."
 
 #: controlpanel.cpp:1641
 msgid "Modules loaded for user {1}:"
-msgstr ""
+msgstr "Módulos carregados para o usuário {1}:"
 
 #: controlpanel.cpp:1661
 msgid "Network {1} of user {2} has no modules loaded."
@@ -523,7 +523,7 @@ msgstr ""
 
 #: controlpanel.cpp:1674
 msgid "Prints help for matching commands and variables"
-msgstr ""
+msgstr "Exibe ajuda para comandos e variáveis correspondentes"
 
 #: controlpanel.cpp:1677
 msgid "<variable> [username]"
@@ -579,11 +579,11 @@ msgstr ""
 
 #: controlpanel.cpp:1697
 msgid "Adds a new channel"
-msgstr ""
+msgstr "Adiciona um novo canal"
 
 #: controlpanel.cpp:1700
 msgid "Deletes a channel"
-msgstr ""
+msgstr "Exclui um canal"
 
 #: controlpanel.cpp:1702
 msgid "Lists users"
@@ -591,23 +591,23 @@ msgstr ""
 
 #: controlpanel.cpp:1704
 msgid "<username> <password>"
-msgstr ""
+msgstr "<usuário> <senha>"
 
 #: controlpanel.cpp:1705
 msgid "Adds a new user"
-msgstr ""
+msgstr "Cria um novo usuário"
 
 #: controlpanel.cpp:1707 controlpanel.cpp:1730 controlpanel.cpp:1744
 msgid "<username>"
-msgstr ""
+msgstr "<usuário>"
 
 #: controlpanel.cpp:1707
 msgid "Deletes a user"
-msgstr ""
+msgstr "Exclui um usuário"
 
 #: controlpanel.cpp:1709
 msgid "<old username> <new username>"
-msgstr ""
+msgstr "<antigo nome> <novo nome>"
 
 #: controlpanel.cpp:1710
 msgid "Clones a user"
@@ -615,11 +615,11 @@ msgstr ""
 
 #: controlpanel.cpp:1712 controlpanel.cpp:1715
 msgid "<username> <network> <server>"
-msgstr ""
+msgstr "<usuário> <rede> <servidor>"
 
 #: controlpanel.cpp:1713
 msgid "Adds a new IRC server for the given or current user"
-msgstr ""
+msgstr "Adiciona um novo servidor IRC para o usuário atual ou especificado"
 
 #: controlpanel.cpp:1716
 msgid "Deletes an IRC server from the given or current user"
@@ -643,7 +643,7 @@ msgstr ""
 
 #: controlpanel.cpp:1725
 msgid "Loads a Module for a user"
-msgstr ""
+msgstr "Carrega um módulo para um usuário"
 
 #: controlpanel.cpp:1727
 msgid "<username> <modulename>"
@@ -663,7 +663,7 @@ msgstr ""
 
 #: controlpanel.cpp:1735
 msgid "Loads a Module for a network"
-msgstr ""
+msgstr "Carrega um módulo para uma rede"
 
 #: controlpanel.cpp:1738
 msgid "<username> <network> <modulename>"
@@ -679,7 +679,7 @@ msgstr ""
 
 #: controlpanel.cpp:1745
 msgid "List the configured CTCP replies"
-msgstr ""
+msgstr "Lista as respostas CTCP configuradas"
 
 #: controlpanel.cpp:1747
 msgid "<username> <ctcp> [reply]"
@@ -703,7 +703,7 @@ msgstr ""
 
 #: controlpanel.cpp:1756
 msgid "Add a network for a user"
-msgstr ""
+msgstr "Adiciona uma rede para o usuário"
 
 #: controlpanel.cpp:1759
 msgid "Delete a network for a user"
@@ -715,7 +715,7 @@ msgstr ""
 
 #: controlpanel.cpp:1762
 msgid "List all networks for a user"
-msgstr ""
+msgstr "Lista todas as redes de um usuário"
 
 #: controlpanel.cpp:1775
 msgid ""

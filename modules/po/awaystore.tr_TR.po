@@ -1,0 +1,118 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: tr\n"
+"X-Crowdin-File: /master/modules/po/awaystore.pot\n"
+"X-Crowdin-File-ID: 156\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Turkish\n"
+"Language: tr_TR\n"
+
+#: awaystore.cpp:67
+msgid "You have been marked as away"
+msgstr "Away olarak işaretlendiniz"
+
+#: awaystore.cpp:78 awaystore.cpp:385 awaystore.cpp:388
+msgid "Welcome back!"
+msgstr "Tekrar hoşgeldiniz!"
+
+#: awaystore.cpp:100
+msgid "Deleted {1} messages"
+msgstr "{1} mesaj silindi"
+
+#: awaystore.cpp:104
+msgid "USAGE: delete <num|all>"
+msgstr "Kullanımı: delete <num|all>"
+
+#: awaystore.cpp:109
+msgid "Illegal message # requested"
+msgstr "İllegal mesaj # istendi"
+
+#: awaystore.cpp:113
+msgid "Message erased"
+msgstr "Mesaj silindi"
+
+#: awaystore.cpp:122
+msgid "Messages saved to disk"
+msgstr "Mesajlar diske kaydedildi"
+
+#: awaystore.cpp:124
+msgid "There are no messages to save"
+msgstr "Kaydedilecek mesaj yok"
+
+#: awaystore.cpp:135
+msgid "Password updated to [{1}]"
+msgstr "Şifre [{1}] olarak güncellendi"
+
+#: awaystore.cpp:147
+msgid "Corrupt message! [{1}]"
+msgstr "Bozuk mesaj! [{1}]"
+
+#: awaystore.cpp:159
+msgid "Corrupt time stamp! [{1}]"
+msgstr "Bozuk zaman damgası! [{1}]"
+
+#: awaystore.cpp:178
+msgid "#--- End of messages"
+msgstr "#---Mesajların sonu"
+
+#: awaystore.cpp:183
+msgid "Timer set to 300 seconds"
+msgstr "Zamanlayıcı 300 saniyeye ayarlandı"
+
+#: awaystore.cpp:188 awaystore.cpp:197
+msgid "Timer disabled"
+msgstr "Zamanlayıcı devre dışı"
+
+#: awaystore.cpp:199
+msgid "Timer set to {1} seconds"
+msgstr "Zamanlayıcı {1} saniyeye ayarlandı"
+
+#: awaystore.cpp:203
+msgid "Current timer setting: {1} seconds"
+msgstr "Geçerli zamanlayıcı ayarı: {1} saniye"
+
+#: awaystore.cpp:278
+msgid "This module needs as an argument a keyphrase used for encryption"
+msgstr ""
+"Bu modülün argüman olarak şifreleme için kullanılan bir anahtar kelimeye "
+"ihtiyacı var"
+
+#: awaystore.cpp:285
+msgid ""
+"Failed to decrypt your saved messages - Did you give the right encryption "
+"key as an argument to this module?"
+msgstr ""
+"Kayıtlı mesajlarınızın şifrelemesi çözülemedi - Bu modüle argüman olarak "
+"doğru şifreleme anahtarını verdiniz mi?"
+
+#: awaystore.cpp:386 awaystore.cpp:389
+msgid "You have {1} messages!"
+msgstr "{1} mesajınız var!"
+
+#: awaystore.cpp:456
+msgid "Unable to find buffer"
+msgstr "Arabellek bulunamıyor"
+
+#: awaystore.cpp:469
+msgid "Unable to decode encrypted messages"
+msgstr "Şifrelenmiş mesajların kodu çözülemiyor"
+
+#: awaystore.cpp:516
+msgid ""
+"[ -notimer | -timer N ] [-chans]  passw0rd . N is number of seconds, 600 by "
+"default."
+msgstr ""
+"[ -notimer | -timer N ] [-chans]  şifre . N saniye sayısı, varsayılan "
+"600'dür."
+
+#: awaystore.cpp:521
+msgid ""
+"Adds auto-away with logging, useful when you use ZNC from different locations"
+msgstr ""
+"ZNC'yi farklı konumlardan kullandığınızda kullanışlı olan günlük kaydıyla "
+"otomatik away özelliği ekler"

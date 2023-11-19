@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.13)
 project(ZNC VERSION 1.9.0 LANGUAGES CXX)
 set(ZNC_VERSION 1.9.x)
 set(append_git_version true)
@@ -41,12 +41,10 @@ endfunction()
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
-include(TestCXX11)
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED true)
+include(TestCXX17)
 if(NOT CYGWIN)
-	# We don't want to use -std=gnu++11 instead of -std=c++11, but among other
-	# things, -std=c++11 on cygwin defines __STRICT_ANSI__ which makes cygwin
+	# We don't want to use -std=gnu++17 instead of -std=c++17, but among other
+	# things, -std=c++17 on cygwin defines __STRICT_ANSI__ which makes cygwin
 	# not to compile: undefined references to strerror_r, to fdopen, to
 	# strcasecmp, etc (their declarations in system headers are between ifdef)
 	set(CMAKE_CXX_EXTENSIONS false)
@@ -79,6 +77,9 @@ macro(tristate_option opt help)
 	endif()
 endmacro()
 
+set(ZNC_CMAKE_FIND_DEPS "")
+set(zncpubdeps)
+
 tristate_option(OPENSSL "Support SSL")
 if(WANT_OPENSSL)
 	find_package(OpenSSL ${TRISTATE_OPENSSL_REQUIRED})
@@ -95,6 +96,9 @@ if(WANT_OPENSSL)
 				HAVE_SSL_SESSION_get0_cipher)
 		endfunction()
 		check_SSL_SESSION_get0_cipher()
+		set(ZNC_CMAKE_FIND_DEPS
+			"${ZNC_CMAKE_FIND_DEPS}\nfind_dependency(OpenSSL)")
+		list(APPEND zncpubdeps OpenSSL::SSL)
 	endif()
 endif()
 set(HAVE_LIBSSL "${OPENSSL_FOUND}")
@@ -110,7 +114,7 @@ set(HAVE_ZLIB "${ZLIB_FOUND}")
 
 tristate_option(CYRUS "Support authentication with Cyrus")
 if(WANT_CYRUS)
-	pkg_check_modules(CYRUS libsasl2)
+	pkg_check_modules(CYRUS IMPORTED_TARGET libsasl2)
 	if(NOT CYRUS_FOUND)
 		# libsasl2.pc is missing on 2.1.25 which is on ubuntu 14.04
 		# next ubuntu version has 2.1.26 which has libsasl2.pc
@@ -126,7 +130,9 @@ if(WANT_CYRUS)
 			CYRUS_HARDCODED)
 		set(CMAKE_REQUIRED_LIBRARIES "${_old_cmake_required_libraries}")
 		if(CYRUS_HARDCODED)
-			set(CYRUS_LDFLAGS -lsasl2)
+			add_library(HardcodedCyrusDep INTERFACE)
+			add_library(PkgConfig::CYRUS ALIAS HardcodedCyrusDep)
+			target_link_libraries(HardcodedCyrusDep INTERFACE sasl2)
 			set(CYRUS_FOUND true)
 		endif()
 	endif()
@@ -135,11 +141,21 @@ if(WANT_CYRUS)
 	endif()
 endif()
 
+tristate_option(ARGON "Store password hashes using Argon2id instead of SHA-256")
+if(WANT_ARGON)
+	pkg_check_modules(ARGON ${TRISTATE_ARGON_REQUIRED} IMPORTED_TARGET libargon2)
+endif()
+set(ZNC_HAVE_ARGON "${ARGON_FOUND}")
+
 tristate_option(ICU "Support character encodings")
 if(WANT_ICU)
-	pkg_check_modules(ICU ${TRISTATE_ICU_REQUIRED} icu-uc)
+	pkg_check_modules(ICU ${TRISTATE_ICU_REQUIRED} IMPORTED_TARGET icu-uc)
 endif()
 set(HAVE_ICU "${ICU_FOUND}")
+if(ICU_FOUND)
+	set(ZNC_CMAKE_FIND_DEPS "${ZNC_CMAKE_FIND_DEPS}\nfind_dependency_pc(ICU icu-uc)")
+	list(APPEND zncpubdeps PkgConfig::ICU)
+endif()
 
 set(WANT_PERL false CACHE BOOL "Support Perl modules")
 set(WANT_PYTHON false CACHE BOOL "Support Python modules")
@@ -269,11 +285,12 @@ else()
 	set(CSOCK_USE_POLL true)
 endif()
 
-# TODO: verify that this find_package works; on Gentoo it's not currently (Jan
-# 2023) packaged, so in my tests it always falls back to submodule
 find_package(cctz QUIET)
 set(cctz_cc "")
-if (NOT cctz_FOUND)
+if (cctz_FOUND)
+	message(STATUS "Found cctz at ${cctz_DIR}")
+else()
+	message(STATUS "Will build cctz")
 	set(cctz_cc
 		${PROJECT_SOURCE_DIR}/third_party/cctz/src/civil_time_detail.cc
 		${PROJECT_SOURCE_DIR}/third_party/cctz/src/time_zone_fixed.cc
@@ -286,10 +303,14 @@ if (NOT cctz_FOUND)
 		${PROJECT_SOURCE_DIR}/third_party/cctz/src/time_zone_posix.cc
 		${PROJECT_SOURCE_DIR}/third_party/cctz/src/zone_info_source.cc
 	)
-	add_library(cctz INTERFACE EXCLUDE_FROM_ALL)
+	add_library(cctz INTERFACE)
 	add_library(cctz::cctz ALIAS cctz)
 	target_include_directories(cctz INTERFACE
 		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/third_party/cctz/include>)
+	if (APPLE)
+		find_library(CoreFoundation CoreFoundation REQUIRED)
+		target_link_libraries(cctz INTERFACE ${CoreFoundation})
+	endif()
 endif()
 
 check_cxx_symbol_exists(getopt_long "getopt.h" HAVE_GETOPT_LONG)
@@ -414,6 +435,8 @@ include(CMakePackageConfigHelpers)
 write_basic_package_version_file("ZNCConfigVersion.cmake"
 	COMPATIBILITY AnyNewerVersion)
 install(FILES
+	"${PROJECT_SOURCE_DIR}/cmake/CMakeFindDependencyMacroPC.cmake"
+	"${PROJECT_SOURCE_DIR}/cmake/use_homebrew.cmake"
 	"${PROJECT_BINARY_DIR}/ZNCConfig.cmake"
 	"${PROJECT_BINARY_DIR}/ZNCConfigVersion.cmake"
 	DESTINATION "${CMAKE_INSTALL_DATADIR}/znc/cmake")
@@ -446,6 +469,7 @@ summary_line("Cyrus    " "${CYRUS_FOUND}")
 summary_line("Charset  " "${ICU_FOUND}")
 summary_line("Zlib     " "${ZLIB_FOUND}")
 summary_line("i18n     " "${HAVE_I18N}")
+summary_line("Argon2   " "${ZNC_HAVE_ARGON}")
 
 include(render_framed_multiline)
 render_framed_multiline("${summary_lines}")

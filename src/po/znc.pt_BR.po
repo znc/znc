@@ -98,7 +98,7 @@ msgstr "Esta rede está sendo excluída ou movida para outro usuário."
 
 #: IRCNetwork.cpp:950
 msgid "Invalid index"
-msgstr ""
+msgstr "Índice inválido"
 
 #: IRCNetwork.cpp:958 IRCNetwork.cpp:974 IRCNetwork.cpp:982
 #: ClientCommand.cpp:1425
@@ -248,48 +248,48 @@ msgstr ""
 "Você está sendo desconectado porque outro usuário acabou de autenticar-se "
 "como você."
 
-#: Client.cpp:1022
+#: Client.cpp:1026
 msgid "Your CTCP to {1} got lost, you are not connected to IRC!"
 msgstr "O seu CTCP para {1} foi perdido, você não está conectado ao IRC!"
 
-#: Client.cpp:1148
+#: Client.cpp:1152
 msgid "Your notice to {1} got lost, you are not connected to IRC!"
 msgstr "O seu aviso para {1} foi perdido, você não está conectado ao IRC!"
 
-#: Client.cpp:1187
+#: Client.cpp:1191
 msgid "Removing channel {1}"
 msgstr "Removendo canal {1}"
 
-#: Client.cpp:1265
+#: Client.cpp:1269
 msgid "Your message to {1} got lost, you are not connected to IRC!"
 msgstr "Sua mensagem para {1} foi perdida, você não está conectado ao IRC!"
 
-#: Client.cpp:1318 Client.cpp:1324
+#: Client.cpp:1322 Client.cpp:1328
 msgid "Hello. How may I help you?"
 msgstr "Olá. Como posso ajudá-lo(a)?"
 
-#: Client.cpp:1338
+#: Client.cpp:1342
 msgid "Usage: /attach <#chans>"
 msgstr "Sintaxe: /attach <#canais>"
 
-#: Client.cpp:1345 Client.cpp:1367 ClientCommand.cpp:129 ClientCommand.cpp:151
+#: Client.cpp:1349 Client.cpp:1371 ClientCommand.cpp:129 ClientCommand.cpp:151
 #: ClientCommand.cpp:423 ClientCommand.cpp:450
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
 msgstr[0] "Foi encontrado {1} canal correspondente a [{2}]"
 msgstr[1] "Foi encontrado {1} canal correspondentes a [{2}]"
 
-#: Client.cpp:1348 ClientCommand.cpp:132
+#: Client.cpp:1352 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] "{1} canal foi anexado"
 msgstr[1] "{1} canais foram anexados"
 
-#: Client.cpp:1360
+#: Client.cpp:1364
 msgid "Usage: /detach <#chans>"
 msgstr "Sintaxe: /detach <#canais>"
 
-#: Client.cpp:1370 ClientCommand.cpp:154
+#: Client.cpp:1374 ClientCommand.cpp:154
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] "{1} canal foi desanexado"
@@ -505,12 +505,12 @@ msgstr ""
 #: ClientCommand.cpp:203 ClientCommand.cpp:209
 msgctxt "listclientscmd"
 msgid "Host"
-msgstr ""
+msgstr "Host"
 
 #: ClientCommand.cpp:204 ClientCommand.cpp:212
 msgctxt "listclientscmd"
 msgid "Network"
-msgstr ""
+msgstr "Rede"
 
 #: ClientCommand.cpp:205 ClientCommand.cpp:215
 msgctxt "listclientscmd"
@@ -520,7 +520,7 @@ msgstr ""
 #: ClientCommand.cpp:223 ClientCommand.cpp:229
 msgctxt "listuserscmd"
 msgid "Username"
-msgstr ""
+msgstr "Usuário"
 
 #: ClientCommand.cpp:224 ClientCommand.cpp:230
 msgctxt "listuserscmd"
@@ -536,12 +536,12 @@ msgstr ""
 #: ClientCommand.cpp:263
 msgctxt "listallusernetworkscmd"
 msgid "Username"
-msgstr ""
+msgstr "Usuário"
 
 #: ClientCommand.cpp:241 ClientCommand.cpp:251 ClientCommand.cpp:266
 msgctxt "listallusernetworkscmd"
 msgid "Network"
-msgstr ""
+msgstr "Rede"
 
 #: ClientCommand.cpp:242 ClientCommand.cpp:252 ClientCommand.cpp:268
 msgctxt "listallusernetworkscmd"
@@ -556,7 +556,7 @@ msgstr ""
 #: ClientCommand.cpp:244 ClientCommand.cpp:273
 msgctxt "listallusernetworkscmd"
 msgid "IRC Server"
-msgstr ""
+msgstr "Servidor IRC"
 
 #: ClientCommand.cpp:245 ClientCommand.cpp:275
 msgctxt "listallusernetworkscmd"
@@ -566,7 +566,7 @@ msgstr ""
 #: ClientCommand.cpp:246 ClientCommand.cpp:277
 msgctxt "listallusernetworkscmd"
 msgid "Channels"
-msgstr ""
+msgstr "Canais"
 
 #: ClientCommand.cpp:251
 msgid "N/A"
@@ -575,12 +575,12 @@ msgstr ""
 #: ClientCommand.cpp:272
 msgctxt "listallusernetworkscmd"
 msgid "Yes"
-msgstr ""
+msgstr "Sim"
 
 #: ClientCommand.cpp:281
 msgctxt "listallusernetworkscmd"
 msgid "No"
-msgstr ""
+msgstr "Não"
 
 #: ClientCommand.cpp:291
 msgid "Usage: SetMOTD <message>"
@@ -686,7 +686,7 @@ msgstr "Não há canais definidos."
 #: ClientCommand.cpp:539 ClientCommand.cpp:557
 msgctxt "listchans"
 msgid "Index"
-msgstr ""
+msgstr "Índice"
 
 #: ClientCommand.cpp:540 ClientCommand.cpp:558
 msgctxt "listchans"

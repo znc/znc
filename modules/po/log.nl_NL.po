@@ -147,10 +147,10 @@ msgstr "Ongeldig logboekpad [{1}]"
 msgid "Logging to [{1}]. Using timestamp format '{2}'"
 msgstr "Logboek schrijven naar [{1}]. Gebruik tijdstempel: '{2}'"
 
-#: log.cpp:560
+#: log.cpp:576
 msgid "[-sanitize] Optional path where to store logs."
 msgstr "[-sanitize] Optioneel pad waar het logboek opgeslagen moet worden."
 
-#: log.cpp:564
+#: log.cpp:580
 msgid "Writes IRC logs."
 msgstr "Schrijft IRC logboeken."

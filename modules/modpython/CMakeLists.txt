@@ -75,7 +75,7 @@ target_include_directories(modpython_lib PRIVATE
 	"${CMAKE_CURRENT_BINARY_DIR}/.."
 	"${CMAKE_CURRENT_SOURCE_DIR}/.."
 	${Python3_INCLUDE_DIRS})
-target_link_libraries(modpython_lib ${znc_link} ${Python3_LDFLAGS})
+target_link_libraries(modpython_lib ZNC ${Python3_LDFLAGS})
 set_target_properties(modpython_lib PROPERTIES
 	PREFIX "_"
 	OUTPUT_NAME "znc_core"

@@ -100,18 +100,22 @@ jobs:
       #CXXFLAGS: "-fsanitize=undefined -O1 -fPIE -fno-sanitize-recover"
       #LDFLAGS: "-fsanitize=undefined -pie -fno-sanitize-recover"
 
-  #macos:
-    #name: macOS
-    #runs-on: macos-latest
-    #steps:
-      #- uses: actions/checkout@v3
-        #with:
-          #submodules: true
-      #- run: |
-          #brew update
-          #brew install icu4c qt5 gettext pkg-config cpanminus boost
-      #- run: source .github/build.sh
-      #- uses: codecov/codecov-action@v3
+  macos:
+    name: macOS
+    runs-on: macos-latest
+    env:
+      # This doesn't make big difference, since it's the same compiler, but we also use this variable to select lcov vs llvm-cov
+      CXX: clang++
+      CC: clang
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - run: |
+          brew update
+          brew install icu4c qt5 gettext pkg-config cpanminus boost
+      - run: source .github/build.sh
+      - uses: codecov/codecov-action@v3
 
   docker:
     name: Docker push

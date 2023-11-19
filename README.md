@@ -24,7 +24,7 @@ Core:
 
 * GNU make
 * pkg-config
-* GCC 4.8 or clang 3.2
+* GCC 8 or clang 5
 * CMake
 
 ## Optional Requirements

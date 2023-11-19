@@ -1,4 +1,4 @@
-FROM alpine:3.17
+FROM alpine:3.18
 
 ARG VERSION_EXTRA=""
 
@@ -15,6 +15,7 @@ RUN set -x \
     && adduser -S znc \
     && addgroup -S znc
 RUN apk add --no-cache \
+        argon2-libs \
         boost \
         build-base \
         ca-certificates \
@@ -30,6 +31,7 @@ RUN apk add --no-cache \
         tini \
         tzdata
 RUN apk add --no-cache --virtual build-dependencies \
+        argon2-dev \
         boost-dev \
         cyrus-sasl-dev \
         perl-dev \

@@ -54,27 +54,27 @@ msgstr ""
 "msg *status help</code>” en “<code>/msg *status loadmod &lt;module&gt;</"
 "code>”). Zodra je deze geladen hebt zal dit menu zich uitbreiden."
 
-#: znc.cpp:1554
+#: znc.cpp:1552
 msgid "User already exists"
 msgstr "Gebruiker bestaat al"
 
-#: znc.cpp:1662
+#: znc.cpp:1660
 msgid "IPv6 is not enabled"
 msgstr "IPv6 is niet ingeschakeld"
 
-#: znc.cpp:1670
+#: znc.cpp:1668
 msgid "SSL is not enabled"
 msgstr "SSL is niet ingeschakeld"
 
-#: znc.cpp:1678
+#: znc.cpp:1676
 msgid "Unable to locate pem file: {1}"
 msgstr "Kan PEM bestand niet vinden: {1}"
 
-#: znc.cpp:1697
+#: znc.cpp:1695
 msgid "Invalid port"
 msgstr "Ongeldige poort"
 
-#: znc.cpp:1813 ClientCommand.cpp:1720
+#: znc.cpp:1811 ClientCommand.cpp:1720
 msgid "Unable to bind: {1}"
 msgstr "Kan niet binden: {1}"
 
@@ -84,7 +84,7 @@ msgstr ""
 "We schakelen over naar een andere server omdat deze server niet langer in de "
 "lijst staat"
 
-#: IRCNetwork.cpp:671 User.cpp:690
+#: IRCNetwork.cpp:671 User.cpp:699
 msgid "Welcome to ZNC"
 msgstr "Welkom bij ZNC"
 
@@ -257,50 +257,50 @@ msgstr ""
 "Je verbinding wordt verbroken omdat een andere gebruiker zich net aangemeld "
 "heeft als jou."
 
-#: Client.cpp:1022
+#: Client.cpp:1026
 msgid "Your CTCP to {1} got lost, you are not connected to IRC!"
 msgstr "Je CTCP naar {1} is verloren geraakt, je bent niet verbonden met IRC!"
 
-#: Client.cpp:1148
+#: Client.cpp:1152
 msgid "Your notice to {1} got lost, you are not connected to IRC!"
 msgstr ""
 "Je notice naar {1} is verloren geraakt, je bent niet verbonden met IRC!"
 
-#: Client.cpp:1187
+#: Client.cpp:1191
 msgid "Removing channel {1}"
 msgstr "Kanaal verwijderen: {1}"
 
-#: Client.cpp:1265
+#: Client.cpp:1269
 msgid "Your message to {1} got lost, you are not connected to IRC!"
 msgstr ""
 "Je bericht naar {1} is verloren geraakt, je bent niet verbonden met IRC!"
 
-#: Client.cpp:1318 Client.cpp:1324
+#: Client.cpp:1322 Client.cpp:1328
 msgid "Hello. How may I help you?"
 msgstr "Hallo. Hoe kan ik je helpen?"
 
-#: Client.cpp:1338
+#: Client.cpp:1342
 msgid "Usage: /attach <#chans>"
 msgstr "Gebruik: /attach <#kanalen>"
 
-#: Client.cpp:1345 Client.cpp:1367 ClientCommand.cpp:129 ClientCommand.cpp:151
+#: Client.cpp:1349 Client.cpp:1371 ClientCommand.cpp:129 ClientCommand.cpp:151
 #: ClientCommand.cpp:423 ClientCommand.cpp:450
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
 msgstr[0] "Er was {1} kanaal overeenkomend met [{2}]"
 msgstr[1] "Er waren {1} kanalen overeenkomend met [{2}]"
 
-#: Client.cpp:1348 ClientCommand.cpp:132
+#: Client.cpp:1352 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] "Gekoppeld aan {1} kanaal"
 msgstr[1] "Gekoppeld aan {1} kanalen"
 
-#: Client.cpp:1360
+#: Client.cpp:1364
 msgid "Usage: /detach <#chans>"
 msgstr "Gebruik: /detach <#kanalen>"
 
-#: Client.cpp:1370 ClientCommand.cpp:154
+#: Client.cpp:1374 ClientCommand.cpp:154
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] "Losgekoppeld van {1} kanaal"
@@ -1979,7 +1979,7 @@ msgstr "misvormde hostnaam in certificaat"
 msgid "hostname verification error"
 msgstr "hostnaam verificatiefout"
 
-#: User.cpp:519
+#: User.cpp:528
 msgid ""
 "Invalid network name. It should be alphanumeric. Not to be confused with "
 "server name"
@@ -1987,11 +1987,11 @@ msgstr ""
 "Ongeldige netwerknaam. Deze moet alfanumeriek zijn. Niet te verwarren met "
 "server naam"
 
-#: User.cpp:523
+#: User.cpp:532
 msgid "Network {1} already exists"
 msgstr "Netwerk {1} bestaat al"
 
-#: User.cpp:789
+#: User.cpp:798
 msgid ""
 "You are being disconnected because your IP is no longer allowed to connect "
 "to this user"
@@ -1999,18 +1999,18 @@ msgstr ""
 "Je verbinding wordt verbroken omdat het niet meer toegestaan is om met jouw "
 "IP-adres naar deze gebruiker te verbinden"
 
-#: User.cpp:929
+#: User.cpp:938
 msgid "Password is empty"
 msgstr "Wachtwoord is leeg"
 
-#: User.cpp:934
+#: User.cpp:943
 msgid "Username is empty"
 msgstr "Gebruikersnaam is leeg"
 
-#: User.cpp:939
+#: User.cpp:948
 msgid "Username is invalid"
 msgstr "Gebruikersnaam is ongeldig"
 
-#: User.cpp:1214
+#: User.cpp:1249
 msgid "Unable to find modinfo {1}: {2}"
 msgstr "Kan modinfo niet vinden {1}: {2}"

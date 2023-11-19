@@ -14,7 +14,7 @@ msgstr ""
 
 #: autoreply.cpp:25
 msgid "<reply>"
-msgstr ""
+msgstr "<reply>"
 
 #: autoreply.cpp:25
 msgid "Sets a new reply"

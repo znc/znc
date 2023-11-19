@@ -12,6 +12,6 @@ msgstr ""
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
 
-#: modpython.cpp:532
+#: modpython.cpp:505
 msgid "Loads python scripts as ZNC modules"
 msgstr "Laad python scripts als ZNC modulen"

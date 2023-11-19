@@ -14,26 +14,26 @@
 # limitations under the License.
 #
 
-if(NOT DEFINED cxx11check)
-	message(STATUS "Checking for C++11 support")
-	get_filename_component(_CXX11Check_dir "${CMAKE_CURRENT_LIST_FILE}"
+if(NOT DEFINED cxx17check)
+	message(STATUS "Checking for C++17 support")
+	get_filename_component(_CXX17Check_dir "${CMAKE_CURRENT_LIST_FILE}"
 		DIRECTORY)
-	try_compile(cxx11_supported
-		"${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/cxx11check"
-		"${_CXX11Check_dir}/cxx11check" cxx11check
-		OUTPUT_VARIABLE _CXX11Check_tryout)
-	if(cxx11_supported)
-		message(STATUS "Checking for C++11 support - supported")
-		SET(cxx11check 1 CACHE INTERNAL "C++11 support")
+	try_compile(cxx17_supported
+		"${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/cxx17check"
+		"${_CXX17Check_dir}/cxx17check" cxx17check
+		OUTPUT_VARIABLE _CXX17Check_tryout)
+	if(cxx17_supported)
+		message(STATUS "Checking for C++17 support - supported")
+		SET(cxx17check 1 CACHE INTERNAL "C++17 support")
 		file(APPEND
 			"${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log"
-			"Output of C++11 check:\n${_CXX11Check_tryout}\n")
+			"Output of C++17 check:\n${_CXX17Check_tryout}\n")
 	else()
 		file(APPEND
 			"${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log"
-			"Error in C++11 check:\n${_CXX11Check_tryout}\n")
-		message(STATUS "Checking for C++11 support - not supported")
+			"Error in C++17 check:\n${_CXX17Check_tryout}\n")
+		message(STATUS "Checking for C++17 support - not supported")
 		message(FATAL_ERROR " Upgrade your compiler.\n"
-			" GCC 4.8+ and Clang 3.2+ are known to work.")
+			" GCC 8+ and Clang 5+ should work.")
 	endif()
 endif()

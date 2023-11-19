@@ -11,6 +11,7 @@
 // warranty.
 
 #include <map>
+#include <string_view>
 
 template <typename T>
 struct check {
@@ -59,5 +60,6 @@ void test() { func<foo>(0); }
 int main() {
     std::map<int, int> m;
     m.emplace(2, 4);
+    auto [x, y] = *m.begin();
     return 0;
 }

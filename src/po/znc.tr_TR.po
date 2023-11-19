@@ -1,0 +1,1998 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: tr\n"
+"X-Crowdin-File: /master/src/po/znc.pot\n"
+"X-Crowdin-File-ID: 146\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Turkish\n"
+"Language: tr_TR\n"
+
+#: webskins/_default_/tmpl/InfoBar.tmpl:6
+msgid "Logged in as: {1}"
+msgstr "{1} olarak giriş yapıldı"
+
+#: webskins/_default_/tmpl/InfoBar.tmpl:8
+msgid "Not logged in"
+msgstr "Giriş yapmadınız"
+
+#: webskins/_default_/tmpl/LoginBar.tmpl:3
+msgid "Logout"
+msgstr "Çıkış"
+
+#: webskins/_default_/tmpl/Menu.tmpl:4
+msgid "Home"
+msgstr "Ana Sayfa"
+
+#: webskins/_default_/tmpl/Menu.tmpl:7
+msgid "Global Modules"
+msgstr "Global Modüller"
+
+#: webskins/_default_/tmpl/Menu.tmpl:20
+msgid "User Modules"
+msgstr "Kullanıcı Modülleri"
+
+#: webskins/_default_/tmpl/Menu.tmpl:35
+msgid "Network Modules ({1})"
+msgstr "Ağ Modülleri ({1})"
+
+#: webskins/_default_/tmpl/index.tmpl:6
+msgid "Welcome to ZNC's web interface!"
+msgstr "ZNC'nin web arayüzüne hoşgeldiniz!"
+
+#: webskins/_default_/tmpl/index.tmpl:11
+msgid ""
+"No Web-enabled modules have been loaded. Load modules from IRC (“<code>/msg "
+"*status help</code>” and “<code>/msg *status loadmod &lt;module&gt;</"
+"code>”). Once you have loaded some Web-enabled modules, the menu will expand."
+msgstr ""
+"Hiçbir Web özellikli modül yüklenmedi. IRC'den modülleri yükleyin (“<code>/"
+"msg *status help</code>” ve “<code>/msg *status loadmod &lt;module&gt;</"
+"code>”). Bazı Web özellikli modülleri yükledikten sonra menü genişleyecektir."
+
+#: znc.cpp:1554
+msgid "User already exists"
+msgstr "Kullanıcı zaten var"
+
+#: znc.cpp:1662
+msgid "IPv6 is not enabled"
+msgstr "IPv6 etkin değil"
+
+#: znc.cpp:1670
+msgid "SSL is not enabled"
+msgstr "SSL etkin değil"
+
+#: znc.cpp:1678
+msgid "Unable to locate pem file: {1}"
+msgstr "Pem dosyası bulunamıyor: {1}"
+
+#: znc.cpp:1697
+msgid "Invalid port"
+msgstr "Geçersiz port"
+
+#: znc.cpp:1813 ClientCommand.cpp:1720
+msgid "Unable to bind: {1}"
+msgstr "Bağlanamıyor: {1}"
+
+#: IRCNetwork.cpp:235
+msgid "Jumping servers because this server is no longer in the list"
+msgstr "Bu sunucu artık listede olmadığından sunucular atlanıyor"
+
+#: IRCNetwork.cpp:671 User.cpp:690
+msgid "Welcome to ZNC"
+msgstr "ZNC'ye hoş geldiniz"
+
+#: IRCNetwork.cpp:759
+msgid "You are currently disconnected from IRC. Use 'connect' to reconnect."
+msgstr ""
+"Şu anda IRC ile bağlantınız kesilmiştir. Yeniden bağlanmak için 'bağlan'ı "
+"kullanın."
+
+#: IRCNetwork.cpp:789
+msgid "This network is being deleted or moved to another user."
+msgstr "Bu ağ siliniyor veya başka bir kullanıcıya taşınıyor."
+
+#: IRCNetwork.cpp:950
+msgid "Invalid index"
+msgstr "Geçersiz dizin"
+
+#: IRCNetwork.cpp:958 IRCNetwork.cpp:974 IRCNetwork.cpp:982
+#: ClientCommand.cpp:1425
+msgid "You are not on {1}"
+msgstr "{1} üzerinde değilsiniz"
+
+#: IRCNetwork.cpp:1061
+msgid "The channel {1} could not be joined, disabling it."
+msgstr "{1} kanalına katılamadığından devre dışı bırakıldı."
+
+#: IRCNetwork.cpp:1190
+msgid "Your current server was removed, jumping..."
+msgstr "Mevcut sunucunuz kaldırıldı, atlanıyor..."
+
+#: IRCNetwork.cpp:1353
+msgid "Cannot connect to {1}, because ZNC is not compiled with SSL support."
+msgstr "ZNC, SSL desteğiyle derlenmediğinden {1}'e bağlanılamıyor."
+
+#: IRCNetwork.cpp:1374
+msgid "Some module aborted the connection attempt"
+msgstr "Bazı modüller bağlantı girişimini iptal etti"
+
+#: IRCSock.cpp:492
+msgid "Error from server: {1}"
+msgstr "Sunucudan gelen hata: {1}"
+
+#: IRCSock.cpp:694
+msgid "ZNC seems to be connected to itself, disconnecting..."
+msgstr "ZNC kendine bağlı görünüyor, bağlantı kesiliyor..."
+
+#: IRCSock.cpp:741
+msgid "Server {1} redirects us to {2}:{3} with reason: {4}"
+msgstr "{1} sunucusu bizi şu nedenle {2}:{3} adresine yönlendiriyor: {4}"
+
+#: IRCSock.cpp:745
+msgid "Perhaps you want to add it as a new server."
+msgstr "Belki onu yeni bir sunucu olarak eklemek istersiniz."
+
+#: IRCSock.cpp:975
+msgid "Channel {1} is linked to another channel and was thus disabled."
+msgstr "{1} kanalı başka bir kanala bağlı olduğundan devre dışı bırakıldı."
+
+#: IRCSock.cpp:987
+msgid "Switched to SSL (STARTTLS)"
+msgstr "SSL'ye (STARTTLS) geçildi"
+
+#: IRCSock.cpp:1040
+msgid "You quit: {1}"
+msgstr "Çıktınız: {1}"
+
+#: IRCSock.cpp:1246
+msgid "Disconnected from IRC. Reconnecting..."
+msgstr "IRC'den bağlantı kesildi. Yeniden bağlanılıyor..."
+
+#: IRCSock.cpp:1277
+msgid "Cannot connect to IRC ({1}). Retrying..."
+msgstr "IRC'ye ({1}) bağlanılamıyor. Yeniden deneniyor..."
+
+#: IRCSock.cpp:1280
+msgid "Disconnected from IRC ({1}). Reconnecting..."
+msgstr "IRC'den bağlantı kesildi. Yeniden bağlanılıyor..."
+
+#: IRCSock.cpp:1316
+msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
+msgstr ""
+"Bu sertifikaya güveniyorsanız /znc AddTrustedServerFingerprint {1} komutunu "
+"kullanın"
+
+#: IRCSock.cpp:1325
+msgid "IRC connection timed out.  Reconnecting..."
+msgstr "IRC bağlantısı zaman aşımına uğradı. Yeniden bağlanılıyor..."
+
+#: IRCSock.cpp:1337
+msgid "Connection Refused.  Reconnecting..."
+msgstr "Bağlantı reddedildi. Yeniden bağlanılıyor..."
+
+#: IRCSock.cpp:1345
+msgid "Received a too long line from the IRC server!"
+msgstr "IRC sunucusundan çok uzun bir hat alındı!"
+
+#: IRCSock.cpp:1449
+msgid "No free nick available"
+msgstr "Kullanılabilir nick yok"
+
+#: IRCSock.cpp:1457
+msgid "No free nick found"
+msgstr "Kullanılabilir nick bulunamadı"
+
+#: Client.cpp:74
+msgid "No such module {1}"
+msgstr "Böyle bir modül yok: {1}"
+
+#: Client.cpp:359
+msgid "A client from {1} attempted to login as you, but was rejected: {2}"
+msgstr ""
+"{1} adresinden bir istemci, sizin adınıza giriş yapmayı denedi ancak "
+"reddedildi: {2}"
+
+#: Client.cpp:394
+msgid "Network {1} doesn't exist."
+msgstr "{1} networkü mevcut değil."
+
+#: Client.cpp:408
+msgid ""
+"You have several networks configured, but no network was specified for the "
+"connection."
+msgstr ""
+"Yapılandırılmış birden fazla networkünüz var ancak bağlantı için herhangi "
+"bir network belirtilmedi."
+
+#: Client.cpp:411
+msgid ""
+"Selecting network {1}. To see list of all configured networks, use /znc "
+"ListNetworks"
+msgstr ""
+"{1} networkü seçiliyor. Yapılandırılmış tüm netwokrlerin listesini görmek "
+"için /znc ListNetworks komutunu kullanın"
+
+#: Client.cpp:414
+msgid ""
+"If you want to choose another network, use /znc JumpNetwork <network>, or "
+"connect to ZNC with username {1}/<network> (instead of just {1})"
+msgstr ""
+"Başka bir ağ seçmek istiyorsanız, /znc JumpNetwork <network> kullanın veya "
+"ZNC'ye kullanıcı adı {1}/<network> ile bağlanın (yalnızca {1} yerine)"
+
+#: Client.cpp:420
+msgid ""
+"You have no networks configured. Use /znc AddNetwork <network> to add one."
+msgstr ""
+"Yapılandırılmış networkünüz yok. Bir tane eklemek için /znc AddNetwork "
+"<network> kullanın."
+
+#: Client.cpp:431
+msgid "Closing link: Timeout"
+msgstr "Bağlantı kapatılıyor: Zaman aşımı"
+
+#: Client.cpp:453
+msgid "Closing link: Too long raw line"
+msgstr "Bağlantı kapatılıyor: Çok uzun ham hat"
+
+#: Client.cpp:460
+msgid ""
+"You are being disconnected because another user just authenticated as you."
+msgstr ""
+"Başka bir kullanıcı sizin kimliğinizi doğruladığı için bağlantınız kesiliyor."
+
+#: Client.cpp:1026
+msgid "Your CTCP to {1} got lost, you are not connected to IRC!"
+msgstr "{1}'e giden CTCP bağlantınız kayboldu, IRC'ye bağlı değilsiniz!"
+
+#: Client.cpp:1152
+msgid "Your notice to {1} got lost, you are not connected to IRC!"
+msgstr "{1}'a gönderdiğiniz bildirim kayboldu, IRC'ye bağlı değilsiniz!"
+
+#: Client.cpp:1191
+msgid "Removing channel {1}"
+msgstr "{1} kanalı kaldırılıyor"
+
+#: Client.cpp:1269
+msgid "Your message to {1} got lost, you are not connected to IRC!"
+msgstr "{1}'a gönderdiğiniz mesaj kayboldu, IRC'ye bağlı değilsiniz!"
+
+#: Client.cpp:1322 Client.cpp:1328
+msgid "Hello. How may I help you?"
+msgstr "Merhaba. Size nasıl yardım edebilirim?"
+
+#: Client.cpp:1342
+msgid "Usage: /attach <#chans>"
+msgstr "Kullanımı: attach <#kanallar>"
+
+#: Client.cpp:1349 Client.cpp:1371 ClientCommand.cpp:129 ClientCommand.cpp:151
+#: ClientCommand.cpp:423 ClientCommand.cpp:450
+msgid "There was {1} channel matching [{2}]"
+msgid_plural "There were {1} channels matching [{2}]"
+msgstr[0] "[{2}] ile eşleşen {1} kanal vardı"
+msgstr[1] "[{2}] ile eşleşen {1} kanal vardı"
+
+#: Client.cpp:1352 ClientCommand.cpp:132
+msgid "Attached {1} channel"
+msgid_plural "Attached {1} channels"
+msgstr[0] "{1} kanalı eklendi"
+msgstr[1] "{1} kanalları eklendi"
+
+#: Client.cpp:1364
+msgid "Usage: /detach <#chans>"
+msgstr "Kullanımı: detach <#kanallar>"
+
+#: Client.cpp:1374 ClientCommand.cpp:154
+msgid "Detached {1} channel"
+msgid_plural "Detached {1} channels"
+msgstr[0] "{1} kanalı ayrıldı"
+msgstr[1] "{1} kanalları ayrıldı"
+
+#: Chan.cpp:678
+msgid "Buffer Playback..."
+msgstr "Tampon Oynatma..."
+
+#: Chan.cpp:716
+msgid "Playback Complete."
+msgstr "Oynatma Tamamlandı."
+
+#: Modules.cpp:528
+msgctxt "modhelpcmd"
+msgid "<search>"
+msgstr "<search>"
+
+#: Modules.cpp:529
+msgctxt "modhelpcmd"
+msgid "Generate this output"
+msgstr "Bu çıktıyı oluştur"
+
+#: Modules.cpp:573 ClientCommand.cpp:1992
+msgid "No matches for '{1}'"
+msgstr "'{1}' için eşleşme yok"
+
+#: Modules.cpp:691
+msgid "This module doesn't implement any commands."
+msgstr "Bu modül herhangi bir komutu uygulamaz."
+
+#: Modules.cpp:693
+msgid "Unknown command!"
+msgstr "Bilinmeyen komut!"
+
+#: Modules.cpp:1633
+msgid ""
+"Module names can only contain letters, numbers and underscores, [{1}] is "
+"invalid"
+msgstr ""
+"Modül adları yalnızca harf, sayı ve alt çizgi içerebilir; [{1}] geçersizdir"
+
+#: Modules.cpp:1652
+msgid "Module {1} already loaded."
+msgstr "{1} modülü zaten yüklendi."
+
+#: Modules.cpp:1666
+msgid "Unable to find module {1}"
+msgstr "{1} modülü bulunamıyor"
+
+#: Modules.cpp:1678
+msgid "Module {1} does not support module type {2}."
+msgstr "{1} modülü, {2} modül tipini desteklemiyor."
+
+#: Modules.cpp:1685
+msgid "Module {1} requires a user."
+msgstr "{1} modülü bir kullanıcı gerektirir."
+
+#: Modules.cpp:1691
+msgid "Module {1} requires a network."
+msgstr "{1} modülü bir network gerektirir."
+
+#: Modules.cpp:1707
+msgid "Caught an exception"
+msgstr "Bir istisna yakalandı"
+
+#: Modules.cpp:1713
+msgid "Module {1} aborted: {2}"
+msgstr "{1} modülü iptal edildi: {2}"
+
+#: Modules.cpp:1715
+msgid "Module {1} aborted."
+msgstr "{1} modülü iptal edildi."
+
+#: Modules.cpp:1739 Modules.cpp:1781
+msgid "Module [{1}] not loaded."
+msgstr "Modül [{1}] yüklenmedi."
+
+#: Modules.cpp:1763
+msgid "Module {1} unloaded."
+msgstr "{1} modülü kaldırılamıyor."
+
+#: Modules.cpp:1768
+msgid "Unable to unload module {1}."
+msgstr "{1} modülü kaldırılamıyor."
+
+#: Modules.cpp:1797
+msgid "Reloaded module {1}."
+msgstr "{1} modülü tekrar yüklendi."
+
+#: Modules.cpp:1816
+msgid "Unable to find module {1}."
+msgstr "{1} modülü bulunamıyor."
+
+#: Modules.cpp:1963
+msgid "Unknown error"
+msgstr "Bilinmeyen hata"
+
+#: Modules.cpp:1964
+msgid "Unable to open module {1}: {2}"
+msgstr "{1} modülü açılamıyor: {2}"
+
+#: Modules.cpp:1973
+msgid "Could not find ZNCModuleEntry in module {1}"
+msgstr "{1} modülünde ZNCModuleEntry bulunamadı"
+
+#: Modules.cpp:1981
+msgid ""
+"Version mismatch for module {1}: core is {2}, module is built for {3}. "
+"Recompile this module."
+msgstr ""
+"{1} modülü için sürüm uyuşmazlığı: çekirdek {2}, modül {3} için oluşturuldu. "
+"Bu modülü yeniden derleyin."
+
+#: Modules.cpp:1992
+msgid ""
+"Module {1} is built incompatibly: core is '{2}', module is '{3}'. Recompile "
+"this module."
+msgstr ""
+"{1} modülü uyumsuz bir şekilde oluşturulmuş: çekirdek '{2}', modül '{3}'. Bu "
+"modülü yeniden derleyin."
+
+#: Modules.cpp:2023 Modules.cpp:2029
+msgctxt "modhelpcmd"
+msgid "Command"
+msgstr "Komut"
+
+#: Modules.cpp:2024 Modules.cpp:2031
+msgctxt "modhelpcmd"
+msgid "Description"
+msgstr "Açıklama"
+
+#: ClientCommand.cpp:51 ClientCommand.cpp:115 ClientCommand.cpp:137
+#: ClientCommand.cpp:339 ClientCommand.cpp:390 ClientCommand.cpp:405
+#: ClientCommand.cpp:432 ClientCommand.cpp:459 ClientCommand.cpp:480
+#: ClientCommand.cpp:499 ClientCommand.cpp:824 ClientCommand.cpp:848
+#: ClientCommand.cpp:874 ClientCommand.cpp:908 ClientCommand.cpp:921
+#: ClientCommand.cpp:934 ClientCommand.cpp:949 ClientCommand.cpp:1410
+#: ClientCommand.cpp:1458 ClientCommand.cpp:1490 ClientCommand.cpp:1501
+#: ClientCommand.cpp:1510 ClientCommand.cpp:1522
+msgid "You must be connected with a network to use this command"
+msgstr "Bu komutu kullanabilmek için bir networke bağlı olmanız gerekir"
+
+#: ClientCommand.cpp:58
+msgid "Usage: ListNicks <#chan>"
+msgstr "Kullanımı: ListNicks <#kanal>"
+
+#: ClientCommand.cpp:65
+msgid "You are not on [{1}]"
+msgstr "[{1}] üzerinde değilsiniz"
+
+#: ClientCommand.cpp:70
+msgid "You are not on [{1}] (trying)"
+msgstr "[{1}] üzerinde değilsiniz (deneniyor)"
+
+#: ClientCommand.cpp:79
+msgid "No nicks on [{1}]"
+msgstr "[{1}] üzerinde nick yok"
+
+#: ClientCommand.cpp:91 ClientCommand.cpp:106
+msgid "Nick"
+msgstr "Nick"
+
+#: ClientCommand.cpp:92 ClientCommand.cpp:107
+msgid "Ident"
+msgstr "Ident"
+
+#: ClientCommand.cpp:93 ClientCommand.cpp:108
+msgid "Host"
+msgstr "Host"
+
+#: ClientCommand.cpp:122
+msgid "Usage: Attach <#chans>"
+msgstr "Kullanımı: Attach <#kanallar>"
+
+#: ClientCommand.cpp:144
+msgid "Usage: Detach <#chans>"
+msgstr "Kullanımı: Detach <#kanallar>"
+
+#: ClientCommand.cpp:161
+msgid "There is no MOTD set."
+msgstr "Ayarlanan MOTD yok."
+
+#: ClientCommand.cpp:167
+msgid "Rehashing succeeded!"
+msgstr "Yeniden düzenleme (rehash) başarılı oldu!"
+
+#: ClientCommand.cpp:169
+msgid "Rehashing failed: {1}"
+msgstr "Yeniden düzenleme (rehash) başarısız oldu: {1}"
+
+#: ClientCommand.cpp:173
+msgid "Wrote config to {1}"
+msgstr "{1}'a yapılandırma yazıldı"
+
+#: ClientCommand.cpp:175
+msgid "Error while trying to write config."
+msgstr "Yapılandırma yazmaya çalışırken hata oluştu."
+
+#: ClientCommand.cpp:183
+msgid "Usage: ListClients"
+msgstr "Kullanımı: ListClients"
+
+#: ClientCommand.cpp:190
+msgid "No such user: {1}"
+msgstr "Kullanıcı bulunamadı: {1}"
+
+#: ClientCommand.cpp:198
+msgid "No clients are connected"
+msgstr "Bağlı istemci yok"
+
+#: ClientCommand.cpp:203 ClientCommand.cpp:209
+msgctxt "listclientscmd"
+msgid "Host"
+msgstr "Host"
+
+#: ClientCommand.cpp:204 ClientCommand.cpp:212
+msgctxt "listclientscmd"
+msgid "Network"
+msgstr "Network"
+
+#: ClientCommand.cpp:205 ClientCommand.cpp:215
+msgctxt "listclientscmd"
+msgid "Identifier"
+msgstr "Tanımlayıcı"
+
+#: ClientCommand.cpp:223 ClientCommand.cpp:229
+msgctxt "listuserscmd"
+msgid "Username"
+msgstr "Kullanıcı Adı"
+
+#: ClientCommand.cpp:224 ClientCommand.cpp:230
+msgctxt "listuserscmd"
+msgid "Networks"
+msgstr "Networkler"
+
+#: ClientCommand.cpp:225 ClientCommand.cpp:232
+msgctxt "listuserscmd"
+msgid "Clients"
+msgstr "İstemciler"
+
+#: ClientCommand.cpp:240 ClientCommand.cpp:250 ClientCommand.cpp:260
+#: ClientCommand.cpp:263
+msgctxt "listallusernetworkscmd"
+msgid "Username"
+msgstr "Kullanıcı Adı"
+
+#: ClientCommand.cpp:241 ClientCommand.cpp:251 ClientCommand.cpp:266
+msgctxt "listallusernetworkscmd"
+msgid "Network"
+msgstr "Network"
+
+#: ClientCommand.cpp:242 ClientCommand.cpp:252 ClientCommand.cpp:268
+msgctxt "listallusernetworkscmd"
+msgid "Clients"
+msgstr "İstemciler"
+
+#: ClientCommand.cpp:243 ClientCommand.cpp:271 ClientCommand.cpp:280
+msgctxt "listallusernetworkscmd"
+msgid "On IRC"
+msgstr "IRC'de"
+
+#: ClientCommand.cpp:244 ClientCommand.cpp:273
+msgctxt "listallusernetworkscmd"
+msgid "IRC Server"
+msgstr "IRC Sunucusu"
+
+#: ClientCommand.cpp:245 ClientCommand.cpp:275
+msgctxt "listallusernetworkscmd"
+msgid "IRC User"
+msgstr "IRC Kullanıcısı"
+
+#: ClientCommand.cpp:246 ClientCommand.cpp:277
+msgctxt "listallusernetworkscmd"
+msgid "Channels"
+msgstr "Kanallar"
+
+#: ClientCommand.cpp:251
+msgid "N/A"
+msgstr "N/A"
+
+#: ClientCommand.cpp:272
+msgctxt "listallusernetworkscmd"
+msgid "Yes"
+msgstr "Evet"
+
+#: ClientCommand.cpp:281
+msgctxt "listallusernetworkscmd"
+msgid "No"
+msgstr "Hayır"
+
+#: ClientCommand.cpp:291
+msgid "Usage: SetMOTD <message>"
+msgstr "Kullanımı: SetMOTD <mesaj>"
+
+#: ClientCommand.cpp:294
+msgid "MOTD set to: {1}"
+msgstr "MOTD şöyle ayarlandı: {1}"
+
+#: ClientCommand.cpp:300
+msgid "Usage: AddMOTD <message>"
+msgstr "Kullanımı: AddMOTD <mesaj>"
+
+#: ClientCommand.cpp:303
+msgid "Added [{1}] to MOTD"
+msgstr "MOTD'a eklendi: [{1}]"
+
+#: ClientCommand.cpp:307
+msgid "Cleared MOTD"
+msgstr "MOTD temizlendi"
+
+#: ClientCommand.cpp:329
+msgid ""
+"ERROR: Writing config file to disk failed! Aborting. Use {1} FORCE to ignore."
+msgstr ""
+"HATA: Yapılandırma dosyasını diske yazma işlemi başarısız oldu! İptal "
+"ediliyor. Yoksaymak için {1} FORCE'u kullanın."
+
+#: ClientCommand.cpp:344 ClientCommand.cpp:862 ClientCommand.cpp:903
+msgid "You don't have any servers added."
+msgstr "Eklenmiş sunucunuz yok."
+
+#: ClientCommand.cpp:355
+msgid "Server [{1}] not found"
+msgstr "[{1}] sunucusu bulunamadı"
+
+#: ClientCommand.cpp:375 ClientCommand.cpp:380
+msgid "Connecting to {1}..."
+msgstr "{1}'a bağlanıyor..."
+
+#: ClientCommand.cpp:377
+msgid "Jumping to the next server in the list..."
+msgstr "Listede sıradaki sunucuya bağlanıyor..."
+
+#: ClientCommand.cpp:382
+msgid "Connecting..."
+msgstr "Bağlanıyor..."
+
+#: ClientCommand.cpp:400
+msgid "Disconnected from IRC. Use 'connect' to reconnect."
+msgstr ""
+"Şu anda IRC ile bağlantınız kesilmiştir. Yeniden bağlanmak için 'connect'i "
+"kullanın."
+
+#: ClientCommand.cpp:412
+msgid "Usage: EnableChan <#chans>"
+msgstr "Kullanımı: EnableChan <#kanallar>"
+
+#: ClientCommand.cpp:426
+msgid "Enabled {1} channel"
+msgid_plural "Enabled {1} channels"
+msgstr[0] "{1} kanalları etkinleştirildi"
+msgstr[1] "{1} kanalları etkinleştirildi"
+
+#: ClientCommand.cpp:439
+msgid "Usage: DisableChan <#chans>"
+msgstr "Kullanımı: DisableChan <#kanallar>"
+
+#: ClientCommand.cpp:453
+msgid "Disabled {1} channel"
+msgid_plural "Disabled {1} channels"
+msgstr[0] "{1} kanalı pasifleştirildi"
+msgstr[1] "{1} kanalları pasifleştirildi"
+
+#: ClientCommand.cpp:466
+msgid "Usage: MoveChan <#chan> <index>"
+msgstr "Kullanımı: MoveChan <#kanal> <dizin>"
+
+#: ClientCommand.cpp:474
+msgid "Moved channel {1} to index {2}"
+msgstr "{1} kanalı {2} dizinine taşındı"
+
+#: ClientCommand.cpp:487
+msgid "Usage: SwapChans <#chan1> <#chan2>"
+msgstr "Kullanımı: SwapChans <#kanal1> <#kanal2>"
+
+#: ClientCommand.cpp:493
+msgid "Swapped channels {1} and {2}"
+msgstr "{1} ve {2} kanalları değiştirildi"
+
+#: ClientCommand.cpp:510
+msgid "Usage: ListChans"
+msgstr "Kullanımı: ListChans"
+
+#: ClientCommand.cpp:517
+msgid "No such user [{1}]"
+msgstr "Kullanıcı bulunamadı: [{1}]"
+
+#: ClientCommand.cpp:523
+msgid "User [{1}] doesn't have network [{2}]"
+msgstr "[{1}] Kullanıcısının [{2}] networkü yok"
+
+#: ClientCommand.cpp:534
+msgid "There are no channels defined."
+msgstr "Tanımlanmış kanal yok."
+
+#: ClientCommand.cpp:539 ClientCommand.cpp:557
+msgctxt "listchans"
+msgid "Index"
+msgstr "Dizin"
+
+#: ClientCommand.cpp:540 ClientCommand.cpp:558
+msgctxt "listchans"
+msgid "Name"
+msgstr "Adı"
+
+#: ClientCommand.cpp:541 ClientCommand.cpp:561
+msgctxt "listchans"
+msgid "Status"
+msgstr "Durum"
+
+#: ClientCommand.cpp:542 ClientCommand.cpp:568
+msgctxt "listchans"
+msgid "In config"
+msgstr "Yapılandırmada"
+
+#: ClientCommand.cpp:543 ClientCommand.cpp:570
+msgctxt "listchans"
+msgid "Buffer"
+msgstr "Arabellek"
+
+#: ClientCommand.cpp:544 ClientCommand.cpp:574
+msgctxt "listchans"
+msgid "Clear"
+msgstr "Temizle"
+
+#: ClientCommand.cpp:545 ClientCommand.cpp:579
+msgctxt "listchans"
+msgid "Modes"
+msgstr "Modlar"
+
+#: ClientCommand.cpp:546 ClientCommand.cpp:580
+msgctxt "listchans"
+msgid "Users"
+msgstr "Kullanıcılar"
+
+#: ClientCommand.cpp:563
+msgctxt "listchans"
+msgid "Detached"
+msgstr "Ayrılmış"
+
+#: ClientCommand.cpp:564
+msgctxt "listchans"
+msgid "Joined"
+msgstr "Katılmış"
+
+#: ClientCommand.cpp:565
+msgctxt "listchans"
+msgid "Disabled"
+msgstr "Pasif"
+
+#: ClientCommand.cpp:566
+msgctxt "listchans"
+msgid "Trying"
+msgstr "Deneniyor"
+
+#: ClientCommand.cpp:569 ClientCommand.cpp:577
+msgctxt "listchans"
+msgid "yes"
+msgstr "evet"
+
+#: ClientCommand.cpp:596
+msgid "Total: {1}, Joined: {2}, Detached: {3}, Disabled: {4}"
+msgstr "Toplam: {1}, Katılmış: {2}, Ayrılmış: {3}, Pasif: {4}"
+
+#: ClientCommand.cpp:600 ClientCommand.cpp:636 ClientCommand.cpp:816
+#: ClientCommand.cpp:842
+msgid "Access denied!"
+msgstr "Erişim reddedildi!"
+
+#: ClientCommand.cpp:606
+msgid ""
+"Network number limit reached. Ask an admin to increase the limit for you, or "
+"delete unneeded networks using /znc DelNetwork <name>"
+msgstr ""
+"Network sayısı sınırına ulaşıldı. Bir yöneticiden sizin için sınırı "
+"artırmasını isteyin veya /znc DelNetwork <network_ad> kullanarak gereksiz "
+"networleri silmesini isteyin"
+
+#: ClientCommand.cpp:615
+msgid "Usage: AddNetwork <name>"
+msgstr "Kullanımı: AddNetwork <network_adı>"
+
+#: ClientCommand.cpp:619
+msgid "Network name should be alphanumeric"
+msgstr "Network adı alfasayısal olmalıdır"
+
+#: ClientCommand.cpp:626
+msgid ""
+"Network added. Use /znc JumpNetwork {1}, or connect to ZNC with username {2} "
+"(instead of just {3}) to connect to it."
+msgstr ""
+"Network eklendi. /znc JumpNetwork {1} kullanın veya ZNC'ye bağlanmak için "
+"{2} kullanıcı adıyla (yalnızca {3} yerine) ile bağlanın."
+
+#: ClientCommand.cpp:631
+msgid "Unable to add that network"
+msgstr "Bu network eklenemiyor"
+
+#: ClientCommand.cpp:643
+msgid "Usage: DelNetwork <name>"
+msgstr "Kullanımı: DelNetwork <network_adı>"
+
+#: ClientCommand.cpp:652
+msgid "Network deleted"
+msgstr "Network silindi"
+
+#: ClientCommand.cpp:655
+msgid "Failed to delete network, perhaps this network doesn't exist"
+msgstr "Network silinemedi; bu network mevcut olmayabilir"
+
+#: ClientCommand.cpp:665
+msgid "User {1} not found"
+msgstr "{1} kullanıcısı bulunamadı"
+
+#: ClientCommand.cpp:673 ClientCommand.cpp:681
+msgctxt "listnetworks"
+msgid "Network"
+msgstr "Network"
+
+#: ClientCommand.cpp:674 ClientCommand.cpp:683 ClientCommand.cpp:692
+msgctxt "listnetworks"
+msgid "On IRC"
+msgstr "IRC'de"
+
+#: ClientCommand.cpp:675 ClientCommand.cpp:685
+msgctxt "listnetworks"
+msgid "IRC Server"
+msgstr "IRC Sunucusu"
+
+#: ClientCommand.cpp:676 ClientCommand.cpp:687
+msgctxt "listnetworks"
+msgid "IRC User"
+msgstr "IRC Kullanıcısı"
+
+#: ClientCommand.cpp:677 ClientCommand.cpp:689
+msgctxt "listnetworks"
+msgid "Channels"
+msgstr "Kanallar"
+
+#: ClientCommand.cpp:684
+msgctxt "listnetworks"
+msgid "Yes"
+msgstr "Evet"
+
+#: ClientCommand.cpp:693
+msgctxt "listnetworks"
+msgid "No"
+msgstr "Hayır"
+
+#: ClientCommand.cpp:698
+msgctxt "listnetworks"
+msgid "No networks"
+msgstr "Network yok"
+
+#: ClientCommand.cpp:702 ClientCommand.cpp:1017
+msgid "Access denied."
+msgstr "Erişim reddedildi."
+
+#: ClientCommand.cpp:713
+msgid "Usage: MoveNetwork <old user> <old network> <new user> [new network]"
+msgstr ""
+"Kullanımı: MoveNetwork <eski kullanıcı> <eski network> <yeni kullanıcı> "
+"[yeni network]"
+
+#: ClientCommand.cpp:723
+msgid "Old user {1} not found."
+msgstr "{1} eski kullanıcısı bulunamadı."
+
+#: ClientCommand.cpp:729
+msgid "Old network {1} not found."
+msgstr "{1} eski netowrkü bulunamadı."
+
+#: ClientCommand.cpp:735
+msgid "New user {1} not found."
+msgstr "{1} yeni kullanıcısı bulunamadı."
+
+#: ClientCommand.cpp:740
+msgid "User {1} already has network {2}."
+msgstr "{1} kullanıcısı zaten {2} ağına sahip."
+
+#: ClientCommand.cpp:746
+msgid "Invalid network name [{1}]"
+msgstr "Geçersiz ağ adı [{1}]"
+
+#: ClientCommand.cpp:762
+msgid "Some files seem to be in {1}. You might want to move them to {2}"
+msgstr ""
+"Bazı dosyalar {1} konumunda görünüyor. Bunları {2} konumuna taşımak "
+"isteyebilirsiniz"
+
+#: ClientCommand.cpp:776
+msgid "Error adding network: {1}"
+msgstr "Network eklenirken hata oluştu: {1}"
+
+#: ClientCommand.cpp:788
+msgid "Success."
+msgstr "Başarılı."
+
+#: ClientCommand.cpp:791
+msgid "Copied the network to new user, but failed to delete old network"
+msgstr "Ağ yeni kullanıcıya kopyalandı ancak eski ağ silinemedi"
+
+#: ClientCommand.cpp:798
+msgid "No network supplied."
+msgstr "Network sağlanmadı."
+
+#: ClientCommand.cpp:803
+msgid "You are already connected with this network."
+msgstr "Bu networke zaten bağlısınız."
+
+#: ClientCommand.cpp:809
+msgid "Switched to {1}"
+msgstr "{1}'e geçildi"
+
+#: ClientCommand.cpp:812
+msgid "You don't have a network named {1}"
+msgstr "{1} adında bir ağınız yok"
+
+#: ClientCommand.cpp:829
+msgid "Usage: AddServer <host> [[+]port] [pass]"
+msgstr "Kullanımı: AddServer <host> [[+]port] [şifre]"
+
+#: ClientCommand.cpp:834
+msgid "Server added"
+msgstr "Sunucu eklendi"
+
+#: ClientCommand.cpp:837
+msgid ""
+"Unable to add that server. Perhaps the server is already added or openssl is "
+"disabled?"
+msgstr ""
+"Bu sunucu eklenemiyor. Belki sunucu zaten eklenmiştir veya openssl devre "
+"dışı bırakılmıştır?"
+
+#: ClientCommand.cpp:857
+msgid "Usage: DelServer <host> [port] [pass]"
+msgstr "Kullanımı: DelServer <host> [[+] port] [şifre]"
+
+#: ClientCommand.cpp:867
+msgid "Server removed"
+msgstr "Sunucu silindi"
+
+#: ClientCommand.cpp:869
+msgid "No such server"
+msgstr "Böyle bir sunucu yok"
+
+#: ClientCommand.cpp:882 ClientCommand.cpp:890
+msgctxt "listservers"
+msgid "Host"
+msgstr "Host"
+
+#: ClientCommand.cpp:883 ClientCommand.cpp:892
+msgctxt "listservers"
+msgid "Port"
+msgstr "Port"
+
+#: ClientCommand.cpp:884 ClientCommand.cpp:895
+msgctxt "listservers"
+msgid "SSL"
+msgstr "SSL"
+
+#: ClientCommand.cpp:885 ClientCommand.cpp:897
+msgctxt "listservers"
+msgid "Password"
+msgstr "Şifre"
+
+#: ClientCommand.cpp:896
+msgctxt "listservers|cell"
+msgid "SSL"
+msgstr "SSL"
+
+#: ClientCommand.cpp:913
+msgid "Usage: AddTrustedServerFingerprint <fi:ng:er>"
+msgstr "Kullanımı: AddTrustedServerFingerprint <pa:rm:ak:iz>"
+
+#: ClientCommand.cpp:917 ClientCommand.cpp:930
+msgid "Done."
+msgstr "Tamamdır."
+
+#: ClientCommand.cpp:926
+msgid "Usage: DelTrustedServerFingerprint <fi:ng:er>"
+msgstr "Kullanımı: DelTrustedServerFingerprint <pa:rm:ak:iz>"
+
+#: ClientCommand.cpp:939
+msgid "No fingerprints added."
+msgstr "Parmak izi eklenmedi."
+
+#: ClientCommand.cpp:955 ClientCommand.cpp:961
+msgctxt "topicscmd"
+msgid "Channel"
+msgstr "Kanal"
+
+#: ClientCommand.cpp:956 ClientCommand.cpp:962
+msgctxt "topicscmd"
+msgid "Set By"
+msgstr "Ayarla:"
+
+#: ClientCommand.cpp:957 ClientCommand.cpp:963
+msgctxt "topicscmd"
+msgid "Topic"
+msgstr "Başlık"
+
+#: ClientCommand.cpp:970 ClientCommand.cpp:975
+msgctxt "listmods"
+msgid "Name"
+msgstr "Adı"
+
+#: ClientCommand.cpp:971 ClientCommand.cpp:976
+msgctxt "listmods"
+msgid "Arguments"
+msgstr "Argümanlar"
+
+#: ClientCommand.cpp:985
+msgid "No global modules loaded."
+msgstr "Global modül eklenmedi."
+
+#: ClientCommand.cpp:987 ClientCommand.cpp:1051
+msgid "Global modules:"
+msgstr "Global modüller:"
+
+#: ClientCommand.cpp:996
+msgid "Your user has no modules loaded."
+msgstr "Kullanıcınızda yüklü modül yok."
+
+#: ClientCommand.cpp:998 ClientCommand.cpp:1063
+msgid "User modules:"
+msgstr "Kullanıcı modülleri:"
+
+#: ClientCommand.cpp:1006
+msgid "This network has no modules loaded."
+msgstr "Bu ağda yüklü modül yok."
+
+#: ClientCommand.cpp:1008 ClientCommand.cpp:1075
+msgid "Network modules:"
+msgstr "Ağ modülleri:"
+
+#: ClientCommand.cpp:1023 ClientCommand.cpp:1030
+msgctxt "listavailmods"
+msgid "Name"
+msgstr "Adı"
+
+#: ClientCommand.cpp:1024 ClientCommand.cpp:1035
+msgctxt "listavailmods"
+msgid "Description"
+msgstr "Açıklama"
+
+#: ClientCommand.cpp:1049
+msgid "No global modules available."
+msgstr "Kullanılabilir global modül yok."
+
+#: ClientCommand.cpp:1061
+msgid "No user modules available."
+msgstr "Kullanılabilir kullanıcı modülü yok."
+
+#: ClientCommand.cpp:1073
+msgid "No network modules available."
+msgstr "Kullanılabilir ağ modülü yok."
+
+#: ClientCommand.cpp:1101
+msgid "Unable to load {1}: Access denied."
+msgstr "{1} yüklenemiyor: Erişim reddedildi."
+
+#: ClientCommand.cpp:1107
+msgid "Usage: LoadMod [--type=global|user|network] <module> [args]"
+msgstr "Kullanımı: LoadMod [--type=global|user|network] <modül> [argümanlar]"
+
+#: ClientCommand.cpp:1114
+msgid "Unable to load {1}: {2}"
+msgstr "{1} yüklenemiyor: {2}"
+
+#: ClientCommand.cpp:1124
+msgid "Unable to load global module {1}: Access denied."
+msgstr "{1} genel modülü yüklenemiyor: Erişim reddedildi."
+
+#: ClientCommand.cpp:1130
+msgid "Unable to load network module {1}: Not connected with a network."
+msgstr "{1} ağ modülü yüklenemiyor: Bir ağa bağlı değil."
+
+#: ClientCommand.cpp:1152
+msgid "Unknown module type"
+msgstr "Bilinmeyen modül türü"
+
+#: ClientCommand.cpp:1157
+msgid "Loaded module {1}"
+msgstr "{1} modülü yüklendi"
+
+#: ClientCommand.cpp:1159
+msgid "Loaded module {1}: {2}"
+msgstr "{1} modülü yüklendi: {2}"
+
+#: ClientCommand.cpp:1162
+msgid "Unable to load module {1}: {2}"
+msgstr "{1} modülü yüklenemiyor: {2}"
+
+#: ClientCommand.cpp:1185
+msgid "Unable to unload {1}: Access denied."
+msgstr "{1} kaldırılamıyor: Erişim reddedildi."
+
+#: ClientCommand.cpp:1191
+msgid "Usage: UnloadMod [--type=global|user|network] <module>"
+msgstr "Kullanımı: UnLoadMod [--type=global|user|network] <modül>"
+
+#: ClientCommand.cpp:1200
+msgid "Unable to determine type of {1}: {2}"
+msgstr "{1} türü belirlenemiyor: {2}"
+
+#: ClientCommand.cpp:1208
+msgid "Unable to unload global module {1}: Access denied."
+msgstr "{1} global modülü kaldırılamıyor: Erişim reddedildi."
+
+#: ClientCommand.cpp:1215
+msgid "Unable to unload network module {1}: Not connected with a network."
+msgstr "{1} ağ modülü kaldırılamıyor: Bir ağa bağlı değil."
+
+#: ClientCommand.cpp:1234
+msgid "Unable to unload module {1}: Unknown module type"
+msgstr "{1} modülü kaldırılamıyor: Bilinmeyen modül türü"
+
+#: ClientCommand.cpp:1247
+msgid "Unable to reload modules. Access denied."
+msgstr "Modüller yeniden yüklenemiyor. Erişim engellendi."
+
+#: ClientCommand.cpp:1268
+msgid "Usage: ReloadMod [--type=global|user|network] <module> [args]"
+msgstr "Kullanımı: ReloadMod [--type=global|user|network] <modül> [argümanlar]"
+
+#: ClientCommand.cpp:1277
+msgid "Unable to reload {1}: {2}"
+msgstr "{1} tekrar yüklenemiyor: {2}"
+
+#: ClientCommand.cpp:1285
+msgid "Unable to reload global module {1}: Access denied."
+msgstr "{1} genel modülü tekrar yüklenemiyor: Erişim reddedildi."
+
+#: ClientCommand.cpp:1292
+msgid "Unable to reload network module {1}: Not connected with a network."
+msgstr "{1} ağ modülü tekrar yüklenemiyor: Bir ağa bağlı değil."
+
+#: ClientCommand.cpp:1314
+msgid "Unable to reload module {1}: Unknown module type"
+msgstr "{1} modülü yeniden yüklenemiyor: Bilinmeyen modül türü"
+
+#: ClientCommand.cpp:1325
+msgid "Usage: UpdateMod <module>"
+msgstr "Kullanım: UpdateMod <modül>"
+
+#: ClientCommand.cpp:1329
+msgid "Reloading {1} everywhere"
+msgstr "{1} her yere yeniden yükleniyor"
+
+#: ClientCommand.cpp:1331
+msgid "Done"
+msgstr "Tamamdır"
+
+#: ClientCommand.cpp:1334
+msgid ""
+"Done, but there were errors, module {1} could not be reloaded everywhere."
+msgstr ""
+"Tamamlandı, ancak hatalar vardı; {1} modülü her yere yeniden yüklenemedi."
+
+#: ClientCommand.cpp:1342
+msgid ""
+"You must be connected with a network to use this command. Try "
+"SetUserBindHost instead"
+msgstr ""
+"Bu komutu kullanabilmek için bir ağa bağlı olmanız gerekir. Bunun yerine "
+"SetUserBindHost'u deneyin"
+
+#: ClientCommand.cpp:1349
+msgid "Usage: SetBindHost <host>"
+msgstr "Kullanımı: SetBindHost <host>"
+
+#: ClientCommand.cpp:1354 ClientCommand.cpp:1371
+msgid "You already have this bind host!"
+msgstr "Bu bind hotunuz zaten mevcut!"
+
+#: ClientCommand.cpp:1359
+msgid "Set bind host for network {1} to {2}"
+msgstr "{1} ağı için bind hostu {2} olarak ayarlayın"
+
+#: ClientCommand.cpp:1366
+msgid "Usage: SetUserBindHost <host>"
+msgstr "Kullanımı: SetUserBindHost <host>"
+
+#: ClientCommand.cpp:1376
+msgid "Set default bind host to {1}"
+msgstr "Varsayılan bind hostu {1} olarak ayarla"
+
+#: ClientCommand.cpp:1382
+msgid ""
+"You must be connected with a network to use this command. Try "
+"ClearUserBindHost instead"
+msgstr ""
+"Bu komutu kullanabilmek için bir ağa bağlı olmanız gerekir. Bunun yerine "
+"ClearUserBindHost'u deneyin"
+
+#: ClientCommand.cpp:1387
+msgid "Bind host cleared for this network."
+msgstr "Bu ağ için bind host temizlendi."
+
+#: ClientCommand.cpp:1391
+msgid "Default bind host cleared for your user."
+msgstr "Kullanıcınız için varsayılan bind host temizlendi."
+
+#: ClientCommand.cpp:1394
+msgid "This user's default bind host not set"
+msgstr "Bu kullanıcının varsayılan bind host ayarlanmadı"
+
+#: ClientCommand.cpp:1396
+msgid "This user's default bind host is {1}"
+msgstr "Bu kullanıcının varsayılan bind hostu {1}"
+
+#: ClientCommand.cpp:1401
+msgid "This network's bind host not set"
+msgstr "Bu ağın bind hostu ayarlanmadı"
+
+#: ClientCommand.cpp:1403
+msgid "This network's default bind host is {1}"
+msgstr "Bu ağın varsayılan bind hostu {1}"
+
+#: ClientCommand.cpp:1417
+msgid "Usage: PlayBuffer <#chan|query>"
+msgstr "Kullanımı: PlayBuffer <#kanal|sorgu>"
+
+#: ClientCommand.cpp:1430
+msgid "You are not on {1} (trying to join)"
+msgstr "{1} üzerinde değilsiniz (katılmaya çalışılıyor)"
+
+#: ClientCommand.cpp:1435
+msgid "The buffer for channel {1} is empty"
+msgstr "{1} kanalının arabelleği boş"
+
+#: ClientCommand.cpp:1444
+msgid "No active query with {1}"
+msgstr "{1} ile etkin sorgu yok"
+
+#: ClientCommand.cpp:1449
+msgid "The buffer for {1} is empty"
+msgstr "{1} için arabellek boş"
+
+#: ClientCommand.cpp:1465
+msgid "Usage: ClearBuffer <#chan|query>"
+msgstr "Kullanımı: ClearBuffer <#kanal|sorgu>"
+
+#: ClientCommand.cpp:1484
+msgid "{1} buffer matching {2} has been cleared"
+msgid_plural "{1} buffers matching {2} have been cleared"
+msgstr[0] "{2} ile eşleşen {1} arabellek temizlendi"
+msgstr[1] "{2} ile eşleşen {1} arabellek temizlendi"
+
+#: ClientCommand.cpp:1497
+msgid "All channel buffers have been cleared"
+msgstr "Tüm kanal arabellekleri temizlendi"
+
+#: ClientCommand.cpp:1506
+msgid "All query buffers have been cleared"
+msgstr "Tüm sorgu arabellekleri temizlendi"
+
+#: ClientCommand.cpp:1518
+msgid "All buffers have been cleared"
+msgstr "Tüm arabellekler temizlendi"
+
+#: ClientCommand.cpp:1529
+msgid "Usage: SetBuffer <#chan|query> [linecount]"
+msgstr "Kullanımı: SetBuffer <#kanal|sorgu> [satırsayısı]"
+
+#: ClientCommand.cpp:1550
+msgid "Setting buffer size failed for {1} buffer"
+msgid_plural "Setting buffer size failed for {1} buffers"
+msgstr[0] "{1} arabellek için arabellek boyutunun ayarlanması başarısız oldu"
+msgstr[1] "{1} arabellek için arabellek boyutunun ayarlanması başarısız oldu"
+
+#: ClientCommand.cpp:1553
+msgid "Maximum buffer size is {1} line"
+msgid_plural "Maximum buffer size is {1} lines"
+msgstr[0] "Maksimum arabellek boyutu {1} satırdır"
+msgstr[1] "Maksimum arabellek boyutu {1} satırdır"
+
+#: ClientCommand.cpp:1558
+msgid "Size of every buffer was set to {1} line"
+msgid_plural "Size of every buffer was set to {1} lines"
+msgstr[0] "Her arabelleğin boyutu {1} satıra ayarlandı"
+msgstr[1] "Her arabelleğin boyutu {1} satıra ayarlandı"
+
+#: ClientCommand.cpp:1568 ClientCommand.cpp:1575 ClientCommand.cpp:1586
+#: ClientCommand.cpp:1595 ClientCommand.cpp:1603
+msgctxt "trafficcmd"
+msgid "Username"
+msgstr "Kullanıcı Adı"
+
+#: ClientCommand.cpp:1569 ClientCommand.cpp:1576 ClientCommand.cpp:1588
+#: ClientCommand.cpp:1597 ClientCommand.cpp:1605
+msgctxt "trafficcmd"
+msgid "In"
+msgstr "İçeri"
+
+#: ClientCommand.cpp:1570 ClientCommand.cpp:1578 ClientCommand.cpp:1589
+#: ClientCommand.cpp:1598 ClientCommand.cpp:1606
+msgctxt "trafficcmd"
+msgid "Out"
+msgstr "Dışarı"
+
+#: ClientCommand.cpp:1571 ClientCommand.cpp:1581 ClientCommand.cpp:1591
+#: ClientCommand.cpp:1599 ClientCommand.cpp:1608
+msgctxt "trafficcmd"
+msgid "Total"
+msgstr "Toplam"
+
+#: ClientCommand.cpp:1587
+msgctxt "trafficcmd"
+msgid "<Users>"
+msgstr "<Kullanıcılar>"
+
+#: ClientCommand.cpp:1596
+msgctxt "trafficcmd"
+msgid "<ZNC>"
+msgstr "<ZNC>"
+
+#: ClientCommand.cpp:1604
+msgctxt "trafficcmd"
+msgid "<Total>"
+msgstr "<Toplam>"
+
+#: ClientCommand.cpp:1613
+msgid "Running for {1}"
+msgstr "{1} boyunca çalışıyor"
+
+#: ClientCommand.cpp:1619
+msgid "Unknown command, try 'Help'"
+msgstr "Bilinmeyen komut, 'Help'i deneyin"
+
+#: ClientCommand.cpp:1628 ClientCommand.cpp:1639
+msgctxt "listports"
+msgid "Port"
+msgstr "Port"
+
+#: ClientCommand.cpp:1629 ClientCommand.cpp:1642
+msgctxt "listports"
+msgid "BindHost"
+msgstr "BindHost"
+
+#: ClientCommand.cpp:1630 ClientCommand.cpp:1645
+msgctxt "listports"
+msgid "SSL"
+msgstr "SSL"
+
+#: ClientCommand.cpp:1631 ClientCommand.cpp:1650
+msgctxt "listports"
+msgid "Protocol"
+msgstr "Protokol"
+
+#: ClientCommand.cpp:1632 ClientCommand.cpp:1657
+msgctxt "listports"
+msgid "IRC"
+msgstr "IRC"
+
+#: ClientCommand.cpp:1633 ClientCommand.cpp:1662
+msgctxt "listports"
+msgid "Web"
+msgstr "Web"
+
+#: ClientCommand.cpp:1646
+msgctxt "listports|ssl"
+msgid "yes"
+msgstr "evet"
+
+#: ClientCommand.cpp:1647
+msgctxt "listports|ssl"
+msgid "no"
+msgstr "hayır"
+
+#: ClientCommand.cpp:1651
+msgctxt "listports"
+msgid "IPv4 and IPv6"
+msgstr "IPv4 ve IPv6"
+
+#: ClientCommand.cpp:1653
+msgctxt "listports"
+msgid "IPv4"
+msgstr "IPv4"
+
+#: ClientCommand.cpp:1654
+msgctxt "listports"
+msgid "IPv6"
+msgstr "IPv6"
+
+#: ClientCommand.cpp:1660
+msgctxt "listports|irc"
+msgid "yes"
+msgstr "evet"
+
+#: ClientCommand.cpp:1661
+msgctxt "listports|irc"
+msgid "no"
+msgstr "hayır"
+
+#: ClientCommand.cpp:1665
+msgctxt "listports|irc"
+msgid "yes, on {1}"
+msgstr "evet, {1}'de"
+
+#: ClientCommand.cpp:1667
+msgctxt "listports|web"
+msgid "no"
+msgstr "hayır"
+
+#: ClientCommand.cpp:1707
+msgid ""
+"Usage: AddPort <[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost [uriprefix]]"
+msgstr ""
+"Kullanımı: AddPort <[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost "
+"[uriprefix]]"
+
+#: ClientCommand.cpp:1723
+msgid "Port added"
+msgstr "Port eklendi"
+
+#: ClientCommand.cpp:1725
+msgid "Couldn't add port"
+msgstr "Port eklenemedi"
+
+#: ClientCommand.cpp:1731
+msgid "Usage: DelPort <port> <ipv4|ipv6|all> [bindhost]"
+msgstr "Kullanımı: DelPort <port> <ipv4|ipv6|all> [bindhost]"
+
+#: ClientCommand.cpp:1740
+msgid "Deleted Port"
+msgstr "Port Silindi"
+
+#: ClientCommand.cpp:1742
+msgid "Unable to find a matching port"
+msgstr "Eşleşen bir port bulunamıyor"
+
+#: ClientCommand.cpp:1750 ClientCommand.cpp:1765
+msgctxt "helpcmd"
+msgid "Command"
+msgstr "Komut"
+
+#: ClientCommand.cpp:1751 ClientCommand.cpp:1767
+msgctxt "helpcmd"
+msgid "Description"
+msgstr "Açıklama"
+
+#: ClientCommand.cpp:1756
+msgid ""
+"In the following list all occurrences of <#chan> support wildcards (* and ?) "
+"except ListNicks"
+msgstr ""
+"Aşağıdaki listede, ListNicks hariç tüm <#kanal> örnekleri joker karakterleri "
+"(* ve ?) destekler"
+
+#: ClientCommand.cpp:1773
+msgctxt "helpcmd|Version|desc"
+msgid "Print which version of ZNC this is"
+msgstr "ZNC'nin hangi sürümü olduğunu yazdırın"
+
+#: ClientCommand.cpp:1776
+msgctxt "helpcmd|ListMods|desc"
+msgid "List all loaded modules"
+msgstr "Yüklü tüm modülleri listele"
+
+#: ClientCommand.cpp:1779
+msgctxt "helpcmd|ListAvailMods|desc"
+msgid "List all available modules"
+msgstr "Mevcut tüm modülleri listele"
+
+#: ClientCommand.cpp:1783 ClientCommand.cpp:1974
+msgctxt "helpcmd|ListChans|desc"
+msgid "List all channels"
+msgstr "Tüm kanalları listele"
+
+#: ClientCommand.cpp:1786
+msgctxt "helpcmd|ListNicks|args"
+msgid "<#chan>"
+msgstr "<#kanal>"
+
+#: ClientCommand.cpp:1787
+msgctxt "helpcmd|ListNicks|desc"
+msgid "List all nicks on a channel"
+msgstr "Bir kanaldaki tüm nickleri listeleme"
+
+#: ClientCommand.cpp:1790
+msgctxt "helpcmd|ListClients|desc"
+msgid "List all clients connected to your ZNC user"
+msgstr "ZNC kullanıcınıza bağlı tüm istemcileri listeleyin"
+
+#: ClientCommand.cpp:1794
+msgctxt "helpcmd|ListServers|desc"
+msgid "List all servers of current IRC network"
+msgstr "Mevcut IRC ağının tüm sunucularını listele"
+
+#: ClientCommand.cpp:1798
+msgctxt "helpcmd|AddNetwork|args"
+msgid "<name>"
+msgstr "<adı>"
+
+#: ClientCommand.cpp:1799
+msgctxt "helpcmd|AddNetwork|desc"
+msgid "Add a network to your user"
+msgstr "Kullanıcınıza bir ağ ekleyin"
+
+#: ClientCommand.cpp:1801
+msgctxt "helpcmd|DelNetwork|args"
+msgid "<name>"
+msgstr "<adı>"
+
+#: ClientCommand.cpp:1802
+msgctxt "helpcmd|DelNetwork|desc"
+msgid "Delete a network from your user"
+msgstr "Kullanıcınızdan bir ağı silin"
+
+#: ClientCommand.cpp:1804
+msgctxt "helpcmd|ListNetworks|desc"
+msgid "List all networks"
+msgstr "Tüm ağları listele"
+
+#: ClientCommand.cpp:1807
+msgctxt "helpcmd|MoveNetwork|args"
+msgid "<old user> <old network> <new user> [new network]"
+msgstr "<eski kullanıcı> <eski ağ> <yeni kullanıcı> [yeni ağ]"
+
+#: ClientCommand.cpp:1809
+msgctxt "helpcmd|MoveNetwork|desc"
+msgid "Move an IRC network from one user to another"
+msgstr "IRC ağını bir kullanıcıdan diğerine taşıma"
+
+#: ClientCommand.cpp:1813
+msgctxt "helpcmd|JumpNetwork|args"
+msgid "<network>"
+msgstr "<ağ>"
+
+#: ClientCommand.cpp:1814
+msgctxt "helpcmd|JumpNetwork|desc"
+msgid ""
+"Jump to another network (Alternatively, you can connect to ZNC several "
+"times, using `user/network` as username)"
+msgstr ""
+"Başka bir ağa geçin (Alternatif olarak, kullanıcı adı olarak `user/network`ü "
+"kullanarak ZNC'ye birkaç kez bağlanabilirsiniz)"
+
+#: ClientCommand.cpp:1819
+msgctxt "helpcmd|AddServer|args"
+msgid "<host> [[+]port] [pass]"
+msgstr "<host> [[+]port] [şifre]"
+
+#: ClientCommand.cpp:1820
+msgctxt "helpcmd|AddServer|desc"
+msgid ""
+"Add a server to the list of alternate/backup servers of current IRC network."
+msgstr ""
+"Mevcut IRC ağının alternatif/yedek sunucuları listesine bir sunucu ekleyin."
+
+#: ClientCommand.cpp:1824
+msgctxt "helpcmd|DelServer|args"
+msgid "<host> [port] [pass]"
+msgstr "<host> [port] [şifre]"
+
+#: ClientCommand.cpp:1825
+msgctxt "helpcmd|DelServer|desc"
+msgid ""
+"Remove a server from the list of alternate/backup servers of current IRC "
+"network"
+msgstr ""
+"Mevcut IRC ağının alternatif/yedek sunucuları listesinden bir sunucuyu "
+"kaldırın"
+
+#: ClientCommand.cpp:1831
+msgctxt "helpcmd|AddTrustedServerFingerprint|args"
+msgid "<fi:ng:er>"
+msgstr "<pa:rm:ak:iz>"
+
+#: ClientCommand.cpp:1832
+msgctxt "helpcmd|AddTrustedServerFingerprint|desc"
+msgid ""
+"Add a trusted server SSL certificate fingerprint (SHA-256) to current IRC "
+"network."
+msgstr ""
+"Geçerli IRC ağına güvenilir bir sunucu SSL sertifikası parmak izi (SHA-256) "
+"ekleyin."
+
+#: ClientCommand.cpp:1837
+msgctxt "helpcmd|DelTrustedServerFingerprint|args"
+msgid "<fi:ng:er>"
+msgstr "<pa:rm:ak:iz>"
+
+#: ClientCommand.cpp:1838
+msgctxt "helpcmd|DelTrustedServerFingerprint|desc"
+msgid "Delete a trusted server SSL certificate from current IRC network."
+msgstr "Geçerli IRC ağından güvenilir bir sunucu SSL sertifikasını silin."
+
+#: ClientCommand.cpp:1842
+msgctxt "helpcmd|ListTrustedServerFingerprints|desc"
+msgid "List all trusted server SSL certificates of current IRC network."
+msgstr ""
+"Geçerli IRC ağının tüm güvenilir sunucu SSL sertifikalarını listeleyin."
+
+#: ClientCommand.cpp:1845
+msgctxt "helpcmd|EnableChan|args"
+msgid "<#chans>"
+msgstr "<#kanallar>"
+
+#: ClientCommand.cpp:1846
+msgctxt "helpcmd|EnableChan|desc"
+msgid "Enable channels"
+msgstr "Kanalları etkinleştir"
+
+#: ClientCommand.cpp:1847
+msgctxt "helpcmd|DisableChan|args"
+msgid "<#chans>"
+msgstr "<#kanallar>"
+
+#: ClientCommand.cpp:1848
+msgctxt "helpcmd|DisableChan|desc"
+msgid "Disable channels"
+msgstr "Kanalları pasifleştir"
+
+#: ClientCommand.cpp:1849
+msgctxt "helpcmd|MoveChan|args"
+msgid "<#chan> <index>"
+msgstr "<#kanal> <dizin>"
+
+#: ClientCommand.cpp:1850
+msgctxt "helpcmd|MoveChan|desc"
+msgid "Move channel in sort order"
+msgstr "Kanalı sıralama düzenine göre taşı"
+
+#: ClientCommand.cpp:1852
+msgctxt "helpcmd|SwapChans|args"
+msgid "<#chan1> <#chan2>"
+msgstr "<#kanal1> <#kanal2>"
+
+#: ClientCommand.cpp:1853
+msgctxt "helpcmd|SwapChans|desc"
+msgid "Swap channels in sort order"
+msgstr "Kanalları sıralama düzenine göre değiştirin"
+
+#: ClientCommand.cpp:1854
+msgctxt "helpcmd|Attach|args"
+msgid "<#chans>"
+msgstr "<#kanallar>"
+
+#: ClientCommand.cpp:1855
+msgctxt "helpcmd|Attach|desc"
+msgid "Attach to channels"
+msgstr "Kanallara ekle"
+
+#: ClientCommand.cpp:1856
+msgctxt "helpcmd|Detach|args"
+msgid "<#chans>"
+msgstr "<#kanallar>"
+
+#: ClientCommand.cpp:1857
+msgctxt "helpcmd|Detach|desc"
+msgid "Detach from channels"
+msgstr "Kanallardan ayır"
+
+#: ClientCommand.cpp:1860
+msgctxt "helpcmd|Topics|desc"
+msgid "Show topics in all your channels"
+msgstr "Başlıkları tüm kanallarınızda gösterin"
+
+#: ClientCommand.cpp:1863
+msgctxt "helpcmd|PlayBuffer|args"
+msgid "<#chan|query>"
+msgstr "<#kanal|sorgu>"
+
+#: ClientCommand.cpp:1864
+msgctxt "helpcmd|PlayBuffer|desc"
+msgid "Play back the specified buffer"
+msgstr "Belirtilen arabelleği oynat"
+
+#: ClientCommand.cpp:1866
+msgctxt "helpcmd|ClearBuffer|args"
+msgid "<#chan|query>"
+msgstr "<#kanal|sorgu>"
+
+#: ClientCommand.cpp:1867
+msgctxt "helpcmd|ClearBuffer|desc"
+msgid "Clear the specified buffer"
+msgstr "Belirtilen arabelleği temizle"
+
+#: ClientCommand.cpp:1869
+msgctxt "helpcmd|ClearAllBuffers|desc"
+msgid "Clear all channel and query buffers"
+msgstr "Tüm kanal ve sorgu arabelleklerini temizle"
+
+#: ClientCommand.cpp:1872
+msgctxt "helpcmd|ClearAllChannelBuffers|desc"
+msgid "Clear the channel buffers"
+msgstr "Kanal arabelleklerini temizle"
+
+#: ClientCommand.cpp:1876
+msgctxt "helpcmd|ClearAllQueryBuffers|desc"
+msgid "Clear the query buffers"
+msgstr "Sorgu arabelleklerini temizle"
+
+#: ClientCommand.cpp:1878
+msgctxt "helpcmd|SetBuffer|args"
+msgid "<#chan|query> [linecount]"
+msgstr "<#kanal|sorgu> [satırsayısı]"
+
+#: ClientCommand.cpp:1879
+msgctxt "helpcmd|SetBuffer|desc"
+msgid "Set the buffer count"
+msgstr "Arabellek sayısını ayarlayın"
+
+#: ClientCommand.cpp:1883
+msgctxt "helpcmd|SetBindHost|args"
+msgid "<host (IP preferred)>"
+msgstr "<host (tercihen IP)>"
+
+#: ClientCommand.cpp:1884
+msgctxt "helpcmd|SetBindHost|desc"
+msgid "Set the bind host for this network"
+msgstr "Bu ağ için bind hostu ayarlayın"
+
+#: ClientCommand.cpp:1888
+msgctxt "helpcmd|SetUserBindHost|args"
+msgid "<host (IP preferred)>"
+msgstr "<host (tercihen IP)>"
+
+#: ClientCommand.cpp:1889
+msgctxt "helpcmd|SetUserBindHost|desc"
+msgid "Set the default bind host for this user"
+msgstr "Bu kullanıcı için varsayılan bind hostu ayarlayın"
+
+#: ClientCommand.cpp:1892
+msgctxt "helpcmd|ClearBindHost|desc"
+msgid "Clear the bind host for this network"
+msgstr "Bu ağ için bind hostu temizleyin"
+
+#: ClientCommand.cpp:1895
+msgctxt "helpcmd|ClearUserBindHost|desc"
+msgid "Clear the default bind host for this user"
+msgstr "Bu kullanıcı için varsayılan bind hostu temizleyin"
+
+#: ClientCommand.cpp:1901
+msgctxt "helpcmd|ShowBindHost|desc"
+msgid "Show currently selected bind host"
+msgstr "Şu anda seçili bind hostu göster"
+
+#: ClientCommand.cpp:1903
+msgctxt "helpcmd|Jump|args"
+msgid "[server]"
+msgstr "[sunucu]"
+
+#: ClientCommand.cpp:1904
+msgctxt "helpcmd|Jump|desc"
+msgid "Jump to the next or the specified server"
+msgstr "Sonraki veya belirtilen sunucuya atla"
+
+#: ClientCommand.cpp:1905
+msgctxt "helpcmd|Disconnect|args"
+msgid "[message]"
+msgstr "[mesaj]"
+
+#: ClientCommand.cpp:1906
+msgctxt "helpcmd|Disconnect|desc"
+msgid "Disconnect from IRC"
+msgstr "IRC'den bağlantıyı kes"
+
+#: ClientCommand.cpp:1908
+msgctxt "helpcmd|Connect|desc"
+msgid "Reconnect to IRC"
+msgstr "IRC'ye yeniden bağlanın"
+
+#: ClientCommand.cpp:1911
+msgctxt "helpcmd|Uptime|desc"
+msgid "Show for how long ZNC has been running"
+msgstr "ZNC'nin ne kadar süredir çalıştığını göster"
+
+#: ClientCommand.cpp:1915
+msgctxt "helpcmd|LoadMod|args"
+msgid "[--type=global|user|network] <module> [args]"
+msgstr "[--type=global|user|network] <modül> [argümanlar]"
+
+#: ClientCommand.cpp:1917
+msgctxt "helpcmd|LoadMod|desc"
+msgid "Load a module"
+msgstr "Bir modül yükle"
+
+#: ClientCommand.cpp:1919
+msgctxt "helpcmd|UnloadMod|args"
+msgid "[--type=global|user|network] <module>"
+msgstr "[--type=global|user|network] <modül>"
+
+#: ClientCommand.cpp:1921
+msgctxt "helpcmd|UnloadMod|desc"
+msgid "Unload a module"
+msgstr "Bir modülü kaldır"
+
+#: ClientCommand.cpp:1923
+msgctxt "helpcmd|ReloadMod|args"
+msgid "[--type=global|user|network] <module> [args]"
+msgstr "[--type=global|user|network] <modül> [argümanlar]"
+
+#: ClientCommand.cpp:1925
+msgctxt "helpcmd|ReloadMod|desc"
+msgid "Reload a module"
+msgstr "Bir modülü tekrar yükle"
+
+#: ClientCommand.cpp:1928
+msgctxt "helpcmd|UpdateMod|args"
+msgid "<module>"
+msgstr "<modül>"
+
+#: ClientCommand.cpp:1929
+msgctxt "helpcmd|UpdateMod|desc"
+msgid "Reload a module everywhere"
+msgstr "Bir modülü her yere yeniden yükle"
+
+#: ClientCommand.cpp:1935
+msgctxt "helpcmd|ShowMOTD|desc"
+msgid "Show ZNC's message of the day"
+msgstr "ZNC'nin günün mesajını (MOTD) göster"
+
+#: ClientCommand.cpp:1939
+msgctxt "helpcmd|SetMOTD|args"
+msgid "<message>"
+msgstr "<mesaj>"
+
+#: ClientCommand.cpp:1940
+msgctxt "helpcmd|SetMOTD|desc"
+msgid "Set ZNC's message of the day"
+msgstr "ZNC'nin günün mesajını (MOTD) ayarla"
+
+#: ClientCommand.cpp:1942
+msgctxt "helpcmd|AddMOTD|args"
+msgid "<message>"
+msgstr "<mesaj>"
+
+#: ClientCommand.cpp:1943
+msgctxt "helpcmd|AddMOTD|desc"
+msgid "Append <message> to ZNC's MOTD"
+msgstr "ZNC'nin MOTD'una <mesaj> ekleyin"
+
+#: ClientCommand.cpp:1945
+msgctxt "helpcmd|ClearMOTD|desc"
+msgid "Clear ZNC's MOTD"
+msgstr "ZNC'nin MOTD'unu temizle"
+
+#: ClientCommand.cpp:1948
+msgctxt "helpcmd|ListPorts|desc"
+msgid "Show all active listeners"
+msgstr "Tüm aktif dinleyicileri göster"
+
+#: ClientCommand.cpp:1950
+msgctxt "helpcmd|AddPort|args"
+msgid "<[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost [uriprefix]]"
+msgstr "<[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost [uriprefix]]"
+
+#: ClientCommand.cpp:1953
+msgctxt "helpcmd|AddPort|desc"
+msgid "Add another port for ZNC to listen on"
+msgstr "ZNC'nin dinlemesi için başka bir port ekleyin"
+
+#: ClientCommand.cpp:1957
+msgctxt "helpcmd|DelPort|args"
+msgid "<port> <ipv4|ipv6|all> [bindhost]"
+msgstr "<port> <ipv4|ipv6|all> [bindhost]"
+
+#: ClientCommand.cpp:1958
+msgctxt "helpcmd|DelPort|desc"
+msgid "Remove a port from ZNC"
+msgstr "ZNC'den bir portu kaldırın"
+
+#: ClientCommand.cpp:1961
+msgctxt "helpcmd|Rehash|desc"
+msgid "Reload global settings, modules, and listeners from znc.conf"
+msgstr ""
+"Genel ayarları, modülleri ve dinleyicileri znc.conf'tan yeniden yükleyin"
+
+#: ClientCommand.cpp:1964
+msgctxt "helpcmd|SaveConfig|desc"
+msgid "Save the current settings to disk"
+msgstr "Geçerli ayarları diske kaydet"
+
+#: ClientCommand.cpp:1967
+msgctxt "helpcmd|ListUsers|desc"
+msgid "List all ZNC users and their connection status"
+msgstr "Tüm ZNC kullanıcılarını ve bağlantı durumlarını listeleyin"
+
+#: ClientCommand.cpp:1970
+msgctxt "helpcmd|ListAllUserNetworks|desc"
+msgid "List all ZNC users and their networks"
+msgstr "Tüm ZNC kullanıcılarını ve ağlarını listeleyin"
+
+#: ClientCommand.cpp:1973
+msgctxt "helpcmd|ListChans|args"
+msgid "[user <network>]"
+msgstr "[kullanıcı <ağ>]"
+
+#: ClientCommand.cpp:1976
+msgctxt "helpcmd|ListClients|args"
+msgid "[user]"
+msgstr "[kullanıcı]"
+
+#: ClientCommand.cpp:1977
+msgctxt "helpcmd|ListClients|desc"
+msgid "List all connected clients"
+msgstr "Bağlı tüm istemcileri listele"
+
+#: ClientCommand.cpp:1979
+msgctxt "helpcmd|Traffic|desc"
+msgid "Show basic traffic stats for all ZNC users"
+msgstr "Tüm ZNC kullanıcıları için temel trafik istatistiklerini göster"
+
+#: ClientCommand.cpp:1981
+msgctxt "helpcmd|Broadcast|args"
+msgid "[message]"
+msgstr "[mesaj]"
+
+#: ClientCommand.cpp:1982
+msgctxt "helpcmd|Broadcast|desc"
+msgid "Broadcast a message to all ZNC users"
+msgstr "Tüm ZNC kullanıcılarına bir mesaj yayınlayın"
+
+#: ClientCommand.cpp:1985
+msgctxt "helpcmd|Shutdown|args"
+msgid "[message]"
+msgstr "[mesaj]"
+
+#: ClientCommand.cpp:1986
+msgctxt "helpcmd|Shutdown|desc"
+msgid "Shut down ZNC completely"
+msgstr "ZNC'yi tamamen kapatın"
+
+#: ClientCommand.cpp:1987
+msgctxt "helpcmd|Restart|args"
+msgid "[message]"
+msgstr "[mesaj]"
+
+#: ClientCommand.cpp:1988
+msgctxt "helpcmd|Restart|desc"
+msgid "Restart ZNC"
+msgstr "ZNC'yi yeniden başlatın"
+
+#: Socket.cpp:336
+msgid "Can't resolve server hostname"
+msgstr "Sunucu hostname çözülemiyor"
+
+#: Socket.cpp:343
+msgid ""
+"Can't resolve bind hostname. Try /znc ClearBindHost and /znc "
+"ClearUserBindHost"
+msgstr ""
+"Bind Hostname çözülemiyor. /znc ClearBindHost ve /znc ClearUserBindHost'u "
+"deneyin"
+
+#: Socket.cpp:348
+msgid "Server address is IPv4-only, but bindhost is IPv6-only"
+msgstr "Sunucu adresi yalnızca IPv4'tür, ancak bind host yalnızca IPv6'dır"
+
+#: Socket.cpp:357
+msgid "Server address is IPv6-only, but bindhost is IPv4-only"
+msgstr "Sunucu adresi yalnızca IPv6'dır, ancak bind host yalnızca IPv4'tür"
+
+#: Socket.cpp:515
+msgid "Some socket reached its max buffer limit and was closed!"
+msgstr "Bazı soketler maksimum arabellek sınırına ulaştı ve kapatıldı!"
+
+#: SSLVerifyHost.cpp:481
+msgid "hostname doesn't match"
+msgstr "hostname eşleşmiyor"
+
+#: SSLVerifyHost.cpp:485
+msgid "malformed hostname in certificate"
+msgstr "sertifikada hatalı biçimlendirilmiş hostname"
+
+#: SSLVerifyHost.cpp:489
+msgid "hostname verification error"
+msgstr "hostname doğrulama hatası"
+
+#: User.cpp:519
+msgid ""
+"Invalid network name. It should be alphanumeric. Not to be confused with "
+"server name"
+msgstr ""
+"Geçersiz ağ adı. Alfasayısal olmalıdır. Sunucu adıyla karıştırılmamalıdır"
+
+#: User.cpp:523
+msgid "Network {1} already exists"
+msgstr "{1} ağı zaten mevcut"
+
+#: User.cpp:789
+msgid ""
+"You are being disconnected because your IP is no longer allowed to connect "
+"to this user"
+msgstr ""
+"IP'nizin artık bu kullanıcıya bağlanmasına izin verilmediğinden bağlantınız "
+"kesiliyor"
+
+#: User.cpp:929
+msgid "Password is empty"
+msgstr "Şifre boş"
+
+#: User.cpp:934
+msgid "Username is empty"
+msgstr "Kullanıcı adı boş"
+
+#: User.cpp:939
+msgid "Username is invalid"
+msgstr "Kullanıcı adı geçersiz"
+
+#: User.cpp:1214
+msgid "Unable to find modinfo {1}: {2}"
+msgstr "{1} modülü yüklenemiyor: {2}"
