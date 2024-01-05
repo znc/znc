@@ -162,6 +162,8 @@ class CIRCSock : public CIRCSocket {
     bool IsCapAccepted(const CString& sCap) {
         return 1 == m_ssAcceptedCaps.count(sCap);
     }
+    CString GetCapLsValue(const CString& sKey,
+                          const CString& sDefault = "") const;
     const MCString& GetISupport() const { return m_mISupport; }
     CString GetISupport(const CString& sKey,
                         const CString& sDefault = "") const;
@@ -223,6 +225,7 @@ class CIRCSock : public CIRCSocket {
     unsigned int m_uCapPaused;
     SCString m_ssAcceptedCaps;
     SCString m_ssPendingCaps;
+    MCString m_msCapLsValues;
     time_t m_lastCTCP;
     unsigned int m_uNumCTCP;
     static const time_t m_uCTCPFloodTime;

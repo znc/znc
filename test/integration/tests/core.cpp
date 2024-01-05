@@ -534,6 +534,117 @@ TEST_F(ZNCTest, CAP302LSValue) {
     client2.ReadUntil("testcap=");
 }
 
+TEST_F(ZNCTest, ServerDependentCapInModule) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    InstallModule("testmod.cpp", R"(
+        #include <znc/Modules.h>
+        #include <znc/Client.h>
+        #include <znc/IRCNetwork.h>
+        #include <znc/IRCSock.h>
+        class TestModule : public CModule {
+          public:
+            MODCONSTRUCTOR(TestModule) {}
+            void OnClientCapLs(CClient* pClient, SCString& ssCaps) override {
+                if (GetNetwork() && GetNetwork()->IsServerCapAccepted("testcap")) {
+                    if (pClient->HasCap302()) {
+                        CString sValue = GetNetwork()->GetIRCSock()->GetCapLsValue("testcap");
+                        if (!sValue.empty()) {
+                            ssCaps.insert("testcap=" + sValue);
+                        } else {
+                            ssCaps.insert("testcap");
+                        }
+                    } else {
+                        ssCaps.insert("testcap");
+                    }
+                }
+            }
+            bool IsClientCapSupported(CClient* pClient, const CString& sCap,
+                                      bool bState) override {
+                if (!bState) return false;
+                if (sCap != "testcap") return false;
+                return GetNetwork() && GetNetwork()->IsServerCapAccepted("testcap");
+            }
+            void OnClientCapRequest(CClient* pClient, const CString& sCap,
+                                    bool bState) override {
+                PutModule("OnClientCapRequest " + sCap + " " + CString(bState));
+            }
+            bool OnServerCap302Available(const CString& sCap, const CString& sValue) override {
+                PutModule("OnServerCapAvailable " + sCap + " " + sValue);
+                return sCap == "testcap";
+            }
+            void OnServerCapResult(const CString& sCap, bool bSuccess) override {
+                if (sCap == "testcap") {
+                    GetNetwork()->NotifyClientsAboutServerDependentCap("testcap", bSuccess, [=](CClient* pClient, bool bState) {
+                        PutModule("OnServerCapResult " + sCap + " " + CString(bSuccess) + " " + CString(bState));
+                    });
+                }
+            }
+            void OnIRCConnected() override {
+                if (GetNetwork()->IsServerCapAccepted("testcap")) {
+                    GetNetwork()->NotifyClientsAboutServerDependentCap("testcap", true, [=](CClient* pClient, bool bState) {
+                        PutModule("OnIRCConnected " + CString(bState));
+                    });
+                }
+            }
+            void OnIRCDisconnected() override {
+                GetNetwork()->NotifyClientsAboutServerDependentCap("testcap", false, [=](CClient* pClient, bool bState) {
+                    PutModule("OnIRCDisconnected " + CString(bState));
+                });
+            }
+            ~TestModule() override {
+                // TODO user module
+                GetNetwork()->NotifyClientsAboutServerDependentCap("testcap", false, [=](CClient* pClient, bool bState) {
+                    PutModule("~ " + CString(bState));
+                });
+            }
+        };
+        MODULEDEFS(TestModule, "Test")
+    )");
+    client.Write("znc loadmod testmod");
+    client.ReadUntil("Loaded module testmod");
+    client.Close();
+
+    client = ConnectClient();
+    client.Write("CAP LS 302");
+    client.Write("PASS :hunter2");
+    client.Write("NICK nick");
+    client.Write("USER user x x :x");
+    client.Write("CAP END");
+    client.ReadUntil("Welcome");
+
+    ircd.Write("001 nick Welcome");
+    ircd.Write("CAP nick NEW testcap=value");
+    ircd.ReadUntil("CAP REQ :testcap");
+    ircd.Write("CAP nick ACK :testcap");
+    client.ReadUntil("CAP nick NEW :testcap=value");
+    client.Write("CAP REQ testcap");
+    client.ReadUntil("CAP nick ACK :testcap");
+
+	client.Write("CAP LS");
+	client.ReadUntil(" testcap=value ");
+
+	ircd.Write("CAP nick DEL testcap");
+	client.ReadUntil("CAP nick DEL :testcap");
+	client.ReadUntil(":OnServerCapResult testcap false false");
+
+	ircd.Close();
+	ircd = ConnectIRCd();
+	ircd.ReadUntil("CAP LS 302");
+	ircd.Write("CAP nick LS :testcap=new");
+	ircd.ReadUntil("CAP REQ :testcap");
+    ircd.Write("CAP nick ACK :testcap");
+	ircd.ReadUntil("CAP END");
+	// TODO should NEW wait until 001?
+	// TODO combine multiple NEWs to single line
+	client.ReadUntil("CAP nick NEW :testcap=new");
+	ircd.ReadUntil("001 nick Welcome");
+    client.ReadUntil("Welcome2");
+	// TODO NEW with new value without DEL
+    // TODO client.Write("jumpnetwork");
+}
+
 TEST_F(ZNCTest, HashUpgrade) {
     QFile conf(m_dir.path() + "/configs/znc.conf");
     ASSERT_TRUE(conf.open(QIODevice::Append | QIODevice::Text));

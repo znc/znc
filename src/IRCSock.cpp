@@ -398,7 +398,7 @@ bool CIRCSock::OnCapabilityMessage(CMessage& Message) {
         m_ssAcceptedCaps.erase(sCap);
         m_ssPendingCaps.erase(sCap);
         if (m_bAuthed) {
-            m_pNetwork->NotifyServerDependentCap(sCap, false);
+            m_pNetwork->PotentiallyNotifyServerDependentCap(sCap, false);
         }
     };
 
@@ -415,6 +415,7 @@ bool CIRCSock::OnCapabilityMessage(CMessage& Message) {
                 sCap = sToken.substr(0, eq);
                 sValue = sToken.substr(eq + 1);
             }
+            m_msCapLsValues[sCap] = sValue;
             if (OnServerCapAvailable(sCap, sValue) || mSupportedCaps.count(sCap)) {
                 m_ssPendingCaps.insert(sCap);
             }
@@ -428,7 +429,7 @@ bool CIRCSock::OnCapabilityMessage(CMessage& Message) {
         }
         m_ssAcceptedCaps.insert(sArgs);
         if (m_bAuthed) {
-            m_pNetwork->NotifyServerDependentCap(sArgs, true);
+            m_pNetwork->PotentiallyNotifyServerDependentCap(sArgs, true);
         }
     } else if (sSubCmd == "NAK") {
         // This should work because there's no [known]
@@ -441,6 +442,7 @@ bool CIRCSock::OnCapabilityMessage(CMessage& Message) {
 
         for (const CString& sCap : vsTokens) {
             RemoveCap(sCap);
+            m_msCapLsValues.erase(sCap);
         }
     }
 
@@ -1442,6 +1444,16 @@ CString CIRCSock::GetISupport(const CString& sKey,
                               const CString& sDefault) const {
     MCString::const_iterator i = m_mISupport.find(sKey.AsUpper());
     if (i == m_mISupport.end()) {
+        return sDefault;
+    } else {
+        return i->second;
+    }
+}
+
+CString CIRCSock::GetCapLsValue(const CString& sKey,
+                                const CString& sDefault) const {
+    MCString::const_iterator i = m_msCapLsValues.find(sKey);
+    if (i == m_msCapLsValues.end()) {
         return sDefault;
     } else {
         return i->second;

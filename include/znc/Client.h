@@ -227,7 +227,11 @@ class CClient : public CIRCSocket {
 
     /** Notifies client about one specific cap which server has just notified us about.
      */
-    void NotifyServerDependentCap(const CString& sCap, bool bValue);
+    void NotifyServerDependentCap(const CString& sCap, bool bValue, const CString& sValue,
+            const std::function<void(CClient*, bool)>& handler);
+    /** Notifies client if the cap is server-dependent, otherwise noop.
+     */
+    void PotentiallyNotifyServerDependentCap(const CString& sCap, bool bValue, const CString& sValue);
     /** Notifies client that all these caps are now available.
      *
      * This function will internally filter only those which are server-dependent.

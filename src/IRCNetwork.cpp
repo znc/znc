@@ -1417,10 +1417,22 @@ void CIRCNetwork::IRCDisconnected() {
     CheckIRCConnect();
 }
 
-void CIRCNetwork::NotifyServerDependentCap(const CString& sCap, bool bValue) {
+void CIRCNetwork::PotentiallyNotifyServerDependentCap(const CString& sCap, bool bValue) {
+    CString sValue = GetIRCSock() ? GetIRCSock()->GetCapLsValue(sCap) : "";
     for (CClient* pClient : m_vClients) {
-        pClient->NotifyServerDependentCap(sCap, bValue);
+        pClient->PotentiallyNotifyServerDependentCap(sCap, bValue, sValue);
     }
+}
+
+void CIRCNetwork::NotifyClientsAboutServerDependentCap(const CString& sCap, bool bValue, const std::function<void(CClient*, bool)>& handler) {
+    CString sValue = GetIRCSock() ? GetIRCSock()->GetCapLsValue(sCap) : "";
+    for (CClient* pClient : m_vClients) {
+        pClient->NotifyServerDependentCap(sCap, bValue, sValue, handler);
+    }
+}
+
+bool CIRCNetwork::IsServerCapAccepted(const CString& sCap) const {
+    return m_pIRCSock && m_pIRCSock->IsCapAccepted(sCap);
 }
 
 void CIRCNetwork::SetIRCConnectEnabled(bool b) {

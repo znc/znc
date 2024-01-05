@@ -790,7 +790,7 @@ void CClient::HandleCap(const CMessage& Message) {
     CString sSubCmd = Message.GetParam(0);
 
     if (sSubCmd.Equals("LS")) {
-        m_uCapVersion = Message.GetParam(1).ToInt();
+        m_uCapVersion = std::max(m_uCapVersion, Message.GetParam(1).ToUShort());
         SCString ssOfferCaps;
         for (const auto& it : CoreCaps()) {
             bool bServerDependent = std::get<0>(it.second);
@@ -798,7 +798,7 @@ void CClient::HandleCap(const CMessage& Message) {
                 m_ssServerDependentCaps.count(it.first) > 0)
                 ssOfferCaps.insert(it.first);
         }
-        GLOBALMODULECALL(OnClientCapLs(this, ssOfferCaps), NOTHING);
+        NETWORKMODULECALL(OnClientCapLs(this, ssOfferCaps), GetUser(), GetNetwork(), this, NOTHING);
         VCString vsCaps = MultiLine(ssOfferCaps);
         m_bInCap = true;
         if (HasCap302()) {
@@ -830,13 +830,13 @@ void CClient::HandleCap(const CMessage& Message) {
             if (sCap.TrimPrefix("-")) bVal = false;
 
             bool bAccepted = false;
-            const auto& it = CoreCaps().find(sCap);
+            auto it = CoreCaps().find(sCap);
             if (CoreCaps().end() != it) {
                 bool bServerDependent = std::get<0>(it->second);
                 bAccepted = !bServerDependent ||
                             m_ssServerDependentCaps.count(sCap) > 0;
             }
-            GLOBALMODULECALL(IsClientCapSupported(this, sCap, bVal),
+            NETWORKMODULECALL(IsClientCapSupported(this, sCap, bVal), GetUser(), GetNetwork(), this,
                              &bAccepted);
 
             if (!bAccepted) {
@@ -857,7 +857,7 @@ void CClient::HandleCap(const CMessage& Message) {
                 const auto& handler = std::get<1>(handler_it->second);
                 handler(this, bVal);
             }
-            GLOBALMODULECALL(OnClientCapRequest(this, sCap, bVal), NOTHING);
+            NETWORKMODULECALL(OnClientCapRequest(this, sCap, bVal), GetUser(), GetNetwork(), this, NOTHING);
 
             if (bVal) {
                 m_ssAcceptedCaps.insert(sCap);
@@ -936,8 +936,38 @@ void CClient::SetTagSupport(const CString& sTag, bool bState) {
     }
 }
 
-void CClient::NotifyServerDependentCap(const CString& sCap, bool bValue) {
+void CClient::NotifyServerDependentCap(const CString& sCap, bool bValue, const CString& sValue,
+        const std::function<void(CClient*, bool)>& handler) {
+    if (bValue) {
+        if (HasCapNotify()) {
+            if (HasCap302() && !sValue.empty()) {
+                PutClient(":irc.znc.in CAP " + GetNick() + " NEW :" + sCap + "=" + sValue);
+            } else {
+                PutClient(":irc.znc.in CAP " + GetNick() + " NEW :" + sCap);
+            }
+        }
+    } else {
+        if (HasCapNotify()) {
+            PutClient(":irc.znc.in CAP " + GetNick() + " DEL :" + sCap);
+        }
+        handler(this, false);
+        m_ssAcceptedCaps.erase(sCap);
+    }
+}
+
+void CClient::PotentiallyNotifyServerDependentCap(const CString& sCap, bool bValue, const CString& sValue) {
     auto it = CoreCaps().find(sCap);
+    if (CoreCaps().end() != it) {
+        const auto& [bServerDependent, handler] = it->second;
+        if (bServerDependent) {
+            NotifyServerDependentCap(sCap, bValue, sValue, handler);
+        }
+    }
+    if (!bValue) {
+        m_ssServerDependentCaps.erase(sCap);
+    }
+    return;
+
     if (bValue) {
         if (CoreCaps().end() != it) {
             bool bServerDependent = std::get<0>(it->second);
