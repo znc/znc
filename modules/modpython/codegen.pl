@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-# Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2024 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ open my $out, ">", $ARGV[1] or die;
 
 print $out <<'EOF';
 /*
- * Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2024 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,30 +50,7 @@ print $out <<'EOF';
  ***************************************************************************/
 
 namespace {
-/*	template<class T>
-	struct pyobj_to_ptr {
-		CString m_sType;
-		SvToPtr(const CString& sType) {
-			m_sType = sType;
-		}
-		bool operator()(PyObject* py, T** result) {
-			T* x = nullptr;
-			int res = SWIG_ConvertPtr(sv, (void**)&x, SWIG_TypeQuery(m_sType.c_str()), 0);
-			if (SWIG_IsOK(res)) {
-				*result = x;
-				return true;
-			}
-			DEBUG("modpython: ");
-			return false;
-		}
-	};
-
-	CModule::EModRet SvToEModRet(PyObject* py, CModule::EModRet* result) {
-		long int x = PyLong_AsLong();
-		return static_cast<CModule::EModRet>(SvUV(sv));
-	}*/
-
-	inline swig_type_info* SWIG_pchar_descriptor(void) {
+	inline swig_type_info* ZNC_SWIG_pchar_descriptor(void) {
 		static int init = 0;
 		static swig_type_info* info = 0;
 		if (!init) {
@@ -83,7 +60,71 @@ namespace {
 		return info;
 	}
 
-	inline int SWIG_AsCharPtrAndSize(PyObject *obj, char** cptr, size_t* psize, int *alloc) {
+// SWIG 4.2.0 replaced SWIG_Python_str_AsChar with SWIG_PyUnicode_AsUTF8AndSize.
+// SWIG doesn't provide any good way to detect SWIG version (other than parsing
+// `swig -version`), but it also introduced SWIG_NULLPTR in 4.2.0.
+// So let's abuse that define to do different code for new SWIG.
+#ifdef SWIG_NULLPTR
+	// This is copied/adapted from SWIG 4.2.0 from pystrings.swg
+	inline int ZNC_SWIG_AsCharPtrAndSize(PyObject *obj, char** cptr, size_t* psize, int *alloc) {
+#if PY_VERSION_HEX>=0x03000000
+#if defined(SWIG_PYTHON_STRICT_BYTE_CHAR)
+		if (PyBytes_Check(obj))
+#else
+		if (PyUnicode_Check(obj))
+#endif
+#else
+		if (PyString_Check(obj))
+#endif
+		{
+			char *cstr; Py_ssize_t len;
+			PyObject *bytes = NULL;
+			int ret = SWIG_OK;
+			if (alloc)
+				*alloc = SWIG_OLDOBJ;
+#if PY_VERSION_HEX>=0x03000000 && defined(SWIG_PYTHON_STRICT_BYTE_CHAR)
+			if (PyBytes_AsStringAndSize(obj, &cstr, &len) == -1)
+				return SWIG_TypeError;
+#else
+			cstr = (char *)SWIG_PyUnicode_AsUTF8AndSize(obj, &len, &bytes);
+			if (!cstr)
+				return SWIG_TypeError;
+			/* The returned string is only duplicated if the char * returned is not owned and memory managed by obj */
+			if (bytes && cptr) {
+				if (alloc) {
+					//cstr = %new_copy_array(cstr, len + 1, char);
+					cstr = (char *)memcpy((char *)malloc((len + 1)*sizeof(char)), cstr, sizeof(char)*(len + 1));
+					*alloc = SWIG_NEWOBJ;
+				} else {
+					/* alloc must be set in order to clean up allocated memory */
+					return SWIG_RuntimeError;
+				}
+			}
+#endif
+			if (cptr) *cptr = cstr;
+			if (psize) *psize = len + 1;
+			Py_XDECREF(bytes);
+			return ret;
+		} else {
+			swig_type_info* pchar_descriptor = ZNC_SWIG_pchar_descriptor();
+			if (pchar_descriptor) {
+				void* vptr = 0;
+				if (SWIG_ConvertPtr(obj, &vptr, pchar_descriptor, 0) == SWIG_OK) {
+					if (cptr) *cptr = (char *) vptr;
+					if (psize) *psize = vptr ? (strlen((char *)vptr) + 1) : 0;
+					if (alloc) *alloc = SWIG_OLDOBJ;
+					return SWIG_OK;
+				}
+			}
+		}
+		return SWIG_TypeError;
+	}
+
+#else
+	// TODO: at some point drop support for SWIG<4.2.0 (drop this branch of ifdef)
+
+	// This is copied from some old SWIG version from pystrings.swg
+	inline int ZNC_SWIG_AsCharPtrAndSize(PyObject *obj, char** cptr, size_t* psize, int *alloc) {
 #if PY_VERSION_HEX>=0x03000000
 		if (PyUnicode_Check(obj))
 #else
@@ -142,7 +183,7 @@ namespace {
 #endif
 				return SWIG_OK;
 			} else {
-				swig_type_info* pchar_descriptor = SWIG_pchar_descriptor();
+				swig_type_info* pchar_descriptor = ZNC_SWIG_pchar_descriptor();
 				if (pchar_descriptor) {
 					void* vptr = 0;
 					if (SWIG_ConvertPtr(obj, &vptr, pchar_descriptor, 0) == SWIG_OK) {
@@ -155,10 +196,11 @@ namespace {
 			}
 		return SWIG_TypeError;
 	}
+#endif
 
-	inline int SWIG_AsPtr_CString (PyObject * obj, CString **val) {
+	inline int ZNC_SWIG_AsPtr_CString (PyObject * obj, CString **val) {
 		char* buf = 0 ; size_t size = 0; int alloc = SWIG_OLDOBJ;
-		if (SWIG_IsOK((SWIG_AsCharPtrAndSize(obj, &buf, &size, &alloc)))) {
+		if (SWIG_IsOK((ZNC_SWIG_AsCharPtrAndSize(obj, &buf, &size, &alloc)))) {
 			if (buf) {
 				if (val) *val = new CString(buf, size - 1);
 				if (alloc == SWIG_NEWOBJ) delete[] buf;
@@ -389,7 +431,7 @@ while (<$in>) {
 			}
 			when ('CString') {
 				say $out "\t\tCString* p = nullptr;";
-				say $out "\t\tint res = SWIG_AsPtr_CString(pyRes, &p);";
+				say $out "\t\tint res = ZNC_SWIG_AsPtr_CString(pyRes, &p);";
 				say $out "\t\tif (!SWIG_IsOK(res)) {";
 				say $out "\t\t\tDEBUG(\"modpython: \" << (GetUser() ? GetUser()->GetUsername() : CString(\"<no user>\")) << \"/\" << GetModName() << \"/$name was expected to return '$type' but error=\" << res);";
 				say $out "\t\t\tresult = $default;";
