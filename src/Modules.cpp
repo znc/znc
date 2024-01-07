@@ -997,6 +997,8 @@ CModule::EModRet CModule::OnSendToIRC(CString& sLine) { return CONTINUE; }
 CModule::EModRet CModule::OnSendToIRCMessage(CMessage& Message) {
     return CONTINUE;
 }
+void CModule::OnClientAttached() {}
+void CModule::OnClientDetached() {}
 
 bool CModule::OnServerCapAvailable(const CString& sCap) { return false; }
 bool CModule::OnServerCap302Available(const CString& sCap, const CString& sValue) {
@@ -1490,6 +1492,14 @@ bool CModules::OnModNotice(const CString& sMessage) {
 }
 bool CModules::OnModCTCP(const CString& sMessage) {
     MODUNLOADCHK(OnModCTCP(sMessage));
+    return false;
+}
+bool CModules::OnClientAttached() {
+    MODUNLOADCHK(OnClientAttached());
+    return false;
+}
+bool CModules::OnClientDetached() {
+    MODUNLOADCHK(OnClientDetached());
     return false;
 }
 

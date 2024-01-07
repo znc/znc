@@ -585,13 +585,17 @@ TEST_F(ZNCTest, ServerDependentCapInModule) {
             }
             void OnServerCapResult(const CString& sCap, bool bSuccess) override {
                 if (sCap == "testcap") {
-                    GetNetwork()->NotifyClientsAboutServerDependentCap("testcap", bSuccess, [=](CClient* pClient, bool bState) {
-                        PutModule("OnServerCapResult " + sCap + " " + CString(bSuccess) + " " + CString(bState));
-                    });
+                    PutModule("OnServerCapResult " + sCap + " " + CString(bSuccess));
+                    if (GetNetwork()->GetIRCSock()->IsAuthed()) {
+                        GetNetwork()->NotifyClientsAboutServerDependentCap("testcap", bSuccess, [=](CClient* pClient, bool bState) {
+                            PutModule("OnServerCapResult " + sCap + " " + CString(bSuccess) + " " + CString(bState));
+                        });
+                    }
                 }
             }
             void OnIRCConnected() override {
                 if (GetNetwork()->IsServerCapAccepted("testcap")) {
+                    PutModule("OnIRCConnected");
                     GetNetwork()->NotifyClientsAboutServerDependentCap("testcap", true, [=](CClient* pClient, bool bState) {
                         PutModule("OnIRCConnected " + CString(bState));
                     });
@@ -601,6 +605,14 @@ TEST_F(ZNCTest, ServerDependentCapInModule) {
                 GetNetwork()->NotifyClientsAboutServerDependentCap("testcap", false, [=](CClient* pClient, bool bState) {
                     PutModule("OnIRCDisconnected " + CString(bState));
                 });
+            }
+            void OnClientAttached() override {
+                if (GetNetwork()->IsServerCapAccepted("testcap")) {
+                    GetClient()->NotifyServerDependentCap("testcap", true, GetNetwork()->GetIRCSock()->GetCapLsValue("testcap"), nullptr);
+                }
+            }
+            void OnClientDetached() override {
+                GetClient()->NotifyServerDependentCap("testcap", false, "", [](CClient*, bool) {});
             }
             ~TestModule() override {
                 // TODO user module
@@ -646,10 +658,11 @@ TEST_F(ZNCTest, ServerDependentCapInModule) {
     ircd.ReadUntil("CAP REQ :testcap");
     ircd.Write("CAP nick ACK :testcap");
     ircd.ReadUntil("CAP END");
-    // TODO should NEW wait until 001?
+    // NEW waits until 001
+    ASSERT_THAT(ircd.ReadRemainder().toStdString(), Not(HasSubstr("testcap")));
+    ircd.Write("001 nick Welcome");
     // TODO combine multiple NEWs to single line
     client.ReadUntil("CAP nick NEW :testcap=new");
-    ircd.Write("001 nick Welcome");
     client.ReadUntil("Welcome");
 
     // NEW with new value without DEL
@@ -657,7 +670,10 @@ TEST_F(ZNCTest, ServerDependentCapInModule) {
     client.ReadUntil("CAP nick NEW :testcap=another");
 
     client.Write("znc jumpnetwork net2");
-    client.ReadUntil("AAAAA");
+    client.ReadUntil("CAP nick DEL :testcap");
+
+    client.Write("znc jumpnetwork test");
+    client.ReadUntil("CAP nick NEW :testcap=another");
 }
 
 TEST_F(ZNCTest, HashUpgrade) {

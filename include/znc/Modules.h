@@ -1292,6 +1292,10 @@ class CModule {
     virtual EModRet OnUnknownUserRaw(CClient* pClient, CString& sLine);
     virtual EModRet OnUnknownUserRawMessage(CMessage& Message);
 
+    /** Called after login, upon disconnect, and also during JumpNetwork. */
+    virtual void OnClientAttached();
+    virtual void OnClientDetached();
+
     /** Called when a client told us CAP LS. Use ssCaps.insert("cap-name")
      *  for announcing capabilities which your module supports.
      *  @param pClient The client which requested the list.
@@ -1550,6 +1554,8 @@ class CModules : public std::vector<CModule*>, private CCoreTranslationMixin {
     bool OnSendToClientMessage(CMessage& Message);
     bool OnSendToIRC(CString& sLine);
     bool OnSendToIRCMessage(CMessage& Message);
+    bool OnClientAttached();
+    bool OnClientDetached();
 
     bool OnServerCapAvailable(const CString& sCap, const CString& sValue);
     bool OnServerCapResult(const CString& sCap, bool bSuccess);

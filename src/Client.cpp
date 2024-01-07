@@ -271,6 +271,7 @@ void CClient::SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect,
         m_pNetwork->ClientDisconnected(this);
 
         if (bDisconnect) {
+            NETWORKMODULECALL(OnClientDetached(), m_pUser, m_pNetwork, this, NOTHING);
             ClearServerDependentCaps();
             // Tell the client they are no longer in these channels.
             const vector<CChan*>& vChans = m_pNetwork->GetChans();
@@ -293,6 +294,7 @@ void CClient::SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect,
         } else if (m_pUser) {
             m_pUser->UserConnected(this);
         }
+        NETWORKMODULECALL(OnClientAttached(), m_pUser, m_pNetwork, this, NOTHING);
     }
 }
 
