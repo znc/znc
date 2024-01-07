@@ -48,6 +48,14 @@ void WriteConfig(QString path) {
     p.ReadUntil("Launch ZNC now?");         p.Write("no");
     p.ShouldFinishItself();
     // clang-format on
+
+    // Default 30s is too slow for the test
+    QFile conf(path + "/configs/znc.conf");
+    ASSERT_TRUE(conf.open(QIODevice::Append | QIODevice::Text));
+    QTextStream out(&conf);
+    out << R"(
+        ServerThrottle = 5
+    )";
 }
 
 void ZNCTest::SetUp() {
