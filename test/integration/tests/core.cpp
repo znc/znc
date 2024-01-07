@@ -572,7 +572,16 @@ TEST_F(ZNCTest, ServerDependentCapInModule) {
             }
             bool OnServerCap302Available(const CString& sCap, const CString& sValue) override {
                 PutModule("OnServerCapAvailable " + sCap + " " + sValue);
-                return sCap == "testcap";
+                if (sCap == "testcap") {
+                    if (GetNetwork()->IsServerCapAccepted("testcap")) {
+                        // This can happen when server sent CAP NEW with another value.
+                        for (CClient* pClient : GetNetwork()->GetClients()) {
+                            pClient->NotifyServerDependentCap("testcap", true, sValue, nullptr);
+                        }
+                    }
+                    return true;
+                }
+                return false;
             }
             void OnServerCapResult(const CString& sCap, bool bSuccess) override {
                 if (sCap == "testcap") {
@@ -604,6 +613,7 @@ TEST_F(ZNCTest, ServerDependentCapInModule) {
     )");
     client.Write("znc loadmod testmod");
     client.ReadUntil("Loaded module testmod");
+    client.Write("znc addnetwork net2");
     client.Close();
 
     client = ConnectClient();
@@ -622,27 +632,32 @@ TEST_F(ZNCTest, ServerDependentCapInModule) {
     client.Write("CAP REQ testcap");
     client.ReadUntil("CAP nick ACK :testcap");
 
-	client.Write("CAP LS");
-	client.ReadUntil(" testcap=value ");
+    client.Write("CAP LS");
+    client.ReadUntil(" testcap=value ");
 
-	ircd.Write("CAP nick DEL testcap");
-	client.ReadUntil("CAP nick DEL :testcap");
-	client.ReadUntil(":OnServerCapResult testcap false false");
+    ircd.Write("CAP nick DEL testcap");
+    client.ReadUntil("CAP nick DEL :testcap");
+    client.ReadUntil(":OnServerCapResult testcap false false");
 
-	ircd.Close();
-	ircd = ConnectIRCd();
-	ircd.ReadUntil("CAP LS 302");
-	ircd.Write("CAP nick LS :testcap=new");
-	ircd.ReadUntil("CAP REQ :testcap");
+    ircd.Close();
+    ircd = ConnectIRCd();
+    ircd.ReadUntil("CAP LS 302");
+    ircd.Write("CAP nick LS :testcap=new");
+    ircd.ReadUntil("CAP REQ :testcap");
     ircd.Write("CAP nick ACK :testcap");
-	ircd.ReadUntil("CAP END");
-	// TODO should NEW wait until 001?
-	// TODO combine multiple NEWs to single line
-	client.ReadUntil("CAP nick NEW :testcap=new");
-	ircd.ReadUntil("001 nick Welcome");
-    client.ReadUntil("Welcome2");
-	// TODO NEW with new value without DEL
-    // TODO client.Write("jumpnetwork");
+    ircd.ReadUntil("CAP END");
+    // TODO should NEW wait until 001?
+    // TODO combine multiple NEWs to single line
+    client.ReadUntil("CAP nick NEW :testcap=new");
+    ircd.Write("001 nick Welcome");
+    client.ReadUntil("Welcome");
+
+    // NEW with new value without DEL
+    ircd.Write("CAP nick NEW testcap=another");
+    client.ReadUntil("CAP nick NEW :testcap=another");
+
+    client.Write("znc jumpnetwork net2");
+    client.ReadUntil("AAAAA");
 }
 
 TEST_F(ZNCTest, HashUpgrade) {
