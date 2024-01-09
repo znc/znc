@@ -541,6 +541,7 @@ TEST_F(ZNCTest, ServerDependentCapInModule) {
     InstallModule("testmod.cpp", R"(
         #include <znc/Modules.h>
         #include <znc/Client.h>
+        #include <znc/User.h>
         #include <znc/IRCNetwork.h>
         #include <znc/IRCSock.h>
         class TestModule : public CModule {
@@ -607,6 +608,7 @@ TEST_F(ZNCTest, ServerDependentCapInModule) {
                 });
             }
             void OnClientAttached() override {
+                if (!GetNetwork()) return;
                 if (GetNetwork()->IsServerCapAccepted("testcap")) {
                     GetClient()->NotifyServerDependentCap("testcap", true, GetNetwork()->GetIRCSock()->GetCapLsValue("testcap"), nullptr);
                 }
@@ -615,10 +617,28 @@ TEST_F(ZNCTest, ServerDependentCapInModule) {
                 GetClient()->NotifyServerDependentCap("testcap", false, "", [](CClient*, bool) {});
             }
             ~TestModule() override {
-                // TODO user module
-                GetNetwork()->NotifyClientsAboutServerDependentCap("testcap", false, [=](CClient* pClient, bool bState) {
-                    PutModule("~ " + CString(bState));
-                });
+                switch (GetType()) {
+                    case CModInfo::NetworkModule:
+                        GetNetwork()->NotifyClientsAboutServerDependentCap("testcap", false, [=](CClient* pClient, bool bState) {
+                            PutModule("~ " + CString(bState));
+                        });
+                        break;
+                    case CModInfo::UserModule:
+                        for (CIRCNetwork* pNetwork : GetUser()->GetNetworks()) {
+                            pNetwork->NotifyClientsAboutServerDependentCap("testcap", false, [=](CClient* pClient, bool bState) {
+                                PutModule("~ " + CString(bState));
+                            });
+                        }
+                        break;
+                    case CModInfo::GlobalModule:
+                        for (auto& [_, pUser] : CZNC::Get().GetUserMap()) {
+                            for (CIRCNetwork* pNetwork : pUser->GetNetworks()) {
+                                pNetwork->NotifyClientsAboutServerDependentCap("testcap", false, [=](CClient* pClient, bool bState) {
+                                    PutModule("~ " + CString(bState));
+                                });
+                            }
+                        }
+                }
             }
         };
         MODULEDEFS(TestModule, "Test")
