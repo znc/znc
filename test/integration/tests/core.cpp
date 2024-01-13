@@ -540,105 +540,20 @@ TEST_F(ZNCTest, ServerDependentCapInModule) {
     auto client = LoginClient();
     InstallModule("testmod.cpp", R"(
         #include <znc/Modules.h>
-        #include <znc/Client.h>
-        #include <znc/User.h>
-        #include <znc/IRCNetwork.h>
-        #include <znc/IRCSock.h>
         class TestModule : public CModule {
+            class TestCap : public CCapability {
+                public:
+                using CCapability::CCapability;
+                void OnServerChangedSupport(CIRCNetwork* pNetwork, bool bState) override {
+                    GetModule()->PutModule("Server changed support: " + CString(bState));
+                }
+                void OnClientChangedSupport(CClient* pClient, bool bState) override {
+                    GetModule()->PutModule("Client changed support: " + CString(bState));
+                }
+            };
           public:
-            MODCONSTRUCTOR(TestModule) {}
-            void OnClientCapLs(CClient* pClient, SCString& ssCaps) override {
-                if (GetNetwork() && GetNetwork()->IsServerCapAccepted("testcap")) {
-                    if (pClient->HasCap302()) {
-                        CString sValue = GetNetwork()->GetIRCSock()->GetCapLsValue("testcap");
-                        if (!sValue.empty()) {
-                            ssCaps.insert("testcap=" + sValue);
-                        } else {
-                            ssCaps.insert("testcap");
-                        }
-                    } else {
-                        ssCaps.insert("testcap");
-                    }
-                }
-            }
-            bool IsClientCapSupported(CClient* pClient, const CString& sCap,
-                                      bool bState) override {
-                if (!bState) return false;
-                if (sCap != "testcap") return false;
-                return GetNetwork() && GetNetwork()->IsServerCapAccepted("testcap");
-            }
-            void OnClientCapRequest(CClient* pClient, const CString& sCap,
-                                    bool bState) override {
-                PutModule("OnClientCapRequest " + sCap + " " + CString(bState));
-            }
-            bool OnServerCap302Available(const CString& sCap, const CString& sValue) override {
-                PutModule("OnServerCapAvailable " + sCap + " " + sValue);
-                if (sCap == "testcap") {
-                    if (GetNetwork()->IsServerCapAccepted("testcap")) {
-                        // This can happen when server sent CAP NEW with another value.
-                        for (CClient* pClient : GetNetwork()->GetClients()) {
-                            pClient->NotifyServerDependentCap("testcap", true, sValue, nullptr);
-                        }
-                    }
-                    return true;
-                }
-                return false;
-            }
-            void OnServerCapResult(const CString& sCap, bool bSuccess) override {
-                if (sCap == "testcap") {
-                    PutModule("OnServerCapResult " + sCap + " " + CString(bSuccess));
-                    if (GetNetwork()->GetIRCSock()->IsAuthed()) {
-                        GetNetwork()->NotifyClientsAboutServerDependentCap("testcap", bSuccess, [=](CClient* pClient, bool bState) {
-                            PutModule("OnServerCapResult " + sCap + " " + CString(bSuccess) + " " + CString(bState));
-                        });
-                    }
-                }
-            }
-            void OnIRCConnected() override {
-                if (GetNetwork()->IsServerCapAccepted("testcap")) {
-                    PutModule("OnIRCConnected");
-                    GetNetwork()->NotifyClientsAboutServerDependentCap("testcap", true, [=](CClient* pClient, bool bState) {
-                        PutModule("OnIRCConnected " + CString(bState));
-                    });
-                }
-            }
-            void OnIRCDisconnected() override {
-                GetNetwork()->NotifyClientsAboutServerDependentCap("testcap", false, [=](CClient* pClient, bool bState) {
-                    PutModule("OnIRCDisconnected " + CString(bState));
-                });
-            }
-            void OnClientAttached() override {
-                if (!GetNetwork()) return;
-                if (GetNetwork()->IsServerCapAccepted("testcap")) {
-                    GetClient()->NotifyServerDependentCap("testcap", true, GetNetwork()->GetIRCSock()->GetCapLsValue("testcap"), nullptr);
-                }
-            }
-            void OnClientDetached() override {
-                GetClient()->NotifyServerDependentCap("testcap", false, "", [](CClient*, bool) {});
-            }
-            ~TestModule() override {
-                switch (GetType()) {
-                    case CModInfo::NetworkModule:
-                        GetNetwork()->NotifyClientsAboutServerDependentCap("testcap", false, [=](CClient* pClient, bool bState) {
-                            PutModule("~ " + CString(bState));
-                        });
-                        break;
-                    case CModInfo::UserModule:
-                        for (CIRCNetwork* pNetwork : GetUser()->GetNetworks()) {
-                            pNetwork->NotifyClientsAboutServerDependentCap("testcap", false, [=](CClient* pClient, bool bState) {
-                                PutModule("~ " + CString(bState));
-                            });
-                        }
-                        break;
-                    case CModInfo::GlobalModule:
-                        for (auto& [_, pUser] : CZNC::Get().GetUserMap()) {
-                            for (CIRCNetwork* pNetwork : pUser->GetNetworks()) {
-                                pNetwork->NotifyClientsAboutServerDependentCap("testcap", false, [=](CClient* pClient, bool bState) {
-                                    PutModule("~ " + CString(bState));
-                                });
-                            }
-                        }
-                }
+            MODCONSTRUCTOR(TestModule) {
+                AddCapability("testcap", std::make_unique<TestCap>());
             }
         };
         MODULEDEFS(TestModule, "Test")
@@ -668,8 +583,8 @@ TEST_F(ZNCTest, ServerDependentCapInModule) {
     client.ReadUntil(" testcap=value ");
 
     ircd.Write("CAP nick DEL testcap");
+    client.ReadUntil(":Server changed support: false");
     client.ReadUntil("CAP nick DEL :testcap");
-    client.ReadUntil(":OnServerCapResult testcap false false");
 
     ircd.Close();
     ircd = ConnectIRCd();

@@ -25,6 +25,7 @@
 #include <znc/main.h>
 #include <znc/Translation.h>
 #include <functional>
+#include <memory>
 #include <set>
 #include <queue>
 #include <sys/time.h>
@@ -165,6 +166,19 @@ class CModule;
 class CFPTimer;
 class CSockManager;
 // !Forward Declarations
+
+class CCapability {
+  public:
+    virtual ~CCapability() = default;
+    virtual void OnServerChangedSupport(CIRCNetwork* pNetwork, bool bState) {}
+    virtual void OnClientChangedSupport(CClient* pClient, bool bState) {}
+
+    CModule* GetModule() { return m_pModule; }
+    void SetModule(CModule* p) { m_pModule = p; }
+
+  protected:
+    CModule* m_pModule = nullptr;
+};
 
 class CTimer : public CCron {
   public:
@@ -1292,9 +1306,14 @@ class CModule {
     virtual EModRet OnUnknownUserRaw(CClient* pClient, CString& sLine);
     virtual EModRet OnUnknownUserRawMessage(CMessage& Message);
 
-    /** Called after login, upon disconnect, and also during JumpNetwork. */
+    /** Called after login, and also during JumpNetwork. */
     virtual void OnClientAttached();
+    /** Called upon disconnect, and also during JumpNetwork. */
     virtual void OnClientDetached();
+
+#ifndef SWIG
+    void AddCapability(const CString& sName, std::unique_ptr<CCapability> pCap);
+#endif
 
     /** Called when a client told us CAP LS. Use ssCaps.insert("cap-name")
      *  for announcing capabilities which your module supports.
@@ -1391,6 +1410,7 @@ class CModule {
     CString m_sArgs;
     CString m_sModPath;
     CTranslationDomainRefHolder m_Translation;
+    std::map<CString, std::unique_ptr<CCapability>> m_mCaps;
 
   private:
     MCString
