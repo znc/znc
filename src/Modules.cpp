@@ -1621,9 +1621,12 @@ bool CModules::OnServerCapAvailable(const CString& sCap, const CString& sValue) 
             pMod->SetClient(m_pClient);
             if (m_pUser) {
                 CUser* pOldUser = pMod->GetUser();
+                CIRCNetwork* pOldNetwork = pMod->GetNetwork();
                 pMod->SetUser(m_pUser);
+                pMod->SetNetwork(m_pNetwork);
                 bResult |= pMod->OnServerCap302Available(sCap, sValue);
                 pMod->SetUser(pOldUser);
+                pMod->SetNetwork(pOldNetwork);
             } else {
                 // WTF? Is that possible?
                 bResult |= pMod->OnServerCap302Available(sCap, sValue);
@@ -1691,9 +1694,12 @@ bool CModules::IsClientCapSupported(CClient* pClient, const CString& sCap,
             pMod->SetClient(m_pClient);
             if (m_pUser) {
                 CUser* pOldUser = pMod->GetUser();
+                CIRCNetwork* pOldNetwork = pMod->GetNetwork();
                 pMod->SetUser(m_pUser);
+                pMod->SetNetwork(m_pNetwork);
                 bResult |= pMod->IsClientCapSupported(pClient, sCap, bState);
                 pMod->SetUser(pOldUser);
+                pMod->SetNetwork(pOldNetwork);
             } else {
                 // WTF? Is that possible?
                 bResult |= pMod->IsClientCapSupported(pClient, sCap, bState);
@@ -1998,6 +2004,7 @@ void CModules::GetDefaultMods(set<CModInfo>& ssMods,
     const map<CString, CModInfo::EModuleType> ns = {
         {"chansaver", CModInfo::UserModule},
         {"controlpanel", CModInfo::UserModule},
+        {"corecaps", CModInfo::GlobalModule},
         {"simple_away", CModInfo::NetworkModule},
         {"webadmin", CModInfo::GlobalModule}};
 

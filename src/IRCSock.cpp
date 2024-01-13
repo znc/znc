@@ -379,11 +379,7 @@ bool CIRCSock::OnCapabilityMessage(CMessage& Message) {
     std::map<CString, std::function<void(bool bVal)>> mSupportedCaps = {
         {"multi-prefix", [this](bool bVal) { m_bNamesx = bVal; }},
         {"userhost-in-names", [this](bool bVal) { m_bUHNames = bVal; }},
-        {"away-notify", [this](bool bVal) { m_bAwayNotify = bVal; }},
-        {"account-notify", [this](bool bVal) { m_bAccountNotify = bVal; }},
-        {"account-tag", [this](bool bVal) { m_bAccountTag = bVal; }},
         {"cap-notify", [](bool bVal) {}},
-        {"extended-join", [this](bool bVal) { m_bExtendedJoin = bVal; }},
         {"server-time", [this](bool bVal) { m_bServerTime = bVal; }},
         {"znc.in/server-time-iso",
          [this](bool bVal) { m_bServerTime = bVal; }},

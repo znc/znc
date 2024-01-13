@@ -335,6 +335,7 @@ class CClient : public CIRCSocket {
     SCString m_ssServerDependentCaps;
 
     friend class ClientTest;
+    friend class CCoreCaps;
 };
 
 #endif  // !ZNC_CLIENT_H

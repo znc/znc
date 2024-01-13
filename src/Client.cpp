@@ -764,17 +764,6 @@ CClient::CoreCaps() {
           }}},
           {"cap-notify",
            {false, [](CClient* pClient, bool bVal) { pClient->m_bCapNotify = bVal; }}},
-          {"away-notify",
-           {true, [](CClient* pClient, bool bVal) { pClient->m_bAwayNotify = bVal; }}},
-          {"account-notify",
-           {true, [](CClient* pClient, bool bVal) { pClient->m_bAccountNotify = bVal; }}},
-          {"account-tag",
-           {true, [](CClient* pClient, bool bVal) {
-            pClient->m_bAccountTag = bVal;
-            pClient->SetTagSupport("account", bVal);
-           }}},
-          {"extended-join",
-           {true, [](CClient* pClient, bool bVal) { pClient->m_bExtendedJoin = bVal; }}},
         };
 
         // For compatibility with older clients

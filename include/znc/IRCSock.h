@@ -240,6 +240,7 @@ class CIRCSock : public CIRCSocket {
     VCString m_vsSSLError;
 
     friend class CIRCFloodTimer;
+    friend class CCoreCaps;
 };
 
 #endif  // !ZNC_IRCSOCK_H
