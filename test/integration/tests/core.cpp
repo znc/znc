@@ -567,7 +567,7 @@ TEST_F(ZNCTest, ServerDependentCapInModule) {
     client.Write("CAP LS 302");
     client.Write("PASS :hunter2");
     client.Write("NICK nick");
-    client.Write("USER user x x :x");
+    client.Write("USER user/test x x :x");
     client.Write("CAP END");
     client.ReadUntil("Welcome");
 
@@ -575,8 +575,10 @@ TEST_F(ZNCTest, ServerDependentCapInModule) {
     ircd.Write("CAP nick NEW testcap=value");
     ircd.ReadUntil("CAP REQ :testcap");
     ircd.Write("CAP nick ACK :testcap");
+    client.ReadUntil(":Server changed support: true");
     client.ReadUntil("CAP nick NEW :testcap=value");
     client.Write("CAP REQ testcap");
+    client.ReadUntil(":Client changed support: true");
     client.ReadUntil("CAP nick ACK :testcap");
 
     client.Write("CAP LS");
@@ -585,13 +587,19 @@ TEST_F(ZNCTest, ServerDependentCapInModule) {
     ircd.Write("CAP nick DEL testcap");
     client.ReadUntil(":Server changed support: false");
     client.ReadUntil("CAP nick DEL :testcap");
+    client.ReadUntil(":Client changed support: false");
 
     ircd.Close();
+    // TODO combine multiple DELs to single line
+    client.ReadUntil("CAP nick DEL :testcap");
+    client.ReadUntil(":Client changed support: false");
+
     ircd = ConnectIRCd();
     ircd.ReadUntil("CAP LS 302");
     ircd.Write("CAP nick LS :testcap=new");
     ircd.ReadUntil("CAP REQ :testcap");
     ircd.Write("CAP nick ACK :testcap");
+    client.ReadUntil(":Server changed support: true");
     ircd.ReadUntil("CAP END");
     // NEW waits until 001
     ASSERT_THAT(ircd.ReadRemainder().toStdString(), Not(HasSubstr("testcap")));
@@ -606,6 +614,7 @@ TEST_F(ZNCTest, ServerDependentCapInModule) {
 
     client.Write("znc jumpnetwork net2");
     client.ReadUntil("CAP nick DEL :testcap");
+    client.ReadUntil(":Client changed support: false");
 
     client.Write("znc jumpnetwork test");
     client.ReadUntil("CAP nick NEW :testcap=another");

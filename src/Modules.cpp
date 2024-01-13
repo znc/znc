@@ -1079,9 +1079,10 @@ void CModule::OnServerCapResult(const CString& sCap, bool bSuccess) {
     if (GetNetwork()->GetIRCSock()->IsAuthed()) {
         GetNetwork()->NotifyClientsAboutServerDependentCap(
             sCap, bSuccess, [&](CClient* pClient, bool bState) {});
-        if (!bSuccess)
-        for (CClient* pClient : GetNetwork()->GetClients()) {
-            it->second->OnClientChangedSupport(pClient, false);
+        if (!bSuccess) {
+            for (CClient* pClient : GetNetwork()->GetClients()) {
+                it->second->OnClientChangedSupport(pClient, false);
+            }
         }
     }
 }
