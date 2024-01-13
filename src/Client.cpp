@@ -272,7 +272,6 @@ void CClient::SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect,
 
         if (bDisconnect) {
             NETWORKMODULECALL(OnClientDetached(), m_pUser, m_pNetwork, this, NOTHING);
-            ClearServerDependentCaps();
             // Tell the client they are no longer in these channels.
             const vector<CChan*>& vChans = m_pNetwork->GetChans();
             for (const CChan* pChan : vChans) {
@@ -743,34 +742,35 @@ static VCString MultiLine(const SCString& ssCaps) {
     return vsRes;
 }
 
-const std::map<CString, std::pair<bool, std::function<void(CClient*, bool bVal)>>>&
+const std::map<CString, std::function<void(CClient*, bool bVal)>>&
 CClient::CoreCaps() {
-    static const std::map<CString, std::pair<bool, std::function<void(CClient*, bool bVal)>>> mCoreCaps = []{
-        std::map<CString, std::pair<bool, std::function<void(CClient*, bool bVal)>>> mCoreCaps = {
+    static const std::map<CString, std::function<void(CClient*, bool bVal)>> mCoreCaps = []{
+        std::map<CString, std::function<void(CClient*, bool bVal)>> mCoreCaps = {
           {"multi-prefix",
-           {false, [](CClient* pClient, bool bVal) { pClient->m_bNamesx = bVal; }}},
+           [](CClient* pClient, bool bVal) { pClient->m_bNamesx = bVal; }},
           {"userhost-in-names",
-           {false, [](CClient* pClient, bool bVal) { pClient->m_bUHNames = bVal; }}},
+           [](CClient* pClient, bool bVal) { pClient->m_bUHNames = bVal; }},
           {"echo-message",
-           {false, [](CClient* pClient, bool bVal) { pClient->m_bEchoMessage = bVal; }}},
+           [](CClient* pClient, bool bVal) { pClient->m_bEchoMessage = bVal; }},
           {"server-time",
-           {false, [](CClient* pClient, bool bVal) {
+           [](CClient* pClient, bool bVal) {
             pClient->m_bServerTime = bVal;
             pClient->SetTagSupport("time", bVal);
-           }}},
-          {"batch", {false, [](CClient* pClient, bool bVal) {
+           }},
+          {"batch", [](CClient* pClient, bool bVal) {
             pClient->m_bBatch = bVal;
             pClient->SetTagSupport("batch", bVal);
-          }}},
+          }},
           {"cap-notify",
-           {false, [](CClient* pClient, bool bVal) { pClient->m_bCapNotify = bVal; }}},
+           [](CClient* pClient, bool bVal) { pClient->m_bCapNotify = bVal; }},
         };
 
         // For compatibility with older clients
         mCoreCaps["znc.in/server-time-iso"] = mCoreCaps["server-time"];
         mCoreCaps["znc.in/batch"] = mCoreCaps["batch"];
-        mCoreCaps["znc.in/self-message"] = {
-            false, [](CClient* pClient, bool bVal) { pClient->m_bSelfMessage = bVal; }};
+        mCoreCaps["znc.in/self-message"] = [](CClient* pClient, bool bVal) {
+            pClient->m_bSelfMessage = bVal;
+        };
 
         return mCoreCaps;
     }();
@@ -784,10 +784,7 @@ void CClient::HandleCap(const CMessage& Message) {
         m_uCapVersion = std::max(m_uCapVersion, Message.GetParam(1).ToUShort());
         SCString ssOfferCaps;
         for (const auto& it : CoreCaps()) {
-            bool bServerDependent = std::get<0>(it.second);
-            if (!bServerDependent ||
-                m_ssServerDependentCaps.count(it.first) > 0)
-                ssOfferCaps.insert(it.first);
+            ssOfferCaps.insert(it.first);
         }
         NETWORKMODULECALL(OnClientCapLs(this, ssOfferCaps), GetUser(), GetNetwork(), this, NOTHING);
         VCString vsCaps = MultiLine(ssOfferCaps);
@@ -823,9 +820,7 @@ void CClient::HandleCap(const CMessage& Message) {
             bool bAccepted = false;
             auto it = CoreCaps().find(sCap);
             if (CoreCaps().end() != it) {
-                bool bServerDependent = std::get<0>(it->second);
-                bAccepted = !bServerDependent ||
-                            m_ssServerDependentCaps.count(sCap) > 0;
+                bAccepted = true;
             }
             NETWORKMODULECALL(IsClientCapSupported(this, sCap, bVal), GetUser(), GetNetwork(), this,
                              &bAccepted);
@@ -845,7 +840,7 @@ void CClient::HandleCap(const CMessage& Message) {
 
             auto handler_it = CoreCaps().find(sCap);
             if (CoreCaps().end() != handler_it) {
-                const auto& handler = std::get<1>(handler_it->second);
+                const auto& handler = handler_it->second;
                 handler(this, bVal);
             }
             NETWORKMODULECALL(OnClientCapRequest(this, sCap, bVal), GetUser(), GetNetwork(), this, NOTHING);
@@ -927,8 +922,7 @@ void CClient::SetTagSupport(const CString& sTag, bool bState) {
     }
 }
 
-void CClient::NotifyServerDependentCap(const CString& sCap, bool bValue, const CString& sValue,
-        const std::function<void(CClient*, bool)>& handler) {
+void CClient::NotifyServerDependentCap(const CString& sCap, bool bValue, const CString& sValue) {
     if (bValue) {
         if (HasCapNotify()) {
             if (HasCap302() && !sValue.empty()) {
@@ -941,88 +935,8 @@ void CClient::NotifyServerDependentCap(const CString& sCap, bool bValue, const C
         if (HasCapNotify()) {
             PutClient(":irc.znc.in CAP " + GetNick() + " DEL :" + sCap);
         }
-        handler(this, false);
         m_ssAcceptedCaps.erase(sCap);
     }
-}
-
-void CClient::PotentiallyNotifyServerDependentCap(const CString& sCap, bool bValue, const CString& sValue) {
-    auto it = CoreCaps().find(sCap);
-    if (CoreCaps().end() != it) {
-        const auto& [bServerDependent, handler] = it->second;
-        if (bServerDependent) {
-            NotifyServerDependentCap(sCap, bValue, sValue, handler);
-        }
-    }
-    if (!bValue) {
-        m_ssServerDependentCaps.erase(sCap);
-    }
-    return;
-
-    if (bValue) {
-        if (CoreCaps().end() != it) {
-            bool bServerDependent = std::get<0>(it->second);
-            if (bServerDependent) {
-                if (m_ssServerDependentCaps.count(sCap) == 0) {
-                    m_ssServerDependentCaps.insert(sCap);
-                    if (HasCapNotify()) {
-                        PutClient(":irc.znc.in CAP " + GetNick() + " NEW :" + sCap);
-                    }
-                }
-            }
-        }
-    } else {
-        if (HasCapNotify() && m_ssServerDependentCaps.count(sCap) > 0) {
-            PutClient(":irc.znc.in CAP " + GetNick() + " DEL :" + sCap);
-        }
-        if (CoreCaps().end() != it) {
-            bool bServerDependent = std::get<0>(it->second);
-            const auto& handler = std::get<1>(it->second);
-            if (bServerDependent) {
-                handler(this, false);
-            }
-        }
-        m_ssServerDependentCaps.erase(sCap);
-    }
-}
-
-void CClient::NotifyServerDependentCaps(const SCString& ssCaps) {
-    for (const CString& sCap : ssCaps) {
-        auto it = CoreCaps().find(sCap);
-        if (CoreCaps().end() != it) {
-            bool bServerDependent = std::get<0>(it->second);
-            if (bServerDependent) {
-                m_ssServerDependentCaps.insert(sCap);
-            }
-        }
-    }
-
-    if (HasCapNotify() && !m_ssServerDependentCaps.empty()) {
-        VCString vsCaps = MultiLine(m_ssServerDependentCaps);
-        for (const CString& sLine : vsCaps) {
-            PutClient(":irc.znc.in CAP " + GetNick() + " NEW :" + sLine);
-        }
-    }
-}
-
-void CClient::ClearServerDependentCaps() {
-    if (HasCapNotify() && !m_ssServerDependentCaps.empty()) {
-        VCString vsCaps = MultiLine(m_ssServerDependentCaps);
-        for (const CString& sLine : vsCaps) {
-            PutClient(":irc.znc.in CAP " + GetNick() + " DEL :" + sLine);
-        }
-
-        for (const CString& sCap : m_ssServerDependentCaps) {
-            auto it = CoreCaps().find(sCap);
-            if (CoreCaps().end() != it) {
-                const auto& handler = std::get<1>(it->second);
-                handler(this, false);
-            }
-            m_ssAcceptedCaps.erase(sCap);
-        }
-    }
-
-    m_ssServerDependentCaps.clear();
 }
 
 template <typename T>

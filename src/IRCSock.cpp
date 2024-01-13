@@ -393,9 +393,6 @@ bool CIRCSock::OnCapabilityMessage(CMessage& Message) {
         }
         m_ssAcceptedCaps.erase(sCap);
         m_ssPendingCaps.erase(sCap);
-        if (m_bAuthed) {
-            m_pNetwork->PotentiallyNotifyServerDependentCap(sCap, false);
-        }
     };
 
     if (sSubCmd == "LS" || sSubCmd == "NEW") {
@@ -424,9 +421,6 @@ bool CIRCSock::OnCapabilityMessage(CMessage& Message) {
             it->second(true);
         }
         m_ssAcceptedCaps.insert(sArgs);
-        if (m_bAuthed) {
-            m_pNetwork->PotentiallyNotifyServerDependentCap(sArgs, true);
-        }
     } else if (sSubCmd == "NAK") {
         // This should work because there's no [known]
         // capability with length of name more than 100 characters.

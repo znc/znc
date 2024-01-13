@@ -22,6 +22,9 @@
 #include <memory>
 
 class CCoreCaps : public CModule {
+    // Note: for historical reasons CClient and CIRCSock have such fields, but
+    // really they should not.
+    // TODO: move these fields and their handling from core to this module.
     class AwayNotify : public CCapability {
         void OnServerChangedSupport(CIRCNetwork* pNetwork,
                                     bool bState) override {
@@ -65,10 +68,10 @@ class CCoreCaps : public CModule {
 
   public:
     MODCONSTRUCTOR(CCoreCaps) {
-        AddCapability("away-notify", std::make_unique<AwayNotify>());
-        AddCapability("account-notify", std::make_unique<AccountNotify>());
-        AddCapability("account-tag", std::make_unique<AccountTag>());
-        AddCapability("extended-join", std::make_unique<ExtendedJoin>());
+        AddServerDependentCapability("away-notify", std::make_unique<AwayNotify>());
+        AddServerDependentCapability("account-notify", std::make_unique<AccountNotify>());
+        AddServerDependentCapability("account-tag", std::make_unique<AccountTag>());
+        AddServerDependentCapability("extended-join", std::make_unique<ExtendedJoin>());
     }
 };
 

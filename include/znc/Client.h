@@ -227,23 +227,7 @@ class CClient : public CIRCSocket {
 
     /** Notifies client about one specific cap which server has just notified us about.
      */
-    void NotifyServerDependentCap(const CString& sCap, bool bValue, const CString& sValue,
-            const std::function<void(CClient*, bool)>& handler);
-    /** Notifies client if the cap is server-dependent, otherwise noop.
-     */
-    void PotentiallyNotifyServerDependentCap(const CString& sCap, bool bValue, const CString& sValue);
-    /** Notifies client that all these caps are now available.
-     *
-     * This function will internally filter only those which are server-dependent.
-     * This is when new client connects to an already connected server, and
-     * when server has just connected and finished negotiating caps.
-     */
-    void NotifyServerDependentCaps(const SCString& ssCaps);
-    /** Notifies client that all server-dependent caps are not available anymore.
-     *
-     * Called when server disconnects.
-     */
-    void ClearServerDependentCaps();
+    void NotifyServerDependentCap(const CString& sCap, bool bValue, const CString& sValue);
 
     void ReadLine(const CString& sData) override;
     bool SendMotd();
@@ -323,16 +307,11 @@ class CClient : public CIRCSocket {
     std::shared_ptr<CAuthBase> m_spAuth;
     SCString m_ssAcceptedCaps;
     SCString m_ssSupportedTags;
-    // The capabilities supported by the ZNC core - capability names mapped
-    // to a pair which contains a bool describing whether the capability is
-    // server-dependent, and a capability value change handler.
-    static const std::map<CString, std::pair<bool, std::function<void(CClient*, bool bVal)>>>&
-        CoreCaps();
-    // A subset of CIRCSock::GetAcceptedCaps(), the caps that can be listed
-    // in CAP LS and may be notified to the client with CAP NEW (cap-notify).
-    // TODO: come up with a way for modules to work with this, and with
-    // =values in NEW.
-    SCString m_ssServerDependentCaps;
+    // The capabilities supported by the ZNC core - capability names mapped to
+    // change handler. Note: this lists caps which don't require support on IRC
+    // server.
+    static const std::map<CString, std::function<void(CClient*, bool bVal)>>&
+    CoreCaps();
 
     friend class ClientTest;
     friend class CCoreCaps;

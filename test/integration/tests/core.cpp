@@ -553,7 +553,7 @@ TEST_F(ZNCTest, ServerDependentCapInModule) {
             };
           public:
             MODCONSTRUCTOR(TestModule) {
-                AddCapability("testcap", std::make_unique<TestCap>());
+                AddServerDependentCapability("testcap", std::make_unique<TestCap>());
             }
         };
         MODULEDEFS(TestModule, "Test")

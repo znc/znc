@@ -1312,7 +1312,7 @@ class CModule {
     virtual void OnClientDetached();
 
 #ifndef SWIG
-    void AddCapability(const CString& sName, std::unique_ptr<CCapability> pCap);
+    void AddServerDependentCapability(const CString& sName, std::unique_ptr<CCapability> pCap);
 #endif
 
     /** Called when a client told us CAP LS. Use ssCaps.insert("cap-name")
@@ -1410,7 +1410,7 @@ class CModule {
     CString m_sArgs;
     CString m_sModPath;
     CTranslationDomainRefHolder m_Translation;
-    std::map<CString, std::unique_ptr<CCapability>> m_mCaps;
+    std::map<CString, std::unique_ptr<CCapability>> m_mServerDependentCaps;
 
   private:
     MCString
