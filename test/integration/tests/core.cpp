@@ -556,7 +556,7 @@ TEST_F(ZNCTest, CAP302LSValue) {
 
 class AllLanguages : public ZNCTest, public testing::WithParamInterface<int> {};
 
-INSTANTIATE_TEST_CASE_P(LanguagesTests, AllLanguages, testing::Values(1, 2));
+INSTANTIATE_TEST_CASE_P(LanguagesTests, AllLanguages, testing::Values(1, 2, 3));
 
 TEST_P(AllLanguages, ServerDependentCapInModule) {
     auto znc = Run();
@@ -607,6 +607,24 @@ TEST_P(AllLanguages, ServerDependentCapInModule) {
                     "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
                 return;
             }
+            znc->CanLeak();
+            InstallModule("testmod.pm", R"(
+                package testmod;
+                use base 'ZNC::Module';
+                sub OnLoad {
+                    my $self = shift;
+                    my $listen = $self->AddServerDependentCapability('testcap', sub {
+                        my ($net, $state) = @_;
+                        $self->PutModule('Server changed support: ' . ($state ? 'true' : 'false'));
+                    }, sub {
+                        my ($client, $state) = @_;
+                        $self->PutModule('Client changed support: ' . ($state ? 'true' : 'false'));
+                    });
+                    return 1;
+                }
+                1;
+            )");
+            client.Write("znc loadmod modperl");
             break;
     }
     client.Write("znc loadmod testmod");

@@ -1327,7 +1327,7 @@ class CModule {
      *  stopped supporting it. Note that it's not a strict toggle: e.g.
      *  sometimes client will disable the cap even when it was already disabled
      *  for that client.
-     *  For python modules, this function accepts 3 parameters:
+     *  For perl and python modules, this function accepts 3 parameters:
      *  name, server callback, client callback; signatures of the callbacks are
      *  the same as of the virtual functions you'd implement in C++.
      */
@@ -1414,8 +1414,9 @@ class CModule {
                             const CString& sContext = "") const;
 #endif
 
-    // Default implementations of several CAP callbacks to make
+    // Default implementations of several callbacks to make
     // AddServerDependentCapability work in modpython/modperl.
+    // Don't worry about existence of these functions.
     bool InternalServerDependentCapsOnServerCap302Available(
         const CString& sCap, const CString& sValue);
     void InternalServerDependentCapsOnServerCapResult(const CString& sCap,

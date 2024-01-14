@@ -216,6 +216,20 @@ inline CPerlSocket* CreatePerlSocket(CPerlModule* pModule, SV* perlObj) {
     return new CPerlSocket(pModule, perlObj);
 }
 
+class ZNC_EXPORT_LIB_EXPORT CPerlCapability : public CCapability {
+  public:
+    CPerlCapability(SV* serverCb, SV* clientCb)
+        : m_serverCb(newSVsv(serverCb)), m_clientCb(newSVsv(clientCb)) {}
+    ~CPerlCapability();
+
+    void OnServerChangedSupport(CIRCNetwork* pNetwork, bool bState) override;
+    void OnClientChangedSupport(CClient* pClient, bool bState) override;
+
+  private:
+    SV* m_serverCb;
+    SV* m_clientCb;
+};
+
 inline bool HaveIPv6() {
 #ifdef HAVE_IPV6
     return true;
