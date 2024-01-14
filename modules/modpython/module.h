@@ -369,3 +369,17 @@ inline CPyModCommand* CreatePyModCommand(CPyModule* pModule,
                                          PyObject* pyObj) {
     return new CPyModCommand(pModule, sCmd, sArgs, sDesc, pyObj);
 }
+
+class ZNC_EXPORT_LIB_EXPORT CPyCapability : public CCapability {
+  public:
+    CPyCapability(PyObject* serverCb, PyObject* clientCb);
+    ~CPyCapability();
+
+    void OnServerChangedSupport(CIRCNetwork* pNetwork, bool bState) override;
+    void OnClientChangedSupport(CClient* pClient, bool bState) override;
+
+  private:
+    PyObject* m_serverCb;
+    PyObject* m_clientCb;
+};
+

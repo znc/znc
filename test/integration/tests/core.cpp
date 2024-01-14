@@ -554,30 +554,61 @@ TEST_F(ZNCTest, CAP302LSValue) {
     client2.ReadUntil("testcap=");
 }
 
-TEST_F(ZNCTest, ServerDependentCapInModule) {
+class AllLanguages : public ZNCTest, public testing::WithParamInterface<int> {};
+
+INSTANTIATE_TEST_CASE_P(LanguagesTests, AllLanguages, testing::Values(1, 2));
+
+TEST_P(AllLanguages, ServerDependentCapInModule) {
     auto znc = Run();
     auto ircd = ConnectIRCd();
     auto client = LoginClient();
-    InstallModule("testmod.cpp", R"(
-        #include <znc/Modules.h>
-        class TestModule : public CModule {
-            class TestCap : public CCapability {
-                public:
-                using CCapability::CCapability;
-                void OnServerChangedSupport(CIRCNetwork* pNetwork, bool bState) override {
-                    GetModule()->PutModule("Server changed support: " + CString(bState));
-                }
-                void OnClientChangedSupport(CClient* pClient, bool bState) override {
-                    GetModule()->PutModule("Client changed support: " + CString(bState));
-                }
-            };
-          public:
-            MODCONSTRUCTOR(TestModule) {
-                AddServerDependentCapability("testcap", std::make_unique<TestCap>());
+    switch (GetParam()) {
+        case 1:
+            InstallModule("testmod.cpp", R"(
+                #include <znc/Modules.h>
+                class TestModule : public CModule {
+                    class TestCap : public CCapability {
+                        void OnServerChangedSupport(CIRCNetwork* pNetwork, bool bState) override {
+                            GetModule()->PutModule("Server changed support: " + CString(bState));
+                        }
+                        void OnClientChangedSupport(CClient* pClient, bool bState) override {
+                            GetModule()->PutModule("Client changed support: " + CString(bState));
+                        }
+                    };
+                  public:
+                    MODCONSTRUCTOR(TestModule) {
+                        AddServerDependentCapability("testcap", std::make_unique<TestCap>());
+                    }
+                };
+                MODULEDEFS(TestModule, "Test")
+            )");
+            break;
+        case 2:
+            if (QProcessEnvironment::systemEnvironment().value(
+                    "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
+                return;
             }
-        };
-        MODULEDEFS(TestModule, "Test")
-    )");
+            znc->CanLeak();
+            InstallModule("testmod.py", R"(
+                import znc
+                class testmod(znc.Module):
+                    def OnLoad(self, args, ret):
+                        def server_change(net, state):
+                            self.PutModule('Server changed support: ' + ('true' if state else 'false'))
+                        def client_change(client, state):
+                            self.PutModule('Client changed support: ' + ('true' if state else 'false'))
+                        self.AddServerDependentCapability('testcap', server_change, client_change)
+                        return True
+                )");
+            client.Write("znc loadmod modpython");
+            break;
+        case 3:
+            if (QProcessEnvironment::systemEnvironment().value(
+                    "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
+                return;
+            }
+            break;
+    }
     client.Write("znc loadmod testmod");
     client.ReadUntil("Loaded module testmod");
     client.Write("znc addnetwork net2");

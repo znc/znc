@@ -478,6 +478,49 @@ CPySocket::~CPySocket() {
     Py_CLEAR(m_pyObj);
 }
 
+CPyCapability::CPyCapability(PyObject* serverCb, PyObject* clientCb)
+    : m_serverCb(serverCb), m_clientCb(clientCb) {
+    Py_INCREF(serverCb);
+    Py_INCREF(clientCb);
+}
+
+CPyCapability::~CPyCapability() {
+    Py_CLEAR(m_serverCb);
+    Py_CLEAR(m_clientCb);
+}
+
+void CPyCapability::OnServerChangedSupport(CIRCNetwork* pNetwork, bool bState) {
+    PyObject* pyArg_Network =
+        SWIG_NewInstanceObj(pNetwork, SWIG_TypeQuery("CIRCNetwork*"), 0);
+    PyObject* pyArg_bState = Py_BuildValue("l", (long int)bState);
+    PyObject* pyRes = PyObject_CallFunctionObjArgs(m_serverCb, pyArg_Network,
+                                                   pyArg_bState, nullptr);
+    if (!pyRes) {
+        CString sPyErr = ((CPyModule*)GetModule())->GetPyExceptionStr();
+        DEBUG("modpython: " << GetModule()->GetModName()
+                            << "/OnServerChangedSupport failed: " << sPyErr);
+    }
+    Py_CLEAR(pyRes);
+    Py_CLEAR(pyArg_bState);
+    Py_CLEAR(pyArg_Network);
+}
+
+void CPyCapability::OnClientChangedSupport(CClient* pClient, bool bState) {
+    PyObject* pyArg_Client =
+        SWIG_NewInstanceObj(pClient, SWIG_TypeQuery("CClient*"), 0);
+    PyObject* pyArg_bState = Py_BuildValue("l", (long int)bState);
+    PyObject* pyRes = PyObject_CallFunctionObjArgs(m_clientCb, pyArg_Client,
+                                                   pyArg_bState, nullptr);
+    if (!pyRes) {
+        CString sPyErr = ((CPyModule*)GetModule())->GetPyExceptionStr();
+        DEBUG("modpython: " << GetModule()->GetModName()
+                            << "/OnClientChangedSupport failed: " << sPyErr);
+    }
+    Py_CLEAR(pyRes);
+    Py_CLEAR(pyArg_bState);
+    Py_CLEAR(pyArg_Client);
+}
+
 CPyModule* CPyModCommand::GetModule() {
     return this->m_pModule;
 }

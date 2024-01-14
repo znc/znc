@@ -1324,11 +1324,12 @@ class CModule {
      *  use, create a subclass of CCapability, and pass to this function; it
      *  will automatically set the module pointer, then call the callbacks to
      *  notify you when server and client accepted support of the capability, or
-     *  stopped supporting it. Note that it's not a strict toggle: e.g. sometimes
-     *  client will disable the cap even when it was already disabled for that
-     *  client. If you want to mix this function with other CAP callbacks in the
-     *  same module, in the overridden functions you'll need to explicitly call
-     *  the function from the base class CModule.
+     *  stopped supporting it. Note that it's not a strict toggle: e.g.
+     *  sometimes client will disable the cap even when it was already disabled
+     *  for that client.
+     *  For python modules, this function accepts 3 parameters:
+     *  name, server callback, client callback; signatures of the callbacks are
+     *  the same as of the virtual functions you'd implement in C++.
      */
     void AddServerDependentCapability(const CString& sName, std::unique_ptr<CCapability> pCap);
 #endif
@@ -1412,6 +1413,25 @@ class CModule {
     CDelayedTranslation t_d(const CString& sEnglish,
                             const CString& sContext = "") const;
 #endif
+
+    // Default implementations of several CAP callbacks to make
+    // AddServerDependentCapability work in modpython/modperl.
+    bool InternalServerDependentCapsOnServerCap302Available(
+        const CString& sCap, const CString& sValue);
+    void InternalServerDependentCapsOnServerCapResult(const CString& sCap,
+                                                      bool bSuccess);
+    void InternalServerDependentCapsOnClientCapLs(CClient* pClient,
+                                                  SCString& ssCaps);
+    bool InternalServerDependentCapsIsClientCapSupported(CClient* pClient,
+                                                         const CString& sCap,
+                                                         bool bState);
+    void InternalServerDependentCapsOnClientCapRequest(CClient* pClient,
+                                                       const CString& sCap,
+                                                       bool bState);
+    void InternalServerDependentCapsOnClientAttached();
+    void InternalServerDependentCapsOnClientDetached();
+    void InternalServerDependentCapsOnIRCConnected();
+    void InternalServerDependentCapsOnIRCDisconnected();
 
   protected:
     CModInfo::EModuleType m_eType;
