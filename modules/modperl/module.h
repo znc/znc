@@ -118,6 +118,8 @@ class ZNC_EXPORT_LIB_EXPORT CPerlModule : public CModule {
     bool OnServerCapAvailable(const CString& sCap) override;
     bool OnServerCap302Available(const CString& sCap, const CString& sValue) override;
     void OnServerCapResult(const CString& sCap, bool bSuccess) override;
+    void OnClientAttached() override;
+    void OnClientDetached() override;
     EModRet OnTimerAutoJoin(CChan& Channel) override;
     bool OnEmbeddedWebRequest(CWebSock&, const CString&, CTemplate&) override;
     EModRet OnAddNetwork(CIRCNetwork& Network, CString& sErrorRet) override;

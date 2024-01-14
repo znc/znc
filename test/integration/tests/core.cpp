@@ -271,6 +271,26 @@ TEST_F(ZNCTest, AwayNotify) {
     client.Write("znc shutdown");
 }
 
+TEST_F(ZNCTest, ExtendedJoin) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    ircd.Write(":server 001 user :welcome");
+    client.ReadUntil(" 001 ");
+    ircd.Write(":nick!user@host JOIN #channel account :Real Name");
+    // Not sure why it is like this when server sends such format unexpectedly.
+    client.ReadUntil("JOIN #channel account :Real Name");
+    ircd.Write("CAP nick ACK extended-join");
+    ircd.Write(":nick!user@host JOIN #channel2 account :Real Name");
+    QByteArray line;
+    client.ReadUntilAndGet("JOIN", line);
+    EXPECT_EQ(line.toStdString(), "JOIN #channel2");
+    client.Write("CAP REQ extended-join");
+    client.ReadUntil("CAP user ACK :extended-join");
+    ircd.Write(":nick!user@host JOIN #channel3 account :Real Name");
+    client.ReadUntil("JOIN #channel3 account :Real Name");
+}
+
 TEST_F(ZNCTest, CAP302LSWaitFull) {
     auto znc = Run();
     auto ircd = ConnectIRCd();

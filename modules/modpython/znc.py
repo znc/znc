@@ -413,6 +413,12 @@ class Module:
     def OnServerCap302Available(self, sCap, sValue):
         return self.OnServerCapAvailable(sCap)
 
+    def OnClientAttached(self):
+        pass
+
+    def OnClientDetached(self):
+        pass
+
     def OnServerCapResult(self, sCap, bSuccess):
         pass
 
