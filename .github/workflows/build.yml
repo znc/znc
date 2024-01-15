@@ -30,11 +30,17 @@ jobs:
           submodules: true
       - run: source .github/ubuntu_deps.sh
       - run: |
-          ./make-tarball.sh --nightly znc-git-2015-01-16 /tmp/znc-tarball.tar.gz
-          tar xvf /tmp/znc-tarball.tar.gz
-          cd znc-git-2015-01-16
+          date=$(date +%Y-%m-%d)
+          ./make-tarball.sh --nightly znc-git-$date /tmp/znc-git-$date.tar.gz
+          tar xvf /tmp/znc-git-$date.tar.gz
+          cd znc-git-$date
           export CFGFLAGS="--with-gtest=$GITHUB_WORKSPACE/third_party/googletest/googletest --with-gmock=$GITHUB_WORKSPACE/third_party/googletest/googlemock --disable-swig"
           source $GITHUB_WORKSPACE/.github/build.sh
+      - uses: actions/upload-artifact@v3
+        with:
+          name: znc-tarball
+          path: /tmp/znc-git*.tar.gz
+          if-no-files-found: error
       - uses: codecov/codecov-action@v3
         with:
           name: ${{ github.job }}
