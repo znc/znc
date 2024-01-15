@@ -382,6 +382,9 @@ bool CIRCSock::OnCapabilityMessage(CMessage& Message) {
             {"server-time", [this](bool bVal) { m_bServerTime = bVal; }},
             {"znc.in/server-time-iso",
              [this](bool bVal) { m_bServerTime = bVal; }},
+            {"solanum.chat/realhost", [this](bool bVal) {}},
+            {"solanum.chat/oper", [this](bool bVal) {}},
+            {"solanum.chat/identify-msg", [this](bool bVal){}},
         };
 
         if (sSubCmd == "LS") {
