@@ -1308,6 +1308,14 @@ class CModule {
      */
     virtual void OnClientCapRequest(CClient* pClient, const CString& sCap,
                                     bool bState);
+    virtual EModRet OnSaslServerChallenge(const CString& sMechanism,
+                                          CString& sResponse);
+    virtual EModRet OnClientSaslAuthenticate(const CString& sMechanism,
+                                             const CString& sBuffer,
+                                             CString& sUser,
+                                             CString& sMechanismResponse,
+                                             bool& bAuthenticationSuccess);
+    virtual void OnGetSaslMechanisms(SCString& ssMechanisms);
 
     /** Called when a module is going to be loaded.
      *  @param sModName name of the module.
@@ -1587,6 +1595,15 @@ class CModules : public std::vector<CModule*>, private CCoreTranslationMixin {
     bool IsClientCapSupported(CClient* pClient, const CString& sCap,
                               bool bState);
     bool OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState);
+    bool OnSaslServerChallenge(const CString& sMechanism,
+                               CString& sResponse);
+    bool OnClientSaslAuthenticate(const CString& sMechanism,
+                                  const CString& sBuffer,
+                                  CString& sUser,
+                                  CString& sResponse,
+                                  bool& bAuthenticationSuccess);
+    bool OnGetSaslMechanisms(SCString& ssMechanisms);
+
     bool OnModuleLoading(const CString& sModName, const CString& sArgs,
                          CModInfo::EModuleType eType, bool& bSuccess,
                          CString& sRetMsg);
