@@ -469,6 +469,15 @@ class Module:
     def OnClientCapRequest(self, pClient, sCap, bState):
         pass
 
+    def OnGetSASLMechanisms(self, ssMechanisms):
+        pass
+
+    def OnSASLServerChallenge(self, sMechanism, sResponse):
+        pass
+
+    def OnClientSASLAuthenticate(self, sMechanism, sBuffer, sUser, sResponse, bAuthenticationSuccess):
+        pass
+
     def OnModuleLoading(self, sModName, sArgs, eType, bSuccess, sRetMsg):
         pass
 

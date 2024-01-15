@@ -1075,6 +1075,22 @@ bool CModule::IsClientCapSupported(CClient* pClient, const CString& sCap,
 }
 void CModule::OnClientCapRequest(CClient* pClient, const CString& sCap,
                                  bool bState) {}
+
+CModule::EModRet CModule::OnClientSASLAuthenticate(const CString& sMechanism,
+                                                   const CString& sBuffer,
+                                                   CString& sUser,
+												   CString& sMechanismResponse,
+												   bool& bAuthenticationSuccess) {
+    return CONTINUE;
+}
+
+CModule::EModRet CModule::OnSASLServerChallenge(const CString& sMechanism,
+                                                CString& sResponse) {
+    return CONTINUE;
+}
+
+void CModule::OnGetSASLMechanisms(SCString& ssMechanisms) {}
+
 CModule::EModRet CModule::OnModuleLoading(const CString& sModName,
                                           const CString& sArgs,
                                           CModInfo::EModuleType eType,
@@ -1589,6 +1605,25 @@ bool CModules::IsClientCapSupported(CClient* pClient, const CString& sCap,
 bool CModules::OnClientCapRequest(CClient* pClient, const CString& sCap,
                                   bool bState) {
     MODUNLOADCHK(OnClientCapRequest(pClient, sCap, bState));
+    return false;
+}
+
+bool CModules::OnClientSASLAuthenticate(const CString& sMechanism,
+                                        const CString& sBuffer,
+                                        CString& sUser,
+                                        CString& sResponse,
+                                        bool& bAuthenticationSuccess) {
+    MODHALTCHK(OnClientSASLAuthenticate(sMechanism, sBuffer, sUser,
+                                        sResponse, bAuthenticationSuccess));
+}
+
+bool CModules::OnSASLServerChallenge(const CString& sMechanism,
+                                     CString& sResponse) {
+    MODHALTCHK(OnSASLServerChallenge(sMechanism, sResponse));
+}
+
+bool CModules::OnGetSASLMechanisms(SCString& ssMechanisms) {
+    MODUNLOADCHK(OnGetSASLMechanisms(ssMechanisms));
     return false;
 }
 
