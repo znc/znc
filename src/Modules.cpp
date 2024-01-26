@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <znc/IRCSock.h>
 #include <znc/Modules.h>
 #include <znc/FileUtils.h>
 #include <znc/Template.h>
@@ -160,6 +161,31 @@ CModule::CModule(ModHandle pDLL, CUser* pUser, CIRCNetwork* pNetwork,
 }
 
 CModule::~CModule() {
+    for (const auto& [sName, pCap] : m_mServerDependentCaps) {
+        // pCap->OnClientChangedSupport is useless (and even dangerous) to call
+        // from the destructor, since the derived CModule class is gone already.
+        // But still need to tell clients via cap-notify that the cap is gone.
+        switch (GetType()) {
+            case CModInfo::NetworkModule:
+                GetNetwork()->NotifyClientsAboutServerDependentCap(sName,
+                                                                   false);
+                break;
+            case CModInfo::UserModule:
+                for (CIRCNetwork* pNetwork : GetUser()->GetNetworks()) {
+                    pNetwork->NotifyClientsAboutServerDependentCap(sName,
+                                                                   false);
+                }
+                break;
+            case CModInfo::GlobalModule:
+                for (auto& [_, pUser] : CZNC::Get().GetUserMap()) {
+                    for (CIRCNetwork* pNetwork : pUser->GetNetworks()) {
+                        pNetwork->NotifyClientsAboutServerDependentCap(sName,
+                                                                       false);
+                    }
+                }
+        }
+    }
+
     while (!m_sTimers.empty()) {
         RemTimer(*m_sTimers.begin());
     }
@@ -606,7 +632,24 @@ bool CModule::OnBoot() { return true; }
 void CModule::OnPreRehash() {}
 void CModule::OnPostRehash() {}
 void CModule::OnIRCDisconnected() {}
+void CModule::InternalServerDependentCapsOnIRCDisconnected() {
+    OnIRCDisconnected();
+    for (const auto& [sName, pCap] : m_mServerDependentCaps) {
+        GetNetwork()->NotifyClientsAboutServerDependentCap(sName, false);
+        for (CClient* pClient : GetNetwork()->GetClients()) {
+            pCap->OnClientChangedSupport(pClient, false);
+        }
+    }
+}
 void CModule::OnIRCConnected() {}
+void CModule::InternalServerDependentCapsOnIRCConnected() {
+    OnIRCConnected();
+    for (const auto& [sName, pCap] : m_mServerDependentCaps) {
+        if (GetNetwork()->IsServerCapAccepted(sName)) {
+            GetNetwork()->NotifyClientsAboutServerDependentCap(sName, true);
+        }
+    }
+}
 CModule::EModRet CModule::OnIRCConnecting(CIRCSock* IRCSock) {
     return CONTINUE;
 }
@@ -997,9 +1040,59 @@ CModule::EModRet CModule::OnSendToIRC(CString& sLine) { return CONTINUE; }
 CModule::EModRet CModule::OnSendToIRCMessage(CMessage& Message) {
     return CONTINUE;
 }
+void CModule::OnClientAttached() {}
+void CModule::InternalServerDependentCapsOnClientAttached() {
+    OnClientAttached();
+    if (!GetNetwork()) return;
+    for (const auto& [sName, pCap] : m_mServerDependentCaps) {
+        if (GetNetwork()->IsServerCapAccepted(sName)) {
+            GetClient()->NotifyServerDependentCap(sName, true, GetNetwork()->GetIRCSock()->GetCapLsValue(sName));
+        }
+    }
+}
+void CModule::OnClientDetached() {}
+void CModule::InternalServerDependentCapsOnClientDetached() {
+    OnClientDetached();
+    for (const auto& [sName, pCap] : m_mServerDependentCaps) {
+        GetClient()->NotifyServerDependentCap(sName, false, "");
+        pCap->OnClientChangedSupport(GetClient(), false);
+    }
+}
 
 bool CModule::OnServerCapAvailable(const CString& sCap) { return false; }
+bool CModule::OnServerCap302Available(const CString& sCap,
+                                      const CString& sValue) {
+    return OnServerCapAvailable(sCap);
+}
+bool CModule::InternalServerDependentCapsOnServerCap302Available(const CString& sCap,
+                                      const CString& sValue) {
+    auto it = m_mServerDependentCaps.find(sCap);
+    if (it == m_mServerDependentCaps.end())
+        return OnServerCap302Available(sCap, sValue);
+    if (GetNetwork()->IsServerCapAccepted(sCap)) {
+        // This can happen when server sent CAP NEW with another value.
+        GetNetwork()->NotifyClientsAboutServerDependentCap(sCap, true);
+        // It's enabled already, no need to REQ it again.
+        return false;
+    }
+    return true;
+}
 void CModule::OnServerCapResult(const CString& sCap, bool bSuccess) {}
+void CModule::InternalServerDependentCapsOnServerCapResult(const CString& sCap,
+                                                           bool bSuccess) {
+    OnServerCapResult(sCap, bSuccess);
+    auto it = m_mServerDependentCaps.find(sCap);
+    if (it == m_mServerDependentCaps.end()) return;
+    it->second->OnServerChangedSupport(GetNetwork(), bSuccess);
+    if (GetNetwork()->GetIRCSock()->IsAuthed()) {
+        GetNetwork()->NotifyClientsAboutServerDependentCap(sCap, bSuccess);
+        if (!bSuccess) {
+            for (CClient* pClient : GetNetwork()->GetClients()) {
+                it->second->OnClientChangedSupport(pClient, false);
+            }
+        }
+    }
+}
 
 bool CModule::PutIRC(const CString& sLine) {
     return m_pNetwork ? m_pNetwork->PutIRC(sLine) : false;
@@ -1069,12 +1162,44 @@ CModule::EModRet CModule::OnUnknownUserRawMessage(CMessage& Message) {
     return CONTINUE;
 }
 void CModule::OnClientCapLs(CClient* pClient, SCString& ssCaps) {}
+void CModule::InternalServerDependentCapsOnClientCapLs(CClient* pClient, SCString& ssCaps) {
+    for (const auto& [sName, pCap] : m_mServerDependentCaps) {
+        if (GetNetwork() && GetNetwork()->IsServerCapAccepted(sName)) {
+            if (pClient->HasCap302()) {
+                CString sValue =
+                    GetNetwork()->GetIRCSock()->GetCapLsValue(sName);
+                if (!sValue.empty()) {
+                    ssCaps.insert(sName + '=' + sValue);
+                } else {
+                    ssCaps.insert(sName);
+                }
+            } else {
+                ssCaps.insert(sName);
+            }
+        }
+    }
+    OnClientCapLs(pClient, ssCaps);
+}
 bool CModule::IsClientCapSupported(CClient* pClient, const CString& sCap,
-                                   bool bState) {
-    return false;
+                                   bool bState) { return false; }
+bool CModule::InternalServerDependentCapsIsClientCapSupported(
+    CClient* pClient, const CString& sCap, bool bState) {
+    auto it = m_mServerDependentCaps.find(sCap);
+    if (it == m_mServerDependentCaps.end())
+        return IsClientCapSupported(pClient, sCap, bState);
+    if (!bState) return true;
+    return GetNetwork() && GetNetwork()->IsServerCapAccepted(sCap);
 }
 void CModule::OnClientCapRequest(CClient* pClient, const CString& sCap,
                                  bool bState) {}
+void CModule::InternalServerDependentCapsOnClientCapRequest(CClient* pClient,
+                                                            const CString& sCap,
+                                                            bool bState) {
+    OnClientCapRequest(pClient, sCap, bState);
+    auto it = m_mServerDependentCaps.find(sCap);
+    if (it == m_mServerDependentCaps.end()) return;
+    it->second->OnClientChangedSupport(pClient, bState);
+}
 CModule::EModRet CModule::OnModuleLoading(const CString& sModName,
                                           const CString& sArgs,
                                           CModInfo::EModuleType eType,
@@ -1092,6 +1217,11 @@ CModule::EModRet CModule::OnGetModInfo(CModInfo& ModInfo,
 }
 void CModule::OnGetAvailableMods(set<CModInfo>& ssMods,
                                  CModInfo::EModuleType eType) {}
+void CModule::AddServerDependentCapability(const CString& sName,
+                                           std::unique_ptr<CCapability> pCap) {
+    pCap->SetModule(this);
+    m_mServerDependentCaps[sName] = std::move(pCap);
+}
 
 CModules::CModules()
     : m_pUser(nullptr), m_pNetwork(nullptr), m_pClient(nullptr) {}
@@ -1131,7 +1261,7 @@ bool CModules::OnPostRehash() {
     return false;
 }
 bool CModules::OnIRCConnected() {
-    MODUNLOADCHK(OnIRCConnected());
+    MODUNLOADCHK(InternalServerDependentCapsOnIRCConnected());
     return false;
 }
 bool CModules::OnIRCConnecting(CIRCSock* pIRCSock) {
@@ -1149,7 +1279,7 @@ bool CModules::OnBroadcast(CString& sMessage) {
     MODHALTCHK(OnBroadcast(sMessage));
 }
 bool CModules::OnIRCDisconnected() {
-    MODUNLOADCHK(OnIRCDisconnected());
+    MODUNLOADCHK(InternalServerDependentCapsOnIRCDisconnected());
     return false;
 }
 
@@ -1489,9 +1619,17 @@ bool CModules::OnModCTCP(const CString& sMessage) {
     MODUNLOADCHK(OnModCTCP(sMessage));
     return false;
 }
+bool CModules::OnClientAttached() {
+    MODUNLOADCHK(InternalServerDependentCapsOnClientAttached());
+    return false;
+}
+bool CModules::OnClientDetached() {
+    MODUNLOADCHK(InternalServerDependentCapsOnClientDetached());
+    return false;
+}
 
 // Why MODHALTCHK works only with functions returning EModRet ? :(
-bool CModules::OnServerCapAvailable(const CString& sCap) {
+bool CModules::OnServerCapAvailable(const CString& sCap, const CString& sValue) {
     bool bResult = false;
     for (CModule* pMod : *this) {
         try {
@@ -1499,12 +1637,19 @@ bool CModules::OnServerCapAvailable(const CString& sCap) {
             pMod->SetClient(m_pClient);
             if (m_pUser) {
                 CUser* pOldUser = pMod->GetUser();
+                CIRCNetwork* pOldNetwork = pMod->GetNetwork();
                 pMod->SetUser(m_pUser);
-                bResult |= pMod->OnServerCapAvailable(sCap);
+                pMod->SetNetwork(m_pNetwork);
+                bResult |=
+                    pMod->InternalServerDependentCapsOnServerCap302Available(
+                        sCap, sValue);
                 pMod->SetUser(pOldUser);
+                pMod->SetNetwork(pOldNetwork);
             } else {
                 // WTF? Is that possible?
-                bResult |= pMod->OnServerCapAvailable(sCap);
+                bResult |=
+                    pMod->InternalServerDependentCapsOnServerCap302Available(
+                        sCap, sValue);
             }
             pMod->SetClient(pOldClient);
         } catch (const CModule::EModException& e) {
@@ -1517,7 +1662,7 @@ bool CModules::OnServerCapAvailable(const CString& sCap) {
 }
 
 bool CModules::OnServerCapResult(const CString& sCap, bool bSuccess) {
-    MODUNLOADCHK(OnServerCapResult(sCap, bSuccess));
+    MODUNLOADCHK(InternalServerDependentCapsOnServerCapResult(sCap, bSuccess));
     return false;
 }
 
@@ -1555,7 +1700,7 @@ bool CModules::OnUnknownUserRawMessage(CMessage& Message) {
 }
 
 bool CModules::OnClientCapLs(CClient* pClient, SCString& ssCaps) {
-    MODUNLOADCHK(OnClientCapLs(pClient, ssCaps));
+    MODUNLOADCHK(InternalServerDependentCapsOnClientCapLs(pClient, ssCaps));
     return false;
 }
 
@@ -1569,12 +1714,19 @@ bool CModules::IsClientCapSupported(CClient* pClient, const CString& sCap,
             pMod->SetClient(m_pClient);
             if (m_pUser) {
                 CUser* pOldUser = pMod->GetUser();
+                CIRCNetwork* pOldNetwork = pMod->GetNetwork();
                 pMod->SetUser(m_pUser);
-                bResult |= pMod->IsClientCapSupported(pClient, sCap, bState);
+                pMod->SetNetwork(m_pNetwork);
+                bResult |=
+                    pMod->InternalServerDependentCapsIsClientCapSupported(
+                        pClient, sCap, bState);
                 pMod->SetUser(pOldUser);
+                pMod->SetNetwork(pOldNetwork);
             } else {
                 // WTF? Is that possible?
-                bResult |= pMod->IsClientCapSupported(pClient, sCap, bState);
+                bResult |=
+                    pMod->InternalServerDependentCapsIsClientCapSupported(
+                        pClient, sCap, bState);
             }
             pMod->SetClient(pOldClient);
         } catch (const CModule::EModException& e) {
@@ -1588,7 +1740,8 @@ bool CModules::IsClientCapSupported(CClient* pClient, const CString& sCap,
 
 bool CModules::OnClientCapRequest(CClient* pClient, const CString& sCap,
                                   bool bState) {
-    MODUNLOADCHK(OnClientCapRequest(pClient, sCap, bState));
+    MODUNLOADCHK(
+        InternalServerDependentCapsOnClientCapRequest(pClient, sCap, bState));
     return false;
 }
 
@@ -1876,6 +2029,7 @@ void CModules::GetDefaultMods(set<CModInfo>& ssMods,
     const map<CString, CModInfo::EModuleType> ns = {
         {"chansaver", CModInfo::UserModule},
         {"controlpanel", CModInfo::UserModule},
+        {"corecaps", CModInfo::GlobalModule},
         {"simple_away", CModInfo::NetworkModule},
         {"webadmin", CModInfo::GlobalModule}};
 

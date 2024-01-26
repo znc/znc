@@ -166,6 +166,7 @@ TEST_F(ZNCTest, InvalidConfigInChan) {
     auto znc = Run();
     znc->ShouldFinishItself(1);
 }
+
 TEST_F(ZNCTest, Encoding) {
     auto znc = Run();
     auto ircd = ConnectIRCd();
@@ -268,6 +269,55 @@ TEST_F(ZNCTest, AwayNotify) {
     // This test often fails on macos due to ZNC process not finishing.
     // No idea why. Let's try to shutdown it more explicitly...
     client.Write("znc shutdown");
+}
+
+TEST_F(ZNCTest, ExtendedJoin) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    ircd.Write(":server 001 user :welcome");
+    client.ReadUntil(" 001 ");
+    ircd.Write(":nick!user@host JOIN #channel account :Real Name");
+    // Not sure why it is like this when server sends such format unexpectedly.
+    client.ReadUntil("JOIN #channel account :Real Name");
+    ircd.Write("CAP nick ACK extended-join");
+    ircd.Write(":nick!user@host JOIN #channel2 account :Real Name");
+    QByteArray line;
+    client.ReadUntilAndGet("JOIN", line);
+    EXPECT_EQ(line.toStdString(), "JOIN #channel2");
+    client.Write("CAP REQ extended-join");
+    client.ReadUntil("CAP user ACK :extended-join");
+    ircd.Write(":nick!user@host JOIN #channel3 account :Real Name");
+    client.ReadUntil("JOIN #channel3 account :Real Name");
+}
+
+TEST_F(ZNCTest, CAP302LSWaitFull) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    ircd.ReadUntil("CAP LS 302");
+    ircd.Write("CAP user LS * :away-notify");
+    ASSERT_THAT(ircd.ReadRemainder().toStdString(), Not(HasSubstr("away-notify")));
+    ircd.Write("CAP user LS :blahblah");
+    ircd.ReadUntil("CAP REQ :away-notify");
+}
+
+TEST_F(ZNCTest, CAP302NewDel) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    ircd.Write("CAP nick LS :blahblah");
+    ircd.ReadUntil("CAP END");
+    ircd.Write(":server 001 nick :Hello");
+    client.Write("CAP REQ :away-notify");
+    client.ReadUntil("NAK :away-notify");
+    client.Write("CAP REQ :cap-notify");
+    client.ReadUntil("ACK :cap-notify");
+    ircd.Write("CAP nick NEW :away-notify");
+    ircd.ReadUntil("CAP REQ :away-notify");
+    ircd.Write("CAP nick ACK :away-notify");
+    client.ReadUntil("CAP nick NEW :away-notify");
+    ircd.Write("CAP nick DEL :away-notify");
+    client.ReadUntil("CAP nick DEL :away-notify");
 }
 
 TEST_F(ZNCTest, JoinKey) {
@@ -429,6 +479,214 @@ TEST_F(ZNCTest, DenyOptions) {
     client2.ReadUntil("Access denied!");
     client2.Write("PRIVMSG *controlpanel :DelCTCP user2 FOO");
     client2.ReadUntil("Access denied!");
+}
+
+TEST_F(ZNCTest, CAP302MultiLS) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    InstallModule("testmod.cpp", R"(
+        #include <znc/Client.h>
+        #include <znc/Modules.h>
+        class TestModule : public CModule {
+          public:
+            MODCONSTRUCTOR(TestModule) {}
+            void OnClientCapLs(CClient* pClient, SCString& ssCaps) override {
+                for (int i = 0; i < 100; ++i) {
+                    ssCaps.insert("testcap-" + CString(i));
+                }
+            }
+        };
+        GLOBALMODULEDEFS(TestModule, "Test")
+    )");
+    client.Write("znc loadmod testmod");
+    client.ReadUntil("Loaded module testmod");
+
+    auto client2 = ConnectClient();
+    client2.Write("CAP LS");
+    client2.ReadUntil("LS :");
+    auto rem = client2.ReadRemainder();
+    ASSERT_GT(rem.indexOf("testcap-10"), 10);
+    ASSERT_EQ(rem.indexOf("testcap-80"), -1);
+    ASSERT_EQ(rem.indexOf("LS"), -1);
+
+    client2 = ConnectClient();
+    client2.Write("CAP LS 302");
+    client2.ReadUntil("LS * :");
+    rem = client2.ReadRemainder();
+    int w = 0;
+    ASSERT_GT(w = rem.indexOf("testcap-10"), 1);
+    ASSERT_GT(w = rem.indexOf("testcap-22", w), 1);
+    ASSERT_GT(w = rem.indexOf("LS * :", w), 1);
+    ASSERT_GT(rem.indexOf("testcap-80", w), 1);
+    ASSERT_GT(rem.indexOf("LS :", w), 1);
+}
+
+TEST_F(ZNCTest, CAP302LSValue) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    InstallModule("testmod.cpp", R"(
+        #include <znc/Client.h>
+        #include <znc/Modules.h>
+        class TestModule : public CModule {
+          public:
+            MODCONSTRUCTOR(TestModule) {}
+            void OnClientCapLs(CClient* pClient, SCString& ssCaps) override {
+                if (pClient->HasCap302()) {
+                    ssCaps.insert("testcap=blah");
+                } else {
+                    ssCaps.insert("testcap");
+                }
+            }
+        };
+        GLOBALMODULEDEFS(TestModule, "Test")
+    )");
+    client.Write("znc loadmod testmod");
+    client.ReadUntil("Loaded module testmod");
+
+    auto client2 = ConnectClient();
+    client2.Write("CAP LS");
+    client2.ReadUntil("testcap ");
+
+    client2 = ConnectClient();
+    client2.Write("CAP LS 302");
+    client2.ReadUntil("testcap=");
+}
+
+class AllLanguages : public ZNCTest, public testing::WithParamInterface<int> {};
+
+INSTANTIATE_TEST_CASE_P(LanguagesTests, AllLanguages, testing::Values(1, 2, 3));
+
+TEST_P(AllLanguages, ServerDependentCapInModule) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    switch (GetParam()) {
+        case 1:
+            InstallModule("testmod.cpp", R"(
+                #include <znc/Modules.h>
+                class TestModule : public CModule {
+                    class TestCap : public CCapability {
+                        void OnServerChangedSupport(CIRCNetwork* pNetwork, bool bState) override {
+                            GetModule()->PutModule("Server changed support: " + CString(bState));
+                        }
+                        void OnClientChangedSupport(CClient* pClient, bool bState) override {
+                            GetModule()->PutModule("Client changed support: " + CString(bState));
+                        }
+                    };
+                  public:
+                    MODCONSTRUCTOR(TestModule) {
+                        AddServerDependentCapability("testcap", std::make_unique<TestCap>());
+                    }
+                };
+                MODULEDEFS(TestModule, "Test")
+            )");
+            break;
+        case 2:
+            if (QProcessEnvironment::systemEnvironment().value(
+                    "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
+                return;
+            }
+            znc->CanLeak();
+            InstallModule("testmod.py", R"(
+                import znc
+                class testmod(znc.Module):
+                    def OnLoad(self, args, ret):
+                        def server_change(net, state):
+                            self.PutModule('Server changed support: ' + ('true' if state else 'false'))
+                        def client_change(client, state):
+                            self.PutModule('Client changed support: ' + ('true' if state else 'false'))
+                        self.AddServerDependentCapability('testcap', server_change, client_change)
+                        return True
+                )");
+            client.Write("znc loadmod modpython");
+            break;
+        case 3:
+            if (QProcessEnvironment::systemEnvironment().value(
+                    "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
+                return;
+            }
+            znc->CanLeak();
+            InstallModule("testmod.pm", R"(
+                package testmod;
+                use base 'ZNC::Module';
+                sub OnLoad {
+                    my $self = shift;
+                    my $listen = $self->AddServerDependentCapability('testcap', sub {
+                        my ($net, $state) = @_;
+                        $self->PutModule('Server changed support: ' . ($state ? 'true' : 'false'));
+                    }, sub {
+                        my ($client, $state) = @_;
+                        $self->PutModule('Client changed support: ' . ($state ? 'true' : 'false'));
+                    });
+                    return 1;
+                }
+                1;
+            )");
+            client.Write("znc loadmod modperl");
+            break;
+    }
+    client.Write("znc loadmod testmod");
+    client.ReadUntil("Loaded module testmod");
+    client.Write("znc addnetwork net2");
+    client.Close();
+
+    client = ConnectClient();
+    client.Write("CAP LS 302");
+    client.Write("PASS :hunter2");
+    client.Write("NICK nick");
+    client.Write("USER user/test x x :x");
+    client.Write("CAP END");
+    client.ReadUntil("Welcome");
+
+    ircd.Write("001 nick Welcome");
+    ircd.Write("CAP nick NEW testcap=value");
+    ircd.ReadUntil("CAP REQ :testcap");
+    ircd.Write("CAP nick ACK :testcap");
+    client.ReadUntil(":Server changed support: true");
+    client.ReadUntil("CAP nick NEW :testcap=value");
+    client.Write("CAP REQ testcap");
+    client.ReadUntil(":Client changed support: true");
+    client.ReadUntil("CAP nick ACK :testcap");
+
+    client.Write("CAP LS");
+    client.ReadUntil(" testcap=value ");
+
+    ircd.Write("CAP nick DEL testcap");
+    client.ReadUntil(":Server changed support: false");
+    client.ReadUntil("CAP nick DEL :testcap");
+    client.ReadUntil(":Client changed support: false");
+
+    ircd.Close();
+    // TODO combine multiple DELs to single line
+    client.ReadUntil("CAP nick DEL :testcap");
+    client.ReadUntil(":Client changed support: false");
+
+    ircd = ConnectIRCd();
+    ircd.ReadUntil("CAP LS 302");
+    ircd.Write("CAP nick LS :testcap=new");
+    ircd.ReadUntil("CAP REQ :testcap");
+    ircd.Write("CAP nick ACK :testcap");
+    client.ReadUntil(":Server changed support: true");
+    ircd.ReadUntil("CAP END");
+    // NEW waits until 001
+    ASSERT_THAT(ircd.ReadRemainder().toStdString(), Not(HasSubstr("testcap")));
+    ircd.Write("001 nick Welcome");
+    // TODO combine multiple NEWs to single line
+    client.ReadUntil("CAP nick NEW :testcap=new");
+    client.ReadUntil("Welcome");
+
+    // NEW with new value without DEL
+    ircd.Write("CAP nick NEW testcap=another");
+    client.ReadUntil("CAP nick NEW :testcap=another");
+
+    client.Write("znc jumpnetwork net2");
+    client.ReadUntil("CAP nick DEL :testcap");
+    client.ReadUntil(":Client changed support: false");
+
+    client.Write("znc jumpnetwork test");
+    client.ReadUntil("CAP nick NEW :testcap=another");
 }
 
 TEST_F(ZNCTest, HashUpgrade) {

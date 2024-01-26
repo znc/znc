@@ -241,6 +241,10 @@ class CPyRetBool {
 	bool ExistsNV(const CString& sName) {
 		return $self->EndNV() != $self->FindNV(sName);
 	}
+    void AddServerDependentCapability(const CString& sName, PyObject* serverCb,
+                                      PyObject* clientCb) {
+        $self->AddServerDependentCapability(sName, std::make_unique<CPyCapability>(serverCb, clientCb));
+	}
 }
 
 %extend CModules {

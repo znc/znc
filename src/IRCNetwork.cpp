@@ -660,10 +660,6 @@ void CIRCNetwork::ClientConnected(CClient* pClient) {
 
     size_t uIdx, uSize;
 
-    if (m_pIRCSock) {
-        pClient->NotifyServerDependentCaps(m_pIRCSock->GetAcceptedCaps());
-    }
-
     pClient->SetPlaybackActive(true);
 
     if (m_RawBuffer.IsEmpty()) {
@@ -1393,10 +1389,6 @@ bool CIRCNetwork::IsIRCConnected() const {
 void CIRCNetwork::SetIRCSocket(CIRCSock* pIRCSock) { m_pIRCSock = pIRCSock; }
 
 void CIRCNetwork::IRCConnected() {
-    const SCString& ssCaps = m_pIRCSock->GetAcceptedCaps();
-    for (CClient* pClient : m_vClients) {
-        pClient->NotifyServerDependentCaps(ssCaps);
-    }
     if (m_uJoinDelay > 0) {
         m_pJoinTimer->Delay(m_uJoinDelay);
     } else {
@@ -1405,9 +1397,6 @@ void CIRCNetwork::IRCConnected() {
 }
 
 void CIRCNetwork::IRCDisconnected() {
-    for (CClient* pClient : m_vClients) {
-        pClient->ClearServerDependentCaps();
-    }
     m_pIRCSock = nullptr;
 
     SetIRCServer("");
@@ -1415,6 +1404,17 @@ void CIRCNetwork::IRCDisconnected() {
 
     // Get the reconnect going
     CheckIRCConnect();
+}
+
+void CIRCNetwork::NotifyClientsAboutServerDependentCap(const CString& sCap, bool bValue) {
+    CString sValue = GetIRCSock() ? GetIRCSock()->GetCapLsValue(sCap) : "";
+    for (CClient* pClient : m_vClients) {
+        pClient->NotifyServerDependentCap(sCap, bValue, sValue);
+    }
+}
+
+bool CIRCNetwork::IsServerCapAccepted(const CString& sCap) const {
+    return m_pIRCSock && m_pIRCSock->IsCapAccepted(sCap);
 }
 
 void CIRCNetwork::SetIRCConnectEnabled(bool b) {

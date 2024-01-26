@@ -136,7 +136,10 @@ class ZNC_EXPORT_LIB_EXPORT CPyModule : public CModule {
                          CString& sMessage) override;
     EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) override;
     bool OnServerCapAvailable(const CString& sCap) override;
+    bool OnServerCap302Available(const CString& sCap, const CString& sValue) override;
     void OnServerCapResult(const CString& sCap, bool bSuccess) override;
+    void OnClientAttached() override;
+    void OnClientDetached() override;
     EModRet OnTimerAutoJoin(CChan& Channel) override;
     bool OnEmbeddedWebRequest(CWebSock&, const CString&, CTemplate&) override;
     EModRet OnAddNetwork(CIRCNetwork& Network, CString& sErrorRet) override;
@@ -366,3 +369,17 @@ inline CPyModCommand* CreatePyModCommand(CPyModule* pModule,
                                          PyObject* pyObj) {
     return new CPyModCommand(pModule, sCmd, sArgs, sDesc, pyObj);
 }
+
+class ZNC_EXPORT_LIB_EXPORT CPyCapability : public CCapability {
+  public:
+    CPyCapability(PyObject* serverCb, PyObject* clientCb);
+    ~CPyCapability();
+
+    void OnServerChangedSupport(CIRCNetwork* pNetwork, bool bState) override;
+    void OnClientChangedSupport(CClient* pClient, bool bState) override;
+
+  private:
+    PyObject* m_serverCb;
+    PyObject* m_clientCb;
+};
+

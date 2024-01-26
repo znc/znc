@@ -189,6 +189,10 @@ class MCString : public std::map<CString, CString> {};
 	bool ExistsNV(const CString& sName) {
 		return $self->EndNV() != $self->FindNV(sName);
 	}
+    void AddServerDependentCapability(const CString& sName, SV* serverCb,
+                                      SV* clientCb) {
+        $self->AddServerDependentCapability(sName, std::make_unique<CPerlCapability>(serverCb, clientCb));
+	}
 }
 
 %extend CModules {

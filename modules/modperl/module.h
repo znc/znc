@@ -116,7 +116,10 @@ class ZNC_EXPORT_LIB_EXPORT CPerlModule : public CModule {
                          CString& sMessage) override;
     EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) override;
     bool OnServerCapAvailable(const CString& sCap) override;
+    bool OnServerCap302Available(const CString& sCap, const CString& sValue) override;
     void OnServerCapResult(const CString& sCap, bool bSuccess) override;
+    void OnClientAttached() override;
+    void OnClientDetached() override;
     EModRet OnTimerAutoJoin(CChan& Channel) override;
     bool OnEmbeddedWebRequest(CWebSock&, const CString&, CTemplate&) override;
     EModRet OnAddNetwork(CIRCNetwork& Network, CString& sErrorRet) override;
@@ -212,6 +215,20 @@ class ZNC_EXPORT_LIB_EXPORT CPerlSocket : public CSocket {
 inline CPerlSocket* CreatePerlSocket(CPerlModule* pModule, SV* perlObj) {
     return new CPerlSocket(pModule, perlObj);
 }
+
+class ZNC_EXPORT_LIB_EXPORT CPerlCapability : public CCapability {
+  public:
+    CPerlCapability(SV* serverCb, SV* clientCb)
+        : m_serverCb(newSVsv(serverCb)), m_clientCb(newSVsv(clientCb)) {}
+    ~CPerlCapability();
+
+    void OnServerChangedSupport(CIRCNetwork* pNetwork, bool bState) override;
+    void OnClientChangedSupport(CClient* pClient, bool bState) override;
+
+  private:
+    SV* m_serverCb;
+    SV* m_clientCb;
+};
 
 inline bool HaveIPv6() {
 #ifdef HAVE_IPV6

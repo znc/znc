@@ -172,22 +172,6 @@ TEST_F(ClientTest, UserhostInNames) {  // aka UHNAMES
                 ElementsAre(msg.ToString(), extmsg.ToString()));
 }
 
-TEST_F(ClientTest, ExtendedJoin) {
-    m_pTestSock->ReadLine(":server CAP * ACK :extended-join");
-    m_pTestClient->Reset();
-
-    CMessage msg(":nick!user@host JOIN #channel");
-    CMessage extmsg(":nick!user@host JOIN #channel account :Real Name");
-    EXPECT_FALSE(m_pTestClient->HasExtendedJoin());
-    m_pTestClient->PutClient(extmsg);
-    EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString()));
-    m_pTestClient->SetExtendedJoin(true);
-    EXPECT_TRUE(m_pTestClient->HasExtendedJoin());
-    m_pTestClient->PutClient(extmsg);
-    EXPECT_THAT(m_pTestClient->vsLines,
-                ElementsAre(msg.ToString(), extmsg.ToString()));
-}
-
 TEST_F(ClientTest, StatusMsg) {
     m_pTestSock->ReadLine(
         ":irc.znc.in 001 me :Welcome to the Internet Relay Network me");

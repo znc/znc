@@ -156,6 +156,8 @@ class CIRCNetwork : private CCoreTranslationMixin {
     void IRCConnected();
     void IRCDisconnected();
     void CheckIRCConnect();
+    void NotifyClientsAboutServerDependentCap(const CString& sCap, bool bValue);
+    bool IsServerCapAccepted(const CString& sCap) const;
 
     bool PutIRC(const CString& sLine);
     bool PutIRC(const CMessage& Message);
