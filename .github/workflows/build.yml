@@ -141,7 +141,7 @@ jobs:
           if [[ "$GITHUB_REF" == refs/heads/master ]]; then
             echo "::set-output name=latest::type=raw,latest"
           fi
-      - uses: docker/metadata-action@v4
+      - uses: docker/metadata-action@v5
         id: meta
         with:
           images: zncbouncer/znc-git
