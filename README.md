@@ -50,9 +50,12 @@ cyrusauth:
 Character Encodings:
 * To get proper character encoding and charsets install ICU (`libicu4-dev`)
 
-I18N (UI translation)
+I18N (UI translation):
 * Boost.Locale
 * gettext is a build dependency
+
+Argon2 password hash:
+* libargon2
 
 ## Installing ZNC
 
