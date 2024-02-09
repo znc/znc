@@ -3,6 +3,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: modperl.cpp:417
-msgid "Loads perl scripts as ZNC modules"
+#: corecaps.cpp:80
+msgid "Adds support for several IRC capabilities, extracted from ZNC core."
 msgstr ""
