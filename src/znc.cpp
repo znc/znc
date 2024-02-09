@@ -1050,6 +1050,7 @@ bool CZNC::ReadConfig(CConfig& config, CString& sError) {
     // create a backup file if necessary
     CString sSavedVersion;
     config.FindStringEntry("version", sSavedVersion);
+    config.AddKeyValuePair("version", sSavedVersion);
     if (sSavedVersion.empty()) {
         CUtils::PrintError(
             "Config does not contain a version identifier. It may be be too "
@@ -1092,20 +1093,28 @@ bool CZNC::RehashConfig(CString& sError) {
 bool CZNC::LoadGlobal(CConfig& config, CString& sError) {
     sError.clear();
 
+    CString sSavedVersion;
+    config.FindStringEntry("version", sSavedVersion);
+    tuple<unsigned int, unsigned int> tSavedVersion =
+        make_tuple(sSavedVersion.Token(0, false, ".").ToUInt(),
+                   sSavedVersion.Token(1, false, ".").ToUInt());
+
     MCString msModules;  // Modules are queued for later loading
 
     VCString vsList;
     config.FindStringVector("loadmodule", vsList);
+
+    // Automatically load corecaps if config was upgraded from old version, but
+    // don't force it if user explicitly unloaded it
+    if (tSavedVersion < make_tuple(1, 9)) {
+        vsList.push_back("corecaps");
+    }
+
     for (const CString& sModLine : vsList) {
         CString sModName = sModLine.Token(0);
         CString sArgs = sModLine.Token(1, true);
 
         // compatibility for pre-1.0 configs
-        CString sSavedVersion;
-        config.FindStringEntry("version", sSavedVersion);
-        tuple<unsigned int, unsigned int> tSavedVersion =
-            make_tuple(sSavedVersion.Token(0, false, ".").ToUInt(),
-                       sSavedVersion.Token(1, false, ".").ToUInt());
         if (sModName == "saslauth" && tSavedVersion < make_tuple(0, 207)) {
             CUtils::PrintMessage(
                 "saslauth module was renamed to cyrusauth. Loading cyrusauth "
