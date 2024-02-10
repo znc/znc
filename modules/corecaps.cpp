@@ -46,12 +46,7 @@ class CCoreCaps : public CModule {
     };
 
     class AccountTag : public CCapability {
-        void OnServerChangedSupport(CIRCNetwork* pNetwork,
-                                    bool bState) override {
-            pNetwork->GetIRCSock()->m_bAccountTag = bState;
-        }
         void OnClientChangedSupport(CClient* pClient, bool bState) override {
-            pClient->m_bAccountTag = bState;
             pClient->SetTagSupport("account", bState);
         }
     };

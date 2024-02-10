@@ -67,7 +67,6 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork)
       m_bUHNames(false),
       m_bAwayNotify(false),
       m_bAccountNotify(false),
-      m_bAccountTag(false),
       m_bExtendedJoin(false),
       m_bServerTime(false),
       m_sPerms("*!@%+"),

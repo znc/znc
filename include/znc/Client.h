@@ -116,7 +116,6 @@ class CClient : public CIRCSocket {
     bool HasCapNotify() const { return m_bCapNotify; }
     bool HasAwayNotify() const { return m_bAwayNotify; }
     bool HasAccountNotify() const { return m_bAccountNotify; }
-    bool HasAccountTag() const { return m_bAccountTag; }
     bool HasExtendedJoin() const { return m_bExtendedJoin; }
     bool HasNamesx() const { return m_bNamesx; }
     bool HasUHNames() const { return m_bUHNames; }
@@ -287,7 +286,6 @@ class CClient : public CIRCSocket {
     bool m_bCapNotify;
     bool m_bAwayNotify;
     bool m_bAccountNotify;
-    bool m_bAccountTag;
     bool m_bExtendedJoin;
     bool m_bNamesx;
     bool m_bUHNames;
