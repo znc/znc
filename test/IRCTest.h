@@ -36,7 +36,6 @@ class TestClient : public CClient {
     }
     void Reset() { vsLines.clear(); }
     void SetAccountNotify(bool bEnabled) { m_bAccountNotify = bEnabled; }
-    void SetAccountTag(bool bEnabled) { m_bAccountTag = bEnabled; }
     void SetAwayNotify(bool bEnabled) { m_bAwayNotify = bEnabled; }
     void SetExtendedJoin(bool bEnabled) { m_bExtendedJoin = bEnabled; }
     void SetNamesx(bool bEnabled) { m_bNamesx = bEnabled; }

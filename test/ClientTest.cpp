@@ -88,12 +88,11 @@ TEST_F(ClientTest, AccountTag) {
 
     CMessage msg(":nick!user@host PRIVMSG #channel :text");
     CMessage extmsg("@account=account-name :nick!user@host PRIVMSG #channel :text");
-    EXPECT_FALSE(m_pTestClient->HasAccountTag());
+    EXPECT_FALSE(m_pTestClient->IsTagEnabled("account"));
     m_pTestClient->PutClient(extmsg);
     EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString()));
-    m_pTestClient->SetAccountTag(true);
     m_pTestClient->SetTagSupport("account", true);
-    EXPECT_TRUE(m_pTestClient->HasAccountTag());
+    EXPECT_TRUE(m_pTestClient->IsTagEnabled("account"));
     m_pTestClient->PutClient(extmsg);
     EXPECT_THAT(m_pTestClient->vsLines,
                 ElementsAre(msg.ToString(), extmsg.ToString()));
