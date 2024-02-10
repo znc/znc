@@ -808,6 +808,7 @@ void CClient::HandleCap(const CMessage& Message) {
             }
         }
     } else if (sSubCmd.Equals("REQ")) {
+        m_bInCap = true;
         VCString vsTokens;
         Message.GetParam(1).Split(" ", vsTokens, false);
 

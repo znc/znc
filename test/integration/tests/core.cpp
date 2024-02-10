@@ -733,5 +733,17 @@ TEST_F(ZNCTest, HashUpgrade) {
     client.Close();
 }
 
+TEST_F(ZNCTest, CapReqWithoutLs) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+
+    auto client = ConnectClient();
+    client.Write("CAP REQ nonono");
+    client.Write("PASS :hunter2");
+    client.Write("NICK nick");
+    client.Write("USER foo x x :x");
+    ASSERT_THAT(client.ReadRemainder().toStdString(), Not(HasSubstr("Welcome")));
+}
+
 }  // namespace
 }  // namespace znc_inttest
