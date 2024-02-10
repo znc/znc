@@ -25,7 +25,7 @@ Core:
 * GNU make
 * pkg-config
 * GCC 8 or clang 5
-* CMake
+* CMake 3.13
 
 ## Optional Requirements
 
@@ -138,7 +138,7 @@ These directories are also in there:
 - moddata - Global modules save their settings here.
   (e.g. webadmin saves the current skin name in here)
 - users   - This is per-user data and mainly contains just a moddata
-  directory.
+  directory and a directory for each network configured.
 
 ## ZNC's config file
 
