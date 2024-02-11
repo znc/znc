@@ -3,6 +3,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: corecaps.cpp:80
+#: corecaps.cpp:75
 msgid "Adds support for several IRC capabilities, extracted from ZNC core."
 msgstr ""

@@ -54,27 +54,27 @@ msgstr ""
 "msg *status help</code>” en “<code>/msg *status loadmod &lt;module&gt;</"
 "code>”). Zodra je deze geladen hebt zal dit menu zich uitbreiden."
 
-#: znc.cpp:1552
+#: znc.cpp:1561
 msgid "User already exists"
 msgstr "Gebruiker bestaat al"
 
-#: znc.cpp:1660
+#: znc.cpp:1669
 msgid "IPv6 is not enabled"
 msgstr "IPv6 is niet ingeschakeld"
 
-#: znc.cpp:1668
+#: znc.cpp:1677
 msgid "SSL is not enabled"
 msgstr "SSL is niet ingeschakeld"
 
-#: znc.cpp:1676
+#: znc.cpp:1685
 msgid "Unable to locate pem file: {1}"
 msgstr "Kan PEM bestand niet vinden: {1}"
 
-#: znc.cpp:1695
+#: znc.cpp:1704
 msgid "Invalid port"
 msgstr "Ongeldige poort"
 
-#: znc.cpp:1811 ClientCommand.cpp:1720
+#: znc.cpp:1820 ClientCommand.cpp:1720
 msgid "Unable to bind: {1}"
 msgstr "Kan niet binden: {1}"
 
@@ -128,72 +128,72 @@ msgstr ""
 msgid "Some module aborted the connection attempt"
 msgstr "Een module heeft de verbindingspoging afgebroken"
 
-#: IRCSock.cpp:521
+#: IRCSock.cpp:520
 msgid "Error from server: {1}"
 msgstr "Fout van server: {1}"
 
-#: IRCSock.cpp:723
+#: IRCSock.cpp:722
 msgid "ZNC seems to be connected to itself, disconnecting..."
 msgstr ""
 "ZNC blijkt verbonden te zijn met zichzelf... De verbinding zal verbroken "
 "worden..."
 
-#: IRCSock.cpp:770
+#: IRCSock.cpp:769
 msgid "Server {1} redirects us to {2}:{3} with reason: {4}"
 msgstr "Server {1} stuurt ons door naar {2}:{3} met reden: {4}"
 
-#: IRCSock.cpp:774
+#: IRCSock.cpp:773
 msgid "Perhaps you want to add it as a new server."
 msgstr "Misschien wil je het toevoegen als nieuwe server."
 
-#: IRCSock.cpp:1004
+#: IRCSock.cpp:1003
 msgid "Channel {1} is linked to another channel and was thus disabled."
 msgstr ""
 "Kanaal {1} is verbonden naar een andere kanaal en is daarom uitgeschakeld."
 
-#: IRCSock.cpp:1016
+#: IRCSock.cpp:1015
 msgid "Switched to SSL (STARTTLS)"
 msgstr "Omgeschakeld naar een veilige verbinding (STARTTLS)"
 
-#: IRCSock.cpp:1069
+#: IRCSock.cpp:1068
 msgid "You quit: {1}"
 msgstr "Je hebt het netwerk verlaten: {1}"
 
-#: IRCSock.cpp:1275
+#: IRCSock.cpp:1274
 msgid "Disconnected from IRC. Reconnecting..."
 msgstr "Verbinding met IRC verbroken. We proberen opnieuw te verbinden..."
 
-#: IRCSock.cpp:1306
+#: IRCSock.cpp:1305
 msgid "Cannot connect to IRC ({1}). Retrying..."
 msgstr "Kan niet verbinden met IRC ({1}). We proberen opnieuw te verbinden..."
 
-#: IRCSock.cpp:1309
+#: IRCSock.cpp:1308
 msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr ""
 "Verbinding met IRC verbroken ({1}). We proberen opnieuw te verbinden..."
 
-#: IRCSock.cpp:1345
+#: IRCSock.cpp:1344
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 "Als je dit certificaat vertrouwt, doe: /znc AddTrustedServerFingerprint {1}"
 
-#: IRCSock.cpp:1354
+#: IRCSock.cpp:1353
 msgid "IRC connection timed out.  Reconnecting..."
 msgstr "IRC verbinding time-out. We proberen opnieuw te verbinden..."
 
-#: IRCSock.cpp:1366
+#: IRCSock.cpp:1365
 msgid "Connection Refused.  Reconnecting..."
 msgstr "Verbinding geweigerd. We proberen opnieuw te verbinden..."
 
-#: IRCSock.cpp:1374
+#: IRCSock.cpp:1373
 msgid "Received a too long line from the IRC server!"
 msgstr "Een te lange regel ontvangen van de IRC server!"
 
-#: IRCSock.cpp:1488
+#: IRCSock.cpp:1487
 msgid "No free nick available"
 msgstr "Geen beschikbare bijnaam"
 
-#: IRCSock.cpp:1496
+#: IRCSock.cpp:1495
 msgid "No free nick found"
 msgstr "Geen beschikbare bijnaam gevonden"
 
@@ -201,17 +201,17 @@ msgstr "Geen beschikbare bijnaam gevonden"
 msgid "No such module {1}"
 msgstr "Geen dergelijke module {1}"
 
-#: Client.cpp:395
+#: Client.cpp:394
 msgid "A client from {1} attempted to login as you, but was rejected: {2}"
 msgstr ""
 "Een client van {1} heeft geprobeerd als jou in te loggen maar werd "
 "geweigerd: {2}"
 
-#: Client.cpp:430
+#: Client.cpp:429
 msgid "Network {1} doesn't exist."
 msgstr "Netwerk {1} bestaat niet."
 
-#: Client.cpp:444
+#: Client.cpp:443
 msgid ""
 "You have several networks configured, but no network was specified for the "
 "connection."
@@ -219,7 +219,7 @@ msgstr ""
 "Je hebt meerdere netwerken geconfigureerd maar je hebt er geen gekozen om "
 "verbinding mee te maken."
 
-#: Client.cpp:447
+#: Client.cpp:446
 msgid ""
 "Selecting network {1}. To see list of all configured networks, use /znc "
 "ListNetworks"
@@ -227,7 +227,7 @@ msgstr ""
 "Netwerk {1} geselecteerd. Om een lijst te tonen van alle geconfigureerde "
 "netwerken, gebruik /znc ListNetworks"
 
-#: Client.cpp:450
+#: Client.cpp:449
 msgid ""
 "If you want to choose another network, use /znc JumpNetwork <network>, or "
 "connect to ZNC with username {1}/<network> (instead of just {1})"
@@ -235,22 +235,22 @@ msgstr ""
 "Als je een ander netwerk wilt kiezen, gebruik /znc JumpNetwork <netwerk>, of "
 "verbind naar ZNC met gebruikersnaam {1}/<netwerk> (in plaats van alleen {1})"
 
-#: Client.cpp:456
+#: Client.cpp:455
 msgid ""
 "You have no networks configured. Use /znc AddNetwork <network> to add one."
 msgstr ""
 "Je hebt geen netwerken geconfigureerd. Gebruiker /znc AddNetwork <netwerk> "
 "om er een toe te voegen."
 
-#: Client.cpp:467
+#: Client.cpp:466
 msgid "Closing link: Timeout"
 msgstr "Verbinding verbroken: Time-out"
 
-#: Client.cpp:489
+#: Client.cpp:488
 msgid "Closing link: Too long raw line"
 msgstr "Verbinding verbroken: Te lange onbewerkte regel"
 
-#: Client.cpp:496
+#: Client.cpp:495
 msgid ""
 "You are being disconnected because another user just authenticated as you."
 msgstr ""

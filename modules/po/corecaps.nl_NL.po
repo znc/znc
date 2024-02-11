@@ -12,6 +12,6 @@ msgstr ""
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
 
-#: corecaps.cpp:80
+#: corecaps.cpp:75
 msgid "Adds support for several IRC capabilities, extracted from ZNC core."
 msgstr ""
