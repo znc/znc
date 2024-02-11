@@ -613,7 +613,7 @@ TEST_P(AllLanguages, ServerDependentCapInModule) {
                 use base 'ZNC::Module';
                 sub OnLoad {
                     my $self = shift;
-                    my $listen = $self->AddServerDependentCapability('testcap', sub {
+                    $self->AddServerDependentCapability('testcap', sub {
                         my ($net, $state) = @_;
                         $self->PutModule('Server changed support: ' . ($state ? 'true' : 'false'));
                     }, sub {
