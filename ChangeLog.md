@@ -1,3 +1,74 @@
+# ZNC 1.9.0 (2024-02-22)
+
+## New
+* Support for capability negotiation 302 and `cap-notify`. ZNC now has API `AddServerDependentCapability()`, using which modules can easily implement new capabilities: if server supports a cap, it will automatically be offered to clients which support `cap-notify` and ZNC will notify the module when the capability is enabled or disabled for server and for each client.
+    * Several capabilities (`away-notify`, `account-notify`, `extended-join`) were moved from the core to a new module: corecaps.
+    * The corecaps module is loaded automatically when upgrading from old config and when creating new config, but it's possible to unload it.
+        * Note: users who were using pre-release versions of 1.9.x (from git or from nightly tarballs) won't have it loaded automatically, because the existing config states `Version = 1.9`. In such case you can load it manually. This is to honor choice of users who decide to unload it, since we don't know whether the module is missing intentionally.
+    * Added support for `account-tag` capability, also in corecaps module.
+* Updated password hashing algorithm from SHA-256 to Argon2id (if libargon2 is installed). Existing passwords are transparently upgraded upon login.
+* Allow ordering of channels: via `ListChans`, `MoveChan` and `SwapChans` commands, and via webadmin.
+* New user options: `DenySetIdent`, `DenySetNetwork`, `DenySetRealName`, `DenySetQuitMsg`, `DenySetCTCPReplies`.
+* Switched `--makeconf` wizard default network from freenode to Libera.
+* Added Portuguese and Turkish translations.
+* znc-buildmod: output where the module was written to
+
+## Fixes
+* Fixed crash when receiving SASL lines from server without having negotiated SASL via CAP.
+* Fixed build with SWIG 4.2.0.
+* Fixed build with LibreSSL.
+* Fixed handling of timezones when parsing server-time tags received from server.
+* Use module names as the module ident, otherwise some clients were merging conversations with different modules together.
+* Stopped sending invalid 333 (`RPL_TOPICWHOTIME`) to client if topic owner is unknown.
+* Fixed an ODR violation.
+* Better hide password in PASS debug lines, sometimes it was not hidden.
+* CAP REQ sent by client without CAP LS now suspends the registration as the spec requires.
+
+## Modules
+* autoop: In some cases settings were parsed incorrectly, resulting in failure to do the autoop, now it's fixed.
+* clientnotify: Added options to reduce amount of notifications depending on the IP and the client ID of the connecting client.
+* controlpanel: Fixed help output.
+* log: Log nickserv account in the joins lines.
+* modperl: Allow overriding label for timers, which means now there can be more than 1 timer per module.
+* modpython:
+    * Rewrote internals of how modpython loads modules.
+    * Main motivation for the switch from using `imp` to using `importlib` was to support Python 3.12+.
+        * As an additional benefit, now it's possible to structure the module as a python package (a subdirectory with `__init__.py` and other .py files).
+        * All the old python modules should load as they were before.
+        * ZNC no longer supports loading a C python extension directly through modpython (though I doubt there were any users of that obscure feature): if you want to some parts of the module to be compiled, you can always import that from `__init__.py`.
+    * Implemented `Module.AddCommand()`
+* route_replies:
+    * Added Solanum-specific 337 (`RPL_WHOISTEXT`) to possible replies of `/whois`.
+    * Route replies to `/topic`.
+* sasl: Don't forward 908 (`RPL_SASLMECHS`) to clients.
+* webadmin: Fixed order of breadcrumbs in network page.
+* watch: Allow new entries to use spaces.
+
+## Notes for package maintainers
+* Require C++17 compiler. That is, GCC 8+ or Clang 5+.
+* Removed autoconf, leaving only CMake as the build system. The `configure` script is now merely a wrapper for CMake, and accepts mostly the same parameters as the old `configure`. You can use either `configure` as before, or CMake directly. Minimum supported CMake version is 3.13.
+* If cctz library is available on the system, it will be used, otherwise the bundled copy will be used.
+* libargon2 is new optional dependency.
+* Dropped support for Python < 3.4
+* Dropped support for SWIG < 4.0.1
+* The systemd unit now passes `--datadir=/var/lib/znc`.
+
+## Internal
+* Switched to steady clock for cache map and for sockets to fix certain issues with leap seconds and DST.
+* Made `CUser::Put...()` send to all clients instead of only networkless clients. Deprecate `CUser::PutAllUser()`.
+* Setup Github Actions to replace old Travis CI setup.
+* Added CIFuzz.
+* Added CodeQL.
+* List of translators is now automatically generated from Crowdin.
+* Modernized the way how CMake is used.
+* Updated default SSL settings from Mozilla recommendations.
+* Rewrote message parsing using `std::string_view`, improving the performance of the parser.
+* Web: removed legacy xhtml syntax.
+* Documented more functions.
+* Made some integration tests run faster by changing ServerThrottle value in the test.
+
+
+
 # ZNC 1.8.2 (2020-07-07)
 
 ## New
