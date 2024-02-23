@@ -8,12 +8,12 @@ msgstr ""
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: pl\n"
-"X-Crowdin-File: /master/modules/po/modpython.pot\n"
-"X-Crowdin-File-ID: 183\n"
+"X-Crowdin-File: /1.9.x/modules/po/modpython.pot\n"
+"X-Crowdin-File-ID: 500\n"
 "Project-Id-Version: znc-bouncer\n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
 
-#: modpython.cpp:505
+#: modpython.cpp:548
 msgid "Loads python scripts as ZNC modules"
 msgstr "Ładuje skrypty pythona jako moduły ZNC"

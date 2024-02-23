@@ -8,8 +8,8 @@ msgstr ""
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: pl\n"
-"X-Crowdin-File: /master/src/po/znc.pot\n"
-"X-Crowdin-File-ID: 146\n"
+"X-Crowdin-File: /1.9.x/src/po/znc.pot\n"
+"X-Crowdin-File-ID: 420\n"
 "Project-Id-Version: znc-bouncer\n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -56,27 +56,27 @@ msgstr ""
 "msg *status help</code>” i “<code>/msg *status loadmod &lt;moduł&gt;</"
 "code>”). Jak już załadujesz jakieś moduły WWW to menu się rozwinie."
 
-#: znc.cpp:1552
+#: znc.cpp:1561
 msgid "User already exists"
 msgstr "Użytkownik już istnieje"
 
-#: znc.cpp:1660
+#: znc.cpp:1669
 msgid "IPv6 is not enabled"
 msgstr "IPv6 nie jest włączone"
 
-#: znc.cpp:1668
+#: znc.cpp:1677
 msgid "SSL is not enabled"
 msgstr "SSL nie jest włączone"
 
-#: znc.cpp:1676
+#: znc.cpp:1685
 msgid "Unable to locate pem file: {1}"
 msgstr "Nie udało się odnaleźć pliku pem: {1}"
 
-#: znc.cpp:1695
+#: znc.cpp:1704
 msgid "Invalid port"
 msgstr "Nieprawidłowy port"
 
-#: znc.cpp:1811 ClientCommand.cpp:1720
+#: znc.cpp:1820 ClientCommand.cpp:1720
 msgid "Unable to bind: {1}"
 msgstr "Nie udało się przypiąć: {1}"
 
@@ -85,109 +85,109 @@ msgid "Jumping servers because this server is no longer in the list"
 msgstr ""
 "Przeskakiwanie na inne serwery, ponieważ tego serwera nie ma już na liście"
 
-#: IRCNetwork.cpp:671 User.cpp:699
+#: IRCNetwork.cpp:667 User.cpp:699
 msgid "Welcome to ZNC"
 msgstr "Witamy w ZNC"
 
-#: IRCNetwork.cpp:759
+#: IRCNetwork.cpp:755
 msgid "You are currently disconnected from IRC. Use 'connect' to reconnect."
 msgstr ""
 "Jesteś aktualnie rozłączony/a z IRC. Użyj 'connect' aby połączyć się "
 "ponownie."
 
-#: IRCNetwork.cpp:789
+#: IRCNetwork.cpp:785
 msgid "This network is being deleted or moved to another user."
 msgstr "Ta sieć jest usuwana lub przenoszona do innego użytkownika."
 
-#: IRCNetwork.cpp:950
+#: IRCNetwork.cpp:946
 msgid "Invalid index"
 msgstr ""
 
-#: IRCNetwork.cpp:958 IRCNetwork.cpp:974 IRCNetwork.cpp:982
+#: IRCNetwork.cpp:954 IRCNetwork.cpp:970 IRCNetwork.cpp:978
 #: ClientCommand.cpp:1425
 msgid "You are not on {1}"
 msgstr "Nie jesteś na {1}"
 
-#: IRCNetwork.cpp:1061
+#: IRCNetwork.cpp:1057
 msgid "The channel {1} could not be joined, disabling it."
 msgstr "Nie można dołączyć do kanału {1} , wyłączanie go."
 
-#: IRCNetwork.cpp:1190
+#: IRCNetwork.cpp:1186
 msgid "Your current server was removed, jumping..."
 msgstr "Twój obecny serwer został usunięty, przeskakiwanie..."
 
-#: IRCNetwork.cpp:1353
+#: IRCNetwork.cpp:1349
 msgid "Cannot connect to {1}, because ZNC is not compiled with SSL support."
 msgstr ""
 "Nie można połączyć się z {1}, ponieważ ZNC nie jest skompilowany z obsługą "
 "SSL."
 
-#: IRCNetwork.cpp:1374
+#: IRCNetwork.cpp:1370
 msgid "Some module aborted the connection attempt"
 msgstr "Jakiś moduł przerwał próbę połączenia"
 
-#: IRCSock.cpp:492
+#: IRCSock.cpp:520
 msgid "Error from server: {1}"
 msgstr "Błąd z serwera: {1}"
 
-#: IRCSock.cpp:694
+#: IRCSock.cpp:722
 msgid "ZNC seems to be connected to itself, disconnecting..."
 msgstr "Wygląda na to że ZNC jest połączony sam do siebie, rozłączanie..."
 
-#: IRCSock.cpp:741
+#: IRCSock.cpp:769
 msgid "Server {1} redirects us to {2}:{3} with reason: {4}"
 msgstr "Serwer {1} przekierowuje nas do {2}:{3} z powodu: {4}"
 
-#: IRCSock.cpp:745
+#: IRCSock.cpp:773
 msgid "Perhaps you want to add it as a new server."
 msgstr "Być może chcesz dodać go jako nowy serwer."
 
-#: IRCSock.cpp:975
+#: IRCSock.cpp:1003
 msgid "Channel {1} is linked to another channel and was thus disabled."
 msgstr "Kanał {1} jest połączony z innym kanałem i dlatego został zablokowany."
 
-#: IRCSock.cpp:987
+#: IRCSock.cpp:1015
 msgid "Switched to SSL (STARTTLS)"
 msgstr "Przełączono na SSL (STARTTLS)"
 
-#: IRCSock.cpp:1040
+#: IRCSock.cpp:1068
 msgid "You quit: {1}"
 msgstr "Opuszczono sieć: {1}"
 
-#: IRCSock.cpp:1246
+#: IRCSock.cpp:1274
 msgid "Disconnected from IRC. Reconnecting..."
 msgstr "Rozłączono z IRC. Łączenie się ponownie..."
 
-#: IRCSock.cpp:1277
+#: IRCSock.cpp:1305
 msgid "Cannot connect to IRC ({1}). Retrying..."
 msgstr "Nie można połączyć się z IRC ({1}). Próbowanie ponownie..."
 
-#: IRCSock.cpp:1280
+#: IRCSock.cpp:1308
 msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr "Rołączono z IRC ({1}). Łączenie się ponownie..."
 
-#: IRCSock.cpp:1316
+#: IRCSock.cpp:1344
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 "Jeżeli ufasz temu certyfikatowi, wykonaj /znc AddTrustedServerFingerprint {1}"
 
-#: IRCSock.cpp:1325
+#: IRCSock.cpp:1353
 msgid "IRC connection timed out.  Reconnecting..."
 msgstr "Przekroczono limit czasu połączenia IRC. Łączenie się ponownie..."
 
-#: IRCSock.cpp:1337
+#: IRCSock.cpp:1365
 msgid "Connection Refused.  Reconnecting..."
 msgstr "Połączenie odrzucone. Łączenie się ponownie..."
 
-#: IRCSock.cpp:1345
+#: IRCSock.cpp:1373
 msgid "Received a too long line from the IRC server!"
 msgstr "Otrzymano zbyt długą linię z serwera IRC!"
 
-#: IRCSock.cpp:1449
+#: IRCSock.cpp:1487
 msgid "No free nick available"
 msgstr "Brak dostępnego wolnego pseudonimu"
 
-#: IRCSock.cpp:1457
+#: IRCSock.cpp:1495
 msgid "No free nick found"
 msgstr "Nie znaleziono wolnego pseudonimu"
 
@@ -195,15 +195,15 @@ msgstr "Nie znaleziono wolnego pseudonimu"
 msgid "No such module {1}"
 msgstr "Nie ma takiego modułu {1}"
 
-#: Client.cpp:359
+#: Client.cpp:394
 msgid "A client from {1} attempted to login as you, but was rejected: {2}"
 msgstr "Klient z {1} próbował się zalogować jako Ty, ale został odrzucony: {2}"
 
-#: Client.cpp:394
+#: Client.cpp:429
 msgid "Network {1} doesn't exist."
 msgstr "Sieć {1} nie istnieje."
 
-#: Client.cpp:408
+#: Client.cpp:443
 msgid ""
 "You have several networks configured, but no network was specified for the "
 "connection."
@@ -211,7 +211,7 @@ msgstr ""
 "Masz skonfigurowanych kilka sieci, ale nie określiłeś z którą chcesz się "
 "połączyć."
 
-#: Client.cpp:411
+#: Client.cpp:446
 msgid ""
 "Selecting network {1}. To see list of all configured networks, use /znc "
 "ListNetworks"
@@ -219,7 +219,7 @@ msgstr ""
 "Wybieranie sieci {1}. Aby zobaczyć listę wszystkich skonfigurowanych sieci, "
 "użyj /znc ListNetworks"
 
-#: Client.cpp:414
+#: Client.cpp:449
 msgid ""
 "If you want to choose another network, use /znc JumpNetwork <network>, or "
 "connect to ZNC with username {1}/<network> (instead of just {1})"
@@ -228,53 +228,53 @@ msgstr ""
 "z ZNC za pomocą zmodyfikowanej nazwy użytkownika {1}/<sieć> (zamiast tylko "
 "{1})"
 
-#: Client.cpp:420
+#: Client.cpp:455
 msgid ""
 "You have no networks configured. Use /znc AddNetwork <network> to add one."
 msgstr ""
 "Nie masz skonfigurowanych sieci. Użyj /znc AddNetwork <sieć>, aby dodać "
 "pierwszą."
 
-#: Client.cpp:431
+#: Client.cpp:466
 msgid "Closing link: Timeout"
 msgstr "Zamknięcie połączenia: przedawnienie"
 
-#: Client.cpp:453
+#: Client.cpp:488
 msgid "Closing link: Too long raw line"
 msgstr "Zamknięcie połączenia: za długa surowa linia"
 
-#: Client.cpp:460
+#: Client.cpp:495
 msgid ""
 "You are being disconnected because another user just authenticated as you."
 msgstr ""
 "Trwa rozłączanie, ponieważ inny użytkownik właśnie uwierzytelnił się jako Ty."
 
-#: Client.cpp:1026
+#: Client.cpp:1100
 msgid "Your CTCP to {1} got lost, you are not connected to IRC!"
 msgstr "Twoje CTCP do {1} zostało zgubione, nie jesteś połączony z IRC!"
 
-#: Client.cpp:1152
+#: Client.cpp:1226
 msgid "Your notice to {1} got lost, you are not connected to IRC!"
 msgstr ""
 "Twoje powiadomienie do {1} zostało zgubione, nie jesteś połączony z IRC!"
 
-#: Client.cpp:1191
+#: Client.cpp:1265
 msgid "Removing channel {1}"
 msgstr "Usuwanie kanału {1}"
 
-#: Client.cpp:1269
+#: Client.cpp:1343
 msgid "Your message to {1} got lost, you are not connected to IRC!"
 msgstr "Twoja wiadomość do {1} została zgubiona, nie jesteś połączony z IRC!"
 
-#: Client.cpp:1322 Client.cpp:1328
+#: Client.cpp:1396 Client.cpp:1402
 msgid "Hello. How may I help you?"
 msgstr "Witaj. Jak mogę ci pomóc?"
 
-#: Client.cpp:1342
+#: Client.cpp:1416
 msgid "Usage: /attach <#chans>"
 msgstr "Użycie: /attach <#kanały>"
 
-#: Client.cpp:1349 Client.cpp:1371 ClientCommand.cpp:129 ClientCommand.cpp:151
+#: Client.cpp:1423 Client.cpp:1445 ClientCommand.cpp:129 ClientCommand.cpp:151
 #: ClientCommand.cpp:423 ClientCommand.cpp:450
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
@@ -283,7 +283,7 @@ msgstr[1] ""
 msgstr[2] ""
 msgstr[3] ""
 
-#: Client.cpp:1352 ClientCommand.cpp:132
+#: Client.cpp:1426 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] "Podłączony {1} kanał"
@@ -291,11 +291,11 @@ msgstr[1] ""
 msgstr[2] ""
 msgstr[3] ""
 
-#: Client.cpp:1364
+#: Client.cpp:1438
 msgid "Usage: /detach <#chans>"
 msgstr "Użycie: /detach <#kanały>"
 
-#: Client.cpp:1374 ClientCommand.cpp:154
+#: Client.cpp:1448 ClientCommand.cpp:154
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] "Odpięto kanał {1}"
@@ -303,37 +303,37 @@ msgstr[1] "Odpięto {1} kanały"
 msgstr[2] "Odpięto {1} kanałów"
 msgstr[3] "Odpięto {1} kanały/ów"
 
-#: Chan.cpp:678
+#: Chan.cpp:680
 msgid "Buffer Playback..."
 msgstr "Odtwarzanie bufora..."
 
-#: Chan.cpp:716
+#: Chan.cpp:718
 msgid "Playback Complete."
 msgstr "Odtwarzanie zakończone."
 
-#: Modules.cpp:528
+#: Modules.cpp:554
 msgctxt "modhelpcmd"
 msgid "<search>"
 msgstr "<szukaj>"
 
-#: Modules.cpp:529
+#: Modules.cpp:555
 msgctxt "modhelpcmd"
 msgid "Generate this output"
 msgstr "Tworzy ten wynik"
 
-#: Modules.cpp:573 ClientCommand.cpp:1992
+#: Modules.cpp:599 ClientCommand.cpp:1992
 msgid "No matches for '{1}'"
 msgstr "Brak dopasowań dla '{1}'"
 
-#: Modules.cpp:691
+#: Modules.cpp:734
 msgid "This module doesn't implement any commands."
 msgstr "Ten moduł nie implementuje żadnych poleceń."
 
-#: Modules.cpp:693
+#: Modules.cpp:736
 msgid "Unknown command!"
 msgstr "Nieznane polecenie!"
 
-#: Modules.cpp:1633
+#: Modules.cpp:1786
 msgid ""
 "Module names can only contain letters, numbers and underscores, [{1}] is "
 "invalid"
@@ -341,71 +341,71 @@ msgstr ""
 "Nazwy modułów mogą zawierać tylko litery, cyfry i znaki podkreślenia, [{1}] "
 "jest nieprawidłowa"
 
-#: Modules.cpp:1652
+#: Modules.cpp:1805
 msgid "Module {1} already loaded."
 msgstr "Moduł {1} już jest załadowany."
 
-#: Modules.cpp:1666
+#: Modules.cpp:1819
 msgid "Unable to find module {1}"
 msgstr "Nie udało się odnaleźć modułu {1}"
 
-#: Modules.cpp:1678
+#: Modules.cpp:1831
 msgid "Module {1} does not support module type {2}."
 msgstr "Moduł {1} nie wspiera modułów typu {2}."
 
-#: Modules.cpp:1685
+#: Modules.cpp:1838
 msgid "Module {1} requires a user."
 msgstr "Moduł {1} wymaga użytkownika."
 
-#: Modules.cpp:1691
+#: Modules.cpp:1844
 msgid "Module {1} requires a network."
 msgstr "Moduł {1} wymaga sieci."
 
-#: Modules.cpp:1707
+#: Modules.cpp:1860
 msgid "Caught an exception"
 msgstr "Napotkano wyjątek"
 
-#: Modules.cpp:1713
+#: Modules.cpp:1866
 msgid "Module {1} aborted: {2}"
 msgstr "Moduł {1} przerwany: {2}"
 
-#: Modules.cpp:1715
+#: Modules.cpp:1868
 msgid "Module {1} aborted."
 msgstr "Przerwano moduł {1}."
 
-#: Modules.cpp:1739 Modules.cpp:1781
+#: Modules.cpp:1892 Modules.cpp:1934
 msgid "Module [{1}] not loaded."
 msgstr "Moduł [{1}] nie został załadowany."
 
-#: Modules.cpp:1763
+#: Modules.cpp:1916
 msgid "Module {1} unloaded."
 msgstr "Moduł {1} został wyładowany."
 
-#: Modules.cpp:1768
+#: Modules.cpp:1921
 msgid "Unable to unload module {1}."
 msgstr "Nie można wyładować modułu {1}."
 
-#: Modules.cpp:1797
+#: Modules.cpp:1950
 msgid "Reloaded module {1}."
 msgstr "Przeładowano moduł {1}."
 
-#: Modules.cpp:1816
+#: Modules.cpp:1969
 msgid "Unable to find module {1}."
 msgstr "Nie można znaleźć modułu {1}."
 
-#: Modules.cpp:1963
+#: Modules.cpp:2117
 msgid "Unknown error"
 msgstr "Nieznany błąd"
 
-#: Modules.cpp:1964
+#: Modules.cpp:2118
 msgid "Unable to open module {1}: {2}"
 msgstr "Nie można otworzyć modułu {1}: {2}"
 
-#: Modules.cpp:1973
+#: Modules.cpp:2127
 msgid "Could not find ZNCModuleEntry in module {1}"
 msgstr "Nie można znaleźć ZNCModuleEntry w module {1}"
 
-#: Modules.cpp:1981
+#: Modules.cpp:2135
 msgid ""
 "Version mismatch for module {1}: core is {2}, module is built for {3}. "
 "Recompile this module."
@@ -413,7 +413,7 @@ msgstr ""
 "Niezgodność wersji dla modułu {1}: jądro to {2}, moduł jest zbudowany dla "
 "{3}. Ponownie skompiluj ten moduł."
 
-#: Modules.cpp:1992
+#: Modules.cpp:2146
 msgid ""
 "Module {1} is built incompatibly: core is '{2}', module is '{3}'. Recompile "
 "this module."
@@ -421,12 +421,12 @@ msgstr ""
 "Moduł {1} jest zbudowany niekompatybilnie: jądro to „{2}”, moduł to „{3}”. "
 "Ponownie skompiluj ten moduł."
 
-#: Modules.cpp:2023 Modules.cpp:2029
+#: Modules.cpp:2177 Modules.cpp:2183
 msgctxt "modhelpcmd"
 msgid "Command"
 msgstr "Polecenie"
 
-#: Modules.cpp:2024 Modules.cpp:2031
+#: Modules.cpp:2178 Modules.cpp:2185
 msgctxt "modhelpcmd"
 msgid "Description"
 msgstr "Opis"

@@ -1,5 +1,8 @@
 msgid ""
 msgstr ""
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Indonesian\n"
+"Language: id_ID\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -8,9 +11,6 @@ msgstr ""
 "X-Crowdin-Language: id\n"
 "X-Crowdin-File: /master/modules/po/notes.pot\n"
 "X-Crowdin-File-ID: 186\n"
-"Project-Id-Version: znc-bouncer\n"
-"Language-Team: Indonesian\n"
-"Language: id_ID\n"
 
 #: modules/po/../data/notes/tmpl/index.tmpl:7
 msgid "Add A Note"
