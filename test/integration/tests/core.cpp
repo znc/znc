@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
+#include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
 #include "znctest.h"
+#include "znctestconfig.h"
 
 using testing::HasSubstr;
 using testing::ContainsRegex;
@@ -584,10 +586,9 @@ TEST_P(AllLanguages, ServerDependentCapInModule) {
             )");
             break;
         case 2:
-            if (QProcessEnvironment::systemEnvironment().value(
-                    "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
-                return;
-            }
+#ifndef WANT_PYTHON
+            GTEST_SKIP() << "Modpython is disabled";
+#endif
             znc->CanLeak();
             InstallModule("testmod.py", R"(
                 import znc
@@ -603,10 +604,9 @@ TEST_P(AllLanguages, ServerDependentCapInModule) {
             client.Write("znc loadmod modpython");
             break;
         case 3:
-            if (QProcessEnvironment::systemEnvironment().value(
-                    "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
-                return;
-            }
+#ifndef WANT_PERL
+            GTEST_SKIP() << "Modperl is disabled";
+#endif
             znc->CanLeak();
             InstallModule("testmod.pm", R"(
                 package testmod;

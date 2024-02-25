@@ -15,15 +15,15 @@
  */
 
 #include "znctest.h"
+#include "znctestconfig.h"
 
 namespace znc_inttest {
 namespace {
 
 TEST_F(ZNCTest, Modperl) {
-    if (QProcessEnvironment::systemEnvironment().value(
-            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
-        return;
-    }
+#ifndef WANT_PERL
+    GTEST_SKIP() << "Modperl is disabled";
+#endif
     auto znc = Run();
     znc->CanLeak();
     auto ircd = ConnectIRCd();
@@ -37,10 +37,9 @@ TEST_F(ZNCTest, Modperl) {
 }
 
 TEST_F(ZNCTest, Modpython) {
-    if (QProcessEnvironment::systemEnvironment().value(
-            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
-        return;
-    }
+#ifndef WANT_PYTHON
+    GTEST_SKIP() << "Modpython is disabled";
+#endif
     auto znc = Run();
     znc->CanLeak();
     auto ircd = ConnectIRCd();
@@ -65,10 +64,9 @@ TEST_F(ZNCTest, Modpython) {
 }
 
 TEST_F(ZNCTest, ModpythonSocket) {
-    if (QProcessEnvironment::systemEnvironment().value(
-            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
-        return;
-    }
+#ifndef WANT_PYTHON
+    GTEST_SKIP() << "Modpython is disabled";
+#endif
     auto znc = Run();
     znc->CanLeak();
 
@@ -107,10 +105,9 @@ TEST_F(ZNCTest, ModpythonSocket) {
 }
 
 TEST_F(ZNCTest, ModperlSocket) {
-    if (QProcessEnvironment::systemEnvironment().value(
-            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
-        return;
-    }
+#ifndef WANT_PERL
+    GTEST_SKIP() << "Modperl is disabled";
+#endif
     auto znc = Run();
     znc->CanLeak();
 
@@ -160,10 +157,9 @@ TEST_F(ZNCTest, ModperlSocket) {
 }
 
 TEST_F(ZNCTest, ModpythonVCString) {
-    if (QProcessEnvironment::systemEnvironment().value(
-            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
-        return;
-    }
+#ifndef WANT_PYTHON
+    GTEST_SKIP() << "Modpython is disabled";
+#endif
     auto znc = Run();
     znc->CanLeak();
 
@@ -185,10 +181,9 @@ TEST_F(ZNCTest, ModpythonVCString) {
 }
 
 TEST_F(ZNCTest, ModperlVCString) {
-    if (QProcessEnvironment::systemEnvironment().value(
-            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
-        return;
-    }
+#ifndef WANT_PERL
+    GTEST_SKIP() << "Modperl is disabled";
+#endif
     auto znc = Run();
     znc->CanLeak();
 
@@ -214,10 +209,9 @@ TEST_F(ZNCTest, ModperlVCString) {
 }
 
 TEST_F(ZNCTest, ModperlNV) {
-    if (QProcessEnvironment::systemEnvironment().value(
-            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
-        return;
-    }
+#ifndef WANT_PERL
+    GTEST_SKIP() << "Modperl is disabled";
+#endif
     auto znc = Run();
     znc->CanLeak();
 
@@ -244,10 +238,9 @@ TEST_F(ZNCTest, ModperlNV) {
 }
 
 TEST_F(ZNCTest, ModpythonPackage) {
-    if (QProcessEnvironment::systemEnvironment().value(
-            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
-        return;
-    }
+#ifndef WANT_PYTHON
+    GTEST_SKIP() << "Modpython is disabled";
+#endif
     auto znc = Run();
     znc->CanLeak();
 
@@ -285,10 +278,12 @@ TEST_F(ZNCTest, ModpythonPackage) {
 }
 
 TEST_F(ZNCTest, ModpythonModperl) {
-    if (QProcessEnvironment::systemEnvironment().value(
-            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
-        return;
-    }
+#ifndef WANT_PYTHON
+    GTEST_SKIP() << "Modpython is disabled";
+#endif
+#ifndef WANT_PERL
+    GTEST_SKIP() << "Modperl is disabled";
+#endif
     auto znc = Run();
     znc->CanLeak();
 
@@ -302,11 +297,9 @@ TEST_F(ZNCTest, ModpythonModperl) {
 }
 
 TEST_F(ZNCTest, ModpythonCommand) {
-    if (QProcessEnvironment::systemEnvironment().value(
-            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
-        return;
-    }
-
+#ifndef WANT_PYTHON
+    GTEST_SKIP() << "Modpython is disabled";
+#endif
     auto znc = Run();
     znc->CanLeak();
 

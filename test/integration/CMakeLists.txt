@@ -45,6 +45,7 @@ add_executable(inttest
 target_link_libraries(inttest Qt5::Network Threads::Threads)
 target_include_directories(inttest PUBLIC
 	"${PROJECT_SOURCE_DIR}/framework"
+	"${PROJECT_BINARY_DIR}"
 	"${GTEST_ROOT}" "${GTEST_ROOT}/include"
 	"${GMOCK_ROOT}" "${GMOCK_ROOT}/include")
 target_compile_definitions(inttest PRIVATE

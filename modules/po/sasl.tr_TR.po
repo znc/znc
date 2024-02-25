@@ -6,8 +6,8 @@ msgstr ""
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: tr\n"
-"X-Crowdin-File: /master/modules/po/sasl.pot\n"
-"X-Crowdin-File-ID: 197\n"
+"X-Crowdin-File: /1.9.x/modules/po/sasl.pot\n"
+"X-Crowdin-File-ID: 522\n"
 "Project-Id-Version: znc-bouncer\n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -38,7 +38,7 @@ msgstr "Seçenekler"
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:25
 msgid "Connect only if SASL authentication succeeds."
-msgstr ""
+msgstr "Yalnızca SASL kimlik doğrulaması başarılı olursa bağlanın."
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:27
 msgid "Require authentication"
@@ -58,7 +58,7 @@ msgstr "Açıklama"
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:57
 msgid "Selected mechanisms and their order:"
-msgstr ""
+msgstr "Seçilen mekanizmalar ve sıraları:"
 
 #: modules/po/../data/sasl/tmpl/index.tmpl:74
 msgid "Save"
@@ -66,12 +66,13 @@ msgstr "Kaydet"
 
 #: sasl.cpp:54
 msgid "TLS certificate, for use with the *cert module"
-msgstr ""
+msgstr "*cert modülüyle kullanım için TLS sertifikası"
 
 #: sasl.cpp:56
 msgid ""
 "Plain text negotiation, this should work always if the network supports SASL"
 msgstr ""
+"Düz metin anlaşması; ağ SASL'yi destekliyorsa bu her zaman çalışmalıdır"
 
 #: sasl.cpp:62
 msgid "search"
@@ -83,29 +84,32 @@ msgstr "Bu çıktıyı oluştur"
 
 #: sasl.cpp:64
 msgid "[<username> [<password>]]"
-msgstr ""
+msgstr "[<kullanıcı_adı> [<şifre>]]"
 
 #: sasl.cpp:65
 msgid ""
 "Set username and password for the mechanisms that need them. Password is "
 "optional. Without parameters, returns information about current settings."
 msgstr ""
+"İhtiyaç duydukları mekanizmalar için kullanıcı adı ve şifre belirleyin. "
+"Şifre isteğe bağlıdır. Parametreler olmadan geçerli ayarlarla ilgili "
+"bilgileri döndürür."
 
 #: sasl.cpp:69
 msgid "[mechanism[ ...]]"
-msgstr ""
+msgstr "[mekanizma[ ...]]"
 
 #: sasl.cpp:70
 msgid "Set the mechanisms to be attempted (in order)"
-msgstr ""
+msgstr "Denenecek mekanizmaları ayarlayın (sırayla)"
 
 #: sasl.cpp:72
 msgid "[yes|no]"
-msgstr ""
+msgstr "[yes|no]"
 
 #: sasl.cpp:73
 msgid "Don't connect unless SASL authentication succeeds"
-msgstr ""
+msgstr "SASL kimlik doğrulaması başarılı olmadığı sürece bağlanmayın"
 
 #: sasl.cpp:88 sasl.cpp:94
 msgid "Mechanism"
@@ -113,62 +117,64 @@ msgstr "Mekanizma"
 
 #: sasl.cpp:99
 msgid "The following mechanisms are available:"
-msgstr ""
+msgstr "Aşağıdaki mekanizmalar mevcuttur:"
 
 #: sasl.cpp:109
 msgid "Username is currently not set"
-msgstr ""
+msgstr "Kullanıcı adı şu anda ayarlanmamış"
 
 #: sasl.cpp:111
 msgid "Username is currently set to '{1}'"
-msgstr ""
+msgstr "Kullanıcı adı şu anda '{1}' olarak ayarlı"
 
 #: sasl.cpp:114
 msgid "Password was not supplied"
-msgstr ""
+msgstr "Şifre sağlanmadı"
 
 #: sasl.cpp:116
 msgid "Password was supplied"
-msgstr ""
+msgstr "Şifre sağlandı"
 
 #: sasl.cpp:124
 msgid "Username has been set to [{1}]"
-msgstr ""
+msgstr "Kullanıcı adı [{1}] olarak ayarlandı"
 
 #: sasl.cpp:125
 msgid "Password has been set to [{1}]"
-msgstr ""
+msgstr "Şifre [{1}] olarak ayarlandı"
 
 #: sasl.cpp:145
 msgid "Current mechanisms set: {1}"
-msgstr ""
+msgstr "Mevcut mekanizmalar ayarlandı: {1}"
 
 #: sasl.cpp:154
 msgid "We require SASL negotiation to connect"
-msgstr ""
+msgstr "Bağlanmak için SASL anlaşmasına ihtiyacımız var"
 
 #: sasl.cpp:156
 msgid "We will connect even if SASL fails"
-msgstr ""
+msgstr "SASL başarısız olsa bile bağlanacağız"
 
 #: sasl.cpp:193
 msgid "Disabling network, we require authentication."
-msgstr ""
+msgstr "Ağı devre dışı bırakırken kimlik doğrulaması yapmamız gerekiyor."
 
 #: sasl.cpp:194
 msgid "Use 'RequireAuth no' to disable."
-msgstr ""
+msgstr "Devre dışı bırakmak için 'RequireAuth no' seçeneğini kullanın."
 
 #: sasl.cpp:258
 msgid "{1} mechanism succeeded."
-msgstr ""
+msgstr "{1} mekanizması başarılı oldu."
 
 #: sasl.cpp:270
 msgid "{1} mechanism failed."
-msgstr ""
+msgstr "{1} mekanizması başarısız oldu."
 
 #: sasl.cpp:350
 msgid ""
 "Adds support for sasl authentication capability to authenticate to an IRC "
 "server"
 msgstr ""
+"Bir IRC sunucusunda kimlik doğrulaması yapmak için SASL kimlik doğrulama "
+"özelliği desteği ekler"

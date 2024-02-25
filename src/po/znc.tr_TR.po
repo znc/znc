@@ -6,8 +6,8 @@ msgstr ""
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: tr\n"
-"X-Crowdin-File: /master/src/po/znc.pot\n"
-"X-Crowdin-File-ID: 146\n"
+"X-Crowdin-File: /1.9.x/src/po/znc.pot\n"
+"X-Crowdin-File-ID: 420\n"
 "Project-Id-Version: znc-bouncer\n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -54,27 +54,27 @@ msgstr ""
 "msg *status help</code>” ve “<code>/msg *status loadmod &lt;module&gt;</"
 "code>”). Bazı Web özellikli modülleri yükledikten sonra menü genişleyecektir."
 
-#: znc.cpp:1554
+#: znc.cpp:1561
 msgid "User already exists"
 msgstr "Kullanıcı zaten var"
 
-#: znc.cpp:1662
+#: znc.cpp:1669
 msgid "IPv6 is not enabled"
 msgstr "IPv6 etkin değil"
 
-#: znc.cpp:1670
+#: znc.cpp:1677
 msgid "SSL is not enabled"
 msgstr "SSL etkin değil"
 
-#: znc.cpp:1678
+#: znc.cpp:1685
 msgid "Unable to locate pem file: {1}"
 msgstr "Pem dosyası bulunamıyor: {1}"
 
-#: znc.cpp:1697
+#: znc.cpp:1704
 msgid "Invalid port"
 msgstr "Geçersiz port"
 
-#: znc.cpp:1813 ClientCommand.cpp:1720
+#: znc.cpp:1820 ClientCommand.cpp:1720
 msgid "Unable to bind: {1}"
 msgstr "Bağlanamıyor: {1}"
 
@@ -82,108 +82,108 @@ msgstr "Bağlanamıyor: {1}"
 msgid "Jumping servers because this server is no longer in the list"
 msgstr "Bu sunucu artık listede olmadığından sunucular atlanıyor"
 
-#: IRCNetwork.cpp:671 User.cpp:690
+#: IRCNetwork.cpp:667 User.cpp:699
 msgid "Welcome to ZNC"
 msgstr "ZNC'ye hoş geldiniz"
 
-#: IRCNetwork.cpp:759
+#: IRCNetwork.cpp:755
 msgid "You are currently disconnected from IRC. Use 'connect' to reconnect."
 msgstr ""
 "Şu anda IRC ile bağlantınız kesilmiştir. Yeniden bağlanmak için 'bağlan'ı "
 "kullanın."
 
-#: IRCNetwork.cpp:789
+#: IRCNetwork.cpp:785
 msgid "This network is being deleted or moved to another user."
 msgstr "Bu ağ siliniyor veya başka bir kullanıcıya taşınıyor."
 
-#: IRCNetwork.cpp:950
+#: IRCNetwork.cpp:946
 msgid "Invalid index"
 msgstr "Geçersiz dizin"
 
-#: IRCNetwork.cpp:958 IRCNetwork.cpp:974 IRCNetwork.cpp:982
+#: IRCNetwork.cpp:954 IRCNetwork.cpp:970 IRCNetwork.cpp:978
 #: ClientCommand.cpp:1425
 msgid "You are not on {1}"
 msgstr "{1} üzerinde değilsiniz"
 
-#: IRCNetwork.cpp:1061
+#: IRCNetwork.cpp:1057
 msgid "The channel {1} could not be joined, disabling it."
 msgstr "{1} kanalına katılamadığından devre dışı bırakıldı."
 
-#: IRCNetwork.cpp:1190
+#: IRCNetwork.cpp:1186
 msgid "Your current server was removed, jumping..."
 msgstr "Mevcut sunucunuz kaldırıldı, atlanıyor..."
 
-#: IRCNetwork.cpp:1353
+#: IRCNetwork.cpp:1349
 msgid "Cannot connect to {1}, because ZNC is not compiled with SSL support."
 msgstr "ZNC, SSL desteğiyle derlenmediğinden {1}'e bağlanılamıyor."
 
-#: IRCNetwork.cpp:1374
+#: IRCNetwork.cpp:1370
 msgid "Some module aborted the connection attempt"
 msgstr "Bazı modüller bağlantı girişimini iptal etti"
 
-#: IRCSock.cpp:492
+#: IRCSock.cpp:520
 msgid "Error from server: {1}"
 msgstr "Sunucudan gelen hata: {1}"
 
-#: IRCSock.cpp:694
+#: IRCSock.cpp:722
 msgid "ZNC seems to be connected to itself, disconnecting..."
 msgstr "ZNC kendine bağlı görünüyor, bağlantı kesiliyor..."
 
-#: IRCSock.cpp:741
+#: IRCSock.cpp:769
 msgid "Server {1} redirects us to {2}:{3} with reason: {4}"
 msgstr "{1} sunucusu bizi şu nedenle {2}:{3} adresine yönlendiriyor: {4}"
 
-#: IRCSock.cpp:745
+#: IRCSock.cpp:773
 msgid "Perhaps you want to add it as a new server."
 msgstr "Belki onu yeni bir sunucu olarak eklemek istersiniz."
 
-#: IRCSock.cpp:975
+#: IRCSock.cpp:1003
 msgid "Channel {1} is linked to another channel and was thus disabled."
 msgstr "{1} kanalı başka bir kanala bağlı olduğundan devre dışı bırakıldı."
 
-#: IRCSock.cpp:987
+#: IRCSock.cpp:1015
 msgid "Switched to SSL (STARTTLS)"
 msgstr "SSL'ye (STARTTLS) geçildi"
 
-#: IRCSock.cpp:1040
+#: IRCSock.cpp:1068
 msgid "You quit: {1}"
 msgstr "Çıktınız: {1}"
 
-#: IRCSock.cpp:1246
+#: IRCSock.cpp:1274
 msgid "Disconnected from IRC. Reconnecting..."
 msgstr "IRC'den bağlantı kesildi. Yeniden bağlanılıyor..."
 
-#: IRCSock.cpp:1277
+#: IRCSock.cpp:1305
 msgid "Cannot connect to IRC ({1}). Retrying..."
 msgstr "IRC'ye ({1}) bağlanılamıyor. Yeniden deneniyor..."
 
-#: IRCSock.cpp:1280
+#: IRCSock.cpp:1308
 msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr "IRC'den bağlantı kesildi. Yeniden bağlanılıyor..."
 
-#: IRCSock.cpp:1316
+#: IRCSock.cpp:1344
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 "Bu sertifikaya güveniyorsanız /znc AddTrustedServerFingerprint {1} komutunu "
 "kullanın"
 
-#: IRCSock.cpp:1325
+#: IRCSock.cpp:1353
 msgid "IRC connection timed out.  Reconnecting..."
 msgstr "IRC bağlantısı zaman aşımına uğradı. Yeniden bağlanılıyor..."
 
-#: IRCSock.cpp:1337
+#: IRCSock.cpp:1365
 msgid "Connection Refused.  Reconnecting..."
 msgstr "Bağlantı reddedildi. Yeniden bağlanılıyor..."
 
-#: IRCSock.cpp:1345
+#: IRCSock.cpp:1373
 msgid "Received a too long line from the IRC server!"
 msgstr "IRC sunucusundan çok uzun bir hat alındı!"
 
-#: IRCSock.cpp:1449
+#: IRCSock.cpp:1487
 msgid "No free nick available"
 msgstr "Kullanılabilir nick yok"
 
-#: IRCSock.cpp:1457
+#: IRCSock.cpp:1495
 msgid "No free nick found"
 msgstr "Kullanılabilir nick bulunamadı"
 
@@ -191,17 +191,17 @@ msgstr "Kullanılabilir nick bulunamadı"
 msgid "No such module {1}"
 msgstr "Böyle bir modül yok: {1}"
 
-#: Client.cpp:359
+#: Client.cpp:394
 msgid "A client from {1} attempted to login as you, but was rejected: {2}"
 msgstr ""
 "{1} adresinden bir istemci, sizin adınıza giriş yapmayı denedi ancak "
 "reddedildi: {2}"
 
-#: Client.cpp:394
+#: Client.cpp:429
 msgid "Network {1} doesn't exist."
 msgstr "{1} networkü mevcut değil."
 
-#: Client.cpp:408
+#: Client.cpp:443
 msgid ""
 "You have several networks configured, but no network was specified for the "
 "connection."
@@ -209,7 +209,7 @@ msgstr ""
 "Yapılandırılmış birden fazla networkünüz var ancak bağlantı için herhangi "
 "bir network belirtilmedi."
 
-#: Client.cpp:411
+#: Client.cpp:446
 msgid ""
 "Selecting network {1}. To see list of all configured networks, use /znc "
 "ListNetworks"
@@ -217,7 +217,7 @@ msgstr ""
 "{1} networkü seçiliyor. Yapılandırılmış tüm netwokrlerin listesini görmek "
 "için /znc ListNetworks komutunu kullanın"
 
-#: Client.cpp:414
+#: Client.cpp:449
 msgid ""
 "If you want to choose another network, use /znc JumpNetwork <network>, or "
 "connect to ZNC with username {1}/<network> (instead of just {1})"
@@ -225,176 +225,176 @@ msgstr ""
 "Başka bir ağ seçmek istiyorsanız, /znc JumpNetwork <network> kullanın veya "
 "ZNC'ye kullanıcı adı {1}/<network> ile bağlanın (yalnızca {1} yerine)"
 
-#: Client.cpp:420
+#: Client.cpp:455
 msgid ""
 "You have no networks configured. Use /znc AddNetwork <network> to add one."
 msgstr ""
 "Yapılandırılmış networkünüz yok. Bir tane eklemek için /znc AddNetwork "
 "<network> kullanın."
 
-#: Client.cpp:431
+#: Client.cpp:466
 msgid "Closing link: Timeout"
 msgstr "Bağlantı kapatılıyor: Zaman aşımı"
 
-#: Client.cpp:453
+#: Client.cpp:488
 msgid "Closing link: Too long raw line"
 msgstr "Bağlantı kapatılıyor: Çok uzun ham hat"
 
-#: Client.cpp:460
+#: Client.cpp:495
 msgid ""
 "You are being disconnected because another user just authenticated as you."
 msgstr ""
 "Başka bir kullanıcı sizin kimliğinizi doğruladığı için bağlantınız kesiliyor."
 
-#: Client.cpp:1026
+#: Client.cpp:1100
 msgid "Your CTCP to {1} got lost, you are not connected to IRC!"
 msgstr "{1}'e giden CTCP bağlantınız kayboldu, IRC'ye bağlı değilsiniz!"
 
-#: Client.cpp:1152
+#: Client.cpp:1226
 msgid "Your notice to {1} got lost, you are not connected to IRC!"
 msgstr "{1}'a gönderdiğiniz bildirim kayboldu, IRC'ye bağlı değilsiniz!"
 
-#: Client.cpp:1191
+#: Client.cpp:1265
 msgid "Removing channel {1}"
 msgstr "{1} kanalı kaldırılıyor"
 
-#: Client.cpp:1269
+#: Client.cpp:1343
 msgid "Your message to {1} got lost, you are not connected to IRC!"
 msgstr "{1}'a gönderdiğiniz mesaj kayboldu, IRC'ye bağlı değilsiniz!"
 
-#: Client.cpp:1322 Client.cpp:1328
+#: Client.cpp:1396 Client.cpp:1402
 msgid "Hello. How may I help you?"
 msgstr "Merhaba. Size nasıl yardım edebilirim?"
 
-#: Client.cpp:1342
+#: Client.cpp:1416
 msgid "Usage: /attach <#chans>"
 msgstr "Kullanımı: attach <#kanallar>"
 
-#: Client.cpp:1349 Client.cpp:1371 ClientCommand.cpp:129 ClientCommand.cpp:151
+#: Client.cpp:1423 Client.cpp:1445 ClientCommand.cpp:129 ClientCommand.cpp:151
 #: ClientCommand.cpp:423 ClientCommand.cpp:450
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
 msgstr[0] "[{2}] ile eşleşen {1} kanal vardı"
 msgstr[1] "[{2}] ile eşleşen {1} kanal vardı"
 
-#: Client.cpp:1352 ClientCommand.cpp:132
+#: Client.cpp:1426 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] "{1} kanalı eklendi"
 msgstr[1] "{1} kanalları eklendi"
 
-#: Client.cpp:1364
+#: Client.cpp:1438
 msgid "Usage: /detach <#chans>"
 msgstr "Kullanımı: detach <#kanallar>"
 
-#: Client.cpp:1374 ClientCommand.cpp:154
+#: Client.cpp:1448 ClientCommand.cpp:154
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] "{1} kanalı ayrıldı"
 msgstr[1] "{1} kanalları ayrıldı"
 
-#: Chan.cpp:678
+#: Chan.cpp:680
 msgid "Buffer Playback..."
 msgstr "Tampon Oynatma..."
 
-#: Chan.cpp:716
+#: Chan.cpp:718
 msgid "Playback Complete."
 msgstr "Oynatma Tamamlandı."
 
-#: Modules.cpp:528
+#: Modules.cpp:554
 msgctxt "modhelpcmd"
 msgid "<search>"
 msgstr "<search>"
 
-#: Modules.cpp:529
+#: Modules.cpp:555
 msgctxt "modhelpcmd"
 msgid "Generate this output"
 msgstr "Bu çıktıyı oluştur"
 
-#: Modules.cpp:573 ClientCommand.cpp:1992
+#: Modules.cpp:599 ClientCommand.cpp:1992
 msgid "No matches for '{1}'"
 msgstr "'{1}' için eşleşme yok"
 
-#: Modules.cpp:691
+#: Modules.cpp:734
 msgid "This module doesn't implement any commands."
 msgstr "Bu modül herhangi bir komutu uygulamaz."
 
-#: Modules.cpp:693
+#: Modules.cpp:736
 msgid "Unknown command!"
 msgstr "Bilinmeyen komut!"
 
-#: Modules.cpp:1633
+#: Modules.cpp:1786
 msgid ""
 "Module names can only contain letters, numbers and underscores, [{1}] is "
 "invalid"
 msgstr ""
 "Modül adları yalnızca harf, sayı ve alt çizgi içerebilir; [{1}] geçersizdir"
 
-#: Modules.cpp:1652
+#: Modules.cpp:1805
 msgid "Module {1} already loaded."
 msgstr "{1} modülü zaten yüklendi."
 
-#: Modules.cpp:1666
+#: Modules.cpp:1819
 msgid "Unable to find module {1}"
 msgstr "{1} modülü bulunamıyor"
 
-#: Modules.cpp:1678
+#: Modules.cpp:1831
 msgid "Module {1} does not support module type {2}."
 msgstr "{1} modülü, {2} modül tipini desteklemiyor."
 
-#: Modules.cpp:1685
+#: Modules.cpp:1838
 msgid "Module {1} requires a user."
 msgstr "{1} modülü bir kullanıcı gerektirir."
 
-#: Modules.cpp:1691
+#: Modules.cpp:1844
 msgid "Module {1} requires a network."
 msgstr "{1} modülü bir network gerektirir."
 
-#: Modules.cpp:1707
+#: Modules.cpp:1860
 msgid "Caught an exception"
 msgstr "Bir istisna yakalandı"
 
-#: Modules.cpp:1713
+#: Modules.cpp:1866
 msgid "Module {1} aborted: {2}"
 msgstr "{1} modülü iptal edildi: {2}"
 
-#: Modules.cpp:1715
+#: Modules.cpp:1868
 msgid "Module {1} aborted."
 msgstr "{1} modülü iptal edildi."
 
-#: Modules.cpp:1739 Modules.cpp:1781
+#: Modules.cpp:1892 Modules.cpp:1934
 msgid "Module [{1}] not loaded."
 msgstr "Modül [{1}] yüklenmedi."
 
-#: Modules.cpp:1763
+#: Modules.cpp:1916
 msgid "Module {1} unloaded."
 msgstr "{1} modülü kaldırılamıyor."
 
-#: Modules.cpp:1768
+#: Modules.cpp:1921
 msgid "Unable to unload module {1}."
 msgstr "{1} modülü kaldırılamıyor."
 
-#: Modules.cpp:1797
+#: Modules.cpp:1950
 msgid "Reloaded module {1}."
 msgstr "{1} modülü tekrar yüklendi."
 
-#: Modules.cpp:1816
+#: Modules.cpp:1969
 msgid "Unable to find module {1}."
 msgstr "{1} modülü bulunamıyor."
 
-#: Modules.cpp:1963
+#: Modules.cpp:2117
 msgid "Unknown error"
 msgstr "Bilinmeyen hata"
 
-#: Modules.cpp:1964
+#: Modules.cpp:2118
 msgid "Unable to open module {1}: {2}"
 msgstr "{1} modülü açılamıyor: {2}"
 
-#: Modules.cpp:1973
+#: Modules.cpp:2127
 msgid "Could not find ZNCModuleEntry in module {1}"
 msgstr "{1} modülünde ZNCModuleEntry bulunamadı"
 
-#: Modules.cpp:1981
+#: Modules.cpp:2135
 msgid ""
 "Version mismatch for module {1}: core is {2}, module is built for {3}. "
 "Recompile this module."
@@ -402,7 +402,7 @@ msgstr ""
 "{1} modülü için sürüm uyuşmazlığı: çekirdek {2}, modül {3} için oluşturuldu. "
 "Bu modülü yeniden derleyin."
 
-#: Modules.cpp:1992
+#: Modules.cpp:2146
 msgid ""
 "Module {1} is built incompatibly: core is '{2}', module is '{3}'. Recompile "
 "this module."
@@ -410,12 +410,12 @@ msgstr ""
 "{1} modülü uyumsuz bir şekilde oluşturulmuş: çekirdek '{2}', modül '{3}'. Bu "
 "modülü yeniden derleyin."
 
-#: Modules.cpp:2023 Modules.cpp:2029
+#: Modules.cpp:2177 Modules.cpp:2183
 msgctxt "modhelpcmd"
 msgid "Command"
 msgstr "Komut"
 
-#: Modules.cpp:2024 Modules.cpp:2031
+#: Modules.cpp:2178 Modules.cpp:2185
 msgctxt "modhelpcmd"
 msgid "Description"
 msgstr "Açıklama"
@@ -522,7 +522,7 @@ msgstr "Kullanıcı Adı"
 #: ClientCommand.cpp:224 ClientCommand.cpp:230
 msgctxt "listuserscmd"
 msgid "Networks"
-msgstr "Networkler"
+msgstr "Ağlar"
 
 #: ClientCommand.cpp:225 ClientCommand.cpp:232
 msgctxt "listuserscmd"
@@ -1962,18 +1962,18 @@ msgstr "sertifikada hatalı biçimlendirilmiş hostname"
 msgid "hostname verification error"
 msgstr "hostname doğrulama hatası"
 
-#: User.cpp:519
+#: User.cpp:528
 msgid ""
 "Invalid network name. It should be alphanumeric. Not to be confused with "
 "server name"
 msgstr ""
 "Geçersiz ağ adı. Alfasayısal olmalıdır. Sunucu adıyla karıştırılmamalıdır"
 
-#: User.cpp:523
+#: User.cpp:532
 msgid "Network {1} already exists"
 msgstr "{1} ağı zaten mevcut"
 
-#: User.cpp:789
+#: User.cpp:798
 msgid ""
 "You are being disconnected because your IP is no longer allowed to connect "
 "to this user"
@@ -1981,18 +1981,18 @@ msgstr ""
 "IP'nizin artık bu kullanıcıya bağlanmasına izin verilmediğinden bağlantınız "
 "kesiliyor"
 
-#: User.cpp:929
+#: User.cpp:938
 msgid "Password is empty"
 msgstr "Şifre boş"
 
-#: User.cpp:934
+#: User.cpp:943
 msgid "Username is empty"
 msgstr "Kullanıcı adı boş"
 
-#: User.cpp:939
+#: User.cpp:948
 msgid "Username is invalid"
 msgstr "Kullanıcı adı geçersiz"
 
-#: User.cpp:1214
+#: User.cpp:1249
 msgid "Unable to find modinfo {1}: {2}"
 msgstr "{1} modülü yüklenemiyor: {2}"
