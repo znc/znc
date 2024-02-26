@@ -6,105 +6,103 @@ msgstr ""
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: tr\n"
-"X-Crowdin-File: /1.9.x/modules/po/perform.pot\n"
-"X-Crowdin-File-ID: 510\n"
+"X-Crowdin-File: /master/modules/po/perform.pot\n"
+"X-Crowdin-File-ID: 189\n"
 "Project-Id-Version: znc-bouncer\n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
 
 #: modules/po/../data/perform/tmpl/index.tmpl:7 perform.cpp:143
 msgid "Perform"
-msgstr "Uygula"
+msgstr ""
 
 #: modules/po/../data/perform/tmpl/index.tmpl:11
 msgid "Perform commands:"
-msgstr "'Uygula' komutları:"
+msgstr ""
 
 #: modules/po/../data/perform/tmpl/index.tmpl:15
 msgid "Commands sent to the IRC server on connect, one per line."
 msgstr ""
-"Bağlantı sırasında IRC sunucusuna her satıra bir tane olmak üzere gönderilen "
-"komutlar."
 
 #: modules/po/../data/perform/tmpl/index.tmpl:18
 msgid "Save"
-msgstr "Kaydet"
+msgstr ""
 
 #: perform.cpp:24
 msgid "Usage: add <command>"
-msgstr "Kullanımı: add <komut>"
+msgstr ""
 
 #: perform.cpp:29
 msgid "Added!"
-msgstr "Eklendi!"
+msgstr ""
 
 #: perform.cpp:37 perform.cpp:82
 msgid "Illegal # Requested"
-msgstr "İllegal # İstek"
+msgstr ""
 
 #: perform.cpp:41
 msgid "Command Erased."
-msgstr "Komut Silindi."
+msgstr ""
 
 #: perform.cpp:50 perform.cpp:56
 msgctxt "list"
 msgid "Id"
-msgstr "Id"
+msgstr ""
 
 #: perform.cpp:51 perform.cpp:57
 msgctxt "list"
 msgid "Perform"
-msgstr "Uygula"
+msgstr ""
 
 #: perform.cpp:52 perform.cpp:62
 msgctxt "list"
 msgid "Expanded"
-msgstr "Genişletilmiş"
+msgstr ""
 
 #: perform.cpp:67
 msgid "No commands in your perform list."
-msgstr "Uygula listenizde komut yok."
+msgstr ""
 
 #: perform.cpp:73
 msgid "perform commands sent"
-msgstr "'Uygula' komutları gönderildi"
+msgstr ""
 
 #: perform.cpp:86
 msgid "Commands Swapped."
-msgstr "Komutlar Değiştirildi."
+msgstr ""
 
 #: perform.cpp:95
 msgid "<command>"
-msgstr "<komut>"
+msgstr ""
 
 #: perform.cpp:96
 msgid "Adds perform command to be sent to the server on connect"
-msgstr "Bağlanıldığında sunucuya gönderilecek 'Uygula' komutunu ekler"
+msgstr ""
 
 #: perform.cpp:98
 msgid "<number>"
-msgstr "<sayı>"
+msgstr ""
 
 #: perform.cpp:98
 msgid "Delete a perform command"
-msgstr "Bir 'Uygula' komutunu silme"
+msgstr ""
 
 #: perform.cpp:100
 msgid "List the perform commands"
-msgstr "'Uygula' komutlarını listeleyin"
+msgstr ""
 
 #: perform.cpp:103
 msgid "Send the perform commands to the server now"
-msgstr "'Uygula' komutlarını şimdi sunucuya gönderin"
+msgstr ""
 
 #: perform.cpp:105
 msgid "<number> <number>"
-msgstr "<sayı> <sayı>"
+msgstr ""
 
 #: perform.cpp:106
 msgid "Swap two perform commands"
-msgstr "İki 'Uygula' komutunu değiştirin"
+msgstr ""
 
 #: perform.cpp:192
 msgid "Keeps a list of commands to be executed when ZNC connects to IRC."
-msgstr "ZNC, IRC'ye bağlandığında yürütülecek komutların bir listesini tutar."
+msgstr ""

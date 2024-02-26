@@ -6,57 +6,56 @@ msgstr ""
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: tr\n"
-"X-Crowdin-File: /1.9.x/modules/po/kickrejoin.pot\n"
-"X-Crowdin-File-ID: 490\n"
+"X-Crowdin-File: /master/modules/po/kickrejoin.pot\n"
+"X-Crowdin-File-ID: 177\n"
 "Project-Id-Version: znc-bouncer\n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
 
 #: kickrejoin.cpp:56
 msgid "<secs>"
-msgstr "<sn.>"
+msgstr ""
 
 #: kickrejoin.cpp:56
 msgid "Set the rejoin delay"
-msgstr "Kanala yeniden katılma gecikmesini ayarlayın"
+msgstr ""
 
 #: kickrejoin.cpp:58
 msgid "Show the rejoin delay"
-msgstr "Kanala yeniden katılma gecikmesini gösterin"
+msgstr ""
 
 #: kickrejoin.cpp:77
 msgid "Illegal argument, must be a positive number or 0"
-msgstr "İllegal argüman, pozitif bir sayı veya 0 olmalıdır"
+msgstr ""
 
 #: kickrejoin.cpp:90
 msgid "Negative delays don't make any sense!"
-msgstr "Olumsuz gecikmelerin hiçbir anlamı yok!"
+msgstr ""
 
 #: kickrejoin.cpp:98
 msgid "Rejoin delay set to 1 second"
 msgid_plural "Rejoin delay set to {1} seconds"
-msgstr[0] "Kanala yeniden katılma gecikmesi 1 saniyeye ayarlandı"
-msgstr[1] "Kanala yeniden katılma gecikmesi {1} saniyeye ayarlandı"
+msgstr[0] ""
+msgstr[1] ""
 
 #: kickrejoin.cpp:101
 msgid "Rejoin delay disabled"
-msgstr "Kanala yeniden katılma gecikmesi devre dışı"
+msgstr ""
 
 #: kickrejoin.cpp:106
 msgid "Rejoin delay is set to 1 second"
 msgid_plural "Rejoin delay is set to {1} seconds"
-msgstr[0] "Kanala yeniden katılma gecikmesi 1 saniyeye ayarlandı"
-msgstr[1] "Kanala yeniden katılma gecikmesi {1} saniyeye ayarlandı"
+msgstr[0] ""
+msgstr[1] ""
 
 #: kickrejoin.cpp:109
 msgid "Rejoin delay is disabled"
-msgstr "Kanala yeniden katılma gecikmesi devre dışı"
+msgstr ""
 
 #: kickrejoin.cpp:131
 msgid "You might enter the number of seconds to wait before rejoining."
 msgstr ""
-"Kanala yeniden katılmadan önce beklenecek saniye sayısını girebilirsiniz."
 
 #: kickrejoin.cpp:134
 msgid "Autorejoins on kick"
-msgstr "Atıldıktan sonra kanala otomatik katılma"
+msgstr ""

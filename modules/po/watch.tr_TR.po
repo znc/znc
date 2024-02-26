@@ -6,192 +6,188 @@ msgstr ""
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: tr\n"
-"X-Crowdin-File: /1.9.x/modules/po/watch.pot\n"
-"X-Crowdin-File-ID: 536\n"
+"X-Crowdin-File: /master/modules/po/watch.pot\n"
+"X-Crowdin-File-ID: 204\n"
 "Project-Id-Version: znc-bouncer\n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
 
 #: watch.cpp:178
 msgid "<HostMask> [Target] [Pattern]"
-msgstr "<HostMaskesi> [Hedef] [Şablon]"
+msgstr ""
 
 #: watch.cpp:178
 msgid "Used to add an entry to watch for."
-msgstr "İzlenecek bir girdi eklemek için kullanılır."
+msgstr ""
 
 #: watch.cpp:180
 msgid "List all entries being watched."
-msgstr "İzlenen tüm girdileri listeleyin."
+msgstr ""
 
 #: watch.cpp:182
 msgid "Dump a list of all current entries to be used later."
-msgstr "Daha sonra kullanılmak üzere tüm mevcut girdilerin listesini boşaltın."
+msgstr ""
 
 #: watch.cpp:184
 msgid "<Id>"
-msgstr "<Id>"
+msgstr ""
 
 #: watch.cpp:184
 msgid "Deletes Id from the list of watched entries."
-msgstr "İzlenen girdiler listesinden Id'yi siler."
+msgstr ""
 
 #: watch.cpp:186
 msgid "Delete all entries."
-msgstr "Tüm girdileri silin."
+msgstr ""
 
 #: watch.cpp:188 watch.cpp:190
 msgid "<Id | *>"
-msgstr "<Id | *>"
+msgstr ""
 
 #: watch.cpp:188
 msgid "Enable a disabled entry."
-msgstr "Devre dışı bırakılmış bir girdiyi etkinleştirin."
+msgstr ""
 
 #: watch.cpp:190
 msgid "Disable (but don't delete) an entry."
-msgstr "Bir girdiyi devre dışı bırakın (ancak silmeyin)."
+msgstr ""
 
 #: watch.cpp:192 watch.cpp:194
 msgid "<Id | *> <True | False>"
-msgstr "<Id | *> <True | False>"
+msgstr ""
 
 #: watch.cpp:192
 msgid "Enable or disable detached client only for an entry."
 msgstr ""
-"Ayrılmış istemciyi yalnızca bir girdi için etkinleştirin veya devre dışı "
-"bırakın."
 
 #: watch.cpp:194
 msgid "Enable or disable detached channel only for an entry."
 msgstr ""
-"Ayrılmış kanalı yalnızca bir girdi için etkinleştirin veya devre dışı "
-"bırakın."
 
 #: watch.cpp:196
 msgid "<Id> [#chan priv #foo* !#bar]"
-msgstr "<Id> [#kanal priv #ali* !#veli]"
+msgstr ""
 
 #: watch.cpp:196
 msgid "Set the source channels that you care about."
-msgstr "Önemsediğiniz kaynak kanalları ayarlayın."
+msgstr ""
 
 #: watch.cpp:237
 msgid "WARNING: malformed entry found while loading"
-msgstr "UYARI: yükleme sırasında hatalı biçimlendirilmiş girdi bulundu"
+msgstr ""
 
 #: watch.cpp:382
 msgid "Disabled all entries."
-msgstr "Tüm girdiler devre dışı bırakıldı."
+msgstr ""
 
 #: watch.cpp:383
 msgid "Enabled all entries."
-msgstr "Tüm girdiler etkinleştirildi."
+msgstr ""
 
 #: watch.cpp:390 watch.cpp:432 watch.cpp:474 watch.cpp:577 watch.cpp:619
 msgid "Invalid Id"
-msgstr "Geçersiz Id"
+msgstr ""
 
 #: watch.cpp:399
 msgid "Id {1} disabled"
-msgstr "{1} Id'si devre dışı bırakıldı"
+msgstr ""
 
 #: watch.cpp:401
 msgid "Id {1} enabled"
-msgstr "{1} Id'si etkinleştirildi"
+msgstr ""
 
 #: watch.cpp:423
 msgid "Set DetachedClientOnly for all entries to Yes"
-msgstr "Tüm girdiler için DetachedClientOnly'yi 'Yes' olarak ayarlayın"
+msgstr ""
 
 #: watch.cpp:425
 msgid "Set DetachedClientOnly for all entries to No"
-msgstr "Tüm girdiler için DetachedClientOnly'yi 'No' olarak ayarlayın"
+msgstr ""
 
 #: watch.cpp:441 watch.cpp:483
 msgid "Id {1} set to Yes"
-msgstr "{1}'si 'Yes' olarak ayarlandı"
+msgstr ""
 
 #: watch.cpp:443 watch.cpp:485
 msgid "Id {1} set to No"
-msgstr "{1}'si 'No' olarak ayarlandı"
+msgstr ""
 
 #: watch.cpp:465
 msgid "Set DetachedChannelOnly for all entries to Yes"
-msgstr "Tüm girdiler için DetachedChannelOnly'yi 'Yes' olarak ayarlayın"
+msgstr ""
 
 #: watch.cpp:467
 msgid "Set DetachedChannelOnly for all entries to No"
-msgstr "Tüm girdiler için DetachedChannelOnly'yi 'No' olarak ayarlayın"
+msgstr ""
 
 #: watch.cpp:491 watch.cpp:507
 msgid "Id"
-msgstr "Id"
+msgstr ""
 
 #: watch.cpp:492 watch.cpp:508
 msgid "HostMask"
-msgstr "Host Maskesi"
+msgstr ""
 
 #: watch.cpp:493 watch.cpp:509
 msgid "Target"
-msgstr "Hedef"
+msgstr ""
 
 #: watch.cpp:494 watch.cpp:510
 msgid "Pattern"
-msgstr "Şablon"
+msgstr ""
 
 #: watch.cpp:495 watch.cpp:511
 msgid "Sources"
-msgstr "Kaynaklar"
+msgstr ""
 
 #: watch.cpp:496 watch.cpp:512 watch.cpp:513
 msgid "Off"
-msgstr "Kapalı"
+msgstr ""
 
 #: watch.cpp:497 watch.cpp:515
 msgid "DetachedClientOnly"
-msgstr "DetachedClientOnly"
+msgstr ""
 
 #: watch.cpp:498 watch.cpp:518
 msgid "DetachedChannelOnly"
-msgstr "DetachedChannelOnly"
+msgstr ""
 
 #: watch.cpp:516 watch.cpp:519
 msgid "Yes"
-msgstr "Yes"
+msgstr ""
 
 #: watch.cpp:516 watch.cpp:519
 msgid "No"
-msgstr "No"
+msgstr ""
 
 #: watch.cpp:525 watch.cpp:531
 msgid "You have no entries."
-msgstr "Hiçbir girdiniz yok."
+msgstr ""
 
 #: watch.cpp:585
 msgid "Sources set for Id {1}."
-msgstr "{1} Id'si için kaynaklar ayarlandı."
+msgstr ""
 
 #: watch.cpp:609
 msgid "All entries cleared."
-msgstr "Tüm girdiler temizlendi."
+msgstr ""
 
 #: watch.cpp:627
 msgid "Id {1} removed."
-msgstr "{1} Id'si kaldırıldı."
+msgstr ""
 
 #: watch.cpp:646
 msgid "Entry for {1} already exists."
-msgstr "{1} için girdi zaten mevcut."
+msgstr ""
 
 #: watch.cpp:654
 msgid "Adding entry: {1} watching for [{2}] -> {3}"
-msgstr "Girdi ekleniyor: {1}, [{2}] -> {3} için izliyor"
+msgstr ""
 
 #: watch.cpp:660
 msgid "Watch: Not enough arguments.  Try Help"
-msgstr "İzleyin: Yeterli argüman yok. Yardımı Deneyin"
+msgstr ""
 
 #: watch.cpp:702
 msgid "Copy activity from a specific user into a separate window"
-msgstr "Belirli bir kullanıcının etkinliğini ayrı bir pencereye kopyala"
+msgstr ""

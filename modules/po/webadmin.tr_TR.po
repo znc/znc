@@ -6,8 +6,8 @@ msgstr ""
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: tr\n"
-"X-Crowdin-File: /1.9.x/modules/po/webadmin.pot\n"
-"X-Crowdin-File-ID: 538\n"
+"X-Crowdin-File: /master/modules/po/webadmin.pot\n"
+"X-Crowdin-File-ID: 205\n"
 "Project-Id-Version: znc-bouncer\n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -58,199 +58,189 @@ msgstr "Bayraklar"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:51
 msgid "Save to config"
-msgstr "Yapılandırmaya kaydet"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:67
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:294
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:429
 msgid "Module {1}"
-msgstr "{1} Modülü"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:75
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:302
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:438
 msgid "Save and return"
-msgstr "Kaydet ve Geri Dön"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:76
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:303
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:439
 msgid "Save and continue"
-msgstr "Kaydet ve devam et"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:78
 msgid "Add Channel and return"
-msgstr "Kanal ekleyin ve geri dönün"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:79
 msgid "Add Channel and continue"
-msgstr "Kanal ekleyin ve devam edin"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:12
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:15
 msgid "&lt;password&gt;"
-msgstr "&lt;şifre&gt;"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:15
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:16
 msgid "&lt;network&gt;"
-msgstr "&lt;ağ&gt;"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:18
 msgid ""
 "To connect to this network from your IRC client, you can set the server "
 "password field as <code>{1}</code> or username field as <code>{2}</code>"
 msgstr ""
-"IRC istemcinizden bu ağa bağlanmak için sunucu şifre alanını <code>{1}</"
-"code> veya kullanıcı adı alanını <code>{2}</code> olarak ayarlayabilirsiniz"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:28
 msgid "Network Info"
-msgstr "Ağ Bilgisi"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:29
 msgid ""
 "Nick, AltNick, Ident, RealName, BindHost can be left empty to use the value "
 "from the user."
 msgstr ""
-"Kullanıcıdan gelen değeri kullanmak için Nick, AltNick, Ident, Gerçek Adı, "
-"Bind Host boş bırakılabilir."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:33
 msgid "Network Name:"
-msgstr "Ağ Adı:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:35
 msgid "The name of the IRC network."
-msgstr "IRC ağının adı."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:39
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:73
 msgid "Nickname:"
-msgstr "Kullanıcı adı:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:41
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:75
 msgid "Your nickname on IRC."
-msgstr "IRC'deki nickiniz."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:44
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:78
 msgid "Alt. Nickname:"
-msgstr "Alt. Nick:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:46
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:80
 msgid "Your secondary nickname, if the first is not available on IRC."
-msgstr "Birinci nickiniz IRC'de mevcut değilse ikincil nickiniz."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:50
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:84
 msgid "Ident:"
-msgstr "Ident:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:52
 msgid "Your ident."
-msgstr "Identiniz."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:55
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:96
 msgid "Realname:"
-msgstr "Gerçek Adı:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:57
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:98
 msgid "Your real name."
-msgstr "Gerçek adınız."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:62
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:104
 msgid "BindHost:"
-msgstr "Bind Host:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:69
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:117
 msgid "Quit Message:"
-msgstr "Çıkış Mesajı:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:71
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:119
 msgid "You may define a Message shown, when you quit IRC."
-msgstr "IRC'den çıktığınızda gösterilen bir mesajı tanımlayabilirsiniz."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:76
 msgid "Active:"
-msgstr "Aktif:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:78
 msgid "Connect to IRC &amp; automatically re-connect"
-msgstr "IRC'ye bağlanın ve otomatik olarak yeniden bağlan"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:82
 msgid "Trust all certs:"
-msgstr "Tüm sertifikalara güvenin:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:84
 msgid ""
 "Disable certificate validation (takes precedence over TrustPKI). INSECURE!"
 msgstr ""
-"Sertifika doğrulamasını devre dışı bırakın (TrustPKI'ye göre önceliklidir). "
-"GÜVENSİZ!"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:88
 msgid "Automatically detect trusted certificates (Trust the PKI):"
-msgstr "Güvenilir sertifikaları otomatik olarak algıla (PKI'ya güvenin):"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:90
 msgid ""
 "When disabled, manually whitelist all server fingerprints, even if the "
 "certificate is valid"
 msgstr ""
-"Devre dışı bırakıldığında, sertifika geçerli olsa bile tüm sunucu parmak "
-"izlerini manuel olarak beyaz listeye alın"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:94
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:101
 msgid "Servers of this IRC network:"
-msgstr "Bu IRC ağının sunucuları:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:98
 msgid "One server per line, “host [[+]port] [password]”, + means SSL"
-msgstr "Her satıra bir sunucu, “host [[+]port] [şifre]”, + SSL anlamına gelir"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:106
 msgid "Hostname"
-msgstr "Host adı"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:107
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:13
 msgid "Port"
-msgstr "Port"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:108
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:15
 msgid "SSL"
-msgstr "SSL"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:109
 msgid "Password"
-msgstr "Şifre"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:125
 msgid "SHA-256 fingerprints of trusted SSL certificates of this IRC network:"
-msgstr "Bu IRC ağının güvenilir SSL sertifikalarının SHA-256 parmak izleri:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:129
 msgid ""
 "When these certificates are encountered, checks for hostname, expiration "
 "date, CA are skipped"
 msgstr ""
-"Bu sertifikalarla karşılaşıldığında host adı, sona erme tarihi, CA "
-"kontrolleri atlanır"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:133
 msgid "Flood protection:"
-msgstr "Flood koruması:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:136
 msgid ""
@@ -258,79 +248,70 @@ msgid ""
 "which occur, when your IRC bot is command flooded or spammed. After changing "
 "this, reconnect ZNC to server."
 msgstr ""
-"Flood korumasını etkinleştirebilirsiniz. Bu, IRC botunuza komut basıldığında "
-"veya spam gönderildiğinde ortaya çıkan \"flood saldırı\" hatalarını önler. "
-"Bunu değiştirdikten sonra ZNC'yi sunucuya yeniden bağlayın."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:139
 msgctxt "Flood Protection"
 msgid "Enabled"
-msgstr "Etkinleştirildi"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:143
 msgid "Flood protection rate:"
-msgstr "Flood koruma oranı:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:146
 msgid ""
 "The number of seconds per line. After changing this, reconnect ZNC to server."
 msgstr ""
-"Satır başına saniye sayısı. Bunu değiştirdikten sonra ZNC'yi sunucuya "
-"yeniden bağlayın."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:149
 msgid "{1} seconds per line"
-msgstr "Satır başına {1} saniye"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:153
 msgid "Flood protection burst:"
-msgstr "Flood koruma sağlamlığı:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:156
 msgid ""
 "Defines the number of lines, which can be sent immediately. After changing "
 "this, reconnect ZNC to server."
 msgstr ""
-"Hemen gönderilebilecek satır sayısını tanımlar. Bunu değiştirdikten sonra "
-"ZNC'yi sunucuya yeniden bağlayın."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:159
 msgid "{1} lines can be sent immediately"
-msgstr "{1} satır hemen gönderilebilir"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:163
 msgid "Channel join delay:"
-msgstr "Kanala girme gecikmesi:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:166
 msgid ""
 "Defines the delay in seconds, until channels are joined after getting "
 "connected."
 msgstr ""
-"Bağlandıktan sonra, kanallara girene kadarki gecikmeyi saniye cinsinden "
-"tanımlar."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:169
 msgid "{1} seconds"
-msgstr "{1} saniye"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:174
 msgid "Character encoding used between ZNC and IRC server."
-msgstr "ZNC ve IRC sunucusu arasında kullanılan karakter kodlaması."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:175
 msgid "Server encoding:"
-msgstr "Sunucu kodlaması:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:185
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:248
 msgid "Channels"
-msgstr "Kanallar"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:187
 msgid ""
 "You will be able to add + modify channels here after you created the network."
-msgstr "Ağı oluşturduktan sonra buraya kanal ekleyip değiştirebileceksiniz."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:194
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:140
@@ -338,17 +319,17 @@ msgstr "Ağı oluşturduktan sonra buraya kanal ekleyip değiştirebileceksiniz.
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:15
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:72
 msgid "Add"
-msgstr "Ekle"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:196
 msgid "Index"
-msgstr "Dizin"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:197
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:449
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:237
 msgid "Save"
-msgstr "Kaydet"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:198
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:240
@@ -356,214 +337,205 @@ msgstr "Kaydet"
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:191
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:176
 msgid "Name"
-msgstr "Adı"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:199
 msgid "CurModes"
-msgstr "GçrliModlar"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:200
 msgid "DefModes"
-msgstr "VrsylnModlar"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:201
 msgid "BufferSize"
-msgstr "A.bellkBoyutu"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:202
 msgid "Options"
-msgstr "Seçenekler"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:204
 msgid "← Add a channel (opens in same page)"
-msgstr "← Kanal ekleyin (aynı sayfada açılır)"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:214
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:161
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:27
 msgid "Edit"
-msgstr "Düzenle"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:214
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:162
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:53
 msgid "Del"
-msgstr "Sil"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:234
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:185
 msgid "Modules"
-msgstr "Modüller"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:241
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:192
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:177
 msgid "Arguments"
-msgstr "Argümanlar"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:242
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:193
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:178
 msgid "Description"
-msgstr "Açıklama"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:243
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:194
 msgid "Loaded globally"
-msgstr "Global olarak yüklendi"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:244
 msgid "Loaded by user"
-msgstr "Kullanıcı tarafından yüklendi"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:305
 msgid "Add Network and return"
-msgstr "Ağ ekleyin ve geri dönün"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:306
 msgid "Add Network and continue"
-msgstr "Ağ ekleyin ve devam edin"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:19
 msgid "Authentication"
-msgstr "Kimlik Doğrulama"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:23
 msgid "Username:"
-msgstr "Kullanıcı Adı:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:33
 msgid "Please enter a username."
-msgstr "Lütfen bir kullanıcı adı girin."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:38
 msgid "Password:"
-msgstr "Şifre:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:40
 msgid "Please enter a password."
-msgstr "Lütfen bir şifre girin."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:43
 msgid "Confirm password:"
-msgstr "Şifreyi doğrula:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:45
 msgid "Please re-type the above password."
-msgstr "Lütfen yukarıdaki şifreyi tekrar yazın."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:48
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:151
 msgid "Auth Only Via Module:"
-msgstr "Yalnızca Modül Aracılığıyla Kimlik Doğrulama:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:50
 msgid ""
 "Allow user authentication by external modules only, disabling built-in "
 "password authentication."
 msgstr ""
-"Yerleşik parola kimlik doğrulamasını devre dışı bırakarak yalnızca harici "
-"modüllerle kullanıcı kimlik doğrulamasına izin verin."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:54
 msgid "Allowed IPs:"
-msgstr "İzin verilen IP'ler:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:58
 msgid ""
 "Leave empty to allow connections from all IPs.<br/>Otherwise, one entry per "
 "line, wildcards * and ? are available."
 msgstr ""
-"Tüm IP'lerden bağlantılara izin vermek için boş bırakın.<br/>Aksi takdirde, "
-"her satıra bir IP girin, joker karakterler * ve ? kullanılabilir."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:66
 msgid "IRC Information"
-msgstr "IRC Bilgileri"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:68
 msgid ""
 "Nick, AltNick, Ident, RealName and QuitMsg can be left empty to use default "
 "values."
 msgstr ""
-"Varsayılan değerlerin kullanılması için Nick, AltNick, Ident, Gerçek Adı ve "
-"ÇkşMsj boş bırakılabilir."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:86
 msgid "The Ident is sent to server as username."
-msgstr "Ident, kullanıcı adı olarak sunucuya gönderilir."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:90
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:102
 msgid "Status Prefix:"
-msgstr "Durum Öneki:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:92
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:104
 msgid "The prefix for the status and module queries."
-msgstr "Durum ve modül sorgularının öneki."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:110
 msgid "DCCBindHost:"
-msgstr "DCC Bind Host:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:128
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:17
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:39
 msgid "Networks"
-msgstr "Ağlar"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:133
 msgid "No networks have been added for you yet."
-msgstr "Henüz sizin için hiçbir ağ eklenmedi."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:147
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:18
 msgid "Clients"
-msgstr "İstemciler"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:148
 msgid "Current Server"
-msgstr "Geçerli Sunucu"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:149
 msgid "Nick"
-msgstr "Nick"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:151
 msgid "← Add a network (opens in same page)"
-msgstr "← Ağ ekleyin (aynı sayfada açılır)"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:177
 msgid ""
 "You will be able to add + modify networks here after you have cloned the "
 "user."
 msgstr ""
-"Kullanıcıyı klonladıktan sonra burada ağ ekleyebilir + değiştirebilirsiniz."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:179
 msgid ""
 "You will be able to add + modify networks here after you have created the "
 "user."
 msgstr ""
-"Kullanıcıyı oluşturduktan sonra buraya ağ ekleyip değiştirebileceksiniz."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:195
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:179
 msgid "Loaded by networks"
-msgstr "Ağlar tarafından yüklendi"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:254
 msgid ""
 "These are the default modes ZNC will set when you join an empty channel."
 msgstr ""
-"Bunlar boş bir kanala katıldığınızda ayarlanacak varsayılan ZNC modlarıdır."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:255
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:261
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:280
 msgid "Empty = use standard value"
-msgstr "Boş = standart değeri kullan"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:260
 msgid ""
@@ -571,20 +543,18 @@ msgid ""
 "before dropping off the oldest line. The buffers are stored in the memory by "
 "default."
 msgstr ""
-"Bu, arabelleği oynatmanın en eski satırı bırakmadan önce kanallar için "
-"depolayacağı satır miktarıdır. Tamponlar varsayılan olarak bellekte saklanır."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:268
 msgid "Queries"
-msgstr "Sorgular"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:272
 msgid "Max Buffers:"
-msgstr "Maks Arabellek:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:274
 msgid "Maximum number of query buffers. 0 is unlimited."
-msgstr "Maksimum sorgu arabelleği sayısı. 0 sınırsızdır."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:279
 msgid ""
@@ -592,23 +562,19 @@ msgid ""
 "before dropping off the oldest line. The buffers are stored in the memory by "
 "default."
 msgstr ""
-"Bu, arabelleği oynatmanın en eski satırı bırakmadan önce sorgular için "
-"depolayacağı satır miktarıdır. Tamponlar varsayılan olarak bellekte saklanır."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:302
 msgid "ZNC Behavior"
-msgstr "ZNC Davranışı"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:303
 msgid ""
 "Any of the following text boxes can be left empty to use their default value."
 msgstr ""
-"Aşağıdaki metin kutularından herhangi biri, varsayılan değerlerini kullanmak "
-"için boş bırakılabilir."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:307
 msgid "Timestamp Format:"
-msgstr "Zaman Damgası Formatı:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:309
 msgid ""
@@ -616,55 +582,46 @@ msgid ""
 "setting is ignored in new IRC clients, which use server-time. If your client "
 "supports server-time, change timestamp format in client settings instead."
 msgstr ""
-"Arabelleklerde kullanılan zaman damgalarının biçimi; örneğin [%H:%M:%S]. Bu "
-"ayar, sunucu zamanını kullanan yeni IRC istemcilerinde dikkate alınmaz. "
-"İstemciniz sunucu zamanını destekliyorsa bunun yerine istemci ayarlarında "
-"zaman damgası biçimini değiştirin."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:312
 msgid "Timezone:"
-msgstr "Saat Dilimi:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:315
 msgid "E.g. <code>Europe/Berlin</code>, or <code>GMT-6</code>"
-msgstr "Ör. <code>Europe/Berlin</code> veya <code>GMT-6</code> gibi"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:323
 msgid "Character encoding used between IRC client and ZNC."
-msgstr "IRC istemcisi ve ZNC arasında kullanılan karakter kodlaması."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:324
 msgid "Client encoding:"
-msgstr "İstemci kodlaması:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:329
 msgid "Join Tries:"
-msgstr "Kanala Giriş Denemeleri:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:331
 msgid ""
 "This defines how many times ZNC tries to join a channel, if the first join "
 "failed, e.g. due to channel mode +i/+k or if you are banned."
 msgstr ""
-"Bu, örneğin +i/+k kanal modu nedeniyle veya yasaklı olmanız nedeniyle ilk "
-"katılmanın başarısız olması durumunda ZNC'nin bir kanala kaç kez katılmaya "
-"çalışacağını tanımlar."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:334
 msgid "Join speed:"
-msgstr "Kanala giriş hızı:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:336
 msgid ""
 "How many channels are joined in one JOIN command. 0 is unlimited (default). "
 "Set to small positive value if you get disconnected with “Max SendQ Exceeded”"
 msgstr ""
-"Bir JOIN komutunda kaç kanala girileceği. 0 sınırsızdır (varsayılan). “Max "
-"SendQ Exceeded” ile bağlantınız kesilirse küçük pozitif değere ayarlayın"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:339
 msgid "Timeout before reconnect:"
-msgstr "Yeniden bağlanmadan önce zaman aşımı:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:341
 msgid ""
@@ -672,230 +629,221 @@ msgid ""
 "network or declares the connection timeout. This happens after attempts to "
 "ping the peer."
 msgstr ""
-"ZNC'nin ağdan bir şey alana veya bağlantı zaman aşımı bildirene kadar ne "
-"kadar süre beklediği (saniye cinsinden). Bu, eşe ping atmaya çalıştıktan "
-"sonra gerçekleşir."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:344
 msgid "Max IRC Networks Number:"
-msgstr "Maksimum IRC Ağ Sayısı:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:346
 msgid "Maximum number of IRC networks allowed for this user."
-msgstr "Bu kullanıcı için izin verilen maksimum IRC ağı sayısı."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:349
 msgid "Substitutions"
-msgstr "Yedekler"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:351
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:359
 msgid "CTCP Replies:"
-msgstr "CTCP Yanıtları:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:355
 msgid "One reply per line. Example: <code>TIME Buy a watch!</code>"
-msgstr "Her satıra bir yanıt. Örnek: <code>TIME Bir saat satın alın!</code>"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:356
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:374
 msgid "{1} are available"
-msgstr "{1} mevcut"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:358
 msgid "Empty value means this CTCP request will be ignored"
-msgstr "Boş değer, bu CTCP isteğinin göz ardı edileceği anlamına gelir"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:364
 msgid "Request"
-msgstr "İstek"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:365
 msgid "Response"
-msgstr "Yanıt"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:392
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:90
 msgid "Skin:"
-msgstr "Tema:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:396
 msgid "- Global -"
-msgstr "- Global -"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:398
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:94
 msgid "Default"
-msgstr "Varsayılan"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:402
 msgid "No other skins found"
-msgstr "Başka görünüm bulunamadı"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:408
 msgid "Language:"
-msgstr "Dil:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:441
 msgid "Clone and return"
-msgstr "Kopyala ve geri dön"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:442
 msgid "Clone and continue"
-msgstr "Kopyala ve devam et"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:444
 msgid "Create and return"
-msgstr "Oluştur ve geri dön"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:445
 msgid "Create and continue"
-msgstr "Oluştur ve devam et"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:451
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:28
 msgid "Clone"
-msgstr "Klonla"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:453
 msgid "Create"
-msgstr "Oluştur"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/del_network.tmpl:5
 msgid "Confirm Network Deletion"
-msgstr "Ağ Silme İşlemini Onayla"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/del_network.tmpl:9
 msgid "Are you sure you want to delete network “{2}” of user “{1}”?"
 msgstr ""
-"\"{1}\" kullanıcısının \"{2}\" ağını silmek istediğinizden emin misiniz?"
 
 #: modules/po/../data/webadmin/tmpl/del_network.tmpl:14
 #: modules/po/../data/webadmin/tmpl/del_user.tmpl:14
 msgid "Yes"
-msgstr "Evet"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/del_network.tmpl:17
 #: modules/po/../data/webadmin/tmpl/del_user.tmpl:17
 msgid "No"
-msgstr "Hayır"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/del_user.tmpl:5
 msgid "Confirm User Deletion"
-msgstr "Kullanıcı Silme İşlemini Onayla"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/del_user.tmpl:9
 msgid "Are you sure you want to delete user “{1}”?"
-msgstr "\"{1}\" kullanıcısını silmek istediğinizden emin misiniz?"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:6
 msgid "ZNC is compiled without encodings support. {1} is required for it."
-msgstr "ZNC, kodlama desteği olmadan derlenir. Bunun için {1} gereklidir."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:11
 msgid "Legacy mode is disabled by modpython."
-msgstr "Eski mod modpython tarafından devre dışı bırakıldı."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:18
 msgid "Don't ensure any encoding at all (legacy mode, not recommended)"
-msgstr "Hiçbir kodlama yapmayın (eski mod, önerilmez)"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:22
 msgid "Try to parse as UTF-8 and as {1}, send as UTF-8 (recommended)"
 msgstr ""
-"UTF-8 ve {1} olarak ayrıştırmayı deneyin, UTF-8 olarak gönderin (önerilir)"
 
 #: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:26
 msgid "Try to parse as UTF-8 and as {1}, send as {1}"
-msgstr "UTF-8 ve {1} olarak ayrıştırmayı deneyin, {1} olarak gönderin"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:30
 msgid "Parse and send as {1} only"
-msgstr "Yalnızca {1} olarak ayrıştırın ve gönderin"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:36
 msgid "E.g. <code>UTF-8</code>, or <code>ISO-8859-15</code>"
-msgstr "Ör. <code>UTF-8</code> veya <code>ISO-8859-15</code> gibi"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/index.tmpl:5
 msgid "Welcome to the ZNC webadmin module."
-msgstr "ZNC web admin modülüne hoş geldiniz."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/index.tmpl:6
 msgid ""
 "All changes you make will be in effect immediately after you submitted them."
 msgstr ""
-"Yaptığınız tüm değişiklikler, gönderdikten hemen sonra geçerli olacaktır."
 
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:16
 msgid "Username"
-msgstr "Kullanıcı Adı"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:29
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:21
 msgid "Delete"
-msgstr "Sil"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:6
 msgid "Listen Port(s)"
-msgstr "Port(lar)u Dinleyin"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:14
 msgid "BindHost"
-msgstr "Bind Host"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:16
 msgid "IPv4"
-msgstr "IPv4"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:17
 msgid "IPv6"
-msgstr "IPv6"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:18
 msgid "IRC"
-msgstr "IRC"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:19
 msgid "HTTP"
-msgstr "HTTP"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:20
 msgid "URIPrefix"
-msgstr "URI Öneki"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:56
 msgid ""
 "To delete port which you use to access webadmin itself, either connect to "
 "webadmin via another port, or do it in IRC (/znc DelPort)"
 msgstr ""
-"Webadmin'e erişmek için kullandığınız portlarını silmek için webadmin'e "
-"başka bir port üzerinden bağlanın veya bunu IRC'de (/znc DelPort) yapın."
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:56
 msgid "Current"
-msgstr "Geçerli"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:86
 msgid "Settings"
-msgstr "Ayarlar"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:105
 msgid "Default for new users only."
-msgstr "Yalnızca yeni kullanıcılar için varsayılandır."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:110
 msgid "Maximum Buffer Size:"
-msgstr "Maksimum Arabellek Boyutu:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:112
 msgid "Sets the global Max Buffer Size a user can have."
 msgstr ""
-"Bir kullanıcının sahip olabileceği genel Maksimum Arabellek Boyutunu ayarlar."
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:117
 msgid "Connect Delay:"
-msgstr "Bağlantı Gecikmesi:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:119
 msgid ""
@@ -903,409 +851,397 @@ msgid ""
 "affects the connection between ZNC and the IRC server; not the connection "
 "between your IRC client and ZNC."
 msgstr ""
-"IRC sunucularına bağlantı girişimleri arasındaki saniye cinsinden süre. Bu, "
-"ZNC ile IRC sunucusu arasındaki bağlantıyı etkiler; IRC istemciniz ile ZNC "
-"arasındaki bağlantı değil."
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:124
 msgid "Server Throttle:"
-msgstr "Sunucu Kısıtı:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:126
 msgid ""
 "The minimal time between two connect attempts to the same hostname, in "
 "seconds. Some servers refuse your connection if you reconnect too fast."
 msgstr ""
-"Aynı host adına yapılan iki bağlantı girişimi arasındaki saniye cinsinden "
-"minimum süre. Çok hızlı yeniden bağlanırsanız bazı sunucular bağlantınızı "
-"reddeder."
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:131
 msgid "Anonymous Connection Limit per IP:"
-msgstr "IP başına Anonim Bağlantı Limiti:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:133
 msgid "Limits the number of unidentified connections per IP."
-msgstr "IP başına tanımlanamayan bağlantı sayısını sınırlar."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:138
 msgid "Protect Web Sessions:"
-msgstr "Web Oturumları Koruması:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:140
 msgid "Disallow IP changing during each web session"
-msgstr "Her web oturumu sırasında IP değişimine izin verme!"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:145
 msgid "Hide ZNC Version:"
-msgstr "ZNC Sürümünü Gizle:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:147
 msgid "Hide version number from non-ZNC users"
-msgstr "Sürüm numarasını ZNC üyesi olmayan kullanıcılardan gizler"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:153
 msgid "Allow user authentication by external modules only"
-msgstr "Yalnızca harici modüllerle kullanıcı kimlik doğrulamasına izin ver"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:158
 msgid "MOTD:"
-msgstr "MOTD:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:162
 msgid "“Message of the Day”, sent to all ZNC users on connect."
-msgstr "Bağlanınca tüm ZNC kullanıcılarına gönderilen \"MOTD-Günün Mesajı\"."
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:170
 msgid "Global Modules"
-msgstr "Global Modüller"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:180
 msgid "Loaded by users"
-msgstr "Kullanıcılar tarafından yüklendi"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:7
 msgid "Information"
-msgstr "Bilgi"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:13
 msgid "Uptime"
-msgstr "Çalışma Süresi"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:18
 msgid "Total Users"
-msgstr "Toplam Kullanıcı"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:22
 msgid "Total Networks"
-msgstr "Toplam Ağ:"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:26
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:43
 msgid "Attached Networks"
-msgstr "Ekli Ağlar"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:30
 msgid "Total Client Connections"
-msgstr "Toplam İstemci Bağlantıları"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:34
 msgid "Total IRC Connections"
-msgstr "Toplam IRC Bağlantıları"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:47
 msgid "Client Connections"
-msgstr "İstemci Bağlantıları"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:51
 msgid "IRC Connections"
-msgstr "IRC Bağlantıları"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:63
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:72
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:89
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:117
 msgid "Total"
-msgstr "Toplam"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:70
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:115
 msgctxt "Traffic"
 msgid "In"
-msgstr "İçeri"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:71
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:116
 msgctxt "Traffic"
 msgid "Out"
-msgstr "Dışarı"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:77
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:104
 msgid "Users"
-msgstr "Kullanıcılar"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:106
 msgid "Traffic"
-msgstr "Trafik"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:113
 msgid "User"
-msgstr "Kullanıcı"
+msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:114
 msgid "Network"
-msgstr "Ağ"
+msgstr ""
 
 #: webadmin.cpp:91 webadmin.cpp:2023
 msgid "Global Settings"
-msgstr "Global Ayarlar"
+msgstr ""
 
 #: webadmin.cpp:93
 msgid "Your Settings"
-msgstr "Sizin Ayarlarınız"
+msgstr ""
 
 #: webadmin.cpp:94 webadmin.cpp:1835
 msgid "Traffic Info"
-msgstr "Trafik Bilgisi"
+msgstr ""
 
 #: webadmin.cpp:97 webadmin.cpp:1814
 msgid "Manage Users"
-msgstr "Kullanıcıları Yönet"
+msgstr ""
 
 #: webadmin.cpp:188
 msgid "Invalid Submission [Username is required]"
-msgstr "Geçersiz Gönderim [Kullanıcı adı gereklidir]"
+msgstr ""
 
 #: webadmin.cpp:201
 msgid "Invalid Submission [Passwords do not match]"
-msgstr "Geçersiz Gönderim [Şifreler eşleşmiyor]"
+msgstr ""
 
 #: webadmin.cpp:337
 msgid "Timeout can't be less than 30 seconds!"
-msgstr "Zaman aşımı 30 saniyeden az olamaz!"
+msgstr ""
 
 #: webadmin.cpp:436 webadmin.cpp:464 webadmin.cpp:1272 webadmin.cpp:2208
 msgid "Unable to load module [{1}]: {2}"
-msgstr "[{1}] modülü yüklenemiyor: {2}"
+msgstr ""
 
 #: webadmin.cpp:441 webadmin.cpp:469
 msgid "Unable to load module [{1}] with arguments [{2}]"
-msgstr "[{1}] modülü [{2}] argümanlarıyla yüklenemiyor"
+msgstr ""
 
 #: webadmin.cpp:547 webadmin.cpp:664 webadmin.cpp:689 webadmin.cpp:711
 #: webadmin.cpp:745 webadmin.cpp:1339
 msgid "No such user"
-msgstr "Böyle bir kullanıcı yok"
+msgstr ""
 
 #: webadmin.cpp:555 webadmin.cpp:592 webadmin.cpp:925
 msgid "Permission denied"
-msgstr "Erişim reddedildi"
+msgstr ""
 
 #: webadmin.cpp:568 webadmin.cpp:605 webadmin.cpp:634 webadmin.cpp:650
 msgid "No such user or network"
-msgstr "Böyle bir kullanıcı veya ağ yok"
+msgstr ""
 
 #: webadmin.cpp:615
 msgid "No such channel"
-msgstr "Böyle bir kanal yok"
+msgstr ""
 
 #: webadmin.cpp:681
 msgid "Please don't delete yourself, suicide is not the answer!"
-msgstr "Lütfen kendinizi silmeyin, intihar çözüm değil!"
+msgstr ""
 
 #: webadmin.cpp:754 webadmin.cpp:942 webadmin.cpp:1404
 msgid "Edit User [{1}]"
-msgstr "[{1}] Kullanıcısını Düzenle"
+msgstr ""
 
 #: webadmin.cpp:758 webadmin.cpp:956
 msgid "Edit Network [{1}]"
-msgstr "[{1}] Ağını Düzenle"
+msgstr ""
 
 #: webadmin.cpp:768
 msgid "Edit Channel [{1}] of Network [{2}] of User [{3}]"
-msgstr "[{3}] Kullanıcısının [{2}] Ağının [{1}] Kanalını Düzenle"
+msgstr ""
 
 #: webadmin.cpp:775
 msgid "Edit Channel [{1}]"
-msgstr "[{1}] Kanalını Düzenle"
+msgstr ""
 
 #: webadmin.cpp:783
 msgid "Add Channel to Network [{1}] of User [{2}]"
-msgstr "[{2}] Kullanıcının[{1}] Ağına Kanal Ekle"
+msgstr ""
 
 #: webadmin.cpp:788
 msgid "Add Channel"
-msgstr "Kanal Ekle"
+msgstr ""
 
 #: webadmin.cpp:795 webadmin.cpp:1624
 msgid "Auto Clear Chan Buffer"
-msgstr "Kanal Tamponunu Otomatik Temizle"
+msgstr ""
 
 #: webadmin.cpp:797
 msgid "Automatically Clear Channel Buffer After Playback"
-msgstr "Kanal Arabelleğini Oynatma Otomatik Olarak Temizle"
+msgstr ""
 
 #: webadmin.cpp:805
 msgid "Detached"
-msgstr "Ayrılmış"
+msgstr ""
 
 #: webadmin.cpp:812
 msgid "Enabled"
-msgstr "Etkinleştirildi"
+msgstr ""
 
 #: webadmin.cpp:836
 msgid "Channel name is a required argument"
-msgstr "Kanal adı gerekli bir argümandır"
+msgstr ""
 
 #: webadmin.cpp:845
 msgid "Channel [{1}] already exists"
-msgstr "[{1}] kanalı zaten mevcut"
+msgstr ""
 
 #: webadmin.cpp:852
 msgid "Could not add channel [{1}]"
-msgstr "[{1}] kanalı eklenemedi"
+msgstr ""
 
 #: webadmin.cpp:900
 msgid "Channel was added/modified, but config file was not written"
-msgstr "Kanal eklendi/değiştirildi ancak yapılandırma dosyası yazılmadı"
+msgstr ""
 
 #: webadmin.cpp:932
 msgid ""
 "Network number limit reached. Ask an admin to increase the limit for you, or "
 "delete unneeded networks from Your Settings."
 msgstr ""
-"Ağ sayısı sınırına ulaşıldı. Bir yöneticiden sizin için sınırı artırmasını "
-"isteyin veya gereksiz ağları 'Sizin Ayarlarınız'dan silin."
 
 #: webadmin.cpp:953
 msgid "Edit Network [{1}] of User [{2}]"
-msgstr "[{2}] Kullanıcısının [{1}] Ağını Düzenle"
+msgstr ""
 
 #: webadmin.cpp:960
 msgid "Add Network for User [{1}]"
-msgstr "[{1}] Kullanıcısı için Ağ Ekle"
+msgstr ""
 
 #: webadmin.cpp:961
 msgid "Add Network"
-msgstr "Ağ Ekle"
+msgstr ""
 
 #: webadmin.cpp:1144
 msgid "Network name is a required argument"
-msgstr "Ağ adı gerekli bir argümandır"
+msgstr ""
 
 #: webadmin.cpp:1279 webadmin.cpp:2215
 msgid "Unable to reload module [{1}]: {2}"
-msgstr "[{1}] modülü yeniden yüklenemiyor: {2}"
+msgstr ""
 
 #: webadmin.cpp:1316
 msgid "Network was added/modified, but config file was not written"
-msgstr "Ağ eklendi/değiştirildi ancak yapılandırma dosyası yazılmadı"
+msgstr ""
 
 #: webadmin.cpp:1345
 msgid "That network doesn't exist for this user"
-msgstr "Bu ağ bu kullanıcı için mevcut değil"
+msgstr ""
 
 #: webadmin.cpp:1362
 msgid "Network was deleted, but config file was not written"
-msgstr "Ağ silindi ancak yapılandırma dosyası yazılmadı"
+msgstr ""
 
 #: webadmin.cpp:1376
 msgid "That channel doesn't exist for this network"
-msgstr "Bu kanal bu ağ için mevcut değil"
+msgstr ""
 
 #: webadmin.cpp:1385
 msgid "Channel was deleted, but config file was not written"
-msgstr "Kanal silindi ancak yapılandırma dosyası yazılmadı"
+msgstr ""
 
 #: webadmin.cpp:1413
 msgid "Clone User [{1}]"
-msgstr "[{1}] Kullanıcısını Klonla"
+msgstr ""
 
 #: webadmin.cpp:1626
 msgid ""
 "Automatically Clear Channel Buffer After Playback (the default value for new "
 "channels)"
 msgstr ""
-"Kanal Arabelleğini Oynatma Sonrası Otomatik Olarak Temizle (yeni kanallar "
-"için varsayılan değer)"
 
 #: webadmin.cpp:1636
 msgid "Multi Clients"
-msgstr "Çoklu İstemciler"
+msgstr ""
 
 #: webadmin.cpp:1643
 msgid "Append Timestamps"
-msgstr "Zaman Damgalarını Ekle"
+msgstr ""
 
 #: webadmin.cpp:1650
 msgid "Prepend Timestamps"
-msgstr "Zaman Damgalarını Başına Ekle"
+msgstr ""
 
 #: webadmin.cpp:1658
 msgid "Deny LoadMod"
-msgstr "LoadMod'u Reddet"
+msgstr ""
 
 #: webadmin.cpp:1665
 msgid "Admin (dangerous! may gain shell access)"
-msgstr "Yönetici (Tehlikeli! Shell erişimi sağlayabilir)"
+msgstr ""
 
 #: webadmin.cpp:1675
 msgid "Deny Setting BindHost"
-msgstr "BindHost Ayarlamayı Reddet"
+msgstr ""
 
 #: webadmin.cpp:1682
 msgid "Deny Setting Ident"
-msgstr "Ident Ayarlamayı Reddet"
+msgstr ""
 
 #: webadmin.cpp:1689
 msgid "Deny Editing Networks/Servers"
-msgstr "Ağları/Sunucuları Ayarlamayı Reddet"
+msgstr ""
 
 #: webadmin.cpp:1691
 msgid ""
 "Deny adding/deleting networks, setting network name and editing the server "
 "list"
 msgstr ""
-"Ağ eklemeyi/silmeyi, ağ adını ayarlamayı ve sunucu listesini düzenlemeyi "
-"reddet"
 
 #: webadmin.cpp:1698
 msgid "Deny Setting RealName"
-msgstr "Gerk Adı Ayarlamayı Reddet"
+msgstr ""
 
 #: webadmin.cpp:1705
 msgid "Deny Setting Quit Message"
-msgstr "Çıkış Mesajını Ayarlamayı Reddet"
+msgstr ""
 
 #: webadmin.cpp:1712
 msgid "Deny Setting CTCP Replies"
-msgstr "CTCP Yanıtlarını Ayarlamayı Reddet"
+msgstr ""
 
 #: webadmin.cpp:1720
 msgid "Auto Clear Query Buffer"
-msgstr "Sorgu Arabelleğini Otomatik Temizleme"
+msgstr ""
 
 #: webadmin.cpp:1722
 msgid "Automatically Clear Query Buffer After Playback"
-msgstr "Sorgu Arabelleğini Oynatmadan Sonra Otomatik Olarak Temizle"
+msgstr ""
 
 #: webadmin.cpp:1746
 msgid "Invalid Submission: User {1} already exists"
-msgstr "Geçersiz Gönderim: {1} kullanıcısı zaten mevcut"
+msgstr ""
 
 #: webadmin.cpp:1768 webadmin.cpp:1779
 msgid "Invalid submission: {1}"
-msgstr "Geçersiz gönderim: {1}"
+msgstr ""
 
 #: webadmin.cpp:1774
 msgid "User was added, but config file was not written"
-msgstr "Kullanıcı eklendi ancak yapılandırma dosyası yazılamadı"
+msgstr ""
 
 #: webadmin.cpp:1785
 msgid "User was edited, but config file was not written"
-msgstr "Kullanıcı düzenlendi ancak yapılandırma dosyası yazılamadı"
+msgstr ""
 
 #: webadmin.cpp:1943
 msgid "Choose either IPv4 or IPv6 or both."
-msgstr "IPv4'ü veya IPv6'yı ya da her ikisini birden seçin."
+msgstr ""
 
 #: webadmin.cpp:1960
 msgid "Choose either IRC or HTTP or both."
-msgstr "IRC'yi veya HTTP'yi veya her ikisini de seçin."
+msgstr ""
 
 #: webadmin.cpp:1973 webadmin.cpp:2009
 msgid "Port was changed, but config file was not written"
-msgstr "Port değiştirildi ancak yapılandırma dosyası yazılamadı"
+msgstr ""
 
 #: webadmin.cpp:1999
 msgid "Invalid request."
-msgstr "Geçersiz istek."
+msgstr ""
 
 #: webadmin.cpp:2013
 msgid "The specified listener was not found."
-msgstr "Belirtilen dinleyici bulunamadı."
+msgstr ""
 
 #: webadmin.cpp:2244
 msgid "Settings were changed, but config file was not written"
-msgstr "Ayarlar değiştirildi ancak yapılandırma dosyası yazılamadı"
+msgstr ""

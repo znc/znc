@@ -1,8 +1,5 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: znc-bouncer\n"
-"Language-Team: Indonesian\n"
-"Language: id_ID\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -11,6 +8,9 @@ msgstr ""
 "X-Crowdin-Language: id\n"
 "X-Crowdin-File: /master/modules/po/blockuser.pot\n"
 "X-Crowdin-File-ID: 158\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Indonesian\n"
+"Language: id_ID\n"
 
 #: modules/po/../data/blockuser/tmpl/blockuser_WebadminUser.tmpl:9
 msgid "Account is blocked"
