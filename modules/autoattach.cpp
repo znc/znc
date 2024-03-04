@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
+#include <string>
 #include <znc/Chan.h>
 #include <znc/Modules.h>
 
 using std::vector;
+using std::to_string;
 
 class CAttachMatch {
   public:
@@ -116,20 +118,32 @@ class CChanAttach : public CModule {
         }
     }
 
+    void HandleSwap(const CString& sLine) {
+        u_int iA = sLine.Token(1).ToUInt();
+        u_int iB = sLine.Token(2).ToUInt();
+
+        Swap(iA, iB);
+    }
+
     void HandleList(const CString& sLine) {
+        int iIndex;
         CTable Table;
+        Table.AddColumn(t_s("Index"));
         Table.AddColumn(t_s("Neg"));
         Table.AddColumn(t_s("Chan"));
         Table.AddColumn(t_s("Search"));
         Table.AddColumn(t_s("Host"));
 
+        iIndex = 1;
         VAttachIter it = m_vMatches.begin();
         for (; it != m_vMatches.end(); ++it) {
             Table.AddRow();
+            Table.SetCell(t_s("Index"), to_string(iIndex));
             Table.SetCell(t_s("Neg"), it->IsNegated() ? "!" : "");
             Table.SetCell(t_s("Chan"), it->GetChans());
             Table.SetCell(t_s("Search"), it->GetSearch());
             Table.SetCell(t_s("Host"), it->GetHostMask());
+            iIndex += 1;
         }
 
         if (Table.size()) {
@@ -151,37 +165,27 @@ class CChanAttach : public CModule {
                    [=](const CString& sLine) { HandleDel(sLine); });
         AddCommand("List", "", t_d("List all entries"),
                    [=](const CString& sLine) { HandleList(sLine); });
+        AddCommand("Swap", t_d("<a> <b>"), t_d("Swap a and b entries in the list."),
+                   [=](const CString& sLine) { HandleSwap(sLine); });
     }
 
     ~CChanAttach() override {}
 
     bool OnLoad(const CString& sArgs, CString& sMessage) override {
-        VCString vsChans;
-        sArgs.Split(" ", vsChans, false);
+        CString migrated = GetNV("migrated");
 
-        for (VCString::const_iterator it = vsChans.begin(); it != vsChans.end();
-             ++it) {
-            CString sAdd = *it;
-            bool bNegated = sAdd.TrimPrefix("!");
-            CString sChan = sAdd.Token(0);
-            CString sSearch = sAdd.Token(1);
-            CString sHost = sAdd.Token(2, true);
-
-            if (!Add(bNegated, sChan, sSearch, sHost)) {
-                PutModule(t_f("Unable to add [{1}]")(*it));
-            }
+        if (migrated != "1") {
+            MigrateFromOldNV();
         }
 
-        // Load our saved settings, ignore errors
-        MCString::iterator it;
-        for (it = BeginNV(); it != EndNV(); ++it) {
-            CString sAdd = it->first;
-            bool bNegated = sAdd.TrimPrefix("!");
-            CString sChan = sAdd.Token(0);
-            CString sSearch = sAdd.Token(1);
-            CString sHost = sAdd.Token(2, true);
+        VCString vsChans;
 
-            Add(bNegated, sChan, sSearch, sHost);
+        GetNV("Autoattach").Split("\n", vsChans, false);
+
+        for (const CString& sRule : vsChans) {
+            if (!AddFromString(sRule)) {
+                PutModule(t_f("Unable to add [{1}]")(sRule));
+            }
         }
 
         return true;
@@ -238,6 +242,16 @@ class CChanAttach : public CModule {
         return m_vMatches.end();
     }
 
+    bool AddFromString(const CString& sRule) {
+        CString sAdd = sRule;
+        bool bNegated = sAdd.TrimPrefix("!");
+        CString sChan = sAdd.Token(0);
+        CString sSearch = sAdd.Token(1);
+        CString sHost = sAdd.Token(2, true);
+
+        return Add(bNegated, sChan, sSearch, sHost);
+    }
+
     bool Add(bool bNegated, const CString& sChan, const CString& sSearch,
              const CString& sHost) {
         CAttachMatch attach(this, sChan, sSearch, sHost, bNegated);
@@ -253,9 +267,7 @@ class CChanAttach : public CModule {
 
         m_vMatches.push_back(attach);
 
-        // Also save it for next module load
-        SetNV(attach.ToString(), "");
-
+        Save();
         return true;
     }
 
@@ -264,13 +276,58 @@ class CChanAttach : public CModule {
         VAttachIter it = FindEntry(sChan, sSearch, sHost);
         if (it == m_vMatches.end() || it->IsNegated() != bNegated) return false;
 
-        DelNV(it->ToString());
         m_vMatches.erase(it);
+
+        Save();
 
         return true;
     }
 
+    bool Swap(int iStart, int iEnd) {
+        // CAttachMatch
+        if (iStart > m_vMatches.size() || iStart <= 0 ||
+            iEnd > m_vMatches.size() || iEnd <= 0) {
+            PutModule(t_s("Illegal # Requested"));
+            return false;
+        } else {
+            std::swap(m_vMatches[iStart - 1], m_vMatches[iEnd - 1]);
+            PutModule(t_s("Rules Swapped."));
+            Save();
+            return true;
+        }
+    }
+
   private:
+    void Save() {
+        CString sBuffer = "";
+
+        for (CAttachMatch& cRule : m_vMatches) {
+            sBuffer += cRule.ToString() + "\n";
+        }
+
+        SetNV("Autoattach", sBuffer);
+    }
+
+    void MigrateFromOldNV() {
+        VCString rules;
+        // Load our saved settings, ignore errors
+        MCString::iterator it;
+        for (it = BeginNV(); it != EndNV(); ++it) {
+            CString sAdd = it->first;
+
+            rules.push_back(sAdd);
+        }
+
+        for (const CString& sRule : rules) {
+            AddFromString(sRule);
+            DelNV(sRule);
+        }
+
+        SetNV("migrated", "1");
+
+        Save();
+    }
+
     VAttachMatch m_vMatches;
 };
 
