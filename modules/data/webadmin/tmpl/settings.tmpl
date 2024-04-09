@@ -99,7 +99,7 @@
 
 
 				<div class="subsection third">
-					<div class="inputlabel"><label for="statusprefix"><? FORMAT "Status Prefix:" ?></label></div>
+					<div class="inputlabel"><label for="statusprefix"><? FORMAT "Status prefix:" ?></label></div>
 					<input id="statusprefix" type="text" name="statusprefix" value="<? VAR StatusPrefix ?>"
 						   title="<? FORMAT "The prefix for the status and module queries." ?>"/>
 					<br /><span class="info"><? FORMAT "Default for new users only." ?></span>
@@ -107,48 +107,48 @@
 
 
 				<div class="subsection half">
-					<div class="inputlabel"><label for="maxbufsize"><? FORMAT "Maximum Buffer Size:" ?></label></div>
+					<div class="inputlabel"><label for="maxbufsize"><? FORMAT "Maximum buffer size:" ?></label></div>
 					<input id="maxbufsize" type="number" name="maxbufsize" value="<? VAR MaxBufferSize ?>"
 						   title="<? FORMAT "Sets the global Max Buffer Size a user can have." ?>"/>
 				</div>
 
 
 				<div class="subsection half">
-					<div class="inputlabel"><label for="connectdelay"><? FORMAT "Connect Delay:" ?></label></div>
+					<div class="inputlabel"><label for="connectdelay"><? FORMAT "Connect delay:" ?></label></div>
 					<input id="connectdelay" type="number" name="connectdelay" value="<? VAR ConnectDelay ?>"
 						   title="<? FORMAT "The time between connection attempts to IRC servers, in seconds. This affects the connection between ZNC and the IRC server; not the connection between your IRC client and ZNC." ?>"/>
 				</div>
 
 
 				<div class="subsection half">
-					<div class="inputlabel"><label for="serverthrottle"><? FORMAT "Server Throttle:" ?></label></div>
+					<div class="inputlabel"><label for="serverthrottle"><? FORMAT "Server throttle:" ?></label></div>
 					<input id="serverthrottle" type="number" name="serverthrottle" value="<? VAR ServerThrottle ?>"
 						   title="<? FORMAT "The minimal time between two connect attempts to the same hostname, in seconds. Some servers refuse your connection if you reconnect too fast." ?>"/>
 				</div>
 
 
 				<div class="subsection half">
-					<div class="inputlabel"><label for="anoniplimit"><? FORMAT "Anonymous Connection Limit per IP:" ?></label></div>
+					<div class="inputlabel"><label for="anoniplimit"><? FORMAT "Anonymous connection limit per IP:" ?></label></div>
 					<input id="anoniplimit" type="number" name="anoniplimit" value="<? VAR AnonIPLimit ?>"
 						   title="<? FORMAT "Limits the number of unidentified connections per IP." ?>"/>
 				</div>
 
 
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Protect Web Sessions:" ?></div>
+					<div class="inputlabel"><? FORMAT "Protect web sessions:" ?></div>
 					<div class="checkbox"><input type="checkbox" name="protectwebsessions" id="protectwebsessions_checkbox"<? IF ProtectWebSessions ?> checked="checked"<? ENDIF ?> />
 						<label for="protectwebsessions_checkbox"><? FORMAT "Disallow IP changing during each web session" ?></label></div>
 				</div>
 
 
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Hide ZNC Version:" ?></div>
+					<div class="inputlabel"><? FORMAT "Hide ZNC version:" ?></div>
 					<div class="checkbox"><input type="checkbox" name="hideversion" id="hideversion_checkbox"<? IF HideVersion ?> checked="checked"<? ENDIF ?> />
 						<label for="hideversion_checkbox"><? FORMAT "Hide version number from non-ZNC users" ?></label></div>
 				</div>
 
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Auth Only Via Module:" ?></div>
+					<div class="inputlabel"><? FORMAT "Auth only via module:" ?></div>
 					<div class="checkbox"><input type="checkbox" name="authonlyviamodule" id="authonlyviamodule_checkbox"<? IF AuthOnlyViaModule ?> checked="checked"<? ENDIF ?> />
 						<label for="authonlyviamodule_checkbox"><? FORMAT "Allow user authentication by external modules only" ?></label></div>
 				</div>
