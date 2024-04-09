@@ -1688,7 +1688,7 @@ class CWebAdminMod : public CModule {
                 o13["Name"] = "denysetnetwork";
                 o13["DisplayName"] = t_s("Deny Editing Networks/Servers");
                 o13["Tooltip"] =
-                    t_s("Deny adding/deleting networks, setting network name and editing the server list");
+                    t_s("Deny Adding/Deleting Networks, Setting Network Name and Editing the Server List");
                 if (pUser->DenySetNetwork()) {
                     o13["Checked"] = "true";
                 }
