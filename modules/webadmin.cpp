@@ -1710,6 +1710,8 @@ class CWebAdminMod : public CModule {
                 CTemplate& o16 = Tmpl.AddRow("OptionLoop");
                 o16["Name"] = "denysetctcpreplies";
                 o16["DisplayName"] = t_s("Deny Setting CTCP Replies");
+                o16["Tooltip"] =
+                    t_s("Block Customizing CTCP Replies for Non Admin Users");
                 if (pUser->DenySetCTCPReplies()) {
                     o16["Checked"] = "true";
                 }
