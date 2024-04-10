@@ -18,8 +18,60 @@
 #include <znc/IRCSock.h>
 #include <algorithm>
 
+#ifdef HAVE_LIBSSL
+#include <openssl/hmac.h>
+#include <openssl/rand.h>
+
+#define NONCE_LENGTH 18
+#define CLIENT_KEY "Client Key"
+#define SERVER_KEY "Server Key"
+
+// EVP_MD_CTX_create() and EVP_MD_CTX_destroy() were renamed in OpenSSL 1.1.0
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
+#define EVP_MD_CTX_new(ctx) EVP_MD_CTX_create(ctx)
+#define EVP_MD_CTX_free(ctx) EVP_MD_CTX_destroy(ctx)
+#endif
+#define SUPPORTED_MECHANISMS_SIZE 5
+#else
+#define SUPPORTED_MECHANISMS_SIZE 2
+#endif
+
 #define NV_REQUIRE_AUTH "require_auth"
 #define NV_MECHANISMS "mechanisms"
+
+#ifdef HAVE_LIBSSL
+class CSASLMod;
+class Scram;
+
+class Scram {
+  public:
+    enum ScramStatus {
+        SCRAM_ERROR = 0,
+        SCRAM_IN_PROGRESS,
+        SCRAM_SUCCESS
+    };
+
+    Scram(CString sMechanism, CSASLMod* pMod);
+    ~Scram();
+    void Authenticate(CString sInput);
+
+  private:
+    const EVP_MD* m_pDigest;
+    size_t m_uDigestSize;
+    CString m_sClientNonceB64;
+    CString m_sClientFirstMessageBare;
+    CString m_sAuthMessage;
+    unsigned char* m_pSaltedPassword;
+    unsigned int m_uiStep = 0;
+    CSASLMod* m_pModule;
+
+    int CreateSHA(const unsigned char* pInput, size_t uInputLen,
+                  unsigned char* pOutput, unsigned int* pOutputLen);
+    ScramStatus ProcessClientFirst();
+    ScramStatus ProcessServerFirst(CString& sInput);
+    ScramStatus ProcessServerFinal(CString& sInput);
+};
+#endif
 
 class Mechanisms : public VCString {
   public:
@@ -50,7 +102,18 @@ class CSASLMod : public CModule {
         const char* szName;
         CDelayedTranslation sDescription;
         bool bDefault;
-    } SupportedMechanisms[2] = {
+    } SupportedMechanisms[SUPPORTED_MECHANISMS_SIZE] = {
+#ifdef HAVE_LIBSSL
+        {"SCRAM-SHA-512", t_d("Salted Challenge Response Authentication "
+                              "Mechanism (SCRAM) with SHA-512"),
+         true},
+        {"SCRAM-SHA-256", t_d("Salted Challenge Response Authentication "
+                              "Mechanism (SCRAM) with SHA-256"),
+         true},
+        {"SCRAM-SHA-1", t_d("Salted Challenge Response Authentication "
+                            "Mechanism (SCRAM) with SHA-1"),
+         true},
+#endif
         {"EXTERNAL", t_d("TLS certificate, for use with the *cert module"),
          true},
         {"PLAIN", t_d("Plain text negotiation, this should work always if the "
@@ -79,7 +142,15 @@ class CSASLMod : public CModule {
                    });
 
         m_bAuthenticated = false;
+#ifdef HAVE_LIBSSL
+        m_pScram = nullptr;
+#endif
     }
+#ifdef HAVE_LIBSSL
+    ~CSASLMod() override {
+        delete m_pScram;
+    }
+#endif
 
     void PrintHelp(const CString& sLine) {
         HandleHelpCommand(sLine);
@@ -203,8 +274,22 @@ class CSASLMod : public CModule {
             sAuthLine = GetNV("username") + '\0' + GetNV("username") +
                                 '\0' + GetNV("password");
             sAuthLine.Base64Encode();
+            SendAuthentication(sAuthLine);
+        } else if (m_Mechanisms.GetCurrent().Equals("EXTERNAL") &&
+                   sLine.Equals("+")) {
+            SendAuthentication(sAuthLine);
         }
+#ifdef HAVE_LIBSSL
+        else if (m_pScram != nullptr &&
+                 (m_Mechanisms.GetCurrent().Equals("SCRAM-SHA-1") ||
+                  m_Mechanisms.GetCurrent().Equals("SCRAM-SHA-256") ||
+                  m_Mechanisms.GetCurrent().Equals("SCRAM-SHA-512"))) {
+            m_pScram->Authenticate(!sLine.Equals("+") ? sLine : "");
+        }
+#endif
+    }
 
+    void SendAuthentication(CString sAuthLine) {
         /* The spec requires authentication data to be sent in chunks */
         const size_t chunkSize = 400;
         for (size_t offset = 0; offset < sAuthLine.length(); offset += chunkSize) {
@@ -234,6 +319,22 @@ class CSASLMod : public CModule {
                 GetNetwork()->GetIRCSock()->PauseCap();
 
                 m_Mechanisms.SetIndex(0);
+#ifdef HAVE_LIBSSL
+                if (m_Mechanisms.GetCurrent().Equals("SCRAM-SHA-1") ||
+                    m_Mechanisms.GetCurrent().Equals("SCRAM-SHA-256") ||
+                    m_Mechanisms.GetCurrent().Equals("SCRAM-SHA-512")) {
+                    delete m_pScram;
+
+                    try {
+                        m_pScram = new Scram(m_Mechanisms.GetCurrent(), this);
+                    } catch (const CString& s) {
+                        m_pScram = nullptr;
+                        PutModule(
+                            t_f("Could not create SCRAM session: {1}")(s));
+                        OnAuthenticationFailed();
+                    }
+                }
+#endif
                 PutIRC("AUTHENTICATE " + m_Mechanisms.GetCurrent());
             } else {
                 CheckRequireAuth();
@@ -249,6 +350,27 @@ class CSASLMod : public CModule {
         return CONTINUE;
     }
 
+    void OnAuthenticationFailed() {
+        DEBUG("sasl: Mechanism [" << m_Mechanisms.GetCurrent()
+                                  << "] failed.");
+        if (m_bVerbose) {
+            PutModule(
+                t_f("{1} mechanism failed.")(m_Mechanisms.GetCurrent()));
+        }
+
+        if (m_Mechanisms.HasNext()) {
+            m_Mechanisms.IncrementIndex();
+            PutIRC("AUTHENTICATE " + m_Mechanisms.GetCurrent());
+        } else {
+            CheckRequireAuth();
+#ifdef HAVE_LIBSSL
+            delete m_pScram;
+            m_pScram = nullptr;
+#endif
+            GetNetwork()->GetIRCSock()->ResumeCap();
+        }
+    }
+
     EModRet OnNumericMessage(CNumericMessage& msg) override {
         if (m_Mechanisms.empty()) return CONTINUE;
         if (msg.GetCode() == 903) {
@@ -261,30 +383,29 @@ class CSASLMod : public CModule {
             m_bAuthenticated = true;
             DEBUG("sasl: Authenticated with mechanism ["
                   << m_Mechanisms.GetCurrent() << "]");
+#ifdef HAVE_LIBSSL
+            delete m_pScram;
+            m_pScram = nullptr;
+#endif
         } else if (msg.GetCode() == 904 ||
                    msg.GetCode() == 905) {
-            DEBUG("sasl: Mechanism [" << m_Mechanisms.GetCurrent()
-                                      << "] failed.");
-            if (m_bVerbose) {
-                PutModule(
-                    t_f("{1} mechanism failed.")(m_Mechanisms.GetCurrent()));
-            }
-
-            if (m_Mechanisms.HasNext()) {
-                m_Mechanisms.IncrementIndex();
-                PutIRC("AUTHENTICATE " + m_Mechanisms.GetCurrent());
-            } else {
-                CheckRequireAuth();
-                GetNetwork()->GetIRCSock()->ResumeCap();
-            }
+            OnAuthenticationFailed();
         } else if (msg.GetCode() == 906) {
             /* CAP wasn't paused? */
             DEBUG("sasl: Reached 906.");
             CheckRequireAuth();
+#ifdef HAVE_LIBSSL
+            delete m_pScram;
+            m_pScram = nullptr;
+#endif
         } else if (msg.GetCode() == 907) {
             m_bAuthenticated = true;
             GetNetwork()->GetIRCSock()->ResumeCap();
             DEBUG("sasl: Received 907 -- We are already registered");
+#ifdef HAVE_LIBSSL
+            delete m_pScram;
+            m_pScram = nullptr;
+#endif
         } else if (msg.GetCode() == 908) {
             return HALT;
         } else {
@@ -298,6 +419,10 @@ class CSASLMod : public CModule {
          * respond to our CAP negotiation. */
 
         CheckRequireAuth();
+#ifdef HAVE_LIBSSL
+        delete m_pScram;
+        m_pScram = nullptr;
+#endif
     }
 
     void OnIRCDisconnected() override { m_bAuthenticated = false; }
@@ -338,9 +463,255 @@ class CSASLMod : public CModule {
 
   private:
     Mechanisms m_Mechanisms;
+#ifdef HAVE_LIBSSL
+    Scram* m_pScram;
+#endif
     bool m_bAuthenticated;
     bool m_bVerbose = false;
 };
+
+#ifdef HAVE_LIBSSL
+Scram::Scram(CString sMechanism, CSASLMod* pMod) {
+    const EVP_MD* pDigest;
+    CString pDigestName;
+    m_pModule = pMod;
+    m_pSaltedPassword = nullptr;
+
+    if (sMechanism.Equals("SCRAM-SHA-1")) {
+        pDigestName = "SHA1";
+    } else if (sMechanism.Equals("SCRAM-SHA-256")) {
+        pDigestName = "SHA256";
+    } else if (sMechanism.Equals("SCRAM-SHA-512")) {
+        pDigestName = "SHA512";
+    }
+
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
+    OpenSSL_add_all_algorithms();
+#endif
+    pDigest = EVP_get_digestbyname(pDigestName.c_str());
+
+    if (pDigest == nullptr) {
+        throw m_pModule->t_f("Unknown message digest: {1}")(pDigestName);
+    }
+
+    m_pDigest = pDigest;
+    m_uDigestSize = EVP_MD_size(pDigest);
+}
+
+Scram::~Scram() {
+    if (m_pSaltedPassword != nullptr) {
+        free(m_pSaltedPassword);
+    }
+}
+
+int Scram::CreateSHA(const unsigned char* pInput, size_t uInputLen,
+                     unsigned char* pOutput, unsigned int* pOutputLen) {
+    EVP_MD_CTX* pMdCtx = EVP_MD_CTX_new();
+
+    if (!EVP_DigestInit_ex(pMdCtx, m_pDigest, NULL)) {
+        m_pModule->PutModule("Message digest initialization failed");
+        EVP_MD_CTX_free(pMdCtx);
+        return SCRAM_ERROR;
+    }
+
+    if (!EVP_DigestUpdate(pMdCtx, pInput, uInputLen)) {
+        m_pModule->PutModule("Message digest update failed");
+        EVP_MD_CTX_free(pMdCtx);
+        return SCRAM_ERROR;
+    }
+
+    if (!EVP_DigestFinal_ex(pMdCtx, pOutput, pOutputLen)) {
+        m_pModule->PutModule("Message digest finalization failed");
+        EVP_MD_CTX_free(pMdCtx);
+        return SCRAM_ERROR;
+    }
+
+    EVP_MD_CTX_free(pMdCtx);
+    return SCRAM_IN_PROGRESS;
+}
+
+Scram::ScramStatus Scram::ProcessClientFirst() {
+    CString sOutput;
+    m_sClientNonceB64 = CString::RandomString(NONCE_LENGTH);
+    m_sClientNonceB64.Base64Encode();
+    sOutput =
+        "n,,n=" + m_pModule->GetNV("username") + ",r=" + m_sClientNonceB64;
+    m_sClientFirstMessageBare = sOutput.substr(3);
+    sOutput.Base64Encode();
+    m_pModule->SendAuthentication(sOutput);
+    m_uiStep++;
+    return SCRAM_IN_PROGRESS;
+}
+
+Scram::ScramStatus Scram::ProcessServerFirst(CString& sInput) {
+    CString sClientFinalMessageWithoutProof, sServerNonceB64, sSalt,
+        sClientProofB64;
+    VCString vsParams;
+    unsigned char *pClientKey, sStoredKey[EVP_MAX_MD_SIZE], *pClientSignature,
+        *pClientProof;
+    unsigned int uiIndex, uiIterCount = 0, uiClientKeyLen, uiStoredKeyLen;
+    unsigned long ulSaltLen;
+    size_t uClientNonceLen;
+    CString sPassword = m_pModule->GetNV("password");
+    CString sOutput;
+
+    sInput.Split(",", vsParams, false);
+
+    if (vsParams.size() < 3) {
+        m_pModule->PutModule(
+            m_pModule->t_f("Invalid server-first-message: {1}")(sInput));
+        return SCRAM_ERROR;
+    }
+
+    for (const CString& sParam : vsParams) {
+        if (!strncmp(sParam.c_str(), "r=", 2)) {
+            sServerNonceB64 = sParam.substr(2);
+        } else if (!strncmp(sParam.c_str(), "s=", 2)) {
+            sSalt = sParam.substr(2);
+        } else if (!strncmp(sParam.c_str(), "i=", 2)) {
+            uiIterCount = strtoul(sParam.substr(2).c_str(), NULL, 10);
+        }
+    }
+
+    if (sServerNonceB64.empty() || sSalt.empty() || uiIterCount == 0) {
+        m_pModule->PutModule(
+            m_pModule->t_f("Invalid server-first-message: {1}")(sInput));
+        return SCRAM_ERROR;
+    }
+    uClientNonceLen = m_sClientNonceB64.length();
+
+    // The server can append his nonce to the client's nonce
+    if (sServerNonceB64.length() < uClientNonceLen ||
+        strncmp(sServerNonceB64.c_str(), m_sClientNonceB64.c_str(),
+                uClientNonceLen)) {
+        m_pModule->PutModule(
+            m_pModule->t_f("Invalid server nonce: {1}")(sServerNonceB64));
+        return SCRAM_ERROR;
+    }
+    ulSaltLen = sSalt.Base64Decode();
+
+    // SaltedPassword := Hi(Normalize(password), sSalt, i)
+    m_pSaltedPassword = static_cast<unsigned char*>(malloc(m_uDigestSize));
+    PKCS5_PBKDF2_HMAC(sPassword.c_str(), sPassword.length(),
+                      (unsigned char*)sSalt.c_str(), ulSaltLen, uiIterCount,
+                      m_pDigest, m_uDigestSize, m_pSaltedPassword);
+
+    // AuthMessage := client-first-message-bare + "," +
+    //                server-first-message + "," +
+    //                client-final-message-without-proof
+    sClientFinalMessageWithoutProof = "c=biws,r=" + sServerNonceB64;
+
+    m_sAuthMessage = m_sClientFirstMessageBare + "," + sInput + "," +
+                     sClientFinalMessageWithoutProof;
+
+    // ClientKey := HMAC(SaltedPassword, "Client Key")
+    pClientKey = static_cast<unsigned char*>(malloc(m_uDigestSize));
+    HMAC(m_pDigest, m_pSaltedPassword, m_uDigestSize,
+         (unsigned char*)CLIENT_KEY, strlen(CLIENT_KEY), pClientKey,
+         &uiClientKeyLen);
+
+    // StoredKey := H(ClientKey)
+    if (!CreateSHA(pClientKey, m_uDigestSize, sStoredKey, &uiStoredKeyLen)) {
+        free(pClientKey);
+        return SCRAM_ERROR;
+    }
+
+    // ClientSignature := HMAC(StoredKey, AuthMessage)
+    pClientSignature = static_cast<unsigned char*>(malloc(m_uDigestSize));
+    memset(pClientSignature, 0, m_uDigestSize);
+    HMAC(m_pDigest, sStoredKey, uiStoredKeyLen,
+         (unsigned char*)m_sAuthMessage.c_str(), m_sAuthMessage.length(),
+         pClientSignature, NULL);
+
+    // ClientProof := ClientKey XOR ClientSignature
+    pClientProof = static_cast<unsigned char*>(malloc(uiClientKeyLen));
+    memset(pClientProof, 0, uiClientKeyLen);
+    for (uiIndex = 0; uiIndex < uiClientKeyLen; uiIndex++) {
+        pClientProof[uiIndex] = pClientKey[uiIndex] ^ pClientSignature[uiIndex];
+    }
+    sClientProofB64 = CString((const char*)pClientProof, uiClientKeyLen);
+    sClientProofB64.Base64Encode();
+
+    sOutput = sClientFinalMessageWithoutProof + ",p=" + sClientProofB64;
+    sOutput.Base64Encode();
+    m_pModule->SendAuthentication(sOutput);
+
+    free(pClientKey);
+    free(pClientSignature);
+    free(pClientProof);
+    m_uiStep++;
+    return SCRAM_IN_PROGRESS;
+}
+
+Scram::ScramStatus Scram::ProcessServerFinal(CString& sInput) {
+    CString sVerifier;
+    unsigned char *pServerKey, *pServerSignature;
+    unsigned int uiServerKeyLen = 0, uiServerSignatureLen = 0;
+    unsigned long ulVerifierLen;
+
+    if (sInput.length() < 3 || (sInput[0] != 'v' && sInput[1] != '=')) {
+        return SCRAM_ERROR;
+    }
+
+    sVerifier = sInput.substr(2);
+    ulVerifierLen = sVerifier.Base64Decode();
+
+    // ServerKey := HMAC(SaltedPassword, "Server Key")
+    pServerKey = static_cast<unsigned char*>(malloc(m_uDigestSize));
+    HMAC(m_pDigest, m_pSaltedPassword, m_uDigestSize,
+         (unsigned char*)SERVER_KEY, strlen(SERVER_KEY), pServerKey,
+         &uiServerKeyLen);
+
+    // ServerSignature := HMAC(ServerKey, AuthMessage)
+    pServerSignature = static_cast<unsigned char*>(malloc(m_uDigestSize));
+    HMAC(m_pDigest, pServerKey, m_uDigestSize,
+         (unsigned char*)m_sAuthMessage.c_str(), m_sAuthMessage.length(),
+         pServerSignature, &uiServerSignatureLen);
+
+    if (ulVerifierLen == uiServerSignatureLen &&
+        std::memcmp(sVerifier.c_str(), pServerSignature, ulVerifierLen) == 0) {
+        free(pServerKey);
+        free(pServerSignature);
+        return SCRAM_SUCCESS;
+    } else {
+        free(pServerKey);
+        free(pServerSignature);
+        return SCRAM_ERROR;
+    }
+}
+
+void Scram::Authenticate(CString sInput) {
+    ScramStatus status;
+
+    if (sInput != "+") {
+        sInput.Base64Decode();
+    }
+
+    switch (m_uiStep) {
+        case 0:
+            status = ProcessClientFirst();
+            break;
+        case 1:
+            status = ProcessServerFirst(sInput);
+            break;
+        case 2:
+            status = ProcessServerFinal(sInput);
+            break;
+        default:
+            status = SCRAM_ERROR;
+            break;
+    }
+
+    if (status == Scram::SCRAM_SUCCESS) {
+        DEBUG("sasl: SCRAM authentication succeeded");
+        m_pModule->SendAuthentication("+");
+    } else if (status == Scram::SCRAM_ERROR) {
+        DEBUG("sasl: SCRAM authentication failed");
+        m_pModule->CheckRequireAuth();
+        m_pModule->GetNetwork()->GetIRCSock()->ResumeCap();
+    }
+}
+#endif
 
 template <>
 void TModInfo<CSASLMod>(CModInfo& Info) {
