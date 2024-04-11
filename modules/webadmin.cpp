@@ -792,9 +792,9 @@ class CWebAdminMod : public CModule {
 
             CTemplate& o2 = Tmpl.AddRow("OptionLoop");
             o2["Name"] = "autoclearchanbuffer";
-            o2["DisplayName"] = t_s("Auto Clear Chan Buffer");
+            o2["DisplayName"] = t_s("Auto clear chan buffer");
             o2["Tooltip"] =
-                t_s("Automatically Clear Channel Buffer After Playback");
+                t_s("Automatically clear channel buffer after playback");
             if ((pChan && pChan->AutoClearChanBuffer()) ||
                 (!pChan && pUser->AutoClearChanBuffer())) {
                 o2["Checked"] = "true";
@@ -1621,7 +1621,7 @@ class CWebAdminMod : public CModule {
 
             CTemplate& o1 = Tmpl.AddRow("OptionLoop");
             o1["Name"] = "autoclearchanbuffer";
-            o1["DisplayName"] = t_s("Auto Clear Chan Buffer");
+            o1["DisplayName"] = t_s("Auto clear chan buffer");
             o1["Tooltip"] =
                 t_s("Automatically clear channel buffer after playback (the "
                     "default value for new channels)");
@@ -1686,7 +1686,7 @@ class CWebAdminMod : public CModule {
 
                 CTemplate& o13 = Tmpl.AddRow("OptionLoop");
                 o13["Name"] = "denysetnetwork";
-                o13["DisplayName"] = t_s("Deny Editing Networks/Servers");
+                o13["DisplayName"] = t_s("Deny editing networks/servers");
                 o13["Tooltip"] =
                     t_s("Deny adding/deleting networks, setting network name and editing the server list");
                 if (pUser->DenySetNetwork()) {
@@ -1709,7 +1709,7 @@ class CWebAdminMod : public CModule {
 
                 CTemplate& o16 = Tmpl.AddRow("OptionLoop");
                 o16["Name"] = "denysetctcpreplies";
-                o16["DisplayName"] = t_s("Deny Setting CTCP Replies");
+                o16["DisplayName"] = t_s("Deny setting CTCP replies");
                 o16["Tooltip"] =
                     t_s("Block customizing CTCP replies for non-admin users");
                 if (pUser->DenySetCTCPReplies()) {
@@ -1719,7 +1719,7 @@ class CWebAdminMod : public CModule {
 
             CTemplate& o17 = Tmpl.AddRow("OptionLoop");
             o17["Name"] = "autoclearquerybuffer";
-            o17["DisplayName"] = t_s("Auto Clear Query Buffer");
+            o17["DisplayName"] = t_s("Auto clear query buffer");
             o17["Tooltip"] =
                 t_s("Automatically clear query buffer after playback");
             if (pUser->AutoClearQueryBuffer()) {
