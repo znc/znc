@@ -218,6 +218,20 @@ TEST_F(ZNCTest, AutoAttachModule) {
     ircd.Write(":foo PRIVMSG #znc :hello");
     ircd.ReadUntil("TEST");
     client.ReadUntil("hello");
+    client.Write("PRIVMSG *autoattach :Add !#znc * *");
+    client.ReadUntil("Added to list");
+    client.Write("detach #znc");
+    client.ReadUntil("Detached");
+    ircd.Write(":foo PRIVMSG #znc :hello");
+    ircd.ReadUntil("TEST");
+    client.ReadUtil("hello");
+    client.Write("PRIVMSG *autoattach :Swap 1 2");
+    client.ReadUntil("Rules Swapped");
+    client.Write("detach #znc");
+    client.ReadUntil("Detached");
+    ircd.Write(":foo PRIVMSG #znc :hello");
+    client.Write(":foo ZNC :listchans");
+    client.ReadUntil("Total: 0");
 }
 
 TEST_F(ZNCTest, KeepNickModule) {
