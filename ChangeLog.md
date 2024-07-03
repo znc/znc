@@ -1,3 +1,11 @@
+# ZNC 1.9.1 (2024-07-03)
+
+* This is a security release to fix CVE-2024-39844: remote code execution vulnerability in modtcl.
+    * To mitigate this for existing installations, simply unload the modtcl module for every user, if it's loaded. Note that only users with admin rights can load modtcl at all.
+    * Thanks to Johannes Kuhn (DasBrain) for reporting, to glguy for the patch, and to multiple IRC network operators for help with mitigating this on server side before disclosure.
+* Improve tooltips in webadmin.
+
+
 # ZNC 1.9.0 (2024-02-22)
 
 ## New
