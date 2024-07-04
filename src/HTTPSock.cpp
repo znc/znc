@@ -106,6 +106,20 @@ void CHTTPSock::CheckPost() {
     }
 }
 
+bool CHTTPSock::IsTrustedProxy(const CString& sIP) {
+    const VCString& vsTrustedProxies = CZNC::Get().GetTrustedProxies();
+    bool bTrusted = false;
+
+    for (const CString& sTrustedProxy : vsTrustedProxies) {
+        if (CUtils::CheckCIDR(sIP, sTrustedProxy)) {
+            bTrusted = true;
+            break;
+        }
+    }
+
+    return bTrusted;
+}
+
 void CHTTPSock::ReadLine(const CString& sData) {
     if (m_bGotHeader) {
         return;
@@ -152,7 +166,6 @@ void CHTTPSock::ReadLine(const CString& sData) {
     } else if (sName.Equals("X-Forwarded-For:")) {
         // X-Forwarded-For: client, proxy1, proxy2
         if (m_sForwardedIP.empty()) {
-            const VCString& vsTrustedProxies = CZNC::Get().GetTrustedProxies();
             CString sIP = GetRemoteIP();
 
             VCString vsIPs;
@@ -161,13 +174,7 @@ void CHTTPSock::ReadLine(const CString& sData) {
             while (!vsIPs.empty()) {
                 // sIP told us that it got connection from vsIPs.back()
                 // check if sIP is trusted proxy
-                bool bTrusted = false;
-                for (const CString& sTrustedProxy : vsTrustedProxies) {
-                    if (CUtils::CheckCIDR(sIP, sTrustedProxy)) {
-                        bTrusted = true;
-                        break;
-                    }
-                }
+                bool bTrusted = IsTrustedProxy(sIP);
                 if (bTrusted) {
                     // sIP is trusted proxy, so use vsIPs.back() as new sIP
                     sIP = vsIPs.back();
@@ -180,6 +187,12 @@ void CHTTPSock::ReadLine(const CString& sData) {
             // either sIP is not trusted proxy, or it's in the beginning of the
             // X-Forwarded-For list in both cases use it as the endpoind
             m_sForwardedIP = sIP;
+        }
+    } else if (sName.Equals("X-Forwarded-CertFP:")) {
+        if (IsTrustedProxy(GetRemoteIP())) {
+            m_sForwardedCertFP = sLine.Token(1, true);
+            DEBUG(GetSockName()
+                  << " Got a forwarded CertFP '" << m_sForwardedCertFP << "'");
         }
     } else if (sName.Equals("If-None-Match:")) {
         // this is for proper client cache support (HTTP 304) on static files:
@@ -539,6 +552,15 @@ const CString& CHTTPSock::GetParamString() const { return m_sPostData; }
 const CString& CHTTPSock::GetURI() const { return m_sURI; }
 
 const CString& CHTTPSock::GetURIPrefix() const { return m_sURIPrefix; }
+
+long CHTTPSock::GetPeerFingerprint(CString& sResult) const {
+    if(m_sForwardedCertFP.empty()) {
+        return CSocket::GetPeerFingerprint(sResult);
+    }
+
+    sResult = m_sForwardedCertFP;
+    return X509_V_OK;
+}
 
 bool CHTTPSock::HasParam(const CString& sName, bool bPost) const {
     if (bPost) return (m_msvsPOSTParams.find(sName) != m_msvsPOSTParams.end());
