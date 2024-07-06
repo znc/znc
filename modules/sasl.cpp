@@ -554,7 +554,7 @@ Scram::ScramStatus Scram::ProcessServerFirst(CString& sInput) {
     size_t uClientNonceLen;
     CString sPassword = m_pModule->GetNV("password");
     CString sOutput;
-    bool hasMandatoryExtensions = false;
+    bool hasMandatoryExtensions = false, hasError = false;
 
     sInput.Split(",", vsParams, false);
 
@@ -574,11 +574,14 @@ Scram::ScramStatus Scram::ProcessServerFirst(CString& sInput) {
         } else if (!strncmp(sParam.c_str(), "m=", 2)) {
             hasMandatoryExtensions = true;
             break;
+        } else if (!strncmp(sParam.c_str(), "e=", 2)) {
+            hasError = true;
+            break;
         }
     }
 
-    if (hasMandatoryExtensions || sServerNonceB64.empty() || sSalt.empty() ||
-        uiIterCount == 0) {
+    if (hasMandatoryExtensions || hasError || sServerNonceB64.empty() ||
+        sSalt.empty() || uiIterCount == 0) {
         m_pModule->PutModule(
             m_pModule->t_f("Invalid server-first-message: {1}")(sInput));
         return SCRAM_ERROR;
