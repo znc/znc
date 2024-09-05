@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <QRegularExpression>
 #include "znctest.h"
 
 #ifndef ZNC_BIN_DIR
@@ -119,13 +120,10 @@ std::unique_ptr<QNetworkReply> ZNCTest::HandleHttp(QNetworkReply* reply) {
         std::cout << "Got HTTP reply" << std::endl;
         loop.quit();
     });
-    QObject::connect(
-        reply,
-        static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(
-            &QNetworkReply::error),
-        [&](QNetworkReply::NetworkError e) {
-            ADD_FAILURE() << reply->errorString().toStdString();
-        });
+    QObject::connect(reply, &QNetworkReply::errorOccurred,
+                     [&](QNetworkReply::NetworkError e) {
+                         ADD_FAILURE() << reply->errorString().toStdString();
+                     });
     QTimer::singleShot(30000 /* msec */, &loop, [&]() {
         ADD_FAILURE() << "connection timeout";
         loop.quit();
@@ -160,7 +158,7 @@ void ZNCTest::InstallModule(QString name, QString content) {
         QStringList lines = content.split("\n");
         int maxoffset = -1;
         for (const QString& line : lines) {
-            int nonspace = line.indexOf(QRegExp("\\S"));
+            int nonspace = line.indexOf(QRegularExpression("\\S"));
             if (nonspace == -1) continue;
             if (nonspace < maxoffset || maxoffset == -1) maxoffset = nonspace;
         }
