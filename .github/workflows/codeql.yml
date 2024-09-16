@@ -28,7 +28,10 @@ jobs:
       uses: actions/checkout@v4
       with:
         submodules: true
-    - run: source .github/ubuntu_deps.sh
+    - run: |
+        source .github/ubuntu_deps.sh
+        sudo apt-get remove -y qt6-base-dev
+        sudo apt-get install -y qtbase5-dev
       
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
@@ -36,6 +39,8 @@ jobs:
         languages: ${{ matrix.language }}
 
     - run: source .github/build.sh
+      env:
+        ZNC_QT_VER: "5"
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3

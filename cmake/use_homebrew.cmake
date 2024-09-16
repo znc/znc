@@ -54,12 +54,17 @@ if(brew_python_f EQUAL 0)
 		"${brew_python}/Frameworks/Python.framework")
 endif()
 
-execute_process(COMMAND "${brew}" --prefix qt6
-	RESULT_VARIABLE brew_qt6_f
-	OUTPUT_VARIABLE brew_qt6 OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
-if(brew_qt6_f EQUAL 0)
-	find_package_message(brew_qt6 "Qt6 via Homebrew: ${brew_qt6}"
-		"${brew_qt6}")
+if(DEFINED ENV{ZNC_QT_VER})
+	set(ZNC_QT_VER $ENV{ZNC_QT_VER})
+else()
+	set(ZNC_QT_VER 6)
+endif()
+execute_process(COMMAND "${brew}" --prefix qt${ZNC_QT_VER}
+	RESULT_VARIABLE brew_qt_f
+	OUTPUT_VARIABLE brew_qt OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
+if(brew_qt_f EQUAL 0)
+	find_package_message(brew_qt "Qt via Homebrew: ${brew_qt}"
+		"${brew_qt}")
 endif()
 
 execute_process(COMMAND "${brew}" --prefix gettext
