@@ -119,7 +119,7 @@ jobs:
           submodules: true
       - run: |
           brew update
-          brew install icu4c qt6 gettext pkg-config cpanminus boost
+          brew install icu4c qt6 gettext pkg-config cpanminus boost argon2
       - run: source .github/build.sh
       - uses: codecov/codecov-action@v3
 

@@ -39,7 +39,7 @@ ls -lRa
 
 case "${CC:-gcc}" in
 	gcc)
-		lcov --directory . --capture --output-file lcov-coverage.txt
+		lcov --directory . --capture --output-file lcov-coverage.txt --ignore-errors mismatch
 		lcov --list lcov-coverage.txt
 		;;
 	clang)
