@@ -120,10 +120,20 @@ std::unique_ptr<QNetworkReply> ZNCTest::HandleHttp(QNetworkReply* reply) {
         std::cout << "Got HTTP reply" << std::endl;
         loop.quit();
     });
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
     QObject::connect(reply, &QNetworkReply::errorOccurred,
                      [&](QNetworkReply::NetworkError e) {
                          ADD_FAILURE() << reply->errorString().toStdString();
                      });
+#else
+    QObject::connect(
+        reply,
+        static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(
+            &QNetworkReply::error),
+        [&](QNetworkReply::NetworkError e) {
+            ADD_FAILURE() << reply->errorString().toStdString();
+        });
+#endif
     QTimer::singleShot(30000 /* msec */, &loop, [&]() {
         ADD_FAILURE() << "connection timeout";
         loop.quit();
