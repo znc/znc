@@ -24,7 +24,13 @@ set(CMAKE_THREAD_PREFER_PTHREAD true)
 set(THREADS_PREFER_PTHREAD_FLAG true)
 find_package(Threads REQUIRED)
 
-find_package(Qt5Network 5.4 REQUIRED HINTS ${Qt5_HINTS})
+if(DEFINED ENV{ZNC_QT_VER})
+	set(ZNC_QT_VER $ENV{ZNC_QT_VER})
+else()
+	set(ZNC_QT_VER 6)
+endif()
+
+find_package(Qt${ZNC_QT_VER}Network 5.4 REQUIRED HINTS ${Qt_HINTS})
 
 # Force the simple internal regex engine to get consistent behavior on all
 # platforms. See
@@ -42,7 +48,7 @@ add_executable(inttest
 	"${GTEST_ROOT}/src/gtest-all.cc"
 	"${GMOCK_ROOT}/src/gmock-all.cc")
 
-target_link_libraries(inttest Qt5::Network Threads::Threads)
+target_link_libraries(inttest Qt${ZNC_QT_VER}::Network Threads::Threads)
 target_include_directories(inttest PUBLIC
 	"${PROJECT_SOURCE_DIR}/framework"
 	"${PROJECT_BINARY_DIR}"

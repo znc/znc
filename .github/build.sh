@@ -6,7 +6,7 @@ ls -la
 cpanm --local-lib=~/perl5 local::lib
 eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
 cpanm --notest Devel::Cover::Report::Clover
-pip3 install --user coverage
+pip3 install --user --break-system-packages coverage
 export ZNC_MODPERL_COVERAGE=1
 #export ZNC_MODPYTHON_COVERAGE=1
 
@@ -39,7 +39,7 @@ ls -lRa
 
 case "${CC:-gcc}" in
 	gcc)
-		lcov --directory . --capture --output-file lcov-coverage.txt
+		lcov --directory . --capture --output-file lcov-coverage.txt --ignore-errors mismatch
 		lcov --list lcov-coverage.txt
 		;;
 	clang)

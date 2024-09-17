@@ -6,7 +6,7 @@ on:
 jobs:
   gcc:
     name: GCC
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -23,7 +23,7 @@ jobs:
 
   tarball:
     name: Tarball
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -48,7 +48,7 @@ jobs:
   # can be removed when asan below is fixed
   clang:
     name: Clang
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     env:
       CXX: clang++
       CC: clang
@@ -69,7 +69,7 @@ jobs:
  
   #clang_asan:
     #name: Clang ASAN
-    #runs-on: ubuntu-20.04
+    #runs-on: ubuntu-24.04
     #env:
       #CXX: clang++
       #CC: clang
@@ -85,7 +85,7 @@ jobs:
 
   #clang_tsan:
     #name: Clang TSAN
-    #runs-on: ubuntu-20.04
+    #runs-on: ubuntu-24.04
     #env:
       #CXX: clang++
       #CC: clang
@@ -119,7 +119,7 @@ jobs:
           submodules: true
       - run: |
           brew update
-          brew install icu4c qt5 gettext pkg-config cpanminus boost
+          brew install icu4c qt6 gettext pkg-config cpanminus boost argon2 swig
       - run: source .github/build.sh
       - uses: codecov/codecov-action@v3
 

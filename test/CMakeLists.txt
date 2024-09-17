@@ -90,7 +90,7 @@ externalproject_add(inttest_bin
 	"-DGTEST_ROOT:path=${GTEST_ROOT}"
 	"-DGMOCK_ROOT:path=${GMOCK_ROOT}"
 	"-DZNC_BIN_DIR:path=${CMAKE_INSTALL_FULL_BINDIR}"
-	"-DQt5_HINTS:path=${brew_qt5}")
+	"-DQt_HINTS:path=${brew_qt}")
 add_custom_target(inttest COMMAND
 	#   MAKEFLAGS:
 	# Prevent a warning from test of znc-buildmod, when inner make
