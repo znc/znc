@@ -211,20 +211,24 @@ CString CUtils::AskSaltedHashPassForConfig() {
             CUtils::PrintError("The supplied passwords did not match");
         } else {
             // Construct the salted pass
+            return CUtils::ConstructSaltedPass(pass1, sSalt);
+        }
+    }
+}
+
+CString CUtils::ConstructSaltedPass(const CString& sPass, const CString& sSalt) {
             VCString vsLines;
             vsLines.push_back("<Pass password>");
 #if ZNC_HAVE_ARGON
             vsLines.push_back("\tMethod = Argon2id");
-            vsLines.push_back("\tHash = " + SaltedArgonHash(pass1, sSalt));
+            vsLines.push_back("\tHash = " + SaltedArgonHash(sPass, sSalt));
 #else
             vsLines.push_back("\tMethod = SHA256");
-            vsLines.push_back("\tHash = " + SaltedSHA256Hash(pass1, sSalt));
+            vsLines.push_back("\tHash = " + SaltedSHA256Hash(sPass, sSalt));
             vsLines.push_back("\tSalt = " + sSalt);
 #endif
             vsLines.push_back("</Pass>");
             return CString("\n").Join(vsLines.begin(), vsLines.end());
-        }
-    }
 }
 
 CString CUtils::GetSalt() { return CString::RandomString(20); }

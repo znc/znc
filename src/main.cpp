@@ -162,7 +162,7 @@ static void GenerateHelp(const char* appname) {
     CUtils::PrintMessage(
         "\t-r, --allow-root   Don't complain if ZNC is run as root");
     CUtils::PrintMessage(
-        "\t-s, --makepass     Generates a password for use in config");
+        "\t-s, --makepass     Generates a password for use in config (via env ZNC_PASS or interactive)");
 }
 
 class CSignalHandler {
@@ -383,8 +383,15 @@ int main(int argc, char** argv) {
 #endif /* HAVE_LIBSSL */
 
     if (bMakePass) {
-        CUtils::PrintMessage("Type your new password.");
-        CString sPass = CUtils::AskSaltedHashPassForConfig();
+        CString sPass;
+        if (const char* pass = getenv("ZNC_PASS")) {
+          CString sSalt = CUtils::GetSalt();
+          sPass = CUtils::ConstructSaltedPass(CString(pass), sSalt);
+        } else {
+          CUtils::PrintMessage("Type your new password.");
+          sPass = CUtils::AskSaltedHashPassForConfig();
+        }
+
         CUtils::PrintMessage("Kill ZNC process, if it's running.");
         CUtils::PrintMessage(
             "Then replace password in the <User> section of your config with "
