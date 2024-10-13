@@ -38,13 +38,13 @@ use feature 'switch', 'say';
 
 package ZNC::String;
 use overload '""' => sub {
-    my $self = shift;
-    my @caller = caller;
-    # When called from internal SWIG subroutines, return default stringification (e.g. 'ZNC::String=SCALAR(0x6210002fe090)') instead of the stored string.
-    # Otherwise, ZNC crashes with use-after-free.
-    # SWIG uses it as key for a hash, so without the number in the returned string, different strings which happen to represent the same value, collide.
-    return $self if $caller[0] eq 'ZNC::String';
-    return $self->GetPerlStr;
+	my $self = shift;
+	my @caller = caller;
+	# When called from internal SWIG subroutines, return default stringification (e.g. 'ZNC::String=SCALAR(0x6210002fe090)') instead of the stored string.
+	# Otherwise, ZNC crashes with use-after-free.
+	# SWIG uses it as key for a hash, so without the number in the returned string, different strings which happen to represent the same value, collide.
+	return $self if $caller[0] eq 'ZNC::String';
+	return $self->GetPerlStr;
 };
 
 package ZNC::CMessage;
@@ -669,28 +669,28 @@ sub CreateSocket {
 }
 
 sub t_s {
-    my $self = shift;
-    my $module = ref $self;
-    my $english = shift;
-    my $context = shift//'';
-    ZNC::CTranslation::Get->Singular("znc-$module", $context, $english);
+	my $self = shift;
+	my $module = ref $self;
+	my $english = shift;
+	my $context = shift//'';
+	ZNC::CTranslation::Get->Singular("znc-$module", $context, $english);
 }
 
 sub t_f {
-    my $self = shift;
-    my $fmt = $self->t_s(@_);
-    return sub { sprintf $fmt, @_ }
+	my $self = shift;
+	my $fmt = $self->t_s(@_);
+	return sub { sprintf $fmt, @_ }
 }
 
 sub t_p {
-    my $self = shift;
-    my $module = ref $self;
-    my $english = shift;
-    my $englishes = shift;
-    my $num = shift;
-    my $context = shift//'';
-    my $fmt = ZNC::CTranslation::Get->Plural("znc-$module", $context, $english, $englishes, $num);
-    return sub { sprintf $fmt, @_ }
+	my $self = shift;
+	my $module = ref $self;
+	my $english = shift;
+	my $englishes = shift;
+	my $num = shift;
+	my $context = shift//'';
+	my $fmt = ZNC::CTranslation::Get->Plural("znc-$module", $context, $english, $englishes, $num);
+	return sub { sprintf $fmt, @_ }
 }
 
 # TODO is t_d needed for perl? Maybe after AddCommand is implemented
