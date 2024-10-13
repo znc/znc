@@ -330,5 +330,21 @@ TEST_F(ZNCTest, SaslMechsNotInit) {
     ircd.ReadUntil("PONG foo");
 }
 
+TEST_F(ZNCTest, SaslRequire) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod sasl");
+    client.Write("PRIVMSG *sasl :set * *");
+    client.Write("PRIVMSG *sasl :requireauth yes");
+    client.ReadUntil("Password has been set");
+    client.Write("znc jump");
+    ircd = ConnectIRCd();
+    ircd.ReadUntil("CAP LS");
+    ircd.Write(":server 001 nick :Hello");
+    ircd.ReadUntil("QUIT :SASL not available");
+    auto ircd2 = ConnectIRCd();
+}
+
 }  // namespace
 }  // namespace znc_inttest

@@ -189,9 +189,7 @@ class CSASLMod : public CModule {
 
     void CheckRequireAuth() {
         if (!m_bAuthenticated && GetNV(NV_REQUIRE_AUTH).ToBool()) {
-            GetNetwork()->SetIRCConnectEnabled(false);
-            PutModule(t_s("Disabling network, we require authentication."));
-            PutModule(t_s("Use 'RequireAuth no' to disable."));
+            GetNetwork()->GetIRCSock()->Quit("SASL not available");
         }
     }
 
