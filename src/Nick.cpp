@@ -118,7 +118,7 @@ bool CNick::RemPerm(char cPerm) {
 
 char CNick::GetPermChar() const {
     CIRCSock* pIRCSock = (!m_pNetwork) ? nullptr : m_pNetwork->GetIRCSock();
-    const CString& sChanPerms = (!pIRCSock) ? "@+" : pIRCSock->GetPerms();
+    const CString sChanPerms = (!pIRCSock) ? "@+" : pIRCSock->GetPerms();
 
     for (unsigned int a = 0; a < sChanPerms.size(); a++) {
         const char& c = sChanPerms[a];
@@ -132,7 +132,7 @@ char CNick::GetPermChar() const {
 
 CString CNick::GetPermStr() const {
     CIRCSock* pIRCSock = (!m_pNetwork) ? nullptr : m_pNetwork->GetIRCSock();
-    const CString& sChanPerms = (!pIRCSock) ? "@+" : pIRCSock->GetPerms();
+    const CString sChanPerms = (!pIRCSock) ? "@+" : pIRCSock->GetPerms();
     CString sRet;
 
     for (unsigned int a = 0; a < sChanPerms.size(); a++) {
