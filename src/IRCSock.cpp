@@ -185,6 +185,9 @@ void CIRCSock::ReadLine(const CString& sData) {
         case CMessage::Type::Capability:
             bReturn = OnCapabilityMessage(Message);
             break;
+        case CMessage::Type::ChgHost:
+            bReturn = OnChgHostMessage(Message);
+            break;
         case CMessage::Type::CTCP:
             bReturn = OnCTCPMessage(Message);
             break;
@@ -380,8 +383,8 @@ bool CIRCSock::OnCapabilityMessage(CMessage& Message) {
         {"userhost-in-names", [this](bool bVal) { m_bUHNames = bVal; }},
         {"cap-notify", [](bool bVal) {}},
         {"server-time", [this](bool bVal) { m_bServerTime = bVal; }},
-        {"znc.in/server-time-iso",
-         [this](bool bVal) { m_bServerTime = bVal; }},
+        {"znc.in/server-time-iso", [this](bool bVal) { m_bServerTime = bVal; }},
+        {"chghost", [](bool) {}},
     };
 
     auto RemoveCap = [&](const CString& sCap) {
@@ -512,6 +515,69 @@ bool CIRCSock::OnCTCPMessage(CCTCPMessage& Message) {
     }
 
     return (pChan && pChan->IsDetached());
+}
+
+bool CIRCSock::OnChgHostMessage(CChgHostMessage& Message) {
+    // The emulation of QUIT+JOIN would be cleaner inside CClient::PutClient()
+    // but computation of new modes is difficult enough so that I don't want to
+    // repeat it for every client
+    //
+    // TODO: make CNick store modes (v, o) instead of perm chars (+, @), that
+    // would simplify this
+    bool bNeedEmulate = false;
+    for (CClient* pClient : m_pNetwork->GetClients()) {
+        if (pClient->HasChgHost()) {
+            pClient->PutClient(Message);
+        } else {
+            bNeedEmulate = true;
+            pClient->PutClient(CMessage(Message.GetNick(), "QUIT",
+                                        {"Changing hostname"},
+                                        Message.GetTags()));
+        }
+    }
+
+    if (!bNeedEmulate) return true;
+
+    CNick NewNick = Message.GetNick();
+    NewNick.SetIdent(Message.GetNewIdent());
+    NewNick.SetHost(Message.GetNewHost());
+
+    for (CChan* pChan : m_pNetwork->GetChans()) {
+        if (CNick* pNick = pChan->FindNick(Message.GetNick().GetNick())) {
+            pNick->SetIdent(Message.GetNewIdent());
+            pNick->SetHost(Message.GetNewHost());
+        }
+
+        CTargetMessage ModeMsg;
+        ModeMsg.SetNick(CNick(":irc.znc.in"));
+        ModeMsg.SetTags(Message.GetTags());
+        ModeMsg.SetCommand("MODE");
+        VCString vsModeParams = {pChan->GetName(), "+"};
+        if (CNick* pNick = pChan->FindNick(NewNick.GetNick())) {
+            for (char cPerm : pNick->GetPermStr()) {
+                char cMode = GetModeFromPerm(cPerm);
+                if (cMode) {
+                    vsModeParams[1].append(1, cMode);
+                    vsModeParams.push_back(NewNick.GetNick());
+                }
+            }
+        }
+        ModeMsg.SetParams(std::move(vsModeParams));
+
+        for (CClient* pClient : m_pNetwork->GetClients()) {
+            if (!pClient->HasChgHost()) {
+                // TODO: send account name and real name too, for
+                // extended-join
+                pClient->PutClient(CMessage(NewNick, "JOIN", {pChan->GetName()},
+                                            Message.GetTags()));
+                if (ModeMsg.GetParams().size() > 2) {
+                    pClient->PutClient(ModeMsg);
+                }
+            }
+        }
+    }
+
+    return true;
 }
 
 bool CIRCSock::OnErrorMessage(CMessage& Message) {
@@ -1510,6 +1576,18 @@ char CIRCSock::GetPermFromMode(char cMode) const {
         for (unsigned int a = 0; a < m_sPermModes.size(); a++) {
             if (m_sPermModes[a] == cMode) {
                 return m_sPerms[a];
+            }
+        }
+    }
+
+    return 0;
+}
+
+char CIRCSock::GetModeFromPerm(char cPerm) const {
+    if (m_sPermModes.size() == m_sPerms.size()) {
+        for (unsigned int a = 0; a < m_sPermModes.size(); a++) {
+            if (m_sPerms[a] == cPerm) {
+                return m_sPermModes[a];
             }
         }
     }

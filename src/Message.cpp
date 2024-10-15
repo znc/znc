@@ -81,6 +81,16 @@ void CMessage::SetParams(const VCString& vsParams) {
     }
 }
 
+void CMessage::SetParams(VCString&& vsParams) {
+    m_vsParams = std::move(vsParams);
+    m_bColon = false;
+
+    if (m_eType == Type::Text || m_eType == Type::Notice ||
+        m_eType == Type::Action || m_eType == Type::CTCP) {
+        InitType();
+    }
+}
+
 CString CMessage::GetParam(unsigned int uIdx) const {
     if (uIdx >= m_vsParams.size()) {
         return "";
@@ -270,6 +280,7 @@ void CMessage::InitType() {
             {"ACCOUNT", Type::Account},
             {"AWAY", Type::Away},
             {"CAP", Type::Capability},
+            {"CHGHOST", Type::ChgHost},
             {"ERROR", Type::Error},
             {"INVITE", Type::Invite},
             {"JOIN", Type::Join},

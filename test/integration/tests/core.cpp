@@ -745,5 +745,56 @@ TEST_F(ZNCTest, CapReqWithoutLs) {
     ASSERT_THAT(client.ReadRemainder().toStdString(), Not(HasSubstr("Welcome")));
 }
 
+TEST_F(ZNCTest, ChgHostEmulation) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    ircd.Write("CAP user LS :chghost");
+    ircd.ReadUntil("CAP REQ :chghost");
+    ircd.Write("CAP user ACK :chghost");
+
+    auto client1 = LoginClient();
+    auto client2 = LoginClient();
+    client2.Write("CAP REQ :chghost");
+    client2.ReadUntil("ACK");
+
+    ircd.Write(":user!oldident@oldhost JOIN #chan");
+
+    ircd.Write(":user!oldident@oldhost CHGHOST newident newhost");
+    client1.ReadUntil(":user!oldident@oldhost QUIT :Changing hostname");
+    client1.ReadUntil(":user!newident@newhost JOIN #chan");
+    ASSERT_THAT(client1.ReadRemainder().toStdString(), Not(HasSubstr("MODE")));
+    client2.ReadUntil(":user!oldident@oldhost CHGHOST newident newhost");
+    client2.Close();
+
+    ircd.Write(":server MODE #chan +v user");
+    client1.ReadUntil("MODE");
+    ircd.Write(":user!newident@newhost CHGHOST ident-2 host-2");
+    client1.ReadUntil(":irc.znc.in MODE #chan +v user");
+
+    ircd.Write(":server MODE #chan +o user");
+    client1.ReadUntil("MODE");
+    ircd.Write(":user!ident-2@host-2 CHGHOST ident-3 host-3");
+    client1.ReadUntil(":irc.znc.in MODE #chan +ov user user");
+}
+
+TEST_F(ZNCTest, ChgHostOnce) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    ircd.Write("CAP user LS :chghost");
+    ircd.ReadUntil("CAP REQ :chghost");
+    ircd.Write("CAP user ACK :chghost");
+
+    auto client = LoginClient();
+    client.Write("CAP REQ :chghost");
+    client.ReadUntil("ACK");
+
+    ircd.Write(":user!oldident@oldhost JOIN #chan");
+    ircd.Write(":user!oldident@oldhost JOIN #chan2");
+    ircd.Write(":user!oldident@oldhost CHGHOST newident newhost");
+    client.ReadUntil("CHGHOST");
+    ASSERT_THAT(client.ReadRemainder().toStdString(),
+                Not(HasSubstr("CHGHOST")));
+}
+
 }  // namespace
 }  // namespace znc_inttest

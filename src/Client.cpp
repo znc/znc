@@ -75,7 +75,8 @@ using std::vector;
         }                                                                     \
     }
 
-CClient::CClient() : CIRCSocket(),
+CClient::CClient()
+    : CIRCSocket(),
       m_bGotPass(false),
       m_bGotNick(false),
       m_bGotUser(false),
@@ -87,6 +88,7 @@ CClient::CClient() : CIRCSocket(),
       m_bExtendedJoin(false),
       m_bNamesx(false),
       m_bUHNames(false),
+      m_bChgHost(false),
       m_bAway(false),
       m_bServerTime(false),
       m_bBatch(false),
@@ -762,6 +764,7 @@ CClient::CoreCaps() {
           }},
           {"cap-notify",
            [](CClient* pClient, bool bVal) { pClient->m_bCapNotify = bVal; }},
+          {"chghost", [](CClient* pClient, bool bVal) { pClient->m_bChgHost = bVal; }},
         };
 
         // For compatibility with older clients

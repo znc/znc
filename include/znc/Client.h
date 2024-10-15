@@ -119,6 +119,7 @@ class CClient : public CIRCSocket {
     bool HasExtendedJoin() const { return m_bExtendedJoin; }
     bool HasNamesx() const { return m_bNamesx; }
     bool HasUHNames() const { return m_bUHNames; }
+    bool HasChgHost() const { return m_bChgHost; }
     bool IsAway() const { return m_bAway; }
     bool HasServerTime() const { return m_bServerTime; }
     bool HasBatch() const { return m_bBatch; }
@@ -289,6 +290,7 @@ class CClient : public CIRCSocket {
     bool m_bExtendedJoin;
     bool m_bNamesx;
     bool m_bUHNames;
+    bool m_bChgHost;
     bool m_bAway;
     bool m_bServerTime;
     bool m_bBatch;

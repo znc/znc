@@ -67,6 +67,7 @@ class CMessage {
         Action,
         Away,
         Capability,
+        ChgHost,
         CTCP,
         Error,
         Invite,
@@ -121,6 +122,7 @@ class CMessage {
      */
     VCString GetParamsSplit(unsigned int uIdx, unsigned int uLen = -1) const;
     void SetParams(const VCString& vsParams);
+    void SetParams(VCString&& vsParams);
 
     /// @deprecated use GetParamsColon() instead.
     CString GetParams(unsigned int uIdx, unsigned int uLen = -1) const
@@ -332,5 +334,14 @@ class CTopicMessage : public CTargetMessage {
     void SetText(const CString& sText) { SetTopic(sText); }
 };
 REGISTER_ZNC_MESSAGE(CTopicMessage);
+
+class CChgHostMessage : public CMessage {
+  public:
+    CString GetNewIdent() const { return GetParam(0); }
+    void SetNewIdent(const CString& sIdent) { SetParam(0, sIdent); }
+    CString GetNewHost() const { return GetParam(1); }
+    void SetNewHost(const CString& sHost) { SetParam(1, sHost); }
+};
+REGISTER_ZNC_MESSAGE(CChgHostMessage);
 
 #endif  // !ZNC_MESSAGE_H
