@@ -775,6 +775,15 @@ TEST_F(ZNCTest, ChgHostEmulation) {
     client1.ReadUntil("MODE");
     ircd.Write(":user!ident-2@host-2 CHGHOST ident-3 host-3");
     client1.ReadUntil(":irc.znc.in MODE #chan +ov user user");
+
+    // Only attached channel should receive emulation
+    ircd.Write(":user!ident-3@host-3 JOIN #chan2");
+    client1.ReadUntil("JOIN #chan2");
+    client1.Write("DETACH #chan2");
+    client1.ReadUntil("Detached 1 channel");
+    ircd.Write(":user!ident-3@host-3 CHGHOST ident host");
+    ASSERT_THAT(client1.ReadRemainder().toStdString(),
+                Not(HasSubstr("#chan2")));
 }
 
 TEST_F(ZNCTest, ChgHostOnce) {

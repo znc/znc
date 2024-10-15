@@ -536,8 +536,6 @@ bool CIRCSock::OnChgHostMessage(CChgHostMessage& Message) {
         }
     }
 
-    if (!bNeedEmulate) return true;
-
     CNick NewNick = Message.GetNick();
     NewNick.SetIdent(Message.GetNewIdent());
     NewNick.SetHost(Message.GetNewHost());
@@ -547,6 +545,9 @@ bool CIRCSock::OnChgHostMessage(CChgHostMessage& Message) {
             pNick->SetIdent(Message.GetNewIdent());
             pNick->SetHost(Message.GetNewHost());
         }
+
+        if (!bNeedEmulate) continue;
+        if (pChan->IsDetached()) continue;
 
         CTargetMessage ModeMsg;
         ModeMsg.SetNick(CNick(":irc.znc.in"));
