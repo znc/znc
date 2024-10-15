@@ -276,7 +276,7 @@ void CMessage::InitType() {
             m_eType = Type::Notice;
         }
     } else {
-        std::map<CString, Type> mTypes = {
+        static std::map<CString, Type> mTypes = {
             {"ACCOUNT", Type::Account},
             {"AWAY", Type::Away},
             {"CAP", Type::Capability},

@@ -378,7 +378,7 @@ bool CIRCSock::OnCapabilityMessage(CMessage& Message) {
         sArgs = Message.GetParam(2);
     }
 
-    std::map<CString, std::function<void(bool bVal)>> mSupportedCaps = {
+    static std::map<CString, std::function<void(bool bVal)>> mSupportedCaps = {
         {"multi-prefix", [this](bool bVal) { m_bNamesx = bVal; }},
         {"userhost-in-names", [this](bool bVal) { m_bUHNames = bVal; }},
         {"cap-notify", [](bool bVal) {}},
