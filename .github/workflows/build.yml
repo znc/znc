@@ -13,7 +13,7 @@ jobs:
           submodules: true
       - run: source .github/ubuntu_deps.sh
       - run: source .github/build.sh
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           name: ${{ github.job }}
       - uses: actions/upload-artifact@v4
@@ -41,7 +41,7 @@ jobs:
           name: znc-tarball
           path: /tmp/znc-git*.tar.gz
           if-no-files-found: error
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           name: ${{ github.job }}
 
@@ -58,7 +58,7 @@ jobs:
           submodules: true
       - run: source .github/ubuntu_deps.sh
       - run: source .github/build.sh
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           name: ${{ github.job }}
       - uses: actions/upload-artifact@v4
@@ -81,7 +81,7 @@ jobs:
           #submodules: true
       #- run: source .github/ubuntu_deps.sh
       #- run: source .github/build.sh
-      #- uses: codecov/codecov-action@v3
+      #- uses: codecov/codecov-action@v4
 
   #clang_tsan:
     #name: Clang TSAN
@@ -97,7 +97,7 @@ jobs:
           #submodules: true
       #- run: source .github/ubuntu_deps.sh
       #- run: source .github/build.sh
-      #- uses: codecov/codecov-action@v3
+      #- uses: codecov/codecov-action@v4
 
       # TODO: enable
       #CXXFLAGS: "-fsanitize=memory -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize-memory-track-origins"
@@ -121,7 +121,7 @@ jobs:
           brew update
           brew install icu4c qt6 gettext pkg-config cpanminus boost argon2 swig
       - run: source .github/build.sh
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
 
   docker:
     name: Docker push
