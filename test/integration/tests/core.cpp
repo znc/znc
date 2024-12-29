@@ -819,13 +819,9 @@ TEST_F(ZNCTest, ChgHostOnlyNicksAlreadyOnChannels) {
     client.ReadUntil("another");
 
     ircd.Write(":another!ident@host CHGHOST i2 h2");
-    client.ReadUntil(":another!i2@h2 JOIN #chan1");
-
-    // Can't combine into previous channels could arrive in random order, which
-    // messes with ReadUntil assertions.
-    ircd.Write(":another!i2@h2 CHGHOST i3 h3");
     ASSERT_THAT(client.ReadRemainder().toStdString(),
-                Not(HasSubstr("#chan2")));
+                AllOf(HasSubstr("JOIN #chan1"),
+                    Not(HasSubstr("#chan2"))));
 }
 
 }  // namespace
