@@ -805,5 +805,28 @@ TEST_F(ZNCTest, ChgHostOnce) {
                 Not(HasSubstr("CHGHOST")));
 }
 
+TEST_F(ZNCTest, ChgHostOnlyNicksAlreadyOnChannels) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    ircd.Write("CAP user LS :chghost");
+    ircd.ReadUntil("CAP REQ :chghost");
+    ircd.Write("CAP user ACK :chghost");
+
+    auto client = LoginClient();
+    ircd.Write(":user!ident@host JOIN #chan1");
+    ircd.Write(":user!ident@host JOIN #chan2");
+    ircd.Write(":another!ident@host JOIN #chan1");
+    client.ReadUntil("another");
+
+    ircd.Write(":another!ident@host CHGHOST i2 h2");
+    client.ReadUntil(":another!i2@h2 JOIN #chan1");
+
+    // Can't combine into previous channels could arrive in random order, which
+    // messes with ReadUntil assertions.
+    ircd.Write(":another!i2@h2 CHGHOST i3 h3");
+    ASSERT_THAT(client.ReadRemainder().toStdString(),
+                Not(HasSubstr("#chan2")));
+}
+
 }  // namespace
 }  // namespace znc_inttest

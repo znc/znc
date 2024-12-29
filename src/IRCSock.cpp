@@ -550,10 +550,6 @@ bool CIRCSock::OnChgHostMessage(CChgHostMessage& Message) {
         if (pChan->IsDisabled()) continue;
         if (pChan->IsDetached()) continue;
 
-        CTargetMessage ModeMsg;
-        ModeMsg.SetNick(CNick(":irc.znc.in"));
-        ModeMsg.SetTags(Message.GetTags());
-        ModeMsg.SetCommand("MODE");
         VCString vsModeParams = {pChan->GetName(), "+"};
         if (CNick* pNick = pChan->FindNick(NewNick.GetNick())) {
             for (char cPerm : pNick->GetPermStr()) {
@@ -563,7 +559,13 @@ bool CIRCSock::OnChgHostMessage(CChgHostMessage& Message) {
                     vsModeParams.push_back(NewNick.GetNick());
                 }
             }
+        } else {
+            continue;
         }
+        CTargetMessage ModeMsg;
+        ModeMsg.SetNick(CNick(":irc.znc.in"));
+        ModeMsg.SetTags(Message.GetTags());
+        ModeMsg.SetCommand("MODE");
         ModeMsg.SetParams(std::move(vsModeParams));
 
         for (CClient* pClient : m_pNetwork->GetClients()) {
