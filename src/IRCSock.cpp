@@ -550,8 +550,8 @@ bool CIRCSock::OnChgHostMessage(CChgHostMessage& Message) {
         if (pChan->IsDisabled()) continue;
         if (pChan->IsDetached()) continue;
 
-        VCString vsModeParams = {pChan->GetName(), "+"};
         if (CNick* pNick = pChan->FindNick(NewNick.GetNick())) {
+            VCString vsModeParams = {pChan->GetName(), "+"};
             for (char cPerm : pNick->GetPermStr()) {
                 char cMode = GetModeFromPerm(cPerm);
                 if (cMode) {
@@ -559,23 +559,23 @@ bool CIRCSock::OnChgHostMessage(CChgHostMessage& Message) {
                     vsModeParams.push_back(NewNick.GetNick());
                 }
             }
-        } else {
-            continue;
-        }
-        CTargetMessage ModeMsg;
-        ModeMsg.SetNick(CNick(":irc.znc.in"));
-        ModeMsg.SetTags(Message.GetTags());
-        ModeMsg.SetCommand("MODE");
-        ModeMsg.SetParams(std::move(vsModeParams));
 
-        for (CClient* pClient : m_pNetwork->GetClients()) {
-            if (!pClient->HasChgHost()) {
-                // TODO: send account name and real name too, for
-                // extended-join
-                pClient->PutClient(CMessage(NewNick, "JOIN", {pChan->GetName()},
-                                            Message.GetTags()));
-                if (ModeMsg.GetParams().size() > 2) {
-                    pClient->PutClient(ModeMsg);
+            CTargetMessage ModeMsg;
+            ModeMsg.SetNick(CNick(":irc.znc.in"));
+            ModeMsg.SetTags(Message.GetTags());
+            ModeMsg.SetCommand("MODE");
+            ModeMsg.SetParams(std::move(vsModeParams));
+
+            for (CClient* pClient : m_pNetwork->GetClients()) {
+                if (!pClient->HasChgHost()) {
+                    // TODO: send account name and real name too, for
+                    // extended-join
+                    pClient->PutClient(CMessage(NewNick, "JOIN",
+                                                {pChan->GetName()},
+                                                Message.GetTags()));
+                    if (ModeMsg.GetParams().size() > 2) {
+                        pClient->PutClient(ModeMsg);
+                    }
                 }
             }
         }
