@@ -547,6 +547,7 @@ bool CIRCSock::OnChgHostMessage(CChgHostMessage& Message) {
         }
 
         if (!bNeedEmulate) continue;
+        if (pChan->IsDisabled()) continue;
         if (pChan->IsDetached()) continue;
 
         CTargetMessage ModeMsg;
