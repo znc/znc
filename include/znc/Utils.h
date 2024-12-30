@@ -56,6 +56,7 @@ class CUtils {
 	 * @returns Piece of znc.conf with <Pass> block
 	 * */
     static CString AskSaltedHashPassForConfig();
+    static CString ConstructSaltedPass(const CString& sPass, const CString& sSalt);
 
     static CString GetSalt();
     static CString SaltedMD5Hash(const CString& sPass, const CString& sSalt);
