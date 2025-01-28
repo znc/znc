@@ -518,10 +518,11 @@ TEST_F(IRCSockTest, ISupport) {
     MCString m123;
     std::merge(m12.begin(), m12.end(), m3.begin(), m3.end(),
                std::inserter(m123, m123.begin()));
+    m123.erase("MONITOR");
 
     m_pTestSock->ReadLine(
         ":server 005 zzzzzz EXTBAN=$,ajrxz WHOX CLIENTVER=3.0 SAFELIST "
-        "ELIST=CTU :are supported by this server");
+        "-MONITOR ELIST=CTU :are supported by this server");
     EXPECT_THAT(m_pTestSock->GetISupport(), ContainerEq(m123));
     for (const auto& it : m3) {
         EXPECT_EQ(m_pTestSock->GetISupport(it.first), it.second);
@@ -530,6 +531,7 @@ TEST_F(IRCSockTest, ISupport) {
     EXPECT_EQ(m_pTestSock->GetISupport("FOOBAR", "default"), "default");
     EXPECT_EQ(m_pTestSock->GetISupport("CLIENTVER", "default"), "3.0");
     EXPECT_EQ(m_pTestSock->GetISupport("SAFELIST", "default"), "");
+    EXPECT_EQ(m_pTestSock->GetISupport("MONITOR", "default"), "default");
 }
 
 TEST_F(IRCSockTest, StatusMsg) {
