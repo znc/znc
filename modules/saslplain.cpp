@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2018 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,15 +41,8 @@ class CSASLMechanismPlain : public CModule {
             return HALTMODS;
         }
 
-		auto pUser = CZNC::Get().FindUser(sAuthcId);
-
-        if (!sAuthcId.empty() && !sPassword.empty()) {
-            if (pUser->CheckPass(sPassword)) {
-                bAuthenticationSuccess = true;
-				sUser = sAuthcId;
-			}
-        }
-
+        auto spAuth = std::make_shared<CClientAuth>(this, sAuthcId, sPassword);
+        CZNC::Get().AuthUser(spAuth);
 		return HALTMODS;
 	}
 
