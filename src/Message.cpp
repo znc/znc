@@ -234,7 +234,7 @@ void CMessage::Parse(const CString& sMessage) {
         if (m_bColon) {
             ++begin;
             m_vsParams.push_back(std::string(begin, end - begin));
-	    begin = end;
+            begin = end;
         } else {
             m_vsParams.push_back(std::string(next_word()));
         }

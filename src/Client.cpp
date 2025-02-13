@@ -829,7 +829,7 @@ void CClient::HandleCap(const CMessage& Message) {
                 PutClient(":irc.znc.in 906 " + GetNick() +
                           " :SASL authentication aborted");
                 m_sSASLMechanism = "";
-				m_bSASLAuthenticating = false;
+                m_bSASLAuthenticating = false;
             }
 
             if (!m_pUser && m_bGotUser &&
@@ -1105,30 +1105,30 @@ void CClient::OnAuthenticateMessage(CAuthenticateMessage& Message) {
     };
 
     if (!m_bSASL) return;
-	
-	if (!m_sSASLUser.empty() || IsAttached()) {
+
+    if (!m_sSASLUser.empty() || IsAttached()) {
         PutClient(":irc.znc.in 907 " + GetNick() +
                   " :You have already authenticated using SASL");
         return;
     }
-    
-	if (!m_bSASLAuthenticating || sMessage.Equals("*")) {
+
+    if (!m_bSASLAuthenticating || sMessage.Equals("*")) {
         PutClient(":irc.znc.in 906 " + GetNick() +
                   " :SASL authentication aborted");
         if (!IsAttached()) {
-			m_bSASLAuthenticating = false;
+            m_bSASLAuthenticating = false;
             SASLReset();
-		}
+        }
         return;
     }
 
-	if (iBufferSize > uiMaxSASLMsgLength) {
+    if (iBufferSize > uiMaxSASLMsgLength) {
         PutClient(":irc.znc.in 905 " + GetNick() + " :SASL message too long");
         SASLReset();
         return;
     }
 
-	if (m_sSASLMechanism.empty()) {
+    if (m_sSASLMechanism.empty()) {
         SCString ssMechanisms;
         auto sMechanisms = EnumerateSASLMechanisms(ssMechanisms);
 
@@ -1153,8 +1153,8 @@ void CClient::OnAuthenticateMessage(CAuthenticateMessage& Message) {
         } else {
             PutClient("AUTHENTICATE +");
         }
-		return;
-	}
+        return;
+    }
 
     if (m_sSASLBuffer.length() + sMessage.length() > 10 * 1024) {
         PutClient(":irc.znc.in 904 " + GetNick() + " :SASL response too long");
@@ -1162,48 +1162,49 @@ void CClient::OnAuthenticateMessage(CAuthenticateMessage& Message) {
         return;
     }
 
-	if (iBufferSize == uiMaxSASLMsgLength) {
-		m_sSASLBuffer.append(sMessage);
-		return;
-	}
+    if (iBufferSize == uiMaxSASLMsgLength) {
+        m_sSASLBuffer.append(sMessage);
+        return;
+    }
 
     if (sMessage != "+") {
         m_sSASLBuffer += sMessage;
     }
 
-	m_sSASLBuffer.Base64Decode();
+    m_sSASLBuffer.Base64Decode();
 
-	CString sResponse;
-	bool bResult;
+    CString sResponse;
+    bool bResult;
 
     CString sSASLUser;
-	GLOBALMODULECALL(OnClientSASLAuthenticate(
-					m_sSASLMechanism, m_sSASLBuffer, sSASLUser,
-                    sResponse, bAuthenticationSuccess),
-					&bResult);
+    GLOBALMODULECALL(
+        OnClientSASLAuthenticate(m_sSASLMechanism, m_sSASLBuffer, sSASLUser,
+                                 sResponse, bAuthenticationSuccess),
+        &bResult);
     m_sSASLBuffer.clear();
 
-	if (bResult && !sResponse.empty()) {
-		SASLChallenge(sResponse);
+    if (bResult && !sResponse.empty()) {
+        SASLChallenge(sResponse);
         return;
-	}
+    }
 
-	auto pUser = CZNC::Get().FindUser(sSASLUser);
+    auto pUser = CZNC::Get().FindUser(sSASLUser);
 
-	if (pUser && bAuthenticationSuccess) {
-		PutClient(":irc.znc.in 900 " + GetNick() + " " + GetNick() + "!" +
-			pUser->GetIdent() + "@" + GetHostName() + " " + sSASLUser +
-					  " :You are now logged in as " + sSASLUser);
-		PutClient(":irc.znc.in 903 " + GetNick() +
-					  " :SASL authentication successful");
-			m_sSASLUser = sSASLUser;
-			m_bSASLAuthenticating = false;
-	} else {
-		PutClient(":irc.znc.in 904 " + GetNick() + " :SASL authentication failed");
-		SASLReset();
-	}
+    if (pUser && bAuthenticationSuccess) {
+        PutClient(":irc.znc.in 900 " + GetNick() + " " + GetNick() + "!" +
+                  pUser->GetIdent() + "@" + GetHostName() + " " + sSASLUser +
+                  " :You are now logged in as " + sSASLUser);
+        PutClient(":irc.znc.in 903 " + GetNick() +
+                  " :SASL authentication successful");
+        m_sSASLUser = sSASLUser;
+        m_bSASLAuthenticating = false;
+    } else {
+        PutClient(":irc.znc.in 904 " + GetNick() +
+                  " :SASL authentication failed");
+        SASLReset();
+    }
 
-	return;
+    return;
 }
 
 CString CClient::EnumerateSASLMechanisms(SCString& ssMechanisms) {
