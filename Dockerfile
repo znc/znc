@@ -1,8 +1,8 @@
-FROM alpine:3.17
+FROM alpine:3.19
 
 ARG VERSION_EXTRA=""
 
-ARG CMAKEFLAGS="-DVERSION_EXTRA=${VERSION_EXTRA} -DCMAKE_INSTALL_PREFIX=/opt/znc -DWANT_CYRUS=YES -DWANT_PERL=YES -DWANT_PYTHON=YES"
+ARG CMAKEFLAGS="-DVERSION_EXTRA=${VERSION_EXTRA} -DCMAKE_INSTALL_PREFIX=/opt/znc -DWANT_CYRUS=YES -DWANT_PERL=YES -DWANT_PYTHON=YES -DWANT_ARGON=YES"
 ARG MAKEFLAGS=""
 
 LABEL org.label-schema.schema-version="1.0"
@@ -15,6 +15,7 @@ RUN set -x \
     && adduser -S znc \
     && addgroup -S znc
 RUN apk add --no-cache \
+        argon2-libs \
         boost \
         build-base \
         ca-certificates \
@@ -30,6 +31,7 @@ RUN apk add --no-cache \
         tini \
         tzdata
 RUN apk add --no-cache --virtual build-dependencies \
+        argon2-dev \
         boost-dev \
         cyrus-sasl-dev \
         perl-dev \
@@ -44,7 +46,7 @@ RUN apk add --no-cache --virtual build-dependencies \
     && cd / && rm -rf /znc-src
 
 COPY docker/slim/entrypoint.sh /
-COPY docker/*/??-*.sh /startup-sequence/
+COPY docker/*/??-*.sh docker/*/startup-sequence/??-*.sh /startup-sequence/
 
 VOLUME /znc-data
 

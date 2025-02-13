@@ -6,56 +6,62 @@ on:
 jobs:
   gcc:
     name: GCC
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
       - run: source .github/ubuntu_deps.sh
       - run: source .github/build.sh
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           name: ${{ github.job }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: codecov debug results ${{ github.job }}
           path: "/tmp/codecov.*.gz"
 
   tarball:
     name: Tarball
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
       - run: source .github/ubuntu_deps.sh
       - run: |
-          ./make-tarball.sh --nightly znc-git-2015-01-16 /tmp/znc-tarball.tar.gz
-          tar xvf /tmp/znc-tarball.tar.gz
-          cd znc-git-2015-01-16
+          date=$(date +%Y-%m-%d)
+          ./make-tarball.sh --nightly znc-git-$date /tmp/znc-git-$date.tar.gz
+          tar xvf /tmp/znc-git-$date.tar.gz
+          cd znc-git-$date
           export CFGFLAGS="--with-gtest=$GITHUB_WORKSPACE/third_party/googletest/googletest --with-gmock=$GITHUB_WORKSPACE/third_party/googletest/googlemock --disable-swig"
           source $GITHUB_WORKSPACE/.github/build.sh
-      - uses: codecov/codecov-action@v3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: znc-tarball
+          path: /tmp/znc-git*.tar.gz
+          if-no-files-found: error
+      - uses: codecov/codecov-action@v4
         with:
           name: ${{ github.job }}
 
   # can be removed when asan below is fixed
   clang:
     name: Clang
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     env:
       CXX: clang++
       CC: clang
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
       - run: source .github/ubuntu_deps.sh
       - run: source .github/build.sh
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           name: ${{ github.job }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: codecov debug results ${{ github.job }}
           path: "/tmp/codecov.*.gz"
@@ -63,35 +69,35 @@ jobs:
  
   #clang_asan:
     #name: Clang ASAN
-    #runs-on: ubuntu-20.04
+    #runs-on: ubuntu-24.04
     #env:
       #CXX: clang++
       #CC: clang
       #CXXFLAGS: "-fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fPIE"
       #LDFLAGS: "-fsanitize=address -pie"
     #steps:
-      #- uses: actions/checkout@v3
+      #- uses: actions/checkout@v4
         #with:
           #submodules: true
       #- run: source .github/ubuntu_deps.sh
       #- run: source .github/build.sh
-      #- uses: codecov/codecov-action@v3
+      #- uses: codecov/codecov-action@v4
 
   #clang_tsan:
     #name: Clang TSAN
-    #runs-on: ubuntu-20.04
+    #runs-on: ubuntu-24.04
     #env:
       #CXX: clang++
       #CC: clang
       #CXXFLAGS: "-fsanitize=thread -O1 -fPIE"
       #LDFLAGS: "-fsanitize=thread"
     #steps:
-      #- uses: actions/checkout@v3
+      #- uses: actions/checkout@v4
         #with:
           #submodules: true
       #- run: source .github/ubuntu_deps.sh
       #- run: source .github/build.sh
-      #- uses: codecov/codecov-action@v3
+      #- uses: codecov/codecov-action@v4
 
       # TODO: enable
       #CXXFLAGS: "-fsanitize=memory -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize-memory-track-origins"
@@ -100,18 +106,22 @@ jobs:
       #CXXFLAGS: "-fsanitize=undefined -O1 -fPIE -fno-sanitize-recover"
       #LDFLAGS: "-fsanitize=undefined -pie -fno-sanitize-recover"
 
-  #macos:
-    #name: macOS
-    #runs-on: macos-latest
-    #steps:
-      #- uses: actions/checkout@v3
-        #with:
-          #submodules: true
-      #- run: |
-          #brew update
-          #brew install icu4c qt5 gettext pkg-config cpanminus boost
-      #- run: source .github/build.sh
-      #- uses: codecov/codecov-action@v3
+  macos:
+    name: macOS
+    runs-on: macos-latest
+    env:
+      # This doesn't make big difference, since it's the same compiler, but we also use this variable to select lcov vs llvm-cov
+      CXX: clang++
+      CC: clang
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - run: |
+          brew update
+          brew install icu4c qt6 gettext pkg-config cpanminus boost argon2 swig
+      - run: source .github/build.sh
+      - uses: codecov/codecov-action@v4
 
   docker:
     name: Docker push
@@ -121,7 +131,7 @@ jobs:
       - tarball
       - clang
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
       - id: tagger
@@ -131,7 +141,7 @@ jobs:
           if [[ "$GITHUB_REF" == refs/heads/master ]]; then
             echo "::set-output name=latest::type=raw,latest"
           fi
-      - uses: docker/metadata-action@v4
+      - uses: docker/metadata-action@v5
         id: meta
         with:
           images: zncbouncer/znc-git
@@ -141,12 +151,12 @@ jobs:
             ${{steps.tagger.outputs.latest}}
       - run: echo "${GITHUB_REF#refs/heads/}-${{steps.tagger.outputs.describe}}" > .nightly
       - run: cat .nightly
-      - uses: docker/login-action@v2
+      - uses: docker/login-action@v3
         if: ${{ github.repository == 'znc/znc' && github.event_name == 'push' }}
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - uses: docker/build-push-action@v3
+      - uses: docker/build-push-action@v6
         with:
           context: .
           push: ${{ github.repository == 'znc/znc' && github.event_name == 'push' }}
@@ -160,7 +170,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
       - run: sudo apt-get update

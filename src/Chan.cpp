@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -156,11 +156,13 @@ void CChan::AttachUser(CClient* pClient) {
                                 m_pNetwork->GetIRCNick().GetNick() + " " +
                                 GetName() + " :" + GetTopic(),
                             pClient);
-        m_pNetwork->PutUser(":" + m_pNetwork->GetIRCServer() + " 333 " +
-                                m_pNetwork->GetIRCNick().GetNick() + " " +
-                                GetName() + " " + GetTopicOwner() + " " +
-                                CString(GetTopicDate()),
-                            pClient);
+        if (!GetTopicOwner().empty()) {
+            m_pNetwork->PutUser(":" + m_pNetwork->GetIRCServer() + " 333 " +
+                                    m_pNetwork->GetIRCNick().GetNick() + " " +
+                                    GetName() + " " + GetTopicOwner() + " " +
+                                    CString(GetTopicDate()),
+                                pClient);
+        }
     }
 
     CString sPre = ":" + m_pNetwork->GetIRCServer() + " 353 " +

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,15 +51,16 @@ class CUtils {
     static void PrintAction(const CString& sMessage);
     static void PrintStatus(bool bSuccess, const CString& sMessage = "");
 
-#ifndef SWIGPERL
-    // TODO refactor this
-    static const CString sDefaultHash;
-#endif
+	/** Asks password from stdin, with confirmation.
+	 *
+	 * @returns Piece of znc.conf with <Pass> block
+	 * */
+    static CString AskSaltedHashPassForConfig();
 
-    static CString GetSaltedHashPass(CString& sSalt);
     static CString GetSalt();
     static CString SaltedMD5Hash(const CString& sPass, const CString& sSalt);
     static CString SaltedSHA256Hash(const CString& sPass, const CString& sSalt);
+    static CString SaltedHash(const CString& sPass, const CString& sSalt);
     static CString GetPass(const CString& sPrompt);
     static bool GetInput(const CString& sPrompt, CString& sRet,
                          const CString& sDefault = "",

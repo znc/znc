@@ -1,0 +1,78 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: tr\n"
+"X-Crowdin-File: /master/modules/po/cert.pot\n"
+"X-Crowdin-File-ID: 161\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Turkish\n"
+"Language: tr_TR\n"
+
+#  this text is inserted into `click here` in the other string
+#: modules/po/../data/cert/tmpl/index.tmpl:5
+msgid "here"
+msgstr "burada"
+
+#  {1} is `here`, translateable in the other string
+#: modules/po/../data/cert/tmpl/index.tmpl:6
+msgid ""
+"You already have a certificate set, use the form below to overwrite the "
+"current certificate. Alternatively click {1} to delete your certificate."
+msgstr ""
+"Zaten bir sertifika setiniz var, mevcut sertifikanın üzerine yazmak için "
+"aşağıdaki formu kullanın. Alternatif olarak sertifikanızı silmek için {1} "
+"öğesine tıklayın."
+
+#: modules/po/../data/cert/tmpl/index.tmpl:8
+msgid "You do not have a certificate yet."
+msgstr "Henüz bir sertifikanız yok."
+
+#: modules/po/../data/cert/tmpl/index.tmpl:14 cert.cpp:72
+msgid "Certificate"
+msgstr "Sertifika"
+
+#: modules/po/../data/cert/tmpl/index.tmpl:18
+msgid "PEM File:"
+msgstr "PEM Dosyası:"
+
+#: modules/po/../data/cert/tmpl/index.tmpl:22
+msgid "Update"
+msgstr "Güncelle"
+
+#: cert.cpp:28
+msgid "Pem file deleted"
+msgstr "PEM dosyası silindi"
+
+#: cert.cpp:31
+msgid "The pem file doesn't exist or there was a error deleting the pem file."
+msgstr "PEM dosyası mevcut değil veya PEM dosyası silinirken bir hata oluştu."
+
+#: cert.cpp:38
+msgid "You have a certificate in {1}"
+msgstr "{1} alanında bir sertifikanız var"
+
+#: cert.cpp:41
+msgid ""
+"You do not have a certificate. Please use the web interface to add a "
+"certificate"
+msgstr "Sertifikanız yok. Sertifika eklemek için lütfen web arayüzünü kullanın"
+
+#: cert.cpp:44
+msgid "Alternatively you can either place one at {1}"
+msgstr "Alternatif olarak {1}'e de bir tane yerleştirebilirsiniz"
+
+#: cert.cpp:52
+msgid "Delete the current certificate"
+msgstr "Mevcut sertifikayı sil"
+
+#: cert.cpp:54
+msgid "Show the current certificate"
+msgstr "Geçerli sertifikayı göster"
+
+#: cert.cpp:105
+msgid "Use a ssl certificate to connect to a server"
+msgstr "Bir sunucuya bağlanmak için SSL sertifikası kullan"

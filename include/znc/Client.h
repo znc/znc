@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,83 +98,7 @@ class CClientAuth : public CAuthBase {
 
 class CClient : public CIRCSocket {
   public:
-    CClient()
-        : CIRCSocket(),
-          m_bGotPass(false),
-          m_bGotNick(false),
-          m_bGotUser(false),
-          m_bInCap(false),
-          m_bCapNotify(false),
-          m_bAwayNotify(false),
-          m_bAccountNotify(false),
-          m_bAccountTag(false),
-          m_bExtendedJoin(false),
-          m_bNamesx(false),
-          m_bUHNames(false),
-          m_bAway(false),
-          m_bServerTime(false),
-          m_bBatch(false),
-          m_bEchoMessage(false),
-          m_bSelfMessage(false),
-          m_bSASL(false),
-          m_bSASLAuthenticating(false),
-          m_bPlaybackActive(false),
-          m_pUser(nullptr),
-          m_pNetwork(nullptr),
-          m_sNick("unknown-nick"),
-          m_sPass(""),
-          m_sUser(""),
-          m_sNetwork(""),
-          m_sIdentifier(""),
-          m_sSASLBuffer(""),
-          m_sSASLMechanism(""),
-          m_sSASLUser(""),
-          m_spAuth(),
-          m_ssAcceptedCaps(),
-          m_ssSupportedTags(),
-          m_mCoreCaps({
-              {"multi-prefix",
-               {false, [this](bool bVal) { m_bNamesx = bVal; }}},
-              {"userhost-in-names",
-               {false, [this](bool bVal) { m_bUHNames = bVal; }}},
-              {"echo-message",
-               {false, [this](bool bVal) { m_bEchoMessage = bVal; }}},
-              {"server-time",
-               {false, [this](bool bVal) {
-                m_bServerTime = bVal;
-                SetTagSupport("time", bVal);
-               }}},
-              {"batch", {false, [this](bool bVal) {
-                m_bBatch = bVal;
-                SetTagSupport("batch", bVal);
-              }}},
-              {"cap-notify",
-               {false, [this](bool bVal) { m_bCapNotify = bVal; }}},
-              {"away-notify",
-               {true, [this](bool bVal) { m_bAwayNotify = bVal; }}},
-              {"account-notify",
-               {true, [this](bool bVal) { m_bAccountNotify = bVal; }}},
-              {"account-tag",
-               {true, [this](bool bVal) {
-                m_bAccountTag = bVal;
-                SetTagSupport("account", bVal);
-               }}},
-              {"extended-join",
-               {true, [this](bool bVal) { m_bExtendedJoin = bVal; }}},
-              {"sasl", {false, [this](bool bVal) { m_bSASL = bVal; m_bSASLAuthenticating = bVal; }}},
-          }) {
-        EnableReadLine();
-        // RFC says a line can have 512 chars max, but we are
-        // a little more gentle ;)
-        SetMaxBufferThreshold(1024);
-
-        // For compatibility with older clients
-        m_mCoreCaps["znc.in/server-time-iso"] = m_mCoreCaps["server-time"];
-        m_mCoreCaps["znc.in/batch"] = m_mCoreCaps["batch"];
-        m_mCoreCaps["znc.in/self-message"] = {
-            false, [this](bool bVal) { m_bSelfMessage = bVal; }};
-    }
-
+    CClient();
     virtual ~CClient();
 
     CClient(const CClient&) = delete;
@@ -187,13 +111,15 @@ class CClient : public CIRCSocket {
     CString GetNick(bool bAllowIRCNick = true) const;
     CString GetNickMask() const;
     CString GetIdentifier() const { return m_sIdentifier; }
+    unsigned short int CapVersion() const { return m_uCapVersion; }
+    bool HasCap302() const { return CapVersion() >= 302; }
     bool HasCapNotify() const { return m_bCapNotify; }
     bool HasAwayNotify() const { return m_bAwayNotify; }
     bool HasAccountNotify() const { return m_bAccountNotify; }
-    bool HasAccountTag() const { return m_bAccountTag; }
     bool HasExtendedJoin() const { return m_bExtendedJoin; }
     bool HasNamesx() const { return m_bNamesx; }
     bool HasUHNames() const { return m_bUHNames; }
+    bool HasChgHost() const { return m_bChgHost; }
     bool IsAway() const { return m_bAway; }
     bool HasServerTime() const { return m_bServerTime; }
     bool HasBatch() const { return m_bBatch; }
@@ -299,8 +225,9 @@ class CClient : public CIRCSocket {
      */
     void SetTagSupport(const CString& sTag, bool bState);
 
-    void NotifyServerDependentCaps(const SCString& ssCaps);
-    void ClearServerDependentCaps();
+    /** Notifies client about one specific cap which server has just notified us about.
+     */
+    void NotifyServerDependentCap(const CString& sCap, bool bValue, const CString& sValue);
 
     void ReadLine(const CString& sData) override;
     bool SendMotd();
@@ -364,14 +291,15 @@ class CClient : public CIRCSocket {
     bool m_bGotPass;
     bool m_bGotNick;
     bool m_bGotUser;
+    unsigned short int m_uCapVersion;
     bool m_bInCap;
     bool m_bCapNotify;
     bool m_bAwayNotify;
     bool m_bAccountNotify;
-    bool m_bAccountTag;
     bool m_bExtendedJoin;
     bool m_bNamesx;
     bool m_bUHNames;
+    bool m_bChgHost;
     bool m_bAway;
     bool m_bServerTime;
     bool m_bBatch;
@@ -393,16 +321,14 @@ class CClient : public CIRCSocket {
     std::shared_ptr<CAuthBase> m_spAuth;
     SCString m_ssAcceptedCaps;
     SCString m_ssSupportedTags;
-    // The capabilities supported by the ZNC core - capability names mapped
-    // to a pair which contains a bool describing whether the capability is
-    // server-dependent, and a capability value change handler.
-    std::map<CString, std::pair<bool, std::function<void(bool bVal)>>>
-        m_mCoreCaps;
-    // A subset of CIRCSock::GetAcceptedCaps(), the caps that can be listed
-    // in CAP LS and may be notified to the client with CAP NEW (cap-notify).
-    SCString m_ssServerDependentCaps;
+    // The capabilities supported by the ZNC core - capability names mapped to
+    // change handler. Note: this lists caps which don't require support on IRC
+    // server.
+    static const std::map<CString, std::function<void(CClient*, bool bVal)>>&
+    CoreCaps();
 
     friend class ClientTest;
+    friend class CCoreCaps;
 };
 
 #endif  // !ZNC_CLIENT_H

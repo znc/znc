@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -240,6 +240,10 @@ class CPyRetBool {
 	}
 	bool ExistsNV(const CString& sName) {
 		return $self->EndNV() != $self->FindNV(sName);
+	}
+    void AddServerDependentCapability(const CString& sName, PyObject* serverCb,
+                                      PyObject* clientCb) {
+        $self->AddServerDependentCapability(sName, std::make_unique<CPyCapability>(serverCb, clientCb));
 	}
 }
 

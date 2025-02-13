@@ -12,6 +12,6 @@ msgstr ""
 "Language-Team: Italian\n"
 "Language: it_IT\n"
 
-#: modperl.cpp:382
+#: modperl.cpp:417
 msgid "Loads perl scripts as ZNC modules"
 msgstr "Carica gli script Perl come moduli ZNC"

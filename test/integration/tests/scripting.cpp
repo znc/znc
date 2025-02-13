@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,15 @@
  */
 
 #include "znctest.h"
+#include "znctestconfig.h"
 
 namespace znc_inttest {
 namespace {
 
 TEST_F(ZNCTest, Modperl) {
-    if (QProcessEnvironment::systemEnvironment().value(
-            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
-        return;
-    }
+#ifndef WANT_PERL
+    GTEST_SKIP() << "Modperl is disabled";
+#endif
     auto znc = Run();
     znc->CanLeak();
     auto ircd = ConnectIRCd();
@@ -31,16 +31,15 @@ TEST_F(ZNCTest, Modperl) {
     client.Write("znc loadmod modperl");
     client.Write("znc loadmod perleval");
     client.Write("PRIVMSG *perleval :2+2");
-    client.ReadUntil(":*perleval!znc@znc.in PRIVMSG nick :Result: 4");
+    client.ReadUntil(":*perleval!perleval@znc.in PRIVMSG nick :Result: 4");
     client.Write("PRIVMSG *perleval :$self->GetUser->GetUsername");
     client.ReadUntil("Result: user");
 }
 
 TEST_F(ZNCTest, Modpython) {
-    if (QProcessEnvironment::systemEnvironment().value(
-            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
-        return;
-    }
+#ifndef WANT_PYTHON
+    GTEST_SKIP() << "Modpython is disabled";
+#endif
     auto znc = Run();
     znc->CanLeak();
     auto ircd = ConnectIRCd();
@@ -48,7 +47,7 @@ TEST_F(ZNCTest, Modpython) {
     client.Write("znc loadmod modpython");
     client.Write("znc loadmod pyeval");
     client.Write("PRIVMSG *pyeval :2+2");
-    client.ReadUntil(":*pyeval!znc@znc.in PRIVMSG nick :4");
+    client.ReadUntil(":*pyeval!pyeval@znc.in PRIVMSG nick :4");
     client.Write("PRIVMSG *pyeval :module.GetUser().GetUsername()");
     client.ReadUntil("nick :'user'");
     ircd.Write(":server 001 nick :Hello");
@@ -60,15 +59,14 @@ TEST_F(ZNCTest, Modpython) {
     client.Write("PRIVMSG *controlpanel :Set ClientEncoding $me Western");
     client.Write("JOIN #a\342");
     client.ReadUntil(
-        ":*controlpanel!znc@znc.in PRIVMSG nick :ClientEncoding = UTF-8");
+        ":*controlpanel!controlpanel@znc.in PRIVMSG nick :ClientEncoding = UTF-8");
     ircd.ReadUntil("JOIN #a\xEF\xBF\xBD");
 }
 
 TEST_F(ZNCTest, ModpythonSocket) {
-    if (QProcessEnvironment::systemEnvironment().value(
-            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
-        return;
-    }
+#ifndef WANT_PYTHON
+    GTEST_SKIP() << "Modpython is disabled";
+#endif
     auto znc = Run();
     znc->CanLeak();
 
@@ -107,10 +105,9 @@ TEST_F(ZNCTest, ModpythonSocket) {
 }
 
 TEST_F(ZNCTest, ModperlSocket) {
-    if (QProcessEnvironment::systemEnvironment().value(
-            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
-        return;
-    }
+#ifndef WANT_PERL
+    GTEST_SKIP() << "Modperl is disabled";
+#endif
     auto znc = Run();
     znc->CanLeak();
 
@@ -160,10 +157,9 @@ TEST_F(ZNCTest, ModperlSocket) {
 }
 
 TEST_F(ZNCTest, ModpythonVCString) {
-    if (QProcessEnvironment::systemEnvironment().value(
-            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
-        return;
-    }
+#ifndef WANT_PYTHON
+    GTEST_SKIP() << "Modpython is disabled";
+#endif
     auto znc = Run();
     znc->CanLeak();
 
@@ -185,10 +181,9 @@ TEST_F(ZNCTest, ModpythonVCString) {
 }
 
 TEST_F(ZNCTest, ModperlVCString) {
-    if (QProcessEnvironment::systemEnvironment().value(
-            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
-        return;
-    }
+#ifndef WANT_PERL
+    GTEST_SKIP() << "Modperl is disabled";
+#endif
     auto znc = Run();
     znc->CanLeak();
 
@@ -214,10 +209,9 @@ TEST_F(ZNCTest, ModperlVCString) {
 }
 
 TEST_F(ZNCTest, ModperlNV) {
-    if (QProcessEnvironment::systemEnvironment().value(
-            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
-        return;
-    }
+#ifndef WANT_PERL
+    GTEST_SKIP() << "Modperl is disabled";
+#endif
     auto znc = Run();
     znc->CanLeak();
 
@@ -244,10 +238,9 @@ TEST_F(ZNCTest, ModperlNV) {
 }
 
 TEST_F(ZNCTest, ModpythonPackage) {
-    if (QProcessEnvironment::systemEnvironment().value(
-            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
-        return;
-    }
+#ifndef WANT_PYTHON
+    GTEST_SKIP() << "Modpython is disabled";
+#endif
     auto znc = Run();
     znc->CanLeak();
 
@@ -277,13 +270,20 @@ TEST_F(ZNCTest, ModpythonPackage) {
     client.Write("znc updatemod packagetest");
     client.Write("PRIVMSG *packagetest :foo");
     client.ReadUntil("value = b");
+    // Test if python modules are viewable via *status.
+    // https://github.com/znc/znc/issues/1884
+    client.Write("znc listavailmods");
+    client.ReadUntil(":*status!status@znc.in PRIVMSG nick :\x02 packagetest");
+    client.ReadUntil(":*status!status@znc.in PRIVMSG nick :\x02 pyeval\x0F: Evaluates python code");
 }
 
 TEST_F(ZNCTest, ModpythonModperl) {
-    if (QProcessEnvironment::systemEnvironment().value(
-            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
-        return;
-    }
+#ifndef WANT_PYTHON
+    GTEST_SKIP() << "Modpython is disabled";
+#endif
+#ifndef WANT_PERL
+    GTEST_SKIP() << "Modperl is disabled";
+#endif
     auto znc = Run();
     znc->CanLeak();
 
@@ -297,11 +297,9 @@ TEST_F(ZNCTest, ModpythonModperl) {
 }
 
 TEST_F(ZNCTest, ModpythonCommand) {
-    if (QProcessEnvironment::systemEnvironment().value(
-            "DISABLED_ZNC_PERL_PYTHON_TEST") == "1") {
-        return;
-    }
-
+#ifndef WANT_PYTHON
+    GTEST_SKIP() << "Modpython is disabled";
+#endif
     auto znc = Run();
     znc->CanLeak();
 
@@ -328,7 +326,7 @@ TEST_F(ZNCTest, ModpythonCommand) {
     client.Write("znc loadmod modpython");
     client.Write("znc loadmod cmdtest");
     client.Write("PRIVMSG *cmdtest :ping or");
-    client.ReadUntil(":*cmdtest!znc@znc.in PRIVMSG nick :ping or pong");
+    client.ReadUntil(":*cmdtest!cmdtest@znc.in PRIVMSG nick :ping or pong");
 
     InstallTranslation("cmdtest", "ru_RU", R"(
         msgid ""
@@ -352,9 +350,9 @@ TEST_F(ZNCTest, ModpythonCommand) {
 
     client.Write("PRIVMSG *controlpanel :set language $me ru-RU");
     client.Write("PRIVMSG *cmdtest :help");
-    client.ReadUntil(":*cmdtest!znc@znc.in PRIVMSG nick :\x02ping аргумент\x0F: бла");
+    client.ReadUntil(":*cmdtest!cmdtest@znc.in PRIVMSG nick :\x02ping аргумент\x0F: бла");
     client.Write("PRIVMSG *cmdtest :ping");
-    client.ReadUntil(":*cmdtest!znc@znc.in PRIVMSG nick :ping понг");
+    client.ReadUntil(":*cmdtest!cmdtest@znc.in PRIVMSG nick :ping понг");
 }
 
 }  // namespace

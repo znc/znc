@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,6 +74,47 @@ using std::vector;
             PutStatus(t_f("No such module {1}")(MOD));                        \
         }                                                                     \
     }
+
+CClient::CClient()
+    : CIRCSocket(),
+      m_bGotPass(false),
+      m_bGotNick(false),
+      m_bGotUser(false),
+      m_uCapVersion(0),
+      m_bInCap(false),
+      m_bCapNotify(false),
+      m_bAwayNotify(false),
+      m_bAccountNotify(false),
+      m_bExtendedJoin(false),
+      m_bNamesx(false),
+      m_bUHNames(false),
+      m_bChgHost(false),
+      m_bAway(false),
+      m_bServerTime(false),
+      m_bBatch(false),
+      m_bEchoMessage(false),
+      m_bSelfMessage(false),
+      m_bSASL(false),
+      m_bSASLAuthenticating(false),
+      m_bPlaybackActive(false),
+      m_pUser(nullptr),
+      m_pNetwork(nullptr),
+      m_sNick("unknown-nick"),
+      m_sPass(""),
+      m_sUser(""),
+      m_sNetwork(""),
+      m_sIdentifier(""),
+      m_sSASLBuffer(""),
+      m_sSASLMechanism(""),
+      m_sSASLUser(""),
+      m_spAuth(),
+      m_ssAcceptedCaps(),
+      m_ssSupportedTags() {
+    EnableReadLine();
+    // RFC says a line can have 512 chars max, but we are
+    // a little more gentle ;)
+    SetMaxBufferThreshold(1024);
+}
 
 CClient::~CClient() {
     if (m_spAuth) {
@@ -242,7 +283,7 @@ void CClient::SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect,
         m_pNetwork->ClientDisconnected(this);
 
         if (bDisconnect) {
-            ClearServerDependentCaps();
+            NETWORKMODULECALL(OnClientDetached(), m_pUser, m_pNetwork, this, NOTHING);
             // Tell the client they are no longer in these channels.
             const vector<CChan*>& vChans = m_pNetwork->GetChans();
             for (const CChan* pChan : vChans) {
@@ -264,6 +305,7 @@ void CClient::SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect,
         } else if (m_pUser) {
             m_pUser->UserConnected(this);
         }
+        NETWORKMODULECALL(OnClientAttached(), m_pUser, m_pNetwork, this, NOTHING);
     }
 }
 
@@ -624,11 +666,13 @@ void CClient::PutModNotice(const CString& sModule, const CString& sLine) {
 
     DEBUG("(" << GetFullName()
               << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() +
+                     ((sModule.empty()) ? "status" : sModule) + "!" +
                      ((sModule.empty()) ? "status" : sModule) +
-                     "!znc@znc.in NOTICE " << GetNick() << " :" << sLine
-              << "]");
+                     "@znc.in NOTICE "
+              << GetNick() << " :" << sLine << "]");
     Write(":" + m_pUser->GetStatusPrefix() +
-          ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in NOTICE " +
+          ((sModule.empty()) ? "status" : sModule) + "!" +
+          ((sModule.empty()) ? "status" : sModule) + "@znc.in NOTICE " +
           GetNick() + " :" + sLine + "\r\n");
 }
 
@@ -639,16 +683,18 @@ void CClient::PutModule(const CString& sModule, const CString& sLine) {
 
     DEBUG("(" << GetFullName()
               << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() +
+                     ((sModule.empty()) ? "status" : sModule) + "!" +
                      ((sModule.empty()) ? "status" : sModule) +
-                     "!znc@znc.in PRIVMSG " << GetNick() << " :" << sLine
-              << "]");
+                     "@znc.in PRIVMSG "
+              << GetNick() << " :" << sLine << "]");
 
     VCString vsLines;
     sLine.Split("\n", vsLines);
     for (const CString& s : vsLines) {
         Write(":" + m_pUser->GetStatusPrefix() +
-              ((sModule.empty()) ? "status" : sModule) +
-              "!znc@znc.in PRIVMSG " + GetNick() + " :" + s + "\r\n");
+              ((sModule.empty()) ? "status" : sModule) + "!" +
+              ((sModule.empty()) ? "status" : sModule) + "@znc.in PRIVMSG " +
+              GetNick() + " :" + s + "\r\n");
     }
 }
 
@@ -702,32 +748,79 @@ void CClient::RespondCap(const CString& sResponse) {
     PutClient(":irc.znc.in CAP " + GetNick() + " " + sResponse);
 }
 
+static VCString MultiLine(const SCString& ssCaps) {
+    VCString vsRes = {""};
+    for (const CString& sCap : ssCaps) {
+        if (vsRes.back().length() + sCap.length() > 400) {
+            vsRes.push_back(sCap);
+        } else {
+            if (!vsRes.back().empty()) {
+                vsRes.back() += " ";
+            }
+            vsRes.back() += sCap;
+        }
+    }
+    return vsRes;
+}
+
+const std::map<CString, std::function<void(CClient*, bool bVal)>>&
+CClient::CoreCaps() {
+    static const std::map<CString, std::function<void(CClient*, bool bVal)>> mCoreCaps = []{
+        std::map<CString, std::function<void(CClient*, bool bVal)>> mCoreCaps = {
+          {"multi-prefix",
+           [](CClient* pClient, bool bVal) { pClient->m_bNamesx = bVal; }},
+          {"userhost-in-names",
+           [](CClient* pClient, bool bVal) { pClient->m_bUHNames = bVal; }},
+          {"echo-message",
+           [](CClient* pClient, bool bVal) { pClient->m_bEchoMessage = bVal; }},
+          {"server-time",
+           [](CClient* pClient, bool bVal) {
+            pClient->m_bServerTime = bVal;
+            pClient->SetTagSupport("time", bVal);
+           }},
+          {"batch", [](CClient* pClient, bool bVal) {
+            pClient->m_bBatch = bVal;
+            pClient->SetTagSupport("batch", bVal);
+          }},
+          {"cap-notify",
+           [](CClient* pClient, bool bVal) { pClient->m_bCapNotify = bVal; }},
+          {"chghost", [](CClient* pClient, bool bVal) { pClient->m_bChgHost = bVal; }},
+        };
+
+        // For compatibility with older clients
+        mCoreCaps["znc.in/server-time-iso"] = mCoreCaps["server-time"];
+        mCoreCaps["znc.in/batch"] = mCoreCaps["batch"];
+        mCoreCaps["znc.in/self-message"] = [](CClient* pClient, bool bVal) {
+            pClient->m_bSelfMessage = bVal;
+        };
+
+        return mCoreCaps;
+    }();
+    return mCoreCaps;
+}
+
 void CClient::HandleCap(const CMessage& Message) {
     CString sSubCmd = Message.GetParam(0);
 
     if (sSubCmd.Equals("LS")) {
-        int iCapVersion = Message.GetParam(1).ToInt();
+        m_uCapVersion = std::max(m_uCapVersion, Message.GetParam(1).ToUShort());
         SCString ssOfferCaps;
-        for (const auto& it : m_mCoreCaps) {
-            bool bServerDependent = std::get<0>(it.second);
-            if (!bServerDependent ||
-                m_ssServerDependentCaps.count(it.first) > 0) {
-                if (it.first.Equals("sasl") && iCapVersion >= 302) {
-                    SCString ssMechanisms;
-                    ssOfferCaps.insert(it.first + "=" +
-                                       EnumerateSASLMechanisms(ssMechanisms));
-                } else {
-                ssOfferCaps.insert(it.first);
+        for (const auto& it : CoreCaps()) {
+            // TODO sasl value enumerating mechanisms
+            ssOfferCaps.insert(it.first);
         }
-            }
-        }
-        GLOBALMODULECALL(OnClientCapLs(this, ssOfferCaps), NOTHING);
-        CString sRes =
-            CString(" ").Join(ssOfferCaps.begin(), ssOfferCaps.end());
-        RespondCap("LS :" + sRes);
+        NETWORKMODULECALL(OnClientCapLs(this, ssOfferCaps), GetUser(), GetNetwork(), this, NOTHING);
+        VCString vsCaps = MultiLine(ssOfferCaps);
         m_bInCap = true;
-        if (iCapVersion >= 302) {
+        if (HasCap302()) {
             m_bCapNotify = true;
+            for (int i = 0; i < vsCaps.size() - 1; ++i) {
+                RespondCap("LS * :" + vsCaps[i]);
+            }
+            RespondCap("LS :" + vsCaps.back());
+        } else {
+            // Can't send more than one line of caps :(
+            RespondCap("LS :" + vsCaps.front());
         }
     } else if (sSubCmd.Equals("END")) {
         m_bInCap = false;
@@ -747,6 +840,7 @@ void CClient::HandleCap(const CMessage& Message) {
             }
         }
     } else if (sSubCmd.Equals("REQ")) {
+        m_bInCap = true;
         VCString vsTokens;
         Message.GetParam(1).Split(" ", vsTokens, false);
 
@@ -756,13 +850,11 @@ void CClient::HandleCap(const CMessage& Message) {
             if (sCap.TrimPrefix("-")) bVal = false;
 
             bool bAccepted = false;
-            const auto& it = m_mCoreCaps.find(sCap);
-            if (m_mCoreCaps.end() != it) {
-                bool bServerDependent = std::get<0>(it->second);
-                bAccepted = !bServerDependent ||
-                            m_ssServerDependentCaps.count(sCap) > 0;
+            auto it = CoreCaps().find(sCap);
+            if (CoreCaps().end() != it) {
+                bAccepted = true;
             }
-            GLOBALMODULECALL(IsClientCapSupported(this, sCap, bVal),
+            NETWORKMODULECALL(IsClientCapSupported(this, sCap, bVal), GetUser(), GetNetwork(), this,
                              &bAccepted);
 
             if (!bAccepted) {
@@ -778,12 +870,12 @@ void CClient::HandleCap(const CMessage& Message) {
             CString sCap = sToken;
             if (sCap.TrimPrefix("-")) bVal = false;
 
-            auto handler_it = m_mCoreCaps.find(sCap);
-            if (m_mCoreCaps.end() != handler_it) {
-                const auto& handler = std::get<1>(handler_it->second);
-                handler(bVal);
+            auto handler_it = CoreCaps().find(sCap);
+            if (CoreCaps().end() != handler_it) {
+                const auto& handler = handler_it->second;
+                handler(this, bVal);
             }
-            GLOBALMODULECALL(OnClientCapRequest(this, sCap, bVal), NOTHING);
+            NETWORKMODULECALL(OnClientCapRequest(this, sCap, bVal), GetUser(), GetNetwork(), this, NOTHING);
 
             if (bVal) {
                 m_ssAcceptedCaps.insert(sCap);
@@ -794,9 +886,16 @@ void CClient::HandleCap(const CMessage& Message) {
 
         RespondCap("ACK :" + Message.GetParam(1));
     } else if (sSubCmd.Equals("LIST")) {
-        CString sList =
-            CString(" ").Join(m_ssAcceptedCaps.begin(), m_ssAcceptedCaps.end());
-        RespondCap("LIST :" + sList);
+        VCString vsCaps = MultiLine(m_ssAcceptedCaps);
+        if (HasCap302()) {
+            for (int i = 0; i < vsCaps.size() - 1; ++i) {
+                RespondCap("LIST * :" + vsCaps[i]);
+            }
+            RespondCap("LIST :" + vsCaps.back());
+        } else {
+            // Can't send more than one line of caps :(
+            RespondCap("LISTS :" + vsCaps.front());
+        }
     } else {
         PutClient(":irc.znc.in 410 " + GetNick() + " " + sSubCmd +
                   " :Invalid CAP subcommand");
@@ -855,41 +954,21 @@ void CClient::SetTagSupport(const CString& sTag, bool bState) {
     }
 }
 
-void CClient::NotifyServerDependentCaps(const SCString& ssCaps) {
-    for (const CString& sCap : ssCaps) {
-        const auto& it = m_mCoreCaps.find(sCap);
-        if (m_mCoreCaps.end() != it) {
-            bool bServerDependent = std::get<0>(it->second);
-            if (bServerDependent) {
-                m_ssServerDependentCaps.insert(sCap);
+void CClient::NotifyServerDependentCap(const CString& sCap, bool bValue, const CString& sValue) {
+    if (bValue) {
+        if (HasCapNotify()) {
+            if (HasCap302() && !sValue.empty()) {
+                PutClient(":irc.znc.in CAP " + GetNick() + " NEW :" + sCap + "=" + sValue);
+            } else {
+                PutClient(":irc.znc.in CAP " + GetNick() + " NEW :" + sCap);
             }
         }
-    }
-
-    if (HasCapNotify() && !m_ssServerDependentCaps.empty()) {
-        CString sCaps = CString(" ").Join(m_ssServerDependentCaps.begin(),
-                                          m_ssServerDependentCaps.end());
-        PutClient(":irc.znc.in CAP " + GetNick() + " NEW :" + sCaps);
-    }
-}
-
-void CClient::ClearServerDependentCaps() {
-    if (HasCapNotify() && !m_ssServerDependentCaps.empty()) {
-        CString sCaps = CString(" ").Join(m_ssServerDependentCaps.begin(),
-                                          m_ssServerDependentCaps.end());
-        PutClient(":irc.znc.in CAP " + GetNick() + " DEL :" + sCaps);
-
-        for (const CString& sCap : m_ssServerDependentCaps) {
-            const auto& it = m_mCoreCaps.find(sCap);
-            if (m_mCoreCaps.end() != it) {
-                const auto& handler = std::get<1>(it->second);
-                handler(false);
-            }
-            m_ssAcceptedCaps.erase(sCap);
+    } else {
+        if (HasCapNotify()) {
+            PutClient(":irc.znc.in CAP " + GetNick() + " DEL :" + sCap);
         }
+        m_ssAcceptedCaps.erase(sCap);
     }
-
-    m_ssServerDependentCaps.clear();
 }
 
 template <typename T>

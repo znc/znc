@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -408,6 +408,15 @@ class Module:
         pass
 
     def OnServerCapAvailable(self, sCap):
+        pass
+
+    def OnServerCap302Available(self, sCap, sValue):
+        return self.OnServerCapAvailable(sCap)
+
+    def OnClientAttached(self):
+        pass
+
+    def OnClientDetached(self):
         pass
 
     def OnServerCapResult(self, sCap, bSuccess):
@@ -947,33 +956,6 @@ def get_mod_info(modname, retmsg, modinfo):
     modinfo.SetPath(pymodule.__file__)
     gather_mod_info(cl, modinfo)
     return 2
-
-
-def get_mod_info_path(path, modname, modinfo):
-    try:
-        x = imp.find_module(modname, [path])
-    except ImportError:
-        return 0
-    # x == (<open file './modules/admin.so', mode 'rb' at 0x7fa2dc748d20>,
-    #       './modules/admin.so', ('.so', 'rb', 3))
-    # x == (<open file './modules/pythontest.py', mode 'U' at 0x7fa2dc748d20>,
-    #       './modules/pythontest.py', ('.py', 'U', 1))
-    if x[0] is None and x[2][2] != imp.PKG_DIRECTORY:
-        return 0
-    try:
-        pymodule = imp.load_module(modname, *x)
-    except ImportError:
-        return 0
-    finally:
-        if x[0]:
-            x[0].close()
-    if modname not in pymodule.__dict__:
-        return 0
-    cl = pymodule.__dict__[modname]
-    modinfo.SetName(modname)
-    modinfo.SetPath(pymodule.__file__)
-    gather_mod_info(cl, modinfo)
-    return 1
 
 
 CONTINUE = CModule.CONTINUE

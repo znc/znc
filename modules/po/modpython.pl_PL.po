@@ -14,6 +14,6 @@ msgstr ""
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
 
-#: modpython.cpp:532
+#: modpython.cpp:548
 msgid "Loads python scripts as ZNC modules"
 msgstr "Ładuje skrypty pythona jako moduły ZNC"

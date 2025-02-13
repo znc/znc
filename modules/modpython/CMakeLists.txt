@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@ target_include_directories(modpython_lib PRIVATE
 	"${CMAKE_CURRENT_BINARY_DIR}/.."
 	"${CMAKE_CURRENT_SOURCE_DIR}/.."
 	${Python3_INCLUDE_DIRS})
-target_link_libraries(modpython_lib ${znc_link} ${Python3_LDFLAGS})
+target_link_libraries(modpython_lib ZNC ${Python3_LDFLAGS})
 set_target_properties(modpython_lib PROPERTIES
 	PREFIX "_"
 	OUTPUT_NAME "znc_core"

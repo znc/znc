@@ -12,6 +12,6 @@ msgstr ""
 "Language-Team: Danish\n"
 "Language: da_DK\n"
 
-#: modpython.cpp:532
+#: modpython.cpp:548
 msgid "Loads python scripts as ZNC modules"
 msgstr ""

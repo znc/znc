@@ -1,4 +1,4 @@
-# [![ZNC](https://wiki.znc.in/resources/assets/wiki.png)](https://znc.in) - An advanced IRC bouncer
+# [![ZNC](logo.png)](https://znc.in) - An advanced IRC bouncer
 
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/znc/znc/build.yml?branch=master&label=linux)](https://github.com/znc/znc/actions/workflows/build.yml)
 [![Jenkins Build Status](https://img.shields.io/jenkins/s/https/jenkins.znc.in/job/znc/job/znc/job/master.svg?label=freebsd)](https://jenkins.znc.in/job/znc/job/znc/job/master/)
@@ -24,8 +24,8 @@ Core:
 
 * GNU make
 * pkg-config
-* GCC 4.8 or clang 3.2
-* CMake
+* GCC 8 or clang 5
+* CMake 3.13
 
 ## Optional Requirements
 
@@ -50,9 +50,12 @@ cyrusauth:
 Character Encodings:
 * To get proper character encoding and charsets install ICU (`libicu4-dev`)
 
-I18N (UI translation)
+I18N (UI translation):
 * Boost.Locale
 * gettext is a build dependency
+
+Argon2 password hash:
+* libargon2
 
 ## Installing ZNC
 
@@ -135,7 +138,7 @@ These directories are also in there:
 - moddata - Global modules save their settings here.
   (e.g. webadmin saves the current skin name in here)
 - users   - This is per-user data and mainly contains just a moddata
-  directory.
+  directory and a directory for each network configured.
 
 ## ZNC's config file
 

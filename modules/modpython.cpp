@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -289,42 +289,17 @@ class CModPython : public CModule {
         return HALT;
     }
 
-    void TryAddModInfo(const CString& sPath, const CString& sName,
+    void TryAddModInfo(const CString& sName,
                        set<CModInfo>& ssMods, set<CString>& ssAlready,
                        CModInfo::EModuleType eType) {
         if (ssAlready.count(sName)) {
             return;
         }
-        PyObject* pyFunc =
-            PyObject_GetAttrString(m_PyZNCModule, "get_mod_info_path");
-        if (!pyFunc) {
-            CString sRetMsg = GetPyExceptionStr();
-            DEBUG("modpython tried to get info about ["
-                  << sPath << "] (1) but: " << sRetMsg);
-            return;
-        }
         CModInfo ModInfo;
-        PyObject* pyRes = PyObject_CallFunction(
-            pyFunc, const_cast<char*>("ssN"), sPath.c_str(), sName.c_str(),
-            SWIG_NewInstanceObj(&ModInfo, SWIG_TypeQuery("CModInfo*"), 0));
-        if (!pyRes) {
-            CString sRetMsg = GetPyExceptionStr();
-            DEBUG("modpython tried to get info about ["
-                  << sPath << "] (2) but: " << sRetMsg);
-            Py_CLEAR(pyFunc);
-            return;
-        }
-        Py_CLEAR(pyFunc);
-        long int x = PyLong_AsLong(pyRes);
-        if (PyErr_Occurred()) {
-            CString sRetMsg = GetPyExceptionStr();
-            DEBUG("modpython tried to get info about ["
-                  << sPath << "] (3) but: " << sRetMsg);
-            Py_CLEAR(pyRes);
-            return;
-        }
-        Py_CLEAR(pyRes);
-        if (x && ModInfo.SupportsType(eType)) {
+        bool bSuccess = false;
+        CString sRetMsg;
+        OnGetModInfo(ModInfo, sName, bSuccess, sRetMsg);
+        if (bSuccess && ModInfo.SupportsType(eType)) {
             ssMods.insert(ModInfo);
             ssAlready.insert(sName);
         }
@@ -342,20 +317,18 @@ class CModPython : public CModule {
             for (unsigned int a = 0; a < Dir.size(); a++) {
                 CFile& File = *Dir[a];
                 CString sName = File.GetShortName();
-                CString sPath = File.GetLongName();
-                sPath.TrimSuffix(sName);
 
                 if (!File.IsDir()) {
                     if (sName.WildCmp("*.pyc")) {
                         sName.RightChomp(4);
-                    } else if (sName.WildCmp("*.py") || sName.WildCmp("*.so")) {
+                    } else if (sName.WildCmp("*.py")) {
                         sName.RightChomp(3);
                     } else {
                         continue;
                     }
                 }
 
-                TryAddModInfo(sPath, sName, ssMods, already, eType);
+                TryAddModInfo(sName, ssMods, already, eType);
             }
 
             dirs.pop();
@@ -503,6 +476,49 @@ CPySocket::~CPySocket() {
     }
     Py_CLEAR(pyRes);
     Py_CLEAR(m_pyObj);
+}
+
+CPyCapability::CPyCapability(PyObject* serverCb, PyObject* clientCb)
+    : m_serverCb(serverCb), m_clientCb(clientCb) {
+    Py_INCREF(serverCb);
+    Py_INCREF(clientCb);
+}
+
+CPyCapability::~CPyCapability() {
+    Py_CLEAR(m_serverCb);
+    Py_CLEAR(m_clientCb);
+}
+
+void CPyCapability::OnServerChangedSupport(CIRCNetwork* pNetwork, bool bState) {
+    PyObject* pyArg_Network =
+        SWIG_NewInstanceObj(pNetwork, SWIG_TypeQuery("CIRCNetwork*"), 0);
+    PyObject* pyArg_bState = Py_BuildValue("l", (long int)bState);
+    PyObject* pyRes = PyObject_CallFunctionObjArgs(m_serverCb, pyArg_Network,
+                                                   pyArg_bState, nullptr);
+    if (!pyRes) {
+        CString sPyErr = ((CPyModule*)GetModule())->GetPyExceptionStr();
+        DEBUG("modpython: " << GetModule()->GetModName()
+                            << "/OnServerChangedSupport failed: " << sPyErr);
+    }
+    Py_CLEAR(pyRes);
+    Py_CLEAR(pyArg_bState);
+    Py_CLEAR(pyArg_Network);
+}
+
+void CPyCapability::OnClientChangedSupport(CClient* pClient, bool bState) {
+    PyObject* pyArg_Client =
+        SWIG_NewInstanceObj(pClient, SWIG_TypeQuery("CClient*"), 0);
+    PyObject* pyArg_bState = Py_BuildValue("l", (long int)bState);
+    PyObject* pyRes = PyObject_CallFunctionObjArgs(m_clientCb, pyArg_Client,
+                                                   pyArg_bState, nullptr);
+    if (!pyRes) {
+        CString sPyErr = ((CPyModule*)GetModule())->GetPyExceptionStr();
+        DEBUG("modpython: " << GetModule()->GetModName()
+                            << "/OnClientChangedSupport failed: " << sPyErr);
+    }
+    Py_CLEAR(pyRes);
+    Py_CLEAR(pyArg_bState);
+    Py_CLEAR(pyArg_Client);
 }
 
 CPyModule* CPyModCommand::GetModule() {

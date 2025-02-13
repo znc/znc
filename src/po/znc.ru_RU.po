@@ -243,31 +243,31 @@ msgid ""
 "You are being disconnected because another user just authenticated as you."
 msgstr "Другой пользователь зашёл под вашим именем, отключаем."
 
-#: Client.cpp:1022
+#: Client.cpp:1026
 msgid "Your CTCP to {1} got lost, you are not connected to IRC!"
 msgstr "Вы не подключены к IRC, ваш CTCP-запрос к {1} утерян!"
 
-#: Client.cpp:1148
+#: Client.cpp:1152
 msgid "Your notice to {1} got lost, you are not connected to IRC!"
 msgstr "Вы не подключены к IRC, ваше сообщение к {1} утеряно!"
 
-#: Client.cpp:1187
+#: Client.cpp:1191
 msgid "Removing channel {1}"
 msgstr "Убираю канал {1}"
 
-#: Client.cpp:1265
+#: Client.cpp:1269
 msgid "Your message to {1} got lost, you are not connected to IRC!"
 msgstr "Вы не подключены к IRC, ваше сообщение к {1} утеряно!"
 
-#: Client.cpp:1318 Client.cpp:1324
+#: Client.cpp:1322 Client.cpp:1328
 msgid "Hello. How may I help you?"
 msgstr "Привет, чем могу быть вам полезен?"
 
-#: Client.cpp:1338
+#: Client.cpp:1342
 msgid "Usage: /attach <#chans>"
 msgstr "Использование: /attach <#каналы>"
 
-#: Client.cpp:1345 Client.cpp:1367 ClientCommand.cpp:129 ClientCommand.cpp:151
+#: Client.cpp:1349 Client.cpp:1371 ClientCommand.cpp:129 ClientCommand.cpp:151
 #: ClientCommand.cpp:423 ClientCommand.cpp:450
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
@@ -276,7 +276,7 @@ msgstr[1] "{1} канала подходят под маску [{2}]"
 msgstr[2] "{1} каналов подходят под маску [{2}]"
 msgstr[3] "{1} каналов подходят под маску [{2}]"
 
-#: Client.cpp:1348 ClientCommand.cpp:132
+#: Client.cpp:1352 ClientCommand.cpp:132
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] "Прицепляю {1} канал"
@@ -284,11 +284,11 @@ msgstr[1] "Прицепляю {1} канала"
 msgstr[2] "Прицепляю {1} каналов"
 msgstr[3] "Прицепляю {1} каналов"
 
-#: Client.cpp:1360
+#: Client.cpp:1364
 msgid "Usage: /detach <#chans>"
 msgstr "Использование: /detach <#каналы>"
 
-#: Client.cpp:1370 ClientCommand.cpp:154
+#: Client.cpp:1374 ClientCommand.cpp:154
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] "Отцепляю {1} канал"

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -131,6 +131,7 @@ class CIRCSock : public CIRCSocket {
     unsigned int GetMaxNickLen() const { return m_uMaxNickLen; }
     EChanModeArgs GetModeType(char cMode) const;
     char GetPermFromMode(char cMode) const;
+    char GetModeFromPerm(char cPerm) const;
     const std::map<char, EChanModeArgs>& GetChanModes() const {
         return m_mceChanModes;
     }
@@ -150,7 +151,6 @@ class CIRCSock : public CIRCSocket {
     bool HasUHNames() const { return m_bUHNames; }
     bool HasAwayNotify() const { return m_bAwayNotify; }
     bool HasAccountNotify() const { return m_bAccountNotify; }
-    bool HasAccountTag() const { return m_bAccountTag; }
     bool HasExtendedJoin() const { return m_bExtendedJoin; }
     bool HasServerTime() const { return m_bServerTime; }
     const std::set<char>& GetUserModes() const {
@@ -162,6 +162,8 @@ class CIRCSock : public CIRCSocket {
     bool IsCapAccepted(const CString& sCap) {
         return 1 == m_ssAcceptedCaps.count(sCap);
     }
+    CString GetCapLsValue(const CString& sKey,
+                          const CString& sDefault = "") const;
     const MCString& GetISupport() const { return m_mISupport; }
     CString GetISupport(const CString& sKey,
                         const CString& sDefault = "") const;
@@ -176,6 +178,7 @@ class CIRCSock : public CIRCSocket {
     bool OnActionMessage(CActionMessage& Message);
     bool OnAwayMessage(CMessage& Message);
     bool OnCapabilityMessage(CMessage& Message);
+    bool OnChgHostMessage(CChgHostMessage& Message);
     bool OnCTCPMessage(CCTCPMessage& Message);
     bool OnErrorMessage(CMessage& Message);
     bool OnInviteMessage(CMessage& Message);
@@ -192,7 +195,7 @@ class CIRCSock : public CIRCSocket {
     bool OnTextMessage(CTextMessage& Message);
     bool OnTopicMessage(CTopicMessage& Message);
     bool OnWallopsMessage(CMessage& Message);
-    bool OnServerCapAvailable(const CString& sCap);
+    bool OnServerCapAvailable(const CString& sCap, const CString& sValue);
     // !Message Handlers
 
     void SetNick(const CString& sNick);
@@ -208,7 +211,6 @@ class CIRCSock : public CIRCSocket {
     bool m_bUHNames;
     bool m_bAwayNotify;
     bool m_bAccountNotify;
-    bool m_bAccountTag;
     bool m_bExtendedJoin;
     bool m_bServerTime;
     CString m_sPerms;
@@ -223,6 +225,7 @@ class CIRCSock : public CIRCSocket {
     unsigned int m_uCapPaused;
     SCString m_ssAcceptedCaps;
     SCString m_ssPendingCaps;
+    MCString m_msCapLsValues;
     time_t m_lastCTCP;
     unsigned int m_uNumCTCP;
     static const time_t m_uCTCPFloodTime;
@@ -237,6 +240,7 @@ class CIRCSock : public CIRCSocket {
     VCString m_vsSSLError;
 
     friend class CIRCFloodTimer;
+    friend class CCoreCaps;
 };
 
 #endif  // !ZNC_IRCSOCK_H

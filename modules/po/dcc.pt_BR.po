@@ -64,7 +64,7 @@ msgstr "Sintaxe: Get <arquivo>"
 #: dcc.cpp:215 dcc.cpp:232 dcc.cpp:234
 msgctxt "list"
 msgid "Type"
-msgstr ""
+msgstr "Tipo"
 
 #: dcc.cpp:216 dcc.cpp:238 dcc.cpp:241
 msgctxt "list"
@@ -74,22 +74,22 @@ msgstr ""
 #: dcc.cpp:217 dcc.cpp:243
 msgctxt "list"
 msgid "Speed"
-msgstr ""
+msgstr "Velocidade"
 
 #: dcc.cpp:218 dcc.cpp:227
 msgctxt "list"
 msgid "Nick"
-msgstr ""
+msgstr "Apelido"
 
 #: dcc.cpp:219 dcc.cpp:228
 msgctxt "list"
 msgid "IP"
-msgstr ""
+msgstr "IP"
 
 #: dcc.cpp:220 dcc.cpp:229
 msgctxt "list"
 msgid "File"
-msgstr ""
+msgstr "Arquivo"
 
 #: dcc.cpp:232
 msgctxt "list-type"

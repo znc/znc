@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -156,6 +156,8 @@ class CIRCNetwork : private CCoreTranslationMixin {
     void IRCConnected();
     void IRCDisconnected();
     void CheckIRCConnect();
+    void NotifyClientsAboutServerDependentCap(const CString& sCap, bool bValue);
+    bool IsServerCapAccepted(const CString& sCap) const;
 
     bool PutIRC(const CString& sLine);
     bool PutIRC(const CMessage& Message);

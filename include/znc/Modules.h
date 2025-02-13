@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@
 #include <znc/main.h>
 #include <znc/Translation.h>
 #include <functional>
+#include <memory>
 #include <set>
 #include <queue>
 #include <sys/time.h>
@@ -165,6 +166,19 @@ class CModule;
 class CFPTimer;
 class CSockManager;
 // !Forward Declarations
+
+class CCapability {
+  public:
+    virtual ~CCapability() = default;
+    virtual void OnServerChangedSupport(CIRCNetwork* pNetwork, bool bState) {}
+    virtual void OnClientChangedSupport(CClient* pClient, bool bState) {}
+
+    CModule* GetModule() { return m_pModule; }
+    void SetModule(CModule* p) { m_pModule = p; }
+
+  protected:
+    CModule* m_pModule = nullptr;
+};
 
 class CTimer : public CCron {
   public:
@@ -998,13 +1012,28 @@ class CModule {
     virtual EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic);
 
     /** Called for every CAP received via CAP LS from server.
+     *  If you need to also advertise the cap to clients, use
+     *  AddServerDependentCapability() instead.
      *  @param sCap capability supported by server.
      *  @return true if your module supports this CAP and
      *          needs to turn it on with CAP REQ.
      */
     virtual bool OnServerCapAvailable(const CString& sCap);
+    /** Called for every CAP received via CAP LS from server.
+     *  By default just calls OnServerCapAvailable() without sValue, so
+     *  overriding one of the two is enough.
+     *  If you need to also advertise the cap to clients, use
+     *  AddServerDependentCapability() instead.
+     *  @param sCap capability name supported by server.
+     *  @param sValue value.
+     *  @return true if your module supports this CAP and
+     *          needs to turn it on with CAP REQ.
+     */
+    virtual bool OnServerCap302Available(const CString& sCap, const CString& sValue);
     /** Called for every CAP accepted or rejected by server
      *  (with CAP ACK or CAP NAK after our CAP REQ).
+     *  If you need to also advertise the cap to clients, use
+     *  AddServerDependentCapability() instead.
      *  @param sCap capability accepted/rejected by server.
      *  @param bSuccess true if capability was accepted, false if rejected.
      */
@@ -1283,8 +1312,32 @@ class CModule {
     virtual EModRet OnUnknownUserRaw(CClient* pClient, CString& sLine);
     virtual EModRet OnUnknownUserRawMessage(CMessage& Message);
 
+    /** Called after login, and also during JumpNetwork. */
+    virtual void OnClientAttached();
+    /** Called upon disconnect, and also during JumpNetwork. */
+    virtual void OnClientDetached();
+
+#ifndef SWIG
+    /** Simple API to support client capabilities which depend on server to support that capability.
+     *  It is built on top of other CAP related API, but removes boilerplate,
+     *  and handles some tricky cases related to cap-notify and JumpNetwork. To
+     *  use, create a subclass of CCapability, and pass to this function; it
+     *  will automatically set the module pointer, then call the callbacks to
+     *  notify you when server and client accepted support of the capability, or
+     *  stopped supporting it. Note that it's not a strict toggle: e.g.
+     *  sometimes client will disable the cap even when it was already disabled
+     *  for that client.
+     *  For perl and python modules, this function accepts 3 parameters:
+     *  name, server callback, client callback; signatures of the callbacks are
+     *  the same as of the virtual functions you'd implement in C++.
+     */
+    void AddServerDependentCapability(const CString& sName, std::unique_ptr<CCapability> pCap);
+#endif
+
     /** Called when a client told us CAP LS. Use ssCaps.insert("cap-name")
      *  for announcing capabilities which your module supports.
+     *  If you need to adverite the cap to clients only when it's also supported
+     *  by the server, use AddServerDependentCapability() instead.
      *  @param pClient The client which requested the list.
      *  @param ssCaps set of caps which will be sent to client.
      */
@@ -1298,6 +1351,8 @@ class CModule {
     virtual bool IsClientCapSupported(CClient* pClient, const CString& sCap,
                                       bool bState);
     /** Called when we actually need to turn a capability on or off for a client.
+     *  If you need to adverite the cap to clients only when it's also supported
+     *  by the server, use AddServerDependentCapability() instead.
      *  If implementing a custom capability, make sure to call
      *  pClient->SetTagSupport("tag-name", bState) for each tag that the
      *  capability provides.
@@ -1388,6 +1443,26 @@ class CModule {
                             const CString& sContext = "") const;
 #endif
 
+    // Default implementations of several callbacks to make
+    // AddServerDependentCapability work in modpython/modperl.
+    // Don't worry about existence of these functions.
+    bool InternalServerDependentCapsOnServerCap302Available(
+        const CString& sCap, const CString& sValue);
+    void InternalServerDependentCapsOnServerCapResult(const CString& sCap,
+                                                      bool bSuccess);
+    void InternalServerDependentCapsOnClientCapLs(CClient* pClient,
+                                                  SCString& ssCaps);
+    bool InternalServerDependentCapsIsClientCapSupported(CClient* pClient,
+                                                         const CString& sCap,
+                                                         bool bState);
+    void InternalServerDependentCapsOnClientCapRequest(CClient* pClient,
+                                                       const CString& sCap,
+                                                       bool bState);
+    void InternalServerDependentCapsOnClientAttached();
+    void InternalServerDependentCapsOnClientDetached();
+    void InternalServerDependentCapsOnIRCConnected();
+    void InternalServerDependentCapsOnIRCDisconnected();
+
   protected:
     CModInfo::EModuleType m_eType;
     CString m_sDescription;
@@ -1407,6 +1482,7 @@ class CModule {
     CString m_sArgs;
     CString m_sModPath;
     CTranslationDomainRefHolder m_Translation;
+    std::map<CString, std::unique_ptr<CCapability>> m_mServerDependentCaps;
 
   private:
     MCString
@@ -1570,8 +1646,10 @@ class CModules : public std::vector<CModule*>, private CCoreTranslationMixin {
     bool OnSendToClientMessage(CMessage& Message);
     bool OnSendToIRC(CString& sLine);
     bool OnSendToIRCMessage(CMessage& Message);
+    bool OnClientAttached();
+    bool OnClientDetached();
 
-    bool OnServerCapAvailable(const CString& sCap);
+    bool OnServerCapAvailable(const CString& sCap, const CString& sValue);
     bool OnServerCapResult(const CString& sCap, bool bSuccess);
 
     CModule* FindModule(const CString& sModule) const;

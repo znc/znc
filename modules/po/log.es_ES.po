@@ -141,10 +141,10 @@ msgstr "Ruta de log no válida [{1}]"
 msgid "Logging to [{1}]. Using timestamp format '{2}'"
 msgstr "Registrando a [{1}]. Usando marca de tiempo '{2}'"
 
-#: log.cpp:560
+#: log.cpp:576
 msgid "[-sanitize] Optional path where to store logs."
 msgstr "[-sanitize] ruta opcional donde almacenar registros."
 
-#: log.cpp:564
+#: log.cpp:580
 msgid "Writes IRC logs."
 msgstr "Guarda registros de IRC."

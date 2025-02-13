@@ -1,0 +1,231 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: tr\n"
+"X-Crowdin-File: /master/modules/po/dcc.pot\n"
+"X-Crowdin-File-ID: 170\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Turkish\n"
+"Language: tr_TR\n"
+
+#: dcc.cpp:88
+msgid "<nick> <file>"
+msgstr "<nick> <dosya>"
+
+#: dcc.cpp:89
+msgid "Send a file from ZNC to someone"
+msgstr "ZNC'den birine dosya gönderin"
+
+#: dcc.cpp:91
+msgid "<file>"
+msgstr "<dosya>"
+
+#: dcc.cpp:92
+msgid "Send a file from ZNC to your client"
+msgstr "ZNC'den istemcinize bir dosya gönderin"
+
+#: dcc.cpp:94
+msgid "List current transfers"
+msgstr "Mevcut transferleri listele"
+
+#: dcc.cpp:103
+msgid "You must be admin to use the DCC module"
+msgstr "DCC modülünü kullanmak için yönetici olmanız gerekir"
+
+#: dcc.cpp:140
+msgid "Attempting to send [{1}] to [{2}]."
+msgstr "[{1}], [{2}] adresine gönderilmeye çalışılıyor."
+
+#: dcc.cpp:149 dcc.cpp:554
+msgid "Receiving [{1}] from [{2}]: File already exists."
+msgstr "[{2}] cihazından [{1}] alınıyor: Dosya zaten mevcut."
+
+#: dcc.cpp:167
+msgid ""
+"Attempting to connect to [{1} {2}] in order to download [{3}] from [{4}]."
+msgstr ""
+"[{4}] tarafından [{3}] indirmek için [{1} {2}] tarafına bağlanmaya "
+"çalışılıyor."
+
+#: dcc.cpp:179
+msgid "Usage: Send <nick> <file>"
+msgstr "Kullanımı: Send <nick> <dosya>"
+
+#: dcc.cpp:186 dcc.cpp:206
+msgid "Illegal path."
+msgstr "İllegal yol."
+
+#: dcc.cpp:199
+msgid "Usage: Get <file>"
+msgstr "Kullanımı: Get <dosya>"
+
+#: dcc.cpp:215 dcc.cpp:232 dcc.cpp:234
+msgctxt "list"
+msgid "Type"
+msgstr "Tip"
+
+#: dcc.cpp:216 dcc.cpp:238 dcc.cpp:241
+msgctxt "list"
+msgid "State"
+msgstr "Durum"
+
+#: dcc.cpp:217 dcc.cpp:243
+msgctxt "list"
+msgid "Speed"
+msgstr "Hız"
+
+#: dcc.cpp:218 dcc.cpp:227
+msgctxt "list"
+msgid "Nick"
+msgstr "Nick"
+
+#: dcc.cpp:219 dcc.cpp:228
+msgctxt "list"
+msgid "IP"
+msgstr "IP"
+
+#: dcc.cpp:220 dcc.cpp:229
+msgctxt "list"
+msgid "File"
+msgstr "Dosya"
+
+#: dcc.cpp:232
+msgctxt "list-type"
+msgid "Sending"
+msgstr "Gönderiliyor"
+
+#: dcc.cpp:234
+msgctxt "list-type"
+msgid "Getting"
+msgstr "Alınıyor"
+
+#: dcc.cpp:239
+msgctxt "list-state"
+msgid "Waiting"
+msgstr "Bekleniyor"
+
+#: dcc.cpp:244
+msgid "{1} KiB/s"
+msgstr "{1} KiB/sn"
+
+#: dcc.cpp:250
+msgid "You have no active DCC transfers."
+msgstr "Aktif DCC transferiniz bulunmamaktadır."
+
+#: dcc.cpp:267
+msgid "Attempting to resume send from position {1} of file [{2}] for [{3}]"
+msgstr ""
+"[{3}] için [{2}] dosyasının {1}. konumundan gönderime devam edilmeye "
+"çalışılıyor"
+
+#: dcc.cpp:277
+msgid "Couldn't resume file [{1}] for [{2}]: not sending anything."
+msgstr "[{2}] için [{1}] dosyası devam ettirilemedi: hiçbir şey gönderilmiyor."
+
+#: dcc.cpp:286
+msgid "Bad DCC file: {1}"
+msgstr "Kötü DCC dosyası: {1}"
+
+#: dcc.cpp:341
+msgid "Sending [{1}] to [{2}]: File not open!"
+msgstr "[{1}], [{2}] hedefine gönderiliyor: Dosya açık değil!"
+
+#: dcc.cpp:345
+msgid "Receiving [{1}] from [{2}]: File not open!"
+msgstr "[{2}] cihazından [{1}] alınıyor: Dosya açık değil!"
+
+#: dcc.cpp:385
+msgid "Sending [{1}] to [{2}]: Connection refused."
+msgstr "[{1}], [{2}] hedefine gönderiliyor: Bağlantı reddedildi."
+
+#: dcc.cpp:389
+msgid "Receiving [{1}] from [{2}]: Connection refused."
+msgstr "[{2}] konumundan [{1}] alınıyor: Bağlantı reddedildi."
+
+#: dcc.cpp:397
+msgid "Sending [{1}] to [{2}]: Timeout."
+msgstr "[{1}], [{2}]'a gönderiliyor: Zaman aşımı."
+
+#: dcc.cpp:401
+msgid "Receiving [{1}] from [{2}]: Timeout."
+msgstr "[{2}] cihazından [{1}] alınıyor: Zaman aşımı."
+
+#: dcc.cpp:411
+msgid "Sending [{1}] to [{2}]: Socket error {3}: {4}"
+msgstr "[{1}], [{2}]'e gönderiliyor: Soket hatası {3}: {4}"
+
+#: dcc.cpp:415
+msgid "Receiving [{1}] from [{2}]: Socket error {3}: {4}"
+msgstr "[{2}] cihazından [{1}] alınıyor: Soket hatası {3}: {4}"
+
+#: dcc.cpp:423
+msgid "Sending [{1}] to [{2}]: Transfer started."
+msgstr "[{1}], [{2}] adresine gönderiliyor: Aktarım başladı."
+
+#: dcc.cpp:427
+msgid "Receiving [{1}] from [{2}]: Transfer started."
+msgstr "[{2}] konumundan [{1}] alınıyor: Aktarım başladı."
+
+#: dcc.cpp:446
+msgid "Sending [{1}] to [{2}]: Too much data!"
+msgstr "[{1}], [{2}] hedefine gönderiliyor: Çok fazla veri!"
+
+#: dcc.cpp:450
+msgid "Receiving [{1}] from [{2}]: Too much data!"
+msgstr "[{2}] cihazından [{1}] alınıyor: Çok fazla veri!"
+
+#: dcc.cpp:456
+msgid "Sending [{1}] to [{2}] completed at {3} KiB/s"
+msgstr "[{1}] öğesinin [{2}] hedefine gönderilmesi {3} KiB/sn hızla tamamlandı"
+
+#: dcc.cpp:461
+msgid "Receiving [{1}] from [{2}] completed at {3} KiB/s"
+msgstr "[{2}] noktasından [{1}] alma işlemi {3} KiB/sn hızla tamamlandı"
+
+#: dcc.cpp:474
+msgid "Sending [{1}] to [{2}]: File closed prematurely."
+msgstr "[{1}], [{2}] adresine gönderiliyor: Dosya erken kapatıldı."
+
+#: dcc.cpp:478
+msgid "Receiving [{1}] from [{2}]: File closed prematurely."
+msgstr "[{2}]'dan [{1}] alınıyor: Dosya zamanından önce kapatıldı."
+
+#: dcc.cpp:501
+msgid "Sending [{1}] to [{2}]: Error reading from file."
+msgstr "[{1}], [{2}] hedefine gönderiliyor: Dosyadan okuma hatası."
+
+#: dcc.cpp:505
+msgid "Receiving [{1}] from [{2}]: Error reading from file."
+msgstr "[{2}]'dan [{1}] alınıyor: Dosyadan okuma hatası."
+
+#: dcc.cpp:537
+msgid "Sending [{1}] to [{2}]: Unable to open file."
+msgstr "[{1}], [{2}] hedefine gönderiliyor: Dosya açılamıyor."
+
+#: dcc.cpp:541
+msgid "Receiving [{1}] from [{2}]: Unable to open file."
+msgstr "[{2}] cihazından [{1}] alınıyor: Dosya açılamıyor."
+
+#: dcc.cpp:563
+msgid "Receiving [{1}] from [{2}]: Could not open file."
+msgstr "[{2}] cihazından [{1}] alınıyor: Dosya açılamadı."
+
+#: dcc.cpp:572
+msgid "Sending [{1}] to [{2}]: Not a file."
+msgstr "[{1}], [{2}] adresine gönderiliyor: Dosya değil."
+
+#: dcc.cpp:581
+msgid "Sending [{1}] to [{2}]: Could not open file."
+msgstr "[{1}], [{2}] hedefine gönderiliyor: Dosya açılamadı."
+
+#: dcc.cpp:593
+msgid "Sending [{1}] to [{2}]: File too large (>4 GiB)."
+msgstr "[{1}], [{2}] hedefine gönderiliyor: Dosya çok büyük (>4 GiB)."
+
+#: dcc.cpp:623
+msgid "This module allows you to transfer files to and from ZNC"
+msgstr "Bu modül ZNC'ye ve ZNC'den dosya aktarmanıza olanak tanır"

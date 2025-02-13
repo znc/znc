@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -792,9 +792,9 @@ class CWebAdminMod : public CModule {
 
             CTemplate& o2 = Tmpl.AddRow("OptionLoop");
             o2["Name"] = "autoclearchanbuffer";
-            o2["DisplayName"] = t_s("Auto Clear Chan Buffer");
+            o2["DisplayName"] = t_s("Auto clear chan buffer");
             o2["Tooltip"] =
-                t_s("Automatically Clear Channel Buffer After Playback");
+                t_s("Automatically clear channel buffer after playback");
             if ((pChan && pChan->AutoClearChanBuffer()) ||
                 (!pChan && pUser->AutoClearChanBuffer())) {
                 o2["Checked"] = "true";
@@ -1621,9 +1621,9 @@ class CWebAdminMod : public CModule {
 
             CTemplate& o1 = Tmpl.AddRow("OptionLoop");
             o1["Name"] = "autoclearchanbuffer";
-            o1["DisplayName"] = t_s("Auto Clear Chan Buffer");
+            o1["DisplayName"] = t_s("Auto clear chan buffer");
             o1["Tooltip"] =
-                t_s("Automatically Clear Channel Buffer After Playback (the "
+                t_s("Automatically clear channel buffer after playback (the "
                     "default value for new channels)");
             if (pUser->AutoClearChanBuffer()) {
                 o1["Checked"] = "true";
@@ -1633,21 +1633,21 @@ class CWebAdminMod : public CModule {
 
             CTemplate& o4 = Tmpl.AddRow("OptionLoop");
             o4["Name"] = "multiclients";
-            o4["DisplayName"] = t_s("Multi Clients");
+            o4["DisplayName"] = t_s("Allow multiple clients");
             if (pUser->MultiClients()) {
                 o4["Checked"] = "true";
             }
 
             CTemplate& o7 = Tmpl.AddRow("OptionLoop");
             o7["Name"] = "appendtimestamp";
-            o7["DisplayName"] = t_s("Append Timestamps");
+            o7["DisplayName"] = t_s("Append timestamps");
             if (pUser->GetTimestampAppend()) {
                 o7["Checked"] = "true";
             }
 
             CTemplate& o8 = Tmpl.AddRow("OptionLoop");
             o8["Name"] = "prependtimestamp";
-            o8["DisplayName"] = t_s("Prepend Timestamps");
+            o8["DisplayName"] = t_s("Prepend timestamps");
             if (pUser->GetTimestampPrepend()) {
                 o8["Checked"] = "true";
             }
@@ -1672,21 +1672,21 @@ class CWebAdminMod : public CModule {
 
                 CTemplate& o11 = Tmpl.AddRow("OptionLoop");
                 o11["Name"] = "denysetbindhost";
-                o11["DisplayName"] = t_s("Deny Setting BindHost");
+                o11["DisplayName"] = t_s("Deny setting BindHost");
                 if (pUser->DenySetBindHost()) {
                     o11["Checked"] = "true";
                 }
 
                 CTemplate& o12 = Tmpl.AddRow("OptionLoop");
                 o12["Name"] = "denysetident";
-                o12["DisplayName"] = t_s("Deny Setting Ident");
+                o12["DisplayName"] = t_s("Deny setting Ident");
                 if (pUser->DenySetIdent()) {
                     o12["Checked"] = "true";
                 }
 
                 CTemplate& o13 = Tmpl.AddRow("OptionLoop");
                 o13["Name"] = "denysetnetwork";
-                o13["DisplayName"] = t_s("Deny Editing Networks/Servers");
+                o13["DisplayName"] = t_s("Deny editing networks/servers");
                 o13["Tooltip"] =
                     t_s("Deny adding/deleting networks, setting network name and editing the server list");
                 if (pUser->DenySetNetwork()) {
@@ -1695,21 +1695,23 @@ class CWebAdminMod : public CModule {
 
                 CTemplate& o14 = Tmpl.AddRow("OptionLoop");
                 o14["Name"] = "denysetrealname";
-                o14["DisplayName"] = t_s("Deny Setting RealName");
+                o14["DisplayName"] = t_s("Deny setting RealName");
                 if (pUser->DenySetRealName()) {
                     o14["Checked"] = "true";
                 }
 
                 CTemplate& o15 = Tmpl.AddRow("OptionLoop");
                 o15["Name"] = "denysetquitmsg";
-                o15["DisplayName"] = t_s("Deny Setting Quit Message");
+                o15["DisplayName"] = t_s("Deny setting quit message");
                 if (pUser->DenySetQuitMsg()) {
                     o15["Checked"] = "true";
                 }
 
                 CTemplate& o16 = Tmpl.AddRow("OptionLoop");
                 o16["Name"] = "denysetctcpreplies";
-                o16["DisplayName"] = t_s("Deny Setting CTCP Replies");
+                o16["DisplayName"] = t_s("Deny setting CTCP replies");
+                o16["Tooltip"] =
+                    t_s("Block customizing CTCP replies for non-admin users");
                 if (pUser->DenySetCTCPReplies()) {
                     o16["Checked"] = "true";
                 }
@@ -1717,9 +1719,9 @@ class CWebAdminMod : public CModule {
 
             CTemplate& o17 = Tmpl.AddRow("OptionLoop");
             o17["Name"] = "autoclearquerybuffer";
-            o17["DisplayName"] = t_s("Auto Clear Query Buffer");
+            o17["DisplayName"] = t_s("Auto clear query buffer");
             o17["Tooltip"] =
-                t_s("Automatically Clear Query Buffer After Playback");
+                t_s("Automatically clear query buffer after playback");
             if (pUser->AutoClearQueryBuffer()) {
                 o17["Checked"] = "true";
             }

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,6 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+include(CMakeFindDependencyMacro)
+include("${CMAKE_CURRENT_LIST_DIR}/CMakeFindDependencyMacroPC.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/use_homebrew.cmake")
+@ZNC_CMAKE_FIND_DEPS@
 
 include("${CMAKE_CURRENT_LIST_DIR}/znc_internal.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/znc_public.cmake")

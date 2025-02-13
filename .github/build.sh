@@ -6,7 +6,7 @@ ls -la
 cpanm --local-lib=~/perl5 local::lib
 eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
 cpanm --notest Devel::Cover::Report::Clover
-pip3 install --user coverage
+pip3 install --user --break-system-packages coverage
 export ZNC_MODPERL_COVERAGE=1
 #export ZNC_MODPYTHON_COVERAGE=1
 
@@ -23,7 +23,7 @@ esac
 
 mkdir build
 cd build
-../configure --enable-debug --enable-perl --enable-python --enable-tcl --enable-cyrus --enable-charset $CFGFLAGS
+../configure --enable-debug --enable-perl --enable-python --enable-tcl --enable-cyrus --enable-charset --enable-argon $CFGFLAGS
 cmake --system-information
 
 make -j2 VERBOSE=1
@@ -39,10 +39,13 @@ ls -lRa
 
 case "${CC:-gcc}" in
 	gcc)
-		lcov --directory . --capture --output-file lcov-coverage.txt
+		lcov --directory . --capture --output-file lcov-coverage.txt --ignore-errors mismatch
 		lcov --list lcov-coverage.txt
 		;;
 	clang)
+		if [[ x$(uname) == xDarwin ]]; then
+			export PATH=$PATH:/Library/Developer/CommandLineTools/usr/bin
+		fi
 		llvm-profdata merge unittest.profraw -o unittest.profdata
 		llvm-profdata merge inttest.profraw -o inttest.profdata
 		llvm-cov show -show-line-counts-or-regions -instr-profile=unittest.profdata test/unittest_bin > unittest-cmake-coverage.txt

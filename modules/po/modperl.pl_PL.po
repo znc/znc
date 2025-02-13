@@ -14,6 +14,6 @@ msgstr ""
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
 
-#: modperl.cpp:382
+#: modperl.cpp:417
 msgid "Loads perl scripts as ZNC modules"
 msgstr "Ładuje skrypty perl jako moduły ZNC"

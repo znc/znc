@@ -14,16 +14,16 @@ msgstr ""
 
 #: clientnotify.cpp:53
 msgid "<message|notice|off>"
-msgstr ""
+msgstr "<message|notice|off>"
 
 #: clientnotify.cpp:54
 msgid "Sets the notify method"
-msgstr ""
+msgstr "Définit la méthode de notification"
 
 #: clientnotify.cpp:56 clientnotify.cpp:59 clientnotify.cpp:63
 #: clientnotify.cpp:68
 msgid "<on|off>"
-msgstr ""
+msgstr "<on|off>"
 
 #: clientnotify.cpp:57
 msgid "Turns notifications for unseen connections on or off"

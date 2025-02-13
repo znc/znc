@@ -12,6 +12,6 @@ msgstr ""
 "Language-Team: Greek\n"
 "Language: el_GR\n"
 
-#: modperl.cpp:382
+#: modperl.cpp:417
 msgid "Loads perl scripts as ZNC modules"
 msgstr ""

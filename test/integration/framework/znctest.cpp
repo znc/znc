@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <QRegularExpression>
 #include "znctest.h"
 
 #ifndef ZNC_BIN_DIR
@@ -48,6 +49,14 @@ void WriteConfig(QString path) {
     p.ReadUntil("Launch ZNC now?");         p.Write("no");
     p.ShouldFinishItself();
     // clang-format on
+
+    // Default 30s is too slow for the test
+    QFile conf(path + "/configs/znc.conf");
+    ASSERT_TRUE(conf.open(QIODevice::Append | QIODevice::Text));
+    QTextStream out(&conf);
+    out << R"(
+        ServerThrottle = 5
+    )";
 }
 
 void ZNCTest::SetUp() {
@@ -111,6 +120,12 @@ std::unique_ptr<QNetworkReply> ZNCTest::HandleHttp(QNetworkReply* reply) {
         std::cout << "Got HTTP reply" << std::endl;
         loop.quit();
     });
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    QObject::connect(reply, &QNetworkReply::errorOccurred,
+                     [&](QNetworkReply::NetworkError e) {
+                         ADD_FAILURE() << reply->errorString().toStdString();
+                     });
+#else
     QObject::connect(
         reply,
         static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(
@@ -118,6 +133,7 @@ std::unique_ptr<QNetworkReply> ZNCTest::HandleHttp(QNetworkReply* reply) {
         [&](QNetworkReply::NetworkError e) {
             ADD_FAILURE() << reply->errorString().toStdString();
         });
+#endif
     QTimer::singleShot(30000 /* msec */, &loop, [&]() {
         ADD_FAILURE() << "connection timeout";
         loop.quit();
@@ -152,7 +168,7 @@ void ZNCTest::InstallModule(QString name, QString content) {
         QStringList lines = content.split("\n");
         int maxoffset = -1;
         for (const QString& line : lines) {
-            int nonspace = line.indexOf(QRegExp("\\S"));
+            int nonspace = line.indexOf(QRegularExpression("\\S"));
             if (nonspace == -1) continue;
             if (nonspace < maxoffset || maxoffset == -1) maxoffset = nonspace;
         }

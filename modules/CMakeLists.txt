@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -37,11 +37,7 @@ function(add_cxx_module mod modpath)
 	if(moddepend_${mod})
 		add_dependencies("module_${mod}" ${moddepend_${mod}})
 	endif()
-	# ${znclib_LIB_DEPENDS} is to overcome OSX's need for -undefined suppress
-	# when accessing symbols exported by dependencies of znclib (e.g.
-	# openssl), but not used in znclib itself
-	target_link_libraries("module_${mod}" PRIVATE ZNC ${modlink_${mod}}
-		${znclib_LIB_DEPENDS})
+	target_link_libraries("module_${mod}" PRIVATE ZNC ${modlink_${mod}})
 	set_target_properties("module_${mod}" PROPERTIES "" "" ${modprop_${mod}})
 	install(TARGETS "module_${mod}"
 		LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/znc")
@@ -54,8 +50,7 @@ function(add_python_module mod modpath)
 endfunction()
 
 if(CYRUS_FOUND)
-	set(modcompile_cyrusauth PRIVATE ${CYRUS_CFLAGS})
-	set(modlink_cyrusauth ${CYRUS_LDFLAGS})
+	set(modlink_cyrusauth PkgConfig::CYRUS)
 else()
 	set(moddisable_cyrusauth true)
 endif()

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -234,7 +234,7 @@ TEST_F(ZNCTest, KeepNickModule) {
     ircd.ReadUntil("NICK user");
     ircd.Write(":server 435 user_ user #error :Nope :-P");
     client.ReadUntil(
-        ":*keepnick!znc@znc.in PRIVMSG user_ "
+        ":*keepnick!keepnick@znc.in PRIVMSG user_ "
         ":Unable to obtain nick user: Nope :-P, #error");
 }
 
@@ -348,6 +348,22 @@ TEST_F(ZNCTest, SaslPlainModule) {
     client2.ReadUntil("AUTHENTICATE +");
     client2.Write("AUTHENTICATE AHVzZXIAaHVudGVyMg=="); // \0user\0hunter2
     client2.ReadUntil(":irc.znc.in 903 foo :SASL authentication successful");
+}
+
+TEST_F(ZNCTest, SaslRequire) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod sasl");
+    client.Write("PRIVMSG *sasl :set * *");
+    client.Write("PRIVMSG *sasl :requireauth yes");
+    client.ReadUntil("Password has been set");
+    client.Write("znc jump");
+    ircd = ConnectIRCd();
+    ircd.ReadUntil("CAP LS");
+    ircd.Write(":server 001 nick :Hello");
+    ircd.ReadUntil("QUIT :SASL not available");
+    auto ircd2 = ConnectIRCd();
 }
 
 }  // namespace

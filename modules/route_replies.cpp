@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ struct reply {
 // TODO this list is far from complete, no errors are handled
 static const struct {
     const char* szRequest;
-    struct reply vReplies[20];
+    struct reply vReplies[21];
 } vRouteReplies[] = {
       {"WHO",
        {{"402", true},   /* rfc1459 ERR_NOSUCHSERVER */
@@ -70,6 +70,7 @@ static const struct {
         {"276", false}, /* oftc-hybrid RPL_WHOISCERTFP */
         {"330", false}, /* ratbox RPL_WHOISLOGGEDIN
                            aka ircu RPL_WHOISACCOUNT */
+        {"337", false}, /* solanum RPL_WHOISTEXT -- "is hiding their idle time" */
         {"338", false}, /* ircu RPL_WHOISACTUALLY -- "actually using host" */
         {"378", false}, /* RPL_WHOISHOST -- real address of vhosts */
         {"671", false}, /* RPL_WHOISSECURE */

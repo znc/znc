@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,11 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-if(CMAKE_VERSION VERSION_LESS 3.2)
-	# Since 3.2 it does this automatically from BYPRODUCTS
-	set_source_files_properties("versionc.cpp" PROPERTIES GENERATED true)
-endif()
 
 set(znc_cpp "ZNCString.cpp" "znc.cpp" "IRCNetwork.cpp" "Translation.cpp"
 	"IRCSock.cpp" "Client.cpp" "Chan.cpp" "Nick.cpp" "Server.cpp"
@@ -61,27 +56,20 @@ add_custom_target(version
 add_dependencies(znclib copy_csocket_h copy_csocket_cc version)
 
 set(znc_include_dirs
-	"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/third_party/bpstd>"
 	"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
 	"$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>"
 	"$<INSTALL_INTERFACE:${CMAKE_INSTALL_FULL_INCLUDEDIR}>")
 target_link_libraries(znclib PRIVATE ${CMAKE_DL_LIBS} Threads::Threads)
-if(OPENSSL_FOUND)
-	target_link_libraries(znclib PUBLIC ${OPENSSL_LIBRARIES})
-	list(APPEND znc_include_dirs "${OPENSSL_INCLUDE_DIR}")
-endif()
 if(ZLIB_FOUND)
-	target_link_libraries(znclib PRIVATE ${ZLIB_LIBRARIES})
-	list(APPEND znc_include_dirs ${ZLIB_INCLUDE_DIRS})
-endif()
-if(ICU_FOUND)
-	target_link_libraries(znclib PUBLIC ${ICU_LDFLAGS})
-	list(APPEND znc_include_dirs ${ICU_INCLUDE_DIRS})
+	target_link_libraries(znclib PRIVATE ZLIB::ZLIB)
 endif()
 if(Boost_FOUND)
-	target_link_libraries(znclib PRIVATE ${Boost_LIBRARIES})
-	list(APPEND znc_include_dirs ${Boost_INCLUDE_DIRS})
+	target_link_libraries(znclib PRIVATE Boost::locale)
 endif()
+if(ZNC_HAVE_ARGON)
+	target_link_libraries(znclib PRIVATE PkgConfig::ARGON)
+endif()
+target_link_libraries(znclib PUBLIC ${zncpubdeps})
 target_link_libraries(znclib PRIVATE cctz::cctz)
 target_include_directories(znc PUBLIC ${znc_include_dirs})
 target_include_directories(znclib PUBLIC ${znc_include_dirs})
@@ -98,16 +86,11 @@ set_target_properties(znclib PROPERTIES
 	OUTPUT_NAME "znc"
 	SOVERSION "${ZNC_VERSION}")
 
-# CMake started supporting metafeature cxx_std_11 only in 3.8
-set(required_cxx11_features
-	cxx_range_for cxx_nullptr cxx_override
-	cxx_lambdas cxx_auto_type)
-target_compile_features(znc PUBLIC ${required_cxx11_features})
-target_compile_features(znclib PUBLIC ${required_cxx11_features})
-
 add_library(ZNC INTERFACE)
-target_link_libraries(ZNC INTERFACE ${znc_link})
+target_link_libraries(ZNC INTERFACE ${znc_link} ${zncpubdeps})
 target_compile_definitions(ZNC INTERFACE "znc_export_lib_EXPORTS")
+target_compile_features(ZNC INTERFACE cxx_std_17)
+target_compile_features(znclib PUBLIC cxx_std_17)
 
 if(HAVE_I18N)
 	add_subdirectory(po)

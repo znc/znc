@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,6 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork)
       m_bUHNames(false),
       m_bAwayNotify(false),
       m_bAccountNotify(false),
-      m_bAccountTag(false),
       m_bExtendedJoin(false),
       m_bServerTime(false),
       m_sPerms("*!@%+"),
@@ -186,6 +185,9 @@ void CIRCSock::ReadLine(const CString& sData) {
         case CMessage::Type::Capability:
             bReturn = OnCapabilityMessage(Message);
             break;
+        case CMessage::Type::ChgHost:
+            bReturn = OnChgHostMessage(Message);
+            break;
         case CMessage::Type::CTCP:
             bReturn = OnCTCPMessage(Message);
             break;
@@ -246,7 +248,9 @@ void CIRCSock::SendNextCap() {
     if (!m_uCapPaused) {
         if (m_ssPendingCaps.empty()) {
             // We already got all needed ACK/NAK replies.
-            PutIRC("CAP END");
+            if (!m_bAuthed) {
+                PutIRC("CAP END");
+            }
         } else {
             CString sCap = *m_ssPendingCaps.begin();
             m_ssPendingCaps.erase(m_ssPendingCaps.begin());
@@ -262,9 +266,9 @@ void CIRCSock::ResumeCap() {
     SendNextCap();
 }
 
-bool CIRCSock::OnServerCapAvailable(const CString& sCap) {
+bool CIRCSock::OnServerCapAvailable(const CString& sCap, const CString& sValue) {
     bool bResult = false;
-    IRCSOCKMODULECALL(OnServerCapAvailable(sCap), &bResult);
+    IRCSOCKMODULECALL(OnServerCapAvailable(sCap, sValue), &bResult);
     return bResult;
 }
 
@@ -347,67 +351,94 @@ bool CIRCSock::OnAwayMessage(CMessage& Message) {
 }
 
 bool CIRCSock::OnCapabilityMessage(CMessage& Message) {
-    // CAPs are supported only before authorization.
-    if (!m_bAuthed) {
-        // The first parameter is most likely "*". No idea why, the
-        // CAP spec don't mention this, but all implementations
-        // I've seen add this extra asterisk
-        CString sSubCmd = Message.GetParam(1);
+    // The first parameter is most likely "*". No idea why, the
+    // CAP spec don't mention this, but all implementations
+    // I've seen add this extra asterisk
+    CString sSubCmd = Message.GetParam(1);
 
-        // If the caplist of a reply is too long, it's split
-        // into multiple replies. A "*" is prepended to show
-        // that the list was split into multiple replies.
-        // This is useful mainly for LS. For ACK and NAK
-        // replies, there's no real need for this, because
-        // we request only 1 capability per line.
-        // If we will need to support broken servers or will
-        // send several requests per line, need to delay ACK
-        // actions until all ACK lines are received and
-        // to recognize past request of NAK by 100 chars
-        // of this reply.
-        CString sArgs;
-        if (Message.GetParam(2) == "*") {
-            sArgs = Message.GetParam(3);
-        } else {
-            sArgs = Message.GetParam(2);
+    // If the caplist of a reply is too long, it's split
+    // into multiple replies. A "*" is prepended to show
+    // that the list was split into multiple replies.
+    // This is useful mainly for LS. For ACK and NAK
+    // replies, there's no real need for this, because
+    // we request only 1 capability per line.
+    // If we will need to support broken servers or will
+    // send several requests per line, need to delay ACK
+    // actions until all ACK lines are received and
+    // to recognize past request of NAK by 100 chars
+    // of this reply.
+    // As for LS, we shouldn't don't send END after receiving first line,
+    // because interesting caps can be on next line.
+    CString sArgs;
+    bool bSendNext = true;
+    if (Message.GetParam(2) == "*") {
+        bSendNext = false;
+        sArgs = Message.GetParam(3);
+    } else {
+        sArgs = Message.GetParam(2);
+    }
+
+    static std::map<CString, std::function<void(bool bVal)>> mSupportedCaps = {
+        {"multi-prefix", [this](bool bVal) { m_bNamesx = bVal; }},
+        {"userhost-in-names", [this](bool bVal) { m_bUHNames = bVal; }},
+        {"cap-notify", [](bool bVal) {}},
+        {"server-time", [this](bool bVal) { m_bServerTime = bVal; }},
+        {"znc.in/server-time-iso", [this](bool bVal) { m_bServerTime = bVal; }},
+        {"chghost", [](bool) {}},
+    };
+
+    auto RemoveCap = [&](const CString& sCap) {
+        IRCSOCKMODULECALL(OnServerCapResult(sCap, false), NOTHING);
+        auto it = mSupportedCaps.find(sCap);
+        if (it != mSupportedCaps.end()) {
+            it->second(false);
         }
+        m_ssAcceptedCaps.erase(sCap);
+        m_ssPendingCaps.erase(sCap);
+    };
 
-        std::map<CString, std::function<void(bool bVal)>> mSupportedCaps = {
-            {"multi-prefix", [this](bool bVal) { m_bNamesx = bVal; }},
-            {"userhost-in-names", [this](bool bVal) { m_bUHNames = bVal; }},
-            {"away-notify", [this](bool bVal) { m_bAwayNotify = bVal; }},
-            {"account-notify", [this](bool bVal) { m_bAccountNotify = bVal; }},
-            {"account-tag", [this](bool bVal) { m_bAccountTag = bVal; }},
-            {"extended-join", [this](bool bVal) { m_bExtendedJoin = bVal; }},
-            {"server-time", [this](bool bVal) { m_bServerTime = bVal; }},
-            {"znc.in/server-time-iso",
-             [this](bool bVal) { m_bServerTime = bVal; }},
-        };
+    if (sSubCmd == "LS" || sSubCmd == "NEW") {
+        VCString vsTokens;
+        sArgs.Split(" ", vsTokens, false);
 
-        if (sSubCmd == "LS") {
-            VCString vsTokens;
-            sArgs.Split(" ", vsTokens, false);
-
-            for (const CString& sCap : vsTokens) {
-                if (OnServerCapAvailable(sCap) || mSupportedCaps.count(sCap)) {
-                    m_ssPendingCaps.insert(sCap);
-                }
+        for (const CString& sToken : vsTokens) {
+            CString sCap, sValue;
+            int eq = sToken.find('=');
+            if (eq == std::string::npos) {
+                sCap = sToken;
+            } else {
+                sCap = sToken.substr(0, eq);
+                sValue = sToken.substr(eq + 1);
             }
-        } else if (sSubCmd == "ACK") {
-            sArgs.Trim();
-            IRCSOCKMODULECALL(OnServerCapResult(sArgs, true), NOTHING);
-            const auto& it = mSupportedCaps.find(sArgs);
-            if (it != mSupportedCaps.end()) {
-                it->second(true);
+            m_msCapLsValues[sCap] = sValue;
+            if (OnServerCapAvailable(sCap, sValue) || mSupportedCaps.count(sCap)) {
+                m_ssPendingCaps.insert(sCap);
             }
-            m_ssAcceptedCaps.insert(sArgs);
-        } else if (sSubCmd == "NAK") {
-            // This should work because there's no [known]
-            // capability with length of name more than 100 characters.
-            sArgs.Trim();
-            IRCSOCKMODULECALL(OnServerCapResult(sArgs, false), NOTHING);
         }
+    } else if (sSubCmd == "ACK") {
+        sArgs.Trim();
+        IRCSOCKMODULECALL(OnServerCapResult(sArgs, true), NOTHING);
+        auto it = mSupportedCaps.find(sArgs);
+        if (it != mSupportedCaps.end()) {
+            it->second(true);
+        }
+        m_ssAcceptedCaps.insert(sArgs);
+    } else if (sSubCmd == "NAK") {
+        // This should work because there's no [known]
+        // capability with length of name more than 100 characters.
+        sArgs.Trim();
+        RemoveCap(sArgs);
+    } else if (sSubCmd == "DEL") {
+        VCString vsTokens;
+        sArgs.Split(" ", vsTokens, false);
 
+        for (const CString& sCap : vsTokens) {
+            RemoveCap(sCap);
+            m_msCapLsValues.erase(sCap);
+        }
+    }
+
+    if (bSendNext) {
         SendNextCap();
     }
     // Don't forward any CAP stuff to the client
@@ -484,6 +515,73 @@ bool CIRCSock::OnCTCPMessage(CCTCPMessage& Message) {
     }
 
     return (pChan && pChan->IsDetached());
+}
+
+bool CIRCSock::OnChgHostMessage(CChgHostMessage& Message) {
+    // The emulation of QUIT+JOIN would be cleaner inside CClient::PutClient()
+    // but computation of new modes is difficult enough so that I don't want to
+    // repeat it for every client
+    //
+    // TODO: make CNick store modes (v, o) instead of perm chars (+, @), that
+    // would simplify this
+    bool bNeedEmulate = false;
+    for (CClient* pClient : m_pNetwork->GetClients()) {
+        if (pClient->HasChgHost()) {
+            pClient->PutClient(Message);
+        } else {
+            bNeedEmulate = true;
+            pClient->PutClient(CMessage(Message.GetNick(), "QUIT",
+                                        {"Changing hostname"},
+                                        Message.GetTags()));
+        }
+    }
+
+    CNick NewNick = Message.GetNick();
+    NewNick.SetIdent(Message.GetNewIdent());
+    NewNick.SetHost(Message.GetNewHost());
+
+    for (CChan* pChan : m_pNetwork->GetChans()) {
+        if (CNick* pNick = pChan->FindNick(Message.GetNick().GetNick())) {
+            pNick->SetIdent(Message.GetNewIdent());
+            pNick->SetHost(Message.GetNewHost());
+        }
+
+        if (!bNeedEmulate) continue;
+        if (pChan->IsDisabled()) continue;
+        if (pChan->IsDetached()) continue;
+
+        if (CNick* pNick = pChan->FindNick(NewNick.GetNick())) {
+            VCString vsModeParams = {pChan->GetName(), "+"};
+            for (char cPerm : pNick->GetPermStr()) {
+                char cMode = GetModeFromPerm(cPerm);
+                if (cMode) {
+                    vsModeParams[1].append(1, cMode);
+                    vsModeParams.push_back(NewNick.GetNick());
+                }
+            }
+
+            CTargetMessage ModeMsg;
+            ModeMsg.SetNick(CNick(":irc.znc.in"));
+            ModeMsg.SetTags(Message.GetTags());
+            ModeMsg.SetCommand("MODE");
+            ModeMsg.SetParams(std::move(vsModeParams));
+
+            for (CClient* pClient : m_pNetwork->GetClients()) {
+                if (!pClient->HasChgHost()) {
+                    // TODO: send account name and real name too, for
+                    // extended-join
+                    pClient->PutClient(CMessage(NewNick, "JOIN",
+                                                {pChan->GetName()},
+                                                Message.GetTags()));
+                    if (ModeMsg.GetParams().size() > 2) {
+                        pClient->PutClient(ModeMsg);
+                    }
+                }
+            }
+        }
+    }
+
+    return true;
 }
 
 bool CIRCSock::OnErrorMessage(CMessage& Message) {
@@ -1222,7 +1320,7 @@ void CIRCSock::Connected() {
                       &bReturn);
     if (bReturn) return;
 
-    PutIRC("CAP LS");
+    PutIRC("CAP LS 302");
 
     if (!sPass.empty()) {
         PutIRC("PASS " + sPass);
@@ -1411,6 +1509,16 @@ CString CIRCSock::GetISupport(const CString& sKey,
     }
 }
 
+CString CIRCSock::GetCapLsValue(const CString& sKey,
+                                const CString& sDefault) const {
+    MCString::const_iterator i = m_msCapLsValues.find(sKey);
+    if (i == m_msCapLsValues.end()) {
+        return sDefault;
+    } else {
+        return i->second;
+    }
+}
+
 void CIRCSock::SendAltNick(const CString& sBadNick) {
     const CString& sLastNick = m_Nick.GetNick();
 
@@ -1472,6 +1580,18 @@ char CIRCSock::GetPermFromMode(char cMode) const {
         for (unsigned int a = 0; a < m_sPermModes.size(); a++) {
             if (m_sPermModes[a] == cMode) {
                 return m_sPerms[a];
+            }
+        }
+    }
+
+    return 0;
+}
+
+char CIRCSock::GetModeFromPerm(char cPerm) const {
+    if (m_sPermModes.size() == m_sPerms.size()) {
+        for (unsigned int a = 0; a < m_sPermModes.size(); a++) {
+            if (m_sPerms[a] == cPerm) {
+                return m_sPermModes[a];
             }
         }
     }

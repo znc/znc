@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,13 +30,13 @@
 #ifdef HAVE_LIBSSL
 // Copypasted from
 // https://wiki.mozilla.org/Security/Server_Side_TLS#Intermediate_compatibility_.28default.29
-// at 2020-09-24
+// at 2024-02-08 (version 5.7)
 static CString ZNC_DefaultCipher() {
     // This is TLS1.2 only, because TLS1.3 ciphers are probably not configurable here yet
     return "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:"
            "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:"
            "ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:"
-           "DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384";
+           "DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305";
 }
 #endif
 

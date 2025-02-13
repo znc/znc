@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -383,20 +383,15 @@ int main(int argc, char** argv) {
 #endif /* HAVE_LIBSSL */
 
     if (bMakePass) {
-        CString sSalt;
         CUtils::PrintMessage("Type your new password.");
-        CString sHash = CUtils::GetSaltedHashPass(sSalt);
+        CString sPass = CUtils::AskSaltedHashPassForConfig();
         CUtils::PrintMessage("Kill ZNC process, if it's running.");
         CUtils::PrintMessage(
             "Then replace password in the <User> section of your config with "
             "this:");
         // Not PrintMessage(), to remove [**] from the beginning, to ease
         // copypasting
-        std::cout << "<Pass password>" << std::endl;
-        std::cout << "\tMethod = " << CUtils::sDefaultHash << std::endl;
-        std::cout << "\tHash = " << sHash << std::endl;
-        std::cout << "\tSalt = " << sSalt << std::endl;
-        std::cout << "</Pass>" << std::endl;
+        std::cout << sPass << std::endl;
         CUtils::PrintMessage(
             "After that start ZNC again, and you should be able to login with "
             "the new password.");

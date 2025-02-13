@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2023 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,6 @@
 
 #ifndef ZNC_MESSAGE_H
 #define ZNC_MESSAGE_H
-
-// Remove this after Feb 2016 when Debian 7 is EOL
-#if __cpp_ref_qualifiers >= 200710
-#define ZNC_LVREFQUAL &
-#elif defined(__clang__)
-#define ZNC_LVREFQUAL &
-#elif __GNUC__ > 4 ||                       \
-    __GNUC__ == 4 && (__GNUC_MINOR__ > 8 || \
-                      __GNUC_MINOR__ == 8 && __GNUC_PATCHLEVEL__ >= 1)
-#define ZNC_LVREFQUAL &
-#else
-#define ZNC_LVREFQUAL
-#endif
 
 #ifdef SWIG
 #define ZNC_MSG_DEPRECATED(msg)
@@ -81,6 +68,7 @@ class CMessage {
         Authenticate,
         Away,
         Capability,
+        ChgHost,
         CTCP,
         Error,
         Invite,
@@ -135,6 +123,7 @@ class CMessage {
      */
     VCString GetParamsSplit(unsigned int uIdx, unsigned int uLen = -1) const;
     void SetParams(const VCString& vsParams);
+    void SetParams(VCString&& vsParams);
 
     /// @deprecated use GetParamsColon() instead.
     CString GetParams(unsigned int uIdx, unsigned int uLen = -1) const
@@ -167,7 +156,7 @@ class CMessage {
 // Implicit and explicit conversion to a subclass reference.
 #ifndef SWIG
     template <typename M>
-    M& As() ZNC_LVREFQUAL {
+    M& As() & {
         static_assert(std::is_base_of<CMessage, M>{},
                       "Must be subclass of CMessage");
         static_assert(sizeof(M) == sizeof(CMessage),
@@ -176,7 +165,7 @@ class CMessage {
     }
 
     template <typename M>
-    const M& As() const ZNC_LVREFQUAL {
+    const M& As() const& {
         static_assert(std::is_base_of<CMessage, M>{},
                       "Must be subclass of CMessage");
         static_assert(sizeof(M) == sizeof(CMessage),
@@ -186,12 +175,12 @@ class CMessage {
 
     template <typename M, typename = typename std::enable_if<
                               std::is_base_of<CMessage, M>{}>::type>
-    operator M&() ZNC_LVREFQUAL {
+    operator M&() & {
         return As<M>();
     }
     template <typename M, typename = typename std::enable_if<
                               std::is_base_of<CMessage, M>{}>::type>
-    operator const M&() const ZNC_LVREFQUAL {
+    operator const M&() const& {
         return As<M>();
     }
 // REGISTER_ZNC_MESSAGE allows SWIG to instantiate correct .As<> calls.
@@ -353,5 +342,14 @@ class CTopicMessage : public CTargetMessage {
     void SetText(const CString& sText) { SetTopic(sText); }
 };
 REGISTER_ZNC_MESSAGE(CTopicMessage);
+
+class CChgHostMessage : public CMessage {
+  public:
+    CString GetNewIdent() const { return GetParam(0); }
+    void SetNewIdent(const CString& sIdent) { SetParam(0, sIdent); }
+    CString GetNewHost() const { return GetParam(1); }
+    void SetNewHost(const CString& sHost) { SetParam(1, sHost); }
+};
+REGISTER_ZNC_MESSAGE(CChgHostMessage);
 
 #endif  // !ZNC_MESSAGE_H
