@@ -1363,9 +1363,9 @@ class CModule {
      */
     virtual void OnClientCapRequest(CClient* pClient, const CString& sCap,
                                     bool bState);
-    /** Called when a client requests SASL authentication. Use ssMechanisms.insert("mechanism")
+    /** Called when a client requests SASL authentication. Use ssMechanisms.insert("MECHANISM")
      *  for announcing SASL mechanisms which your module supports.
-     * @param ssMechanisms The set of supported SASL mechanisms to append to.
+     *  @param ssMechanisms The set of supported SASL mechanisms to append to.
      */
     virtual void OnClientGetSASLMechanisms(SCString& ssMechanisms);
     /** Called when a client has selected a SASL mechanism for SASL authentication.
@@ -1374,18 +1374,23 @@ class CModule {
      * @param sMechanism The SASL mechanism selected by the client.
      * @param sResponse The optional value of an initial SASL challenge message to send to the client.
      */
-    virtual EModRet OnSASLServerChallenge(const CString& sMechanism,
-                                          CString& sResponse);
+    virtual EModRet OnClientSASLServerInitialChallenge(
+        const CString& sMechanism, CString& sResponse);
     /** Called when a client is sending us a SASL message after the mechanism was selected.
-     *  If implementing a SASL authentication mechanism, check the passed credentials,
-     *  then either request more data by sending a challenge in sMechanismResponse,
-     *  reject authentication by setting bAuthenticationSuccess to false,
-     *  or accept authentication by setting bAuthenticationSuccess to true and setting sUser to the authenticated user name.
+     *  If implementing a SASL authentication mechanism, check the passed
+     * credentials, then either request more data by sending a challenge in
+     * sMechanismResponse, reject authentication by setting
+     * bAuthenticationSuccess to false, or accept authentication by setting
+     * bAuthenticationSuccess to true and setting sUser to the authenticated
+     * user name.
      * @param sMechanism The SASL mechanism selected by the client.
      * @param sBuffer The SASL opaque value/credentials sent by the client.
-     * @param sUser The optional name of the authenticated user to log in the user as, if authentication is accepted.
-     * @param sMechanismResponse The optional value of a SASL challenge message to reply to the client to ask for more data.
-     * @param bAuthenticationSuccess If sMechanismResponse is not set, whether to accept or reject the authentication request.
+     * @param sUser The optional name of the authenticated user to log in the
+     * user as, if authentication is accepted.
+     * @param sMechanismResponse The optional value of a SASL challenge message
+     * to reply to the client to ask for more data.
+     * @param bAuthenticationSuccess If sMechanismResponse is not set, whether
+     * to accept or reject the authentication request.
      */
     virtual EModRet OnClientSASLAuthenticate(const CString& sMechanism,
                                              const CString& sBuffer,
@@ -1695,11 +1700,10 @@ class CModules : public std::vector<CModule*>, private CCoreTranslationMixin {
                               bool bState);
     bool OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState);
     bool OnClientGetSASLMechanisms(SCString& ssMechanisms);
-    bool OnSASLServerChallenge(const CString& sMechanism,
-                               CString& sResponse);
+    bool OnClientSASLServerInitialChallenge(const CString& sMechanism,
+                                            CString& sResponse);
     bool OnClientSASLAuthenticate(const CString& sMechanism,
-                                  const CString& sBuffer,
-                                  CString& sUser,
+                                  const CString& sBuffer, CString& sUser,
                                   CString& sResponse,
                                   bool& bAuthenticationSuccess);
 

@@ -195,11 +195,10 @@ class ZNC_EXPORT_LIB_EXPORT CPyModule : public CModule {
     void OnClientCapRequest(CClient* pClient, const CString& sCap,
                             bool bState) override;
     void OnClientGetSASLMechanisms(SCString& ssMechanisms) override;
-    EModRet OnSASLServerChallenge(const CString& sMechanism,
-                                  CString& sResponse) override;
+    EModRet OnClientSASLServerInitialChallenge(const CString& sMechanism,
+                                               CString& sResponse) override;
     EModRet OnClientSASLAuthenticate(const CString& sMechanism,
-                                     const CString& sBuffer,
-                                     CString& sUser,
+                                     const CString& sBuffer, CString& sUser,
                                      CString& sMechanismResponse,
                                      bool& bAuthenticationSuccess) override;
     virtual EModRet OnModuleLoading(const CString& sModName,

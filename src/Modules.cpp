@@ -1208,8 +1208,8 @@ CModule::EModRet CModule::OnClientSASLAuthenticate(
     return CONTINUE;
 }
 
-CModule::EModRet CModule::OnSASLServerChallenge(const CString& sMechanism,
-                                                CString& sResponse) {
+CModule::EModRet CModule::OnClientSASLServerInitialChallenge(
+    const CString& sMechanism, CString& sResponse) {
     return CONTINUE;
 }
 
@@ -1769,9 +1769,9 @@ bool CModules::OnClientSASLAuthenticate(const CString& sMechanism,
                                         sResponse, bAuthenticationSuccess));
 }
 
-bool CModules::OnSASLServerChallenge(const CString& sMechanism,
+bool CModules::OnClientSASLServerInitialChallenge(const CString& sMechanism,
                                      CString& sResponse) {
-    MODHALTCHK(OnSASLServerChallenge(sMechanism, sResponse));
+    MODHALTCHK(OnClientSASLServerInitialChallenge(sMechanism, sResponse));
 }
 
 bool CModules::OnClientGetSASLMechanisms(SCString& ssMechanisms) {

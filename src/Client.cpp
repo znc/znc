@@ -1146,8 +1146,9 @@ void CClient::OnAuthenticateMessage(CAuthenticateMessage& Message) {
 
         auto bResult = false;
         CString sChallenge;
-        GLOBALMODULECALL(OnSASLServerChallenge(m_sSASLMechanism, sChallenge),
-                         &bResult);
+        GLOBALMODULECALL(
+            OnClientSASLServerInitialChallenge(m_sSASLMechanism, sChallenge),
+            &bResult);
         if (bResult) {
             SASLChallenge(sChallenge);
         } else {
