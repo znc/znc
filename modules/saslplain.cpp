@@ -41,12 +41,12 @@ class CSASLMechanismPlain : public CModule {
             return HALTMODS;
         }
 
-        auto spAuth = std::make_shared<CClientAuth>(this, sAuthcId, sPassword);
+        auto spAuth = std::make_shared<CClientAuth>(GetClient(), sAuthcId, sPassword);
         CZNC::Get().AuthUser(spAuth);
         return HALTMODS;
     }
 
-    void OnGetSASLMechanisms(SCString& ssMechanisms) override {
+    void OnClientGetSASLMechanisms(SCString& ssMechanisms) override {
         ssMechanisms.insert("PLAIN");
     }
 };

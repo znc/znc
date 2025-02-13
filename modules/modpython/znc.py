@@ -478,7 +478,7 @@ class Module:
     def OnClientCapRequest(self, pClient, sCap, bState):
         pass
 
-    def OnGetSASLMechanisms(self, ssMechanisms):
+    def OnClientGetSASLMechanisms(self, ssMechanisms):
         pass
 
     def OnSASLServerChallenge(self, sMechanism, sResponse):

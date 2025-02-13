@@ -1213,7 +1213,7 @@ CModule::EModRet CModule::OnSASLServerChallenge(const CString& sMechanism,
     return CONTINUE;
 }
 
-void CModule::OnGetSASLMechanisms(SCString& ssMechanisms) {}
+void CModule::OnClientGetSASLMechanisms(SCString& ssMechanisms) {}
 
 CModule::EModRet CModule::OnModuleLoading(const CString& sModName,
                                           const CString& sArgs,
@@ -1774,8 +1774,8 @@ bool CModules::OnSASLServerChallenge(const CString& sMechanism,
     MODHALTCHK(OnSASLServerChallenge(sMechanism, sResponse));
 }
 
-bool CModules::OnGetSASLMechanisms(SCString& ssMechanisms) {
-    MODUNLOADCHK(OnGetSASLMechanisms(ssMechanisms));
+bool CModules::OnClientGetSASLMechanisms(SCString& ssMechanisms) {
+    MODUNLOADCHK(OnClientGetSASLMechanisms(ssMechanisms));
     return false;
 }
 

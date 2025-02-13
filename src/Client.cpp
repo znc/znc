@@ -1210,7 +1210,7 @@ void CClient::OnAuthenticateMessage(CAuthenticateMessage& Message) {
 CString CClient::EnumerateSASLMechanisms(SCString& ssMechanisms) {
     CString sMechanisms;
 
-    GLOBALMODULECALL(OnGetSASLMechanisms(ssMechanisms), NOTHING);
+    GLOBALMODULECALL(OnClientGetSASLMechanisms(ssMechanisms), NOTHING);
 
     if (ssMechanisms.size()) {
         sMechanisms =

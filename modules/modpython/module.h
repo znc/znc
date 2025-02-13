@@ -194,7 +194,7 @@ class ZNC_EXPORT_LIB_EXPORT CPyModule : public CModule {
                               bool bState) override;
     void OnClientCapRequest(CClient* pClient, const CString& sCap,
                             bool bState) override;
-    void OnGetSASLMechanisms(SCString& ssMechanisms) override;
+    void OnClientGetSASLMechanisms(SCString& ssMechanisms) override;
     EModRet OnSASLServerChallenge(const CString& sMechanism,
                                   CString& sResponse) override;
     EModRet OnClientSASLAuthenticate(const CString& sMechanism,

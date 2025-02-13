@@ -1364,10 +1364,10 @@ class CModule {
     virtual void OnClientCapRequest(CClient* pClient, const CString& sCap,
                                     bool bState);
     /** Called when a client requests SASL authentication. Use ssMechanisms.insert("mechanism")
-     *  for announcing sASL mechanisms which your module supports.
+     *  for announcing SASL mechanisms which your module supports.
      * @param ssMechanisms The set of supported SASL mechanisms to append to.
      */
-    virtual void OnGetSASLMechanisms(SCString& ssMechanisms);
+    virtual void OnClientGetSASLMechanisms(SCString& ssMechanisms);
     /** Called when a client has selected a SASL mechanism for SASL authentication.
      *  If implementing a SASL authentication mechanism, set sResponse to specify an initial challenge
      *  message to send to the client. Otherwise, an empty response will be sent.
@@ -1694,7 +1694,7 @@ class CModules : public std::vector<CModule*>, private CCoreTranslationMixin {
     bool IsClientCapSupported(CClient* pClient, const CString& sCap,
                               bool bState);
     bool OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState);
-    bool OnGetSASLMechanisms(SCString& ssMechanisms);
+    bool OnClientGetSASLMechanisms(SCString& ssMechanisms);
     bool OnSASLServerChallenge(const CString& sMechanism,
                                CString& sResponse);
     bool OnClientSASLAuthenticate(const CString& sMechanism,
