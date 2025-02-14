@@ -94,8 +94,7 @@ CClient::CClient()
       m_bBatch(false),
       m_bEchoMessage(false),
       m_bSelfMessage(false),
-      m_bSASL(false),
-      m_bSASLAuthenticating(false),
+      m_bSASLCap(false),
       m_bPlaybackActive(false),
       m_pUser(nullptr),
       m_pNetwork(nullptr),
@@ -366,14 +365,22 @@ void CClient::AuthUser() {
         (m_sSASLUser.empty() && !m_bGotPass) || IsAttached())
         return;
 
-    if (m_bSASL && !m_sSASLUser.empty()) {
-        m_sUser = m_sSASLUser;
-        auto pUser = CZNC::Get().FindUser(m_sUser);
-        AcceptLogin(*pUser);
-        return;
+    if (m_sSASLUser.empty()) {
+        StartPasswordCheck(
+            std::make_shared<CClientAuth>(this, m_sUser, m_sPass));
+    } else {
+        // Already logged in, but the user could have been deleted meanwhile.
+        CUser* pUser = CZNC::Get().FindUser(m_sSASLUser);
+        if (pUser) {
+            AcceptLogin(*pUser);
+        } else {
+            RefuseLogin("SASL login was valid, but user no longer exists");
+        }
     }
+}
 
-    m_spAuth = std::make_shared<CClientAuth>(this, m_sUser, m_sPass);
+void CClient::StartPasswordCheck(std::shared_ptr<CAuthBase> spAuth) {
+    m_spAuth = spAuth;
 
     CZNC::Get().AuthUser(m_spAuth);
 }
@@ -381,6 +388,12 @@ void CClient::AuthUser() {
 CClientAuth::CClientAuth(CClient* pClient, const CString& sUsername,
                          const CString& sPassword)
     : CAuthBase(sUsername, sPassword, pClient), m_pClient(pClient) {}
+
+void CClientSASLAuth::RefusedLogin(const CString& sReason) {
+    if (m_pClient) {
+        m_pClient->RefuseSASLLogin(sReason);
+    }
+}
 
 void CClientAuth::RefusedLogin(const CString& sReason) {
     if (m_pClient) {
@@ -398,8 +411,12 @@ void CAuthBase::Invalidate() { m_pSock = nullptr; }
 void CAuthBase::AcceptLogin(CUser& User) {
     if (m_pSock) {
         AcceptedLogin(User);
-        Invalidate();
     }
+    Invalidate();
+}
+
+std::shared_ptr<CAuthBase> CAuthBase::WrapPointer(CAuthBase* p) {
+    return std::shared_ptr<CAuthBase>(p);
 }
 
 void CAuthBase::RefuseLogin(const CString& sReason) {
@@ -427,6 +444,12 @@ void CClient::RefuseLogin(const CString& sReason) {
     Close(Csock::CLT_AFTERWRITE);
 }
 
+void CClientSASLAuth::AcceptedLogin(CUser& User) {
+    if (m_pClient) {
+        m_pClient->AcceptSASLLogin(User);
+    }
+}
+
 void CClientAuth::AcceptedLogin(CUser& User) {
     if (m_pClient) {
         m_pClient->AcceptLogin(User);
@@ -436,7 +459,9 @@ void CClientAuth::AcceptedLogin(CUser& User) {
 void CClient::AcceptLogin(CUser& User) {
     m_sPass = "";
     m_pUser = &User;
-    m_bSASLAuthenticating = m_bSASL;
+    m_sSASLMechanism = "";
+    m_sSASLBuffer = "";
+    m_sSASLUser = "";
 
     // Set our proper timeout and set back our proper timeout mode
     // (constructor set a different timeout and mode)
@@ -765,37 +790,58 @@ static VCString MultiLine(const SCString& ssCaps) {
 
 const std::map<CString, std::function<void(CClient*, bool bVal)>>&
 CClient::CoreCaps() {
-    static const std::map<CString, std::function<void(CClient*, bool bVal)>> mCoreCaps = []{
-        std::map<CString, std::function<void(CClient*, bool bVal)>> mCoreCaps = {
-          {"multi-prefix",
-           [](CClient* pClient, bool bVal) { pClient->m_bNamesx = bVal; }},
-          {"userhost-in-names",
-           [](CClient* pClient, bool bVal) { pClient->m_bUHNames = bVal; }},
-          {"echo-message",
-           [](CClient* pClient, bool bVal) { pClient->m_bEchoMessage = bVal; }},
-          {"server-time",
-           [](CClient* pClient, bool bVal) {
-            pClient->m_bServerTime = bVal;
-            pClient->SetTagSupport("time", bVal);
-           }},
-          {"batch", [](CClient* pClient, bool bVal) {
-            pClient->m_bBatch = bVal;
-            pClient->SetTagSupport("batch", bVal);
-          }},
-          {"cap-notify",
-           [](CClient* pClient, bool bVal) { pClient->m_bCapNotify = bVal; }},
-          {"chghost", [](CClient* pClient, bool bVal) { pClient->m_bChgHost = bVal; }},
-        };
+    static const std::map<CString, std::function<void(CClient*, bool bVal)>>
+        mCoreCaps = [] {
+            std::map<CString, std::function<void(CClient*, bool bVal)>>
+                mCoreCaps = {
+                    {"multi-prefix",
+                     [](CClient* pClient, bool bVal) {
+                         pClient->m_bNamesx = bVal;
+                     }},
+                    {"userhost-in-names",
+                     [](CClient* pClient, bool bVal) {
+                         pClient->m_bUHNames = bVal;
+                     }},
+                    {"echo-message",
+                     [](CClient* pClient, bool bVal) {
+                         pClient->m_bEchoMessage = bVal;
+                     }},
+                    {"server-time",
+                     [](CClient* pClient, bool bVal) {
+                         pClient->m_bServerTime = bVal;
+                         pClient->SetTagSupport("time", bVal);
+                     }},
+                    {"batch",
+                     [](CClient* pClient, bool bVal) {
+                         pClient->m_bBatch = bVal;
+                         pClient->SetTagSupport("batch", bVal);
+                     }},
+                    {"cap-notify",
+                     [](CClient* pClient, bool bVal) {
+                         pClient->m_bCapNotify = bVal;
+                     }},
+                    {"chghost", [](CClient* pClient,
+                                   bool bVal) { pClient->m_bChgHost = bVal; }},
+                    {"sasl",
+                     [](CClient* pClient, bool bVal) {
+                         if (pClient->IsDuringSASL() && !bVal) {
+                             pClient->AbortSASL(
+                                 ":irc.znc.in 904 " + pClient->GetNick() +
+                                 " :SASL authentication aborted");
+                         }
+                         pClient->m_bSASLCap = bVal;
+                     }},
+                };
 
-        // For compatibility with older clients
-        mCoreCaps["znc.in/server-time-iso"] = mCoreCaps["server-time"];
-        mCoreCaps["znc.in/batch"] = mCoreCaps["batch"];
-        mCoreCaps["znc.in/self-message"] = [](CClient* pClient, bool bVal) {
-            pClient->m_bSelfMessage = bVal;
-        };
+            // For compatibility with older clients
+            mCoreCaps["znc.in/server-time-iso"] = mCoreCaps["server-time"];
+            mCoreCaps["znc.in/batch"] = mCoreCaps["batch"];
+            mCoreCaps["znc.in/self-message"] = [](CClient* pClient, bool bVal) {
+                pClient->m_bSelfMessage = bVal;
+            };
 
-        return mCoreCaps;
-    }();
+            return mCoreCaps;
+        }();
     return mCoreCaps;
 }
 
@@ -806,8 +852,19 @@ void CClient::HandleCap(const CMessage& Message) {
         m_uCapVersion = std::max(m_uCapVersion, Message.GetParam(1).ToUShort());
         SCString ssOfferCaps;
         for (const auto& it : CoreCaps()) {
-            // TODO sasl value enumerating mechanisms
-            ssOfferCaps.insert(it.first);
+            // TODO figure out a better API for this, including for modules
+            if (HasCap302() && it.first == "sasl") {
+                SCString ssMechanisms = EnumerateSASLMechanisms();
+                if (ssMechanisms.empty()) {
+                    // See the comment near 908. Here "sasl=" would also have wrong meaning.
+                    ssMechanisms.insert("*");
+                }
+                ssOfferCaps.insert(it.first + "=" +
+                                   CString(",").Join(ssMechanisms.begin(),
+                                                     ssMechanisms.end()));
+            } else {
+                ssOfferCaps.insert(it.first);
+            }
         }
         NETWORKMODULECALL(OnClientCapLs(this, ssOfferCaps), GetUser(), GetNetwork(), this, NOTHING);
         VCString vsCaps = MultiLine(ssOfferCaps);
@@ -825,15 +882,12 @@ void CClient::HandleCap(const CMessage& Message) {
     } else if (sSubCmd.Equals("END")) {
         m_bInCap = false;
         if (!IsAttached()) {
-            if (m_bSASL && m_sSASLUser.empty() && m_bSASLAuthenticating) {
-                PutClient(":irc.znc.in 906 " + GetNick() +
+            if (IsDuringSASL()) {
+                AbortSASL(":irc.znc.in 904 " + GetNick() +
                           " :SASL authentication aborted");
-                m_sSASLMechanism = "";
-                m_bSASLAuthenticating = false;
             }
 
-            if (!m_pUser && m_bGotUser &&
-                (m_sSASLUser.empty() && !m_bGotPass)) {
+            if (m_bGotUser && m_sSASLUser.empty() && !m_bGotPass) {
                 SendRequiredPasswordNotice();
             } else {
                 AuthUser();
@@ -1076,35 +1130,25 @@ bool CClient::OnActionMessage(CActionMessage& Message) {
     return true;
 }
 
-void CClient::OnAuthenticateMessage(CAuthenticateMessage& Message) {
-    const auto uiMaxSASLMsgLength = 400u;
-    auto bAuthenticationSuccess = false;
-    auto sMessage = Message.GetText();
-    const auto iBufferSize = sMessage.length();
+void CClient::SendSASLChallenge(CString sMessage) {
+    constexpr size_t uMaxSASLMsgLength = 400u;
+    sMessage.Base64Encode();
+    size_t uChallengeSize = sMessage.length();
 
-    auto SASLReset = [this]() {
-        m_sSASLMechanism = "";
-        m_sSASLBuffer = "";
-    };
+    for (int i = 0; i < uChallengeSize; i += uMaxSASLMsgLength) {
+        CString sMsgPart = sMessage.substr(i, uMaxSASLMsgLength);
+        PutClient("AUTHENTICATE " + sMsgPart);
+    }
+    if (uChallengeSize % uMaxSASLMsgLength == 0) {
+        PutClient("AUTHENTICATE +");
+    }
+}
 
-    auto SASLChallenge = [this](CString sChallenge) {
-        sChallenge.Base64Encode();
-        auto sChallengeSize = sChallenge.length();
-
-        if (sChallengeSize > uiMaxSASLMsgLength) {
-            for (int i = 0; i < sChallengeSize; i += uiMaxSASLMsgLength) {
-                CString sMsgPart = sChallenge.substr(i, uiMaxSASLMsgLength);
-                PutClient("AUTHENTICATE " + sMsgPart);
-            }
-        } else if (sChallengeSize > 0) {
-            PutClient("AUTHENTICATE " + sChallenge);
-        }
-        if (sChallengeSize % uiMaxSASLMsgLength == 0) {
-            PutClient("AUTHENTICATE +");
-        }
-    };
-
-    if (!m_bSASL) return;
+void CClient::OnAuthenticateMessage(const CAuthenticateMessage& Message) {
+    if (!m_bSASLCap) {
+        PutClient(":irc.znc.in 904 " + GetNick() + " :SASL not enabled");
+        return;
+    }
 
     if (!m_sSASLUser.empty() || IsAttached()) {
         PutClient(":irc.znc.in 907 " + GetNick() +
@@ -1112,29 +1156,53 @@ void CClient::OnAuthenticateMessage(CAuthenticateMessage& Message) {
         return;
     }
 
-    if (!m_bSASLAuthenticating || sMessage.Equals("*")) {
-        PutClient(":irc.znc.in 906 " + GetNick() +
+    auto SASLReset = [this]() {
+        m_sSASLMechanism = "";
+        m_sSASLBuffer = "";
+    };
+    CString sMessage = Message.GetText();
+
+    if (sMessage.Equals("*")) {
+        AbortSASL(":irc.znc.in 906 " + GetNick() +
                   " :SASL authentication aborted");
-        if (!IsAttached()) {
-            m_bSASLAuthenticating = false;
+        return;
+    }
+
+    constexpr size_t uMaxSASLMsgLength = 400u;
+    if (sMessage.length() > uMaxSASLMsgLength) {
+        AbortSASL(":irc.znc.in 905 " + GetNick() + " :SASL message too long");
+        return;
+    }
+
+    if (!IsDuringSASL()) {
+        if (m_ssPreviouslyFailedSASLMechanisms.find(sMessage) !=
+            m_ssPreviouslyFailedSASLMechanisms.end()) {
+            // This prevents the client from brute forcing multiple passwords
+            // on the same connection.
+            PutClient(":irc.znc.in 904 " + GetNick() +
+                      " :SASL authentication failed");
             SASLReset();
+            return;
         }
-        return;
-    }
-
-    if (iBufferSize > uiMaxSASLMsgLength) {
-        PutClient(":irc.znc.in 905 " + GetNick() + " :SASL message too long");
-        SASLReset();
-        return;
-    }
-
-    if (m_sSASLMechanism.empty()) {
-        SCString ssMechanisms;
-        auto sMechanisms = EnumerateSASLMechanisms(ssMechanisms);
-
+        SCString ssMechanisms = EnumerateSASLMechanisms();
         if (ssMechanisms.find(sMessage) == ssMechanisms.end()) {
-            PutClient(":irc.znc.in 908 " + GetNick() + " " + sMechanisms +
-                      " :are available SASL mechanisms");
+            if (ssMechanisms.empty()) {
+                // If it happens that no mechanisms are available, an empty
+                // string will cause issues with IRC frames. Probably we should
+                // disable the whole 'sasl' cap, but that becomes complicated
+                // because need to track changes to the list of available caps
+                // (modules adding new mechanisms) and send cap-notify. This
+                // hack is simpler to do. And if a client decides to use
+                // actually use this fake '*' mechanism, they probably won't
+                // succeed anyway.
+                PutClient(":irc.znc.in 908 " + GetNick() +
+                          " * :No SASL mechanisms are available");
+            } else {
+                PutClient(":irc.znc.in 908 " + GetNick() + " " +
+                          CString(",").Join(ssMechanisms.begin(),
+                                            ssMechanisms.end()) +
+                          " :are available SASL mechanisms");
+            }
             PutClient(":irc.znc.in 904 " + GetNick() +
                       " :SASL authentication failed");
             SASLReset();
@@ -1144,27 +1212,24 @@ void CClient::OnAuthenticateMessage(CAuthenticateMessage& Message) {
 
         m_sSASLMechanism = sMessage;
 
-        auto bResult = false;
+        bool bResult = false;
         CString sChallenge;
-        GLOBALMODULECALL(
+        _GLOBALMODULECALL(
             OnClientSASLServerInitialChallenge(m_sSASLMechanism, sChallenge),
-            &bResult);
-        if (bResult) {
-            SASLChallenge(sChallenge);
-        } else {
-            PutClient("AUTHENTICATE +");
+            nullptr, nullptr, this, &bResult);
+        if (!bResult) {
+            SendSASLChallenge(std::move(sChallenge));
         }
         return;
     }
 
     if (m_sSASLBuffer.length() + sMessage.length() > 10 * 1024) {
-        PutClient(":irc.znc.in 904 " + GetNick() + " :SASL response too long");
-        SASLReset();
+        AbortSASL(":irc.znc.in 904 " + GetNick() + " :SASL response too long");
         return;
     }
 
-    if (iBufferSize == uiMaxSASLMsgLength) {
-        m_sSASLBuffer.append(sMessage);
+    if (sMessage.length() == uMaxSASLMsgLength) {
+        m_sSASLBuffer += sMessage;
         return;
     }
 
@@ -1174,51 +1239,46 @@ void CClient::OnAuthenticateMessage(CAuthenticateMessage& Message) {
 
     m_sSASLBuffer.Base64Decode();
 
-    CString sResponse;
-    bool bResult;
+    bool bResult = false;
 
-    CString sSASLUser;
-    GLOBALMODULECALL(
-        OnClientSASLAuthenticate(m_sSASLMechanism, m_sSASLBuffer, sSASLUser,
-                                 sResponse, bAuthenticationSuccess),
-        &bResult);
+    _GLOBALMODULECALL(
+        OnClientSASLAuthenticate(m_sSASLMechanism, m_sSASLBuffer),
+        nullptr, nullptr, this, &bResult);
     m_sSASLBuffer.clear();
-
-    if (bResult && !sResponse.empty()) {
-        SASLChallenge(sResponse);
-        return;
-    }
-
-    auto pUser = CZNC::Get().FindUser(sSASLUser);
-
-    if (pUser && bAuthenticationSuccess) {
-        PutClient(":irc.znc.in 900 " + GetNick() + " " + GetNick() + "!" +
-                  pUser->GetIdent() + "@" + GetHostName() + " " + sSASLUser +
-                  " :You are now logged in as " + sSASLUser);
-        PutClient(":irc.znc.in 903 " + GetNick() +
-                  " :SASL authentication successful");
-        m_sSASLUser = sSASLUser;
-        m_bSASLAuthenticating = false;
-    } else {
-        PutClient(":irc.znc.in 904 " + GetNick() +
-                  " :SASL authentication failed");
-        SASLReset();
-    }
-
-    return;
 }
 
-CString CClient::EnumerateSASLMechanisms(SCString& ssMechanisms) {
-    CString sMechanisms;
+void CClient::AbortSASL(const CString& sFullIRCLine) {
+    PutClient(sFullIRCLine);
+    _GLOBALMODULECALL(OnClientSASLAborted(), nullptr, nullptr, this, NOTHING);
+    m_sSASLMechanism = "";
+    m_sSASLBuffer = "";
+}
 
+void CClient::RefuseSASLLogin(const CString& sReason) {
+    PutClient(":irc.znc.in 904 " + GetNick() + " :" + sReason);
+    m_ssPreviouslyFailedSASLMechanisms.insert(m_sSASLMechanism);
+    m_sSASLMechanism = "";
+    m_sSASLBuffer = "";
+    _GLOBALMODULECALL(OnFailedLogin("", GetRemoteIP()), nullptr, nullptr, this,
+                      NOTHING);
+}
+
+void CClient::AcceptSASLLogin(CUser& User) {
+    PutClient(":irc.znc.in 900 " + GetNick() + " " + GetNick() + "!" +
+              User.GetIdent() + "@" + GetHostName() + " " + User.GetUsername() +
+              " :You are now logged in as " + User.GetUsername());
+    PutClient(":irc.znc.in 903 " + GetNick() +
+              " :SASL authentication successful");
+    m_sSASLMechanism = "";
+    m_sSASLBuffer = "";
+    m_sSASLUser = User.GetUsername();
+}
+
+SCString CClient::EnumerateSASLMechanisms() const {
+    SCString ssMechanisms;
+    // FIXME Currently GetClient()==nullptr due to const
     GLOBALMODULECALL(OnClientGetSASLMechanisms(ssMechanisms), NOTHING);
-
-    if (ssMechanisms.size()) {
-        sMechanisms =
-                CString(",").Join(ssMechanisms.begin(), ssMechanisms.end());
-    }
-
-    return sMechanisms;
+    return ssMechanisms;
 }
 
 bool CClient::OnCTCPMessage(CCTCPMessage& Message) {

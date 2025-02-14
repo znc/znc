@@ -21,33 +21,30 @@ class CSASLMechanismPlain : public CModule {
   public:
     MODCONSTRUCTOR(CSASLMechanismPlain) { AddHelpCommand(); }
 
+    void OnClientGetSASLMechanisms(SCString& ssMechanisms) override {
+        ssMechanisms.insert("PLAIN");
+    }
+
     EModRet OnClientSASLAuthenticate(const CString& sMechanism,
-                                     const CString& sBuffer, CString& sUser,
-                                     CString& sMechanismResponse,
-                                     bool& bAuthenticationSuccess) override {
+                                     const CString& sMessage) override {
         if (!sMechanism.Equals("PLAIN")) {
             return CONTINUE;
         }
 
-        bAuthenticationSuccess = false;
-
         CString sNullSeparator = std::string("\0", 1);
-        auto sAuthzId = sBuffer.Token(0, false, sNullSeparator, true);
-        auto sAuthcId = sBuffer.Token(1, false, sNullSeparator, true);
-        auto sPassword = sBuffer.Token(2, false, sNullSeparator, true);
+        CString sAuthzId = sMessage.Token(0, false, sNullSeparator, true);
+        CString sAuthcId = sMessage.Token(1, false, sNullSeparator, true);
+        CString sPassword = sMessage.Token(2, false, sNullSeparator, true);
 
         if (!sAuthzId.empty() && sAuthzId != sAuthcId) {
             // Reject custom SASL plain authorization identifiers
+            GetClient()->RefuseSASLLogin("No support for custom AuthzId");
             return HALTMODS;
         }
 
-        auto spAuth = std::make_shared<CClientAuth>(GetClient(), sAuthcId, sPassword);
-        CZNC::Get().AuthUser(spAuth);
+        auto spAuth = CAuthBase::WrapPointer(new CClientSASLAuth(GetClient(), sAuthcId, sPassword));
+        GetClient()->StartPasswordCheck(spAuth);
         return HALTMODS;
-    }
-
-    void OnClientGetSASLMechanisms(SCString& ssMechanisms) override {
-        ssMechanisms.insert("PLAIN");
     }
 };
 

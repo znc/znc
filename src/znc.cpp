@@ -1109,6 +1109,9 @@ bool CZNC::LoadGlobal(CConfig& config, CString& sError) {
     if (tSavedVersion < make_tuple(1, 9)) {
         vsList.push_back("corecaps");
     }
+    if (tSavedVersion < make_tuple(1, 10)) {
+        vsList.push_back("saslplain");
+    }
 
     for (const CString& sModLine : vsList) {
         CString sModName = sModLine.Token(0);

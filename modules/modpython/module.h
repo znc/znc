@@ -198,9 +198,7 @@ class ZNC_EXPORT_LIB_EXPORT CPyModule : public CModule {
     EModRet OnClientSASLServerInitialChallenge(const CString& sMechanism,
                                                CString& sResponse) override;
     EModRet OnClientSASLAuthenticate(const CString& sMechanism,
-                                     const CString& sBuffer, CString& sUser,
-                                     CString& sMechanismResponse,
-                                     bool& bAuthenticationSuccess) override;
+                                     const CString& sMessage) override;
     virtual EModRet OnModuleLoading(const CString& sModName,
                                     const CString& sArgs,
                                     CModInfo::EModuleType eType, bool& bSuccess,

@@ -1203,8 +1203,7 @@ void CModule::InternalServerDependentCapsOnClientCapRequest(CClient* pClient,
 }
 
 CModule::EModRet CModule::OnClientSASLAuthenticate(
-    const CString& sMechanism, const CString& sBuffer, CString& sUser,
-    CString& sMechanismResponse, bool& bAuthenticationSuccess) {
+    const CString& sMechanism, const CString& sBuffer) {
     return CONTINUE;
 }
 
@@ -1214,6 +1213,8 @@ CModule::EModRet CModule::OnClientSASLServerInitialChallenge(
 }
 
 void CModule::OnClientGetSASLMechanisms(SCString& ssMechanisms) {}
+
+void CModule::OnClientSASLAborted() {}
 
 CModule::EModRet CModule::OnModuleLoading(const CString& sModName,
                                           const CString& sArgs,
@@ -1761,12 +1762,8 @@ bool CModules::OnClientCapRequest(CClient* pClient, const CString& sCap,
 }
 
 bool CModules::OnClientSASLAuthenticate(const CString& sMechanism,
-                                        const CString& sBuffer,
-                                        CString& sUser,
-                                        CString& sResponse,
-                                        bool& bAuthenticationSuccess) {
-    MODHALTCHK(OnClientSASLAuthenticate(sMechanism, sBuffer, sUser,
-                                        sResponse, bAuthenticationSuccess));
+                                        const CString& sBuffer) {
+    MODHALTCHK(OnClientSASLAuthenticate(sMechanism, sBuffer));
 }
 
 bool CModules::OnClientSASLServerInitialChallenge(const CString& sMechanism,
@@ -1776,6 +1773,11 @@ bool CModules::OnClientSASLServerInitialChallenge(const CString& sMechanism,
 
 bool CModules::OnClientGetSASLMechanisms(SCString& ssMechanisms) {
     MODUNLOADCHK(OnClientGetSASLMechanisms(ssMechanisms));
+    return false;
+}
+
+bool CModules::OnClientSASLAborted() {
+    MODUNLOADCHK(OnClientSASLAborted());
     return false;
 }
 
@@ -2064,6 +2066,7 @@ void CModules::GetDefaultMods(set<CModInfo>& ssMods,
         {"chansaver", CModInfo::UserModule},
         {"controlpanel", CModInfo::UserModule},
         {"corecaps", CModInfo::GlobalModule},
+        {"saslplain", CModInfo::GlobalModule},
         {"simple_away", CModInfo::NetworkModule},
         {"webadmin", CModInfo::GlobalModule}};
 

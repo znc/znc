@@ -1363,40 +1363,39 @@ class CModule {
      */
     virtual void OnClientCapRequest(CClient* pClient, const CString& sCap,
                                     bool bState);
+
     /** Called when a client requests SASL authentication. Use ssMechanisms.insert("MECHANISM")
      *  for announcing SASL mechanisms which your module supports.
      *  @param ssMechanisms The set of supported SASL mechanisms to append to.
      */
     virtual void OnClientGetSASLMechanisms(SCString& ssMechanisms);
     /** Called when a client has selected a SASL mechanism for SASL authentication.
-     *  If implementing a SASL authentication mechanism, set sResponse to specify an initial challenge
-     *  message to send to the client. Otherwise, an empty response will be sent.
+     *  If implementing a SASL authentication mechanism, set sResponse to
+     * specify an initial challenge message to send to the client. Otherwise, an
+     * empty response will be sent. To avoid sending any immediate response,
+     * return HALT; in that case the module should schedule calling
+     * GetClient()->SendSASLChallenge() with the initial response: in IRC SASL,
+     * server always responds first.
      * @param sMechanism The SASL mechanism selected by the client.
-     * @param sResponse The optional value of an initial SASL challenge message to send to the client.
+     * @param sResponse The optional value of an initial SASL challenge message
+     * to send to the client.
      */
     virtual EModRet OnClientSASLServerInitialChallenge(
         const CString& sMechanism, CString& sResponse);
     /** Called when a client is sending us a SASL message after the mechanism was selected.
      *  If implementing a SASL authentication mechanism, check the passed
      * credentials, then either request more data by sending a challenge in
-     * sMechanismResponse, reject authentication by setting
-     * bAuthenticationSuccess to false, or accept authentication by setting
-     * bAuthenticationSuccess to true and setting sUser to the authenticated
-     * user name.
+     * GetClient()->SendSASLChallenge(), or reject authentication by calling
+     * GetClient()->RefuseSASLLogin(), or accept it by calling
+     * GetClient()->AcceptSASLLogin().
      * @param sMechanism The SASL mechanism selected by the client.
-     * @param sBuffer The SASL opaque value/credentials sent by the client.
-     * @param sUser The optional name of the authenticated user to log in the
-     * user as, if authentication is accepted.
-     * @param sMechanismResponse The optional value of a SASL challenge message
-     * to reply to the client to ask for more data.
-     * @param bAuthenticationSuccess If sMechanismResponse is not set, whether
-     * to accept or reject the authentication request.
+     * @param sMessage The SASL opaque value/credentials sent by the client,
+     * after debase64ing and concatenating if it was split.
      */
     virtual EModRet OnClientSASLAuthenticate(const CString& sMechanism,
-                                             const CString& sBuffer,
-                                             CString& sUser,
-                                             CString& sMechanismResponse,
-                                             bool& bAuthenticationSuccess);
+                                             const CString& sMessage);
+    /** Called when a client sent '*' to abort SASL, or aborted it for another reason. */
+    virtual void OnClientSASLAborted();
 
     /** Called when a module is going to be loaded.
      *  @param sModName name of the module.
@@ -1699,13 +1698,13 @@ class CModules : public std::vector<CModule*>, private CCoreTranslationMixin {
     bool IsClientCapSupported(CClient* pClient, const CString& sCap,
                               bool bState);
     bool OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState);
+
     bool OnClientGetSASLMechanisms(SCString& ssMechanisms);
+    bool OnClientSASLAborted();
     bool OnClientSASLServerInitialChallenge(const CString& sMechanism,
                                             CString& sResponse);
     bool OnClientSASLAuthenticate(const CString& sMechanism,
-                                  const CString& sBuffer, CString& sUser,
-                                  CString& sResponse,
-                                  bool& bAuthenticationSuccess);
+                                  const CString& sBuffer);
 
     bool OnModuleLoading(const CString& sModName, const CString& sArgs,
                          CModInfo::EModuleType eType, bool& bSuccess,

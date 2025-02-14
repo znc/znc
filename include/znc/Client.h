@@ -41,6 +41,12 @@ class CAuthBase : private CCoreTranslationMixin {
               CZNCSock* pSock)
         : m_sUsername(sUsername), m_sPassword(sPassword), m_pSock(pSock) {}
 
+    // If a module tries to do std::make_shared, the vtable of the mutex inside
+    // shared_ptr will point to the code in the module, and will crash when the
+    // module is unloaded, e.g. shutdown. This function forces the creation of
+    // shared_ptr in the 'znc' binary instead of in the module.
+    static std::shared_ptr<CAuthBase> WrapPointer(CAuthBase*);
+
     virtual ~CAuthBase() {}
 
     CAuthBase(const CAuthBase&) = delete;
@@ -95,6 +101,17 @@ class CClientAuth : public CAuthBase {
   protected:
     CClient* m_pClient;
 };
+
+// Workaround SWIG bug, TODO report it
+#ifndef SWIG
+/** Username+password auth, which reports success/failure to client via SASL. */ 
+class CClientSASLAuth : public CClientAuth {
+  public:
+    using CClientAuth::CClientAuth;
+    void AcceptedLogin(CUser& User) override;
+    void RefusedLogin(const CString& sReason) override;
+};
+#endif
 
 class CClient : public CIRCSocket {
   public:
@@ -250,6 +267,16 @@ class CClient : public CIRCSocket {
     CIRCSock* GetIRCSock();
     CString GetFullName() const;
 
+    /** Sends AUTHENTIATE message to client.
+     * It encodes it to Base64 and splits to multiple IRC messages if necessary.
+     */
+    void SendSASLChallenge(CString sMessage);
+    void RefuseSASLLogin(const CString& sReason);
+    void AcceptSASLLogin(CUser& User);
+    // Like CZNC::AuthUser() but also stores the pointer, and calls Invalidate()
+    // if the client is destroyed.
+    void StartPasswordCheck(std::shared_ptr<CAuthBase> spAuth);
+
   private:
     void HandleCap(const CMessage& Message);
     void RespondCap(const CString& sResponse);
@@ -266,14 +293,14 @@ class CClient : public CIRCSocket {
     unsigned int DetachChans(const std::set<CChan*>& sChans);
 
     bool OnActionMessage(CActionMessage& Message);
-    void OnAuthenticateMessage(CAuthenticateMessage& Message);
+    void OnAuthenticateMessage(const CAuthenticateMessage& Message);
+    void AbortSASL(const CString& sFullIRCLine);
+    bool IsDuringSASL() const { return !m_sSASLMechanism.empty(); }
 
     /**
-     * Fills all available SASL mechanisms in the passed set, and returns a comma-joined string of those mechanisms.
-     * @param ssMechanisms Set of supported mechanisms, filled by this method.
-     * @return A comma-joined string of supported mechanisms.
+     * Returns set of all available SASL mechanisms.
      */
-    CString EnumerateSASLMechanisms(SCString& ssMechanisms);
+    SCString EnumerateSASLMechanisms() const;
 
     bool OnCTCPMessage(CCTCPMessage& Message);
     bool OnJoinMessage(CJoinMessage& Message);
@@ -305,8 +332,7 @@ class CClient : public CIRCSocket {
     bool m_bBatch;
     bool m_bEchoMessage;
     bool m_bSelfMessage;
-    bool m_bSASL;
-    bool m_bSASLAuthenticating;
+    bool m_bSASLCap;
     bool m_bPlaybackActive;
     CUser* m_pUser;
     CIRCNetwork* m_pNetwork;
@@ -316,11 +342,15 @@ class CClient : public CIRCSocket {
     CString m_sNetwork;
     CString m_sIdentifier;
     CString m_sSASLBuffer;
+    // Set while the exchange is in progress
     CString m_sSASLMechanism;
+    // Username who successfully logged in using SASL. This is not a CUser*
+    // because between the 903 and CAP END the user could have been deleted.
     CString m_sSASLUser;
     std::shared_ptr<CAuthBase> m_spAuth;
     SCString m_ssAcceptedCaps;
     SCString m_ssSupportedTags;
+    SCString m_ssPreviouslyFailedSASLMechanisms;
     // The capabilities supported by the ZNC core - capability names mapped to
     // change handler. Note: this lists caps which don't require support on IRC
     // server.

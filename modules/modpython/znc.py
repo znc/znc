@@ -484,7 +484,7 @@ class Module:
     def OnClientSASLServerInitialChallenge(self, sMechanism, sResponse):
         pass
 
-    def OnClientSASLAuthenticate(self, sMechanism, sBuffer, sUser, sResponse, bAuthenticationSuccess):
+    def OnClientSASLAuthenticate(self, sMechanism, sMessage):
         pass
 
     def OnModuleLoading(self, sModName, sArgs, eType, bSuccess, sRetMsg):
