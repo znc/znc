@@ -56,6 +56,10 @@
 #include <argon2.h>
 #endif
 
+#ifdef HAVE_UNAME
+#include <sys/utsname.h>
+#endif
+
 // Required with GCC 4.3+ if openssl is disabled
 #include <cstring>
 #include <cstdlib>
@@ -184,6 +188,15 @@ bool CUtils::GetHostName(CString &sRet) {
         sRet = pEnv;
         return true;
     }
+
+#ifdef HAVE_UNAME
+    struct utsname UnameBuffer;
+
+    if (uname(&UnameBuffer) == 0 && UnameBuffer.nodename[0] != '\0') {
+        sRet = UnameBuffer.nodename;
+        return true;
+    }
+#endif
 
     CUtils::PrintStatus(false, "Unable to determine hostname");
     return false;
