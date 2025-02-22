@@ -2066,7 +2066,7 @@ void CModules::GetDefaultMods(set<CModInfo>& ssMods,
         {"chansaver", CModInfo::UserModule},
         {"controlpanel", CModInfo::UserModule},
         {"corecaps", CModInfo::GlobalModule},
-        {"saslplain", CModInfo::GlobalModule},
+        {"saslplainauth", CModInfo::GlobalModule},
         {"simple_away", CModInfo::NetworkModule},
         {"webadmin", CModInfo::GlobalModule}};
 
