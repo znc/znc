@@ -82,27 +82,30 @@ constexpr const char* szDefaultDH2048 =
     "cvUyzAEcCQYHmiYjp2hoZbSa8b690TQaAwIBAg==\n"
     "-----END DH PARAMETERS-----\n";
 
-void CUtils::GenerateCert(FILE* pOut, const CString& sHost) {
+bool CUtils::GenerateCert(FILE* pOut) {
     const int days = 365;
     const int years = 10;
+
+    CString sHostName;
+    if (!CUtils::GetHostName(sHostName)) return false;
 
     unsigned int uSeed = (unsigned int)time(nullptr);
     int serial = (rand_r(&uSeed) % 9999);
 
     std::unique_ptr<BIGNUM, void (*)(BIGNUM*)> pExponent(BN_new(), ::BN_free);
-    if (!pExponent || !BN_set_word(pExponent.get(), 0x10001)) return;
+    if (!pExponent || !BN_set_word(pExponent.get(), 0x10001)) return false;
 
     std::unique_ptr<RSA, void (*)(RSA*)> pRSA(RSA_new(), ::RSA_free);
     if (!pRSA ||
         !RSA_generate_key_ex(pRSA.get(), 2048, pExponent.get(), nullptr))
-        return;
+        return false;
 
     std::unique_ptr<EVP_PKEY, void (*)(EVP_PKEY*)> pKey(EVP_PKEY_new(),
                                                         ::EVP_PKEY_free);
-    if (!pKey || !EVP_PKEY_set1_RSA(pKey.get(), pRSA.get())) return;
+    if (!pKey || !EVP_PKEY_set1_RSA(pKey.get(), pRSA.get())) return false;
 
     std::unique_ptr<X509, void (*)(X509*)> pCert(X509_new(), ::X509_free);
-    if (!pCert) return;
+    if (!pCert) return false;
 
     X509_set_version(pCert.get(), 2);
     ASN1_INTEGER_set(X509_get_serialNumber(pCert.get()), serial);
@@ -112,37 +115,30 @@ void CUtils::GenerateCert(FILE* pOut, const CString& sHost) {
     X509_set_pubkey(pCert.get(), pKey.get());
 
     const char* pLogName = getenv("LOGNAME");
-    const char* pHostName = nullptr;
-
     if (!pLogName) pLogName = "Unknown";
-
-    if (!sHost.empty()) pHostName = sHost.c_str();
-
-    if (!pHostName) pHostName = getenv("HOSTNAME");
-
-    if (!pHostName) pHostName = "host.unknown";
 
     CString sEmailAddr = pLogName;
     sEmailAddr += "@";
-    sEmailAddr += pHostName;
+    sEmailAddr += sHostName;
 
     X509_NAME* pName = X509_get_subject_name(pCert.get());
     X509_NAME_add_entry_by_txt(pName, "OU", MBSTRING_ASC,
                                (unsigned char*)pLogName, -1, -1, 0);
     X509_NAME_add_entry_by_txt(pName, "CN", MBSTRING_ASC,
-                               (unsigned char*)pHostName, -1, -1, 0);
+                               (unsigned char*)sHostName.c_str(), -1, -1, 0);
     X509_NAME_add_entry_by_txt(pName, "emailAddress", MBSTRING_ASC,
                                (unsigned char*)sEmailAddr.c_str(), -1, -1, 0);
 
     X509_set_issuer_name(pCert.get(), pName);
 
-    if (!X509_sign(pCert.get(), pKey.get(), EVP_sha256())) return;
+    if (!X509_sign(pCert.get(), pKey.get(), EVP_sha256())) return false;
 
     PEM_write_RSAPrivateKey(pOut, pRSA.get(), nullptr, nullptr, 0, nullptr,
                             nullptr);
     PEM_write_X509(pOut, pCert.get());
 
     fprintf(pOut, "%s", szDefaultDH2048);
+    return true;
 }
 #endif /* HAVE_LIBSSL */
 
@@ -178,6 +174,19 @@ unsigned long CUtils::GetLongIP(const CString& sIP) {
     ret += atol(ip[3]) << 0;
 
     return ret;
+}
+
+bool CUtils::GetHostName(CString &sRet) {
+    const char *pEnv;
+
+    pEnv = getenv("HOSTNAME");
+    if (pEnv != NULL && pEnv[0] != '\0') {
+        sRet = pEnv;
+        return true;
+    }
+
+    CUtils::PrintStatus(false, "Unable to determine hostname");
+    return false;
 }
 
 #ifdef ZNC_HAVE_ARGON

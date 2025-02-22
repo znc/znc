@@ -316,11 +316,11 @@ bool CZNC::WritePemFile() {
         return false;
     }
 
-    CUtils::GenerateCert(f, "");
+    bool bRet = CUtils::GenerateCert(f);
     fclose(f);
 
-    CUtils::PrintStatus(true);
-    return true;
+    CUtils::PrintStatus(bRet);
+    return bRet;
 #endif
 }
 
