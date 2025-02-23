@@ -49,7 +49,7 @@ class CSASLMechanismPlain : public CModule {
 
 template <>
 void TModInfo<CSASLMechanismPlain>(CModInfo& Info) {
-    Info.SetWikiPage("saslplain");
+    Info.SetWikiPage("saslplainauth");
 }
 
 GLOBALMODULEDEFS(
