@@ -42,8 +42,7 @@ class CSASLMechanismPlain : public CModule {
             return HALTMODS;
         }
 
-        auto spAuth = CAuthBase::WrapPointer(new CClientSASLAuth(GetClient(), sAuthcId, sPassword));
-        GetClient()->StartPasswordCheck(spAuth);
+        GetClient()->StartSASLPasswordCheck(sAuthcId, sPassword);
         return HALTMODS;
     }
 };

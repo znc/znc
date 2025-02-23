@@ -366,8 +366,8 @@ void CClient::AuthUser() {
         return;
 
     if (m_sSASLUser.empty()) {
-        StartPasswordCheck(
-            std::make_shared<CClientAuth>(this, m_sUser, m_sPass));
+        m_spAuth = std::make_shared<CClientAuth>(this, m_sUser, m_sPass);
+        CZNC::Get().AuthUser(m_spAuth);
     } else {
         // Already logged in, but the user could have been deleted meanwhile.
         CUser* pUser = CZNC::Get().FindUser(m_sSASLUser);
@@ -379,8 +379,16 @@ void CClient::AuthUser() {
     }
 }
 
-void CClient::StartPasswordCheck(std::shared_ptr<CAuthBase> spAuth) {
-    m_spAuth = spAuth;
+/** Username+password auth, which reports success/failure to client via SASL. */ 
+class CClientSASLAuth : public CClientAuth {
+  public:
+    using CClientAuth::CClientAuth;
+    void AcceptedLogin(CUser& User) override;
+    void RefusedLogin(const CString& sReason) override;
+};
+
+void CClient::StartSASLPasswordCheck(const CString& sUser, const CString& sPassword) {
+    m_spAuth = std::make_shared<CClientSASLAuth>(this, sUser, sPassword);
 
     CZNC::Get().AuthUser(m_spAuth);
 }
@@ -413,10 +421,6 @@ void CAuthBase::AcceptLogin(CUser& User) {
         AcceptedLogin(User);
     }
     Invalidate();
-}
-
-std::shared_ptr<CAuthBase> CAuthBase::WrapPointer(CAuthBase* p) {
-    return std::shared_ptr<CAuthBase>(p);
 }
 
 void CAuthBase::RefuseLogin(const CString& sReason) {

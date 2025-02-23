@@ -41,12 +41,6 @@ class CAuthBase : private CCoreTranslationMixin {
               CZNCSock* pSock)
         : m_sUsername(sUsername), m_sPassword(sPassword), m_pSock(pSock) {}
 
-    // If a module tries to do std::make_shared, the vtable of the mutex inside
-    // shared_ptr will point to the code in the module, and will crash when the
-    // module is unloaded, e.g. shutdown. This function forces the creation of
-    // shared_ptr in the 'znc' binary instead of in the module.
-    static std::shared_ptr<CAuthBase> WrapPointer(CAuthBase*);
-
     virtual ~CAuthBase() {}
 
     CAuthBase(const CAuthBase&) = delete;
@@ -101,17 +95,6 @@ class CClientAuth : public CAuthBase {
   protected:
     CClient* m_pClient;
 };
-
-// Workaround SWIG bug, TODO report it
-#ifndef SWIG
-/** Username+password auth, which reports success/failure to client via SASL. */ 
-class CClientSASLAuth : public CClientAuth {
-  public:
-    using CClientAuth::CClientAuth;
-    void AcceptedLogin(CUser& User) override;
-    void RefusedLogin(const CString& sReason) override;
-};
-#endif
 
 class CClient : public CIRCSocket {
   public:
@@ -273,9 +256,10 @@ class CClient : public CIRCSocket {
     void SendSASLChallenge(CString sMessage);
     void RefuseSASLLogin(const CString& sReason);
     void AcceptSASLLogin(CUser& User);
-    // Like CZNC::AuthUser() but also stores the pointer, and calls Invalidate()
-    // if the client is destroyed.
-    void StartPasswordCheck(std::shared_ptr<CAuthBase> spAuth);
+    /** Start potentially asynchronous process of checking the credentials.
+     * When finished, will send the success/failure SASL numerics to the
+     * client. This is mostly useful for SASL PLAIN. */
+    void StartSASLPasswordCheck(const CString& sUser, const CString& sPassword);
 
   private:
     void HandleCap(const CMessage& Message);
