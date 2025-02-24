@@ -53,15 +53,18 @@ class CSSLClientCertMod : public CModule {
 
         for (MCString::const_iterator it = BeginNV(); it != EndNV(); ++it) {
             VCString vsKeys;
+            const CString& sUser = it->first;
 
-            if (CZNC::Get().FindUser(it->first) == nullptr) {
-                DEBUG("Unknown user in saved data [" + it->first + "]");
+            if (CZNC::Get().FindUser(sUser) == nullptr) {
+                DEBUG("Unknown user in saved data [" + sUser + "]");
                 continue;
             }
 
             it->second.Split(" ", vsKeys, false);
-            for (const CString& sKey : vsKeys) {
-                m_PubKeys[it->first].insert(sKey.AsLower());
+            for (CString& sKey : vsKeys) {
+                sKey.MakeLower();
+                m_PubKeys[sUser].insert(sKey);
+                m_KeyToUser[sKey].insert(sUser);
             }
         }
 
@@ -90,12 +93,14 @@ class CSSLClientCertMod : public CModule {
         return SaveRegistry();
     }
 
-    bool AddKey(CUser* pUser, const CString& sKey) {
+    bool AddKey(CUser* pUser, CString sKey) {
+        sKey.MakeLower();
         const pair<SCString::const_iterator, bool> pair =
-            m_PubKeys[pUser->GetUsername()].insert(sKey.AsLower());
+            m_PubKeys[pUser->GetUsername()].insert(sKey);
 
         if (pair.second) {
             Save();
+            m_KeyToUser[sKey].insert(pUser->GetUsername());
         }
 
         return pair.second;
@@ -118,7 +123,7 @@ class CSSLClientCertMod : public CModule {
 
         MSCString::const_iterator it = m_PubKeys.find(sUser);
         if (it == m_PubKeys.end()) {
-            DEBUG("No saved pubkeys for this client");
+            DEBUG("No saved pubkeys for this user");
             return CONTINUE;
         }
 
@@ -132,6 +137,56 @@ class CSSLClientCertMod : public CModule {
         DEBUG("Accepted pubkey auth");
         Auth->AcceptLogin(*pUser);
 
+        return HALT;
+    }
+
+    void OnClientGetSASLMechanisms(SCString& ssMechanisms) override {
+        ssMechanisms.insert("EXTERNAL");
+    }
+
+    EModRet OnClientSASLAuthenticate(const CString& sMechanism,
+                                     const CString& sMessage) override {
+        if (sMechanism != "EXTERNAL") {
+            return CONTINUE;
+        }
+        CString sUser = GetClient()->ParseUser(sMessage);
+        const CString sKey = GetKey(GetClient());
+        DEBUG("Key: " << sKey);
+
+        if (sKey.empty()) {
+            GetClient()->RefuseSASLLogin("No client cert presented");
+            return HALT;
+        }
+
+        auto it = m_KeyToUser.find(sKey);
+        if (it == m_KeyToUser.end()) {
+            GetClient()->RefuseSASLLogin("Client cert not recognized");
+            return HALT;
+        }
+
+        const SCString& ssUsers = it->second;
+
+        if (ssUsers.empty()) {
+            GetClient()->RefuseSASLLogin("Key found, but list of users is empty, please report bug");
+            return HALT;
+        }
+
+        if (sUser.empty()) {
+            sUser = *ssUsers.begin();
+        } else if (ssUsers.count(sUser) == 0) {
+            GetClient()->RefuseSASLLogin(
+                "The specified user doesn't have this key");
+            return HALT;
+        }
+
+        CUser* pUser = CZNC::Get().FindUser(sUser);
+        if (!pUser) {
+            GetClient()->RefuseSASLLogin("User not found");
+            return HALT;
+        }
+
+        DEBUG("Accepted cert auth for " << sUser);
+        GetClient()->AcceptSASLLogin(*pUser);
         return HALT;
     }
 
@@ -211,8 +266,16 @@ class CSSLClientCertMod : public CModule {
             id--;
         }
 
+        CString sKey = *it2;
         it->second.erase(it2);
         if (it->second.size() == 0) m_PubKeys.erase(it);
+
+        it = m_KeyToUser.find(sKey);
+        if (it != m_KeyToUser.end()) {
+            it->second.erase(GetUser()->GetUsername());
+            if (it->second.empty()) m_KeyToUser.erase(it);
+        }
+
         PutModule(t_s("Removed"));
 
         Save();
@@ -259,9 +322,16 @@ class CSSLClientCertMod : public CModule {
         } else if (sPageName == "delete") {
             MSCString::iterator it = m_PubKeys.find(pUser->GetUsername());
             if (it != m_PubKeys.end()) {
-                if (it->second.erase(WebSock.GetParam("key", false))) {
+                CString sKey = WebSock.GetParam("key", false);
+                if (it->second.erase(sKey)) {
                     if (it->second.size() == 0) {
                         m_PubKeys.erase(it);
+                    }
+
+                    it = m_KeyToUser.find(sKey);
+                    if (it != m_KeyToUser.end()) {
+                        it->second.erase(pUser->GetUsername());
+                        if (it->second.empty()) m_KeyToUser.erase(it);
                     }
 
                     Save();
@@ -279,6 +349,7 @@ class CSSLClientCertMod : public CModule {
     // Maps user names to a list of allowed pubkeys
     typedef map<CString, set<CString>> MSCString;
     MSCString m_PubKeys;
+    MSCString m_KeyToUser;
 };
 
 template <>

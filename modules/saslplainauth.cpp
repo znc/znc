@@ -19,7 +19,7 @@
 
 class CSASLMechanismPlain : public CModule {
   public:
-    MODCONSTRUCTOR(CSASLMechanismPlain) { AddHelpCommand(); }
+    MODCONSTRUCTOR(CSASLMechanismPlain) {}
 
     void OnClientGetSASLMechanisms(SCString& ssMechanisms) override {
         ssMechanisms.insert("PLAIN");
@@ -27,7 +27,7 @@ class CSASLMechanismPlain : public CModule {
 
     EModRet OnClientSASLAuthenticate(const CString& sMechanism,
                                      const CString& sMessage) override {
-        if (!sMechanism.Equals("PLAIN")) {
+        if (sMechanism != "PLAIN") {
             return CONTINUE;
         }
 

@@ -19,6 +19,8 @@
 
 #include "znctest.h"
 
+#include <QSslSocket>
+
 using testing::HasSubstr;
 using testing::Not;
 
@@ -360,6 +362,84 @@ TEST_F(ZNCTest, SaslAuthPlain) {
     client.ReadUntil("AUTHENTICATE +");
     client.Write("AUTHENTICATE AHVzZXIAaHVudGVyMg=="); // \0user\0hunter2
     client.ReadUntil(":irc.znc.in 903 foo :SASL authentication successful");
+}
+
+TEST_F(ZNCTest, SaslAuthExternal) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    ircd.Write(":server 001 nick :Hello");
+    auto client = LoginClient();
+    client.Write("znc addport +12346 all all");
+    client.ReadUntil(":Port added");
+    client.Write("znc loadmod certauth");
+    client.ReadUntil("Loaded");
+    client.Close();
+
+    QSslSocket sock;
+    // Could generate a new one for the test, but this one is good enough
+    sock.setLocalCertificate(m_dir.path() + "/znc.pem");
+    sock.setPrivateKey(m_dir.path() + "/znc.pem");
+    sock.setPeerVerifyMode(QSslSocket::VerifyNone);
+    sock.connectToHostEncrypted("127.0.0.1", 12346);
+    ASSERT_TRUE(sock.waitForConnected()) << sock.errorString().toStdString();
+    ASSERT_TRUE(sock.waitForEncrypted()) << sock.errorString().toStdString();
+    auto client2 = WrapIO(&sock);
+    client2.Write("PASS :hunter2");
+    client2.Write("NICK nick");
+    client2.Write("USER user/test x x :x");
+    client2.Write("privmsg *certauth add");
+    client2.ReadUntil("added");
+
+    auto Reconnect = [&] {
+        client2.Close();
+        ASSERT_TRUE(sock.state() == QAbstractSocket::UnconnectedState || sock.waitForDisconnected())
+            << sock.errorString().toStdString();
+        sock.connectToHostEncrypted("127.0.0.1", 12346);
+        ASSERT_TRUE(sock.waitForConnected())
+            << sock.errorString().toStdString();
+        ASSERT_TRUE(sock.waitForEncrypted())
+            << sock.errorString().toStdString();
+        client2.Write("CAP REQ sasl");
+        client2.Write("NICK nick");
+        client2.Write("USER u x x :x");
+        client2.ReadUntil("ACK :sasl");
+        client2.Write("AUTHENTICATE EXTERNAL");
+        client2.ReadUntil("AUTHENTICATE +");
+    };
+
+    Reconnect();
+    ircd.Write(":friend PRIVMSG nick :hello");
+    client2.Write("AUTHENTICATE +");
+    client2.ReadUntil(
+        ":irc.znc.in 900 nick nick!user@127.0.0.1 user :You are now logged in "
+        "as user");
+    client2.ReadUntil(":irc.znc.in 903 nick :SASL authentication successful");
+    client2.Write("CAP END");
+    // '[' comes from lack of server-time
+    client2.ReadUntil(":friend PRIVMSG nick :[");
+
+    Reconnect();
+    client2.Write("AUTHENTICATE " + QString("user/te").toUtf8().toBase64());
+    client2.ReadUntil(
+        ":irc.znc.in 900 nick nick!user@127.0.0.1 user :You are now logged in "
+        "as user");
+    client2.ReadUntil(":irc.znc.in 903 nick :SASL authentication successful");
+    client2.Write("CAP END");
+    client2.ReadUntil(
+        ":*status!status@znc.in PRIVMSG nick :Network te doesn't exist.");
+
+    Reconnect();
+    client2.Write("AUTHENTICATE " + QString("moo").toUtf8().toBase64());
+    client2.ReadUntil(
+        ":irc.znc.in 904 nick :The specified user doesn't have this key");
+
+    client = LoginClient();
+    client.Write("privmsg *certauth :del 1");
+    client.ReadUntil("Removed");
+    Reconnect();
+    client2.Write("AUTHENTICATE +");
+    client2.ReadUntil(
+        ":irc.znc.in 904 nick :Client cert not recognized");
 }
 
 }  // namespace
