@@ -1388,6 +1388,9 @@ class CModule {
      * GetClient()->SendSASLChallenge(), or reject authentication by calling
      * GetClient()->RefuseSASLLogin(), or accept it by calling
      * GetClient()->AcceptSASLLogin().
+     * At some point before accepting the login, you should call
+     * GetClient()->ParseUser(authz-id) to let it know the network name to
+     * attach to and the client id.
      * @param sMechanism The SASL mechanism selected by the client.
      * @param sMessage The SASL opaque value/credentials sent by the client,
      * after debase64ing and concatenating if it was split.

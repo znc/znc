@@ -258,14 +258,25 @@ class CClient : public CIRCSocket {
     void AcceptSASLLogin(CUser& User);
     /** Start potentially asynchronous process of checking the credentials.
      * When finished, will send the success/failure SASL numerics to the
-     * client. This is mostly useful for SASL PLAIN. */
-    void StartSASLPasswordCheck(const CString& sUser, const CString& sPassword);
+     * client. This is mostly useful for SASL PLAIN.
+     * sAuthorizationId is internally passed through ParseUser() to extract
+     * network and client id.
+     * Currently sUser should match the username from
+     * sAuthorizationId: either in full, or just the username part; but in a
+     * future version we may add an ability to actually login as a different
+     * user, but with your password.
+     */
+    void StartSASLPasswordCheck(const CString& sUser, const CString& sPassword,
+                                const CString& sAuthorizationId);
+    /** Gathers username, client id, network name, if present. Returns username
+     * cleaned from client id and network name.
+     */
+    CString ParseUser(const CString& sAuthLine);
 
   private:
     void HandleCap(const CMessage& Message);
     void RespondCap(const CString& sResponse);
     void ParsePass(const CString& sAuthLine);
-    void ParseUser(const CString& sAuthLine);
     void ParseIdentifier(const CString& sAuthLine);
 
     template <typename T>
@@ -322,6 +333,7 @@ class CClient : public CIRCSocket {
     CIRCNetwork* m_pNetwork;
     CString m_sNick;
     CString m_sPass;
+    // User who didn't necessarily login yet, or might not even exist.
     CString m_sUser;
     CString m_sNetwork;
     CString m_sIdentifier;

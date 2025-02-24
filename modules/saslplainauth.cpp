@@ -36,13 +36,11 @@ class CSASLMechanismPlain : public CModule {
         CString sAuthcId = sMessage.Token(1, false, sNullSeparator, true);
         CString sPassword = sMessage.Token(2, false, sNullSeparator, true);
 
-        if (!sAuthzId.empty() && sAuthzId != sAuthcId) {
-            // Reject custom SASL plain authorization identifiers
-            GetClient()->RefuseSASLLogin("No support for custom AuthzId");
-            return HALTMODS;
+        if (sAuthzId.empty()) {
+            sAuthzId = sAuthcId;
         }
 
-        GetClient()->StartSASLPasswordCheck(sAuthcId, sPassword);
+        GetClient()->StartSASLPasswordCheck(sAuthcId, sPassword, sAuthzId);
         return HALTMODS;
     }
 };

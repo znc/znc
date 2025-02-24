@@ -387,8 +387,14 @@ class CClientSASLAuth : public CClientAuth {
     void RefusedLogin(const CString& sReason) override;
 };
 
-void CClient::StartSASLPasswordCheck(const CString& sUser, const CString& sPassword) {
-    m_spAuth = std::make_shared<CClientSASLAuth>(this, sUser, sPassword);
+void CClient::StartSASLPasswordCheck(const CString& sUser,
+                                     const CString& sPassword, const CString& sAuthorizationId) {
+    ParseUser(sAuthorizationId);
+    if (sUser != m_sUser && sUser != sAuthorizationId) {
+        RefuseSASLLogin("No support for custom AuthzId");
+    }
+
+    m_spAuth = std::make_shared<CClientSASLAuth>(this, m_sUser, sPassword);
 
     CZNC::Get().AuthUser(m_spAuth);
 }
@@ -973,7 +979,7 @@ void CClient::ParsePass(const CString& sAuthLine) {
     }
 }
 
-void CClient::ParseUser(const CString& sAuthLine) {
+CString CClient::ParseUser(const CString& sAuthLine) {
     // user[@identifier][/network]
 
     const size_t uSlash = sAuthLine.rfind("/");
@@ -984,6 +990,8 @@ void CClient::ParseUser(const CString& sAuthLine) {
     } else {
         ParseIdentifier(sAuthLine);
     }
+
+    return m_sUser;
 }
 
 void CClient::ParseIdentifier(const CString& sAuthLine) {
