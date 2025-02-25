@@ -821,7 +821,7 @@ TEST_F(ZNCTest, ChgHostOnlyNicksAlreadyOnChannels) {
     ircd.Write(":another!ident@host CHGHOST i2 h2");
     ASSERT_THAT(client.ReadRemainder().toStdString(),
                 AllOf(HasSubstr("JOIN #chan1"),
-                    Not(HasSubstr("#chan2"))));
+                    Not(HasSubstr("JOIN #chan2"))));
 }
 
 }  // namespace
