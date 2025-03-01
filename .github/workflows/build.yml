@@ -121,6 +121,9 @@ jobs:
           brew update
           brew install icu4c qt6 gettext pkg-config cpanminus boost argon2 swig
       - run: source .github/build.sh
+        env:
+          # https://github.com/znc/znc/issues/1937
+          GTEST_FILTER: "-*Modpython*"
       - uses: codecov/codecov-action@v4
 
   docker:
