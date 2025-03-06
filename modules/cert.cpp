@@ -41,7 +41,7 @@ class CCertMod : public CModule {
                 "You do not have a certificate. Please use the web interface "
                 "to add a certificate"));
             if (GetUser()->IsAdmin()) {
-                PutModule(t_f("Alternatively you can either place one at {1}")(
+                PutModule(t_f("Alternatively you can place one at {1}")(
                     PemFile()));
             }
         }
