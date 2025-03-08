@@ -22,7 +22,8 @@ timestamps {
         step([$class: 'WsCleanup'])
       }
       def tasks = [:]
-      def crowdin_cli = "java -jar ${tool 'crowdin-cli'}/crowdin-cli.jar --config .ci/crowdin.yml"
+      def crowdin_cli = "java -jar ${tool 'crowdin-cli'}/crowdin-cli.jar"
+      def crowdin_cli_suffix = "--config .ci/crowdin.yml"
       for (def branch in branches) {
         def upstream_branch = branch
         def my_branch = "l10n_${branch}"
@@ -43,9 +44,9 @@ timestamps {
               stage("Crowdin for ${upstream_branch}") {
                 withCredentials([string(credentialsId: '11c7e2b4-f990-4670-98a4-c89d2a5a2f43', variable: 'CROWDIN_API_KEY')]) {
                   withEnv(['CROWDIN_BASE_PATH='+pwd()]) {
-                    sh "$crowdin_cli upload sources --branch ${upstream_branch}"
-                    // sh "$crowdin_cli upload translations --branch ${upstream_branch}"
-                    sh "$crowdin_cli download --branch ${upstream_branch}"
+                    sh "$crowdin_cli upload sources --branch ${upstream_branch} ${crowdin_cli_suffix}"
+                    // sh "$crowdin_cli upload translations --branch ${upstream_branch} ${crowdin_cli_suffix}"
+                    sh "$crowdin_cli download --branch ${upstream_branch} ${crowdin_cli_suffix}"
                   }
                 }
                 sh 'LANG=C.UTF-8 find . -name "*.po" -exec msgfilter -i "{}" -o "{}.replacement" .ci/cleanup-po.pl ";"'
