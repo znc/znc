@@ -318,6 +318,8 @@ check_cxx_symbol_exists(lstat "sys/types.h;sys/stat.h;unistd.h" HAVE_LSTAT)
 check_cxx_symbol_exists(getpassphrase "stdlib.h" HAVE_GETPASSPHRASE)
 check_cxx_symbol_exists(tcsetattr "termios.h;unistd.h" HAVE_TCSETATTR)
 check_cxx_symbol_exists(clock_gettime "time.h" HAVE_CLOCK_GETTIME)
+check_cxx_symbol_exists(gethostname "unistd.h" ZNC_HAVE_GETHOSTNAME)
+check_cxx_symbol_exists(uname "sys/utsname.h" ZNC_HAVE_UNAME)
 
 # Note that old broken systems, such as OpenBSD, NetBSD, which don't support
 # AI_ADDRCONFIG, also have thread-unsafe getaddrinfo(). Gladly, they fixed
