@@ -278,6 +278,12 @@ class Module:
     def OnDeop(self, OpNick, Nick, Channel, bNoChange):
         pass
 
+    def OnHalfOp(self, OpNick, Nick, Channel, bNoChange):
+        pass
+
+    def OnDeHalfOp(self, OpNick, Nick, Channel, bNoChange):
+        pass
+
     def OnVoice(self, OpNick, Nick, Channel, bNoChange):
         pass
 
