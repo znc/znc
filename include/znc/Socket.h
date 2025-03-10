@@ -60,6 +60,10 @@ class CZNCSock : public Csock, protected CCoreTranslationMixin {
 
     virtual CString GetRemoteIP() const { return Csock::GetRemoteIP(); }
 
+    virtual long GetPeerFingerprint(CS_STRING& sResult) const {
+        return Csock::GetPeerFingerprint(sResult);
+    }
+
   protected:
     // All existing errno codes seem to be in range 1-300
     enum {
