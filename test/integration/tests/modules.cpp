@@ -348,7 +348,7 @@ TEST_F(ZNCTest, SaslRequire) {
     auto ircd2 = ConnectIRCd();
 }
 
-TEST_F(ZNCTest, SaslAuthPlain) {
+TEST_F(ZNCTest, SaslAuthPlainSimple) {
     auto znc = Run();
     auto ircd = ConnectIRCd();
     auto client = ConnectClient();
@@ -360,8 +360,140 @@ TEST_F(ZNCTest, SaslAuthPlain) {
     client.Write("USER bar");
     client.Write("AUTHENTICATE PLAIN");
     client.ReadUntil("AUTHENTICATE +");
-    client.Write("AUTHENTICATE AHVzZXIAaHVudGVyMg=="); // \0user\0hunter2
+    client.Write("AUTHENTICATE " + QByteArrayLiteral("\0user\0hunter2").toBase64());
     client.ReadUntil(":irc.znc.in 903 foo :SASL authentication successful");
+}
+
+TEST_F(ZNCTest, SaslAuthPlainCopyInZ) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = ConnectClient();
+    client.Write("NICK foo");
+    client.Write("CAP LS");
+    client.ReadUntil(" sasl ");
+    client.Write("CAP REQ :sasl");
+    client.ReadUntil(":irc.znc.in CAP foo ACK :sasl");
+    client.Write("USER bar");
+    client.Write("AUTHENTICATE PLAIN");
+    client.ReadUntil("AUTHENTICATE +");
+    client.Write("AUTHENTICATE " + QByteArrayLiteral("user@phone\0user@phone\0hunter2").toBase64());
+    client.ReadUntil(":irc.znc.in 903 foo :SASL authentication successful");
+    client.Write("CAP END");
+    client.Write("znc listclients");
+    client.ReadUntil("phone");
+}
+
+TEST_F(ZNCTest, SaslAuthPlainPartialInZ) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = ConnectClient();
+    client.Write("NICK foo");
+    client.Write("CAP LS");
+    client.ReadUntil(" sasl ");
+    client.Write("CAP REQ :sasl");
+    client.ReadUntil(":irc.znc.in CAP foo ACK :sasl");
+    client.Write("USER bar");
+    client.Write("AUTHENTICATE PLAIN");
+    client.ReadUntil("AUTHENTICATE +");
+    client.Write("AUTHENTICATE " + QByteArrayLiteral("user@phone\0user\0hunter2").toBase64());
+    client.ReadUntil(":irc.znc.in 903 foo :SASL authentication successful");
+    client.Write("CAP END");
+    client.Write("znc listclients");
+    client.ReadUntil("phone");
+}
+
+TEST_F(ZNCTest, SaslAuthPlainDifferentZ) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = ConnectClient();
+    client.Write("NICK foo");
+    client.Write("CAP LS");
+    client.ReadUntil(" sasl ");
+    client.Write("CAP REQ :sasl");
+    client.ReadUntil(":irc.znc.in CAP foo ACK :sasl");
+    client.Write("USER bar");
+    client.Write("AUTHENTICATE PLAIN");
+    client.ReadUntil("AUTHENTICATE +");
+    client.Write("AUTHENTICATE " + QByteArrayLiteral("user@phone\0user@tablet\0hunter2").toBase64());
+    client.ReadUntil(":irc.znc.in 904 foo :No support for custom AuthzId");
+}
+
+TEST_F(ZNCTest, SaslAuthPlainWrongPassword) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = ConnectClient();
+    client.Write("NICK foo");
+    client.Write("CAP LS");
+    client.ReadUntil(" sasl ");
+    client.Write("CAP REQ :sasl");
+    client.ReadUntil(":irc.znc.in CAP foo ACK :sasl");
+    client.Write("USER bar");
+    client.Write("AUTHENTICATE PLAIN");
+    client.ReadUntil("AUTHENTICATE +");
+    client.Write("AUTHENTICATE " + QByteArrayLiteral("\0user\0hunter3").toBase64());
+    client.ReadUntil(":irc.znc.in 904 foo :Invalid Password");
+
+    // Try again on the same connection
+    client.Write("AUTHENTICATE PLAIN");
+    client.ReadUntil(":irc.znc.in 904 foo :SASL authentication failed");
+}
+
+TEST_F(ZNCTest, SaslAuthPlainWrongUser) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = ConnectClient();
+    client.Write("NICK foo");
+    client.Write("CAP LS");
+    client.ReadUntil(" sasl ");
+    client.Write("CAP REQ :sasl");
+    client.ReadUntil(":irc.znc.in CAP foo ACK :sasl");
+    client.Write("USER bar");
+    client.Write("AUTHENTICATE PLAIN");
+    client.ReadUntil("AUTHENTICATE +");
+    client.Write("AUTHENTICATE " + QByteArrayLiteral("\0anotheruser\0hunter2").toBase64());
+    client.ReadUntil(":irc.znc.in 904 foo :Invalid Password");
+}
+
+TEST_F(ZNCTest, SaslAuthPlainImapAuth) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    QTcpServer imap;
+    ASSERT_TRUE(imap.listen(QHostAddress::LocalHost, 12346)) << imap.errorString().toStdString();
+    auto client = LoginClient();
+    client.Write("znc loadmod imapauth 127.0.0.1 12346 %@mail.test.com");
+    client.ReadUntil("Loaded");
+
+    auto client2 = ConnectClient();
+    client2.Write("NICK foo");
+    client2.Write("CAP REQ :sasl");
+    client2.Write("USER bar");
+    client2.Write("AUTHENTICATE PLAIN");
+    client2.Write("AUTHENTICATE " + QByteArrayLiteral("\0user@phone/net\0hunter3").toBase64());
+    client2.ReadUntil("ACK :sasl");
+
+    ASSERT_TRUE(imap.waitForNewConnection(30000 /* msec */));
+    auto imapsock = WrapIO(imap.nextPendingConnection());
+    imapsock.Write("* OK IMAP4rev1 Service Ready");
+    imapsock.ReadUntil("AUTH LOGIN user@mail.test.com hunter3");
+    imapsock.Write("AUTH OK");
+
+    client2.ReadUntil(":irc.znc.in 903 foo :SASL authentication successful");
+}
+
+TEST_F(ZNCTest, SaslAuthAbort) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = ConnectClient();
+    client.Write("NICK foo");
+    client.Write("CAP LS");
+    client.ReadUntil(" sasl ");
+    client.Write("CAP REQ :sasl");
+    client.ReadUntil(":irc.znc.in CAP foo ACK :sasl");
+    client.Write("USER bar");
+    client.Write("AUTHENTICATE PLAIN");
+    client.ReadUntil("AUTHENTICATE +");
+    client.Write("AUTHENTICATE *");
+    client.ReadUntil(":irc.znc.in 906 foo :SASL authentication aborted");
 }
 
 TEST_F(ZNCTest, SaslAuthExternal) {
@@ -419,7 +551,7 @@ TEST_F(ZNCTest, SaslAuthExternal) {
     client2.ReadUntil(":friend PRIVMSG nick :[");
 
     Reconnect();
-    client2.Write("AUTHENTICATE " + QString("user/te").toUtf8().toBase64());
+    client2.Write("AUTHENTICATE " + QByteArrayLiteral("user/te").toBase64());
     client2.ReadUntil(
         ":irc.znc.in 900 nick nick!user@127.0.0.1 user :You are now logged in "
         "as user");
@@ -429,7 +561,7 @@ TEST_F(ZNCTest, SaslAuthExternal) {
         ":*status!status@znc.in PRIVMSG nick :Network te doesn't exist.");
 
     Reconnect();
-    client2.Write("AUTHENTICATE " + QString("moo").toUtf8().toBase64());
+    client2.Write("AUTHENTICATE " + QByteArrayLiteral("moo").toBase64());
     client2.ReadUntil(
         ":irc.znc.in 904 nick :The specified user doesn't have this key");
 
@@ -440,6 +572,18 @@ TEST_F(ZNCTest, SaslAuthExternal) {
     client2.Write("AUTHENTICATE +");
     client2.ReadUntil(
         ":irc.znc.in 904 nick :Client cert not recognized");
+
+    // Wrong mechanism
+    auto client3 = ConnectClient();
+    client3.Write("CAP LS 302");
+    client3.Write("NICK nick");
+    client3.ReadUntil(" sasl=EXTERNAL,PLAIN ");
+    client3.Write("CAP REQ :sasl");
+    client3.ReadUntil("ACK :sasl");
+    client3.Write("AUTHENTICATE FOO");
+    client3.ReadUntil(":irc.znc.in 908 nick EXTERNAL,PLAIN :are available SASL mechanisms");
+    client3.ReadUntil(
+        ":irc.znc.in 904 nick :SASL authentication failed");
 }
 
 }  // namespace
