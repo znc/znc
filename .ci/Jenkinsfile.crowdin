@@ -73,17 +73,18 @@ timestamps {
                   echo 'No changes found'
                   return
                 }
-                sh "git remote add my git@github.com:${my_user}/${my_repo}.git"
                 if (!pr_mode) {
                   sshagent(credentials: ['baf2df74-935d-40e5-b20f-076e92fa3e9f']) {
                     sh "git push upstream HEAD:refs/heads/${upstream_branch}"
                   }
                   return
                 }
+                // Create pull request if it doesn't exist yet
+                // Note: the following code hasn't been executed for long time, so probably nothing here works anymore, APIs might have changed, etc.
+                sh "git remote add my git@github.com:${my_user}/${my_repo}.git"
                 sshagent(credentials: ['6ef10f80-20dc-4661-af45-52a6e1e15749']) {
                   sh "git push my HEAD:refs/heads/${my_branch} -f"
                 }
-                // Create pull request if it doesn't exist yet
                 withCredentials([string(credentialsId: '7a2546ae-8a29-4eab-921c-6a4803456dce', variable: 'GITHUB_OAUTH_KEY')]) {
                   def headers = [[maskValue: true, name: 'Authorization', value: "token ${env.GITHUB_OAUTH_KEY}"], [maskValue: false, name: 'Accept', value: 'application/vnd.github.v3+json'], [maskValue: false, name: 'User-Agent', value: 'https://github.com/znc/znc/blob/master/.ci/Jenkinsfile.crowdin']]
                   def pulls = httpRequest consoleLogResponseBody: true, customHeaders: headers, url: "https://api.github.com/repos/${upstream_user}/${upstream_repo}/pulls?head=${my_user}:${my_branch}&base=${upstream_branch}"
