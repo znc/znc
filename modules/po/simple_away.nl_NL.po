@@ -54,14 +54,17 @@ msgid "Away reason set"
 msgstr "Afwezigheidsreden ingesteld"
 
 #: simple_away.cpp:138
+#, c++-format
 msgid "Away reason: {1}"
 msgstr "Afwezigheidsreden: {1}"
 
 #: simple_away.cpp:139
+#, c++-format
 msgid "Current away reason would be: {1}"
 msgstr "Huidige afwezigheidsreden zou zijn: {1}"
 
 #: simple_away.cpp:144
+#, c++-format
 msgid "Current timer setting: 1 second"
 msgid_plural "Current timer setting: {1} seconds"
 msgstr[0] "Huidige timer instelling: 1 seconde"
@@ -72,16 +75,19 @@ msgid "Timer disabled"
 msgstr "Timer uitgeschakeld"
 
 #: simple_away.cpp:155
+#, c++-format
 msgid "Timer set to 1 second"
 msgid_plural "Timer set to: {1} seconds"
 msgstr[0] "Timer ingesteld op 1 seconde"
 msgstr[1] "Timer ingesteld op {1} seconden"
 
 #: simple_away.cpp:166
+#, c++-format
 msgid "Current MinClients setting: {1}"
 msgstr "Huidige MinClients instelling: {1}"
 
 #: simple_away.cpp:169
+#, c++-format
 msgid "MinClients set to {1}"
 msgstr "MinClients ingesteld op {1}"
 

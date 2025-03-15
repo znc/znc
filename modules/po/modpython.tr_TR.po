@@ -12,6 +12,6 @@ msgstr ""
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
 
-#: modpython.cpp:532
+#: modpython.cpp:548
 msgid "Loads python scripts as ZNC modules"
 msgstr "Python komut dosyalarını ZNC modülleri olarak yükler"

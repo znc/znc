@@ -31,14 +31,17 @@ msgid "List all entries"
 msgstr "Tüm girişleri listele"
 
 #: autocycle.cpp:46
+#, c++-format
 msgid "Unable to add {1}"
 msgstr "{1} eklenemiyor"
 
 #: autocycle.cpp:66
+#, c++-format
 msgid "{1} is already added"
 msgstr "{1} zaten eklendi"
 
 #: autocycle.cpp:68
+#, c++-format
 msgid "Added {1} to list"
 msgstr "{1} listeye eklendi"
 
@@ -47,6 +50,7 @@ msgid "Usage: Add [!]<#chan>"
 msgstr "Kullanımı: Add [!]<#kanal>"
 
 #: autocycle.cpp:78
+#, c++-format
 msgid "Removed {1} from list"
 msgstr "{1} listeden kaldırıldı"
 

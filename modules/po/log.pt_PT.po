@@ -53,6 +53,7 @@ msgid "No logging rules. Everything is logged."
 msgstr "Sem regras de registo. Tudo é registado."
 
 #: log.cpp:161
+#, c++-format
 msgid "1 rule removed: {2}"
 msgid_plural "{1} rules removed: {2}"
 msgstr[0] "1 regra removida: {2}"
@@ -129,6 +130,7 @@ msgid "Not logging nick changes"
 msgstr "Não está a registar alterações de nick"
 
 #: log.cpp:352
+#, c++-format
 msgid ""
 "Invalid args [{1}]. Only one log path allowed.  Check that there are no "
 "spaces in the path."
@@ -137,10 +139,12 @@ msgstr ""
 "espaços no caminho."
 
 #: log.cpp:402
+#, c++-format
 msgid "Invalid log path [{1}]"
 msgstr "Caminho de registo inválido [{1}]"
 
 #: log.cpp:405
+#, c++-format
 msgid "Logging to [{1}]. Using timestamp format '{2}'"
 msgstr "A registar para [{1}]. A utilizar formato de data e hora '{2}'"
 

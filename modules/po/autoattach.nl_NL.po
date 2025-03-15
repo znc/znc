@@ -17,6 +17,7 @@ msgid "Added to list"
 msgstr "Toegevoegd aan lijst"
 
 #: autoattach.cpp:96
+#, c++-format
 msgid "{1} is already added"
 msgstr "{1} is al toegevoegd"
 
@@ -29,6 +30,7 @@ msgid "Wildcards are allowed"
 msgstr "Jokers zijn toegestaan"
 
 #: autoattach.cpp:113
+#, c++-format
 msgid "Removed {1} from list"
 msgstr "{1} van lijst verwijderd"
 
@@ -75,6 +77,7 @@ msgid "List all entries"
 msgstr "Laat alle kanalen zien"
 
 #: autoattach.cpp:171
+#, c++-format
 msgid "Unable to add [{1}]"
 msgstr "Kan [{1}] niet toevoegen"
 

@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
-"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
-"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: pl\n"
@@ -51,14 +51,17 @@ msgid "That note already exists.  Use MOD <key> <note> to overwrite."
 msgstr "Ta notatka już istnieje.  Użyj MOD <klucz> <notatka> aby nadpisać."
 
 #: notes.cpp:35 notes.cpp:137
+#, c++-format
 msgid "Added note {1}"
 msgstr "Dodano notatkę {1}"
 
 #: notes.cpp:37 notes.cpp:48 notes.cpp:142
+#, c++-format
 msgid "Unable to add note {1}"
 msgstr "Nie udało się dodać notatki {1}"
 
 #: notes.cpp:46 notes.cpp:139
+#, c++-format
 msgid "Set note for {1}"
 msgstr "Ustawiono notatkę dla {1}"
 
@@ -67,10 +70,12 @@ msgid "This note doesn't exist."
 msgstr "Taka notatka nie istnieje."
 
 #: notes.cpp:66 notes.cpp:116
+#, c++-format
 msgid "Deleted note {1}"
 msgstr "Usunięto notatkę {1}"
 
 #: notes.cpp:68 notes.cpp:118
+#, c++-format
 msgid "Unable to delete note {1}"
 msgstr "Nie można usunąć notatki {1}"
 

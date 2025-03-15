@@ -13,10 +13,12 @@ msgstr ""
 "Language: tr_TR\n"
 
 #: alias.cpp:141
+#, c++-format
 msgid "missing required parameter: {1}"
 msgstr "gerekli parametre eksik: {1}"
 
 #: alias.cpp:201
+#, c++-format
 msgid "Created alias: {1}"
 msgstr "Takma ad oluşturuldu: {1}"
 
@@ -25,6 +27,7 @@ msgid "Alias already exists."
 msgstr "Takma ad zaten mevcut."
 
 #: alias.cpp:210
+#, c++-format
 msgid "Deleted alias: {1}"
 msgstr "Silinen takma ad: {1}"
 
@@ -46,6 +49,7 @@ msgid "There are no aliases."
 msgstr "Takma ad yok."
 
 #: alias.cpp:289
+#, c++-format
 msgid "The following aliases exist: {1}"
 msgstr "Aşağıdaki takma adlar mevcuttur: {1}"
 
@@ -55,10 +59,12 @@ msgid ", "
 msgstr ", "
 
 #: alias.cpp:324
+#, c++-format
 msgid "Actions for alias {1}:"
 msgstr "{1} takma adına ilişkin işlemler:"
 
 #: alias.cpp:331
+#, c++-format
 msgid "End of actions for alias {1}."
 msgstr "{1} takma adına ilişkin işlemlerin sonu."
 

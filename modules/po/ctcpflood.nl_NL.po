@@ -29,6 +29,7 @@ msgid "Show the current limits"
 msgstr "Laat de huidige limieten zien"
 
 #: ctcpflood.cpp:76
+#, c++-format
 msgid "Limit reached by {1}, blocking all CTCP"
 msgstr "Limiet bereikt met {1}, alle CTCPs zullen worden geblokkeerd"
 
@@ -41,18 +42,21 @@ msgid "Usage: Lines <limit>"
 msgstr "Gebruik: Lines <limiet>"
 
 #: ctcpflood.cpp:125
+#, c++-format
 msgid "1 CTCP message"
 msgid_plural "{1} CTCP messages"
 msgstr[0] "1 CTCP bericht"
 msgstr[1] "{1} CTCP berichten"
 
 #: ctcpflood.cpp:127
+#, c++-format
 msgid "every second"
 msgid_plural "every {1} seconds"
 msgstr[0] "Elke seconde"
 msgstr[1] "Elke {2} seconden"
 
 #: ctcpflood.cpp:129
+#, c++-format
 msgid "Current limit is {1} {2}"
 msgstr "Huidige limit is {1} {2}"
 

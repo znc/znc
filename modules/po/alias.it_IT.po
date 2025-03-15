@@ -13,10 +13,12 @@ msgstr ""
 "Language: it_IT\n"
 
 #: alias.cpp:141
+#, c++-format
 msgid "missing required parameter: {1}"
 msgstr "manca il parametro obbligatorio: {1}"
 
 #: alias.cpp:201
+#, c++-format
 msgid "Created alias: {1}"
 msgstr "Alias creato: {1}"
 
@@ -25,6 +27,7 @@ msgid "Alias already exists."
 msgstr "Alias già esistente."
 
 #: alias.cpp:210
+#, c++-format
 msgid "Deleted alias: {1}"
 msgstr "Alias eliminato: {1}"
 
@@ -46,6 +49,7 @@ msgid "There are no aliases."
 msgstr "Non ci sono alias."
 
 #: alias.cpp:289
+#, c++-format
 msgid "The following aliases exist: {1}"
 msgstr "Esistono i seguenti alias: {1}"
 
@@ -55,10 +59,12 @@ msgid ", "
 msgstr ", "
 
 #: alias.cpp:324
+#, c++-format
 msgid "Actions for alias {1}:"
 msgstr "Azioni per l'alias {1}:"
 
 #: alias.cpp:331
+#, c++-format
 msgid "End of actions for alias {1}."
 msgstr "Fine delle azioni per l'alias {1}."
 

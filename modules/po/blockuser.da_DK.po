@@ -37,6 +37,7 @@ msgid "Unblock a user"
 msgstr ""
 
 #: blockuser.cpp:55
+#, c++-format
 msgid "Could not block {1}"
 msgstr ""
 
@@ -61,10 +62,12 @@ msgid "You can't block yourself"
 msgstr ""
 
 #: blockuser.cpp:110 blockuser.cpp:152
+#, c++-format
 msgid "Blocked {1}"
 msgstr ""
 
 #: blockuser.cpp:112
+#, c++-format
 msgid "Could not block {1} (misspelled?)"
 msgstr ""
 
@@ -73,6 +76,7 @@ msgid "Usage: Unblock <user>"
 msgstr ""
 
 #: blockuser.cpp:125 blockuser.cpp:161
+#, c++-format
 msgid "Unblocked {1}"
 msgstr ""
 
@@ -81,10 +85,12 @@ msgid "This user is not blocked"
 msgstr ""
 
 #: blockuser.cpp:155
+#, c++-format
 msgid "Couldn't block {1}"
 msgstr ""
 
 #: blockuser.cpp:164
+#, c++-format
 msgid "User {1} is not blocked"
 msgstr ""
 

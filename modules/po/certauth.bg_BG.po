@@ -14,95 +14,101 @@ msgstr ""
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:7
 msgid "Add a key"
-msgstr ""
+msgstr "Добавяне на ключ"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:11
 msgid "Key:"
-msgstr ""
+msgstr "Ключ:"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:15
 msgid "Add Key"
-msgstr ""
+msgstr "Добавяне на ключ"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:23
 msgid "You have no keys."
-msgstr ""
+msgstr "Нямате ключове."
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:30
 msgctxt "web"
 msgid "Key"
-msgstr ""
+msgstr "Ключ"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:36
 msgid "del"
-msgstr ""
+msgstr "дел"
 
 #: certauth.cpp:31
 msgid "[pubkey]"
-msgstr ""
+msgstr "[pubkey]"
 
 #: certauth.cpp:32
 msgid "Add a public key. If key is not provided will use the current key"
 msgstr ""
+"Добавяне на публичен ключ. Ако ключ не е предоставен, ще се използва "
+"текущият ключ"
 
 #: certauth.cpp:35
 msgid "id"
-msgstr ""
+msgstr "id"
 
 #: certauth.cpp:35
 msgid "Delete a key by its number in List"
-msgstr ""
+msgstr "Изтрива ключ по номера му в списъка"
 
 #: certauth.cpp:37
 msgid "List your public keys"
-msgstr ""
+msgstr "Показва вашите публични ключове"
 
 #: certauth.cpp:39
 msgid "Print your current key"
-msgstr ""
+msgstr "Изкарва вашият текущ ключ"
 
 #: certauth.cpp:142
 msgid "You are not connected with any valid public key"
-msgstr ""
+msgstr "Не сте свързани с никакъв валиден публичен ключ"
 
 #: certauth.cpp:144
+#, c++-format
 msgid "Your current public key is: {1}"
-msgstr ""
+msgstr "Вашият публичен ключ: {1}"
 
 #: certauth.cpp:157
 msgid "You did not supply a public key or connect with one."
-msgstr ""
+msgstr "Вие не сте определили публичен ключ, или не сте се свързали с такъв."
 
 #: certauth.cpp:160
+#, c++-format
 msgid "Key '{1}' added."
-msgstr ""
+msgstr "Ключ '{1}' е добавен."
 
 #: certauth.cpp:162
+#, c++-format
 msgid "The key '{1}' is already added."
-msgstr ""
+msgstr "Ключът '{1}' е вече добавен."
 
 #: certauth.cpp:170 certauth.cpp:183
 msgctxt "list"
 msgid "Id"
-msgstr ""
+msgstr "Id"
 
 #: certauth.cpp:171 certauth.cpp:184
 msgctxt "list"
 msgid "Key"
-msgstr ""
+msgstr "Ключ"
 
 #: certauth.cpp:176 certauth.cpp:190 certauth.cpp:199
 msgid "No keys set for your user"
-msgstr ""
+msgstr "Няма ключове зададени за вашият потребител"
 
 #: certauth.cpp:204
 msgid "Invalid #, check \"list\""
-msgstr ""
+msgstr "Невалиден #, проверете 'list'"
 
 #: certauth.cpp:216
 msgid "Removed"
-msgstr ""
+msgstr "Премахнат"
 
 #: certauth.cpp:291
 msgid "Allows users to authenticate via SSL client certificates."
 msgstr ""
+"Позволява на потребителите да се удостоверят с клиентски SSL сертификати."

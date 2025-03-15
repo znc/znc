@@ -15,7 +15,8 @@ msgstr ""
 #: pyeval.py:49
 msgid "You must have admin privileges to load this module."
 msgstr ""
+"Bu modülü yüklemek için yönetici ayrıcalıklarına sahip olmanız gerekir."
 
 #: pyeval.py:82
 msgid "Evaluates python code"
-msgstr ""
+msgstr "Python kodunu değerlendirir"

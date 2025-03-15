@@ -22,7 +22,8 @@ timestamps {
         step([$class: 'WsCleanup'])
       }
       def tasks = [:]
-      def crowdin_cli = "java -jar ${tool 'crowdin-cli'}/crowdin-cli.jar --config .ci/crowdin.yml"
+      def crowdin_cli = "java -jar ${tool 'crowdin-cli'}/crowdin-cli.jar"
+      def crowdin_cli_suffix = "--config .ci/crowdin.yml"
       for (def branch in branches) {
         def upstream_branch = branch
         def my_branch = "l10n_${branch}"
@@ -43,18 +44,16 @@ timestamps {
               stage("Crowdin for ${upstream_branch}") {
                 withCredentials([string(credentialsId: '11c7e2b4-f990-4670-98a4-c89d2a5a2f43', variable: 'CROWDIN_API_KEY')]) {
                   withEnv(['CROWDIN_BASE_PATH='+pwd()]) {
-                    sh "$crowdin_cli upload sources --branch ${upstream_branch}"
-                    // sh "$crowdin_cli upload translations --branch ${upstream_branch}"
-                    sh "$crowdin_cli download --branch ${upstream_branch}"
+                    sh "$crowdin_cli upload sources --branch ${upstream_branch} ${crowdin_cli_suffix}"
+                    // sh "$crowdin_cli upload translations --branch ${upstream_branch} ${crowdin_cli_suffix}"
+                    sh "$crowdin_cli download --branch ${upstream_branch} ${crowdin_cli_suffix}"
                   }
-                }
-                sh 'LANG=C.UTF-8 find . -name "*.po" -exec msgfilter -i "{}" -o "{}.replacement" .ci/cleanup-po.pl ";"'
-                sh 'find . -name "*.po" -exec mv "{}.replacement" "{}" ";"'
-                withCredentials([string(credentialsId: 'fe727e3e-a8e0-4019-817f-6583c3c51ef7', variable: 'CROWDIN_API2_KEY')]) {
-                  def headers = [[maskValue: true, name: 'Authorization', value: "Bearer ${env.CROWDIN_API2_KEY}"], [maskValue: false, name: 'User-Agent', value: 'https://github.com/znc/znc/blob/master/.ci/Jenkinsfile.crowdin']]
+                  def headers = [[maskValue: true, name: 'Authorization', value: "Bearer ${env.CROWDIN_API_KEY}"], [maskValue: false, name: 'User-Agent', value: 'https://github.com/znc/znc/blob/master/.ci/Jenkinsfile.crowdin']]
                   def contributors = httpRequest consoleLogResponseBody: true, customHeaders: headers, url: "https://crowdin.com/api/v2/projects/289533/members?limit=500"
                   writeFile file: 'contributors.tmp', text: contributors.content
                 }
+                sh 'LANG=C.UTF-8 find . -name "*.po" -exec msgfilter -i "{}" -o "{}.replacement" .ci/cleanup-po.pl ";"'
+                sh 'find . -name "*.po" -exec mv "{}.replacement" "{}" ";"'
                 sh '.ci/crowdin-contributors.py < contributors.tmp'
                 sh 'rm contributors.tmp'
               }
@@ -74,17 +73,18 @@ timestamps {
                   echo 'No changes found'
                   return
                 }
-                sh "git remote add my git@github.com:${my_user}/${my_repo}.git"
                 if (!pr_mode) {
                   sshagent(credentials: ['baf2df74-935d-40e5-b20f-076e92fa3e9f']) {
                     sh "git push upstream HEAD:refs/heads/${upstream_branch}"
                   }
                   return
                 }
+                // Create pull request if it doesn't exist yet
+                // Note: the following code hasn't been executed for long time, so probably nothing here works anymore, APIs might have changed, etc.
+                sh "git remote add my git@github.com:${my_user}/${my_repo}.git"
                 sshagent(credentials: ['6ef10f80-20dc-4661-af45-52a6e1e15749']) {
                   sh "git push my HEAD:refs/heads/${my_branch} -f"
                 }
-                // Create pull request if it doesn't exist yet
                 withCredentials([string(credentialsId: '7a2546ae-8a29-4eab-921c-6a4803456dce', variable: 'GITHUB_OAUTH_KEY')]) {
                   def headers = [[maskValue: true, name: 'Authorization', value: "token ${env.GITHUB_OAUTH_KEY}"], [maskValue: false, name: 'Accept', value: 'application/vnd.github.v3+json'], [maskValue: false, name: 'User-Agent', value: 'https://github.com/znc/znc/blob/master/.ci/Jenkinsfile.crowdin']]
                   def pulls = httpRequest consoleLogResponseBody: true, customHeaders: headers, url: "https://api.github.com/repos/${upstream_user}/${upstream_repo}/pulls?head=${my_user}:${my_branch}&base=${upstream_branch}"

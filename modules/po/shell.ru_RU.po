@@ -15,6 +15,7 @@ msgstr ""
 "Language: ru_RU\n"
 
 #: shell.cpp:37
+#, c++-format
 msgid "Failed to execute: {1}"
 msgstr "Не удалось выполнить: {1}"
 

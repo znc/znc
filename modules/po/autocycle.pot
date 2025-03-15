@@ -20,14 +20,17 @@ msgid "List all entries"
 msgstr ""
 
 #: autocycle.cpp:46
+#, c++-format
 msgid "Unable to add {1}"
 msgstr ""
 
 #: autocycle.cpp:66
+#, c++-format
 msgid "{1} is already added"
 msgstr ""
 
 #: autocycle.cpp:68
+#, c++-format
 msgid "Added {1} to list"
 msgstr ""
 
@@ -36,6 +39,7 @@ msgid "Usage: Add [!]<#chan>"
 msgstr ""
 
 #: autocycle.cpp:78
+#, c++-format
 msgid "Removed {1} from list"
 msgstr ""
 

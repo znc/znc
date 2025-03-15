@@ -17,30 +17,37 @@ msgid "Server"
 msgstr "Serveur"
 
 #: buffextras.cpp:47
+#, c++-format
 msgid "{1} set mode: {2} {3}"
 msgstr "{1} mode défini : {2} {3}"
 
 #: buffextras.cpp:55
+#, c++-format
 msgid "{1} kicked {2} with reason: {3}"
 msgstr "{1} kické {2} avec comme raison : {3}"
 
 #: buffextras.cpp:64
+#, c++-format
 msgid "{1} quit: {2}"
 msgstr "{1} quit: {2}"
 
 #: buffextras.cpp:73
+#, c++-format
 msgid "{1} joined"
 msgstr "{1} a rejoint"
 
 #: buffextras.cpp:81
+#, c++-format
 msgid "{1} parted: {2}"
 msgstr "{1} est parti de : {2}"
 
 #: buffextras.cpp:90
+#, c++-format
 msgid "{1} is now known as {2}"
 msgstr "{1} est maintenant connu comme {2}"
 
 #: buffextras.cpp:100
+#, c++-format
 msgid "{1} changed the topic to: {2}"
 msgstr "{1} a changé le topic en : {2}"
 
