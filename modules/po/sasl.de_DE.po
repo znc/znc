@@ -12,7 +12,7 @@ msgstr ""
 "Language-Team: German\n"
 "Language: de_DE\n"
 
-#: modules/po/../data/sasl/tmpl/index.tmpl:7 sasl.cpp:305
+#: modules/po/../data/sasl/tmpl/index.tmpl:7 sasl.cpp:303
 msgid "SASL"
 msgstr "SASL"
 
@@ -125,6 +125,7 @@ msgid "Username is currently not set"
 msgstr "Momentan ist kein Benutzername gesetzt"
 
 #: sasl.cpp:111
+#, c++-format
 msgid "Username is currently set to '{1}'"
 msgstr "Benutzername ist momentan auf '{1}' gesetzt"
 
@@ -137,14 +138,17 @@ msgid "Password was supplied"
 msgstr "Passwort wurde bereitgestellt"
 
 #: sasl.cpp:124
+#, c++-format
 msgid "Username has been set to [{1}]"
 msgstr "Benutzername wurde auf [{1}] gesetzt"
 
 #: sasl.cpp:125
+#, c++-format
 msgid "Password has been set to [{1}]"
 msgstr "Passwort wurde auf [{1}] gesetzt"
 
 #: sasl.cpp:145
+#, c++-format
 msgid "Current mechanisms set: {1}"
 msgstr "Momentan gesetzter Mechanismus: {1}"
 
@@ -156,23 +160,17 @@ msgstr "We benötigen eine SASL-Verhandlung zum Verbinden"
 msgid "We will connect even if SASL fails"
 msgstr "Wir werden auch verbinden, wenn SASL fehlschlägt"
 
-#: sasl.cpp:193
-msgid "Disabling network, we require authentication."
-msgstr "Netzwerk deaktivieren, wir benötigen Authentifizierung."
-
-#: sasl.cpp:194
-msgid "Use 'RequireAuth no' to disable."
-msgstr "Benutzer 'RequireAuth no' zum deaktivieren."
-
-#: sasl.cpp:258
+#: sasl.cpp:256
+#, c++-format
 msgid "{1} mechanism succeeded."
 msgstr "{1} Mechanismus erfolgreich."
 
-#: sasl.cpp:270
+#: sasl.cpp:268
+#, c++-format
 msgid "{1} mechanism failed."
 msgstr "{1} Mechanismus fehlgeschlagen."
 
-#: sasl.cpp:350
+#: sasl.cpp:348
 msgid ""
 "Adds support for sasl authentication capability to authenticate to an IRC "
 "server"

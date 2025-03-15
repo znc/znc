@@ -14,30 +14,34 @@ msgstr ""
 
 #: autoreply.cpp:25
 msgid "<reply>"
-msgstr ""
+msgstr "<reply>"
 
 #: autoreply.cpp:25
 msgid "Sets a new reply"
-msgstr ""
+msgstr "Задава нов отговор"
 
 #: autoreply.cpp:27
 msgid "Displays the current query reply"
-msgstr ""
+msgstr "Показва сегашната заявка за отговор"
 
 #: autoreply.cpp:75
+#, c++-format
 msgid "Current reply is: {1} ({2})"
-msgstr ""
+msgstr "Сегашният отговор е: {1} ({2})"
 
 #: autoreply.cpp:81
+#, c++-format
 msgid "New reply set to: {1} ({2})"
-msgstr ""
+msgstr "Новият отговор е: {1} ({2})"
 
 #: autoreply.cpp:94
 msgid ""
 "You might specify a reply text. It is used when automatically answering "
 "queries, if you are not connected to ZNC."
 msgstr ""
+"Може да не задавате отговор. Той се използва за автоматичното отговаряне на "
+"заявки, ако не сте свързани към ZNC."
 
 #: autoreply.cpp:98
 msgid "Reply to queries when you are away"
-msgstr ""
+msgstr "Отговаря на заявки, когато отсъствате"

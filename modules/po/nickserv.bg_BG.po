@@ -14,66 +14,68 @@ msgstr ""
 
 #: nickserv.cpp:31
 msgid "Password set"
-msgstr ""
+msgstr "Паролата е зададена"
 
 #: nickserv.cpp:36 nickserv.cpp:46
 msgid "Done"
-msgstr ""
+msgstr "Готово"
 
 #: nickserv.cpp:41
 msgid "NickServ name set"
-msgstr ""
+msgstr "Името е зададено през NickServ"
 
 #: nickserv.cpp:60
 msgid "No such editable command. See ViewCommands for list."
-msgstr ""
+msgstr "Няма такава редактируема команда. Вижте ViewCommands за списък."
 
 #: nickserv.cpp:63
 msgid "Ok"
-msgstr ""
+msgstr "ОК"
 
 #: nickserv.cpp:68
 msgid "password"
-msgstr ""
+msgstr "парола"
 
 #: nickserv.cpp:68
 msgid "Set your nickserv password"
-msgstr ""
+msgstr "Задаване на парола чрез nickserv"
 
 #: nickserv.cpp:70
 msgid "Clear your nickserv password"
-msgstr ""
+msgstr "Изчистване на парола чрез nickserv"
 
 #: nickserv.cpp:72
 msgid "nickname"
-msgstr ""
+msgstr "потребителско име"
 
 #: nickserv.cpp:73
 msgid ""
 "Set NickServ name (Useful on networks like EpiKnet, where NickServ is named "
 "Themis"
 msgstr ""
+"Задаване на име за NickServ (Полезно за мрежи като EpiKnet, където NickServ "
+"е кръстен Themis"
 
 #: nickserv.cpp:77
 msgid "Reset NickServ name to default (NickServ)"
-msgstr ""
+msgstr "Възстановяване на нормалното име на NickServ"
 
 #: nickserv.cpp:81
 msgid "Show patterns for lines, which are being sent to NickServ"
-msgstr ""
+msgstr "Показване на модели за редове, които се изпращат на NickServ"
 
 #: nickserv.cpp:83
 msgid "cmd new-pattern"
-msgstr ""
+msgstr "cmd new-pattern"
 
 #: nickserv.cpp:84
 msgid "Set pattern for commands"
-msgstr ""
+msgstr "Задаване на модели за команди"
 
 #: nickserv.cpp:146
 msgid "Please enter your nickserv password."
-msgstr ""
+msgstr "Моля, въведете вашата nickserv парола."
 
 #: nickserv.cpp:150
 msgid "Auths you with NickServ (prefer SASL module instead)"
-msgstr ""
+msgstr "Удостоверява ви с NickServ (предпочита се SASL модулът)"

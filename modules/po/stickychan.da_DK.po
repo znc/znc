@@ -53,6 +53,7 @@ msgid "Usage: Stick <#channel> [key]"
 msgstr ""
 
 #: stickychan.cpp:79
+#, c++-format
 msgid "Stuck {1}"
 msgstr ""
 
@@ -61,6 +62,7 @@ msgid "Usage: Unstick <#channel>"
 msgstr ""
 
 #: stickychan.cpp:89
+#, c++-format
 msgid "Unstuck {1}"
 msgstr ""
 
@@ -69,6 +71,7 @@ msgid " -- End of List"
 msgstr ""
 
 #: stickychan.cpp:115
+#, c++-format
 msgid "Could not join {1} (# prefix missing?)"
 msgstr ""
 
@@ -89,6 +92,7 @@ msgid "Channel stopped being sticky!"
 msgstr ""
 
 #: stickychan.cpp:209
+#, c++-format
 msgid ""
 "Channel {1} cannot be joined, it is an illegal channel name. Unsticking."
 msgstr ""

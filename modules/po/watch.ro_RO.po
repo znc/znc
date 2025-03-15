@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n"
-"%100<20)) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && "
+"n%100<20)) ? 1 : 2);\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: ro\n"
@@ -90,10 +90,12 @@ msgid "Invalid Id"
 msgstr ""
 
 #: watch.cpp:399
+#, c++-format
 msgid "Id {1} disabled"
 msgstr ""
 
 #: watch.cpp:401
+#, c++-format
 msgid "Id {1} enabled"
 msgstr ""
 
@@ -106,10 +108,12 @@ msgid "Set DetachedClientOnly for all entries to No"
 msgstr ""
 
 #: watch.cpp:441 watch.cpp:483
+#, c++-format
 msgid "Id {1} set to Yes"
 msgstr ""
 
 #: watch.cpp:443 watch.cpp:485
+#, c++-format
 msgid "Id {1} set to No"
 msgstr ""
 
@@ -166,6 +170,7 @@ msgid "You have no entries."
 msgstr ""
 
 #: watch.cpp:585
+#, c++-format
 msgid "Sources set for Id {1}."
 msgstr ""
 
@@ -174,14 +179,17 @@ msgid "All entries cleared."
 msgstr ""
 
 #: watch.cpp:627
+#, c++-format
 msgid "Id {1} removed."
 msgstr ""
 
 #: watch.cpp:646
+#, c++-format
 msgid "Entry for {1} already exists."
 msgstr ""
 
 #: watch.cpp:654
+#, c++-format
 msgid "Adding entry: {1} watching for [{2}] -> {3}"
 msgstr ""
 

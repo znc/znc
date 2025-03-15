@@ -77,6 +77,7 @@ msgid "No such user"
 msgstr "Não existe esse utilizador"
 
 #: autovoice.cpp:275
+#, c++-format
 msgid "Channel(s) added to user {1}"
 msgstr "Canal(is) adicionado(s) ao utilizador {1}"
 
@@ -85,10 +86,12 @@ msgid "Usage: DelChans <user> <channel> [channel] ..."
 msgstr "Utilização: DelChans <utilizador> <canal> [canal] ..."
 
 #: autovoice.cpp:298
+#, c++-format
 msgid "Channel(s) Removed from user {1}"
 msgstr "Canal(is) removido(s) do utilizador {1}"
 
 #: autovoice.cpp:335
+#, c++-format
 msgid "User {1} removed"
 msgstr "Utilizador {1} removido"
 
@@ -97,6 +100,7 @@ msgid "That user already exists"
 msgstr "Esse utilizador já existe"
 
 #: autovoice.cpp:347
+#, c++-format
 msgid "User {1} added with hostmask {2}"
 msgstr "Utilizador {1} adicionado com a máscara de host {2}"
 

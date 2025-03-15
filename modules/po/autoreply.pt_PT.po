@@ -25,10 +25,12 @@ msgid "Displays the current query reply"
 msgstr "Mostra a resposta atual da mensagem privada"
 
 #: autoreply.cpp:75
+#, c++-format
 msgid "Current reply is: {1} ({2})"
 msgstr "A resposta atual é: {1} ({2})"
 
 #: autoreply.cpp:81
+#, c++-format
 msgid "New reply set to: {1} ({2})"
 msgstr "Nova resposta definida para: {1} ({2})"
 

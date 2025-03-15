@@ -14,95 +14,97 @@ msgstr ""
 
 #: modules/po/../data/perform/tmpl/index.tmpl:7 perform.cpp:143
 msgid "Perform"
-msgstr ""
+msgstr "Uygula"
 
 #: modules/po/../data/perform/tmpl/index.tmpl:11
 msgid "Perform commands:"
-msgstr ""
+msgstr "'Uygula' komutları:"
 
 #: modules/po/../data/perform/tmpl/index.tmpl:15
 msgid "Commands sent to the IRC server on connect, one per line."
 msgstr ""
+"Bağlantı sırasında IRC sunucusuna her satıra bir tane olmak üzere gönderilen "
+"komutlar."
 
 #: modules/po/../data/perform/tmpl/index.tmpl:18
 msgid "Save"
-msgstr ""
+msgstr "Kaydet"
 
 #: perform.cpp:24
 msgid "Usage: add <command>"
-msgstr ""
+msgstr "Kullanımı: add <komut>"
 
 #: perform.cpp:29
 msgid "Added!"
-msgstr ""
+msgstr "Eklendi!"
 
 #: perform.cpp:37 perform.cpp:82
 msgid "Illegal # Requested"
-msgstr ""
+msgstr "İllegal # İstek"
 
 #: perform.cpp:41
 msgid "Command Erased."
-msgstr ""
+msgstr "Komut Silindi."
 
 #: perform.cpp:50 perform.cpp:56
 msgctxt "list"
 msgid "Id"
-msgstr ""
+msgstr "Id"
 
 #: perform.cpp:51 perform.cpp:57
 msgctxt "list"
 msgid "Perform"
-msgstr ""
+msgstr "Uygula"
 
 #: perform.cpp:52 perform.cpp:62
 msgctxt "list"
 msgid "Expanded"
-msgstr ""
+msgstr "Genişletilmiş"
 
 #: perform.cpp:67
 msgid "No commands in your perform list."
-msgstr ""
+msgstr "Uygula listenizde komut yok."
 
 #: perform.cpp:73
 msgid "perform commands sent"
-msgstr ""
+msgstr "'Uygula' komutları gönderildi"
 
 #: perform.cpp:86
 msgid "Commands Swapped."
-msgstr ""
+msgstr "Komutlar Değiştirildi."
 
 #: perform.cpp:95
 msgid "<command>"
-msgstr ""
+msgstr "<komut>"
 
 #: perform.cpp:96
 msgid "Adds perform command to be sent to the server on connect"
-msgstr ""
+msgstr "Bağlanıldığında sunucuya gönderilecek 'Uygula' komutunu ekler"
 
 #: perform.cpp:98
 msgid "<number>"
-msgstr ""
+msgstr "<sayı>"
 
 #: perform.cpp:98
 msgid "Delete a perform command"
-msgstr ""
+msgstr "Bir 'Uygula' komutunu silme"
 
 #: perform.cpp:100
 msgid "List the perform commands"
-msgstr ""
+msgstr "'Uygula' komutlarını listeleyin"
 
 #: perform.cpp:103
 msgid "Send the perform commands to the server now"
-msgstr ""
+msgstr "'Uygula' komutlarını şimdi sunucuya gönderin"
 
 #: perform.cpp:105
 msgid "<number> <number>"
-msgstr ""
+msgstr "<sayı> <sayı>"
 
 #: perform.cpp:106
 msgid "Swap two perform commands"
-msgstr ""
+msgstr "İki 'Uygula' komutunu değiştirin"
 
 #: perform.cpp:192
 msgid "Keeps a list of commands to be executed when ZNC connects to IRC."
-msgstr ""
+msgstr "ZNC, IRC'ye bağlandığında yürütülecek komutların bir listesini tutar."

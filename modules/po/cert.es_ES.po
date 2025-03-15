@@ -51,6 +51,7 @@ msgid "The pem file doesn't exist or there was a error deleting the pem file."
 msgstr "El fichero pem no existe o hay un error al eliminarlo."
 
 #: cert.cpp:38
+#, c++-format
 msgid "You have a certificate in {1}"
 msgstr "Tienes un certificado en {1}"
 
@@ -61,8 +62,9 @@ msgid ""
 msgstr "No tienes ningún certificado. Usa la interfaz web para añadir uno"
 
 #: cert.cpp:44
-msgid "Alternatively you can either place one at {1}"
-msgstr "También puedes colocar uno en {1}"
+#, c++-format
+msgid "Alternatively you can place one at {1}"
+msgstr ""
 
 #: cert.cpp:52
 msgid "Delete the current certificate"

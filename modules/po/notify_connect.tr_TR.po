@@ -14,16 +14,19 @@ msgstr ""
 
 #: notify_connect.cpp:24
 msgid "attached"
-msgstr ""
+msgstr "bağlandı"
 
 #: notify_connect.cpp:26
 msgid "detached"
-msgstr ""
+msgstr "ayrıldı"
 
 #: notify_connect.cpp:41
+#, c++-format
 msgid "{1} {2} from {3}"
-msgstr ""
+msgstr "{1}, {3}'dan {2}"
 
 #: notify_connect.cpp:52
 msgid "Notifies all admin users when a client connects or disconnects."
 msgstr ""
+"Bir istemci bağlandığında veya bağlantısını kestiğinde tüm yönetici "
+"kullanıcılara bilgi verir."

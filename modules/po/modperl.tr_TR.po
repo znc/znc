@@ -12,6 +12,6 @@ msgstr ""
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
 
-#: modperl.cpp:382
+#: modperl.cpp:417
 msgid "Loads perl scripts as ZNC modules"
 msgstr "Perl komut dosyalarını ZNC modülleri olarak yükler"

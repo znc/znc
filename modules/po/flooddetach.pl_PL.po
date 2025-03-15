@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
-"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
-"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: pl\n"
@@ -37,14 +37,17 @@ msgstr ""
 "dopięciach"
 
 #: flooddetach.cpp:93
+#, c++-format
 msgid "Flood in {1} is over, reattaching..."
 msgstr "Zalewanie się skończyło {1}, ponowne dopinanie..."
 
 #: flooddetach.cpp:150
+#, c++-format
 msgid "Channel {1} was flooded, you've been detached"
 msgstr "Kanał {1} był zalewany, został odpięty"
 
 #: flooddetach.cpp:187
+#, c++-format
 msgid "1 line"
 msgid_plural "{1} lines"
 msgstr[0] "1 linia"
@@ -53,6 +56,7 @@ msgstr[2] "{1} linii"
 msgstr[3] "{1} linii/e"
 
 #: flooddetach.cpp:188
+#, c++-format
 msgid "every second"
 msgid_plural "every {1} seconds"
 msgstr[0] "co sekundę"
@@ -61,22 +65,27 @@ msgstr[2] "co {1} sekund"
 msgstr[3] "co {1} sekund"
 
 #: flooddetach.cpp:190
+#, c++-format
 msgid "Current limit is {1} {2}"
 msgstr "Bieżący limit to {1} {2}"
 
 #: flooddetach.cpp:197
+#, c++-format
 msgid "Seconds limit is {1}"
 msgstr "Limit sekund to {1}"
 
 #: flooddetach.cpp:202
+#, c++-format
 msgid "Set seconds limit to {1}"
 msgstr "Ustawiono limit sekund do {1}"
 
 #: flooddetach.cpp:211
+#, c++-format
 msgid "Lines limit is {1}"
 msgstr "Limit linii to {1}"
 
 #: flooddetach.cpp:216
+#, c++-format
 msgid "Set lines limit to {1}"
 msgstr "Ustawiono limit linii do {1}"
 

@@ -61,6 +61,7 @@ msgid "Logging is enabled for both, file and syslog"
 msgstr "La journalisation est activée pour syslog et un fichier"
 
 #: adminlog.cpp:204
+#, c++-format
 msgid "Log file will be written to {1}"
 msgstr "Le journal sera sauvegardé dans {1}"
 

@@ -42,14 +42,17 @@ msgid ""
 msgstr ""
 
 #: savebuff.cpp:232
+#, c++-format
 msgid "Password set to [{1}]"
 msgstr ""
 
 #: savebuff.cpp:262
+#, c++-format
 msgid "Replayed {1}"
 msgstr ""
 
 #: savebuff.cpp:341
+#, c++-format
 msgid "Unable to decode Encrypted file {1}"
 msgstr ""
 

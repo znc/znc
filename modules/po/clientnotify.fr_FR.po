@@ -27,7 +27,7 @@ msgstr "<on|off>"
 
 #: clientnotify.cpp:57
 msgid "Turns notifications for unseen connections on or off"
-msgstr ""
+msgstr "Active ou désactive les notifications pour les connections non vues"
 
 #: clientnotify.cpp:60
 msgid ""
@@ -49,6 +49,7 @@ msgid "Shows the current settings"
 msgstr ""
 
 #: clientnotify.cpp:104 clientnotify.cpp:134
+#, c++-format
 msgid "<This message is impossible for 1 client>"
 msgid_plural ""
 "Another client ({1}) authenticated as your user. Use the 'ListClients' "
@@ -82,6 +83,7 @@ msgid "Usage: OnDisconnect <on|off>"
 msgstr ""
 
 #: clientnotify.cpp:210
+#, c++-format
 msgid ""
 "Current settings: Method: {1}, for unseen only: {2}, notifyfor unseen IPs: "
 "{3}, notify for unseen IDs: {4}, notify ondisconnecting clients: {5}"

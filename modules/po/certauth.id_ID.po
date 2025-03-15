@@ -66,6 +66,7 @@ msgid "You are not connected with any valid public key"
 msgstr ""
 
 #: certauth.cpp:144
+#, c++-format
 msgid "Your current public key is: {1}"
 msgstr ""
 
@@ -74,10 +75,12 @@ msgid "You did not supply a public key or connect with one."
 msgstr ""
 
 #: certauth.cpp:160
+#, c++-format
 msgid "Key '{1}' added."
 msgstr ""
 
 #: certauth.cpp:162
+#, c++-format
 msgid "The key '{1}' is already added."
 msgstr ""
 

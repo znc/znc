@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
-"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
-"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: pl\n"
@@ -51,6 +51,7 @@ msgid "Shows the current settings"
 msgstr "Pokazuje bieżące ustawienia"
 
 #: clientnotify.cpp:104 clientnotify.cpp:134
+#, c++-format
 msgid "<This message is impossible for 1 client>"
 msgid_plural ""
 "Another client ({1}) authenticated as your user. Use the 'ListClients' "
@@ -92,6 +93,7 @@ msgid "Usage: OnDisconnect <on|off>"
 msgstr "Użycie: OnDisconnect <on|off>"
 
 #: clientnotify.cpp:210
+#, c++-format
 msgid ""
 "Current settings: Method: {1}, for unseen only: {2}, notifyfor unseen IPs: "
 "{3}, notify for unseen IDs: {4}, notify ondisconnecting clients: {5}"
