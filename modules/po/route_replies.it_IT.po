@@ -35,10 +35,12 @@ msgstr ""
 "un bug."
 
 #: route_replies.cpp:381
+#, c++-format
 msgid "To disable this message, do \"/msg {1} silent yes\""
 msgstr "Per disabilitare questo messaggio, digita \"/msg {1} silent yes\""
 
 #: route_replies.cpp:383
+#, c++-format
 msgid "Last request: {1}"
 msgstr "Ultima richiesta: {1}"
 
@@ -47,6 +49,7 @@ msgid "Expected replies:"
 msgstr "Risposte attese:"
 
 #: route_replies.cpp:388
+#, c++-format
 msgid "{1} (last)"
 msgstr "{1} (ultimo)"
 

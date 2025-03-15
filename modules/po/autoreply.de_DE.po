@@ -25,10 +25,12 @@ msgid "Displays the current query reply"
 msgstr "Zeigt die aktuelle Query-Antwort an"
 
 #: autoreply.cpp:75
+#, c++-format
 msgid "Current reply is: {1} ({2})"
 msgstr "Aktuelle Antwort ist: {1} ({2})"
 
 #: autoreply.cpp:81
+#, c++-format
 msgid "New reply set to: {1} ({2})"
 msgstr "Neue Antwort gesetzt auf: {1} ({2})"
 

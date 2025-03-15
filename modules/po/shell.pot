@@ -4,6 +4,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: shell.cpp:37
+#, c++-format
 msgid "Failed to execute: {1}"
 msgstr ""
 

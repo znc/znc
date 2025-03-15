@@ -14,95 +14,96 @@ msgstr ""
 
 #: modules/po/../data/perform/tmpl/index.tmpl:7 perform.cpp:143
 msgid "Perform"
-msgstr ""
+msgstr "Изпълнява"
 
 #: modules/po/../data/perform/tmpl/index.tmpl:11
 msgid "Perform commands:"
-msgstr ""
+msgstr "Изпълнява команди:"
 
 #: modules/po/../data/perform/tmpl/index.tmpl:15
 msgid "Commands sent to the IRC server on connect, one per line."
-msgstr ""
+msgstr "Команди изпратени към IRC сървър при свързване: една на ред."
 
 #: modules/po/../data/perform/tmpl/index.tmpl:18
 msgid "Save"
-msgstr ""
+msgstr "Запази"
 
 #: perform.cpp:24
 msgid "Usage: add <command>"
-msgstr ""
+msgstr "Употреба: add <command>"
 
 #: perform.cpp:29
 msgid "Added!"
-msgstr ""
+msgstr "Добавено!"
 
 #: perform.cpp:37 perform.cpp:82
 msgid "Illegal # Requested"
-msgstr ""
+msgstr "Нелегална # заявена"
 
 #: perform.cpp:41
 msgid "Command Erased."
-msgstr ""
+msgstr "Командата е изтрита."
 
 #: perform.cpp:50 perform.cpp:56
 msgctxt "list"
 msgid "Id"
-msgstr ""
+msgstr "ID"
 
 #: perform.cpp:51 perform.cpp:57
 msgctxt "list"
 msgid "Perform"
-msgstr ""
+msgstr "Изпълнете"
 
 #: perform.cpp:52 perform.cpp:62
 msgctxt "list"
 msgid "Expanded"
-msgstr ""
+msgstr "Разширен"
 
 #: perform.cpp:67
 msgid "No commands in your perform list."
-msgstr ""
+msgstr "Няма команди във вашия изпълняващ списък."
 
 #: perform.cpp:73
 msgid "perform commands sent"
-msgstr ""
+msgstr "командите за изпълнение изпратени"
 
 #: perform.cpp:86
 msgid "Commands Swapped."
-msgstr ""
+msgstr "Командите разменени"
 
 #: perform.cpp:95
 msgid "<command>"
-msgstr ""
+msgstr "<command>"
 
 #: perform.cpp:96
 msgid "Adds perform command to be sent to the server on connect"
-msgstr ""
+msgstr "Добавя команда за изпълнение да се изпрати на сървъра при свързване"
 
 #: perform.cpp:98
 msgid "<number>"
-msgstr ""
+msgstr "<number>"
 
 #: perform.cpp:98
 msgid "Delete a perform command"
-msgstr ""
+msgstr "Изтрива команда за изпълнение"
 
 #: perform.cpp:100
 msgid "List the perform commands"
-msgstr ""
+msgstr "Показва командите за изпълнение"
 
 #: perform.cpp:103
 msgid "Send the perform commands to the server now"
-msgstr ""
+msgstr "Изпрати командата за изпълнение на сървъра сега"
 
 #: perform.cpp:105
 msgid "<number> <number>"
-msgstr ""
+msgstr "<number><number>"
 
 #: perform.cpp:106
 msgid "Swap two perform commands"
-msgstr ""
+msgstr "Смяна на две команди за изпълнение"
 
 #: perform.cpp:192
 msgid "Keeps a list of commands to be executed when ZNC connects to IRC."
 msgstr ""
+"Пази списък на команди, които да бъдат изпълнени когато ZNC се свърже към IRC"

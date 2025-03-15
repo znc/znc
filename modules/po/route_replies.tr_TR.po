@@ -34,11 +34,13 @@ msgstr ""
 "lütfen bir hata raporlayın"
 
 #: route_replies.cpp:381
+#, c++-format
 msgid "To disable this message, do \"/msg {1} silent yes\""
 msgstr ""
 "Bu mesajı devre dışı bırakmak için \"/msg {1} silent yes\" komutunu kullanın"
 
 #: route_replies.cpp:383
+#, c++-format
 msgid "Last request: {1}"
 msgstr "Son istek: {1}"
 
@@ -47,6 +49,7 @@ msgid "Expected replies:"
 msgstr "Beklenen yanıtlar:"
 
 #: route_replies.cpp:388
+#, c++-format
 msgid "{1} (last)"
 msgstr "{1} (son)"
 

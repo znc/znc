@@ -125,6 +125,7 @@ msgid "Username is currently not set"
 msgstr "Gebruikersnaam is niet ingesteld"
 
 #: sasl.cpp:111
+#, c++-format
 msgid "Username is currently set to '{1}'"
 msgstr "Gebruikersnaam is ingesteld op '{1}'"
 
@@ -137,14 +138,17 @@ msgid "Password was supplied"
 msgstr "Wachtwoord was ingevoerd"
 
 #: sasl.cpp:124
+#, c++-format
 msgid "Username has been set to [{1}]"
 msgstr "Gebruikersnaam is ingesteld op [{1}]"
 
 #: sasl.cpp:125
+#, c++-format
 msgid "Password has been set to [{1}]"
 msgstr "Wachtwoord is ingesteld op [{1}]"
 
 #: sasl.cpp:145
+#, c++-format
 msgid "Current mechanisms set: {1}"
 msgstr "Huidige mechanismen ingesteld: {1}"
 
@@ -165,10 +169,12 @@ msgid "Use 'RequireAuth no' to disable."
 msgstr "Gebruik 'RequireAuth no' om uit te schakelen."
 
 #: sasl.cpp:258
+#, c++-format
 msgid "{1} mechanism succeeded."
 msgstr "{1} mechanisme gelukt."
 
 #: sasl.cpp:270
+#, c++-format
 msgid "{1} mechanism failed."
 msgstr "{1} mechanisme gefaalt."
 

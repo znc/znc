@@ -49,18 +49,22 @@ msgid "Send"
 msgstr "Gönder"
 
 #: send_raw.cpp:32
+#, c++-format
 msgid "Sent [{1}] to {2}/{3}"
 msgstr "[{1}], {2}/{3} adresine gönderildi"
 
 #: send_raw.cpp:36 send_raw.cpp:56
+#, c++-format
 msgid "Network {1} not found for user {2}"
 msgstr "{2} kullanıcısı için {1} ağı bulunamadı"
 
 #: send_raw.cpp:40 send_raw.cpp:60
+#, c++-format
 msgid "User {1} not found"
 msgstr "{1} kullanıcısı bulunamadı"
 
 #: send_raw.cpp:52
+#, c++-format
 msgid "Sent [{1}] to IRC server of {2}/{3}"
 msgstr "[{1}], {2}/{3} IRC sunucusuna gönderildi"
 

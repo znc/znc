@@ -54,6 +54,7 @@ msgstr ""
 "le fichier PEM."
 
 #: cert.cpp:38
+#, c++-format
 msgid "You have a certificate in {1}"
 msgstr "Vous avez un certificat dans {1}"
 
@@ -66,6 +67,7 @@ msgstr ""
 "certificat"
 
 #: cert.cpp:44
+#, c++-format
 msgid "Alternatively you can either place one at {1}"
 msgstr "Alternativement, vous pouvez en placer un à {1}"
 

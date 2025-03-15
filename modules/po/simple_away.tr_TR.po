@@ -51,14 +51,17 @@ msgid "Away reason set"
 msgstr "Away sebebi ayarla"
 
 #: simple_away.cpp:138
+#, c++-format
 msgid "Away reason: {1}"
 msgstr "Away sebebi: {1}"
 
 #: simple_away.cpp:139
+#, c++-format
 msgid "Current away reason would be: {1}"
 msgstr "Şu anki away sebebi şu şekilde olacaktır: {1}"
 
 #: simple_away.cpp:144
+#, c++-format
 msgid "Current timer setting: 1 second"
 msgid_plural "Current timer setting: {1} seconds"
 msgstr[0] "Geçerli zamanlayıcı ayarı: 1 saniye"
@@ -69,16 +72,19 @@ msgid "Timer disabled"
 msgstr "Zamanlayıcı devre dışı"
 
 #: simple_away.cpp:155
+#, c++-format
 msgid "Timer set to 1 second"
 msgid_plural "Timer set to: {1} seconds"
 msgstr[0] "Zamanlayıcı 1 saniyeye ayarlandı"
 msgstr[1] "Zamanlayıcı {1} saniyeye ayarlandı"
 
 #: simple_away.cpp:166
+#, c++-format
 msgid "Current MinClients setting: {1}"
 msgstr "Geçerli MinClients ayarı: {1}"
 
 #: simple_away.cpp:169
+#, c++-format
 msgid "MinClients set to {1}"
 msgstr "MinClients {1} olarak ayarlandı"
 

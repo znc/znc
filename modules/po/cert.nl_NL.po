@@ -53,6 +53,7 @@ msgstr ""
 "verwijderen van het PEM bestand."
 
 #: cert.cpp:38
+#, c++-format
 msgid "You have a certificate in {1}"
 msgstr "Je hebt een certificaat in {1}"
 
@@ -65,6 +66,7 @@ msgstr ""
 "voegen"
 
 #: cert.cpp:44
+#, c++-format
 msgid "Alternatively you can either place one at {1}"
 msgstr "In plaats daarvan kan je deze ook plaatsen in {1}"
 

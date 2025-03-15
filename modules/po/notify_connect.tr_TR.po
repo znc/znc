@@ -21,6 +21,7 @@ msgid "detached"
 msgstr "ayrıldı"
 
 #: notify_connect.cpp:41
+#, c++-format
 msgid "{1} {2} from {3}"
 msgstr "{1}, {3}'dan {2}"
 

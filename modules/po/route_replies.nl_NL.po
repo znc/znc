@@ -35,10 +35,12 @@ msgstr ""
 "hier mee."
 
 #: route_replies.cpp:381
+#, c++-format
 msgid "To disable this message, do \"/msg {1} silent yes\""
 msgstr "Om dit bericht uit te zetten, doe \"/msg {1} silent yes\""
 
 #: route_replies.cpp:383
+#, c++-format
 msgid "Last request: {1}"
 msgstr "Laatste aanvraag: {1}"
 
@@ -47,6 +49,7 @@ msgid "Expected replies:"
 msgstr "Verwachte antwoorden:"
 
 #: route_replies.cpp:388
+#, c++-format
 msgid "{1} (last)"
 msgstr "{1} (laatste)"
 

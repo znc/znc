@@ -15,3 +15,4 @@ msgstr ""
 #: corecaps.cpp:75
 msgid "Adds support for several IRC capabilities, extracted from ZNC core."
 msgstr ""
+"Добавя поддръжка за няколко IRC възможности, изкарани от ядрото на ZNC."

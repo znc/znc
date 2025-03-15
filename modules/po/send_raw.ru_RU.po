@@ -51,18 +51,22 @@ msgid "Send"
 msgstr "Отправить"
 
 #: send_raw.cpp:32
+#, c++-format
 msgid "Sent [{1}] to {2}/{3}"
 msgstr "Отправил [{1}] {2}/{3}"
 
 #: send_raw.cpp:36 send_raw.cpp:56
+#, c++-format
 msgid "Network {1} not found for user {2}"
 msgstr "Сеть {1} не найдена для пользователя {2}"
 
 #: send_raw.cpp:40 send_raw.cpp:60
+#, c++-format
 msgid "User {1} not found"
 msgstr "Пользователь {1} не найден"
 
 #: send_raw.cpp:52
+#, c++-format
 msgid "Sent [{1}] to IRC server of {2}/{3}"
 msgstr "Послал [{1}] к IRC серверу {2}/{3}"
 

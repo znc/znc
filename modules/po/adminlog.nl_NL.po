@@ -61,6 +61,7 @@ msgid "Logging is enabled for both, file and syslog"
 msgstr "Logboek is ingesteld voor schrijven naar bestand en syslog"
 
 #: adminlog.cpp:204
+#, c++-format
 msgid "Log file will be written to {1}"
 msgstr "Logboek zal geschreven worden naar {1}"
 

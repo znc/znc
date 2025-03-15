@@ -53,6 +53,7 @@ msgid "Usage: Stick <#channel> [key]"
 msgstr "Kullanımı: Stick <#kanal> [anahtar]"
 
 #: stickychan.cpp:79
+#, c++-format
 msgid "Stuck {1}"
 msgstr "{1} stick edildi"
 
@@ -61,6 +62,7 @@ msgid "Usage: Unstick <#channel>"
 msgstr "Kullanımı: Unstick <#kanal>"
 
 #: stickychan.cpp:89
+#, c++-format
 msgid "Unstuck {1}"
 msgstr "{1} unstick edildi"
 
@@ -69,6 +71,7 @@ msgid " -- End of List"
 msgstr " -- Liste Sonu"
 
 #: stickychan.cpp:115
+#, c++-format
 msgid "Could not join {1} (# prefix missing?)"
 msgstr "{1}'a katılamadı (# öneki eksik mi?)"
 
@@ -89,6 +92,7 @@ msgid "Channel stopped being sticky!"
 msgstr "Kanal sticky olmayı bıraktı!"
 
 #: stickychan.cpp:209
+#, c++-format
 msgid ""
 "Channel {1} cannot be joined, it is an illegal channel name. Unsticking."
 msgstr ""

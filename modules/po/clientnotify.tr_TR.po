@@ -53,6 +53,7 @@ msgid "Shows the current settings"
 msgstr "Geçerli ayarları gösterir"
 
 #: clientnotify.cpp:104 clientnotify.cpp:134
+#, c++-format
 msgid "<This message is impossible for 1 client>"
 msgid_plural ""
 "Another client ({1}) authenticated as your user. Use the 'ListClients' "
@@ -88,6 +89,7 @@ msgid "Usage: OnDisconnect <on|off>"
 msgstr "Kullanımı: OnDisconnect <on|off>"
 
 #: clientnotify.cpp:210
+#, c++-format
 msgid ""
 "Current settings: Method: {1}, for unseen only: {2}, notifyfor unseen IPs: "
 "{3}, notify for unseen IDs: {4}, notify ondisconnecting clients: {5}"

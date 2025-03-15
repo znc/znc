@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
-"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
-"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: pl\n"
@@ -19,6 +19,7 @@ msgid "Added to list"
 msgstr "Dodano do listy"
 
 #: autoattach.cpp:96
+#, c++-format
 msgid "{1} is already added"
 msgstr "{1} już jest dodany"
 
@@ -31,6 +32,7 @@ msgid "Wildcards are allowed"
 msgstr "Wieloznaczniki są dozwolone"
 
 #: autoattach.cpp:113
+#, c++-format
 msgid "Removed {1} from list"
 msgstr "Usunięto {1} z listy"
 
@@ -75,6 +77,7 @@ msgid "List all entries"
 msgstr "Lista wszystkich wpisów"
 
 #: autoattach.cpp:171
+#, c++-format
 msgid "Unable to add [{1}]"
 msgstr "Nie można dodać [{1}]"
 

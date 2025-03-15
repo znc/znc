@@ -61,6 +61,7 @@ msgid "Logging is enabled for both, file and syslog"
 msgstr "Günlük kaydı hem dosya hem de sistem günlüğü için etkinleştirildi"
 
 #: adminlog.cpp:204
+#, c++-format
 msgid "Log file will be written to {1}"
 msgstr "Günlük dosyası {1}'e yazılacak"
 

@@ -52,6 +52,7 @@ msgstr ""
 "Die PEM-Datei existiert nicht oder es trat ein Fehler beim Löschen auf."
 
 #: cert.cpp:38
+#, c++-format
 msgid "You have a certificate in {1}"
 msgstr "Dein Zertifikat ist in {1}"
 
@@ -64,6 +65,7 @@ msgstr ""
 "hinzuzufügen"
 
 #: cert.cpp:44
+#, c++-format
 msgid "Alternatively you can either place one at {1}"
 msgstr "Alternativ kannst du eines in {1} platzieren"
 

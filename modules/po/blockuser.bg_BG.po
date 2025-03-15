@@ -14,84 +14,90 @@ msgstr ""
 
 #: modules/po/../data/blockuser/tmpl/blockuser_WebadminUser.tmpl:9
 msgid "Account is blocked"
-msgstr ""
+msgstr "Акаунтът е блокиран"
 
 #: blockuser.cpp:23
 msgid "Your account has been disabled. Contact your administrator."
-msgstr ""
+msgstr "Вашият акаунт е деактивиран. Свържете се с администратора."
 
 #: blockuser.cpp:29
 msgid "List blocked users"
-msgstr ""
+msgstr "Показване на блокираните потребители"
 
 #: blockuser.cpp:31 blockuser.cpp:33
 msgid "<user>"
-msgstr ""
+msgstr "<user>"
 
 #: blockuser.cpp:31
 msgid "Block a user"
-msgstr ""
+msgstr "Блокирай потребител"
 
 #: blockuser.cpp:33
 msgid "Unblock a user"
-msgstr ""
+msgstr "Отблокирай потребител"
 
 #: blockuser.cpp:55
+#, c++-format
 msgid "Could not block {1}"
-msgstr ""
+msgstr "Не може да се блокира {1}"
 
 #: blockuser.cpp:76
 msgid "Access denied"
-msgstr ""
+msgstr "Достъпът е отказан"
 
 #: blockuser.cpp:85
 msgid "No users are blocked"
-msgstr ""
+msgstr "Няма блокирани потребители"
 
 #: blockuser.cpp:88
 msgid "Blocked users:"
-msgstr ""
+msgstr "Блокирани потребители:"
 
 #: blockuser.cpp:100
 msgid "Usage: Block <user>"
-msgstr ""
+msgstr "Употреба: Block <user>"
 
 #: blockuser.cpp:105 blockuser.cpp:147
 msgid "You can't block yourself"
-msgstr ""
+msgstr "Не може да се блокирате"
 
 #: blockuser.cpp:110 blockuser.cpp:152
+#, c++-format
 msgid "Blocked {1}"
-msgstr ""
+msgstr "{1} е блокиран"
 
 #: blockuser.cpp:112
+#, c++-format
 msgid "Could not block {1} (misspelled?)"
-msgstr ""
+msgstr "Не може да се блокира {1} (правописна грешка?)"
 
 #: blockuser.cpp:120
 msgid "Usage: Unblock <user>"
-msgstr ""
+msgstr "Употреба: Unblock <user>"
 
 #: blockuser.cpp:125 blockuser.cpp:161
+#, c++-format
 msgid "Unblocked {1}"
-msgstr ""
+msgstr "{1} е отблокиран"
 
 #: blockuser.cpp:127
 msgid "This user is not blocked"
-msgstr ""
+msgstr "Този потребител не е блокиран"
 
 #: blockuser.cpp:155
+#, c++-format
 msgid "Couldn't block {1}"
-msgstr ""
+msgstr "Не може да се блокира {1}"
 
 #: blockuser.cpp:164
+#, c++-format
 msgid "User {1} is not blocked"
-msgstr ""
+msgstr "Потребителят {1} не е блокиран"
 
 #: blockuser.cpp:216
 msgid "Enter one or more user names. Separate them by spaces."
-msgstr ""
+msgstr "Въведете едно или повече потребителски имена. Отделете ги с интервал."
 
 #: blockuser.cpp:219
 msgid "Block certain users from logging in."
-msgstr ""
+msgstr "Блокирайте входът на определени потребители."

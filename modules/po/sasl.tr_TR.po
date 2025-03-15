@@ -124,6 +124,7 @@ msgid "Username is currently not set"
 msgstr "Kullanıcı adı şu anda ayarlanmamış"
 
 #: sasl.cpp:111
+#, c++-format
 msgid "Username is currently set to '{1}'"
 msgstr "Kullanıcı adı şu anda '{1}' olarak ayarlı"
 
@@ -136,14 +137,17 @@ msgid "Password was supplied"
 msgstr "Şifre sağlandı"
 
 #: sasl.cpp:124
+#, c++-format
 msgid "Username has been set to [{1}]"
 msgstr "Kullanıcı adı [{1}] olarak ayarlandı"
 
 #: sasl.cpp:125
+#, c++-format
 msgid "Password has been set to [{1}]"
 msgstr "Şifre [{1}] olarak ayarlandı"
 
 #: sasl.cpp:145
+#, c++-format
 msgid "Current mechanisms set: {1}"
 msgstr "Mevcut mekanizmalar ayarlandı: {1}"
 
@@ -164,10 +168,12 @@ msgid "Use 'RequireAuth no' to disable."
 msgstr "Devre dışı bırakmak için 'RequireAuth no' seçeneğini kullanın."
 
 #: sasl.cpp:258
+#, c++-format
 msgid "{1} mechanism succeeded."
 msgstr "{1} mekanizması başarılı oldu."
 
 #: sasl.cpp:270
+#, c++-format
 msgid "{1} mechanism failed."
 msgstr "{1} mekanizması başarısız oldu."
 

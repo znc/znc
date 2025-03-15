@@ -9,17 +9,20 @@ These people helped translating ZNC to various languages:
 * ChaosEngine (Andrzej Pauli)
 * cirinho (Ciro Moniz)
 * CJSStryker
+* Danit
 * DarthGandalf
 * dgw
 * Dreiundachzig
 * Dremski
 * eggoez (Baguz Ach)
+* eleanorsilly (ellie is not coding in the slightest)
 * freonesuka (Андрей Вальтер)
 * gremax
 * hypech
 * JakaMedia (Jaka Media Teknologi)
 * Jay2k1
 * kloun (Victor Kukshiev)
+* kumanoff
 * leon-th (Leon T.)
 * LiteHell
 * lorenzosu

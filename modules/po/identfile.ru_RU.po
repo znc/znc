@@ -43,22 +43,27 @@ msgid "Show current state"
 msgstr ""
 
 #: identfile.cpp:48
+#, c++-format
 msgid "File is set to: {1}"
 msgstr ""
 
 #: identfile.cpp:53
+#, c++-format
 msgid "File has been set to: {1}"
 msgstr ""
 
 #: identfile.cpp:58
+#, c++-format
 msgid "Format has been set to: {1}"
 msgstr ""
 
 #: identfile.cpp:59 identfile.cpp:65
+#, c++-format
 msgid "Format would be expanded to: {1}"
 msgstr ""
 
 #: identfile.cpp:64
+#, c++-format
 msgid "Format is set to: {1}"
 msgstr ""
 
@@ -77,6 +82,7 @@ msgid ""
 msgstr ""
 
 #: identfile.cpp:189
+#, c++-format
 msgid "[{1}] could not be written, retrying..."
 msgstr ""
 

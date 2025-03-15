@@ -14,98 +14,104 @@ msgstr ""
 
 #: autovoice.cpp:120
 msgid "List all users"
-msgstr ""
+msgstr "Изброява на всички потребители"
 
 #: autovoice.cpp:122 autovoice.cpp:125
 msgid "<user> <channel> [channel] ..."
-msgstr ""
+msgstr "<user> <channel> [канал] ..."
 
 #: autovoice.cpp:123
 msgid "Adds channels to a user"
-msgstr ""
+msgstr "Добавя канали към потребител"
 
 #: autovoice.cpp:126
 msgid "Removes channels from a user"
-msgstr ""
+msgstr "Премахва канали към потребител"
 
 #: autovoice.cpp:128
 msgid "<user> <hostmask> [channels]"
-msgstr ""
+msgstr "<user> <hostmask> [канали]"
 
 #: autovoice.cpp:129
 msgid "Adds a user"
-msgstr ""
+msgstr "Добавя потребител"
 
 #: autovoice.cpp:131
 msgid "<user>"
-msgstr ""
+msgstr "<user>"
 
 #: autovoice.cpp:131
 msgid "Removes a user"
-msgstr ""
+msgstr "Премахва потребител"
 
 #: autovoice.cpp:215
 msgid "Usage: AddUser <user> <hostmask> [channels]"
-msgstr ""
+msgstr "Употреба: AddUser <потребител> <хостмаск> [канали]"
 
 #: autovoice.cpp:229
 msgid "Usage: DelUser <user>"
-msgstr ""
+msgstr "Употреба: DelUser <потребител>"
 
 #: autovoice.cpp:238
 msgid "There are no users defined"
-msgstr ""
+msgstr "Няма дефинирани потребители"
 
 #: autovoice.cpp:244 autovoice.cpp:250
 msgid "User"
-msgstr ""
+msgstr "Потребител"
 
 #: autovoice.cpp:245 autovoice.cpp:251
 msgid "Hostmask"
-msgstr ""
+msgstr "Хостмаск"
 
 #: autovoice.cpp:246 autovoice.cpp:252
 msgid "Channels"
-msgstr ""
+msgstr "Канали"
 
 #: autovoice.cpp:263
 msgid "Usage: AddChans <user> <channel> [channel] ..."
-msgstr ""
+msgstr "Употреба: AddChans <потребител> <канал> [канал] ..."
 
 #: autovoice.cpp:270 autovoice.cpp:292 autovoice.cpp:329
 msgid "No such user"
-msgstr ""
+msgstr "Няма такъв потребител"
 
 #: autovoice.cpp:275
+#, c++-format
 msgid "Channel(s) added to user {1}"
-msgstr ""
+msgstr "Добавен(и) канал(и) към потребител {1}"
 
 #: autovoice.cpp:285
 msgid "Usage: DelChans <user> <channel> [channel] ..."
-msgstr ""
+msgstr "Употреба: DelChans <потребител> <канал> [канал]"
 
 #: autovoice.cpp:298
+#, c++-format
 msgid "Channel(s) Removed from user {1}"
-msgstr ""
+msgstr "Премахнат(и) канал(и) от потребител {1}"
 
 #: autovoice.cpp:335
+#, c++-format
 msgid "User {1} removed"
-msgstr ""
+msgstr "Потребителят {1} е премахнат"
 
 #: autovoice.cpp:341
 msgid "That user already exists"
-msgstr ""
+msgstr "Този потребител вече съществува"
 
 #: autovoice.cpp:347
+#, c++-format
 msgid "User {1} added with hostmask {2}"
-msgstr ""
+msgstr "Потребителят {1} е добавен с хостмаск {2}"
 
 #: autovoice.cpp:360
 msgid ""
 "Each argument is either a channel you want autovoice for (which can include "
 "wildcards) or, if it starts with !, it is an exception for autovoice."
 msgstr ""
+"Всеки аргумент е или канал за който искате autovoice (който може да съдържа "
+"wildcards) или, ако започва с ! е изключение за autovoice."
 
 #: autovoice.cpp:365
 msgid "Auto voice the good people"
-msgstr ""
+msgstr "Автоматичен voice за добрите хора"

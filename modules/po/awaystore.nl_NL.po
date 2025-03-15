@@ -21,6 +21,7 @@ msgid "Welcome back!"
 msgstr "Welkom terug!"
 
 #: awaystore.cpp:100
+#, c++-format
 msgid "Deleted {1} messages"
 msgstr "{1} bericht(en) verwijderd"
 
@@ -45,14 +46,17 @@ msgid "There are no messages to save"
 msgstr "Er zijn geen berichten om op te slaan"
 
 #: awaystore.cpp:135
+#, c++-format
 msgid "Password updated to [{1}]"
 msgstr "Wachtwoord bijgewerkt naar [{1}]"
 
 #: awaystore.cpp:147
+#, c++-format
 msgid "Corrupt message! [{1}]"
 msgstr "Corrupt bericht! [{1}]"
 
 #: awaystore.cpp:159
+#, c++-format
 msgid "Corrupt time stamp! [{1}]"
 msgstr "Corrupte tijdstempel! [{1}]"
 
@@ -69,10 +73,12 @@ msgid "Timer disabled"
 msgstr "Timer uitgeschakeld"
 
 #: awaystore.cpp:199
+#, c++-format
 msgid "Timer set to {1} seconds"
 msgstr "Timer ingesteld op {1} second(en)"
 
 #: awaystore.cpp:203
+#, c++-format
 msgid "Current timer setting: {1} seconds"
 msgstr "Huidige timer instelling: {1} second(en)"
 
@@ -90,6 +96,7 @@ msgstr ""
 "wachtwoord als argument voor deze module ingevoerd?"
 
 #: awaystore.cpp:386 awaystore.cpp:389
+#, c++-format
 msgid "You have {1} messages!"
 msgstr "Je hebt {1} bericht(en)!"
 

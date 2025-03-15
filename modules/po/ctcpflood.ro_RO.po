@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n"
-"%100<20)) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && "
+"n%100<20)) ? 1 : 2);\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: ro\n"
@@ -30,6 +30,7 @@ msgid "Show the current limits"
 msgstr ""
 
 #: ctcpflood.cpp:76
+#, c++-format
 msgid "Limit reached by {1}, blocking all CTCP"
 msgstr ""
 
@@ -42,6 +43,7 @@ msgid "Usage: Lines <limit>"
 msgstr ""
 
 #: ctcpflood.cpp:125
+#, c++-format
 msgid "1 CTCP message"
 msgid_plural "{1} CTCP messages"
 msgstr[0] ""
@@ -49,6 +51,7 @@ msgstr[1] ""
 msgstr[2] ""
 
 #: ctcpflood.cpp:127
+#, c++-format
 msgid "every second"
 msgid_plural "every {1} seconds"
 msgstr[0] ""
@@ -56,6 +59,7 @@ msgstr[1] ""
 msgstr[2] ""
 
 #: ctcpflood.cpp:129
+#, c++-format
 msgid "Current limit is {1} {2}"
 msgstr ""
 

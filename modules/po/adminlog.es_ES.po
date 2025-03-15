@@ -61,6 +61,7 @@ msgid "Logging is enabled for both, file and syslog"
 msgstr "Activado registro a fichero y syslog"
 
 #: adminlog.cpp:204
+#, c++-format
 msgid "Log file will be written to {1}"
 msgstr "El fichero de registro será escrito en {1}"
 
