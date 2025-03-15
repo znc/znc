@@ -13,10 +13,10 @@ jobs:
           submodules: true
       - run: source .github/ubuntu_deps.sh
       - run: source .github/build.sh
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           name: ${{ github.job }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: codecov debug results ${{ github.job }}
           path: "/tmp/codecov.*.gz"
@@ -36,12 +36,12 @@ jobs:
           cd znc-git-$date
           export CFGFLAGS="--with-gtest=$GITHUB_WORKSPACE/third_party/googletest/googletest --with-gmock=$GITHUB_WORKSPACE/third_party/googletest/googlemock --disable-swig"
           source $GITHUB_WORKSPACE/.github/build.sh
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: znc-tarball
           path: /tmp/znc-git*.tar.gz
           if-no-files-found: error
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           name: ${{ github.job }}
 
@@ -58,10 +58,10 @@ jobs:
           submodules: true
       - run: source .github/ubuntu_deps.sh
       - run: source .github/build.sh
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           name: ${{ github.job }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: codecov debug results ${{ github.job }}
           path: "/tmp/codecov.*.gz"
@@ -121,7 +121,7 @@ jobs:
           brew update
           brew install icu4c qt5 gettext pkg-config cpanminus boost
       - run: source .github/build.sh
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
 
   docker:
     name: Docker push
@@ -156,7 +156,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - uses: docker/build-push-action@v5
+      - uses: docker/build-push-action@v6
         with:
           context: .
           push: ${{ github.repository == 'znc/znc' && github.event_name == 'push' }}
