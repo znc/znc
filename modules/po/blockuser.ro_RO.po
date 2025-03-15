@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n"
-"%100<20)) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && "
+"n%100<20)) ? 1 : 2);\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: ro\n"
@@ -38,6 +38,7 @@ msgid "Unblock a user"
 msgstr ""
 
 #: blockuser.cpp:55
+#, c++-format
 msgid "Could not block {1}"
 msgstr ""
 
@@ -62,10 +63,12 @@ msgid "You can't block yourself"
 msgstr ""
 
 #: blockuser.cpp:110 blockuser.cpp:152
+#, c++-format
 msgid "Blocked {1}"
 msgstr ""
 
 #: blockuser.cpp:112
+#, c++-format
 msgid "Could not block {1} (misspelled?)"
 msgstr ""
 
@@ -74,6 +77,7 @@ msgid "Usage: Unblock <user>"
 msgstr ""
 
 #: blockuser.cpp:125 blockuser.cpp:161
+#, c++-format
 msgid "Unblocked {1}"
 msgstr ""
 
@@ -82,10 +86,12 @@ msgid "This user is not blocked"
 msgstr ""
 
 #: blockuser.cpp:155
+#, c++-format
 msgid "Couldn't block {1}"
 msgstr ""
 
 #: blockuser.cpp:164
+#, c++-format
 msgid "User {1} is not blocked"
 msgstr ""
 

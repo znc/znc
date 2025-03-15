@@ -13,6 +13,7 @@ msgstr ""
 "Language: de_DE\n"
 
 #: shell.cpp:37
+#, c++-format
 msgid "Failed to execute: {1}"
 msgstr "Fehler beim ausführen: {1}"
 

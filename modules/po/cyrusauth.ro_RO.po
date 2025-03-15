@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n"
-"%100<20)) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && "
+"n%100<20)) ? 1 : 2);\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: ro\n"
@@ -31,6 +31,7 @@ msgid "Access denied"
 msgstr ""
 
 #: cyrusauth.cpp:70
+#, c++-format
 msgid "Ignoring invalid SASL pwcheck method: {1}"
 msgstr ""
 
@@ -51,6 +52,7 @@ msgid "We will not create users on their first login"
 msgstr ""
 
 #: cyrusauth.cpp:174 cyrusauth.cpp:195
+#, c++-format
 msgid ""
 "We will create users on their first login, using user [{1}] as a template"
 msgstr ""

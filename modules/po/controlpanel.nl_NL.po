@@ -69,6 +69,7 @@ msgstr ""
 "aanpassen van je eigen gebruiker en network."
 
 #: controlpanel.cpp:186 controlpanel.cpp:1047 controlpanel.cpp:1084
+#, c++-format
 msgid "Error: User [{1}] does not exist!"
 msgstr "Fout: Gebruiker [{1}] bestaat niet!"
 
@@ -82,6 +83,7 @@ msgid "Error: You cannot use $network to modify other users!"
 msgstr "Fout: Je kan $network niet gebruiken om andere gebruiks aan te passen!"
 
 #: controlpanel.cpp:209
+#, c++-format
 msgid "Error: User {1} does not have a network named [{2}]."
 msgstr "Fout: Gebruiker {1} heeft geen netwerk genaamd [{2}]."
 
@@ -115,6 +117,7 @@ msgid "This bind host is already set!"
 msgstr "Deze bindhost is al ingesteld!"
 
 #: controlpanel.cpp:445 controlpanel.cpp:454 controlpanel.cpp:923
+#, c++-format
 msgid "Setting failed, limit for buffer size is {1}"
 msgstr "Configuratie gefaald, limiet van buffer grootte is {1}"
 
@@ -131,6 +134,7 @@ msgid "That would be a bad idea!"
 msgstr "Dat zou een slecht idee zijn!"
 
 #: controlpanel.cpp:564
+#, c++-format
 msgid "Supported languages: {1}"
 msgstr "Ondersteunde talen: {1}"
 
@@ -161,14 +165,17 @@ msgid "Usage: AddChan <username> <network> <channel>"
 msgstr "Gebruik: AddChan <gebruikersnaam> <netwerk> <kanaal>"
 
 #: controlpanel.cpp:762
+#, c++-format
 msgid "Error: User {1} already has a channel named {2}."
 msgstr "Fout: Gebruiker {1} heeft al een kanaal genaamd {2}."
 
 #: controlpanel.cpp:769
+#, c++-format
 msgid "Channel {1} for user {2} added to network {3}."
 msgstr "Kanaal {1} voor gebruiker {2} toegevoegd aan netwerk {3}."
 
 #: controlpanel.cpp:773
+#, c++-format
 msgid ""
 "Could not add channel {1} for user {2} to network {3}, does it already exist?"
 msgstr ""
@@ -180,12 +187,14 @@ msgid "Usage: DelChan <username> <network> <channel>"
 msgstr "Gebruik: DelChan <gebruikersnaam> <netwerk> <kanaal>"
 
 #: controlpanel.cpp:798
+#, c++-format
 msgid "Error: User {1} does not have any channel matching [{2}] in network {3}"
 msgstr ""
 "Fout: Gebruiker {1} heeft geen kanaal die overeen komt met [{2}] in netwerk "
 "{3}"
 
 #: controlpanel.cpp:811
+#, c++-format
 msgid "Channel {1} is deleted from network {2} of user {3}"
 msgid_plural "Channels {1} are deleted from network {2} of user {3}"
 msgstr[0] "Kanaal {1} is verwijderd van netwerk {2} van gebruiker {3}"
@@ -196,6 +205,7 @@ msgid "Usage: GetChan <variable> <username> <network> <chan>"
 msgstr "Gebruik: GetChan <variabele> <gebruikersnaam> <netwerk> <kanaal>"
 
 #: controlpanel.cpp:840 controlpanel.cpp:904
+#, c++-format
 msgid "Error: No channels matching [{1}] found."
 msgstr "Fout: Geen overeenkomst met kanalen gevonden: [{1}]."
 
@@ -256,14 +266,17 @@ msgid "Usage: AddUser <username> <password>"
 msgstr "Gebruik: AddUser <gebruiker> <wachtwoord>"
 
 #: controlpanel.cpp:1011
+#, c++-format
 msgid "Error: User {1} already exists!"
 msgstr "Fout: Gebruiker {1} bestaat al!"
 
 #: controlpanel.cpp:1023 controlpanel.cpp:1098
+#, c++-format
 msgid "Error: User not added: {1}"
 msgstr "Fout: Gebruiker niet toegevoegd: {1}"
 
 #: controlpanel.cpp:1027 controlpanel.cpp:1102
+#, c++-format
 msgid "User {1} added!"
 msgstr "Gebruiker {1} toegevoegd!"
 
@@ -284,6 +297,7 @@ msgid "Error: Internal error!"
 msgstr "Fout: Interne fout!"
 
 #: controlpanel.cpp:1062
+#, c++-format
 msgid "User {1} deleted!"
 msgstr "Gebruiker {1} verwijderd!"
 
@@ -292,6 +306,7 @@ msgid "Usage: CloneUser <old username> <new username>"
 msgstr "Gebruik: CloneUser <oude gebruikersnaam> <nieuwe gebruikersnaam>"
 
 #: controlpanel.cpp:1092
+#, c++-format
 msgid "Error: Cloning failed: {1}"
 msgstr "Fout: Kloon mislukt: {1}"
 
@@ -309,14 +324,17 @@ msgstr ""
 "DelNetwork <netwerknaam>"
 
 #: controlpanel.cpp:1140
+#, c++-format
 msgid "Error: User {1} already has a network with the name {2}"
 msgstr "Fout: Gebruiker {1} heeft al een netwerk met de naam {2}"
 
 #: controlpanel.cpp:1147
+#, c++-format
 msgid "Network {1} added to user {2}."
 msgstr "Netwerk {1} aan gebruiker {2} toegevoegd."
 
 #: controlpanel.cpp:1151
+#, c++-format
 msgid "Error: Network [{1}] could not be added for user {2}: {3}"
 msgstr "Fout: Netwerk [{1}] kon niet toegevoegd worden voor gebruiker {2}: {3}"
 
@@ -325,14 +343,17 @@ msgid "Usage: DelNetwork [user] network"
 msgstr "Gebruik: DelNetwork [gebruiker] netwerk"
 
 #: controlpanel.cpp:1187
+#, c++-format
 msgid "The currently active network can be deleted via {1}status"
 msgstr "Het huidige actieve netwerk kan worden verwijderd via {1}status"
 
 #: controlpanel.cpp:1193
+#, c++-format
 msgid "Network {1} deleted for user {2}."
 msgstr "Netwerk {1} verwijderd voor gebruiker {2}."
 
 #: controlpanel.cpp:1197
+#, c++-format
 msgid "Error: Network {1} could not be deleted for user {2}."
 msgstr "Fout: Netwerk [{1}] kon niet verwijderd worden voor gebruiker {2}."
 
@@ -372,10 +393,12 @@ msgstr ""
 "[wachtwoord]"
 
 #: controlpanel.cpp:1269
+#, c++-format
 msgid "Added IRC Server {1} to network {2} for user {3}."
 msgstr "IRC Server {1} toegevegd aan netwerk {2} van gebruiker {3}."
 
 #: controlpanel.cpp:1273
+#, c++-format
 msgid "Error: Could not add IRC server {1} to network {2} for user {3}."
 msgstr ""
 "Fout: kon IRC server {1} niet aan netwerk {2} van gebruiker {3} toevoegen."
@@ -387,10 +410,12 @@ msgstr ""
 "[wachtwoord]"
 
 #: controlpanel.cpp:1306
+#, c++-format
 msgid "Deleted IRC Server {1} from network {2} for user {3}."
 msgstr "IRC Server {1} verwijderd van netwerk {2} van gebruiker {3}."
 
 #: controlpanel.cpp:1310
+#, c++-format
 msgid "Error: Could not delete IRC server {1} from network {2} for user {3}."
 msgstr ""
 "Fout: kon IRC server {1} niet van netwerk {2} van gebruiker {3} verwijderen."
@@ -400,6 +425,7 @@ msgid "Usage: Reconnect <username> <network>"
 msgstr "Gebruik: Reconnect <gebruikersnaam> <netwerk>"
 
 #: controlpanel.cpp:1347
+#, c++-format
 msgid "Queued network {1} of user {2} for a reconnect."
 msgstr "Netwerk {1} van gebruiker {2} toegevoegd om opnieuw te verbinden."
 
@@ -408,6 +434,7 @@ msgid "Usage: Disconnect <username> <network>"
 msgstr "Gebruik: Disconnect <gebruikersnaam> <netwerk>"
 
 #: controlpanel.cpp:1371
+#, c++-format
 msgid "Closed IRC connection for network {1} of user {2}."
 msgstr "IRC verbinding afgesloten voor netwerk {1} van gebruiker {2}."
 
@@ -422,10 +449,12 @@ msgid "Reply"
 msgstr "Antwoord"
 
 #: controlpanel.cpp:1396
+#, c++-format
 msgid "No CTCP replies for user {1} are configured"
 msgstr "Geen CTCP antwoorden voor gebruiker {1} zijn ingesteld"
 
 #: controlpanel.cpp:1399
+#, c++-format
 msgid "CTCP replies for user {1}:"
 msgstr "CTCP antwoorden voor gebruiker {1}:"
 
@@ -447,10 +476,12 @@ msgstr ""
 "worden."
 
 #: controlpanel.cpp:1434
+#, c++-format
 msgid "CTCP requests {1} to user {2} will now be blocked."
 msgstr "CTCP aanvraag {1} naar gebruiker {2} zal nu worden geblokkeerd."
 
 #: controlpanel.cpp:1438
+#, c++-format
 msgid "CTCP requests {1} to user {2} will now get reply: {3}"
 msgstr "CTCP aanvraag {1} naar gebruiker {2} zal nu als antwoord krijgen: {3}"
 
@@ -459,10 +490,12 @@ msgid "Usage: DelCTCP [user] [request]"
 msgstr "Gebruik: DelCTCP [gebruikersnaam] [aanvraag]"
 
 #: controlpanel.cpp:1466
+#, c++-format
 msgid "CTCP requests {1} to user {2} will now be sent to IRC clients"
 msgstr "CTCP aanvraag {1} naar gebruiker {2} zal nu doorgestuurd worden"
 
 #: controlpanel.cpp:1470
+#, c++-format
 msgid ""
 "CTCP requests {1} to user {2} will be sent to IRC clients (nothing has "
 "changed)"
@@ -475,22 +508,27 @@ msgid "Loading modules has been disabled."
 msgstr "Het laden van modulen is uit gezet."
 
 #: controlpanel.cpp:1489
+#, c++-format
 msgid "Error: Unable to load module {1}: {2}"
 msgstr "Fout: Niet mogelijk om module te laden, {1}: {2}"
 
 #: controlpanel.cpp:1492
+#, c++-format
 msgid "Loaded module {1}"
 msgstr "Module {1} geladen"
 
 #: controlpanel.cpp:1497
+#, c++-format
 msgid "Error: Unable to reload module {1}: {2}"
 msgstr "Fout: Niet mogelijk om module te herladen, {1}: {2}"
 
 #: controlpanel.cpp:1500
+#, c++-format
 msgid "Reloaded module {1}"
 msgstr "Module {1} opnieuw geladen"
 
 #: controlpanel.cpp:1504
+#, c++-format
 msgid "Error: Unable to load module {1} because it is already loaded"
 msgstr "Fout: Niet mogelijk om module {1} te laden, deze is al geladen"
 
@@ -504,14 +542,17 @@ msgstr ""
 "Gebruik: LoadNetModule <gebruikersnaam> <netwerk> <modulenaam> [argumenten]"
 
 #: controlpanel.cpp:1559
+#, c++-format
 msgid "Please use /znc unloadmod {1}"
 msgstr "Gebruik a.u.b. /znc unloadmod {1}"
 
 #: controlpanel.cpp:1565
+#, c++-format
 msgid "Error: Unable to unload module {1}: {2}"
 msgstr "Fout: Niet mogelijk om module to stoppen, {1}: {2}"
 
 #: controlpanel.cpp:1568
+#, c++-format
 msgid "Unloaded module {1}"
 msgstr "Module {1} gestopt"
 
@@ -534,18 +575,22 @@ msgid "Arguments"
 msgstr "Argumenten"
 
 #: controlpanel.cpp:1637
+#, c++-format
 msgid "User {1} has no modules loaded."
 msgstr "Gebruiker {1} heeft geen modulen geladen."
 
 #: controlpanel.cpp:1641
+#, c++-format
 msgid "Modules loaded for user {1}:"
 msgstr "Modulen geladen voor gebruiker {1}:"
 
 #: controlpanel.cpp:1661
+#, c++-format
 msgid "Network {1} of user {2} has no modules loaded."
 msgstr "Netwerk {1} van gebruiker {2} heeft geen modulen geladen."
 
 #: controlpanel.cpp:1666
+#, c++-format
 msgid "Modules loaded for network {1} of user {2}:"
 msgstr "Modulen geladen voor netwerk {1} van gebruiker {2}:"
 

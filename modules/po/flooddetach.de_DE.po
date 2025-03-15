@@ -34,42 +34,51 @@ msgstr ""
 "Zeige oder Setze ob du über das Trennen und Neuverbinden benachrichtigt wirst"
 
 #: flooddetach.cpp:93
+#, c++-format
 msgid "Flood in {1} is over, reattaching..."
 msgstr "Flut in {1} ist vorbei, verbinde..."
 
 #: flooddetach.cpp:150
+#, c++-format
 msgid "Channel {1} was flooded, you've been detached"
 msgstr "Kanal {1} wurde mit Nachrichten geflutet, sie wurden getrennt"
 
 #: flooddetach.cpp:187
+#, c++-format
 msgid "1 line"
 msgid_plural "{1} lines"
 msgstr[0] "Eine Zeile"
 msgstr[1] "{1} Zeilen"
 
 #: flooddetach.cpp:188
+#, c++-format
 msgid "every second"
 msgid_plural "every {1} seconds"
 msgstr[0] "jede Sekunde"
 msgstr[1] "alle {1} Sekunden"
 
 #: flooddetach.cpp:190
+#, c++-format
 msgid "Current limit is {1} {2}"
 msgstr "Aktuelles Limit ist {1} {2}"
 
 #: flooddetach.cpp:197
+#, c++-format
 msgid "Seconds limit is {1}"
 msgstr "Sekunden-Grenze ist {1}"
 
 #: flooddetach.cpp:202
+#, c++-format
 msgid "Set seconds limit to {1}"
 msgstr "Sekunden-Grenze auf {1} gesetzt"
 
 #: flooddetach.cpp:211
+#, c++-format
 msgid "Lines limit is {1}"
 msgstr "Zeilen-Grenze ist {1}"
 
 #: flooddetach.cpp:216
+#, c++-format
 msgid "Set lines limit to {1}"
 msgstr "Zeilen-Grenze auf {1} gesetzt"
 

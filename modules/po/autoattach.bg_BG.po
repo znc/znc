@@ -14,72 +14,75 @@ msgstr ""
 
 #: autoattach.cpp:94
 msgid "Added to list"
-msgstr ""
+msgstr "Добавено към списъка"
 
 #: autoattach.cpp:96
+#, c++-format
 msgid "{1} is already added"
-msgstr ""
+msgstr "{1} е вече добавено"
 
 #: autoattach.cpp:100
 msgid "Usage: Add [!]<#chan> <search> <host>"
-msgstr ""
+msgstr "Употреба: Add [!]<#chan> <search> <host>"
 
 #: autoattach.cpp:101
 msgid "Wildcards are allowed"
-msgstr ""
+msgstr "Wildcards са позволени"
 
 #: autoattach.cpp:113
+#, c++-format
 msgid "Removed {1} from list"
-msgstr ""
+msgstr "{1} е премахнат от списъка"
 
 #: autoattach.cpp:115
 msgid "Usage: Del [!]<#chan> <search> <host>"
-msgstr ""
+msgstr "Употреба: Del [!]<#chan> <search> <host>"
 
 #: autoattach.cpp:121 autoattach.cpp:129
 msgid "Neg"
-msgstr ""
+msgstr "Neg"
 
 #: autoattach.cpp:122 autoattach.cpp:130
 msgid "Chan"
-msgstr ""
+msgstr "Канал"
 
 #: autoattach.cpp:123 autoattach.cpp:131
 msgid "Search"
-msgstr ""
+msgstr "Търсене"
 
 #: autoattach.cpp:124 autoattach.cpp:132
 msgid "Host"
-msgstr ""
+msgstr "Хост"
 
 #: autoattach.cpp:138
 msgid "You have no entries."
-msgstr ""
+msgstr "Нямате записи."
 
 #: autoattach.cpp:146 autoattach.cpp:149
 msgid "[!]<#chan> <search> <host>"
-msgstr ""
+msgstr "[!]<#chan> <search> <host>"
 
 #: autoattach.cpp:147
 msgid "Add an entry, use !#chan to negate and * for wildcards"
-msgstr ""
+msgstr "Добавяне на запис, използвайте !#chan, за отказ и * за wildcards"
 
 #: autoattach.cpp:150
 msgid "Remove an entry, needs to be an exact match"
-msgstr ""
+msgstr "Премахване на запис, трябва да е точно същият"
 
 #: autoattach.cpp:152
 msgid "List all entries"
-msgstr ""
+msgstr "Показване на всички записи"
 
 #: autoattach.cpp:171
+#, c++-format
 msgid "Unable to add [{1}]"
-msgstr ""
+msgstr "[{1}] не може да бъде добавен"
 
 #: autoattach.cpp:283
 msgid "List of channel masks and channel masks with ! before them."
-msgstr ""
+msgstr "Списък на канали с маски и канали с маски с ! преди тях."
 
 #: autoattach.cpp:286
 msgid "Reattaches you to channels on activity."
-msgstr ""
+msgstr "Отново ви включва в канали при активност."

@@ -44,14 +44,17 @@ msgstr ""
 "reinicializarlo"
 
 #: savebuff.cpp:232
+#, c++-format
 msgid "Password set to [{1}]"
 msgstr "Contraseña establecida a [{1}]"
 
 #: savebuff.cpp:262
+#, c++-format
 msgid "Replayed {1}"
 msgstr "Reproducido {1}"
 
 #: savebuff.cpp:341
+#, c++-format
 msgid "Unable to decode Encrypted file {1}"
 msgstr "No se ha podido descifrar el archivo {1}"
 

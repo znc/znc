@@ -53,14 +53,17 @@ msgid "Set the nick prefix, with no argument it's disabled."
 msgstr "Imposta il prefisso del nick, senza argomenti viene disabilitato."
 
 #: crypt.cpp:271
+#, c++-format
 msgid "Received DH1080 public key from {1}, sending mine..."
 msgstr "Ricevuta la chiave pubblica DH1080 da {1}, ora invio la mia..."
 
 #: crypt.cpp:276 crypt.cpp:297
+#, c++-format
 msgid "Key for {1} successfully set."
 msgstr "La chiave per {1} è stata impostata con successo."
 
 #: crypt.cpp:279 crypt.cpp:300
+#, c++-format
 msgid "Error in {1} with {2}: {3}"
 msgstr "Errore in {1} con {2}: {3}"
 
@@ -69,10 +72,12 @@ msgid "no secret key computed"
 msgstr "nessuna chiave segreta calcolata"
 
 #: crypt.cpp:396
+#, c++-format
 msgid "Target [{1}] deleted"
 msgstr "Target [{1}] eliminato"
 
 #: crypt.cpp:398
+#, c++-format
 msgid "Target [{1}] not found"
 msgstr "Target [{1}] non trovato"
 
@@ -81,6 +86,7 @@ msgid "Usage DelKey <#chan|Nick>"
 msgstr "Utilizzo: DelKey <#canale|Nick>"
 
 #: crypt.cpp:416
+#, c++-format
 msgid "Set encryption key for [{1}] to [{2}]"
 msgstr "Imposta la chiave di crittografia per [{1}] a [{2}]"
 
@@ -89,6 +95,7 @@ msgid "Usage: SetKey <#chan|Nick> <Key>"
 msgstr "Utilizzo: SetKey <#canale|Nick> <chiave>"
 
 #: crypt.cpp:429
+#, c++-format
 msgid "Sent my DH1080 public key to {1}, waiting for reply ..."
 msgstr "Inviata la mia chiave pubblica DH1080 a {1}, attendo risposta ..."
 
@@ -105,6 +112,7 @@ msgid "Nick Prefix disabled."
 msgstr "Prefisso del nick disabilitato."
 
 #: crypt.cpp:443
+#, c++-format
 msgid "Nick Prefix: {1}"
 msgstr "Prefisso del nick: {1}"
 
@@ -115,6 +123,7 @@ msgstr ""
 "simboli."
 
 #: crypt.cpp:461
+#, c++-format
 msgid "Overlap with Status Prefix ({1}), this Nick Prefix will not be used!"
 msgstr ""
 "Sovrapposizione con il Prefisso di Status ({1}), questo prefisso del nick "
@@ -125,6 +134,7 @@ msgid "Disabling Nick Prefix."
 msgstr "Disabilitare il prefisso del nick."
 
 #: crypt.cpp:468
+#, c++-format
 msgid "Setting Nick Prefix to {1}"
 msgstr "Prefisso del nick impostato a {1}"
 

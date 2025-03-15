@@ -31,6 +31,7 @@ msgid "Access denied"
 msgstr "Accesso negato"
 
 #: cyrusauth.cpp:70
+#, c++-format
 msgid "Ignoring invalid SASL pwcheck method: {1}"
 msgstr "Ignoro il metodo non valido SASL pwcheck: {1}"
 
@@ -51,6 +52,7 @@ msgid "We will not create users on their first login"
 msgstr "Non creeremo gli utenti al loro primo accesso"
 
 #: cyrusauth.cpp:174 cyrusauth.cpp:195
+#, c++-format
 msgid ""
 "We will create users on their first login, using user [{1}] as a template"
 msgstr ""

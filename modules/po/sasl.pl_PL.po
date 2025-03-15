@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
-"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
-"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: pl\n"
@@ -126,6 +126,7 @@ msgid "Username is currently not set"
 msgstr "Nazwa użytkownika nie jest bieżąco ustawiona"
 
 #: sasl.cpp:111
+#, c++-format
 msgid "Username is currently set to '{1}'"
 msgstr "Nazwa użytkownika jest bieżąco ustawiona na „{1}”"
 
@@ -138,14 +139,17 @@ msgid "Password was supplied"
 msgstr "Podano hasło"
 
 #: sasl.cpp:124
+#, c++-format
 msgid "Username has been set to [{1}]"
 msgstr "Nazwa użytkownika została ustawiona na [{1}]"
 
 #: sasl.cpp:125
+#, c++-format
 msgid "Password has been set to [{1}]"
 msgstr "Hasło zostało ustawione na [{1}]"
 
 #: sasl.cpp:145
+#, c++-format
 msgid "Current mechanisms set: {1}"
 msgstr "Bieżący zestaw mechanizmów: {1}"
 
@@ -166,10 +170,12 @@ msgid "Use 'RequireAuth no' to disable."
 msgstr "Użyj 'RequireAuth no', aby wyłączyć."
 
 #: sasl.cpp:258
+#, c++-format
 msgid "{1} mechanism succeeded."
 msgstr "Mechanizm {1} zadziałał."
 
 #: sasl.cpp:270
+#, c++-format
 msgid "{1} mechanism failed."
 msgstr "Mechanizm {1} nie powiódł się."
 

@@ -57,6 +57,7 @@ msgid "No logging rules. Everything is logged."
 msgstr "Kayıt kuralı yok. Her şey günlüğe kaydedilir."
 
 #: log.cpp:161
+#, c++-format
 msgid "1 rule removed: {2}"
 msgid_plural "{1} rules removed: {2}"
 msgstr[0] "1 kural silindi: {2}"
@@ -134,6 +135,7 @@ msgid "Not logging nick changes"
 msgstr "nickchanges (nick değişiklikleri) günlüğe kaydedilmiyor"
 
 #: log.cpp:352
+#, c++-format
 msgid ""
 "Invalid args [{1}]. Only one log path allowed.  Check that there are no "
 "spaces in the path."
@@ -142,10 +144,12 @@ msgstr ""
 "olmadığından emin olun."
 
 #: log.cpp:402
+#, c++-format
 msgid "Invalid log path [{1}]"
 msgstr "Geçersiz log yolu [{1}]"
 
 #: log.cpp:405
+#, c++-format
 msgid "Logging to [{1}]. Using timestamp format '{2}'"
 msgstr "[{1}]'da loglanıyor. '{2}' zaman damgası biçimi kullanılıyor"
 

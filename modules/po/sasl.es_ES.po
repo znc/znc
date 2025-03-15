@@ -124,6 +124,7 @@ msgid "Username is currently not set"
 msgstr "El usuario no está establecido"
 
 #: sasl.cpp:111
+#, c++-format
 msgid "Username is currently set to '{1}'"
 msgstr "El usuario está establecido a '{1}'"
 
@@ -136,14 +137,17 @@ msgid "Password was supplied"
 msgstr "Se ha establecido una contraseña"
 
 #: sasl.cpp:124
+#, c++-format
 msgid "Username has been set to [{1}]"
 msgstr "El usuario se ha establecido a [{1}]"
 
 #: sasl.cpp:125
+#, c++-format
 msgid "Password has been set to [{1}]"
 msgstr "La contraseña se ha establecido a [{1}]"
 
 #: sasl.cpp:145
+#, c++-format
 msgid "Current mechanisms set: {1}"
 msgstr "Mecanismo establecido: {1}"
 
@@ -164,10 +168,12 @@ msgid "Use 'RequireAuth no' to disable."
 msgstr "Ejecuta 'RequireAuth no' para desactivarlo."
 
 #: sasl.cpp:258
+#, c++-format
 msgid "{1} mechanism succeeded."
 msgstr "Mecanismo {1} conseguido."
 
 #: sasl.cpp:270
+#, c++-format
 msgid "{1} mechanism failed."
 msgstr "Mecanismo {1} fallido."
 

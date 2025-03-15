@@ -44,14 +44,17 @@ msgstr ""
 "kaydedin"
 
 #: savebuff.cpp:232
+#, c++-format
 msgid "Password set to [{1}]"
 msgstr "Şifre [{1}] olarak ayarlndı"
 
 #: savebuff.cpp:262
+#, c++-format
 msgid "Replayed {1}"
 msgstr "{1} yeniden oynatıldı"
 
 #: savebuff.cpp:341
+#, c++-format
 msgid "Unable to decode Encrypted file {1}"
 msgstr "Şifrelenmiş dosya {1} çözülemiyor"
 

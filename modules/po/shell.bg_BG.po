@@ -13,17 +13,18 @@ msgstr ""
 "Language: bg_BG\n"
 
 #: shell.cpp:37
+#, c++-format
 msgid "Failed to execute: {1}"
-msgstr ""
+msgstr "Не можа да се изпълни: {1}"
 
 #: shell.cpp:75
 msgid "You must be admin to use the shell module"
-msgstr ""
+msgstr "Трябва да сте администратор за да използвате shell модула"
 
 #: shell.cpp:169
 msgid "Gives shell access"
-msgstr ""
+msgstr "Дава достъп до shell-а"
 
 #: shell.cpp:172
 msgid "Gives shell access. Only ZNC admins can use it."
-msgstr ""
+msgstr "Дава достъп до shell-а. Само админите на ZNC може да го използват."

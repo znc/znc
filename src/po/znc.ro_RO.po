@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n"
-"%100<20)) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && "
+"n%100<20)) ? 1 : 2);\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: ro\n"
@@ -65,6 +65,7 @@ msgid "SSL is not enabled"
 msgstr "SSL nu este activat"
 
 #: znc.cpp:1685
+#, c++-format
 msgid "Unable to locate pem file: {1}"
 msgstr "Imposibil de localizat fișierul pem: {1}"
 
@@ -73,6 +74,7 @@ msgid "Invalid port"
 msgstr "Port invalid"
 
 #: znc.cpp:1820 ClientCommand.cpp:1720
+#, c++-format
 msgid "Unable to bind: {1}"
 msgstr "Imposibil de legat: {1}"
 
@@ -100,10 +102,12 @@ msgstr "Index invalid"
 
 #: IRCNetwork.cpp:954 IRCNetwork.cpp:970 IRCNetwork.cpp:978
 #: ClientCommand.cpp:1425
+#, c++-format
 msgid "You are not on {1}"
 msgstr "Nu ești pe {1}"
 
 #: IRCNetwork.cpp:1057
+#, c++-format
 msgid "The channel {1} could not be joined, disabling it."
 msgstr "Canalul {1} nu a putut fi adăugat, î-l dezactivez."
 
@@ -112,6 +116,7 @@ msgid "Your current server was removed, jumping..."
 msgstr "Serverul curent a fost șters, alegem alt server..."
 
 #: IRCNetwork.cpp:1349
+#, c++-format
 msgid "Cannot connect to {1}, because ZNC is not compiled with SSL support."
 msgstr "Nu mă pot conecta la {1}, deoarece ZNC nu este compilat cu suport SSL."
 
@@ -120,6 +125,7 @@ msgid "Some module aborted the connection attempt"
 msgstr "Unele module au întrerupt încercarea de conectare"
 
 #: IRCSock.cpp:520
+#, c++-format
 msgid "Error from server: {1}"
 msgstr "Eroare de la server: {1}"
 
@@ -128,6 +134,7 @@ msgid "ZNC seems to be connected to itself, disconnecting..."
 msgstr "ZNC pare să fie conectat la sine, deconectare..."
 
 #: IRCSock.cpp:769
+#, c++-format
 msgid "Server {1} redirects us to {2}:{3} with reason: {4}"
 msgstr "Serverul {1} mă redirecționează către {2}: {3} cu motivul: {4}"
 
@@ -136,6 +143,7 @@ msgid "Perhaps you want to add it as a new server."
 msgstr "Poate dorești să îl adaugi ca un server nou."
 
 #: IRCSock.cpp:1003
+#, c++-format
 msgid "Channel {1} is linked to another channel and was thus disabled."
 msgstr "Canalul {1} este conectat la un alt canal și a fost astfel dezactivat."
 
@@ -144,6 +152,7 @@ msgid "Switched to SSL (STARTTLS)"
 msgstr "Comutat la SSL (STARTTLS)"
 
 #: IRCSock.cpp:1068
+#, c++-format
 msgid "You quit: {1}"
 msgstr "Ai ieșit: {1}"
 
@@ -152,14 +161,17 @@ msgid "Disconnected from IRC. Reconnecting..."
 msgstr "Deconectat de la IRC. Se reconectează..."
 
 #: IRCSock.cpp:1305
+#, c++-format
 msgid "Cannot connect to IRC ({1}). Retrying..."
 msgstr "Nu se poate conecta la IRC ({1}). Se reîncearcă..."
 
 #: IRCSock.cpp:1308
+#, c++-format
 msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr "Deconectat de la IRC ({1}). Se reconectează..."
 
 #: IRCSock.cpp:1344
+#, c++-format
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 "Dacă ai încredere în acest certificat, tastează /znc "
@@ -186,15 +198,18 @@ msgid "No free nick found"
 msgstr "Nu a fost găsit niciun nume de utilizator"
 
 #: Client.cpp:74
+#, c++-format
 msgid "No such module {1}"
 msgstr "Nu există un astfel de modul {1}"
 
 #: Client.cpp:394
+#, c++-format
 msgid "A client from {1} attempted to login as you, but was rejected: {2}"
 msgstr ""
 "Un client din {1} a încercat să se conecteze ca tine, dar a fost respins: {2}"
 
 #: Client.cpp:429
+#, c++-format
 msgid "Network {1} doesn't exist."
 msgstr "Rețeaua {1} nu există."
 
@@ -207,6 +222,7 @@ msgstr ""
 "pentru conexiune."
 
 #: Client.cpp:446
+#, c++-format
 msgid ""
 "Selecting network {1}. To see list of all configured networks, use /znc "
 "ListNetworks"
@@ -215,6 +231,7 @@ msgstr ""
 "tastează /znc ListNetworks"
 
 #: Client.cpp:449
+#, c++-format
 msgid ""
 "If you want to choose another network, use /znc JumpNetwork <network>, or "
 "connect to ZNC with username {1}/<network> (instead of just {1})"
@@ -244,18 +261,22 @@ msgid ""
 msgstr ""
 
 #: Client.cpp:1100
+#, c++-format
 msgid "Your CTCP to {1} got lost, you are not connected to IRC!"
 msgstr ""
 
 #: Client.cpp:1226
+#, c++-format
 msgid "Your notice to {1} got lost, you are not connected to IRC!"
 msgstr ""
 
 #: Client.cpp:1265
+#, c++-format
 msgid "Removing channel {1}"
 msgstr "Eliminare canal {1}"
 
 #: Client.cpp:1343
+#, c++-format
 msgid "Your message to {1} got lost, you are not connected to IRC!"
 msgstr ""
 
@@ -269,6 +290,7 @@ msgstr "Utilizează: /attach <#canale>"
 
 #: Client.cpp:1423 Client.cpp:1445 ClientCommand.cpp:129 ClientCommand.cpp:151
 #: ClientCommand.cpp:423 ClientCommand.cpp:450
+#, c++-format
 msgid "There was {1} channel matching [{2}]"
 msgid_plural "There were {1} channels matching [{2}]"
 msgstr[0] "A existat {1} canal care se potrivește cu [{2}]"
@@ -276,6 +298,7 @@ msgstr[1] ""
 msgstr[2] "Au existat {1} canale care se potrivesc cu [{2}]"
 
 #: Client.cpp:1426 ClientCommand.cpp:132
+#, c++-format
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] "Am atașat {1} canal"
@@ -287,6 +310,7 @@ msgid "Usage: /detach <#chans>"
 msgstr "Utilizează: /detach <#canale>"
 
 #: Client.cpp:1448 ClientCommand.cpp:154
+#, c++-format
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] "Detașează {1} canal"
@@ -312,6 +336,7 @@ msgid "Generate this output"
 msgstr "Generați această ieșire"
 
 #: Modules.cpp:599 ClientCommand.cpp:1992
+#, c++-format
 msgid "No matches for '{1}'"
 msgstr "Nu există potriviri pentru „{1}”"
 
@@ -324,6 +349,7 @@ msgid "Unknown command!"
 msgstr "Comandă necunoscută!"
 
 #: Modules.cpp:1786
+#, c++-format
 msgid ""
 "Module names can only contain letters, numbers and underscores, [{1}] is "
 "invalid"
@@ -332,22 +358,27 @@ msgstr ""
 "invalid"
 
 #: Modules.cpp:1805
+#, c++-format
 msgid "Module {1} already loaded."
 msgstr "Modulul {1} a fost deja încărcat."
 
 #: Modules.cpp:1819
+#, c++-format
 msgid "Unable to find module {1}"
 msgstr "Imposibil de găsit modulul {1}"
 
 #: Modules.cpp:1831
+#, c++-format
 msgid "Module {1} does not support module type {2}."
 msgstr ""
 
 #: Modules.cpp:1838
+#, c++-format
 msgid "Module {1} requires a user."
 msgstr ""
 
 #: Modules.cpp:1844
+#, c++-format
 msgid "Module {1} requires a network."
 msgstr ""
 
@@ -356,30 +387,37 @@ msgid "Caught an exception"
 msgstr ""
 
 #: Modules.cpp:1866
+#, c++-format
 msgid "Module {1} aborted: {2}"
 msgstr ""
 
 #: Modules.cpp:1868
+#, c++-format
 msgid "Module {1} aborted."
 msgstr ""
 
 #: Modules.cpp:1892 Modules.cpp:1934
+#, c++-format
 msgid "Module [{1}] not loaded."
 msgstr ""
 
 #: Modules.cpp:1916
+#, c++-format
 msgid "Module {1} unloaded."
 msgstr ""
 
 #: Modules.cpp:1921
+#, c++-format
 msgid "Unable to unload module {1}."
 msgstr ""
 
 #: Modules.cpp:1950
+#, c++-format
 msgid "Reloaded module {1}."
 msgstr ""
 
 #: Modules.cpp:1969
+#, c++-format
 msgid "Unable to find module {1}."
 msgstr ""
 
@@ -388,20 +426,24 @@ msgid "Unknown error"
 msgstr "Eroare necunoscută"
 
 #: Modules.cpp:2118
+#, c++-format
 msgid "Unable to open module {1}: {2}"
 msgstr ""
 
 #: Modules.cpp:2127
+#, c++-format
 msgid "Could not find ZNCModuleEntry in module {1}"
 msgstr ""
 
 #: Modules.cpp:2135
+#, c++-format
 msgid ""
 "Version mismatch for module {1}: core is {2}, module is built for {3}. "
 "Recompile this module."
 msgstr ""
 
 #: Modules.cpp:2146
+#, c++-format
 msgid ""
 "Module {1} is built incompatibly: core is '{2}', module is '{3}'. Recompile "
 "this module."
@@ -433,14 +475,17 @@ msgid "Usage: ListNicks <#chan>"
 msgstr ""
 
 #: ClientCommand.cpp:65
+#, c++-format
 msgid "You are not on [{1}]"
 msgstr ""
 
 #: ClientCommand.cpp:70
+#, c++-format
 msgid "You are not on [{1}] (trying)"
 msgstr ""
 
 #: ClientCommand.cpp:79
+#, c++-format
 msgid "No nicks on [{1}]"
 msgstr ""
 
@@ -473,10 +518,12 @@ msgid "Rehashing succeeded!"
 msgstr ""
 
 #: ClientCommand.cpp:169
+#, c++-format
 msgid "Rehashing failed: {1}"
 msgstr ""
 
 #: ClientCommand.cpp:173
+#, c++-format
 msgid "Wrote config to {1}"
 msgstr ""
 
@@ -489,6 +536,7 @@ msgid "Usage: ListClients"
 msgstr ""
 
 #: ClientCommand.cpp:190
+#, c++-format
 msgid "No such user: {1}"
 msgstr ""
 
@@ -581,6 +629,7 @@ msgid "Usage: SetMOTD <message>"
 msgstr ""
 
 #: ClientCommand.cpp:294
+#, c++-format
 msgid "MOTD set to: {1}"
 msgstr ""
 
@@ -589,6 +638,7 @@ msgid "Usage: AddMOTD <message>"
 msgstr ""
 
 #: ClientCommand.cpp:303
+#, c++-format
 msgid "Added [{1}] to MOTD"
 msgstr ""
 
@@ -597,6 +647,7 @@ msgid "Cleared MOTD"
 msgstr ""
 
 #: ClientCommand.cpp:329
+#, c++-format
 msgid ""
 "ERROR: Writing config file to disk failed! Aborting. Use {1} FORCE to ignore."
 msgstr ""
@@ -606,10 +657,12 @@ msgid "You don't have any servers added."
 msgstr ""
 
 #: ClientCommand.cpp:355
+#, c++-format
 msgid "Server [{1}] not found"
 msgstr ""
 
 #: ClientCommand.cpp:375 ClientCommand.cpp:380
+#, c++-format
 msgid "Connecting to {1}..."
 msgstr ""
 
@@ -630,6 +683,7 @@ msgid "Usage: EnableChan <#chans>"
 msgstr ""
 
 #: ClientCommand.cpp:426
+#, c++-format
 msgid "Enabled {1} channel"
 msgid_plural "Enabled {1} channels"
 msgstr[0] ""
@@ -641,6 +695,7 @@ msgid "Usage: DisableChan <#chans>"
 msgstr ""
 
 #: ClientCommand.cpp:453
+#, c++-format
 msgid "Disabled {1} channel"
 msgid_plural "Disabled {1} channels"
 msgstr[0] ""
@@ -652,6 +707,7 @@ msgid "Usage: MoveChan <#chan> <index>"
 msgstr ""
 
 #: ClientCommand.cpp:474
+#, c++-format
 msgid "Moved channel {1} to index {2}"
 msgstr ""
 
@@ -660,6 +716,7 @@ msgid "Usage: SwapChans <#chan1> <#chan2>"
 msgstr ""
 
 #: ClientCommand.cpp:493
+#, c++-format
 msgid "Swapped channels {1} and {2}"
 msgstr ""
 
@@ -668,10 +725,12 @@ msgid "Usage: ListChans"
 msgstr ""
 
 #: ClientCommand.cpp:517
+#, c++-format
 msgid "No such user [{1}]"
 msgstr ""
 
 #: ClientCommand.cpp:523
+#, c++-format
 msgid "User [{1}] doesn't have network [{2}]"
 msgstr ""
 
@@ -745,6 +804,7 @@ msgid "yes"
 msgstr ""
 
 #: ClientCommand.cpp:596
+#, c++-format
 msgid "Total: {1}, Joined: {2}, Detached: {3}, Disabled: {4}"
 msgstr ""
 
@@ -768,6 +828,7 @@ msgid "Network name should be alphanumeric"
 msgstr ""
 
 #: ClientCommand.cpp:626
+#, c++-format
 msgid ""
 "Network added. Use /znc JumpNetwork {1}, or connect to ZNC with username {2} "
 "(instead of just {3}) to connect to it."
@@ -790,6 +851,7 @@ msgid "Failed to delete network, perhaps this network doesn't exist"
 msgstr ""
 
 #: ClientCommand.cpp:665
+#, c++-format
 msgid "User {1} not found"
 msgstr ""
 
@@ -842,30 +904,37 @@ msgid "Usage: MoveNetwork <old user> <old network> <new user> [new network]"
 msgstr ""
 
 #: ClientCommand.cpp:723
+#, c++-format
 msgid "Old user {1} not found."
 msgstr ""
 
 #: ClientCommand.cpp:729
+#, c++-format
 msgid "Old network {1} not found."
 msgstr ""
 
 #: ClientCommand.cpp:735
+#, c++-format
 msgid "New user {1} not found."
 msgstr ""
 
 #: ClientCommand.cpp:740
+#, c++-format
 msgid "User {1} already has network {2}."
 msgstr ""
 
 #: ClientCommand.cpp:746
+#, c++-format
 msgid "Invalid network name [{1}]"
 msgstr ""
 
 #: ClientCommand.cpp:762
+#, c++-format
 msgid "Some files seem to be in {1}. You might want to move them to {2}"
 msgstr ""
 
 #: ClientCommand.cpp:776
+#, c++-format
 msgid "Error adding network: {1}"
 msgstr ""
 
@@ -886,10 +955,12 @@ msgid "You are already connected with this network."
 msgstr ""
 
 #: ClientCommand.cpp:809
+#, c++-format
 msgid "Switched to {1}"
 msgstr ""
 
 #: ClientCommand.cpp:812
+#, c++-format
 msgid "You don't have a network named {1}"
 msgstr ""
 
@@ -1032,6 +1103,7 @@ msgid "No network modules available."
 msgstr ""
 
 #: ClientCommand.cpp:1101
+#, c++-format
 msgid "Unable to load {1}: Access denied."
 msgstr ""
 
@@ -1040,14 +1112,17 @@ msgid "Usage: LoadMod [--type=global|user|network] <module> [args]"
 msgstr ""
 
 #: ClientCommand.cpp:1114
+#, c++-format
 msgid "Unable to load {1}: {2}"
 msgstr ""
 
 #: ClientCommand.cpp:1124
+#, c++-format
 msgid "Unable to load global module {1}: Access denied."
 msgstr ""
 
 #: ClientCommand.cpp:1130
+#, c++-format
 msgid "Unable to load network module {1}: Not connected with a network."
 msgstr ""
 
@@ -1056,18 +1131,22 @@ msgid "Unknown module type"
 msgstr ""
 
 #: ClientCommand.cpp:1157
+#, c++-format
 msgid "Loaded module {1}"
 msgstr ""
 
 #: ClientCommand.cpp:1159
+#, c++-format
 msgid "Loaded module {1}: {2}"
 msgstr ""
 
 #: ClientCommand.cpp:1162
+#, c++-format
 msgid "Unable to load module {1}: {2}"
 msgstr ""
 
 #: ClientCommand.cpp:1185
+#, c++-format
 msgid "Unable to unload {1}: Access denied."
 msgstr ""
 
@@ -1076,18 +1155,22 @@ msgid "Usage: UnloadMod [--type=global|user|network] <module>"
 msgstr ""
 
 #: ClientCommand.cpp:1200
+#, c++-format
 msgid "Unable to determine type of {1}: {2}"
 msgstr ""
 
 #: ClientCommand.cpp:1208
+#, c++-format
 msgid "Unable to unload global module {1}: Access denied."
 msgstr ""
 
 #: ClientCommand.cpp:1215
+#, c++-format
 msgid "Unable to unload network module {1}: Not connected with a network."
 msgstr ""
 
 #: ClientCommand.cpp:1234
+#, c++-format
 msgid "Unable to unload module {1}: Unknown module type"
 msgstr ""
 
@@ -1100,18 +1183,22 @@ msgid "Usage: ReloadMod [--type=global|user|network] <module> [args]"
 msgstr ""
 
 #: ClientCommand.cpp:1277
+#, c++-format
 msgid "Unable to reload {1}: {2}"
 msgstr ""
 
 #: ClientCommand.cpp:1285
+#, c++-format
 msgid "Unable to reload global module {1}: Access denied."
 msgstr ""
 
 #: ClientCommand.cpp:1292
+#, c++-format
 msgid "Unable to reload network module {1}: Not connected with a network."
 msgstr ""
 
 #: ClientCommand.cpp:1314
+#, c++-format
 msgid "Unable to reload module {1}: Unknown module type"
 msgstr ""
 
@@ -1120,6 +1207,7 @@ msgid "Usage: UpdateMod <module>"
 msgstr ""
 
 #: ClientCommand.cpp:1329
+#, c++-format
 msgid "Reloading {1} everywhere"
 msgstr ""
 
@@ -1128,6 +1216,7 @@ msgid "Done"
 msgstr ""
 
 #: ClientCommand.cpp:1334
+#, c++-format
 msgid ""
 "Done, but there were errors, module {1} could not be reloaded everywhere."
 msgstr ""
@@ -1147,6 +1236,7 @@ msgid "You already have this bind host!"
 msgstr ""
 
 #: ClientCommand.cpp:1359
+#, c++-format
 msgid "Set bind host for network {1} to {2}"
 msgstr ""
 
@@ -1155,6 +1245,7 @@ msgid "Usage: SetUserBindHost <host>"
 msgstr ""
 
 #: ClientCommand.cpp:1376
+#, c++-format
 msgid "Set default bind host to {1}"
 msgstr ""
 
@@ -1177,6 +1268,7 @@ msgid "This user's default bind host not set"
 msgstr ""
 
 #: ClientCommand.cpp:1396
+#, c++-format
 msgid "This user's default bind host is {1}"
 msgstr ""
 
@@ -1185,6 +1277,7 @@ msgid "This network's bind host not set"
 msgstr ""
 
 #: ClientCommand.cpp:1403
+#, c++-format
 msgid "This network's default bind host is {1}"
 msgstr ""
 
@@ -1193,18 +1286,22 @@ msgid "Usage: PlayBuffer <#chan|query>"
 msgstr ""
 
 #: ClientCommand.cpp:1430
+#, c++-format
 msgid "You are not on {1} (trying to join)"
 msgstr ""
 
 #: ClientCommand.cpp:1435
+#, c++-format
 msgid "The buffer for channel {1} is empty"
 msgstr ""
 
 #: ClientCommand.cpp:1444
+#, c++-format
 msgid "No active query with {1}"
 msgstr ""
 
 #: ClientCommand.cpp:1449
+#, c++-format
 msgid "The buffer for {1} is empty"
 msgstr ""
 
@@ -1213,6 +1310,7 @@ msgid "Usage: ClearBuffer <#chan|query>"
 msgstr ""
 
 #: ClientCommand.cpp:1484
+#, c++-format
 msgid "{1} buffer matching {2} has been cleared"
 msgid_plural "{1} buffers matching {2} have been cleared"
 msgstr[0] ""
@@ -1236,6 +1334,7 @@ msgid "Usage: SetBuffer <#chan|query> [linecount]"
 msgstr ""
 
 #: ClientCommand.cpp:1550
+#, c++-format
 msgid "Setting buffer size failed for {1} buffer"
 msgid_plural "Setting buffer size failed for {1} buffers"
 msgstr[0] ""
@@ -1243,6 +1342,7 @@ msgstr[1] ""
 msgstr[2] ""
 
 #: ClientCommand.cpp:1553
+#, c++-format
 msgid "Maximum buffer size is {1} line"
 msgid_plural "Maximum buffer size is {1} lines"
 msgstr[0] ""
@@ -1250,6 +1350,7 @@ msgstr[1] ""
 msgstr[2] ""
 
 #: ClientCommand.cpp:1558
+#, c++-format
 msgid "Size of every buffer was set to {1} line"
 msgid_plural "Size of every buffer was set to {1} lines"
 msgstr[0] ""
@@ -1296,6 +1397,7 @@ msgid "<Total>"
 msgstr ""
 
 #: ClientCommand.cpp:1613
+#, c++-format
 msgid "Running for {1}"
 msgstr ""
 
@@ -1369,6 +1471,7 @@ msgid "no"
 msgstr ""
 
 #: ClientCommand.cpp:1665
+#, c++-format
 msgctxt "listports|irc"
 msgid "yes, on {1}"
 msgstr ""
@@ -1937,6 +2040,7 @@ msgid ""
 msgstr ""
 
 #: User.cpp:532
+#, c++-format
 msgid "Network {1} already exists"
 msgstr ""
 
@@ -1959,5 +2063,6 @@ msgid "Username is invalid"
 msgstr ""
 
 #: User.cpp:1249
+#, c++-format
 msgid "Unable to find modinfo {1}: {2}"
 msgstr ""

@@ -17,6 +17,7 @@ msgid "Added to list"
 msgstr "Listeye eklendi"
 
 #: autoattach.cpp:96
+#, c++-format
 msgid "{1} is already added"
 msgstr "{1} zaten eklendi"
 
@@ -29,6 +30,7 @@ msgid "Wildcards are allowed"
 msgstr "Joker karakterlere izin verilir"
 
 #: autoattach.cpp:113
+#, c++-format
 msgid "Removed {1} from list"
 msgstr "{1} listeden kaldırıldı"
 
@@ -74,6 +76,7 @@ msgid "List all entries"
 msgstr "Tüm girişleri listele"
 
 #: autoattach.cpp:171
+#, c++-format
 msgid "Unable to add [{1}]"
 msgstr "[{1}] eklenemiyor"
 

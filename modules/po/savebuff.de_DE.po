@@ -44,14 +44,17 @@ msgstr ""
 "neues Passwort und save für einen Neubeginn"
 
 #: savebuff.cpp:232
+#, c++-format
 msgid "Password set to [{1}]"
 msgstr "Password auf [{1}] gesetzt"
 
 #: savebuff.cpp:262
+#, c++-format
 msgid "Replayed {1}"
 msgstr "{1} abgespielt"
 
 #: savebuff.cpp:341
+#, c++-format
 msgid "Unable to decode Encrypted file {1}"
 msgstr "Kann verschlüsselte Datei {1} nicht dekodieren"
 

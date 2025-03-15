@@ -31,14 +31,17 @@ msgid "List all entries"
 msgstr "Laat alle kanalen zien"
 
 #: autocycle.cpp:46
+#, c++-format
 msgid "Unable to add {1}"
 msgstr "Kan {1} niet toevoegen"
 
 #: autocycle.cpp:66
+#, c++-format
 msgid "{1} is already added"
 msgstr "{1} bestaat al"
 
 #: autocycle.cpp:68
+#, c++-format
 msgid "Added {1} to list"
 msgstr "{1} toegevoegd aan lijst"
 
@@ -47,6 +50,7 @@ msgid "Usage: Add [!]<#chan>"
 msgstr "Gebruik: Add [!]<#kanaal>"
 
 #: autocycle.cpp:78
+#, c++-format
 msgid "Removed {1} from list"
 msgstr "{1} verwijderd van lijst"
 

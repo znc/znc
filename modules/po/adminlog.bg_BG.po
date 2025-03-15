@@ -14,7 +14,7 @@ msgstr ""
 
 #: adminlog.cpp:29
 msgid "Show the logging target"
-msgstr ""
+msgstr "Показване на целта за логване"
 
 #: adminlog.cpp:31
 msgid "<file|syslog|both> [path]"
@@ -22,7 +22,7 @@ msgstr "<Файл| Системни Логове |Двете> [директор�
 
 #: adminlog.cpp:32
 msgid "Set the logging target"
-msgstr ""
+msgstr "Задаване на целта за логване"
 
 #: adminlog.cpp:142
 msgid "Access denied"
@@ -30,40 +30,41 @@ msgstr "Достъпът е отказан"
 
 #: adminlog.cpp:156
 msgid "Now logging to file"
-msgstr ""
+msgstr "Сега се записва към файл"
 
 #: adminlog.cpp:160
 msgid "Now only logging to syslog"
-msgstr ""
+msgstr "Сега се записва само в syslog"
 
 #: adminlog.cpp:164
 msgid "Now logging to syslog and file"
-msgstr ""
+msgstr "Сега се записва в syslog и във файл"
 
 #: adminlog.cpp:168
 msgid "Usage: Target <file|syslog|both> [path]"
-msgstr ""
+msgstr "Употреба: Цел <file|syslog|both> [path]"
 
 #: adminlog.cpp:170
 msgid "Unknown target"
-msgstr ""
+msgstr "Незнайна цел"
 
 #: adminlog.cpp:192
 msgid "Logging is enabled for file"
-msgstr ""
+msgstr "Записването е пуснато за файл"
 
 #: adminlog.cpp:195
 msgid "Logging is enabled for syslog"
-msgstr ""
+msgstr "Записването е пуснато за syslog"
 
 #: adminlog.cpp:198
 msgid "Logging is enabled for both, file and syslog"
-msgstr ""
+msgstr "Записването е пуснат и за файл, и за syslog"
 
 #: adminlog.cpp:204
+#, c++-format
 msgid "Log file will be written to {1}"
-msgstr ""
+msgstr "Лог файла ще бъде записан в {1}"
 
 #: adminlog.cpp:222
 msgid "Log ZNC events to file and/or syslog."
-msgstr ""
+msgstr "Записване на ZNC информация към файл и/или syslog."

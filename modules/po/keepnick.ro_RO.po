@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n"
-"%100<20)) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && "
+"n%100<20)) ? 1 : 2);\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: ro\n"
@@ -30,10 +30,12 @@ msgid "ZNC is already trying to get this nickname"
 msgstr ""
 
 #: keepnick.cpp:173
+#, c++-format
 msgid "Unable to obtain nick {1}: {2}, {3}"
 msgstr ""
 
 #: keepnick.cpp:181
+#, c++-format
 msgid "Unable to obtain nick {1}"
 msgstr ""
 

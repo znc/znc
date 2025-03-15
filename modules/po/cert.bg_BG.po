@@ -15,7 +15,7 @@ msgstr ""
 #  this text is inserted into `click here` in the other string
 #: modules/po/../data/cert/tmpl/index.tmpl:5
 msgid "here"
-msgstr ""
+msgstr "тук"
 
 #  {1} is `here`, translateable in the other string
 #: modules/po/../data/cert/tmpl/index.tmpl:6
@@ -23,53 +23,59 @@ msgid ""
 "You already have a certificate set, use the form below to overwrite the "
 "current certificate. Alternatively click {1} to delete your certificate."
 msgstr ""
+"Вече имате зададен сертификат, използвайте полето отдолу за да презапишете "
+"текущият сертификат. Като друга опция, натиснете {1} за да изтриете вашия "
+"сертификат."
 
 #: modules/po/../data/cert/tmpl/index.tmpl:8
 msgid "You do not have a certificate yet."
-msgstr ""
+msgstr "Нямате сертификат."
 
 #: modules/po/../data/cert/tmpl/index.tmpl:14 cert.cpp:72
 msgid "Certificate"
-msgstr ""
+msgstr "Сертификат"
 
 #: modules/po/../data/cert/tmpl/index.tmpl:18
 msgid "PEM File:"
-msgstr ""
+msgstr "PEM файл:"
 
 #: modules/po/../data/cert/tmpl/index.tmpl:22
 msgid "Update"
-msgstr ""
+msgstr "Актуализация"
 
 #: cert.cpp:28
 msgid "Pem file deleted"
-msgstr ""
+msgstr "Pem файла е изтрит"
 
 #: cert.cpp:31
 msgid "The pem file doesn't exist or there was a error deleting the pem file."
-msgstr ""
+msgstr "Pem файлът не съществува или има грешка в изтриването му."
 
 #: cert.cpp:38
+#, c++-format
 msgid "You have a certificate in {1}"
-msgstr ""
+msgstr "Имате сертификат в {1}"
 
 #: cert.cpp:41
 msgid ""
 "You do not have a certificate. Please use the web interface to add a "
 "certificate"
 msgstr ""
+"Нямате сертификат. Използвайте уеб интерфейса за да добавите сертификат"
 
 #: cert.cpp:44
+#, c++-format
 msgid "Alternatively you can either place one at {1}"
-msgstr ""
+msgstr "Вместо това, може да сложите сертификат в {1}"
 
 #: cert.cpp:52
 msgid "Delete the current certificate"
-msgstr ""
+msgstr "Изтриване на текущия сертификат"
 
 #: cert.cpp:54
 msgid "Show the current certificate"
-msgstr ""
+msgstr "Показва текущият сертификат"
 
 #: cert.cpp:105
 msgid "Use a ssl certificate to connect to a server"
-msgstr ""
+msgstr "Използване на SSL сертификат за да се свържите към сървър"

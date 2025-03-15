@@ -95,6 +95,7 @@ msgid "No such user"
 msgstr "Utilisateur inconnu"
 
 #: autoop.cpp:350
+#, c++-format
 msgid "Channel(s) added to user {1}"
 msgstr "Salon(s) ajouté(s) à l'utilisateur {1}"
 
@@ -103,6 +104,7 @@ msgid "Usage: DelChans <user> <channel> [channel] ..."
 msgstr "Utilisation : DelChans <utilisateur> <salon> [channel] ..."
 
 #: autoop.cpp:372
+#, c++-format
 msgid "Channel(s) Removed from user {1}"
 msgstr "Salons(s) supprimés de l'utilisateur {1}"
 
@@ -111,6 +113,7 @@ msgid "Usage: AddMasks <user> <mask>,[mask] ..."
 msgstr "Utilisation : AddMasks <utilisateur> <masque>,[mask] ..."
 
 #: autoop.cpp:393
+#, c++-format
 msgid "Hostmasks(s) added to user {1}"
 msgstr "Masques(s) ajouté(s) à l'utilisateur {1}"
 
@@ -119,14 +122,17 @@ msgid "Usage: DelMasks <user> <mask>,[mask] ..."
 msgstr "Utilisation : DelMasks <utilisateur> <masque>,[mask] ..."
 
 #: autoop.cpp:414
+#, c++-format
 msgid "Removed user {1} with key {2} and channels {3}"
 msgstr "Utilisateur {1} avec la clé {2} et les salons {3} supprimé"
 
 #: autoop.cpp:420
+#, c++-format
 msgid "Hostmasks(s) Removed from user {1}"
 msgstr "Masques(s) supprimé(s) de l'utilisateur {1}"
 
 #: autoop.cpp:479
+#, c++-format
 msgid "User {1} removed"
 msgstr "Utilisateur {1} supprimé"
 
@@ -135,10 +141,12 @@ msgid "That user already exists"
 msgstr "Cet utilisateur existe déjà"
 
 #: autoop.cpp:491
+#, c++-format
 msgid "User {1} added with hostmask(s) {2}"
 msgstr "Utilisateur {1} ajouté avec le(s) masque(s) {2}"
 
 #: autoop.cpp:533
+#, c++-format
 msgid ""
 "[{1}] sent us a challenge but they are not opped in any defined channels."
 msgstr ""
@@ -146,22 +154,26 @@ msgstr ""
 "aucun des salons définis."
 
 #: autoop.cpp:537
+#, c++-format
 msgid "[{1}] sent us a challenge but they do not match a defined user."
 msgstr ""
 "[{1}] nous ont envoyé une sollicitation mais ils ne correspondent à aucun "
 "utilisateur défini."
 
 #: autoop.cpp:545
+#, c++-format
 msgid "WARNING! [{1}] sent an invalid challenge."
 msgstr "ATTENTION ! [{1}] a envoyé une sollicitation erronée."
 
 #: autoop.cpp:561
+#, c++-format
 msgid "[{1}] sent an unchallenged response.  This could be due to lag."
 msgstr ""
 "[{1}] a envoyé une réponse non sollicitée. Cela peut être dû à une mauvaise "
 "connexion."
 
 #: autoop.cpp:578
+#, c++-format
 msgid ""
 "WARNING! [{1}] sent a bad response.  Please verify that you have their "
 "correct password."
@@ -170,6 +182,7 @@ msgstr ""
 "avez le bon mot de passe."
 
 #: autoop.cpp:587
+#, c++-format
 msgid "WARNING! [{1}] sent a response but did not match any defined users."
 msgstr ""
 "ATTENTION ! [{1}] a envoyé une réponse mais ne correspond à aucun des "

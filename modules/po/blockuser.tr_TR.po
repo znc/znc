@@ -37,6 +37,7 @@ msgid "Unblock a user"
 msgstr "Bir kullanıcının blokesini kaldır"
 
 #: blockuser.cpp:55
+#, c++-format
 msgid "Could not block {1}"
 msgstr "{1} bloke edilemedi"
 
@@ -61,10 +62,12 @@ msgid "You can't block yourself"
 msgstr "Kendinizi kendinizi bloke edemezsiniz"
 
 #: blockuser.cpp:110 blockuser.cpp:152
+#, c++-format
 msgid "Blocked {1}"
 msgstr "{1} bloke edildi"
 
 #: blockuser.cpp:112
+#, c++-format
 msgid "Could not block {1} (misspelled?)"
 msgstr "{1} bloke edilemedi (yanlış mı yazılmış?)"
 
@@ -73,6 +76,7 @@ msgid "Usage: Unblock <user>"
 msgstr "Kullanımı: UnBlock <kullanıcı>"
 
 #: blockuser.cpp:125 blockuser.cpp:161
+#, c++-format
 msgid "Unblocked {1}"
 msgstr "{1} blokesi kaldırıldı"
 
@@ -81,10 +85,12 @@ msgid "This user is not blocked"
 msgstr "Bu kullanıcı bloke edilmedi"
 
 #: blockuser.cpp:155
+#, c++-format
 msgid "Couldn't block {1}"
 msgstr "{1} bloke edilemedi"
 
 #: blockuser.cpp:164
+#, c++-format
 msgid "User {1} is not blocked"
 msgstr "{1} kullanıcısı bloke edilmedi"
 

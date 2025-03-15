@@ -37,6 +37,7 @@ msgstr ""
 "ha alcun senso!"
 
 #: kickrejoin.cpp:98
+#, c++-format
 msgid "Rejoin delay set to 1 second"
 msgid_plural "Rejoin delay set to {1} seconds"
 msgstr[0] "Il ritardo del rientro automatico (rejoin) è impostato a 1 secondo"
@@ -48,6 +49,7 @@ msgid "Rejoin delay disabled"
 msgstr "Il ritardo del rientro automatico (rejoin) è disabilitato"
 
 #: kickrejoin.cpp:106
+#, c++-format
 msgid "Rejoin delay is set to 1 second"
 msgid_plural "Rejoin delay is set to {1} seconds"
 msgstr[0] ""

@@ -35,42 +35,51 @@ msgstr ""
 "veya ayarlayın"
 
 #: flooddetach.cpp:93
+#, c++-format
 msgid "Flood in {1} is over, reattaching..."
 msgstr "{1} bölgesindeki flood bitti, yeniden bağlanıyor..."
 
 #: flooddetach.cpp:150
+#, c++-format
 msgid "Channel {1} was flooded, you've been detached"
 msgstr "Kanal {1} ​​floodlandı, koptunuz"
 
 #: flooddetach.cpp:187
+#, c++-format
 msgid "1 line"
 msgid_plural "{1} lines"
 msgstr[0] "1 satır"
 msgstr[1] "{1} satır"
 
 #: flooddetach.cpp:188
+#, c++-format
 msgid "every second"
 msgid_plural "every {1} seconds"
 msgstr[0] "her saniye"
 msgstr[1] "her {1} saniye"
 
 #: flooddetach.cpp:190
+#, c++-format
 msgid "Current limit is {1} {2}"
 msgstr "Mevcut sınır: {1} {2}"
 
 #: flooddetach.cpp:197
+#, c++-format
 msgid "Seconds limit is {1}"
 msgstr "Saniye sınırı: {1}"
 
 #: flooddetach.cpp:202
+#, c++-format
 msgid "Set seconds limit to {1}"
 msgstr "Saniye sınırını {1} olarak ayarla"
 
 #: flooddetach.cpp:211
+#, c++-format
 msgid "Lines limit is {1}"
 msgstr "Satır sınırı: {1}"
 
 #: flooddetach.cpp:216
+#, c++-format
 msgid "Set lines limit to {1}"
 msgstr "Satır sınırını {1} olarak ayarla"
 

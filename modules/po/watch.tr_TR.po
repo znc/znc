@@ -93,10 +93,12 @@ msgid "Invalid Id"
 msgstr "Geçersiz Id"
 
 #: watch.cpp:399
+#, c++-format
 msgid "Id {1} disabled"
 msgstr "{1} Id'si devre dışı bırakıldı"
 
 #: watch.cpp:401
+#, c++-format
 msgid "Id {1} enabled"
 msgstr "{1} Id'si etkinleştirildi"
 
@@ -109,10 +111,12 @@ msgid "Set DetachedClientOnly for all entries to No"
 msgstr "Tüm girdiler için DetachedClientOnly'yi 'No' olarak ayarlayın"
 
 #: watch.cpp:441 watch.cpp:483
+#, c++-format
 msgid "Id {1} set to Yes"
 msgstr "{1}'si 'Yes' olarak ayarlandı"
 
 #: watch.cpp:443 watch.cpp:485
+#, c++-format
 msgid "Id {1} set to No"
 msgstr "{1}'si 'No' olarak ayarlandı"
 
@@ -169,6 +173,7 @@ msgid "You have no entries."
 msgstr "Hiçbir girdiniz yok."
 
 #: watch.cpp:585
+#, c++-format
 msgid "Sources set for Id {1}."
 msgstr "{1} Id'si için kaynaklar ayarlandı."
 
@@ -177,14 +182,17 @@ msgid "All entries cleared."
 msgstr "Tüm girdiler temizlendi."
 
 #: watch.cpp:627
+#, c++-format
 msgid "Id {1} removed."
 msgstr "{1} Id'si kaldırıldı."
 
 #: watch.cpp:646
+#, c++-format
 msgid "Entry for {1} already exists."
 msgstr "{1} için girdi zaten mevcut."
 
 #: watch.cpp:654
+#, c++-format
 msgid "Adding entry: {1} watching for [{2}] -> {3}"
 msgstr "Girdi ekleniyor: {1}, [{2}] -> {3} için izliyor"
 
