@@ -55,14 +55,17 @@ msgstr ""
 "uitgeschakeld worden."
 
 #: crypt.cpp:271
+#, c++-format
 msgid "Received DH1080 public key from {1}, sending mine..."
 msgstr "DH1080 publieke sleutel ontvangen van {1}, nu mijne sturen..."
 
 #: crypt.cpp:276 crypt.cpp:297
+#, c++-format
 msgid "Key for {1} successfully set."
 msgstr "Sleutel voor {1} ingesteld."
 
 #: crypt.cpp:279 crypt.cpp:300
+#, c++-format
 msgid "Error in {1} with {2}: {3}"
 msgstr "Fout in {1} met {2}: {3}"
 
@@ -71,10 +74,12 @@ msgid "no secret key computed"
 msgstr "Geen geheime sleutel berekend"
 
 #: crypt.cpp:396
+#, c++-format
 msgid "Target [{1}] deleted"
 msgstr "Doel [{1}] verwijderd"
 
 #: crypt.cpp:398
+#, c++-format
 msgid "Target [{1}] not found"
 msgstr "Doel [{1}] niet gevonden"
 
@@ -83,6 +88,7 @@ msgid "Usage DelKey <#chan|Nick>"
 msgstr "Gebruik: DelKey <#kanaal|Naam>"
 
 #: crypt.cpp:416
+#, c++-format
 msgid "Set encryption key for [{1}] to [{2}]"
 msgstr "Sleutel voor versleuteling ingesteld voor [{1}] op [{2}]"
 
@@ -91,6 +97,7 @@ msgid "Usage: SetKey <#chan|Nick> <Key>"
 msgstr "Gebruik: SetKey <#kanaal|Naam> <sleutel>"
 
 #: crypt.cpp:429
+#, c++-format
 msgid "Sent my DH1080 public key to {1}, waiting for reply ..."
 msgstr ""
 "Mijn DH1080 publieke sleutel verzonden naar {1}, wachten op antwoord ..."
@@ -108,6 +115,7 @@ msgid "Nick Prefix disabled."
 msgstr "Naam voorvoegsel uit gezet."
 
 #: crypt.cpp:443
+#, c++-format
 msgid "Nick Prefix: {1}"
 msgstr "Naam voorvoegsel: {1}"
 
@@ -118,6 +126,7 @@ msgstr ""
 "Naam voorvoegsel."
 
 #: crypt.cpp:461
+#, c++-format
 msgid "Overlap with Status Prefix ({1}), this Nick Prefix will not be used!"
 msgstr ""
 "Overlap met Status voorvoegsel ({1}), deze Naam voorvoegsel zal niet worden "
@@ -128,6 +137,7 @@ msgid "Disabling Nick Prefix."
 msgstr "Naam voorvoegsel aan het uitzetten."
 
 #: crypt.cpp:468
+#, c++-format
 msgid "Setting Nick Prefix to {1}"
 msgstr "Naam voorvoegsel naar {1} aan het zetten"
 

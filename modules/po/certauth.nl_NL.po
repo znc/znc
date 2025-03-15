@@ -68,6 +68,7 @@ msgid "You are not connected with any valid public key"
 msgstr "Je bent niet verbonden met een geldige publieke sleutel"
 
 #: certauth.cpp:144
+#, c++-format
 msgid "Your current public key is: {1}"
 msgstr "Je huidige publieke slutel is: {1}"
 
@@ -76,10 +77,12 @@ msgid "You did not supply a public key or connect with one."
 msgstr "Je hebt geen publieke sleutel ingevoerd of verbonden hiermee."
 
 #: certauth.cpp:160
+#, c++-format
 msgid "Key '{1}' added."
 msgstr "Sleutel '{1}' toegevoegd."
 
 #: certauth.cpp:162
+#, c++-format
 msgid "The key '{1}' is already added."
 msgstr "De sleutel '{1}' is al toegevoegd."
 

@@ -14,23 +14,23 @@ msgstr ""
 
 #: savebuff.cpp:65
 msgid "<password>"
-msgstr ""
+msgstr "<şifre>"
 
 #: savebuff.cpp:65
 msgid "Sets the password"
-msgstr ""
+msgstr "Şifreyi ayarlar"
 
 #: savebuff.cpp:67
 msgid "<buffer>"
-msgstr ""
+msgstr "<arabellek>"
 
 #: savebuff.cpp:67
 msgid "Replays the buffer"
-msgstr ""
+msgstr "Arabelleği oynatır"
 
 #: savebuff.cpp:69
 msgid "Saves all buffers"
-msgstr ""
+msgstr "Tüm arabellekleri kaydeder"
 
 #: savebuff.cpp:221
 msgid ""
@@ -38,25 +38,34 @@ msgid ""
 "the appropriate pass and things should start working, or setpass to a new "
 "pass and save to reinstantiate"
 msgstr ""
+"Şifrenin ayarlanmamış olması genellikle şifre çözmenin başarısız olduğu "
+"anlamına gelir. 'setpass' yapabilirseniz ve işler çalışmaya başlayacaktır "
+"veya <setpass> ile yeni bir şifre ayarlayın ve yeniden başlatmak için "
+"kaydedin"
 
 #: savebuff.cpp:232
+#, c++-format
 msgid "Password set to [{1}]"
-msgstr ""
+msgstr "Şifre [{1}] olarak ayarlndı"
 
 #: savebuff.cpp:262
+#, c++-format
 msgid "Replayed {1}"
-msgstr ""
+msgstr "{1} yeniden oynatıldı"
 
 #: savebuff.cpp:341
+#, c++-format
 msgid "Unable to decode Encrypted file {1}"
-msgstr ""
+msgstr "Şifrelenmiş dosya {1} çözülemiyor"
 
 #: savebuff.cpp:358
 msgid ""
 "This user module takes up to one arguments. Either --ask-pass or the "
 "password itself (which may contain spaces) or nothing"
 msgstr ""
+"Bu kullanıcı modülü en fazla bir argüman alır. Ya --ask-pass ya da şifrenin "
+"kendisi (boşluk içerebilir) ya da hiçbir şey"
 
 #: savebuff.cpp:363
 msgid "Stores channel and query buffers to disk, encrypted"
-msgstr ""
+msgstr "Kanal ve sorgu arabelleklerini şifrelenmiş olarak diskte saklar"

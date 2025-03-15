@@ -21,6 +21,7 @@ msgid "Welcome back!"
 msgstr "Bem-vindo novamente!"
 
 #: awaystore.cpp:100
+#, c++-format
 msgid "Deleted {1} messages"
 msgstr "{1} mensagens foram excluídas"
 
@@ -45,14 +46,17 @@ msgid "There are no messages to save"
 msgstr ""
 
 #: awaystore.cpp:135
+#, c++-format
 msgid "Password updated to [{1}]"
 msgstr "Senha atualizada para [{1}]"
 
 #: awaystore.cpp:147
+#, c++-format
 msgid "Corrupt message! [{1}]"
 msgstr "Mensagem corrupta! [{1}]"
 
 #: awaystore.cpp:159
+#, c++-format
 msgid "Corrupt time stamp! [{1}]"
 msgstr ""
 
@@ -69,10 +73,12 @@ msgid "Timer disabled"
 msgstr ""
 
 #: awaystore.cpp:199
+#, c++-format
 msgid "Timer set to {1} seconds"
 msgstr ""
 
 #: awaystore.cpp:203
+#, c++-format
 msgid "Current timer setting: {1} seconds"
 msgstr ""
 
@@ -87,6 +93,7 @@ msgid ""
 msgstr ""
 
 #: awaystore.cpp:386 awaystore.cpp:389
+#, c++-format
 msgid "You have {1} messages!"
 msgstr "Você tem {1} nova{s} mensagem(ns)!"
 

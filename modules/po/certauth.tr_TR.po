@@ -67,6 +67,7 @@ msgid "You are not connected with any valid public key"
 msgstr "Herhangi bir geçerli genel anahtara bağlı değilsiniz"
 
 #: certauth.cpp:144
+#, c++-format
 msgid "Your current public key is: {1}"
 msgstr "Mevcut genel anahtarınız: {1}"
 
@@ -75,10 +76,12 @@ msgid "You did not supply a public key or connect with one."
 msgstr "Bir ortak anahtar sağlamadınız veya bir ortak anahtara bağlanmadınız."
 
 #: certauth.cpp:160
+#, c++-format
 msgid "Key '{1}' added."
 msgstr "'{1}' anahtarı eklendi."
 
 #: certauth.cpp:162
+#, c++-format
 msgid "The key '{1}' is already added."
 msgstr "'{1}' anahtarı zaten eklenmiş."
 

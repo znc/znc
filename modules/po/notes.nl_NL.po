@@ -50,14 +50,17 @@ msgstr ""
 "Die notitie bestaat al. Gebruik MOD <sleutel> <notitie> om te overschrijven."
 
 #: notes.cpp:35 notes.cpp:137
+#, c++-format
 msgid "Added note {1}"
 msgstr "Notitie toegevoegd: {1}"
 
 #: notes.cpp:37 notes.cpp:48 notes.cpp:142
+#, c++-format
 msgid "Unable to add note {1}"
 msgstr "Niet mogelijk om notitie toe te voegen: {1}"
 
 #: notes.cpp:46 notes.cpp:139
+#, c++-format
 msgid "Set note for {1}"
 msgstr "Notitie ingesteld voor {1}"
 
@@ -66,10 +69,12 @@ msgid "This note doesn't exist."
 msgstr "Deze notitie bestaat niet."
 
 #: notes.cpp:66 notes.cpp:116
+#, c++-format
 msgid "Deleted note {1}"
 msgstr "Notitie verwijderd: {1}"
 
 #: notes.cpp:68 notes.cpp:118
+#, c++-format
 msgid "Unable to delete note {1}"
 msgstr "Kon notitie niet verwijderen: {1}"
 

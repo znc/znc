@@ -50,14 +50,17 @@ msgid "Away reason set"
 msgstr "Motivo de ausencia establecido"
 
 #: simple_away.cpp:138
+#, c++-format
 msgid "Away reason: {1}"
 msgstr "Motivo de ausencia: {1}"
 
 #: simple_away.cpp:139
+#, c++-format
 msgid "Current away reason would be: {1}"
 msgstr "El motivo de ausencia quedaría como: {1}"
 
 #: simple_away.cpp:144
+#, c++-format
 msgid "Current timer setting: 1 second"
 msgid_plural "Current timer setting: {1} seconds"
 msgstr[0] "Tiempo establecido: 1 segundo"
@@ -68,16 +71,19 @@ msgid "Timer disabled"
 msgstr "Temporizador deshabilitado"
 
 #: simple_away.cpp:155
+#, c++-format
 msgid "Timer set to 1 second"
 msgid_plural "Timer set to: {1} seconds"
 msgstr[0] "Temporizador establecido a 1 segundo"
 msgstr[1] "Temporizador establecido a {1} segundos"
 
 #: simple_away.cpp:166
+#, c++-format
 msgid "Current MinClients setting: {1}"
 msgstr "MinClients establecido a: {1}"
 
 #: simple_away.cpp:169
+#, c++-format
 msgid "MinClients set to {1}"
 msgstr "MinClients establecido a: {1}"
 

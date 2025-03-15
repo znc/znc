@@ -33,40 +33,49 @@ msgid "Show or set whether to notify you about detaching and attaching back"
 msgstr ""
 
 #: flooddetach.cpp:93
+#, c++-format
 msgid "Flood in {1} is over, reattaching..."
 msgstr ""
 
 #: flooddetach.cpp:150
+#, c++-format
 msgid "Channel {1} was flooded, you've been detached"
 msgstr ""
 
 #: flooddetach.cpp:187
+#, c++-format
 msgid "1 line"
 msgid_plural "{1} lines"
 msgstr[0] ""
 
 #: flooddetach.cpp:188
+#, c++-format
 msgid "every second"
 msgid_plural "every {1} seconds"
 msgstr[0] ""
 
 #: flooddetach.cpp:190
+#, c++-format
 msgid "Current limit is {1} {2}"
 msgstr ""
 
 #: flooddetach.cpp:197
+#, c++-format
 msgid "Seconds limit is {1}"
 msgstr ""
 
 #: flooddetach.cpp:202
+#, c++-format
 msgid "Set seconds limit to {1}"
 msgstr ""
 
 #: flooddetach.cpp:211
+#, c++-format
 msgid "Lines limit is {1}"
 msgstr ""
 
 #: flooddetach.cpp:216
+#, c++-format
 msgid "Set lines limit to {1}"
 msgstr ""
 

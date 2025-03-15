@@ -17,6 +17,7 @@ msgid "Added to list"
 msgstr "Adicionado à lista"
 
 #: autoattach.cpp:96
+#, c++-format
 msgid "{1} is already added"
 msgstr "{1} já estava adicionado"
 
@@ -29,6 +30,7 @@ msgid "Wildcards are allowed"
 msgstr "Asteriscos são permitidos"
 
 #: autoattach.cpp:113
+#, c++-format
 msgid "Removed {1} from list"
 msgstr "{1} removido da lista"
 
@@ -73,6 +75,7 @@ msgid "List all entries"
 msgstr "Lista todas as entradas"
 
 #: autoattach.cpp:171
+#, c++-format
 msgid "Unable to add [{1}]"
 msgstr "Não foi possível adicionar [{1}]"
 

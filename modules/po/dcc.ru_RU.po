@@ -39,14 +39,17 @@ msgid "You must be admin to use the DCC module"
 msgstr "Вы должны быть администратором для использования модуля DCC"
 
 #: dcc.cpp:140
+#, c++-format
 msgid "Attempting to send [{1}] to [{2}]."
 msgstr "Попытка отправить [{1}] [{2}]."
 
 #: dcc.cpp:149 dcc.cpp:554
+#, c++-format
 msgid "Receiving [{1}] from [{2}]: File already exists."
 msgstr "Получение [{1}] с [{2}]: файл уже существует."
 
 #: dcc.cpp:167
+#, c++-format
 msgid ""
 "Attempting to connect to [{1} {2}] in order to download [{3}] from [{4}]."
 msgstr "Попытка подключиться к [{1} {2}], чтобы загрузить [{3}] с [{4}]."
@@ -109,6 +112,7 @@ msgid "Waiting"
 msgstr "Ожидание"
 
 #: dcc.cpp:244
+#, c++-format
 msgid "{1} KiB/s"
 msgstr "{1} Кб/сек"
 
@@ -117,111 +121,138 @@ msgid "You have no active DCC transfers."
 msgstr "У вас нет активных передач DCC."
 
 #: dcc.cpp:267
+#, c++-format
 msgid "Attempting to resume send from position {1} of file [{2}] for [{3}]"
 msgstr "Попытка возобновить отправку от позиции {1} файла [{2}] на [{3}]"
 
 #: dcc.cpp:277
+#, c++-format
 msgid "Couldn't resume file [{1}] for [{2}]: not sending anything."
 msgstr ""
 "Не удалось возобновить отправку файла [{1}] [{2}]: не отправлено ничего."
 
 #: dcc.cpp:286
+#, c++-format
 msgid "Bad DCC file: {1}"
 msgstr "Плохой файл DCC: {1}"
 
 #: dcc.cpp:341
+#, c++-format
 msgid "Sending [{1}] to [{2}]: File not open!"
 msgstr "Отправка [{1}] [{2}]: файл не открыт!"
 
 #: dcc.cpp:345
+#, c++-format
 msgid "Receiving [{1}] from [{2}]: File not open!"
 msgstr "Получение [{1}] с [{2}]: файл не открыт!"
 
 #: dcc.cpp:385
+#, c++-format
 msgid "Sending [{1}] to [{2}]: Connection refused."
 msgstr "Отправка [{1}] [{2}]: Отказанное соединение."
 
 #: dcc.cpp:389
+#, c++-format
 msgid "Receiving [{1}] from [{2}]: Connection refused."
 msgstr "Получение [{1}] с [{2}]: Отказанное соединение."
 
 #: dcc.cpp:397
+#, c++-format
 msgid "Sending [{1}] to [{2}]: Timeout."
 msgstr "Отправка [{1}] с [{2}]: время ожидания истекло."
 
 #: dcc.cpp:401
+#, c++-format
 msgid "Receiving [{1}] from [{2}]: Timeout."
 msgstr "Получение[{1}] с [{2}]: время ожидания истекло."
 
 #: dcc.cpp:411
+#, c++-format
 msgid "Sending [{1}] to [{2}]: Socket error {3}: {4}"
 msgstr "Отправка [{1}] [{2}]: ошибка сокета {3}: {4}"
 
 #: dcc.cpp:415
+#, c++-format
 msgid "Receiving [{1}] from [{2}]: Socket error {3}: {4}"
 msgstr "Получение [{1}] с [{2}]: ошибка сокета {3}: {4}"
 
 #: dcc.cpp:423
+#, c++-format
 msgid "Sending [{1}] to [{2}]: Transfer started."
 msgstr ""
 
 #: dcc.cpp:427
+#, c++-format
 msgid "Receiving [{1}] from [{2}]: Transfer started."
 msgstr ""
 
 #: dcc.cpp:446
+#, c++-format
 msgid "Sending [{1}] to [{2}]: Too much data!"
 msgstr ""
 
 #: dcc.cpp:450
+#, c++-format
 msgid "Receiving [{1}] from [{2}]: Too much data!"
 msgstr ""
 
 #: dcc.cpp:456
+#, c++-format
 msgid "Sending [{1}] to [{2}] completed at {3} KiB/s"
 msgstr ""
 
 #: dcc.cpp:461
+#, c++-format
 msgid "Receiving [{1}] from [{2}] completed at {3} KiB/s"
 msgstr ""
 
 #: dcc.cpp:474
+#, c++-format
 msgid "Sending [{1}] to [{2}]: File closed prematurely."
 msgstr ""
 
 #: dcc.cpp:478
+#, c++-format
 msgid "Receiving [{1}] from [{2}]: File closed prematurely."
 msgstr ""
 
 #: dcc.cpp:501
+#, c++-format
 msgid "Sending [{1}] to [{2}]: Error reading from file."
 msgstr ""
 
 #: dcc.cpp:505
+#, c++-format
 msgid "Receiving [{1}] from [{2}]: Error reading from file."
 msgstr ""
 
 #: dcc.cpp:537
+#, c++-format
 msgid "Sending [{1}] to [{2}]: Unable to open file."
 msgstr ""
 
 #: dcc.cpp:541
+#, c++-format
 msgid "Receiving [{1}] from [{2}]: Unable to open file."
 msgstr ""
 
 #: dcc.cpp:563
+#, c++-format
 msgid "Receiving [{1}] from [{2}]: Could not open file."
 msgstr ""
 
 #: dcc.cpp:572
+#, c++-format
 msgid "Sending [{1}] to [{2}]: Not a file."
 msgstr ""
 
 #: dcc.cpp:581
+#, c++-format
 msgid "Sending [{1}] to [{2}]: Could not open file."
 msgstr ""
 
 #: dcc.cpp:593
+#, c++-format
 msgid "Sending [{1}] to [{2}]: File too large (>4 GiB)."
 msgstr ""
 

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n"
-"%100<20)) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && "
+"n%100<20)) ? 1 : 2);\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: ro\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Language-Team: Romanian\n"
 "Language: ro_RO\n"
 
-#: modules/po/../data/sasl/tmpl/index.tmpl:7 sasl.cpp:305
+#: modules/po/../data/sasl/tmpl/index.tmpl:7 sasl.cpp:303
 msgid "SASL"
 msgstr ""
 
@@ -121,6 +121,7 @@ msgid "Username is currently not set"
 msgstr ""
 
 #: sasl.cpp:111
+#, c++-format
 msgid "Username is currently set to '{1}'"
 msgstr ""
 
@@ -133,14 +134,17 @@ msgid "Password was supplied"
 msgstr ""
 
 #: sasl.cpp:124
+#, c++-format
 msgid "Username has been set to [{1}]"
 msgstr ""
 
 #: sasl.cpp:125
+#, c++-format
 msgid "Password has been set to [{1}]"
 msgstr ""
 
 #: sasl.cpp:145
+#, c++-format
 msgid "Current mechanisms set: {1}"
 msgstr ""
 
@@ -152,23 +156,17 @@ msgstr ""
 msgid "We will connect even if SASL fails"
 msgstr ""
 
-#: sasl.cpp:193
-msgid "Disabling network, we require authentication."
-msgstr ""
-
-#: sasl.cpp:194
-msgid "Use 'RequireAuth no' to disable."
-msgstr ""
-
-#: sasl.cpp:258
+#: sasl.cpp:256
+#, c++-format
 msgid "{1} mechanism succeeded."
 msgstr ""
 
-#: sasl.cpp:270
+#: sasl.cpp:268
+#, c++-format
 msgid "{1} mechanism failed."
 msgstr ""
 
-#: sasl.cpp:350
+#: sasl.cpp:348
 msgid ""
 "Adds support for sasl authentication capability to authenticate to an IRC "
 "server"

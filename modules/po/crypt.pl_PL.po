@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
-"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
-"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: pl\n"
@@ -55,14 +55,17 @@ msgid "Set the nick prefix, with no argument it's disabled."
 msgstr "Ustaw prefix nicka, bez argumentu będzie wyłączony."
 
 #: crypt.cpp:271
+#, c++-format
 msgid "Received DH1080 public key from {1}, sending mine..."
 msgstr "Otrzymano klucz publiczny DH1080 {1}, wysyłanie własnego..."
 
 #: crypt.cpp:276 crypt.cpp:297
+#, c++-format
 msgid "Key for {1} successfully set."
 msgstr "Klucz dla {1} pomyślnie ustawiony."
 
 #: crypt.cpp:279 crypt.cpp:300
+#, c++-format
 msgid "Error in {1} with {2}: {3}"
 msgstr "Błąd w {1} z {2}: {3}"
 
@@ -71,10 +74,12 @@ msgid "no secret key computed"
 msgstr "nie obliczono tajnego klucza"
 
 #: crypt.cpp:396
+#, c++-format
 msgid "Target [{1}] deleted"
 msgstr "Cel [{1}] skasowany"
 
 #: crypt.cpp:398
+#, c++-format
 msgid "Target [{1}] not found"
 msgstr "Cel [{1}] nie znaleziony"
 
@@ -83,6 +88,7 @@ msgid "Usage DelKey <#chan|Nick>"
 msgstr "Użycie DelKey <#chan|Nick>"
 
 #: crypt.cpp:416
+#, c++-format
 msgid "Set encryption key for [{1}] to [{2}]"
 msgstr "Ustaw klucz szyfrowania dla [{1}] do [{2}]"
 
@@ -91,6 +97,7 @@ msgid "Usage: SetKey <#chan|Nick> <Key>"
 msgstr "Użycie: SetKey <#chan|Nick> <Key>"
 
 #: crypt.cpp:429
+#, c++-format
 msgid "Sent my DH1080 public key to {1}, waiting for reply ..."
 msgstr "Ustaw mój klucz publiczny DH1080 dla {1}, oczekuję na odpowiedź ..."
 
@@ -107,6 +114,7 @@ msgid "Nick Prefix disabled."
 msgstr "Prefix Nick wyłączony."
 
 #: crypt.cpp:443
+#, c++-format
 msgid "Nick Prefix: {1}"
 msgstr "Prrefix Nicka: {1}"
 
@@ -116,6 +124,7 @@ msgstr ""
 "Nie możesz użyć :, nawet poprzedzony przez inny symbol, jako prefix Nicka."
 
 #: crypt.cpp:461
+#, c++-format
 msgid "Overlap with Status Prefix ({1}), this Nick Prefix will not be used!"
 msgstr ""
 
@@ -124,6 +133,7 @@ msgid "Disabling Nick Prefix."
 msgstr ""
 
 #: crypt.cpp:468
+#, c++-format
 msgid "Setting Nick Prefix to {1}"
 msgstr ""
 

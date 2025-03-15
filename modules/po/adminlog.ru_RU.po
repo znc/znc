@@ -63,6 +63,7 @@ msgid "Logging is enabled for both, file and syslog"
 msgstr ""
 
 #: adminlog.cpp:204
+#, c++-format
 msgid "Log file will be written to {1}"
 msgstr ""
 

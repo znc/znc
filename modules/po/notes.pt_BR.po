@@ -49,14 +49,17 @@ msgid "That note already exists.  Use MOD <key> <note> to overwrite."
 msgstr ""
 
 #: notes.cpp:35 notes.cpp:137
+#, c++-format
 msgid "Added note {1}"
 msgstr ""
 
 #: notes.cpp:37 notes.cpp:48 notes.cpp:142
+#, c++-format
 msgid "Unable to add note {1}"
 msgstr ""
 
 #: notes.cpp:46 notes.cpp:139
+#, c++-format
 msgid "Set note for {1}"
 msgstr ""
 
@@ -65,10 +68,12 @@ msgid "This note doesn't exist."
 msgstr ""
 
 #: notes.cpp:66 notes.cpp:116
+#, c++-format
 msgid "Deleted note {1}"
 msgstr ""
 
 #: notes.cpp:68 notes.cpp:118
+#, c++-format
 msgid "Unable to delete note {1}"
 msgstr ""
 

@@ -35,44 +35,53 @@ msgstr ""
 "aggancio (attaching)"
 
 #: flooddetach.cpp:93
+#, c++-format
 msgid "Flood in {1} is over, reattaching..."
 msgstr "Il flood su {1} è finito, ri-aggancio..."
 
 #: flooddetach.cpp:150
+#, c++-format
 msgid "Channel {1} was flooded, you've been detached"
 msgstr ""
 "Canale{1} è stato \"invaso da messaggi\" (flooded), sei stato sganciato "
 "(detached)"
 
 #: flooddetach.cpp:187
+#, c++-format
 msgid "1 line"
 msgid_plural "{1} lines"
 msgstr[0] "1 linea"
 msgstr[1] "{1} linee"
 
 #: flooddetach.cpp:188
+#, c++-format
 msgid "every second"
 msgid_plural "every {1} seconds"
 msgstr[0] "ogni secondo"
 msgstr[1] "ogni {1} secondi"
 
 #: flooddetach.cpp:190
+#, c++-format
 msgid "Current limit is {1} {2}"
 msgstr "Il limite corrente è {1} {2}"
 
 #: flooddetach.cpp:197
+#, c++-format
 msgid "Seconds limit is {1}"
 msgstr "Il limite dei secondi è {1}"
 
 #: flooddetach.cpp:202
+#, c++-format
 msgid "Set seconds limit to {1}"
 msgstr "Imposta il limite in secondi a {1}"
 
 #: flooddetach.cpp:211
+#, c++-format
 msgid "Lines limit is {1}"
 msgstr "Il limite delle linee è {1}"
 
 #: flooddetach.cpp:216
+#, c++-format
 msgid "Set lines limit to {1}"
 msgstr "Imposta il limite delle linee a {1}"
 
