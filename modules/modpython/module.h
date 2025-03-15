@@ -199,6 +199,7 @@ class ZNC_EXPORT_LIB_EXPORT CPyModule : public CModule {
                                                CString& sResponse) override;
     EModRet OnClientSASLAuthenticate(const CString& sMechanism,
                                      const CString& sMessage) override;
+    void OnClientSASLAborted() override;
     virtual EModRet OnModuleLoading(const CString& sModName,
                                     const CString& sArgs,
                                     CModInfo::EModuleType eType, bool& bSuccess,

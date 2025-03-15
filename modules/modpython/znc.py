@@ -487,6 +487,9 @@ class Module:
     def OnClientSASLAuthenticate(self, sMechanism, sMessage):
         pass
 
+    def OnClientSASLAborted(self):
+        pass
+
     def OnModuleLoading(self, sModName, sArgs, eType, bSuccess, sRetMsg):
         pass
 
