@@ -200,7 +200,7 @@ void CClient::ReadLine(const CString& sData) {
             }
 
             m_bGotUser = true;
-            if (m_bGotPass) {
+            if (m_bGotPass || !m_sSASLUser.empty()) {
                 AuthUser();
             } else if (!m_bInCap) {
                 SendRequiredPasswordNotice();

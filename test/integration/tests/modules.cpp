@@ -16,6 +16,7 @@
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <qstringview.h>
 
 #include "znctest.h"
 
@@ -478,6 +479,24 @@ TEST_F(ZNCTest, SaslAuthPlainImapAuth) {
     imapsock.Write("AUTH OK");
 
     client2.ReadUntil(":irc.znc.in 903 foo :SASL authentication successful");
+}
+
+TEST_F(ZNCTest, SaslAuthUserAfterCapEnd) {
+    // kvirc sends this
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = ConnectClient();
+    client.Write("CAP LS");
+    client.Write("PING :::1");
+    client.Write("CAP REQ :sasl");
+    client.Write("AUTHENTICATE PLAIN");
+    client.Write("AUTHENTICATE " +
+                 QByteArrayLiteral("\0user\0hunter2").toBase64());
+    client.Write("CAP END");
+    client.ReadUntil("903 unknown-nick :SASL authentication successful");
+    client.Write("NICK nick");
+    client.Write("USER user 0 1 :2");
+    client.ReadUntil("001");
 }
 
 TEST_F(ZNCTest, SaslAuthAbort) {
