@@ -439,10 +439,14 @@ void CLogMod::OnKick(const CNick& OpNick, const CString& sKickedNick,
 void CLogMod::OnQuit(const CNick& Nick, const CString& sMessage,
                      const vector<CChan*>& vChans) {
     if (NeedQuits()) {
-        for (CChan* pChan : vChans)
+        for (CChan* pChan : vChans) {
+            // Core calls this only for enabled channels, but
+            // OnSendToIRCMessage() below calls OnQuit() for all channels.
+            if (pChan->IsDisabled()) continue;
             PutLog("*** Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() +
                        "@" + Nick.GetHost() + ") (" + sMessage + ")",
                    *pChan);
+        }
     }
 }
 
