@@ -16,7 +16,6 @@
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include <qstringview.h>
 
 #include "znctest.h"
 
