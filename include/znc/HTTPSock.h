@@ -86,6 +86,7 @@ class CHTTPSock : public CSocket {
     const CString& GetURI() const;
     const CString& GetURIPrefix() const;
     bool IsPost() const;
+    long GetPeerFingerprint(CString& sResult) const override;
     // !Getters
 
     // Parameter access
@@ -118,6 +119,7 @@ class CHTTPSock : public CSocket {
     void WriteFileGzipped(CFile& File);
 
   protected:
+    bool IsTrustedProxy(const CString& sIP);
     void PrintPage(const CString& sPage);
     void Init();
 
@@ -135,6 +137,7 @@ class CHTTPSock : public CSocket {
     CString m_sContentType;
     CString m_sDocRoot;
     CString m_sForwardedIP;
+    CString m_sForwardedCertFP;
     std::map<CString, VCString> m_msvsPOSTParams;
     std::map<CString, VCString> m_msvsGETParams;
     MCString m_msHeaders;

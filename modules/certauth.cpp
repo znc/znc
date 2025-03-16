@@ -220,7 +220,18 @@ class CSSLClientCertMod : public CModule {
 
     CString GetKey(Csock* pSock) {
         CString sRes;
-        long int res = pSock->GetPeerFingerprint(sRes);
+
+        CZNCSock *pZNCSock;
+        long int res;
+        if ((pZNCSock = dynamic_cast<CZNCSock*>(pSock))) {
+            // This up-cast is needed because GetPeerFingerprint is not declared
+            // virtual on Csock, but it is on CZNCSock. This _should_ never
+            // fail, since all the Csocks we care about are also CZNCSocks, but
+            // better safe than sorry.
+            res = pZNCSock->GetPeerFingerprint(sRes);
+        } else {
+            res = pSock->GetPeerFingerprint(sRes);
+        }
 
         DEBUG("GetKey() returned status " << res << " with key " << sRes);
 
