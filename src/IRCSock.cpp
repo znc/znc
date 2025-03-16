@@ -1323,7 +1323,7 @@ void CIRCSock::Connected() {
     PutIRC("CAP LS 302");
 
     if (!sPass.empty()) {
-        PutIRC("PASS " + sPass);
+        PutIRC(CMessage(CNick(), "PASS", {sPass}));
     }
 
     PutIRC("NICK " + sNick);

@@ -964,5 +964,22 @@ TEST_F(ZNCTest, SaslAuthAbort) {
     client.ReadUntil(":irc.znc.in 906 foo :SASL authentication aborted");
 }
 
+TEST_F(ZNCTest, SpacedServerPassword) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc delserver 127.0.0.1");
+    client.Write("znc addserver 127.0.0.1 6667 a b");
+    client.Write("znc jump");
+    auto ircd2 = ConnectIRCd();
+    ircd2.ReadUntil("PASS :a b");
+    client.Write("znc delserver 127.0.0.1");
+    client.Write("znc addserver 127.0.0.1 6667 a");
+    client.Write("znc jump");
+    auto ircd3 = ConnectIRCd();
+    // No :
+    ircd3.ReadUntil("PASS a");
+}
+
 }  // namespace
 }  // namespace znc_inttest
