@@ -93,30 +93,50 @@ class CSSLClientCertMod : public CModule {
         return SaveRegistry();
     }
 
-    bool AddKey(CUser* pUser, CString sKey) {
+    bool AddKey(CUser& User, CString sKey) {
         sKey.MakeLower();
         const pair<SCString::const_iterator, bool> pair =
-            m_PubKeys[pUser->GetUsername()].insert(sKey);
+            m_PubKeys[User.GetUsername()].insert(sKey);
 
         if (pair.second) {
             Save();
-            m_KeyToUser[sKey].insert(pUser->GetUsername());
+            m_KeyToUser[sKey].insert(User.GetUsername());
         }
 
         return pair.second;
     }
 
+    void DelKey(CUser& User, CString sKey) {
+        sKey.MakeLower();
+        MSCString::iterator it = m_PubKeys.find(User.GetUsername());
+        if (it != m_PubKeys.end()) {
+            if (it->second.erase(sKey)) {
+                if (it->second.size() == 0) {
+                    m_PubKeys.erase(it);
+                }
+
+                it = m_KeyToUser.find(sKey);
+                if (it != m_KeyToUser.end()) {
+                    it->second.erase(User.GetUsername());
+                    if (it->second.empty()) m_KeyToUser.erase(it);
+                }
+
+                Save();
+            }
+        }
+    }
+
     EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) override {
         const CString sUser = Auth->GetUsername();
-        Csock* pSock = Auth->GetSocket();
+        CZNCSock* pSock = dynamic_cast<CZNCSock*>(Auth->GetSocket());
         CUser* pUser = CZNC::Get().FindUser(sUser);
 
         if (pSock == nullptr || pUser == nullptr) return CONTINUE;
 
-        const CString sPubKey = GetKey(pSock);
-        DEBUG("User: " << sUser << " Key: " << sPubKey);
+        const MultiKey PubKey = GetKey(pSock);
+        DEBUG("User: " << sUser << " Key: " << PubKey.ToString());
 
-        if (sPubKey.empty()) {
+        if (PubKey.sSHA1.empty()) {
             DEBUG("Peer got no public key, ignoring");
             return CONTINUE;
         }
@@ -127,7 +147,16 @@ class CSSLClientCertMod : public CModule {
             return CONTINUE;
         }
 
-        SCString::const_iterator it2 = it->second.find(sPubKey);
+        SCString::const_iterator it2 = it->second.find(PubKey.sSHA1);
+        if (it2 != it->second.end()) {
+            DEBUG("Found SHA-1 pubkey, replacing with SHA-256");
+            AddKey(*pUser, PubKey.sSHA256);
+            DelKey(*pUser, PubKey.sSHA1);
+            Auth->AcceptLogin(*pUser);
+            return HALT;
+        }
+
+        it2 = it->second.find(PubKey.sSHA256);
         if (it2 == it->second.end()) {
             DEBUG("Invalid pubkey");
             return CONTINUE;
@@ -150,15 +179,28 @@ class CSSLClientCertMod : public CModule {
             return CONTINUE;
         }
         CString sUser = GetClient()->ParseUser(sMessage);
-        const CString sKey = GetKey(GetClient());
-        DEBUG("Key: " << sKey);
+        const MultiKey Key = GetKey(GetClient());
+        DEBUG("Key: " << Key.ToString());
 
-        if (sKey.empty()) {
+        if (Key.sSHA1.empty()) {
             GetClient()->RefuseSASLLogin("No client cert presented");
             return HALT;
         }
 
-        auto it = m_KeyToUser.find(sKey);
+        auto it = m_KeyToUser.find(Key.sSHA1);
+        if (it != m_KeyToUser.end()) {
+            DEBUG("Found SHA-1 pubkey for SASL, replacing with SHA-256");
+            SCString ssUsers = it->second;
+            for (const CString& sUser2 : ssUsers) {
+                CUser* pUser = CZNC::Get().FindUser(sUser2);
+                if (pUser) {
+                    AddKey(*pUser, Key.sSHA256);
+                    DelKey(*pUser, Key.sSHA1);
+                }
+            }
+        }
+
+        it = m_KeyToUser.find(Key.sSHA256);
         if (it == m_KeyToUser.end()) {
             GetClient()->RefuseSASLLogin("Client cert not recognized");
             return HALT;
@@ -191,7 +233,7 @@ class CSSLClientCertMod : public CModule {
     }
 
     void HandleShowCommand(const CString& sLine) {
-        const CString sPubKey = GetKey(GetClient());
+        const CString sPubKey = GetKey(GetClient()).sSHA256;
 
         if (sPubKey.empty()) {
             PutModule(t_s("You are not connected with any valid public key"));
@@ -204,14 +246,14 @@ class CSSLClientCertMod : public CModule {
         CString sPubKey = sLine.Token(1);
 
         if (sPubKey.empty()) {
-            sPubKey = GetKey(GetClient());
+            sPubKey = GetKey(GetClient()).sSHA256;
         }
 
         if (sPubKey.empty()) {
             PutModule(
                 t_s("You did not supply a public key or connect with one."));
         } else {
-            if (AddKey(GetUser(), sPubKey)) {
+            if (AddKey(*GetUser(), sPubKey)) {
                 PutModule(t_f("Key '{1}' added.")(sPubKey));
             } else {
                 PutModule(t_f("The key '{1}' is already added.")(sPubKey));
@@ -281,11 +323,23 @@ class CSSLClientCertMod : public CModule {
         Save();
     }
 
-    CString GetKey(Csock* pSock) {
-        CString sRes;
-        long int res = pSock->GetPeerFingerprint(sRes);
+    // Struct to allow transparent migration from SHA-1 to SHA-256
+    struct MultiKey {
+        CString sSHA1;
+        CString sSHA256;
 
-        DEBUG("GetKey() returned status " << res << " with key " << sRes);
+        CString ToString() const {
+            return "sha-1: " + sSHA1 + ", sha-256: " + sSHA256;
+        }
+    };
+    MultiKey GetKey(CZNCSock* pSock) {
+        MultiKey Res;
+        long int res = pSock->GetPeerFingerprint(Res.sSHA1);
+        X509* pCert = pSock->GetX509();
+        Res.sSHA256 = pSock->GetSSLPeerFingerprint(pCert);
+        X509_free(pCert);
+
+        DEBUG("GetKey() returned status " << res << " with key " << Res.ToString());
 
         // This is 'inspired' by charybdis' libratbox
         switch (res) {
@@ -293,9 +347,9 @@ class CSSLClientCertMod : public CModule {
             case X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
             case X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE:
             case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
-                return sRes.AsLower();
+                return Res;
             default:
-                return "";
+                return {};
         }
     }
 
@@ -304,6 +358,7 @@ class CSSLClientCertMod : public CModule {
     bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
                       CTemplate& Tmpl) override {
         CUser* pUser = WebSock.GetSession()->GetUser();
+        if (!pUser) return false;
 
         if (sPageName == "index") {
             MSCString::const_iterator it = m_PubKeys.find(pUser->GetUsername());
@@ -316,28 +371,11 @@ class CSSLClientCertMod : public CModule {
 
             return true;
         } else if (sPageName == "add") {
-            AddKey(pUser, WebSock.GetParam("key"));
+            AddKey(*pUser, WebSock.GetParam("key"));
             WebSock.Redirect(GetWebPath());
             return true;
         } else if (sPageName == "delete") {
-            MSCString::iterator it = m_PubKeys.find(pUser->GetUsername());
-            if (it != m_PubKeys.end()) {
-                CString sKey = WebSock.GetParam("key", false);
-                if (it->second.erase(sKey)) {
-                    if (it->second.size() == 0) {
-                        m_PubKeys.erase(it);
-                    }
-
-                    it = m_KeyToUser.find(sKey);
-                    if (it != m_KeyToUser.end()) {
-                        it->second.erase(pUser->GetUsername());
-                        if (it->second.empty()) m_KeyToUser.erase(it);
-                    }
-
-                    Save();
-                }
-            }
-
+            DelKey(*pUser, WebSock.GetParam("key", false));
             WebSock.Redirect(GetWebPath());
             return true;
         }
