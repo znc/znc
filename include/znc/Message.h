@@ -65,6 +65,7 @@ class CMessage {
         Unknown,
         Account,
         Action,
+        Authenticate,
         Away,
         Capability,
         ChgHost,
@@ -238,6 +239,13 @@ class CActionMessage : public CTargetMessage {
     }
 };
 REGISTER_ZNC_MESSAGE(CActionMessage);
+
+class CAuthenticateMessage : public CMessage {
+  public:
+    CString GetText() const { return GetParam(0); }
+    void SetText(const CString& sText) { SetParam(0, sText); }
+};
+REGISTER_ZNC_MESSAGE(CAuthenticateMessage);
 
 class CCTCPMessage : public CTargetMessage {
   public:

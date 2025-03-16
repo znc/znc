@@ -824,5 +824,145 @@ TEST_F(ZNCTest, ChgHostOnlyNicksAlreadyOnChannels) {
                     Not(HasSubstr("JOIN #chan2"))));
 }
 
+TEST_F(ZNCTest, SaslAuthPlainSimple) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = ConnectClient();
+    client.Write("NICK foo");
+    client.Write("CAP LS");
+    client.ReadUntil(" sasl ");
+    client.Write("CAP REQ :sasl");
+    client.ReadUntil(":irc.znc.in CAP foo ACK :sasl");
+    client.Write("USER bar");
+    client.Write("AUTHENTICATE PLAIN");
+    client.ReadUntil("AUTHENTICATE +");
+    client.Write("AUTHENTICATE " + QByteArrayLiteral("\0user\0hunter2").toBase64());
+    client.ReadUntil(":irc.znc.in 903 foo :SASL authentication successful");
+}
+
+TEST_F(ZNCTest, SaslAuthPlainCopyInZ) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = ConnectClient();
+    client.Write("NICK foo");
+    client.Write("CAP LS");
+    client.ReadUntil(" sasl ");
+    client.Write("CAP REQ :sasl");
+    client.ReadUntil(":irc.znc.in CAP foo ACK :sasl");
+    client.Write("USER bar");
+    client.Write("AUTHENTICATE PLAIN");
+    client.ReadUntil("AUTHENTICATE +");
+    client.Write("AUTHENTICATE " + QByteArrayLiteral("user@phone\0user@phone\0hunter2").toBase64());
+    client.ReadUntil(":irc.znc.in 903 foo :SASL authentication successful");
+    client.Write("CAP END");
+    client.Write("znc listclients");
+    client.ReadUntil("phone");
+}
+
+TEST_F(ZNCTest, SaslAuthPlainPartialInZ) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = ConnectClient();
+    client.Write("NICK foo");
+    client.Write("CAP LS");
+    client.ReadUntil(" sasl ");
+    client.Write("CAP REQ :sasl");
+    client.ReadUntil(":irc.znc.in CAP foo ACK :sasl");
+    client.Write("USER bar");
+    client.Write("AUTHENTICATE PLAIN");
+    client.ReadUntil("AUTHENTICATE +");
+    client.Write("AUTHENTICATE " + QByteArrayLiteral("user@phone\0user\0hunter2").toBase64());
+    client.ReadUntil(":irc.znc.in 903 foo :SASL authentication successful");
+    client.Write("CAP END");
+    client.Write("znc listclients");
+    client.ReadUntil("phone");
+}
+
+TEST_F(ZNCTest, SaslAuthPlainDifferentZ) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = ConnectClient();
+    client.Write("NICK foo");
+    client.Write("CAP LS");
+    client.ReadUntil(" sasl ");
+    client.Write("CAP REQ :sasl");
+    client.ReadUntil(":irc.znc.in CAP foo ACK :sasl");
+    client.Write("USER bar");
+    client.Write("AUTHENTICATE PLAIN");
+    client.ReadUntil("AUTHENTICATE +");
+    client.Write("AUTHENTICATE " + QByteArrayLiteral("user@phone\0user@tablet\0hunter2").toBase64());
+    client.ReadUntil(":irc.znc.in 904 foo :No support for custom AuthzId");
+}
+
+TEST_F(ZNCTest, SaslAuthPlainWrongPassword) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = ConnectClient();
+    client.Write("NICK foo");
+    client.Write("CAP LS");
+    client.ReadUntil(" sasl ");
+    client.Write("CAP REQ :sasl");
+    client.ReadUntil(":irc.znc.in CAP foo ACK :sasl");
+    client.Write("USER bar");
+    client.Write("AUTHENTICATE PLAIN");
+    client.ReadUntil("AUTHENTICATE +");
+    client.Write("AUTHENTICATE " + QByteArrayLiteral("\0user\0hunter3").toBase64());
+    client.ReadUntil(":irc.znc.in 904 foo :Invalid Password");
+
+    // Try again on the same connection
+    client.Write("AUTHENTICATE PLAIN");
+    client.ReadUntil(":irc.znc.in 904 foo :SASL authentication failed");
+}
+
+TEST_F(ZNCTest, SaslAuthPlainWrongUser) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = ConnectClient();
+    client.Write("NICK foo");
+    client.Write("CAP LS");
+    client.ReadUntil(" sasl ");
+    client.Write("CAP REQ :sasl");
+    client.ReadUntil(":irc.znc.in CAP foo ACK :sasl");
+    client.Write("USER bar");
+    client.Write("AUTHENTICATE PLAIN");
+    client.ReadUntil("AUTHENTICATE +");
+    client.Write("AUTHENTICATE " + QByteArrayLiteral("\0anotheruser\0hunter2").toBase64());
+    client.ReadUntil(":irc.znc.in 904 foo :Invalid Password");
+}
+
+TEST_F(ZNCTest, SaslAuthUserAfterCapEnd) {
+    // kvirc sends this
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = ConnectClient();
+    client.Write("CAP LS");
+    client.Write("PING :::1");
+    client.Write("CAP REQ :sasl");
+    client.Write("AUTHENTICATE PLAIN");
+    client.Write("AUTHENTICATE " +
+                 QByteArrayLiteral("\0user\0hunter2").toBase64());
+    client.Write("CAP END");
+    client.ReadUntil("903 unknown-nick :SASL authentication successful");
+    client.Write("NICK nick");
+    client.Write("USER user 0 1 :2");
+    client.ReadUntil("001");
+}
+
+TEST_F(ZNCTest, SaslAuthAbort) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = ConnectClient();
+    client.Write("NICK foo");
+    client.Write("CAP LS");
+    client.ReadUntil(" sasl ");
+    client.Write("CAP REQ :sasl");
+    client.ReadUntil(":irc.znc.in CAP foo ACK :sasl");
+    client.Write("USER bar");
+    client.Write("AUTHENTICATE PLAIN");
+    client.ReadUntil("AUTHENTICATE +");
+    client.Write("AUTHENTICATE *");
+    client.ReadUntil(":irc.znc.in 906 foo :SASL authentication aborted");
+}
+
 }  // namespace
 }  // namespace znc_inttest

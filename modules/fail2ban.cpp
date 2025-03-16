@@ -216,6 +216,10 @@ class CFailToBanMod : public CModule {
             Add(sRemoteIP, 1);
     }
 
+    void OnClientLogin() override {
+        Remove(GetClient()->GetRemoteIP());
+    }
+
     EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) override {
         // e.g. webadmin ends up here
         const CString& sRemoteIP = Auth->GetRemoteIP();
