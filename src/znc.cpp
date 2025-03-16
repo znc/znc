@@ -316,7 +316,7 @@ bool CZNC::WritePemFile() {
         return false;
     }
 
-    CUtils::GenerateCert(f, "");
+    CUtils::GenerateCert(f);
     fclose(f);
 
     CUtils::PrintStatus(true);
