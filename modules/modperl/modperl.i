@@ -49,6 +49,7 @@
 #include "znc/Buffer.h"
 #include "modperl/module.h"
 #define stat struct stat
+#include "modperl/pstring.h"
 %}
 
 %apply long { off_t };
@@ -66,11 +67,32 @@
 %include <std_deque.i>
 
 namespace std {
-	template<class K> class set {
-		public:
-		set();
-		set(const set<K>&);
-	};
+    template<class K> class set {
+        public:
+        set();
+        set(const set<K>&);
+        unsigned int size() const;
+        bool empty() const;
+        void clear();
+        void insert(const K& key);
+        void erase(const K& key);
+        %extend {
+            bool has_key(const K& key) {
+                auto i = self->find(key);
+                return i != self->end();
+            }
+            SV* keys_() {
+                AV* av = newAV_alloc_x(self->size());
+                // assume SCString
+                int i = 0;
+                for (const auto& a : *self) {
+                    av_store(av, i++, PString(a).GetSV(false));
+                }
+                SV* result = newRV_noinc((SV*)av);
+                return sv_2mortal(result);
+            }
+        }
+    };
 }
 %include "modperl/CString.i"
 
@@ -98,9 +120,9 @@ namespace std {
 %template(VCString) std::vector<CString>;
 typedef std::vector<CString> VCString;
 /*%template(MNicks) std::map<CString, CNick>;*/
-/*%template(SModInfo) std::set<CModInfo>;
+/*%template(SModInfo) std::set<CModInfo>;*/
 %template(SCString) std::set<CString>;
-typedef std::set<CString> SCString;*/
+typedef std::set<CString> SCString;
 %template(PerlMCString) std::map<CString, CString>;
 class MCString : public std::map<CString, CString> {};
 /*%template(PerlModulesVector) std::vector<CModule*>;*/
@@ -294,6 +316,13 @@ typedef std::vector<std::pair<CString, CString> > VPair;
 		return %$result;
 	}
 	*GetNicks = *_GetNicks_;
+
+    package ZNC::SCString;
+    sub keys {
+        my $self = shift;
+        my $keys = $self->keys_;
+        return @$keys;
+	}
 %}
 
 /* vim: set filetype=cpp: */
