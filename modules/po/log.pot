@@ -134,10 +134,10 @@ msgstr ""
 msgid "Logging to [{1}]. Using timestamp format '{2}'"
 msgstr ""
 
-#: log.cpp:576
+#: log.cpp:580
 msgid "[-sanitize] Optional path where to store logs."
 msgstr ""
 
-#: log.cpp:580
+#: log.cpp:584
 msgid "Writes IRC logs."
 msgstr ""

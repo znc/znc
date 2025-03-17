@@ -147,10 +147,10 @@ msgstr "Ungültiger Log-Pfad [{1}]"
 msgid "Logging to [{1}]. Using timestamp format '{2}'"
 msgstr "Logge nach [{1}] mit Zeitstempelformat '{2}'"
 
-#: log.cpp:576
+#: log.cpp:580
 msgid "[-sanitize] Optional path where to store logs."
 msgstr "[-sanitize] Optionaler Pfad zum Speichern von Logs."
 
-#: log.cpp:580
+#: log.cpp:584
 msgid "Writes IRC logs."
 msgstr "Schreibt IRC-Logs."

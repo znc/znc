@@ -153,10 +153,10 @@ msgstr "Geçersiz log yolu [{1}]"
 msgid "Logging to [{1}]. Using timestamp format '{2}'"
 msgstr "[{1}]'da loglanıyor. '{2}' zaman damgası biçimi kullanılıyor"
 
-#: log.cpp:576
+#: log.cpp:580
 msgid "[-sanitize] Optional path where to store logs."
 msgstr "[-sanitize] Günlüklerin depolanacağı isteğe bağlı yol."
 
-#: log.cpp:580
+#: log.cpp:584
 msgid "Writes IRC logs."
 msgstr "IRC günlüklerini yazar."

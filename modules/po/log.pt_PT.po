@@ -148,10 +148,10 @@ msgstr "Caminho de registo inválido [{1}]"
 msgid "Logging to [{1}]. Using timestamp format '{2}'"
 msgstr "A registar para [{1}]. A utilizar formato de data e hora '{2}'"
 
-#: log.cpp:576
+#: log.cpp:580
 msgid "[-sanitize] Optional path where to store logs."
 msgstr "[-sanitize] Camiho opcional para onde guardar os registos."
 
-#: log.cpp:580
+#: log.cpp:584
 msgid "Writes IRC logs."
 msgstr "Escreve registos do IRC."

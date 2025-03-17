@@ -115,7 +115,7 @@ msgctxt "list"
 msgid "No bans"
 msgstr "Yasak yok"
 
-#: fail2ban.cpp:245
+#: fail2ban.cpp:249
 msgid ""
 "You might enter the time in minutes for the IP banning and the number of "
 "failed logins before any action is taken."
@@ -123,7 +123,7 @@ msgstr ""
 "Herhangi bir işlem yapılmadan önce IP yasağının süresini ve başarısız oturum "
 "açma sayısını dakika cinsinden girebilirsiniz."
 
-#: fail2ban.cpp:250
+#: fail2ban.cpp:254
 msgid "Block IPs for some time after a failed login."
 msgstr ""
 "Başarısız bir oturum açma işleminden sonra IP'leri bir süre engelleyin."
