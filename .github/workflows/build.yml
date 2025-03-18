@@ -13,7 +13,7 @@ jobs:
           submodules: true
       - run: source .github/ubuntu_deps.sh
       - run: source .github/build.sh
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v5
         with:
           name: ${{ github.job }}
       - uses: actions/upload-artifact@v4
@@ -41,7 +41,7 @@ jobs:
           name: znc-tarball
           path: /tmp/znc-git*.tar.gz
           if-no-files-found: error
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v5
         with:
           name: ${{ github.job }}
 
@@ -58,7 +58,7 @@ jobs:
           submodules: true
       - run: source .github/ubuntu_deps.sh
       - run: source .github/build.sh
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v5
         with:
           name: ${{ github.job }}
       - uses: actions/upload-artifact@v4
@@ -81,7 +81,7 @@ jobs:
           #submodules: true
       #- run: source .github/ubuntu_deps.sh
       #- run: source .github/build.sh
-      #- uses: codecov/codecov-action@v4
+      #- uses: codecov/codecov-action@v5
 
   #clang_tsan:
     #name: Clang TSAN
@@ -97,7 +97,7 @@ jobs:
           #submodules: true
       #- run: source .github/ubuntu_deps.sh
       #- run: source .github/build.sh
-      #- uses: codecov/codecov-action@v4
+      #- uses: codecov/codecov-action@v5
 
       # TODO: enable
       #CXXFLAGS: "-fsanitize=memory -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize-memory-track-origins"
@@ -124,7 +124,7 @@ jobs:
         env:
           # https://github.com/znc/znc/issues/1937
           GTEST_FILTER: "-*Modpython*:LanguagesTests/AllLanguages.ServerDependentCapInModule/1"
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v5
 
   docker:
     name: Docker push
