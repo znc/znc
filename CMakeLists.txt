@@ -261,7 +261,7 @@ endif()
 
 tristate_option(I18N "Native language support (i18n)")
 if(WANT_I18N)
-	find_package(Boost ${TRISTATE_I18N_REQUIRED} COMPONENTS locale)
+	find_package(Boost ${TRISTATE_I18N_REQUIRED} COMPONENTS locale CONFIG)
 	find_package(Gettext ${TRISTATE_I18N_REQUIRED})
 endif()
 if(Boost_LOCALE_FOUND AND GETTEXT_MSGFMT_EXECUTABLE)
