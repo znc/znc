@@ -138,6 +138,8 @@ class CClient : public CIRCSocket {
     void SetPlaybackActive(bool bActive) { m_bPlaybackActive = bActive; }
 
     void PutIRC(const CString& sLine);
+    // Strips prefix and potentially tags before sending to server.
+    void PutIRCStripping(CMessage Message);
     /** Sends a raw data line to the client.
      *  @param sLine The line to be sent.
      *
@@ -305,6 +307,7 @@ class CClient : public CIRCSocket {
     bool OnPingMessage(CMessage& Message);
     bool OnPongMessage(CMessage& Message);
     bool OnQuitMessage(CQuitMessage& Message);
+    bool OnTagMessage(CTargetMessage& Message);
     bool OnTextMessage(CTextMessage& Message);
     bool OnTopicMessage(CTopicMessage& Message);
     bool OnOtherMessage(CMessage& Message);
@@ -327,6 +330,7 @@ class CClient : public CIRCSocket {
     bool m_bBatch;
     bool m_bEchoMessage;
     bool m_bSelfMessage;
+    bool m_bMessageTagCap;
     bool m_bSASLCap;
     bool m_bPlaybackActive;
     CUser* m_pUser;

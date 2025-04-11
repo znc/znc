@@ -981,5 +981,53 @@ TEST_F(ZNCTest, SpacedServerPassword) {
     ircd3.ReadUntil("PASS a");
 }
 
+TEST_F(ZNCTest, TagMsg) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    ircd.Write("001 nick Welcome");
+
+    client.Write("@foo=bar PRIVMSG #foo hi");
+    ircd.ReadUntil("\nPRIVMSG");
+
+    client.Write("TAGMSG #foo");
+    ASSERT_THAT(ircd.ReadRemainder().toStdString(), Not(HasSubstr("TAGMSG")));
+
+    ircd.Write("@foo=bar :friend PRIVMSG #foo hi");
+    client.ReadUntil("\n:friend PRIVMSG");
+
+    ircd.Write("TAGMSG #foo");
+    ASSERT_THAT(client.ReadRemainder().toStdString(), Not(HasSubstr("TAGMSG")));
+
+    client.Write("CAP REQ :message-tags");
+    client.ReadUntil("ACK");
+
+    ircd.Write("@foo TAGMSG #foo");
+    client.ReadUntil("@foo TAGMSG #foo");
+
+    ircd.Write("CAP * ACK message-tags");
+    // barrier to make client wait before sending TAGMSG
+    ircd.Write(":friend PRIVMSG #foo hi");
+    client.ReadUntil("friend");
+
+    client.Write("@foo=bar TAGMSG #foo");
+    ircd.ReadUntil("@foo=bar TAGMSG #foo");
+
+    client.Write("CAP REQ echo-message");
+    client.Write("@baz TAGMSG #foo");
+    client.ReadUntil("@baz :nick TAGMSG #foo");
+
+    // Check buffers
+    client.Write("znc addnetwork other");
+    client.Write("znc jumpnetwork other");
+    client.ReadUntil(":Switched to other");
+
+    ircd.Write(":nick JOIN #bar");
+    ircd.Write("@bar TAGMSG #bar");
+    ASSERT_THAT(client.ReadRemainder().toStdString(), Not(HasSubstr("TAGMSG")));
+    client.Write("znc jumpnetwork test");
+    client.ReadUntil("@bar TAGMSG #bar");
+}
+
 }  // namespace
 }  // namespace znc_inttest

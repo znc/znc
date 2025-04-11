@@ -1079,6 +1079,25 @@ class CModule {
     /// @deprecated Use OnSendToIRCMessage() instead.
     virtual EModRet OnSendToIRC(CString& sLine);
 
+    /** This module hook is called when a user sends a TAGMSG message.
+     *  @since 1.10.0
+     *  @param Message The message which was sent.
+     *  @return See CModule::EModRet.
+     */
+    virtual EModRet OnUserTagMessage(CTargetMessage& Message);
+    /** Called when we receive a channel TAGMSG message <em>from IRC</em>.
+     *  @since 1.10.0
+     *  @param Message The channel message.
+     *  @return See CModule::EModRet.
+     */
+    virtual EModRet OnChanTagMessage(CTargetMessage& Message);
+    /** Called when we receive a private TAGMSG message <em>from IRC</em>.
+     *  @since 1.10.0
+     *  @param Message The message.
+     *  @return See CModule::EModRet.
+     */
+    virtual EModRet OnPrivTagMessage(CTargetMessage& Message);
+
     ModHandle GetDLL() { return m_pDLL; }
 
     /** This function sends a given IRC line to the IRC server, if we
@@ -1623,6 +1642,9 @@ class CModules : public std::vector<CModule*>, private CCoreTranslationMixin {
     bool OnUserTopicRequest(CString& sChannel);
     bool OnUserQuit(CString& sMessage);
     bool OnUserQuitMessage(CQuitMessage& Message);
+    bool OnUserTagMessage(CTargetMessage& Message);
+    bool OnChanTagMessage(CTargetMessage& Message);
+    bool OnPrivTagMessage(CTargetMessage& Message);
 
     bool OnCTCPReply(CNick& Nick, CString& sMessage);
     bool OnCTCPReplyMessage(CCTCPMessage& Message);

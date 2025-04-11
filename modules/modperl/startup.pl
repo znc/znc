@@ -589,6 +589,9 @@ sub OnTopicMessage {
 }
 sub OnSendToClientMessage {}
 sub OnSendToIRCMessage {}
+sub OnUserTagMessage {}
+sub OnChanTagMessage {}
+sub OnPrivTagMessage {}
 
 # In Perl "undefined" is allowed value, so perl modules may continue using OnMode and not OnMode2
 sub OnChanPermission2 { my $self = shift; $self->OnChanPermission(@_) }
