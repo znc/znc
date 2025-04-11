@@ -1029,5 +1029,16 @@ TEST_F(ZNCTest, TagMsg) {
     client.ReadUntil("@bar TAGMSG #bar");
 }
 
+TEST_F(ZNCTest, StatusAction) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    ircd.Write("001 nick Welcome");
+
+    client.Write("PRIVMSG *status :\1ACTION waves\1");
+    client.Write("PRIVMSG *status :\1VERSION\1");
+    ASSERT_THAT(ircd.ReadRemainder().toStdString(), Not(HasSubstr("PRIVMSG")));
+}
+
 }  // namespace
 }  // namespace znc_inttest

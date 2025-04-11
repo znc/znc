@@ -1175,6 +1175,11 @@ bool CClient::OnActionMessage(CActionMessage& Message) {
                           this, &bContinue);
         if (bContinue) continue;
 
+        if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
+            EchoMessage(Message);
+            continue;
+        }
+
         if (m_pNetwork) {
             AddBuffer(Message);
             EchoMessage(Message);
@@ -1384,6 +1389,10 @@ bool CClient::OnCTCPMessage(CCTCPMessage& Message) {
                               this, &bContinue);
         }
         if (bContinue) continue;
+
+        if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
+            continue;
+        }
 
         if (!GetIRCSock()) {
             // Some lagmeters do a NOTICE to their own nick, ignore those.
@@ -1610,15 +1619,15 @@ bool CClient::OnTagMessage(CTargetMessage& Message) {
             Message.SetChan(m_pNetwork->FindChan(sTarget));
         }
 
-        if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
-            EchoMessage(Message);
-            continue;
-        }
-
         bool bContinue = false;
         NETWORKMODULECALL(OnUserTagMessage(Message), m_pUser, m_pNetwork,
                           this, &bContinue);
         if (bContinue) continue;
+
+        if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
+            EchoMessage(Message);
+            continue;
+        }
 
         if (m_pNetwork) {
             AddBuffer(Message);
