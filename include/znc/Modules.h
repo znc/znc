@@ -1367,6 +1367,7 @@ class CModule {
     /** Called when a client requests SASL authentication. Use ssMechanisms.insert("MECHANISM")
      *  for announcing SASL mechanisms which your module supports.
      *  @param ssMechanisms The set of supported SASL mechanisms to append to.
+     *  @since 1.10.0
      */
     virtual void OnClientGetSASLMechanisms(SCString& ssMechanisms);
     /** Called when a client has selected a SASL mechanism for SASL authentication.
@@ -1379,6 +1380,7 @@ class CModule {
      * @param sMechanism The SASL mechanism selected by the client.
      * @param sResponse The optional value of an initial SASL challenge message
      * to send to the client.
+     * @since 1.10.0
      */
     virtual EModRet OnClientSASLServerInitialChallenge(
         const CString& sMechanism, CString& sResponse);
@@ -1394,10 +1396,13 @@ class CModule {
      * @param sMechanism The SASL mechanism selected by the client.
      * @param sMessage The SASL opaque value/credentials sent by the client,
      * after debase64ing and concatenating if it was split.
+     * @since 1.10.0
      */
     virtual EModRet OnClientSASLAuthenticate(const CString& sMechanism,
                                              const CString& sMessage);
-    /** Called when a client sent '*' to abort SASL, or aborted it for another reason. */
+    /** Called when a client sent '*' to abort SASL, or aborted it for another reason.
+     *  @since 1.10.0
+     */
     virtual void OnClientSASLAborted();
 
     /** Called when a module is going to be loaded.
