@@ -17,9 +17,9 @@
 cmake_minimum_required(VERSION 3.13)
 project(ZNC VERSION 1.10.0 LANGUAGES CXX)
 set(ZNC_VERSION 1.10.x)
-set(append_git_version false)
+set(append_git_version true)
 set(alpha_version "") # e.g. "-rc1"
-set(VERSION_EXTRA "-znchost" CACHE STRING
+set(VERSION_EXTRA "" CACHE STRING
 	"Additional string appended to version, e.g. to mark distribution")
 
 set(PROJECT_VERSION "${ZNC_VERSION}")
