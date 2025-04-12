@@ -31,8 +31,9 @@
 			<div class="sectionbody">
 				<div class="subsection">
 					<div class="inputlabel"><label for="name"><? FORMAT "Network Name:" ?></label></div>
-					<input id="name" type="text" name="name" value="<? VAR Name ?>" class="half" maxlength="128"
+					<input id="name" type="text" name="name<? IF !NameEdit ?>_disabled<? ENDIF ?>" value="<? VAR Name ?>" class="half" maxlength="128"
 						   title="<? FORMAT "The name of the IRC network." ?>" <? IF !NameEdit ?>disabled<? ENDIF ?> />
+					<? IF !NameEdit ?><input type="hidden" name="name" value="<? VAR Name ?>"><? ENDIF ?>
 				</div>
 
             	<div class="subsection">
@@ -48,13 +49,15 @@
 				<div style="clear: both;"></div>
 				<div class="subsection">
 					<div class="inputlabel"><label for="ident"><? FORMAT "Ident:" ?></label></div>
-					<input id="ident" type="text" name="ident" value="<? VAR Ident ?>" class="half" maxlength="128"
+					<input id="ident" type="text" name="ident<? IF !IdentEdit ?>_disabled<? ENDIF ?>" value="<? VAR Ident ?>" class="half" maxlength="128"
 						   title="<? FORMAT "Your ident." ?>" <? IF !IdentEdit ?>disabled<? ENDIF ?> />
+					<? IF !IdentEdit ?><input type="hidden" name="ident" value="<? VAR Ident ?>"><? ENDIF ?>
 				</div>
                 <div class="subsection">
 					<div class="inputlabel"><label for="realname"><? FORMAT "Realname:" ?></label></div>
-					<input id="realname" type="text" name="realname" value="<? VAR RealName ?>" class="full" maxlength="256"
+					<input id="realname" type="text" name="realname<? IF !RealNameEdit ?>_disabled<? ENDIF ?>" value="<? VAR RealName ?>" class="full" maxlength="256"
 						   title="<? FORMAT "Your real name." ?>" <? IF !RealNameEdit ?>disabled<? ENDIF ?> />
+					<? IF !RealNameEdit ?><input type="hidden" name="realname" value="<? VAR RealName ?>"><? ENDIF ?>
 				</div>
 
 				<? IF BindHostEdit ?>
@@ -67,9 +70,10 @@
 
 				<div class="subsection">
 					<div class="inputlabel"><label for="quitmsg"><? FORMAT "Quit message:" ?></label></div>
-					<input id="quitmsg" type="text" name="quitmsg" value="<? VAR QuitMsg ?>" class="full" maxlength="256"
+					<input id="quitmsg" type="text" name="quitmsg<? IF !QuitMsgEdit ?>_disabled<? ENDIF ?>" value="<? VAR QuitMsg ?>" class="full" maxlength="256"
 						   title="<? FORMAT "You may define a Message shown, when you quit IRC." ?>"
 						   <? IF !QuitMsgEdit ?>disabled<? ENDIF ?> />
+					<? IF !QuitMsgEdit ?><input type="hidden" name="quitmsg" value="<? VAR QuitMsg ?>"><? ENDIF ?>
 				</div>
 
 				<div class="subsection">
