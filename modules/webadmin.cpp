@@ -1030,20 +1030,20 @@ class CWebAdminMod : public CModule {
             if (spSession->IsAdmin() ||
                 !spSession->GetUser()->DenySetIdent()) {
                 Tmpl["IdentEdit"] = "true";
-                Tmpl["Ident"] = pNetwork->GetIdent();
             }
+            Tmpl["Ident"] = pNetwork->GetIdent();
 
             if (spSession->IsAdmin() ||
                 !spSession->GetUser()->DenySetRealName()) {
                 Tmpl["RealNameEdit"] = "true";
-                Tmpl["RealName"] = pNetwork->GetRealName();
             }
+            Tmpl["RealName"] = pNetwork->GetRealName();
 
             if (spSession->IsAdmin() ||
                 !spSession->GetUser()->DenySetQuitMsg()) {
                 Tmpl["QuitMsgEdit"] = "true";
-                Tmpl["QuitMsg"] = pNetwork->GetQuitMsg();
             }
+            Tmpl["QuitMsg"] = pNetwork->GetQuitMsg();
 
             Tmpl["NetworkEdit"] =
                 spSession->IsAdmin() || !spSession->GetUser()->DenySetNetwork()
