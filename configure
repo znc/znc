@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2004-2024 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ exec echo "Either install python, or use cmake directly"
 
 import argparse
 import os
+import shutil
 import subprocess
 import sys
 import re
@@ -116,6 +117,11 @@ def env_type(s):
 parser.add_argument('env', nargs='*', type=env_type, metavar='ENV_VAR=VALUE')
 
 args = parser.parse_args()
+
+if not shutil.which('cmake'):
+    print('CMake is required to proceed. Please install it via package manager,\n'
+          'or download the binary from https://cmake.org/')
+    sys.exit(1)
 
 cm_args = args.cm_args or []
 

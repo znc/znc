@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2024 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@ class CUtils {
 
     static CString GetIP(unsigned long addr);
     static unsigned long GetLongIP(const CString& sIP);
+    static CString GetHostName();
 
     static void PrintError(const CString& sMessage);
     static void PrintMessage(const CString& sMessage, bool bStrong = false);
@@ -74,7 +75,7 @@ class CUtils {
     static timeval GetTime();
     static unsigned long long GetMillTime();
 #ifdef HAVE_LIBSSL
-    static void GenerateCert(FILE* pOut, const CString& sHost = "");
+    static void GenerateCert(FILE* pOut);
 #endif /* HAVE_LIBSSL */
 
     static CString CTime(time_t t, const CString& sTZ);

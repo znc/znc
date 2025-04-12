@@ -53,14 +53,17 @@ msgid "Set the nick prefix, with no argument it's disabled."
 msgstr "Define um prefixo de nick, sem argumentos significa desativado."
 
 #: crypt.cpp:271
+#, c++-format
 msgid "Received DH1080 public key from {1}, sending mine..."
 msgstr "Recebida chave pública DH1080 de {1}, a enviar a minha..."
 
 #: crypt.cpp:276 crypt.cpp:297
+#, c++-format
 msgid "Key for {1} successfully set."
 msgstr "Chave para {1} definida com sucesso."
 
 #: crypt.cpp:279 crypt.cpp:300
+#, c++-format
 msgid "Error in {1} with {2}: {3}"
 msgstr "Erro em {1} com {2}: {3}"
 
@@ -69,10 +72,12 @@ msgid "no secret key computed"
 msgstr "nenhuma chave secreta computada"
 
 #: crypt.cpp:396
+#, c++-format
 msgid "Target [{1}] deleted"
 msgstr "Destino [{1}] eliminado"
 
 #: crypt.cpp:398
+#, c++-format
 msgid "Target [{1}] not found"
 msgstr "Destino [{1}] não encontrado"
 
@@ -81,6 +86,7 @@ msgid "Usage DelKey <#chan|Nick>"
 msgstr "Utilização: DelKey <#canal|Nick>"
 
 #: crypt.cpp:416
+#, c++-format
 msgid "Set encryption key for [{1}] to [{2}]"
 msgstr "Definida chave de encriptação de [{1}] para [{2}]"
 
@@ -89,6 +95,7 @@ msgid "Usage: SetKey <#chan|Nick> <Key>"
 msgstr "Utilização: SetKey <#canal|Nick> <chave>"
 
 #: crypt.cpp:429
+#, c++-format
 msgid "Sent my DH1080 public key to {1}, waiting for reply ..."
 msgstr ""
 "Enviei a minha chave pública DH1080 to {1}, a aguardar pela resposta..."
@@ -106,6 +113,7 @@ msgid "Nick Prefix disabled."
 msgstr "Prefixo de nick desativado."
 
 #: crypt.cpp:443
+#, c++-format
 msgid "Nick Prefix: {1}"
 msgstr "Prefixo nick: {1}"
 
@@ -115,6 +123,7 @@ msgstr ""
 "Não pode usar :, mesmo seguido de outros símbolos, como prefixo de Nick."
 
 #: crypt.cpp:461
+#, c++-format
 msgid "Overlap with Status Prefix ({1}), this Nick Prefix will not be used!"
 msgstr ""
 "Sobrepõe com um prefixo de estado ({1}), este prefixo de Nick não irá ser "
@@ -125,6 +134,7 @@ msgid "Disabling Nick Prefix."
 msgstr "A desativar Prefixo de Nick."
 
 #: crypt.cpp:468
+#, c++-format
 msgid "Setting Nick Prefix to {1}"
 msgstr "A definir Prefixo de Nick para {1}"
 

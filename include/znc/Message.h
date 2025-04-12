@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2024 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,8 +65,10 @@ class CMessage {
         Unknown,
         Account,
         Action,
+        Authenticate,
         Away,
         Capability,
+        ChgHost,
         CTCP,
         Error,
         Invite,
@@ -121,6 +123,7 @@ class CMessage {
      */
     VCString GetParamsSplit(unsigned int uIdx, unsigned int uLen = -1) const;
     void SetParams(const VCString& vsParams);
+    void SetParams(VCString&& vsParams);
 
     /// @deprecated use GetParamsColon() instead.
     CString GetParams(unsigned int uIdx, unsigned int uLen = -1) const
@@ -237,6 +240,13 @@ class CActionMessage : public CTargetMessage {
 };
 REGISTER_ZNC_MESSAGE(CActionMessage);
 
+class CAuthenticateMessage : public CMessage {
+  public:
+    CString GetText() const { return GetParam(0); }
+    void SetText(const CString& sText) { SetParam(0, sText); }
+};
+REGISTER_ZNC_MESSAGE(CAuthenticateMessage);
+
 class CCTCPMessage : public CTargetMessage {
   public:
     bool IsReply() const { return GetCommand().Equals("NOTICE"); }
@@ -332,5 +342,14 @@ class CTopicMessage : public CTargetMessage {
     void SetText(const CString& sText) { SetTopic(sText); }
 };
 REGISTER_ZNC_MESSAGE(CTopicMessage);
+
+class CChgHostMessage : public CMessage {
+  public:
+    CString GetNewIdent() const { return GetParam(0); }
+    void SetNewIdent(const CString& sIdent) { SetParam(0, sIdent); }
+    CString GetNewHost() const { return GetParam(1); }
+    void SetNewHost(const CString& sHost) { SetParam(1, sHost); }
+};
+REGISTER_ZNC_MESSAGE(CChgHostMessage);
 
 #endif  // !ZNC_MESSAGE_H

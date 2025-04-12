@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2024 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -316,7 +316,7 @@ bool CZNC::WritePemFile() {
         return false;
     }
 
-    CUtils::GenerateCert(f, "");
+    CUtils::GenerateCert(f);
     fclose(f);
 
     CUtils::PrintStatus(true);

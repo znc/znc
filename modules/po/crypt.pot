@@ -44,14 +44,17 @@ msgid "Set the nick prefix, with no argument it's disabled."
 msgstr ""
 
 #: crypt.cpp:271
+#, c++-format
 msgid "Received DH1080 public key from {1}, sending mine..."
 msgstr ""
 
 #: crypt.cpp:276 crypt.cpp:297
+#, c++-format
 msgid "Key for {1} successfully set."
 msgstr ""
 
 #: crypt.cpp:279 crypt.cpp:300
+#, c++-format
 msgid "Error in {1} with {2}: {3}"
 msgstr ""
 
@@ -60,10 +63,12 @@ msgid "no secret key computed"
 msgstr ""
 
 #: crypt.cpp:396
+#, c++-format
 msgid "Target [{1}] deleted"
 msgstr ""
 
 #: crypt.cpp:398
+#, c++-format
 msgid "Target [{1}] not found"
 msgstr ""
 
@@ -72,6 +77,7 @@ msgid "Usage DelKey <#chan|Nick>"
 msgstr ""
 
 #: crypt.cpp:416
+#, c++-format
 msgid "Set encryption key for [{1}] to [{2}]"
 msgstr ""
 
@@ -80,6 +86,7 @@ msgid "Usage: SetKey <#chan|Nick> <Key>"
 msgstr ""
 
 #: crypt.cpp:429
+#, c++-format
 msgid "Sent my DH1080 public key to {1}, waiting for reply ..."
 msgstr ""
 
@@ -96,6 +103,7 @@ msgid "Nick Prefix disabled."
 msgstr ""
 
 #: crypt.cpp:443
+#, c++-format
 msgid "Nick Prefix: {1}"
 msgstr ""
 
@@ -104,6 +112,7 @@ msgid "You cannot use :, even followed by other symbols, as Nick Prefix."
 msgstr ""
 
 #: crypt.cpp:461
+#, c++-format
 msgid "Overlap with Status Prefix ({1}), this Nick Prefix will not be used!"
 msgstr ""
 
@@ -112,6 +121,7 @@ msgid "Disabling Nick Prefix."
 msgstr ""
 
 #: crypt.cpp:468
+#, c++-format
 msgid "Setting Nick Prefix to {1}"
 msgstr ""
 

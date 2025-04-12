@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
-"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
-"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: pl\n"
@@ -79,6 +79,7 @@ msgid "No such user"
 msgstr "Nie ma takiego użytkownika"
 
 #: autovoice.cpp:275
+#, c++-format
 msgid "Channel(s) added to user {1}"
 msgstr "Kanał(y) został(y) dodane/y do użytkownika {1}"
 
@@ -87,10 +88,12 @@ msgid "Usage: DelChans <user> <channel> [channel] ..."
 msgstr "Użycie: DelChans <użytkownik> <kanał> [kanał] ..."
 
 #: autovoice.cpp:298
+#, c++-format
 msgid "Channel(s) Removed from user {1}"
 msgstr "Kanał(y) został(y) usunięte/y od użytkownika {1}"
 
 #: autovoice.cpp:335
+#, c++-format
 msgid "User {1} removed"
 msgstr "Użytkownik {1} usunięty"
 
@@ -99,6 +102,7 @@ msgid "That user already exists"
 msgstr "Ten użytkownik już istnieje"
 
 #: autovoice.cpp:347
+#, c++-format
 msgid "User {1} added with hostmask {2}"
 msgstr "Użytkownik {1} został dodany z maską {2}"
 

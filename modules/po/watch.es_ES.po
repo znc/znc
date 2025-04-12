@@ -89,10 +89,12 @@ msgid "Invalid Id"
 msgstr "Id no válido"
 
 #: watch.cpp:399
+#, c++-format
 msgid "Id {1} disabled"
 msgstr "Id {1} deshabilitado"
 
 #: watch.cpp:401
+#, c++-format
 msgid "Id {1} enabled"
 msgstr "Id {1} habilitado"
 
@@ -105,10 +107,12 @@ msgid "Set DetachedClientOnly for all entries to No"
 msgstr "Define DetachedClientOnly para todas las entradas a No"
 
 #: watch.cpp:441 watch.cpp:483
+#, c++-format
 msgid "Id {1} set to Yes"
 msgstr "Id {1} ajustado a Sí"
 
 #: watch.cpp:443 watch.cpp:485
+#, c++-format
 msgid "Id {1} set to No"
 msgstr "Id {1} ajustado a No"
 
@@ -165,6 +169,7 @@ msgid "You have no entries."
 msgstr "No tienes entradas."
 
 #: watch.cpp:585
+#, c++-format
 msgid "Sources set for Id {1}."
 msgstr "Fuentes definidas para el id {1}."
 
@@ -173,14 +178,17 @@ msgid "All entries cleared."
 msgstr "Todas las entradas eliminadas."
 
 #: watch.cpp:627
+#, c++-format
 msgid "Id {1} removed."
 msgstr "Id {1} eliminado."
 
 #: watch.cpp:646
+#, c++-format
 msgid "Entry for {1} already exists."
 msgstr "La entrada para {1} ya existe."
 
 #: watch.cpp:654
+#, c++-format
 msgid "Adding entry: {1} watching for [{2}] -> {3}"
 msgstr "Añadiendo entrada: {1} controlando {2} -> {3}"
 

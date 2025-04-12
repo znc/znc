@@ -52,48 +52,51 @@ msgstr ""
 msgid "Print your current key"
 msgstr ""
 
-#: certauth.cpp:142
+#: certauth.cpp:239
 msgid "You are not connected with any valid public key"
 msgstr ""
 
-#: certauth.cpp:144
+#: certauth.cpp:241
+#, c++-format
 msgid "Your current public key is: {1}"
 msgstr ""
 
-#: certauth.cpp:157
+#: certauth.cpp:254
 msgid "You did not supply a public key or connect with one."
 msgstr ""
 
-#: certauth.cpp:160
+#: certauth.cpp:257
+#, c++-format
 msgid "Key '{1}' added."
 msgstr ""
 
-#: certauth.cpp:162
+#: certauth.cpp:259
+#, c++-format
 msgid "The key '{1}' is already added."
 msgstr ""
 
-#: certauth.cpp:170 certauth.cpp:183
+#: certauth.cpp:267 certauth.cpp:280
 msgctxt "list"
 msgid "Id"
 msgstr ""
 
-#: certauth.cpp:171 certauth.cpp:184
+#: certauth.cpp:268 certauth.cpp:281
 msgctxt "list"
 msgid "Key"
 msgstr ""
 
-#: certauth.cpp:176 certauth.cpp:190 certauth.cpp:199
+#: certauth.cpp:273 certauth.cpp:287 certauth.cpp:296
 msgid "No keys set for your user"
 msgstr ""
 
-#: certauth.cpp:204
+#: certauth.cpp:301
 msgid "Invalid #, check \"list\""
 msgstr ""
 
-#: certauth.cpp:216
+#: certauth.cpp:321
 msgid "Removed"
 msgstr ""
 
-#: certauth.cpp:291
+#: certauth.cpp:400
 msgid "Allows users to authenticate via SSL client certificates."
 msgstr ""

@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
-"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
-"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: pl\n"
@@ -31,6 +31,7 @@ msgid "TEST!!!!"
 msgstr "TEST!!!!"
 
 #: sample.cpp:74
+#, c++-format
 msgid "I'm being loaded with the arguments: {1}"
 msgstr "Jestem załadowany z tymi argumentami: {1}"
 
@@ -47,34 +48,42 @@ msgid "You got disconnected BoyOh."
 msgstr "Rozłączyłeś się BoyOh."
 
 #: sample.cpp:116
+#, c++-format
 msgid "{1} {2} set mode on {3} {4}{5} {6}"
 msgstr "{1} {2} ustawił(a) tryb na {3} {4}{5} {6}"
 
 #: sample.cpp:123
+#, c++-format
 msgid "{1} {2} opped {3} on {4}"
 msgstr "{1} {2} udzielił(a) operatora {3} na {4}"
 
 #: sample.cpp:129
+#, c++-format
 msgid "{1} {2} deopped {3} on {4}"
 msgstr "{1} {2} zabrał operatora {3} na {4}"
 
 #: sample.cpp:135
+#, c++-format
 msgid "{1} {2} voiced {3} on {4}"
 msgstr "{1} {2} udziela prawa wypowiedzi {3} na {4}"
 
 #: sample.cpp:141
+#, c++-format
 msgid "{1} {2} devoiced {3} on {4}"
 msgstr "{1} {2} zabrał(a) prawo wypowiedzi {3} na {4}"
 
 #: sample.cpp:147
+#, c++-format
 msgid "* {1} sets mode: {2} {3} on {4}"
 msgstr "* {1} ustawia tryb: {2} {3} na {4}"
 
 #: sample.cpp:163
+#, c++-format
 msgid "{1} kicked {2} from {3} with the msg {4}"
 msgstr "{1} wyrzucił(a) {2} z {3} z wiadomością {4}"
 
 #: sample.cpp:169
+#, c++-format
 msgid "* {1} ({2}@{3}) quits ({4}) from channel: {6}"
 msgid_plural "* {1} ({2}@{3}) quits ({4}) from {5} channels: {6}"
 msgstr[0] "* {1} ({2}@{3}) opuszcza IRC ({4}) z kanału: {6}"
@@ -83,30 +92,37 @@ msgstr[2] "* {1} ({2}@{3}) opuszcza IRC ({4}) z kanałów: {6}"
 msgstr[3] "* {1} ({2}@{3}) opuszcza IRC ({4}) z kanałów: {6}"
 
 #: sample.cpp:177
+#, c++-format
 msgid "Attempting to join {1}"
 msgstr "Próbowanie dołączenia do {1}"
 
 #: sample.cpp:182
+#, c++-format
 msgid "* {1} ({2}@{3}) joins {4}"
 msgstr "* {1} ({2}@{3}) dołącza do {4}"
 
 #: sample.cpp:189
+#, c++-format
 msgid "* {1} ({2}@{3}) parts {4}"
 msgstr "* {1} ({2}@{3}) opuszcza kanał {4}"
 
 #: sample.cpp:196
+#, c++-format
 msgid "{1} invited us to {2}, ignoring invites to {2}"
 msgstr "{1} zaprosił(a) nas do {2}, ignorowanie zaproszeń do {2}"
 
 #: sample.cpp:201
+#, c++-format
 msgid "{1} invited us to {2}"
 msgstr "{1} zaprosił(a) nas do {2}"
 
 #: sample.cpp:207
+#, c++-format
 msgid "{1} is now known as {2}"
 msgstr "{1} jest znany/a teraz jako {2}"
 
 #: sample.cpp:269 sample.cpp:276
+#, c++-format
 msgid "{1} changes topic on {2} to {3}"
 msgstr "{1} zmienia temat na {2} na {3}"
 

@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
-"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
-"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: pl\n"
@@ -65,6 +65,7 @@ msgid "Usage: Timeout [minutes]"
 msgstr "Użycie: Timeout [minuty]"
 
 #: fail2ban.cpp:91 fail2ban.cpp:94
+#, c++-format
 msgid "Timeout: {1} min"
 msgstr "Czas wygaśnięcia: {1} min"
 
@@ -73,6 +74,7 @@ msgid "Usage: Attempts [count]"
 msgstr "Użycie: Attempts [liczba]"
 
 #: fail2ban.cpp:114 fail2ban.cpp:117
+#, c++-format
 msgid "Attempts: {1}"
 msgstr "Prób: {1}"
 
@@ -81,6 +83,7 @@ msgid "Usage: Ban <hosts>"
 msgstr "Użycie: Ban <hosty>"
 
 #: fail2ban.cpp:140
+#, c++-format
 msgid "Banned: {1}"
 msgstr "Zablokowano: {1}"
 
@@ -89,10 +92,12 @@ msgid "Usage: Unban <hosts>"
 msgstr "Użycie: Unban <hosty>"
 
 #: fail2ban.cpp:163
+#, c++-format
 msgid "Unbanned: {1}"
 msgstr "Odblokowano: {1}"
 
 #: fail2ban.cpp:165
+#, c++-format
 msgid "Ignored: {1}"
 msgstr "Zignorowano: {1}"
 
@@ -111,7 +116,7 @@ msgctxt "list"
 msgid "No bans"
 msgstr "Nie masz żadnych zablokowań"
 
-#: fail2ban.cpp:245
+#: fail2ban.cpp:249
 msgid ""
 "You might enter the time in minutes for the IP banning and the number of "
 "failed logins before any action is taken."
@@ -119,6 +124,6 @@ msgstr ""
 "Możesz podać czas w minutach aby zablokować IP i liczbę nieudanych logowań "
 "zanim jakakolwiek akcja zostanie podjęta."
 
-#: fail2ban.cpp:250
+#: fail2ban.cpp:254
 msgid "Block IPs for some time after a failed login."
 msgstr "Blokuje IP na jakiś czas po nieudanym logowaniu."

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2024 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -476,6 +476,18 @@ class Module:
         pass
 
     def OnClientCapRequest(self, pClient, sCap, bState):
+        pass
+
+    def OnClientGetSASLMechanisms(self, ssMechanisms):
+        pass
+
+    def OnClientSASLServerInitialChallenge(self, sMechanism, sResponse):
+        pass
+
+    def OnClientSASLAuthenticate(self, sMechanism, sMessage):
+        pass
+
+    def OnClientSASLAborted(self):
         pass
 
     def OnModuleLoading(self, sModName, sArgs, eType, bSuccess, sRetMsg):

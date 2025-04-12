@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2024 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -131,6 +131,7 @@ class CIRCSock : public CIRCSocket {
     unsigned int GetMaxNickLen() const { return m_uMaxNickLen; }
     EChanModeArgs GetModeType(char cMode) const;
     char GetPermFromMode(char cMode) const;
+    char GetModeFromPerm(char cPerm) const;
     const std::map<char, EChanModeArgs>& GetChanModes() const {
         return m_mceChanModes;
     }
@@ -177,6 +178,7 @@ class CIRCSock : public CIRCSocket {
     bool OnActionMessage(CActionMessage& Message);
     bool OnAwayMessage(CMessage& Message);
     bool OnCapabilityMessage(CMessage& Message);
+    bool OnChgHostMessage(CChgHostMessage& Message);
     bool OnCTCPMessage(CCTCPMessage& Message);
     bool OnErrorMessage(CMessage& Message);
     bool OnInviteMessage(CMessage& Message);

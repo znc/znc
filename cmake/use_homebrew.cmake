@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2024 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -54,12 +54,17 @@ if(brew_python_f EQUAL 0)
 		"${brew_python}/Frameworks/Python.framework")
 endif()
 
-execute_process(COMMAND "${brew}" --prefix qt5
-	RESULT_VARIABLE brew_qt5_f
-	OUTPUT_VARIABLE brew_qt5 OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
-if(brew_qt5_f EQUAL 0)
-	find_package_message(brew_qt5 "Qt5 via Homebrew: ${brew_qt5}"
-		"${brew_qt5}")
+if(DEFINED ENV{ZNC_QT_VER})
+	set(ZNC_QT_VER $ENV{ZNC_QT_VER})
+else()
+	set(ZNC_QT_VER 6)
+endif()
+execute_process(COMMAND "${brew}" --prefix qt${ZNC_QT_VER}
+	RESULT_VARIABLE brew_qt_f
+	OUTPUT_VARIABLE brew_qt OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
+if(brew_qt_f EQUAL 0)
+	find_package_message(brew_qt "Qt via Homebrew: ${brew_qt}"
+		"${brew_qt}")
 endif()
 
 execute_process(COMMAND "${brew}" --prefix gettext

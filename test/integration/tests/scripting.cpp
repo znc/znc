@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2024 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -353,6 +353,112 @@ TEST_F(ZNCTest, ModpythonCommand) {
     client.ReadUntil(":*cmdtest!cmdtest@znc.in PRIVMSG nick :\x02ping аргумент\x0F: бла");
     client.Write("PRIVMSG *cmdtest :ping");
     client.ReadUntil(":*cmdtest!cmdtest@znc.in PRIVMSG nick :ping понг");
+}
+
+TEST_F(ZNCTest, ModpythonSaslAuth) {
+#ifndef WANT_PYTHON
+    GTEST_SKIP() << "Modpython is disabled";
+#endif
+    auto znc = Run();
+    znc->CanLeak();
+
+    InstallModule("sasltest.py", R"(
+        import znc
+
+        class sasltest(znc.Module):
+
+            module_types = [znc.CModInfo.GlobalModule]
+
+            def OnClientGetSASLMechanisms(self, ssMechanisms):
+                ssMechanisms.insert("FOO")
+
+            def OnClientSASLServerInitialChallenge(self, sMechanism, sResponse):
+                if sMechanism == "FOO":
+                    sResponse.s = "Welcome"
+                return znc.CONTINUE
+
+            def OnClientSASLAuthenticate(self, sMechanism, sMessage):
+                if sMechanism == "FOO":
+                    user = znc.CZNC.Get().FindUser("user")
+                    self.GetClient().AcceptSASLLogin(user)
+                    return znc.HALT
+                return znc.CONTINUE
+
+    )");
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod modpython");
+    client.Write("znc loadmod sasltest");
+    client.ReadUntil("Loaded");
+
+    auto client2 = ConnectClient();
+    client2.Write("CAP LS 302");
+    client2.Write("NICK nick");
+    client2.ReadUntil(" sasl=FOO,PLAIN ");
+    client2.Write("CAP REQ :sasl");
+    client2.Write("AUTHENTICATE FOO");
+    client2.ReadUntil("AUTHENTICATE " + QByteArrayLiteral("Welcome").toBase64());
+    client2.Write("AUTHENTICATE +");
+    client2.ReadUntil(
+        ":irc.znc.in 900 nick nick!user@127.0.0.1 user :You are now logged in "
+        "as user");
+}
+
+TEST_F(ZNCTest, ModperlSaslAuth) {
+#ifndef WANT_PERL
+    GTEST_SKIP() << "Modperl is disabled";
+#endif
+    auto znc = Run();
+    znc->CanLeak();
+
+    InstallModule("sasltest.pm", R"(
+		package sasltest;
+		use base 'ZNC::Module';
+		sub module_types { $ZNC::CModInfo::GlobalModule }
+
+		sub OnClientGetSASLMechanisms {
+			my $self = shift;
+			my $mechs = shift;
+			$mechs->insert('FOO');
+		}
+
+		sub OnClientSASLServerInitialChallenge {
+			if ($_[1] eq "FOO") {
+				$_[2] = "Welcome";
+			}
+			return $ZNC::CONTINUE;
+		}
+
+		sub OnClientSASLAuthenticate {
+			my $self = $_[0];
+			if ($_[1] eq "FOO") {
+				my $user = ZNC::CZNC::Get()->FindUser("user");
+				$self->GetClient->AcceptSASLLogin($user);
+				return $ZNC::HALT;
+			}
+			return $ZNC::CONTINUE;
+		}
+
+		1;
+)");
+
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod modperl");
+    client.Write("znc loadmod sasltest");
+    client.ReadUntil("Loaded");
+
+    auto client2 = ConnectClient();
+    client2.Write("CAP LS 302");
+    client2.Write("NICK nick");
+    client2.ReadUntil(" sasl=FOO,PLAIN ");
+    client2.Write("CAP REQ :sasl");
+    client2.Write("AUTHENTICATE FOO");
+    client2.ReadUntil("AUTHENTICATE " + QByteArrayLiteral("Welcome").toBase64());
+    client2.Write("AUTHENTICATE +");
+    client2.ReadUntil(
+        ":irc.znc.in 900 nick nick!user@127.0.0.1 user :You are now logged in "
+        "as user");
 }
 
 }  // namespace

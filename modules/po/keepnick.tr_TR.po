@@ -29,10 +29,12 @@ msgid "ZNC is already trying to get this nickname"
 msgstr "ZNC zaten bu nicki almaya çalışıyor"
 
 #: keepnick.cpp:173
+#, c++-format
 msgid "Unable to obtain nick {1}: {2}, {3}"
 msgstr "{1} nicki alınamıyor: {2}, {3}"
 
 #: keepnick.cpp:181
+#, c++-format
 msgid "Unable to obtain nick {1}"
 msgstr "{1} nicki alınamıyor"
 

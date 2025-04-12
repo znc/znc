@@ -103,3 +103,8 @@ EModRet OnChanNoticeMessage(CNoticeMessage& Message)
 EModRet OnTopicMessage(CTopicMessage& Message)
 EModRet OnSendToClientMessage(CMessage& Message)
 EModRet OnSendToIRCMessage(CMessage& Message)
+
+void OnClientGetSASLMechanisms(SCString& ssMechanisms)
+EModRet OnClientSASLServerInitialChallenge(const CString& sMechanism, CString& sResponse)
+EModRet OnClientSASLAuthenticate(const CString& sMechanism, const CString& sMessage)
+void OnClientSASLAborted()

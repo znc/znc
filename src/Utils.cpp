@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2024 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,10 @@
 #include <unistd.h>
 #include <time.h>
 
+#ifdef ZNC_HAVE_GETHOSTNAME
+#include <limits.h>
+#endif
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -54,6 +58,10 @@
 
 #ifdef ZNC_HAVE_ARGON
 #include <argon2.h>
+#endif
+
+#ifdef ZNC_HAVE_UNAME
+#include <sys/utsname.h>
 #endif
 
 // Required with GCC 4.3+ if openssl is disabled
@@ -82,7 +90,7 @@ constexpr const char* szDefaultDH2048 =
     "cvUyzAEcCQYHmiYjp2hoZbSa8b690TQaAwIBAg==\n"
     "-----END DH PARAMETERS-----\n";
 
-void CUtils::GenerateCert(FILE* pOut, const CString& sHost) {
+void CUtils::GenerateCert(FILE* pOut) {
     const int days = 365;
     const int years = 10;
 
@@ -112,25 +120,19 @@ void CUtils::GenerateCert(FILE* pOut, const CString& sHost) {
     X509_set_pubkey(pCert.get(), pKey.get());
 
     const char* pLogName = getenv("LOGNAME");
-    const char* pHostName = nullptr;
+    const CString sHostName = GetHostName();
 
     if (!pLogName) pLogName = "Unknown";
 
-    if (!sHost.empty()) pHostName = sHost.c_str();
-
-    if (!pHostName) pHostName = getenv("HOSTNAME");
-
-    if (!pHostName) pHostName = "host.unknown";
-
     CString sEmailAddr = pLogName;
     sEmailAddr += "@";
-    sEmailAddr += pHostName;
+    sEmailAddr += sHostName;
 
     X509_NAME* pName = X509_get_subject_name(pCert.get());
     X509_NAME_add_entry_by_txt(pName, "OU", MBSTRING_ASC,
                                (unsigned char*)pLogName, -1, -1, 0);
     X509_NAME_add_entry_by_txt(pName, "CN", MBSTRING_ASC,
-                               (unsigned char*)pHostName, -1, -1, 0);
+                               (unsigned char*)sHostName.c_str(), -1, -1, 0);
     X509_NAME_add_entry_by_txt(pName, "emailAddress", MBSTRING_ASC,
                                (unsigned char*)sEmailAddr.c_str(), -1, -1, 0);
 
@@ -178,6 +180,30 @@ unsigned long CUtils::GetLongIP(const CString& sIP) {
     ret += atol(ip[3]) << 0;
 
     return ret;
+}
+
+CString CUtils::GetHostName() {
+    const char *pEnv;
+
+    pEnv = getenv("HOSTNAME");
+    if (pEnv && pEnv[0])
+        return pEnv;
+
+#if defined(ZNC_HAVE_GETHOSTNAME) && defined(_POSIX_HOST_NAME_MAX)
+    char szBuffer[_POSIX_HOST_NAME_MAX + 1];
+    szBuffer[_POSIX_HOST_NAME_MAX] = 0;
+    if (gethostname(szBuffer, _POSIX_HOST_NAME_MAX) == 0)
+        return std::string(szBuffer);
+#endif
+
+#if defined(ZNC_HAVE_UNAME)
+    struct utsname UnameBuffer;
+
+    if (uname(&UnameBuffer) == 0 && UnameBuffer.nodename[0] != '\0')
+        return UnameBuffer.nodename;
+#endif
+
+    return "host.unknown";
 }
 
 #ifdef ZNC_HAVE_ARGON

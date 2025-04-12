@@ -25,10 +25,12 @@ msgid "Displays the current query reply"
 msgstr "Geçerli sorgu yanıtını görüntüler"
 
 #: autoreply.cpp:75
+#, c++-format
 msgid "Current reply is: {1} ({2})"
 msgstr "Geçerli yanıt: {1} ({2})"
 
 #: autoreply.cpp:81
+#, c++-format
 msgid "New reply set to: {1} ({2})"
 msgstr "Yeni yanıt şu şekilde ayarlandı: {1} ({2})"
 

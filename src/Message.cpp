@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2024 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,6 +73,16 @@ CString CMessage::GetParamsColon(unsigned int uIdx, unsigned int uLen) const {
 
 void CMessage::SetParams(const VCString& vsParams) {
     m_vsParams = vsParams;
+    m_bColon = false;
+
+    if (m_eType == Type::Text || m_eType == Type::Notice ||
+        m_eType == Type::Action || m_eType == Type::CTCP) {
+        InitType();
+    }
+}
+
+void CMessage::SetParams(VCString&& vsParams) {
+    m_vsParams = std::move(vsParams);
     m_bColon = false;
 
     if (m_eType == Type::Text || m_eType == Type::Notice ||
@@ -224,7 +234,7 @@ void CMessage::Parse(const CString& sMessage) {
         if (m_bColon) {
             ++begin;
             m_vsParams.push_back(std::string(begin, end - begin));
-	    begin = end;
+            begin = end;
         } else {
             m_vsParams.push_back(std::string(next_word()));
         }
@@ -266,10 +276,12 @@ void CMessage::InitType() {
             m_eType = Type::Notice;
         }
     } else {
-        std::map<CString, Type> mTypes = {
+        static std::map<CString, Type> mTypes = {
             {"ACCOUNT", Type::Account},
+            {"AUTHENTICATE", Type::Authenticate},
             {"AWAY", Type::Away},
             {"CAP", Type::Capability},
+            {"CHGHOST", Type::ChgHost},
             {"ERROR", Type::Error},
             {"INVITE", Type::Invite},
             {"JOIN", Type::Join},

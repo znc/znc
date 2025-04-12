@@ -13,6 +13,7 @@ msgstr ""
 "Language: da_DK\n"
 
 #: shell.cpp:37
+#, c++-format
 msgid "Failed to execute: {1}"
 msgstr ""
 

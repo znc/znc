@@ -26,7 +26,7 @@ msgstr ""
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:30
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:258
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:277
-msgid "Buffer Size:"
+msgid "Buffer size:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:32
@@ -35,7 +35,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:36
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:252
-msgid "Default Modes:"
+msgid "Default modes:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:38
@@ -157,7 +157,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:69
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:117
-msgid "Quit Message:"
+msgid "Quit message:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:71
@@ -426,7 +426,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:48
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:151
-msgid "Auth Only Via Module:"
+msgid "Auth only via module:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:50
@@ -461,7 +461,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:90
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:102
-msgid "Status Prefix:"
+msgid "Status prefix:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:92
@@ -540,7 +540,7 @@ msgid "Queries"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:272
-msgid "Max Buffers:"
+msgid "Max buffers:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:274
@@ -564,7 +564,7 @@ msgid ""
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:307
-msgid "Timestamp Format:"
+msgid "Timestamp format:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:309
@@ -591,7 +591,7 @@ msgid "Client encoding:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:329
-msgid "Join Tries:"
+msgid "Join tries:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:331
@@ -622,7 +622,7 @@ msgid ""
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:344
-msgid "Max IRC Networks Number:"
+msgid "Max IRC networks number:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:346
@@ -635,7 +635,7 @@ msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:351
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:359
-msgid "CTCP Replies:"
+msgid "CTCP replies:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:355
@@ -825,7 +825,7 @@ msgid "Default for new users only."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:110
-msgid "Maximum Buffer Size:"
+msgid "Maximum buffer size:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:112
@@ -833,7 +833,7 @@ msgid "Sets the global Max Buffer Size a user can have."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:117
-msgid "Connect Delay:"
+msgid "Connect delay:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:119
@@ -844,7 +844,7 @@ msgid ""
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:124
-msgid "Server Throttle:"
+msgid "Server throttle:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:126
@@ -854,7 +854,7 @@ msgid ""
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:131
-msgid "Anonymous Connection Limit per IP:"
+msgid "Anonymous connection limit per IP:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:133
@@ -862,7 +862,7 @@ msgid "Limits the number of unidentified connections per IP."
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:138
-msgid "Protect Web Sessions:"
+msgid "Protect web sessions:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:140
@@ -870,7 +870,7 @@ msgid "Disallow IP changing during each web session"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:145
-msgid "Hide ZNC Version:"
+msgid "Hide ZNC version:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:147
@@ -906,24 +906,24 @@ msgid "Uptime"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:18
-msgid "Total Users"
+msgid "Total users"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:22
-msgid "Total Networks"
+msgid "Total networks"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:26
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:43
-msgid "Attached Networks"
+msgid "Attached networks"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:30
-msgid "Total Client Connections"
+msgid "Total client connections"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:34
-msgid "Total IRC Connections"
+msgid "Total IRC connections"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:47
@@ -970,7 +970,7 @@ msgstr ""
 msgid "Network"
 msgstr ""
 
-#: webadmin.cpp:91 webadmin.cpp:2023
+#: webadmin.cpp:91 webadmin.cpp:2025
 msgid "Global Settings"
 msgstr ""
 
@@ -978,11 +978,11 @@ msgstr ""
 msgid "Your Settings"
 msgstr ""
 
-#: webadmin.cpp:94 webadmin.cpp:1835
+#: webadmin.cpp:94 webadmin.cpp:1837
 msgid "Traffic Info"
 msgstr ""
 
-#: webadmin.cpp:97 webadmin.cpp:1814
+#: webadmin.cpp:97 webadmin.cpp:1816
 msgid "Manage Users"
 msgstr ""
 
@@ -998,11 +998,13 @@ msgstr ""
 msgid "Timeout can't be less than 30 seconds!"
 msgstr ""
 
-#: webadmin.cpp:436 webadmin.cpp:464 webadmin.cpp:1272 webadmin.cpp:2208
+#: webadmin.cpp:436 webadmin.cpp:464 webadmin.cpp:1272 webadmin.cpp:2210
+#, c++-format
 msgid "Unable to load module [{1}]: {2}"
 msgstr ""
 
 #: webadmin.cpp:441 webadmin.cpp:469
+#, c++-format
 msgid "Unable to load module [{1}] with arguments [{2}]"
 msgstr ""
 
@@ -1028,22 +1030,27 @@ msgid "Please don't delete yourself, suicide is not the answer!"
 msgstr ""
 
 #: webadmin.cpp:754 webadmin.cpp:942 webadmin.cpp:1404
+#, c++-format
 msgid "Edit User [{1}]"
 msgstr ""
 
 #: webadmin.cpp:758 webadmin.cpp:956
+#, c++-format
 msgid "Edit Network [{1}]"
 msgstr ""
 
 #: webadmin.cpp:768
+#, c++-format
 msgid "Edit Channel [{1}] of Network [{2}] of User [{3}]"
 msgstr ""
 
 #: webadmin.cpp:775
+#, c++-format
 msgid "Edit Channel [{1}]"
 msgstr ""
 
 #: webadmin.cpp:783
+#, c++-format
 msgid "Add Channel to Network [{1}] of User [{2}]"
 msgstr ""
 
@@ -1052,11 +1059,11 @@ msgid "Add Channel"
 msgstr ""
 
 #: webadmin.cpp:795 webadmin.cpp:1624
-msgid "Auto Clear Chan Buffer"
+msgid "Auto clear chan buffer"
 msgstr ""
 
 #: webadmin.cpp:797
-msgid "Automatically Clear Channel Buffer After Playback"
+msgid "Automatically clear channel buffer after playback"
 msgstr ""
 
 #: webadmin.cpp:805
@@ -1072,10 +1079,12 @@ msgid "Channel name is a required argument"
 msgstr ""
 
 #: webadmin.cpp:845
+#, c++-format
 msgid "Channel [{1}] already exists"
 msgstr ""
 
 #: webadmin.cpp:852
+#, c++-format
 msgid "Could not add channel [{1}]"
 msgstr ""
 
@@ -1090,10 +1099,12 @@ msgid ""
 msgstr ""
 
 #: webadmin.cpp:953
+#, c++-format
 msgid "Edit Network [{1}] of User [{2}]"
 msgstr ""
 
 #: webadmin.cpp:960
+#, c++-format
 msgid "Add Network for User [{1}]"
 msgstr ""
 
@@ -1105,7 +1116,8 @@ msgstr ""
 msgid "Network name is a required argument"
 msgstr ""
 
-#: webadmin.cpp:1279 webadmin.cpp:2215
+#: webadmin.cpp:1279 webadmin.cpp:2217
+#, c++-format
 msgid "Unable to reload module [{1}]: {2}"
 msgstr ""
 
@@ -1130,25 +1142,26 @@ msgid "Channel was deleted, but config file was not written"
 msgstr ""
 
 #: webadmin.cpp:1413
+#, c++-format
 msgid "Clone User [{1}]"
 msgstr ""
 
 #: webadmin.cpp:1626
 msgid ""
-"Automatically Clear Channel Buffer After Playback (the default value for new "
+"Automatically clear channel buffer after playback (the default value for new "
 "channels)"
 msgstr ""
 
 #: webadmin.cpp:1636
-msgid "Multi Clients"
+msgid "Allow multiple clients"
 msgstr ""
 
 #: webadmin.cpp:1643
-msgid "Append Timestamps"
+msgid "Append timestamps"
 msgstr ""
 
 #: webadmin.cpp:1650
-msgid "Prepend Timestamps"
+msgid "Prepend timestamps"
 msgstr ""
 
 #: webadmin.cpp:1658
@@ -1160,15 +1173,15 @@ msgid "Admin (dangerous! may gain shell access)"
 msgstr ""
 
 #: webadmin.cpp:1675
-msgid "Deny Setting BindHost"
+msgid "Deny setting BindHost"
 msgstr ""
 
 #: webadmin.cpp:1682
-msgid "Deny Setting Ident"
+msgid "Deny setting Ident"
 msgstr ""
 
 #: webadmin.cpp:1689
-msgid "Deny Editing Networks/Servers"
+msgid "Deny editing networks/servers"
 msgstr ""
 
 #: webadmin.cpp:1691
@@ -1178,61 +1191,67 @@ msgid ""
 msgstr ""
 
 #: webadmin.cpp:1698
-msgid "Deny Setting RealName"
+msgid "Deny setting RealName"
 msgstr ""
 
 #: webadmin.cpp:1705
-msgid "Deny Setting Quit Message"
+msgid "Deny setting quit message"
 msgstr ""
 
 #: webadmin.cpp:1712
-msgid "Deny Setting CTCP Replies"
+msgid "Deny setting CTCP replies"
 msgstr ""
 
-#: webadmin.cpp:1720
-msgid "Auto Clear Query Buffer"
+#: webadmin.cpp:1714
+msgid "Block customizing CTCP replies for non-admin users"
 msgstr ""
 
 #: webadmin.cpp:1722
-msgid "Automatically Clear Query Buffer After Playback"
+msgid "Auto clear query buffer"
 msgstr ""
 
-#: webadmin.cpp:1746
+#: webadmin.cpp:1724
+msgid "Automatically clear query buffer after playback"
+msgstr ""
+
+#: webadmin.cpp:1748
+#, c++-format
 msgid "Invalid Submission: User {1} already exists"
 msgstr ""
 
-#: webadmin.cpp:1768 webadmin.cpp:1779
+#: webadmin.cpp:1770 webadmin.cpp:1781
+#, c++-format
 msgid "Invalid submission: {1}"
 msgstr ""
 
-#: webadmin.cpp:1774
+#: webadmin.cpp:1776
 msgid "User was added, but config file was not written"
 msgstr ""
 
-#: webadmin.cpp:1785
+#: webadmin.cpp:1787
 msgid "User was edited, but config file was not written"
 msgstr ""
 
-#: webadmin.cpp:1943
+#: webadmin.cpp:1945
 msgid "Choose either IPv4 or IPv6 or both."
 msgstr ""
 
-#: webadmin.cpp:1960
+#: webadmin.cpp:1962
 msgid "Choose either IRC or HTTP or both."
 msgstr ""
 
-#: webadmin.cpp:1973 webadmin.cpp:2009
+#: webadmin.cpp:1975 webadmin.cpp:2011
 msgid "Port was changed, but config file was not written"
 msgstr ""
 
-#: webadmin.cpp:1999
+#: webadmin.cpp:2001
 msgid "Invalid request."
 msgstr ""
 
-#: webadmin.cpp:2013
+#: webadmin.cpp:2015
 msgid "The specified listener was not found."
 msgstr ""
 
-#: webadmin.cpp:2244
+#: webadmin.cpp:2246
 msgid "Settings were changed, but config file was not written"
 msgstr ""

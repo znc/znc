@@ -60,6 +60,7 @@ msgid "You have no active DCCs."
 msgstr ""
 
 #: bouncedcc.cpp:148
+#, c++-format
 msgid "Use client IP: {1}"
 msgstr ""
 
@@ -82,36 +83,44 @@ msgid "Xfer"
 msgstr ""
 
 #: bouncedcc.cpp:385
+#, c++-format
 msgid "DCC {1} Bounce ({2}): Too long line received"
 msgstr ""
 
 #: bouncedcc.cpp:418
+#, c++-format
 msgid "DCC {1} Bounce ({2}): Timeout while connecting to {3} {4}"
 msgstr ""
 
 #: bouncedcc.cpp:422
+#, c++-format
 msgid "DCC {1} Bounce ({2}): Timeout while connecting."
 msgstr ""
 
 #: bouncedcc.cpp:427
+#, c++-format
 msgid ""
 "DCC {1} Bounce ({2}): Timeout while waiting for incoming connection on {3} "
 "{4}"
 msgstr ""
 
 #: bouncedcc.cpp:440
+#, c++-format
 msgid "DCC {1} Bounce ({2}): Connection refused while connecting to {3} {4}"
 msgstr ""
 
 #: bouncedcc.cpp:444
+#, c++-format
 msgid "DCC {1} Bounce ({2}): Connection refused while connecting."
 msgstr ""
 
 #: bouncedcc.cpp:457 bouncedcc.cpp:465
+#, c++-format
 msgid "DCC {1} Bounce ({2}): Socket error on {3} {4}: {5}"
 msgstr ""
 
 #: bouncedcc.cpp:460
+#, c++-format
 msgid "DCC {1} Bounce ({2}): Socket error: {3}"
 msgstr ""
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2024 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -194,6 +194,12 @@ class ZNC_EXPORT_LIB_EXPORT CPyModule : public CModule {
                               bool bState) override;
     void OnClientCapRequest(CClient* pClient, const CString& sCap,
                             bool bState) override;
+    void OnClientGetSASLMechanisms(SCString& ssMechanisms) override;
+    EModRet OnClientSASLServerInitialChallenge(const CString& sMechanism,
+                                               CString& sResponse) override;
+    EModRet OnClientSASLAuthenticate(const CString& sMechanism,
+                                     const CString& sMessage) override;
+    void OnClientSASLAborted() override;
     virtual EModRet OnModuleLoading(const CString& sModName,
                                     const CString& sArgs,
                                     CModInfo::EModuleType eType, bool& bSuccess,

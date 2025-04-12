@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
-"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
-"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: pl\n"
@@ -55,6 +55,7 @@ msgid "Usage: Stick <#channel> [key]"
 msgstr "Użycie: Stick <#kanał> [klucz]"
 
 #: stickychan.cpp:79
+#, c++-format
 msgid "Stuck {1}"
 msgstr "Przyklejono {1}"
 
@@ -63,6 +64,7 @@ msgid "Usage: Unstick <#channel>"
 msgstr "Użycie: Unstick <#kanał>"
 
 #: stickychan.cpp:89
+#, c++-format
 msgid "Unstuck {1}"
 msgstr "Odklejono {1}"
 
@@ -71,6 +73,7 @@ msgid " -- End of List"
 msgstr " -- Koniec listy"
 
 #: stickychan.cpp:115
+#, c++-format
 msgid "Could not join {1} (# prefix missing?)"
 msgstr "Nie można dołączyć do {1} (brakuje przedrostka # ?)"
 
@@ -91,6 +94,7 @@ msgid "Channel stopped being sticky!"
 msgstr "Kanał przestał być przyklejonym!"
 
 #: stickychan.cpp:209
+#, c++-format
 msgid ""
 "Channel {1} cannot be joined, it is an illegal channel name. Unsticking."
 msgstr ""

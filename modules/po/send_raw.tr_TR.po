@@ -14,96 +14,101 @@ msgstr ""
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:9
 msgid "Send a raw IRC line"
-msgstr ""
+msgstr "Ham bir IRC satırı gönderin"
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:14
 msgid "User:"
-msgstr ""
+msgstr "Kullanıcı:"
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:15
 msgid "To change user, click to Network selector"
-msgstr ""
+msgstr "Kullanıcıyı değiştirmek için Ağ seçiciye tıklayın"
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:19
 msgid "User/Network:"
-msgstr ""
+msgstr "Kullanıcı/Ağ:"
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:32
 msgid "Send to:"
-msgstr ""
+msgstr "Gönderim:"
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:34
 msgid "Client"
-msgstr ""
+msgstr "İstemci"
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:35
 msgid "Server"
-msgstr ""
+msgstr "Sunucu"
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:40
 msgid "Line:"
-msgstr ""
+msgstr "Satır:"
 
 #: modules/po/../data/send_raw/tmpl/index.tmpl:45
 msgid "Send"
-msgstr ""
+msgstr "Gönder"
 
 #: send_raw.cpp:32
+#, c++-format
 msgid "Sent [{1}] to {2}/{3}"
-msgstr ""
+msgstr "[{1}], {2}/{3} adresine gönderildi"
 
 #: send_raw.cpp:36 send_raw.cpp:56
+#, c++-format
 msgid "Network {1} not found for user {2}"
-msgstr ""
+msgstr "{2} kullanıcısı için {1} ağı bulunamadı"
 
 #: send_raw.cpp:40 send_raw.cpp:60
+#, c++-format
 msgid "User {1} not found"
-msgstr ""
+msgstr "{1} kullanıcısı bulunamadı"
 
 #: send_raw.cpp:52
+#, c++-format
 msgid "Sent [{1}] to IRC server of {2}/{3}"
-msgstr ""
+msgstr "[{1}], {2}/{3} IRC sunucusuna gönderildi"
 
 #: send_raw.cpp:75
 msgid "You must have admin privileges to load this module"
-msgstr ""
+msgstr "Bu modülü yüklemek için yönetici ayrıcalıklarına sahip olmanız gerekir"
 
 #: send_raw.cpp:82
 msgid "Send Raw"
-msgstr ""
+msgstr "Raw Gönderme"
 
 #: send_raw.cpp:92
 msgid "User not found"
-msgstr ""
+msgstr "Kullanıcı bulunamadı"
 
 #: send_raw.cpp:99
 msgid "Network not found"
-msgstr ""
+msgstr "Ağ bulunamadı"
 
 #: send_raw.cpp:116
 msgid "Line sent"
-msgstr ""
+msgstr "Satır gönderildi"
 
 #: send_raw.cpp:140 send_raw.cpp:143
 msgid "[user] [network] [data to send]"
-msgstr ""
+msgstr "[kullanıcı] [ağ] [gönderilecek veriler]"
 
 #: send_raw.cpp:141
 msgid "The data will be sent to the user's IRC client(s)"
-msgstr ""
+msgstr "Veriler kullanıcının IRC istemcisine/istemcilerine gönderilecektir."
 
 #: send_raw.cpp:144
 msgid "The data will be sent to the IRC server the user is connected to"
-msgstr ""
+msgstr "Veriler kullanıcının bağlı olduğu IRC sunucusuna gönderilecektir"
 
 #: send_raw.cpp:147
 msgid "[data to send]"
-msgstr ""
+msgstr "[gönderilecek veriler]"
 
 #: send_raw.cpp:148
 msgid "The data will be sent to your current client"
-msgstr ""
+msgstr "Veriler mevcut istemcinize gönderilecek"
 
 #: send_raw.cpp:159
 msgid "Lets you send some raw IRC lines as/to someone else"
 msgstr ""
+"Bazı ham IRC satırlarını başka biri olarak/başka birine göndermenizi sağlar"

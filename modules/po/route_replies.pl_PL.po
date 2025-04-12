@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
-"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
-"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: pl\n"
@@ -33,10 +33,12 @@ msgid ""
 msgstr ""
 
 #: route_replies.cpp:381
+#, c++-format
 msgid "To disable this message, do \"/msg {1} silent yes\""
 msgstr "Aby wyłączyć tą wiadomość, zrób \"/msg {1} silent yes\""
 
 #: route_replies.cpp:383
+#, c++-format
 msgid "Last request: {1}"
 msgstr ""
 
@@ -45,6 +47,7 @@ msgid "Expected replies:"
 msgstr ""
 
 #: route_replies.cpp:388
+#, c++-format
 msgid "{1} (last)"
 msgstr ""
 

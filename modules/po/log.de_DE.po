@@ -53,6 +53,7 @@ msgid "No logging rules. Everything is logged."
 msgstr "Keine Logging-Regeln - alles wird geloggt."
 
 #: log.cpp:161
+#, c++-format
 msgid "1 rule removed: {2}"
 msgid_plural "{1} rules removed: {2}"
 msgstr[0] "1 Regel entfernt: {2}"
@@ -128,6 +129,7 @@ msgid "Not logging nick changes"
 msgstr "Nick-Wechsel werden nicht geloggt"
 
 #: log.cpp:352
+#, c++-format
 msgid ""
 "Invalid args [{1}]. Only one log path allowed.  Check that there are no "
 "spaces in the path."
@@ -136,17 +138,19 @@ msgstr ""
 "Pfad keine Leerzeichen enthält."
 
 #: log.cpp:402
+#, c++-format
 msgid "Invalid log path [{1}]"
 msgstr "Ungültiger Log-Pfad [{1}]"
 
 #: log.cpp:405
+#, c++-format
 msgid "Logging to [{1}]. Using timestamp format '{2}'"
 msgstr "Logge nach [{1}] mit Zeitstempelformat '{2}'"
 
-#: log.cpp:576
+#: log.cpp:580
 msgid "[-sanitize] Optional path where to store logs."
 msgstr "[-sanitize] Optionaler Pfad zum Speichern von Logs."
 
-#: log.cpp:580
+#: log.cpp:584
 msgid "Writes IRC logs."
 msgstr "Schreibt IRC-Logs."

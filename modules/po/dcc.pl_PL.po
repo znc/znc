@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
-"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
-"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: pl\n"
@@ -39,14 +39,17 @@ msgid "You must be admin to use the DCC module"
 msgstr "Musisz być administratorem, aby używać modułu DCC"
 
 #: dcc.cpp:140
+#, c++-format
 msgid "Attempting to send [{1}] to [{2}]."
 msgstr "Próba wysłania [{1}] do [{2}]."
 
 #: dcc.cpp:149 dcc.cpp:554
+#, c++-format
 msgid "Receiving [{1}] from [{2}]: File already exists."
 msgstr "Odbieranie [{1}] od [{2}]: Plik już istnieje."
 
 #: dcc.cpp:167
+#, c++-format
 msgid ""
 "Attempting to connect to [{1} {2}] in order to download [{3}] from [{4}]."
 msgstr "Próbowanie połączenia się do [{1} {2}] w celu pobrania [{3}] od [{4}]."
@@ -109,6 +112,7 @@ msgid "Waiting"
 msgstr "Oczekujący"
 
 #: dcc.cpp:244
+#, c++-format
 msgid "{1} KiB/s"
 msgstr "{1} KiB/s"
 
@@ -117,110 +121,137 @@ msgid "You have no active DCC transfers."
 msgstr "Nie masz aktywnych transferów DCC."
 
 #: dcc.cpp:267
+#, c++-format
 msgid "Attempting to resume send from position {1} of file [{2}] for [{3}]"
 msgstr "Próba wznowienia wysyłania z pozycji {1} pliku [{2}] dla [{3}]"
 
 #: dcc.cpp:277
+#, c++-format
 msgid "Couldn't resume file [{1}] for [{2}]: not sending anything."
 msgstr "Nie można wznowić pliku [{1}] dla [{2}]: nic nie zostanie wysłane."
 
 #: dcc.cpp:286
+#, c++-format
 msgid "Bad DCC file: {1}"
 msgstr "Zły plik DCC: {1}"
 
 #: dcc.cpp:341
+#, c++-format
 msgid "Sending [{1}] to [{2}]: File not open!"
 msgstr "Wysyłanie [{1}] do [{2}]: Plik nie jest otwarty!"
 
 #: dcc.cpp:345
+#, c++-format
 msgid "Receiving [{1}] from [{2}]: File not open!"
 msgstr "Otrzymywanie [{1}] od [{2}]: Plik nie jest otwarty!"
 
 #: dcc.cpp:385
+#, c++-format
 msgid "Sending [{1}] to [{2}]: Connection refused."
 msgstr "Wysyłanie [{1}] do [{2}]: Połączenie odrzucone."
 
 #: dcc.cpp:389
+#, c++-format
 msgid "Receiving [{1}] from [{2}]: Connection refused."
 msgstr "Otrzymywanie [{1}] od [{2}]: Połączenie odrzucone."
 
 #: dcc.cpp:397
+#, c++-format
 msgid "Sending [{1}] to [{2}]: Timeout."
 msgstr "Wysyłanie [{1}] do [{2}]: Przekroczony czas oczekiwania."
 
 #: dcc.cpp:401
+#, c++-format
 msgid "Receiving [{1}] from [{2}]: Timeout."
 msgstr "Otrzymywanie [{1}] od [{2}]: Przekroczony czas oczekiwania."
 
 #: dcc.cpp:411
+#, c++-format
 msgid "Sending [{1}] to [{2}]: Socket error {3}: {4}"
 msgstr "Wysyłanie [{1}] do [{2}]: Błąd gniazda {3}: {4}"
 
 #: dcc.cpp:415
+#, c++-format
 msgid "Receiving [{1}] from [{2}]: Socket error {3}: {4}"
 msgstr "Otrzymywanie [{1}] od [{2}]: Błąd gniazda {3}: {4}"
 
 #: dcc.cpp:423
+#, c++-format
 msgid "Sending [{1}] to [{2}]: Transfer started."
 msgstr "Wysyłanie [{1}] do [{2}]: rozpoczęto transfer."
 
 #: dcc.cpp:427
+#, c++-format
 msgid "Receiving [{1}] from [{2}]: Transfer started."
 msgstr "Otrzymywanie [{1}] od [{2}]: rozpoczęto transfer."
 
 #: dcc.cpp:446
+#, c++-format
 msgid "Sending [{1}] to [{2}]: Too much data!"
 msgstr "Wysyłanie [{1}] do [{2}]: Za dużo danych!"
 
 #: dcc.cpp:450
+#, c++-format
 msgid "Receiving [{1}] from [{2}]: Too much data!"
 msgstr "Otrzymywanie [{1}] od [{2}]: Za dużo danych!"
 
 #: dcc.cpp:456
+#, c++-format
 msgid "Sending [{1}] to [{2}] completed at {3} KiB/s"
 msgstr "Wysyłanie [{1}] do [{2}] zakończono na średniej {3} KiB/s"
 
 #: dcc.cpp:461
+#, c++-format
 msgid "Receiving [{1}] from [{2}] completed at {3} KiB/s"
 msgstr "Otrzymywanie [{1}] od [{2}] zakończono na średniej {3} KiB/s"
 
 #: dcc.cpp:474
+#, c++-format
 msgid "Sending [{1}] to [{2}]: File closed prematurely."
 msgstr "Wysyłanie [{1}] do [{2}]: Plik zamknięty przedwcześnie."
 
 #: dcc.cpp:478
+#, c++-format
 msgid "Receiving [{1}] from [{2}]: File closed prematurely."
 msgstr "Otrzymywanie [{1}] od [{2}]: Plik zamknięty przedwcześnie."
 
 #: dcc.cpp:501
+#, c++-format
 msgid "Sending [{1}] to [{2}]: Error reading from file."
 msgstr "Wysyłanie [{1}] do [{2}]: Błąd odczytu z pliku."
 
 #: dcc.cpp:505
+#, c++-format
 msgid "Receiving [{1}] from [{2}]: Error reading from file."
 msgstr "Otrzymywanie [{1}] od [{2}]: Błąd odczytu z pliku."
 
 #: dcc.cpp:537
+#, c++-format
 msgid "Sending [{1}] to [{2}]: Unable to open file."
 msgstr ""
 
 #: dcc.cpp:541
+#, c++-format
 msgid "Receiving [{1}] from [{2}]: Unable to open file."
 msgstr ""
 
 #: dcc.cpp:563
+#, c++-format
 msgid "Receiving [{1}] from [{2}]: Could not open file."
 msgstr "Otrzymywanie [{1}] od [{2}]: Nie można otworzyć pliku."
 
 #: dcc.cpp:572
+#, c++-format
 msgid "Sending [{1}] to [{2}]: Not a file."
 msgstr "Wysyłanie [{1}] do [{2}]: Nie jest plikiem."
 
 #: dcc.cpp:581
+#, c++-format
 msgid "Sending [{1}] to [{2}]: Could not open file."
 msgstr "Wysyłanie [{1}] do [{2}]: Nie można otworzyć pliku."
 
 #: dcc.cpp:593
+#, c++-format
 msgid "Sending [{1}] to [{2}]: File too large (>4 GiB)."
 msgstr "Wysyłanie [{1}] do [{2}]: Plik jest zbyt duży (>4 GiB)."
 

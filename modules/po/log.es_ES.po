@@ -53,6 +53,7 @@ msgid "No logging rules. Everything is logged."
 msgstr "No hay reglas de logueo. Se registra todo."
 
 #: log.cpp:161
+#, c++-format
 msgid "1 rule removed: {2}"
 msgid_plural "{1} rules removed: {2}"
 msgstr[0] "Borrada regla: {2}"
@@ -126,6 +127,7 @@ msgid "Not logging nick changes"
 msgstr "Sin registrar cambios de nick"
 
 #: log.cpp:352
+#, c++-format
 msgid ""
 "Invalid args [{1}]. Only one log path allowed.  Check that there are no "
 "spaces in the path."
@@ -134,17 +136,19 @@ msgstr ""
 "que no tiene espacios."
 
 #: log.cpp:402
+#, c++-format
 msgid "Invalid log path [{1}]"
 msgstr "Ruta de log no válida [{1}]"
 
 #: log.cpp:405
+#, c++-format
 msgid "Logging to [{1}]. Using timestamp format '{2}'"
 msgstr "Registrando a [{1}]. Usando marca de tiempo '{2}'"
 
-#: log.cpp:576
+#: log.cpp:580
 msgid "[-sanitize] Optional path where to store logs."
 msgstr "[-sanitize] ruta opcional donde almacenar registros."
 
-#: log.cpp:580
+#: log.cpp:584
 msgid "Writes IRC logs."
 msgstr "Guarda registros de IRC."

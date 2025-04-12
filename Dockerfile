@@ -46,7 +46,7 @@ RUN apk add --no-cache --virtual build-dependencies \
     && cd / && rm -rf /znc-src
 
 COPY docker/slim/entrypoint.sh /
-COPY docker/*/??-*.sh /startup-sequence/
+COPY docker/*/??-*.sh docker/*/startup-sequence/??-*.sh /startup-sequence/
 
 VOLUME /znc-data
 

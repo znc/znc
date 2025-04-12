@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2024 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,17 +34,17 @@ BEGIN {
 }
 
 use IO::File;
-use feature 'switch', 'say';
+use feature 'say';
 
 package ZNC::String;
 use overload '""' => sub {
-    my $self = shift;
-    my @caller = caller;
-    # When called from internal SWIG subroutines, return default stringification (e.g. 'ZNC::String=SCALAR(0x6210002fe090)') instead of the stored string.
-    # Otherwise, ZNC crashes with use-after-free.
-    # SWIG uses it as key for a hash, so without the number in the returned string, different strings which happen to represent the same value, collide.
-    return $self if $caller[0] eq 'ZNC::String';
-    return $self->GetPerlStr;
+	my $self = shift;
+	my @caller = caller;
+	# When called from internal SWIG subroutines, return default stringification (e.g. 'ZNC::String=SCALAR(0x6210002fe090)') instead of the stored string.
+	# Otherwise, ZNC crashes with use-after-free.
+	# SWIG uses it as key for a hash, so without the number in the returned string, different strings which happen to represent the same value, collide.
+	return $self if $caller[0] eq 'ZNC::String';
+	return $self->GetPerlStr;
 };
 
 package ZNC::CMessage;
@@ -71,16 +71,15 @@ sub UnloadModule {
 	my $cmod = $pmod->{_cmod};
 	my $modpath = $cmod->GetModPath;
 	my $modname = $cmod->GetModName;
-	given ($cmod->GetType()) {
-		when ($ZNC::CModInfo::NetworkModule) {
-			$cmod->GetNetwork->GetModules->removeModule($cmod);
-		}
-		when ($ZNC::CModInfo::UserModule) {
-			$cmod->GetUser->GetModules->removeModule($cmod);
-		}
-		when ($ZNC::CModInfo::GlobalModule) {
-			ZNC::CZNC::Get()->GetModules->removeModule($cmod);
-		}
+	my $type = $cmod->GetType();
+	if ($type == $ZNC::CModInfo::NetworkModule) {
+		$cmod->GetNetwork->GetModules->removeModule($cmod);
+	} elsif ($type == $ZNC::CModInfo::UserModule) {
+		$cmod->GetUser->GetModules->removeModule($cmod);
+	} elsif ($type == $ZNC::CModInfo::GlobalModule) {
+		ZNC::CZNC::Get()->GetModules->removeModule($cmod);
+	} else {
+		die "UnloadModule: unknown module type $type for $modpath";
 	}
 	delete $pmod->{_cmod};
 	delete $pmod->{_nv};
@@ -110,16 +109,14 @@ sub LoadModule {
 	my ($modname, $args, $type, $user, $network) = @_;
 	$modname =~ /^\w+$/ or return ($ZNC::Perl_LoadError, "Module names can only contain letters, numbers and underscores, [$modname] is invalid.");
 	my $container;
-	given ($type) {
-		when ($ZNC::CModInfo::NetworkModule) {
-			$container = $network;
-		}
-		when ($ZNC::CModInfo::UserModule) {
-			$container = $user;
-		}
-		when ($ZNC::CModInfo::GlobalModule) {
-			$container = ZNC::CZNC::Get();
-		}
+	if ($type == $ZNC::CModInfo::NetworkModule) {
+		$container = $network;
+	} elsif ($type == $ZNC::CModInfo::UserModule) {
+		$container = $user;
+	} elsif ($type == $ZNC::CModInfo::GlobalModule) {
+		$container = ZNC::CZNC::Get();
+	} else {
+		die "LoadModule: unknown module type $type for $modname";
 	}
 	return ($ZNC::Perl_LoadError, "Uhm? No container for the module? Wtf?") unless $container;
 	$container = $container->GetModules;
@@ -669,28 +666,28 @@ sub CreateSocket {
 }
 
 sub t_s {
-    my $self = shift;
-    my $module = ref $self;
-    my $english = shift;
-    my $context = shift//'';
-    ZNC::CTranslation::Get->Singular("znc-$module", $context, $english);
+	my $self = shift;
+	my $module = ref $self;
+	my $english = shift;
+	my $context = shift//'';
+	ZNC::CTranslation::Get->Singular("znc-$module", $context, $english);
 }
 
 sub t_f {
-    my $self = shift;
-    my $fmt = $self->t_s(@_);
-    return sub { sprintf $fmt, @_ }
+	my $self = shift;
+	my $fmt = $self->t_s(@_);
+	return sub { sprintf $fmt, @_ }
 }
 
 sub t_p {
-    my $self = shift;
-    my $module = ref $self;
-    my $english = shift;
-    my $englishes = shift;
-    my $num = shift;
-    my $context = shift//'';
-    my $fmt = ZNC::CTranslation::Get->Plural("znc-$module", $context, $english, $englishes, $num);
-    return sub { sprintf $fmt, @_ }
+	my $self = shift;
+	my $module = ref $self;
+	my $english = shift;
+	my $englishes = shift;
+	my $num = shift;
+	my $context = shift//'';
+	my $fmt = ZNC::CTranslation::Get->Plural("znc-$module", $context, $english, $englishes, $num);
+	return sub { sprintf $fmt, @_ }
 }
 
 # TODO is t_d needed for perl? Maybe after AddCommand is implemented
@@ -791,12 +788,10 @@ sub Listen {
 	my %arg = @_;
 	my $addrtype = $ZNC::ADDR_ALL;
 	if (defined $arg{addrtype}) {
-		given ($arg{addrtype}) {
-			when (/^ipv4$/i) { $addrtype = $ZNC::ADDR_IPV4ONLY }
-			when (/^ipv6$/i) { $addrtype = $ZNC::ADDR_IPV6ONLY }
-			when (/^all$/i)  { }
-			default { die "Specified addrtype [$arg{addrtype}] isn't supported" }
-		}
+		if ($arg{addrtype} =~ /^ipv4$/i) { $addrtype = $ZNC::ADDR_IPV4ONLY }
+		elsif ($arg{addrtype} =~ /^ipv6$/i) { $addrtype = $ZNC::ADDR_IPV6ONLY }
+		elsif ($arg{addrtype} =~ /^all$/i)  { }
+		else { die "Specified addrtype [$arg{addrtype}] isn't supported" }
 	}
 	if (defined $arg{port}) {
 		return $arg{port} if $self->GetModule->GetManager->ListenHost(

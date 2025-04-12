@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2024 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1364,6 +1364,47 @@ class CModule {
     virtual void OnClientCapRequest(CClient* pClient, const CString& sCap,
                                     bool bState);
 
+    /** Called when a client requests SASL authentication. Use ssMechanisms.insert("MECHANISM")
+     *  for announcing SASL mechanisms which your module supports.
+     *  @param ssMechanisms The set of supported SASL mechanisms to append to.
+     *  @since 1.10.0
+     */
+    virtual void OnClientGetSASLMechanisms(SCString& ssMechanisms);
+    /** Called when a client has selected a SASL mechanism for SASL authentication.
+     *  If implementing a SASL authentication mechanism, set sResponse to
+     * specify an initial challenge message to send to the client. Otherwise, an
+     * empty response will be sent. To avoid sending any immediate response,
+     * return HALT; in that case the module should schedule calling
+     * GetClient()->SendSASLChallenge() with the initial response: in IRC SASL,
+     * server always responds first.
+     * @param sMechanism The SASL mechanism selected by the client.
+     * @param sResponse The optional value of an initial SASL challenge message
+     * to send to the client.
+     * @since 1.10.0
+     */
+    virtual EModRet OnClientSASLServerInitialChallenge(
+        const CString& sMechanism, CString& sResponse);
+    /** Called when a client is sending us a SASL message after the mechanism was selected.
+     *  If implementing a SASL authentication mechanism, check the passed
+     * credentials, then either request more data by sending a challenge in
+     * GetClient()->SendSASLChallenge(), or reject authentication by calling
+     * GetClient()->RefuseSASLLogin(), or accept it by calling
+     * GetClient()->AcceptSASLLogin().
+     * At some point before accepting the login, you should call
+     * GetClient()->ParseUser(authz-id) to let it know the network name to
+     * attach to and the client id.
+     * @param sMechanism The SASL mechanism selected by the client.
+     * @param sMessage The SASL opaque value/credentials sent by the client,
+     * after debase64ing and concatenating if it was split.
+     * @since 1.10.0
+     */
+    virtual EModRet OnClientSASLAuthenticate(const CString& sMechanism,
+                                             const CString& sMessage);
+    /** Called when a client sent '*' to abort SASL, or aborted it for another reason.
+     *  @since 1.10.0
+     */
+    virtual void OnClientSASLAborted();
+
     /** Called when a module is going to be loaded.
      *  @param sModName name of the module.
      *  @param eType wanted type of the module (user/global).
@@ -1665,6 +1706,14 @@ class CModules : public std::vector<CModule*>, private CCoreTranslationMixin {
     bool IsClientCapSupported(CClient* pClient, const CString& sCap,
                               bool bState);
     bool OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState);
+
+    bool OnClientGetSASLMechanisms(SCString& ssMechanisms);
+    bool OnClientSASLAborted();
+    bool OnClientSASLServerInitialChallenge(const CString& sMechanism,
+                                            CString& sResponse);
+    bool OnClientSASLAuthenticate(const CString& sMechanism,
+                                  const CString& sBuffer);
+
     bool OnModuleLoading(const CString& sModName, const CString& sArgs,
                          CModInfo::EModuleType eType, bool& bSuccess,
                          CString& sRetMsg);

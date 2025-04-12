@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-# Copyright (C) 2004-2024 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ open my $out, ">", $ARGV[1] or die;
 
 print $out <<'EOF';
 /*
- * Copyright (C) 2004-2024 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,6 +98,7 @@ while (<$in>) {
 				say $out "\t\tPUSH_PTR($sub*, *i);";
 				say $out "\t}";
 			}
+			when (/SCString/)	  { my $b=$a->{base}; $b=~s/^const//; say $out "\tPUSH_PTR($b*, &$a->{var});" }
 			when (/CString/) { say $out "\tPUSH_STR($a->{var});" }
 			when (/\*$/)	 { my $t=$a->{type}; $t=~s/^const//; say $out "\tPUSH_PTR($t, $a->{var});" }
 			when (/&$/)	  { my $b=$a->{base}; $b=~s/^const//; say $out "\tPUSH_PTR($b*, &$a->{var});" }

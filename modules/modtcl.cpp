@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2024 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -248,8 +248,9 @@ class CModTcl : public CModule {
         // chan specific
         unsigned int nLength = vChans.size();
         for (unsigned int n = 0; n < nLength; n++) {
+            CString sChannel = TclEscape(CString(vChans[n]->GetName()));
             sCommand = "Binds::ProcessNick {" + sOldNick + "} {" + sHost +
-                       "} - {" + vChans[n]->GetName() + "} {" + sNewNickTmp +
+                       "} - {" + sChannel + "} {" + sNewNickTmp +
                        "}";
             int i = Tcl_Eval(interp, sCommand.c_str());
             if (i != TCL_OK) {
@@ -260,14 +261,16 @@ class CModTcl : public CModule {
 
     void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel,
                 const CString& sMessage) override {
+        CString sMes = TclEscape(sMessage);
         CString sOpNick = TclEscape(CString(OpNick.GetNick()));
         CString sNick = TclEscape(sKickedNick);
         CString sOpHost =
             TclEscape(CString(OpNick.GetIdent() + "@" + OpNick.GetHost()));
+        CString sChannel = TclEscape(Channel.GetName());
 
         CString sCommand = "Binds::ProcessKick {" + sOpNick + "} {" + sOpHost +
-                           "} - {" + Channel.GetName() + "} {" + sNick + "} {" +
-                           sMessage + "}";
+                           "} - {" + sChannel + "} {" + sNick + "} {" +
+                           sMes + "}";
         int i = Tcl_Eval(interp, sCommand.c_str());
         if (i != TCL_OK) {
             PutModule(Tcl_GetStringResult(interp));

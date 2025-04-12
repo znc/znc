@@ -13,6 +13,7 @@ msgstr ""
 "Language: tr_TR\n"
 
 #: shell.cpp:37
+#, c++-format
 msgid "Failed to execute: {1}"
 msgstr "Yürütülemedi: {1}"
 

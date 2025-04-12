@@ -45,7 +45,7 @@
 						   title="<? FORMAT "Please re-type the above password." ?>"/>
 				</div>
 				<div class="subsection">
-					<div class="inputlabel"><label for="authonlyviamodule"><? FORMAT "Auth Only Via Module:" ?></label></div>
+					<div class="inputlabel"><label for="authonlyviamodule"><? FORMAT "Auth only via module:" ?></label></div>
 					<input id="authonlyviamodule" type="checkbox" name="authonlyviamodule"
 						    title="<? FORMAT "Allow user authentication by external modules only, disabling built-in password authentication." ?>"
 						    <? IF AuthOnlyViaModule ?>checked="checked" <? ENDIF ?><? IF !ImAdmin ?>disabled="disabled" <? ENDIF ?>/>
@@ -87,7 +87,7 @@
 						   <? IF !IdentEdit ?>disabled<? ENDIF ?> />
 				</div>
 				<div class="subsection">
-					<div class="inputlabel"><label for="statusprefix"><? FORMAT "Status Prefix:" ?></label></div>
+					<div class="inputlabel"><label for="statusprefix"><? FORMAT "Status prefix:" ?></label></div>
 					<input id="statusprefix" type="text" name="statusprefix" value="<? VAR StatusPrefix ?>" class="half" maxlength="5"
 						   title="<? FORMAT "The prefix for the status and module queries." ?>"/>
 				</div>
@@ -114,7 +114,7 @@
 				<? ENDIF ?>
 
 				<div class="subsection">
-					<div class="inputlabel"><label for="quitmsg"><? FORMAT "Quit Message:" ?></label></div>
+					<div class="inputlabel"><label for="quitmsg"><? FORMAT "Quit message:" ?></label></div>
 					<input type="text" name="quitmsg" value="<? VAR QuitMsg ?>" class="full" maxlength="256"
 						   title="<? FORMAT "You may define a Message shown, when you quit IRC." ?>"
 						   <? IF !QuitMsgEdit ?>disabled<? ENDIF ?> />
@@ -249,13 +249,13 @@
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection third">
-					<div class="inputlabel"><label for="chanmodes"><? FORMAT "Default Modes:" ?></label></div>
+					<div class="inputlabel"><label for="chanmodes"><? FORMAT "Default modes:" ?></label></div>
 					<input id="chanmodes" type="text" name="chanmodes" value="<? VAR DefaultChanModes ?>" maxlength="32"
 						   title="<? FORMAT "These are the default modes ZNC will set when you join an empty channel." ?>"/>
 					<br /><span class="info"><? FORMAT "Empty = use standard value" ?></span>
 				</div>
 				<div class="subsection third">
-					<div class="inputlabel"><label for="chanbufsize"><? FORMAT "Buffer Size:" ?></label></div>
+					<div class="inputlabel"><label for="chanbufsize"><? FORMAT "Buffer size:" ?></label></div>
 					<input id="chanbufsize" type="number" name="chanbufsize" value="<? VAR ChanBufferSize ?>" min="0"
 						   title="<? FORMAT "This is the amount of lines that the playback buffer will store for channels before dropping off the oldest line. The buffers are stored in the memory by default." ?>"/>
 					<br /><span class="info"><? FORMAT "Empty = use standard value" ?></span>
@@ -269,12 +269,12 @@
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection third">
-					<div class="inputlabel"><label for="maxquerybuffers"><? FORMAT "Max Buffers:" ?></label></div>
+					<div class="inputlabel"><label for="maxquerybuffers"><? FORMAT "Max buffers:" ?></label></div>
 					<input id="maxquerybuffers" type="number" name="maxquerybuffers" value="<? VAR MaxQueryBuffers ?>" class="third" min="0"
 						   title="<? FORMAT "Maximum number of query buffers. 0 is unlimited." ?>"/>
 				</div>
 				<div class="subsection third">
-					<div class="inputlabel"><label for="querybufsize"><? FORMAT "Buffer Size:" ?></label></div>
+					<div class="inputlabel"><label for="querybufsize"><? FORMAT "Buffer size:" ?></label></div>
 					<input id="querybufsize" type="number" name="querybufsize" value="<? VAR QueryBufferSize ?>" min="0"
 						   title="<? FORMAT "This is the amount of lines that the playback buffer will store for queries before dropping off the oldest line. The buffers are stored in the memory by default." ?>"/>
 					<br /><span class="info"><? FORMAT "Empty = use standard value" ?></span>
@@ -304,7 +304,7 @@
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection">
-					<div class="inputlabel"><label for="timestampformat"><? FORMAT "Timestamp Format:" ?></label></div>
+					<div class="inputlabel"><label for="timestampformat"><? FORMAT "Timestamp format:" ?></label></div>
 					<input id="timestampformat" type="text" name="timestampformat" value="<? VAR TimestampFormat ?>" class="full"
 						   title="<? FORMAT "The format for the timestamps used in buffers, for example [%H:%M:%S]. This setting is ignored in new IRC clients, which use server-time. If your client supports server-time, change timestamp format in client settings instead." ?>"/>
 				</div>
@@ -326,7 +326,7 @@
 				</div>
 				<div style="clear:both;"></div>
 				<div class="subsection">
-					<div class="inputlabel"><label for="jointries"><? FORMAT "Join Tries:" ?></label></div>
+					<div class="inputlabel"><label for="jointries"><? FORMAT "Join tries:" ?></label></div>
 					<input id="jointries" type="number" name="jointries" value="<? VAR JoinTries ?>" class="third" min="0"
 						   title="<? FORMAT "This defines how many times ZNC tries to join a channel, if the first join failed, e.g. due to channel mode +i/+k or if you are banned." ?>"/>
 				</div>
@@ -341,14 +341,14 @@
 					       title="<? FORMAT "How much time ZNC waits (in seconds) until it receives something from network or declares the connection timeout. This happens after attempts to ping the peer." ?>"/>
 				</div>
 				<div class="subsection">
-					<div class="inputlabel"><label for="maxnetworks"><? FORMAT "Max IRC Networks Number:" ?></label></div>
+					<div class="inputlabel"><label for="maxnetworks"><? FORMAT "Max IRC networks number:" ?></label></div>
 					<input type="number" name="maxnetworks" value="<? VAR MaxNetworks ?>" class="third" min="0"
 					       title="<? FORMAT "Maximum number of IRC networks allowed for this user." ?>" <? IF !ImAdmin ?>disabled="disabled"<? ENDIF ?> />
 				</div>
 
 				<? SETBLOCK Substitutions_Link ?><a href="https://wiki.znc.in/ExpandString" target="_blank" class="external"><? FORMAT "Substitutions" ?></a><? ENDSETBLOCK ?>
 				<div class="subsection half" id="ctcpreplies_plain">
-					<div class="inputlabel"><label for="ctcpreplies_text"><? FORMAT "CTCP Replies:" ?></label></div>
+					<div class="inputlabel"><label for="ctcpreplies_text"><? FORMAT "CTCP replies:" ?></label></div>
 					<div><textarea name="ctcpreplies" cols="70" rows="3" id="ctcpreplies_text" <? IF !CTCPEdit ?>disabled<? ENDIF ?>><? LOOP CTCPLoop ?><? VAR CTCP ?>
 <? ENDLOOP ?>
 </textarea></div>
@@ -356,7 +356,7 @@
 					<br /><span class="info"><? FORMAT "{1} are available" "Substitutions_Link ESC=" ?></span>
 				</div>
 				<div class="subsection" id="ctcpreplies_js" style="display:none" data-placeholder="<? FORMAT "Empty value means this CTCP request will be ignored" ?>">
-					<div class="inputlabel"><? FORMAT "CTCP Replies:" ?></div>
+					<div class="inputlabel"><? FORMAT "CTCP replies:" ?></div>
 					<div>
 						<table style="width:100%">
 							<thead>

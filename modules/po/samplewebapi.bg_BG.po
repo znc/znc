@@ -14,4 +14,4 @@ msgstr ""
 
 #: samplewebapi.cpp:59
 msgid "Sample Web API module."
-msgstr ""
+msgstr "Примерен Уеб API модул."

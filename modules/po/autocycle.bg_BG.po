@@ -14,56 +14,62 @@ msgstr ""
 
 #: autocycle.cpp:27 autocycle.cpp:30
 msgid "[!]<#chan>"
-msgstr ""
+msgstr "[!]<#chan>"
 
 #: autocycle.cpp:28
 msgid "Add an entry, use !#chan to negate and * for wildcards"
-msgstr ""
+msgstr "Добавяне на запис, използвайте !#chan, за отказ и * за wildcards"
 
 #: autocycle.cpp:31
 msgid "Remove an entry, needs to be an exact match"
-msgstr ""
+msgstr "Премахване на запис, трябва да е точно същият"
 
 #: autocycle.cpp:33
 msgid "List all entries"
-msgstr ""
+msgstr "Показване на всички записи"
 
 #: autocycle.cpp:46
+#, c++-format
 msgid "Unable to add {1}"
-msgstr ""
+msgstr "[{1}] не може да бъде добавен"
 
 #: autocycle.cpp:66
+#, c++-format
 msgid "{1} is already added"
-msgstr ""
+msgstr "{1} е вече добавен"
 
 #: autocycle.cpp:68
+#, c++-format
 msgid "Added {1} to list"
-msgstr ""
+msgstr "{1} е добавено в списъка"
 
 #: autocycle.cpp:70
 msgid "Usage: Add [!]<#chan>"
-msgstr ""
+msgstr "Употреба: Add [!]<#chan>"
 
 #: autocycle.cpp:78
+#, c++-format
 msgid "Removed {1} from list"
-msgstr ""
+msgstr "{1} е премахнат от списъка"
 
 #: autocycle.cpp:80
 msgid "Usage: Del [!]<#chan>"
-msgstr ""
+msgstr "Употреба: Del [!]<#chan>"
 
 #: autocycle.cpp:85 autocycle.cpp:90 autocycle.cpp:95
 msgid "Channel"
-msgstr ""
+msgstr "Канал"
 
 #: autocycle.cpp:101
 msgid "You have no entries."
-msgstr ""
+msgstr "Вие нямате записи."
 
 #: autocycle.cpp:230
 msgid "List of channel masks and channel masks with ! before them."
-msgstr ""
+msgstr "Списък на канали с маски и канали с маски с ! преди тях."
 
 #: autocycle.cpp:235
 msgid "Rejoins channels to gain Op if you're the only user left"
 msgstr ""
+"Повторно присъединяване в канали за да получите Op, ако сте единственият "
+"потребител останал"

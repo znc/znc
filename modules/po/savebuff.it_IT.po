@@ -44,14 +44,17 @@ msgstr ""
 "e salvare per instanziare"
 
 #: savebuff.cpp:232
+#, c++-format
 msgid "Password set to [{1}]"
 msgstr "Password impostata a [{1}]"
 
 #: savebuff.cpp:262
+#, c++-format
 msgid "Replayed {1}"
 msgstr "Ripetizione {1}"
 
 #: savebuff.cpp:341
+#, c++-format
 msgid "Unable to decode Encrypted file {1}"
 msgstr "Impossibile decodificare il file critografato {1}"
 

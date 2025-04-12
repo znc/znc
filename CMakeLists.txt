@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2024 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -55,6 +55,7 @@ include(use_homebrew)
 include(GNUInstallDirs)
 include(CheckCXXSymbolExists)
 include(copy_csocket)
+include(CMakePushCheckState)
 
 set(CMAKE_THREAD_PREFER_PTHREAD true)
 set(THREADS_PREFER_PTHREAD_FLAG true)
@@ -89,13 +90,12 @@ if(WANT_OPENSSL)
 		# LibreSSL gained that function later too.
 		# TODO: maybe remove this check at some point, and stop supporting old
 		# libssl versions
-		function(check_SSL_SESSION_get0_cipher)
+		cmake_push_check_state(RESET)
 			set(CMAKE_REQUIRED_LIBRARIES ${OPENSSL_LIBRARIES})
 			set(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIR})
 			check_cxx_symbol_exists(SSL_SESSION_get0_cipher openssl/ssl.h
 				HAVE_SSL_SESSION_get0_cipher)
-		endfunction()
-		check_SSL_SESSION_get0_cipher()
+		cmake_pop_check_state()
 		set(ZNC_CMAKE_FIND_DEPS
 			"${ZNC_CMAKE_FIND_DEPS}\nfind_dependency(OpenSSL)")
 		list(APPEND zncpubdeps OpenSSL::SSL)
@@ -120,15 +120,15 @@ if(WANT_CYRUS)
 		# next ubuntu version has 2.1.26 which has libsasl2.pc
 		#
 		# osx (as of El Capitan) doesn't have it either...
-		set(_old_cmake_required_libraries "${CMAKE_REQUIRED_LIBRARIES}")
-		set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} -lsasl2)
-		# sys/types.h here is workaround for sasl 2.1.26:
-		# https://github.com/znc/znc/issues/1243
-		# https://lists.andrew.cmu.edu/pipermail/cyrus-sasl/2012-December/002572.html
-		# https://cgit.cyrus.foundation/cyrus-sasl/commit/include/sasl.h?id=2f740223fa1820dd71e6ab0e50d4964760789209
-		check_cxx_symbol_exists(sasl_server_init "sys/types.h;sasl/sasl.h"
-			CYRUS_HARDCODED)
-		set(CMAKE_REQUIRED_LIBRARIES "${_old_cmake_required_libraries}")
+		cmake_push_check_state(RESET)
+			set(CMAKE_REQUIRED_LIBRARIES -lsasl2)
+			# sys/types.h here is workaround for sasl 2.1.26:
+			# https://github.com/znc/znc/issues/1243
+			# https://lists.andrew.cmu.edu/pipermail/cyrus-sasl/2012-December/002572.html
+			# https://cgit.cyrus.foundation/cyrus-sasl/commit/include/sasl.h?id=2f740223fa1820dd71e6ab0e50d4964760789209
+			check_cxx_symbol_exists(sasl_server_init "sys/types.h;sasl/sasl.h"
+				CYRUS_HARDCODED)
+		cmake_pop_check_state()
 		if(CYRUS_HARDCODED)
 			add_library(HardcodedCyrusDep INTERFACE)
 			add_library(PkgConfig::CYRUS ALIAS HardcodedCyrusDep)
@@ -318,6 +318,8 @@ check_cxx_symbol_exists(lstat "sys/types.h;sys/stat.h;unistd.h" HAVE_LSTAT)
 check_cxx_symbol_exists(getpassphrase "stdlib.h" HAVE_GETPASSPHRASE)
 check_cxx_symbol_exists(tcsetattr "termios.h;unistd.h" HAVE_TCSETATTR)
 check_cxx_symbol_exists(clock_gettime "time.h" HAVE_CLOCK_GETTIME)
+check_cxx_symbol_exists(gethostname "unistd.h" ZNC_HAVE_GETHOSTNAME)
+check_cxx_symbol_exists(uname "sys/utsname.h" ZNC_HAVE_UNAME)
 
 # Note that old broken systems, such as OpenBSD, NetBSD, which don't support
 # AI_ADDRCONFIG, also have thread-unsafe getaddrinfo(). Gladly, they fixed

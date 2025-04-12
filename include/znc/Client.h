@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2024 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -119,6 +119,7 @@ class CClient : public CIRCSocket {
     bool HasExtendedJoin() const { return m_bExtendedJoin; }
     bool HasNamesx() const { return m_bNamesx; }
     bool HasUHNames() const { return m_bUHNames; }
+    bool HasChgHost() const { return m_bChgHost; }
     bool IsAway() const { return m_bAway; }
     bool HasServerTime() const { return m_bServerTime; }
     bool HasBatch() const { return m_bBatch; }
@@ -249,11 +250,33 @@ class CClient : public CIRCSocket {
     CIRCSock* GetIRCSock();
     CString GetFullName() const;
 
+    /** Sends AUTHENTIATE message to client.
+     * It encodes it to Base64 and splits to multiple IRC messages if necessary.
+     */
+    void SendSASLChallenge(CString sMessage);
+    void RefuseSASLLogin(const CString& sReason);
+    void AcceptSASLLogin(CUser& User);
+    /** Start potentially asynchronous process of checking the credentials.
+     * When finished, will send the success/failure SASL numerics to the
+     * client. This is mostly useful for SASL PLAIN.
+     * sAuthorizationId is internally passed through ParseUser() to extract
+     * network and client id.
+     * Currently sUser should match the username from
+     * sAuthorizationId: either in full, or just the username part; but in a
+     * future version we may add an ability to actually login as a different
+     * user, but with your password.
+     */
+    void StartSASLPasswordCheck(const CString& sUser, const CString& sPassword,
+                                const CString& sAuthorizationId);
+    /** Gathers username, client id, network name, if present. Returns username
+     * cleaned from client id and network name.
+     */
+    CString ParseUser(const CString& sAuthLine);
+
   private:
     void HandleCap(const CMessage& Message);
     void RespondCap(const CString& sResponse);
     void ParsePass(const CString& sAuthLine);
-    void ParseUser(const CString& sAuthLine);
     void ParseIdentifier(const CString& sAuthLine);
 
     template <typename T>
@@ -265,6 +288,15 @@ class CClient : public CIRCSocket {
     unsigned int DetachChans(const std::set<CChan*>& sChans);
 
     bool OnActionMessage(CActionMessage& Message);
+    void OnAuthenticateMessage(const CAuthenticateMessage& Message);
+    void AbortSASL(const CString& sFullIRCLine);
+    bool IsDuringSASL() const { return !m_sSASLMechanism.empty(); }
+
+    /**
+     * Returns set of all available SASL mechanisms.
+     */
+    SCString EnumerateSASLMechanisms() const;
+
     bool OnCTCPMessage(CCTCPMessage& Message);
     bool OnJoinMessage(CJoinMessage& Message);
     bool OnModeMessage(CModeMessage& Message);
@@ -289,22 +321,32 @@ class CClient : public CIRCSocket {
     bool m_bExtendedJoin;
     bool m_bNamesx;
     bool m_bUHNames;
+    bool m_bChgHost;
     bool m_bAway;
     bool m_bServerTime;
     bool m_bBatch;
     bool m_bEchoMessage;
     bool m_bSelfMessage;
+    bool m_bSASLCap;
     bool m_bPlaybackActive;
     CUser* m_pUser;
     CIRCNetwork* m_pNetwork;
     CString m_sNick;
     CString m_sPass;
+    // User who didn't necessarily login yet, or might not even exist.
     CString m_sUser;
     CString m_sNetwork;
     CString m_sIdentifier;
+    CString m_sSASLBuffer;
+    // Set while the exchange is in progress
+    CString m_sSASLMechanism;
+    // Username who successfully logged in using SASL. This is not a CUser*
+    // because between the 903 and CAP END the user could have been deleted.
+    CString m_sSASLUser;
     std::shared_ptr<CAuthBase> m_spAuth;
     SCString m_ssAcceptedCaps;
     SCString m_ssSupportedTags;
+    SCString m_ssPreviouslyFailedSASLMechanisms;
     // The capabilities supported by the ZNC core - capability names mapped to
     // change handler. Note: this lists caps which don't require support on IRC
     // server.

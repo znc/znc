@@ -21,6 +21,7 @@ msgid "detached"
 msgstr "desunido"
 
 #: notify_connect.cpp:41
+#, c++-format
 msgid "{1} {2} from {3}"
 msgstr "{1} {2} de {3}"
 

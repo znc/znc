@@ -14,48 +14,50 @@ msgstr ""
 
 #: kickrejoin.cpp:56
 msgid "<secs>"
-msgstr ""
+msgstr "<секунди>"
 
 #: kickrejoin.cpp:56
 msgid "Set the rejoin delay"
-msgstr ""
+msgstr "Задава забавяне на повторното присъединяване"
 
 #: kickrejoin.cpp:58
 msgid "Show the rejoin delay"
-msgstr ""
+msgstr "Показва забавяне на повторното присъединяване"
 
 #: kickrejoin.cpp:77
 msgid "Illegal argument, must be a positive number or 0"
-msgstr ""
+msgstr "Неправилен аргумент, трябва да е положително число или 0"
 
 #: kickrejoin.cpp:90
 msgid "Negative delays don't make any sense!"
-msgstr ""
+msgstr "Негативни забавяния не правят никакъв смисъл!"
 
 #: kickrejoin.cpp:98
+#, c++-format
 msgid "Rejoin delay set to 1 second"
 msgid_plural "Rejoin delay set to {1} seconds"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Забавянето за повторно присъединяване е зададено на 1 секунда"
+msgstr[1] "Забавянето за повторно присъединяване е зададено на {1} секунди"
 
 #: kickrejoin.cpp:101
 msgid "Rejoin delay disabled"
-msgstr ""
+msgstr "Забавянето за повторно присъединяване е спряно"
 
 #: kickrejoin.cpp:106
+#, c++-format
 msgid "Rejoin delay is set to 1 second"
 msgid_plural "Rejoin delay is set to {1} seconds"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Забавянето за повторно присъединяване е зададено на 1 секунда"
+msgstr[1] "Забавянето за повторно присъединяване е зададено на {1} секунди"
 
 #: kickrejoin.cpp:109
 msgid "Rejoin delay is disabled"
-msgstr ""
+msgstr "Забавянето за повторно присъединяване е спряно"
 
 #: kickrejoin.cpp:131
 msgid "You might enter the number of seconds to wait before rejoining."
-msgstr ""
+msgstr "Трябва да въведете секундите за изчакване преди да влезете отново."
 
 #: kickrejoin.cpp:134
 msgid "Autorejoins on kick"
-msgstr ""
+msgstr "Повторно присъединяване след кик"
