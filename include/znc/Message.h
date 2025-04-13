@@ -82,6 +82,7 @@ class CMessage {
         Ping,
         Pong,
         Quit,
+        TagMsg,
         Text,
         Topic,
         Wallops,
@@ -139,6 +140,7 @@ class CMessage {
     void SetTime(const timeval& ts) { m_time = ts; }
 
     const MCString& GetTags() const { return m_mssTags; }
+    MCString& GetTags() { return m_mssTags; }
     void SetTags(const MCString& mssTags) { m_mssTags = mssTags; }
 
     CString GetTag(const CString& sKey) const;

@@ -180,6 +180,9 @@ class ZNC_EXPORT_LIB_EXPORT CPyModule : public CModule {
     EModRet OnTopicMessage(CTopicMessage& Message) override;
     EModRet OnSendToClientMessage(CMessage& Message) override;
     EModRet OnSendToIRCMessage(CMessage& Message) override;
+    EModRet OnUserTagMessage(CTargetMessage& Message) override;
+    EModRet OnChanTagMessage(CTargetMessage& Message) override;
+    EModRet OnPrivTagMessage(CTargetMessage& Message) override;
 
     // Global Modules
     EModRet OnAddUser(CUser& User, CString& sErrorRet) override;

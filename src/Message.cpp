@@ -292,6 +292,7 @@ void CMessage::InitType() {
             {"PING", Type::Ping},
             {"PONG", Type::Pong},
             {"QUIT", Type::Quit},
+            {"TAGMSG", Type::TagMsg},
             {"TOPIC", Type::Topic},
             {"WALLOPS", Type::Wallops},
         };

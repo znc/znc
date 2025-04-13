@@ -69,6 +69,7 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork)
       m_bAccountNotify(false),
       m_bExtendedJoin(false),
       m_bServerTime(false),
+      m_bMessageTagCap(false),
       m_sPerms("*!@%+"),
       m_sPermModes("qaohv"),
       m_scUserModes(),
@@ -226,6 +227,9 @@ void CIRCSock::ReadLine(const CString& sData) {
             break;
         case CMessage::Type::Quit:
             bReturn = OnQuitMessage(Message);
+            break;
+        case CMessage::Type::TagMsg:
+            bReturn = OnTagMessage(Message);
             break;
         case CMessage::Type::Text:
             bReturn = OnTextMessage(Message);
@@ -385,6 +389,7 @@ bool CIRCSock::OnCapabilityMessage(CMessage& Message) {
         {"server-time", [this](bool bVal) { m_bServerTime = bVal; }},
         {"znc.in/server-time-iso", [this](bool bVal) { m_bServerTime = bVal; }},
         {"chghost", [](bool) {}},
+        {"message-tags", [this](bool bVal) { m_bMessageTagCap = bVal; }},
     };
 
     auto RemoveCap = [&](const CString& sCap) {
@@ -1160,6 +1165,49 @@ bool CIRCSock::OnQuitMessage(CQuitMessage& Message) {
     return !bIsVisible;
 }
 
+bool CIRCSock::OnTagMessage(CTargetMessage& Message) {
+    bool bResult = false;
+    CChan* pChan = nullptr;
+    CString sTarget = Message.GetTarget();
+
+    if (sTarget.Equals(GetNick())) {
+        IRCSOCKMODULECALL(OnPrivTagMessage(Message), &bResult);
+        if (bResult) return true;
+
+        if (!m_pNetwork->IsUserOnline() ||
+            !m_pNetwork->GetUser()->AutoClearQueryBuffer()) {
+            const CNick& Nick = Message.GetNick();
+            CQuery* pQuery = m_pNetwork->AddQuery(Nick.GetNick());
+            if (pQuery) {
+                CTargetMessage Format;
+                Format.Clone(Message);
+                Format.SetNick(_NAMEDFMT(Nick.GetNickMask()));
+                Format.SetTarget("{target}");
+                pQuery->AddBuffer(Format);
+            }
+        }
+    } else {
+        pChan = m_pNetwork->FindChan(sTarget);
+        if (pChan) {
+            Message.SetChan(pChan);
+            FixupChanNick(Message.GetNick(), pChan);
+            IRCSOCKMODULECALL(OnChanTagMessage(Message), &bResult);
+            if (bResult) return true;
+
+            if (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline() ||
+                pChan->IsDetached()) {
+                CTargetMessage Format;
+                Format.Clone(Message);
+                Format.SetNick(_NAMEDFMT(Message.GetNick().GetNickMask()));
+                Format.SetTarget(_NAMEDFMT(Message.GetTarget()));
+                pChan->AddBuffer(Format);
+            }
+        }
+    }
+
+    return (pChan && pChan->IsDetached());
+}
+
 bool CIRCSock::OnTextMessage(CTextMessage& Message) {
     bool bResult = false;
     CChan* pChan = nullptr;
@@ -1271,13 +1319,15 @@ void CIRCSock::TrySend() {
         m_iSendsAllowed--;
         CMessage& Message = m_vSendQueue.front();
 
-        MCString mssTags;
-        for (const auto& it : Message.GetTags()) {
-            if (IsTagEnabled(it.first)) {
-                mssTags[it.first] = it.second;
+        if (!m_bMessageTagCap) {
+            MCString mssTags;
+            for (const auto& it : Message.GetTags()) {
+                if (IsTagEnabled(it.first)) {
+                    mssTags[it.first] = it.second;
+                }
             }
+            Message.SetTags(mssTags);
         }
-        Message.SetTags(mssTags);
         Message.SetNetwork(m_pNetwork);
 
         bool bSkip = false;

@@ -94,6 +94,7 @@ CClient::CClient()
       m_bBatch(false),
       m_bEchoMessage(false),
       m_bSelfMessage(false),
+      m_bMessageTagCap(false),
       m_bSASLCap(false),
       m_bPlaybackActive(false),
       m_pUser(nullptr),
@@ -258,6 +259,9 @@ void CClient::ReadLine(const CString& sData) {
         case CMessage::Type::Quit:
             bReturn = OnQuitMessage(Message);
             break;
+        case CMessage::Type::TagMsg:
+            bReturn = OnTagMessage(Message);
+            break;
         case CMessage::Type::Text:
             bReturn = OnTextMessage(Message);
             break;
@@ -271,7 +275,7 @@ void CClient::ReadLine(const CString& sData) {
 
     if (bReturn) return;
 
-    PutIRC(Message.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
+    PutIRCStripping(Message);
 }
 
 void CClient::SetNick(const CString& s) { m_sNick = s; }
@@ -560,6 +564,16 @@ void CClient::PutIRC(const CString& sLine) {
     }
 }
 
+void CClient::PutIRCStripping(CMessage Message) {
+    if (CIRCSock* pSock = GetIRCSock()) {
+        Message.SetNick(CNick{});
+        if (!pSock->HasMessageTagCap()) {
+            Message.SetTags({});
+        }
+        pSock->PutIRC(Message);
+    }
+}
+
 CString CClient::GetFullName() const {
     if (!m_pUser) return GetRemoteIP();
     CString sFullName = m_pUser->GetUsername();
@@ -577,6 +591,9 @@ bool CClient::PutClient(const CMessage& Message) {
         return false;
     } else if (!m_bAccountNotify &&
                Message.GetType() == CMessage::Type::Account) {
+        return false;
+    } else if (!m_bMessageTagCap &&
+               Message.GetType() == CMessage::Type::TagMsg) {
         return false;
     }
 
@@ -643,11 +660,14 @@ bool CClient::PutClient(const CMessage& Message) {
         }
     }
 
-    MCString mssTags;
+    MCString mssNewTags;
+    MCString& mssTags = m_bMessageTagCap ? Msg.GetTags() : mssNewTags;
 
-    for (const auto& it : Msg.GetTags()) {
-        if (IsTagEnabled(it.first)) {
-            mssTags[it.first] = it.second;
+    if (!m_bMessageTagCap) {
+        for (const auto& it : Msg.GetTags()) {
+            if (IsTagEnabled(it.first)) {
+                mssTags[it.first] = it.second;
+            }
         }
     }
 
@@ -815,6 +835,10 @@ CClient::CoreCaps() {
                     {"echo-message",
                      [](CClient* pClient, bool bVal) {
                          pClient->m_bEchoMessage = bVal;
+                     }},
+                    {"message-tags",
+                     [](CClient* pClient, bool bVal) {
+                         pClient->m_bMessageTagCap = bVal;
                      }},
                     {"server-time",
                      [](CClient* pClient, bool bVal) {
@@ -1037,6 +1061,17 @@ void CClient::NotifyServerDependentCap(const CString& sCap, bool bValue, const C
     }
 }
 
+namespace {
+template <typename X, class = void>
+struct message_has_text : std::false_type {};
+
+template <typename X>
+struct message_has_text<
+    X, std::void_t<decltype(std::declval<const X&>().GetText()),
+                   decltype(std::declval<X&>().SetText(""))>> : std::true_type {
+};
+}
+
 template <typename T>
 void CClient::AddBuffer(const T& Message) {
     if (!m_pNetwork) {
@@ -1048,18 +1083,27 @@ void CClient::AddBuffer(const T& Message) {
     Format.Clone(Message);
     Format.SetNick(CNick(_NAMEDFMT(GetNickMask())));
     Format.SetTarget(_NAMEDFMT(sTarget));
-    Format.SetText("{text}");
+    if constexpr (message_has_text<T>::value) {
+        Format.SetText("{text}");
+    }
 
+    CString sText;
     CChan* pChan = m_pNetwork->FindChan(sTarget);
     if (pChan) {
         if (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline()) {
-            pChan->AddBuffer(Format, Message.GetText());
+            if constexpr (message_has_text<T>::value) {
+                sText = Message.GetText();
+            }
+            pChan->AddBuffer(Format, sText);
         }
     } else if (Message.GetType() != CMessage::Type::Notice) {
         if (!m_pUser->AutoClearQueryBuffer() || !m_pNetwork->IsUserOnline()) {
             CQuery* pQuery = m_pNetwork->AddQuery(sTarget);
             if (pQuery) {
-                pQuery->AddBuffer(Format, Message.GetText());
+                if constexpr (message_has_text<T>::value) {
+                    sText = Message.GetText();
+                }
+                pQuery->AddBuffer(Format, sText);
             }
         }
     }
@@ -1131,11 +1175,15 @@ bool CClient::OnActionMessage(CActionMessage& Message) {
                           this, &bContinue);
         if (bContinue) continue;
 
+        if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
+            EchoMessage(Message);
+            continue;
+        }
+
         if (m_pNetwork) {
             AddBuffer(Message);
             EchoMessage(Message);
-            PutIRC(Message.ToString(CMessage::ExcludePrefix |
-                                    CMessage::ExcludeTags));
+            PutIRCStripping(Message);
         }
     }
 
@@ -1342,6 +1390,10 @@ bool CClient::OnCTCPMessage(CCTCPMessage& Message) {
         }
         if (bContinue) continue;
 
+        if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
+            continue;
+        }
+
         if (!GetIRCSock()) {
             // Some lagmeters do a NOTICE to their own nick, ignore those.
             if (!sTarget.Equals(m_sNick))
@@ -1352,8 +1404,7 @@ bool CClient::OnCTCPMessage(CCTCPMessage& Message) {
         }
 
         if (m_pNetwork) {
-            PutIRC(Message.ToString(CMessage::ExcludePrefix |
-                                    CMessage::ExcludeTags));
+            PutIRCStripping(Message);
         }
     }
 
@@ -1456,6 +1507,8 @@ bool CClient::OnNoticeMessage(CNoticeMessage& Message) {
         }
 
         if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
+            EchoMessage(Message);
+
             if (!sTarget.Equals("status")) {
                 CALLMOD(sTarget, this, m_pUser, m_pNetwork,
                         OnModNotice(Message.GetText()));
@@ -1480,8 +1533,7 @@ bool CClient::OnNoticeMessage(CNoticeMessage& Message) {
         if (m_pNetwork) {
             AddBuffer(Message);
             EchoMessage(Message);
-            PutIRC(Message.ToString(CMessage::ExcludePrefix |
-                                    CMessage::ExcludeTags));
+            PutIRCStripping(Message);
         }
     }
 
@@ -1554,6 +1606,41 @@ bool CClient::OnQuitMessage(CQuitMessage& Message) {
     return true;
 }
 
+bool CClient::OnTagMessage(CTargetMessage& Message) {
+    CString sTargets = Message.GetTarget();
+
+    VCString vTargets;
+    sTargets.Split(",", vTargets, false);
+
+    for (CString& sTarget : vTargets) {
+        Message.SetTarget(sTarget);
+        if (m_pNetwork) {
+            // May be nullptr.
+            Message.SetChan(m_pNetwork->FindChan(sTarget));
+        }
+
+        bool bContinue = false;
+        NETWORKMODULECALL(OnUserTagMessage(Message), m_pUser, m_pNetwork,
+                          this, &bContinue);
+        if (bContinue) continue;
+
+        if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
+            EchoMessage(Message);
+            continue;
+        }
+
+        if (m_pNetwork) {
+            AddBuffer(Message);
+            EchoMessage(Message);
+            if (GetIRCSock()->HasMessageTagCap()) {
+                PutIRCStripping(Message);
+            }
+        }
+    }
+
+    return true;
+}
+
 bool CClient::OnTextMessage(CTextMessage& Message) {
     CString sTargets = Message.GetTarget();
 
@@ -1597,8 +1684,7 @@ bool CClient::OnTextMessage(CTextMessage& Message) {
         if (m_pNetwork) {
             AddBuffer(Message);
             EchoMessage(Message);
-            PutIRC(Message.ToString(CMessage::ExcludePrefix |
-                                    CMessage::ExcludeTags));
+            PutIRCStripping(Message);
         }
     }
 

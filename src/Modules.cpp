@@ -881,6 +881,15 @@ CModule::EModRet CModule::OnUserNoticeMessage(CNoticeMessage& Message) {
     Message.SetText(sText);
     return ret;
 }
+CModule::EModRet CModule::OnUserTagMessage(CTargetMessage& Message) {
+    return CONTINUE;
+}
+CModule::EModRet CModule::OnPrivTagMessage(CTargetMessage& Message) {
+    return CONTINUE;
+}
+CModule::EModRet CModule::OnChanTagMessage(CTargetMessage& Message) {
+    return CONTINUE;
+}
 CModule::EModRet CModule::OnUserJoin(CString& sChannel, CString& sKey) {
     return CONTINUE;
 }
@@ -1429,6 +1438,15 @@ bool CModules::OnUserNotice(CString& sTarget, CString& sMessage) {
 }
 bool CModules::OnUserNoticeMessage(CNoticeMessage& Message) {
     MODHALTCHK(OnUserNoticeMessage(Message));
+}
+bool CModules::OnUserTagMessage(CTargetMessage& Message) {
+    MODHALTCHK(OnUserTagMessage(Message));
+}
+bool CModules::OnPrivTagMessage(CTargetMessage& Message) {
+    MODHALTCHK(OnPrivTagMessage(Message));
+}
+bool CModules::OnChanTagMessage(CTargetMessage& Message) {
+    MODHALTCHK(OnChanTagMessage(Message));
 }
 bool CModules::OnUserJoin(CString& sChannel, CString& sKey) {
     MODHALTCHK(OnUserJoin(sChannel, sKey));

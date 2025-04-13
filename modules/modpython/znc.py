@@ -704,6 +704,15 @@ class Module:
     def OnSendToIRCMessage(self, msg):
         pass
 
+    def OnUserTagMessage(self, msg):
+        pass
+
+    def OnChanTagMessage(self, msg):
+        pass
+
+    def OnPrivTagMessage(self, msg):
+        pass
+
 
 class Command:
     command = ''

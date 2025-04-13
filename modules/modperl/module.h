@@ -160,6 +160,9 @@ class ZNC_EXPORT_LIB_EXPORT CPerlModule : public CModule {
     EModRet OnTopicMessage(CTopicMessage& Message) override;
     EModRet OnSendToClientMessage(CMessage& Message) override;
     EModRet OnSendToIRCMessage(CMessage& Message) override;
+    EModRet OnUserTagMessage(CTargetMessage& Message) override;
+    EModRet OnChanTagMessage(CTargetMessage& Message) override;
+    EModRet OnPrivTagMessage(CTargetMessage& Message) override;
 
     void OnClientGetSASLMechanisms(SCString& ssMechanisms) override;
     EModRet OnClientSASLServerInitialChallenge(const CString& sMechanism,

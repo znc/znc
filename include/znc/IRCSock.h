@@ -153,9 +153,8 @@ class CIRCSock : public CIRCSocket {
     bool HasAccountNotify() const { return m_bAccountNotify; }
     bool HasExtendedJoin() const { return m_bExtendedJoin; }
     bool HasServerTime() const { return m_bServerTime; }
-    const std::set<char>& GetUserModes() const {
-        return m_scUserModes;
-    }
+    bool HasMessageTagCap() const { return m_bMessageTagCap; }
+    const std::set<char>& GetUserModes() const { return m_scUserModes; }
     // This is true if we are past raw 001
     bool IsAuthed() const { return m_bAuthed; }
     const SCString& GetAcceptedCaps() const { return m_ssAcceptedCaps; }
@@ -192,6 +191,7 @@ class CIRCSock : public CIRCSocket {
     bool OnPingMessage(CMessage& Message);
     bool OnPongMessage(CMessage& Message);
     bool OnQuitMessage(CQuitMessage& Message);
+    bool OnTagMessage(CTargetMessage& Message);
     bool OnTextMessage(CTextMessage& Message);
     bool OnTopicMessage(CTopicMessage& Message);
     bool OnWallopsMessage(CMessage& Message);
@@ -213,6 +213,7 @@ class CIRCSock : public CIRCSocket {
     bool m_bAccountNotify;
     bool m_bExtendedJoin;
     bool m_bServerTime;
+    bool m_bMessageTagCap;
     CString m_sPerms;
     CString m_sPermModes;
     std::set<char> m_scUserModes;
