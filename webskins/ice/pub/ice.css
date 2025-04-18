@@ -381,3 +381,7 @@ div.submitline {
 	margin-bottom: 0.7em;
 }
 
+input.channel_index {
+  width: 3em;
+  min-width: unset;
+}

@@ -1,0 +1,107 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: tr\n"
+"X-Crowdin-File: /master/modules/po/stickychan.pot\n"
+"X-Crowdin-File-ID: 202\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Turkish\n"
+"Language: tr_TR\n"
+
+#: modules/po/../data/stickychan/tmpl/index.tmpl:9
+msgid "Name"
+msgstr "Adı"
+
+#: modules/po/../data/stickychan/tmpl/index.tmpl:10
+msgid "Sticky"
+msgstr "Sabit"
+
+#: modules/po/../data/stickychan/tmpl/index.tmpl:25
+msgid "Save"
+msgstr "Kaydet"
+
+#: modules/po/../data/stickychan/tmpl/stickychan_WebadminChan.tmpl:8
+msgid "Channel is sticky"
+msgstr "Kanal sticky (renk ve kalın yazma yok)"
+
+#: stickychan.cpp:28
+msgid "<#channel> [key]"
+msgstr "<#kanal> [anahtar]"
+
+#: stickychan.cpp:28
+msgid "Sticks a channel"
+msgstr "Bir kanalı 'sticky' yapar (renk ve kalın yazma yok)"
+
+#: stickychan.cpp:30
+msgid "<#channel>"
+msgstr "<#kanal>"
+
+#: stickychan.cpp:30
+msgid "Unsticks a channel"
+msgstr "Bir kanalı 'unsticky' yapar (renk ve kalın yazma var)"
+
+#: stickychan.cpp:32
+msgid "Lists sticky channels"
+msgstr "Sticky kanalları listeler"
+
+#: stickychan.cpp:75
+msgid "Usage: Stick <#channel> [key]"
+msgstr "Kullanımı: Stick <#kanal> [anahtar]"
+
+#: stickychan.cpp:79
+#, c++-format
+msgid "Stuck {1}"
+msgstr "{1} stick edildi"
+
+#: stickychan.cpp:85
+msgid "Usage: Unstick <#channel>"
+msgstr "Kullanımı: Unstick <#kanal>"
+
+#: stickychan.cpp:89
+#, c++-format
+msgid "Unstuck {1}"
+msgstr "{1} unstick edildi"
+
+#: stickychan.cpp:101
+msgid " -- End of List"
+msgstr " -- Liste Sonu"
+
+#: stickychan.cpp:115
+#, c++-format
+msgid "Could not join {1} (# prefix missing?)"
+msgstr "{1}'a katılamadı (# öneki eksik mi?)"
+
+#: stickychan.cpp:128
+msgid "Sticky Channels"
+msgstr "Sticky Kanallar"
+
+#: stickychan.cpp:160
+msgid "Changes have been saved!"
+msgstr "Değişiklikler kaydedildi!"
+
+#: stickychan.cpp:185
+msgid "Channel became sticky!"
+msgstr "Kanal sticky hale geldi!"
+
+#: stickychan.cpp:189
+msgid "Channel stopped being sticky!"
+msgstr "Kanal sticky olmayı bıraktı!"
+
+#: stickychan.cpp:209
+#, c++-format
+msgid ""
+"Channel {1} cannot be joined, it is an illegal channel name. Unsticking."
+msgstr ""
+"{1} kanalına katılınamıyor, illefgal bir kanal adıdır. Unstick ediliyor."
+
+#: stickychan.cpp:246
+msgid "List of channels, separated by comma."
+msgstr "Kanalların virgülle ayrılmış listesi."
+
+#: stickychan.cpp:251
+msgid "configless sticky chans, keeps you there very stickily even"
+msgstr "yapılandırmasız sticky kanallar, sizi orada bile çok sticky tutar"

@@ -1,0 +1,81 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: id\n"
+"X-Crowdin-File: /master/modules/po/nickserv.pot\n"
+"X-Crowdin-File-ID: 185\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Indonesian\n"
+"Language: id_ID\n"
+
+#: nickserv.cpp:31
+msgid "Password set"
+msgstr "Kata sandi diatur"
+
+#: nickserv.cpp:36 nickserv.cpp:46
+msgid "Done"
+msgstr ""
+
+#: nickserv.cpp:41
+msgid "NickServ name set"
+msgstr "Atur nama NickServ"
+
+#: nickserv.cpp:60
+msgid "No such editable command. See ViewCommands for list."
+msgstr "Tidak ada perintah yang dapat diedit. Lihat daftar ViewCommands."
+
+#: nickserv.cpp:63
+msgid "Ok"
+msgstr "Oke"
+
+#: nickserv.cpp:68
+msgid "password"
+msgstr "sandi"
+
+#: nickserv.cpp:68
+msgid "Set your nickserv password"
+msgstr "Atur kata sandi nickserv anda"
+
+#: nickserv.cpp:70
+msgid "Clear your nickserv password"
+msgstr "Bersihkan kata sandi nickserv anda"
+
+#: nickserv.cpp:72
+msgid "nickname"
+msgstr "nickname"
+
+#: nickserv.cpp:73
+msgid ""
+"Set NickServ name (Useful on networks like EpiKnet, where NickServ is named "
+"Themis"
+msgstr ""
+"Atur nama NickServ (Berguna pada jaringan seperti EpiKnet, di mana NickServ "
+"diberi nama Themis"
+
+#: nickserv.cpp:77
+msgid "Reset NickServ name to default (NickServ)"
+msgstr "Kembalikan nama NickServ ke standar (NickServ)"
+
+#: nickserv.cpp:81
+msgid "Show patterns for lines, which are being sent to NickServ"
+msgstr "Tampilkan pola untuk garis, yang dikirim ke NickServ"
+
+#: nickserv.cpp:83
+msgid "cmd new-pattern"
+msgstr "cmd new-pattern"
+
+#: nickserv.cpp:84
+msgid "Set pattern for commands"
+msgstr "Atur pola untuk perintah"
+
+#: nickserv.cpp:146
+msgid "Please enter your nickserv password."
+msgstr "Silahkan masukkan kata sandi nickserv anda."
+
+#: nickserv.cpp:150
+msgid "Auths you with NickServ (prefer SASL module instead)"
+msgstr "Auths anda dengan NickServ (lebih memilih modul SASL sebagai gantinya)"

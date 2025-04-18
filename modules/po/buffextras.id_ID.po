@@ -1,0 +1,56 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: id\n"
+"X-Crowdin-File: /master/modules/po/buffextras.pot\n"
+"X-Crowdin-File-ID: 160\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Indonesian\n"
+"Language: id_ID\n"
+
+#: buffextras.cpp:45
+msgid "Server"
+msgstr ""
+
+#: buffextras.cpp:47
+#, c++-format
+msgid "{1} set mode: {2} {3}"
+msgstr ""
+
+#: buffextras.cpp:55
+#, c++-format
+msgid "{1} kicked {2} with reason: {3}"
+msgstr ""
+
+#: buffextras.cpp:64
+#, c++-format
+msgid "{1} quit: {2}"
+msgstr ""
+
+#: buffextras.cpp:73
+#, c++-format
+msgid "{1} joined"
+msgstr ""
+
+#: buffextras.cpp:81
+#, c++-format
+msgid "{1} parted: {2}"
+msgstr ""
+
+#: buffextras.cpp:90
+#, c++-format
+msgid "{1} is now known as {2}"
+msgstr ""
+
+#: buffextras.cpp:100
+#, c++-format
+msgid "{1} changed the topic to: {2}"
+msgstr ""
+
+#: buffextras.cpp:115
+msgid "Adds joins, parts etc. to the playback buffer"
+msgstr ""

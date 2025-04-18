@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,9 +31,11 @@
 #define HAVE_PTHREAD 1
 #cmakedefine HAVE_THREADED_DNS 1
 #cmakedefine HAVE_LIBSSL 1
+#cmakedefine HAVE_SSL_SESSION_get0_cipher 1
 #cmakedefine HAVE_IPV6 1
 #cmakedefine HAVE_ZLIB 1
 #cmakedefine HAVE_I18N 1
+#cmakedefine ZNC_HAVE_ARGON 1
 #cmakedefine CSOCK_USE_POLL 1
 
 #cmakedefine HAVE_GETOPT_LONG 1
@@ -41,6 +43,8 @@
 #cmakedefine HAVE_TCSETATTR 1
 #cmakedefine HAVE_GETPASSPHRASE 1
 #cmakedefine HAVE_CLOCK_GETTIME 1
+#cmakedefine ZNC_HAVE_GETHOSTNAME 1
+#cmakedefine ZNC_HAVE_UNAME 1
 
 #cmakedefine HAVE_ICU 1
 #define U_USING_ICU_NAMESPACE 1

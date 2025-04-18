@@ -293,9 +293,10 @@ tr.evenrow td {
 	font-size: 80%;
 }
 
-.subsection {
+.subsection::after {
+	content: "";
 	clear: both;
-	margin: 0;
+	display: table;
 }
 
 .subsection div {
@@ -316,10 +317,13 @@ tr.evenrow td {
 
 .subsection div.checkbox {
 	padding: 9px 0 0 3px;
+	max-width: 537px;
 }
 
-.subsection div.checkbox input {
-	min-width: 0;
+.subsection div.checkbox label {
+	vertical-align: top;
+	display: inline-block;
+	max-width:510px;
 }
 
 .section .info {
@@ -359,6 +363,10 @@ td.mod_name,
 	white-space: nowrap;
 }
 
+td.center {
+	text-align: center;
+}
+
 .lotsofcheckboxes .checkboxandlabel {
 	display: block;
 	float: left;
@@ -373,6 +381,11 @@ td.mod_name,
 	border-bottom: 1px solid #aaa;
 }
 
+#servers_js > div:first-child {
+	font-weight: bold;
+	margin: 20px 0 8px;
+}
+
 td {
 	word-wrap: break-word;
 }
@@ -381,3 +394,7 @@ td {
 	margin-bottom: 0.7em;
 }
 
+input.channel_index {
+  width: 3em;
+  min-width: unset;
+}

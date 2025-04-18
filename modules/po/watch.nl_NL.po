@@ -1,0 +1,201 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: nl\n"
+"X-Crowdin-File: /master/modules/po/watch.pot\n"
+"X-Crowdin-File-ID: 204\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Dutch\n"
+"Language: nl_NL\n"
+
+#: watch.cpp:178
+msgid "<HostMask> [Target] [Pattern]"
+msgstr "<HostMasker> [Doel] [Patroon]"
+
+#: watch.cpp:178
+msgid "Used to add an entry to watch for."
+msgstr "Gebruikt om een gebruiker toe te voegen om naar uit te kijken."
+
+#: watch.cpp:180
+msgid "List all entries being watched."
+msgstr "Toon alle gebruikers waar naar uitgekeken wordt."
+
+#: watch.cpp:182
+msgid "Dump a list of all current entries to be used later."
+msgstr "Stort een lijst met alle huidige gebruikers om later te gebruiken."
+
+#: watch.cpp:184
+msgid "<Id>"
+msgstr "<ID>"
+
+#: watch.cpp:184
+msgid "Deletes Id from the list of watched entries."
+msgstr "Verwijdert Id van de lijst van de naar uit te kijken gebruikers."
+
+#: watch.cpp:186
+msgid "Delete all entries."
+msgstr "Verwijder alle gebruikers."
+
+#: watch.cpp:188 watch.cpp:190
+msgid "<Id | *>"
+msgstr "<ID | *>"
+
+#: watch.cpp:188
+msgid "Enable a disabled entry."
+msgstr "Schakel een uitgeschakelde gebruiker in."
+
+#: watch.cpp:190
+msgid "Disable (but don't delete) an entry."
+msgstr "Schakel een ingeschakelde gebruiker uit (maar verwijder deze niet)."
+
+#: watch.cpp:192 watch.cpp:194
+msgid "<Id | *> <True | False>"
+msgstr "<ID | > <Waar | Onwaar>"
+
+#: watch.cpp:192
+msgid "Enable or disable detached client only for an entry."
+msgstr "Schakel een losgekoppelde client in of uit voor een gebruiker."
+
+#: watch.cpp:194
+msgid "Enable or disable detached channel only for an entry."
+msgstr "Schakel een losgekoppeld kanaal in of uit voor een gebruiker."
+
+#: watch.cpp:196
+msgid "<Id> [#chan priv #foo* !#bar]"
+msgstr "<ID> [#kanaal priv #foo* !#bar]"
+
+#: watch.cpp:196
+msgid "Set the source channels that you care about."
+msgstr "Stel the bronkanalen in waar je om geeft."
+
+#: watch.cpp:237
+msgid "WARNING: malformed entry found while loading"
+msgstr "WAARSCHUWING: ongeldige gebruiker gevonden terwijl deze geladen werd"
+
+#: watch.cpp:382
+msgid "Disabled all entries."
+msgstr "Alle gebruikers uitgeschakeld."
+
+#: watch.cpp:383
+msgid "Enabled all entries."
+msgstr "Alle gebruikers ingeschakeld."
+
+#: watch.cpp:390 watch.cpp:432 watch.cpp:474 watch.cpp:577 watch.cpp:619
+msgid "Invalid Id"
+msgstr "Ongeldige ID"
+
+#: watch.cpp:399
+#, c++-format
+msgid "Id {1} disabled"
+msgstr "Id {1} uitgeschakeld"
+
+#: watch.cpp:401
+#, c++-format
+msgid "Id {1} enabled"
+msgstr "Id {1} ingeschakeld"
+
+#: watch.cpp:423
+msgid "Set DetachedClientOnly for all entries to Yes"
+msgstr "Stel DetachedClientOnly voor alle gebruikers in op Ja"
+
+#: watch.cpp:425
+msgid "Set DetachedClientOnly for all entries to No"
+msgstr "Stel DetachedClientOnly voor alle gebruikers in op Nee"
+
+#: watch.cpp:441 watch.cpp:483
+#, c++-format
+msgid "Id {1} set to Yes"
+msgstr "Id {1} ingesteld op Ja"
+
+#: watch.cpp:443 watch.cpp:485
+#, c++-format
+msgid "Id {1} set to No"
+msgstr "Id {1} ingesteld op Nee"
+
+#: watch.cpp:465
+msgid "Set DetachedChannelOnly for all entries to Yes"
+msgstr "DetachedChannelOnly voor alle gebruikers insteld op Ja"
+
+#: watch.cpp:467
+msgid "Set DetachedChannelOnly for all entries to No"
+msgstr "DetachedChannelOnly voor alle gebruikers insteld op Nee"
+
+#: watch.cpp:491 watch.cpp:507
+msgid "Id"
+msgstr "Id"
+
+#: watch.cpp:492 watch.cpp:508
+msgid "HostMask"
+msgstr "Hostmasker"
+
+#: watch.cpp:493 watch.cpp:509
+msgid "Target"
+msgstr "Doel"
+
+#: watch.cpp:494 watch.cpp:510
+msgid "Pattern"
+msgstr "Patroon"
+
+#: watch.cpp:495 watch.cpp:511
+msgid "Sources"
+msgstr "Bronnen"
+
+#: watch.cpp:496 watch.cpp:512 watch.cpp:513
+msgid "Off"
+msgstr "Uit"
+
+#: watch.cpp:497 watch.cpp:515
+msgid "DetachedClientOnly"
+msgstr "DetachedClientOnly"
+
+#: watch.cpp:498 watch.cpp:518
+msgid "DetachedChannelOnly"
+msgstr "DetachedChannelOnly"
+
+#: watch.cpp:516 watch.cpp:519
+msgid "Yes"
+msgstr "Ja"
+
+#: watch.cpp:516 watch.cpp:519
+msgid "No"
+msgstr "Nee"
+
+#: watch.cpp:525 watch.cpp:531
+msgid "You have no entries."
+msgstr "Je hebt geen gebruikers."
+
+#: watch.cpp:585
+#, c++-format
+msgid "Sources set for Id {1}."
+msgstr "Bronnen ingesteld voor Id {1}."
+
+#: watch.cpp:609
+msgid "All entries cleared."
+msgstr "Alle gebruikers gewist."
+
+#: watch.cpp:627
+#, c++-format
+msgid "Id {1} removed."
+msgstr "Id {1} verwijderd."
+
+#: watch.cpp:646
+#, c++-format
+msgid "Entry for {1} already exists."
+msgstr "Gebruiker {1} bestaat al."
+
+#: watch.cpp:654
+#, c++-format
+msgid "Adding entry: {1} watching for [{2}] -> {3}"
+msgstr "Voeg gebruiker toe: {1}, kijk uit naar [{2}] -> {3}"
+
+#: watch.cpp:660
+msgid "Watch: Not enough arguments.  Try Help"
+msgstr "Watch: Niet genoeg argumenten. Probeer Help"
+
+#: watch.cpp:702
+msgid "Copy activity from a specific user into a separate window"
+msgstr "Kopiëer activiteit van een specifieke gebruiker naar een apart venster"

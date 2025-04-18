@@ -1,3 +1,8 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
 #: chansaver.cpp:91
 msgid "Keeps config up-to-date when user joins/parts."
 msgstr ""

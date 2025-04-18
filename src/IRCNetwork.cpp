@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@
 #include <znc/Chan.h>
 #include <znc/Query.h>
 #include <znc/Message.h>
-#include <znc/ZNCDebug.h>
 #include <algorithm>
 #include <memory>
 
@@ -35,7 +34,7 @@ class CIRCNetworkPingTimer : public CCron {
     CIRCNetworkPingTimer(CIRCNetwork* pNetwork)
         : CCron(), m_pNetwork(pNetwork) {
         SetName("CIRCNetworkPingTimer::" +
-                m_pNetwork->GetUser()->GetUserName() + "::" +
+                m_pNetwork->GetUser()->GetUsername() + "::" +
                 m_pNetwork->GetName());
         Start(m_pNetwork->GetUser()->GetPingSlack());
     }
@@ -78,7 +77,7 @@ class CIRCNetworkJoinTimer : public CCron {
     CIRCNetworkJoinTimer(CIRCNetwork* pNetwork)
         : CCron(), m_bDelayed(false), m_pNetwork(pNetwork) {
         SetName("CIRCNetworkJoinTimer::" +
-                m_pNetwork->GetUser()->GetUserName() + "::" +
+                m_pNetwork->GetUser()->GetUsername() + "::" +
                 m_pNetwork->GetName());
         Start(JOIN_FREQUENCY);
     }
@@ -233,7 +232,8 @@ void CIRCNetwork::Clone(const CIRCNetwork& Network, bool bCloneName) {
 
         if (pSock) {
             PutStatus(
-                "Jumping servers because this server is no longer in the list");
+                t_s("Jumping servers because this server is no longer in the "
+                    "list"));
             pSock->Quit();
         }
     }
@@ -363,11 +363,13 @@ CString CIRCNetwork::GetNetworkPath() const {
     return sNetworkPath;
 }
 
+namespace {
 template <class T>
 struct TOption {
     const char* name;
     void (CIRCNetwork::*pSetter)(T);
 };
+}
 
 bool CIRCNetwork::ParseConfig(CConfig* pConfig, CString& sError,
                               bool bUpgrade) {
@@ -456,6 +458,35 @@ bool CIRCNetwork::ParseConfig(CConfig* pConfig, CString& sError,
             bool bModRet = LoadModule(sModName, sArgs, sNotice, sModRet);
 
             if (!bModRet) {
+                // Q is removed in znc 1.8
+                if (sModName == "q") {
+                    CUtils::PrintError(
+                        "NOTICE: [q] is unavailable, cannot load.");
+                    CUtils::PrintError(
+                        "NOTICE: [q] is removed in this release of ZNC. Please "
+                        "either remove it from your config or install it as a "
+                        "third party module with the same name.");
+                    CUtils::PrintError(
+                        "NOTICE: More info can be found on "
+                        "https://wiki.znc.in/Q");
+                    return false;
+                }
+
+                // Partyline is removed in znc 1.8
+                if (sModName == "partyline") {
+                    CUtils::PrintError(
+                        "NOTICE: [partyline] is unavailable, cannot load.");
+                    CUtils::PrintError(
+                        "NOTICE: [partyline] is removed in this release"
+                        " of ZNC. Please either remove it from your config or "
+                        "install it as a third party module with the same "
+                        "name.");
+                    CUtils::PrintError(
+                        "NOTICE: More info can be found on "
+                        "https://wiki.znc.in/Partyline");
+                    return false;
+                }
+
                 // XXX The awaynick module was retired in 1.6 (still available
                 // as external module)
                 if (sModName == "awaynick") {
@@ -468,7 +499,9 @@ bool CIRCNetwork::ParseConfig(CConfig* pConfig, CString& sError,
                     }
                     if (!bFound) {
                         sNotice =
-                            "Loading network module [simple_away] instead";
+                            "NOTICE: awaynick was retired, loading network "
+                            "module [simple_away] instead; if you still need "
+                            "awaynick, install it as an external module";
                         sModName = "simple_away";
                         // not a fatal error if simple_away is not available
                         LoadModule(sModName, sArgs, sNotice, sModRet);
@@ -482,8 +515,8 @@ bool CIRCNetwork::ParseConfig(CConfig* pConfig, CString& sError,
     }
 
     pConfig->FindStringVector("server", vsList);
+    CUtils::PrintAction("Adding " + CString(vsList.size()) + " servers");
     for (const CString& sServer : vsList) {
-        CUtils::PrintAction("Adding server [" + sServer + "]");
         CUtils::PrintStatus(AddServer(sServer));
     }
 
@@ -508,7 +541,7 @@ bool CIRCNetwork::ParseConfig(CConfig* pConfig, CString& sError,
 
         if (!pSubConf->empty()) {
             sError = "Unhandled lines in config for User [" +
-                     m_pUser->GetUserName() + "], Network [" + GetName() +
+                     m_pUser->GetUsername() + "], Network [" + GetName() +
                      "], Channel [" + sChanName + "]!";
             CUtils::PrintError(sError);
 
@@ -627,15 +660,11 @@ void CIRCNetwork::ClientConnected(CClient* pClient) {
 
     size_t uIdx, uSize;
 
-    if (m_pIRCSock) {
-        pClient->NotifyServerDependentCaps(m_pIRCSock->GetAcceptedCaps());
-    }
-
     pClient->SetPlaybackActive(true);
 
     if (m_RawBuffer.IsEmpty()) {
         pClient->PutClient(":irc.znc.in 001 " + pClient->GetNick() +
-                           " :- Welcome to ZNC -");
+                           " :" + t_s("Welcome to ZNC"));
     } else {
         const CString& sClientNick = pClient->GetNick(false);
         MCString msParams;
@@ -667,8 +696,8 @@ void CIRCNetwork::ClientConnected(CClient* pClient) {
 
     if (GetIRCSock() != nullptr) {
         CString sUserMode("");
-        const set<unsigned char>& scUserModes = GetIRCSock()->GetUserModes();
-        for (unsigned char cMode : scUserModes) {
+        const set<char>& scUserModes = GetIRCSock()->GetUserModes();
+        for (char cMode : scUserModes) {
             sUserMode += cMode;
         }
         if (!sUserMode.empty()) {
@@ -723,13 +752,8 @@ void CIRCNetwork::ClientConnected(CClient* pClient) {
     // Tell them why they won't connect
     if (!GetIRCConnectEnabled())
         pClient->PutStatus(
-            "You are currently disconnected from IRC. "
-            "Use 'connect' to reconnect.");
-
-    if (CDebug::Debug()) {
-        pClient->PutStatus("ZNC is presently running in DEBUG mode. Sensitive"
-            " data during your current session may be exposed to the host.");
-    }
+            t_s("You are currently disconnected from IRC. Use 'connect' to "
+                "reconnect."));
 }
 
 void CIRCNetwork::ClientDisconnected(CClient* pClient) {
@@ -758,7 +782,7 @@ std::vector<CClient*> CIRCNetwork::FindClients(
 void CIRCNetwork::SetUser(CUser* pUser) {
     for (CClient* pClient : m_vClients) {
         pClient->PutStatus(
-            "This network is being deleted or moved to another user.");
+            t_s("This network is being deleted or moved to another user."));
         pClient->SetNetwork(nullptr);
     }
 
@@ -916,6 +940,49 @@ bool CIRCNetwork::DelChan(const CString& sName) {
     return false;
 }
 
+bool CIRCNetwork::MoveChan(const CString& sChan, unsigned int uIndex,
+                           CString& sError) {
+    if (uIndex >= m_vChans.size()) {
+        sError = t_s("Invalid index");
+        return false;
+    }
+
+    auto it = m_vChans.begin();
+    for (; it != m_vChans.end(); ++it)
+        if ((*it)->GetName().Equals(sChan)) break;
+    if (it == m_vChans.end()) {
+        sError = t_f("You are not on {1}")(sChan);
+        return false;
+    }
+
+    const auto pChan = *it;
+    m_vChans.erase(it);
+    m_vChans.insert(m_vChans.begin() + uIndex, pChan);
+    return true;
+}
+
+bool CIRCNetwork::SwapChans(const CString& sChan1, const CString& sChan2,
+                            CString& sError) {
+    auto it1 = m_vChans.begin();
+    for (; it1 != m_vChans.end(); ++it1)
+        if ((*it1)->GetName().Equals(sChan1)) break;
+    if (it1 == m_vChans.end()) {
+        sError = t_f("You are not on {1}")(sChan1);
+        return false;
+    }
+
+    auto it2 = m_vChans.begin();
+    for (; it2 != m_vChans.end(); ++it2)
+        if ((*it2)->GetName().Equals(sChan2)) break;
+    if (it2 == m_vChans.end()) {
+        sError = t_f("You are not on {1}")(sChan2);
+        return false;
+    }
+
+    std::swap(*it1, *it2);
+    return true;
+}
+
 void CIRCNetwork::JoinChans() {
     // Avoid divsion by zero, it's bad!
     if (m_vChans.empty()) return;
@@ -987,8 +1054,8 @@ bool CIRCNetwork::JoinChan(CChan* pChan) {
 
     if (m_pUser->JoinTries() != 0 &&
         pChan->GetJoinTries() >= m_pUser->JoinTries()) {
-        PutStatus("The channel " + pChan->GetName() +
-                  " could not be joined, disabling it.");
+        PutStatus(t_f("The channel {1} could not be joined, disabling it.")(
+            pChan->GetName()));
         pChan->Disable();
     } else {
         pChan->IncJoinTries();
@@ -1116,7 +1183,7 @@ bool CIRCNetwork::DelServer(const CString& sName, unsigned short uPort,
 
             if (pIRCSock) {
                 pIRCSock->Quit();
-                PutStatus("Your current server was removed, jumping...");
+                PutStatus(t_s("Your current server was removed, jumping..."));
             }
         } else if (!bSawCurrentServer) {
             // Our current server comes after the server which we
@@ -1278,8 +1345,9 @@ bool CIRCNetwork::Connect() {
     bool bSSL = pServer->IsSSL();
 #ifndef HAVE_LIBSSL
     if (bSSL) {
-        PutStatus("Cannot connect to [" + pServer->GetString(false) +
-                  "], ZNC is not compiled with SSL.");
+        PutStatus(
+            t_f("Cannot connect to {1}, because ZNC is not compiled with SSL "
+                "support.")(pServer->GetString(false)));
         CZNC::Get().AddNetworkToQueue(this);
         return false;
     }
@@ -1291,7 +1359,7 @@ bool CIRCNetwork::Connect() {
     pIRCSock->SetTrustAllCerts(GetTrustAllCerts());
     pIRCSock->SetTrustPKI(GetTrustPKI());
 
-    DEBUG("Connecting user/network [" << m_pUser->GetUserName() << "/"
+    DEBUG("Connecting user/network [" << m_pUser->GetUsername() << "/"
                                       << m_sName << "]");
 
     bool bAbort = false;
@@ -1299,13 +1367,13 @@ bool CIRCNetwork::Connect() {
                       &bAbort);
     if (bAbort) {
         DEBUG("Some module aborted the connection attempt");
-        PutStatus("Some module aborted the connection attempt");
+        PutStatus(t_s("Some module aborted the connection attempt"));
         delete pIRCSock;
         CZNC::Get().AddNetworkToQueue(this);
         return false;
     }
 
-    CString sSockName = "IRC::" + m_pUser->GetUserName() + "::" + m_sName;
+    CString sSockName = "IRC::" + m_pUser->GetUsername() + "::" + m_sName;
     CZNC::Get().GetManager().Connect(pServer->GetName(), pServer->GetPort(),
                                      sSockName, 120, bSSL, GetBindHost(),
                                      pIRCSock);
@@ -1321,10 +1389,6 @@ bool CIRCNetwork::IsIRCConnected() const {
 void CIRCNetwork::SetIRCSocket(CIRCSock* pIRCSock) { m_pIRCSock = pIRCSock; }
 
 void CIRCNetwork::IRCConnected() {
-    const SCString& ssCaps = m_pIRCSock->GetAcceptedCaps();
-    for (CClient* pClient : m_vClients) {
-        pClient->NotifyServerDependentCaps(ssCaps);
-    }
     if (m_uJoinDelay > 0) {
         m_pJoinTimer->Delay(m_uJoinDelay);
     } else {
@@ -1333,9 +1397,6 @@ void CIRCNetwork::IRCConnected() {
 }
 
 void CIRCNetwork::IRCDisconnected() {
-    for (CClient* pClient : m_vClients) {
-        pClient->ClearServerDependentCaps();
-    }
     m_pIRCSock = nullptr;
 
     SetIRCServer("");
@@ -1343,6 +1404,17 @@ void CIRCNetwork::IRCDisconnected() {
 
     // Get the reconnect going
     CheckIRCConnect();
+}
+
+void CIRCNetwork::NotifyClientsAboutServerDependentCap(const CString& sCap, bool bValue) {
+    CString sValue = GetIRCSock() ? GetIRCSock()->GetCapLsValue(sCap) : "";
+    for (CClient* pClient : m_vClients) {
+        pClient->NotifyServerDependentCap(sCap, bValue, sValue);
+    }
+}
+
+bool CIRCNetwork::IsServerCapAccepted(const CString& sCap) const {
+    return m_pIRCSock && m_pIRCSock->IsCapAccepted(sCap);
 }
 
 void CIRCNetwork::SetIRCConnectEnabled(bool b) {
@@ -1373,6 +1445,17 @@ bool CIRCNetwork::PutIRC(const CString& sLine) {
     }
 
     pIRCSock->PutIRC(sLine);
+    return true;
+}
+
+bool CIRCNetwork::PutIRC(const CMessage& Message) {
+    CIRCSock* pIRCSock = GetIRCSock();
+
+    if (!pIRCSock) {
+        return false;
+    }
+
+    pIRCSock->PutIRC(Message);
     return true;
 }
 
@@ -1473,9 +1556,9 @@ void CIRCNetwork::SetBindHost(const CString& s) {
 }
 
 void CIRCNetwork::SetEncoding(const CString& s) {
-    m_sEncoding = s;
+    m_sEncoding = CZNC::Get().FixupEncoding(s);
     if (GetIRCSock()) {
-        GetIRCSock()->SetEncoding(s);
+        GetIRCSock()->SetEncoding(m_sEncoding);
     }
 }
 

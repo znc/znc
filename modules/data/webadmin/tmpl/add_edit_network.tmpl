@@ -3,6 +3,10 @@
 <? AddRow CSSLoop HREF=/modfiles/global/webadmin/webadmin.css ?>
 <? INC Header.tmpl ?>
 
+<script>
+	var NetworkEdit = <? VAR NetworkEdit ?>;
+</script>
+
 <div class="section">
 	<? IF Edit ?>
 		<? SETBLOCK ClientConnectHint_Password ?><? VAR Username ?>/<? VAR Name ?>:<? FORMAT "&lt;password&gt;" ?><? ENDSETBLOCK ?>
@@ -11,7 +15,7 @@
 		<? SETBLOCK ClientConnectHint_Password ?><? VAR Username ?>/<? FORMAT "&lt;network&gt;" ?>:<? FORMAT "&lt;password&gt;" ?><? ENDSETBLOCK ?>
 		<? SETBLOCK ClientConnectHint_Username ?><? VAR Username ?>/<? FORMAT "&lt;network&gt;" ?><? ENDSETBLOCK ?>
 	<? ENDIF ?>
-	<p><? FORMAT "To connect to this network from your IRC client, you can set the server password field as <code>{1}</code> or username field as <code>{2}</code>" "ClientConnectHint_Password ESC=" "ClientConnectHint_Username ESC=" ?>
+	<p><? FORMAT "To connect to this network from your IRC client, you can set the server password field as <code>{1}</code> or username field as <code>{2}</code>" "ClientConnectHint_Password ESC=" "ClientConnectHint_Username ESC=" ?></p>
 </div>
 
 <form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?><? IF Edit ?>editnetwork<? ELSE ?>addnetwork<? ENDIF ?>" method="post">
@@ -27,8 +31,9 @@
 			<div class="sectionbody">
 				<div class="subsection">
 					<div class="inputlabel"><label for="name"><? FORMAT "Network Name:" ?></label></div>
-					<input id="name" type="text" name="name" value="<? VAR Name ?>" class="half" maxlength="128"
-						   title="<? FORMAT "The name of the IRC network." ?>"/>
+					<input id="name" type="text" name="name<? IF !NameEdit ?>_disabled<? ENDIF ?>" value="<? VAR Name ?>" class="half" maxlength="128"
+						   title="<? FORMAT "The name of the IRC network." ?>" <? IF !NameEdit ?>disabled<? ENDIF ?> />
+					<? IF !NameEdit ?><input type="hidden" name="name" value="<? VAR Name ?>"><? ENDIF ?>
 				</div>
 
             	<div class="subsection">
@@ -45,12 +50,12 @@
 				<div class="subsection">
 					<div class="inputlabel"><label for="ident"><? FORMAT "Ident:" ?></label></div>
 					<input id="ident" type="text" name="ident" value="<? VAR Ident ?>" class="half" maxlength="128"
-						   title="<? FORMAT "Your ident." ?>"/>
+						   title="<? FORMAT "Your ident." ?>" <? IF !IdentEdit ?>disabled<? ENDIF ?> />
 				</div>
                 <div class="subsection">
 					<div class="inputlabel"><label for="realname"><? FORMAT "Realname:" ?></label></div>
 					<input id="realname" type="text" name="realname" value="<? VAR RealName ?>" class="full" maxlength="256"
-						   title="<? FORMAT "Your real name." ?>"/>
+						   title="<? FORMAT "Your real name." ?>" <? IF !RealNameEdit ?>disabled<? ENDIF ?> />
 				</div>
 
 				<? IF BindHostEdit ?>
@@ -62,9 +67,10 @@
 				<? ENDIF ?>
 
 				<div class="subsection">
-					<div class="inputlabel"><label for="quitmsg"><? FORMAT "Quit Message:" ?></label></div>
+					<div class="inputlabel"><label for="quitmsg"><? FORMAT "Quit message:" ?></label></div>
 					<input id="quitmsg" type="text" name="quitmsg" value="<? VAR QuitMsg ?>" class="full" maxlength="256"
-						   title="<? FORMAT "You may define a Message shown, when you quit IRC." ?>"/>
+						   title="<? FORMAT "You may define a Message shown, when you quit IRC." ?>"
+						   <? IF !QuitMsgEdit ?>disabled<? ENDIF ?> />
 				</div>
 
 				<div class="subsection">
@@ -80,14 +86,14 @@
 				</div>
 
 				<div class="subsection">
-					<div class="inputlabel"><? FORMAT "Trust the PKI:" ?></div>
+					<div class="inputlabel"><? FORMAT "Automatically detect trusted certificates (Trust the PKI):" ?></div>
 					<div class="checkbox"><input type="checkbox" name="trustpki" id="trustpki_checkbox"<? IF TrustPKI ?> checked="checked"<? ENDIF ?> />
-						<label for="trustpki_checkbox"><? FORMAT "Setting this to false will trust only certificates you added fingerprints for." ?></label></div>
+						<label for="trustpki_checkbox"><? FORMAT "When disabled, manually whitelist all server fingerprints, even if the certificate is valid" ?></label></div>
 				</div>
 
 				<div class="subsection half" id="servers_plain">
 					<div class="inputlabel"><label for="servers_text"><? FORMAT "Servers of this IRC network:" ?></servers></div>
-					<div><textarea name="servers" cols="70" rows="5" id="servers_text"><? LOOP ServerLoop ?><? VAR Server ?>
+					<div><textarea name="servers" cols="70" rows="5" id="servers_text" <? IF !NetworkEdit ?>disabled<? ENDIF ?>><? LOOP ServerLoop ?><? VAR Server ?>
 <? ENDLOOP ?>
 </textarea></div>
 					<br/><span class="info"><? FORMAT "One server per line, “host [[+]port] [password]”, + means SSL" ?></span>
@@ -102,12 +108,16 @@
 									<th><? FORMAT "Port" ?></th>
 									<th><? FORMAT "SSL" ?></th>
 									<th><? FORMAT "Password" ?></th>
+									<? IF NetworkEdit ?>
 									<th/>
+									<? ENDIF ?>
 								</tr>
 							</thead>
 							<tbody id="servers_tbody"/>
 						</table>
+						<? IF NetworkEdit ?>
 						<input type="button" value="Add" id="servers_add"/>
+						<? ENDIF ?>
 					</div>
 				</div>
 				<script type="text/javascript">serverlist_init(jQuery);</script>
@@ -184,6 +194,7 @@
 					<tr>
 						<td>[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>addchan?user=<? VAR Username ESC=URL ?>&amp;network=<? VAR Name ESC=URL ?>"><? FORMAT "Add" ?></a>]</td>
 				<? IF ChannelLoop ?>
+						<th><? FORMAT "Index" ?></th>
 						<th><? FORMAT "Save" ?></th>
 						<th><? FORMAT "Name" ?></th>
 						<th><? FORMAT "CurModes" ?></th>
@@ -196,13 +207,14 @@
 					</tr>
 					</thead>
 
-					<tbody>
-			<? LOOP ChannelLoop SORTASC=Name ?>
+					<tbody id="channels">
+			<? LOOP ChannelLoop ?>
 					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
 						<td>
 							<input type="hidden" name="channel" value="<? VAR Name ?>" />
 							[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>editchan?user=<? VAR Username ESC=URL ?>&amp;network=<? VAR Network ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>"><? FORMAT "Edit" ?></a>] [<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>delchan?user=<? VAR Username ESC=URL ?>&amp;network=<? VAR Network ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>"><? FORMAT "Del" ?></a>]
 						</td>
+						<td><input class="channel_index" type="number" name="index_<? VAR Name ?>" min="1" max="<? VAR MaxIndex ?>" value="<? VAR Index ?>"/></td>
 						<td><input type="checkbox" name="save_<? VAR Name ?>"<? IF InConfig ?> checked="checked"<? ENDIF ?> /></td>
 						<td><? VAR Name ?></td>
 						<td><? VAR CurModes ?></td>
@@ -213,6 +225,7 @@
 			<? ENDLOOP ?>
 					</tbody>
 				</table>
+				<script>channellist_init(jQuery);</script>
 			</div>
 		</div>
 		<? ENDIF ?>
@@ -249,7 +262,7 @@
 							<? ENDIF ?>
 						</td>
 						<td class="mod_descr"><? VAR Description ?></td>
-						<td align="center">
+						<td class="center">
 							<? IF CanBeLoadedGlobally ?>
 								<input type="checkbox" name="loaded_globally" id="loaded_globally_<? VAR Name ?>"
 								<? IF LoadedGlobally ?>
@@ -258,7 +271,7 @@
 								disabled="disabled"/>
 							<? ENDIF ?>
 						</td>
-						<td align="center">
+						<td class="center">
 							<? IF CanBeLoadedByUser ?>
 								<input type="checkbox" name="loaded_by_user" id="loaded_by_user_<? VAR Name ?>"
 								<? IF LoadedByUser ?>

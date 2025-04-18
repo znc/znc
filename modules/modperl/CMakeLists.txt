@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -53,7 +53,6 @@ if(SWIG_FOUND)
 		"-I${PROJECT_SOURCE_DIR}/include"
 		"-I${CMAKE_CURRENT_SOURCE_DIR}/.."
 		"-I${CMAKE_CURRENT_SOURCE_DIR}/include"
-		-DZNC_EXPORT_LIB_EXPORT
 		-outdir "${CMAKE_CURRENT_BINARY_DIR}"
 		-o "${CMAKE_CURRENT_BINARY_DIR}/modperl_biglib.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/modperl.i"
@@ -83,7 +82,7 @@ target_include_directories(modperl_lib PRIVATE
 	"${CMAKE_CURRENT_BINARY_DIR}/.."
 	"${CMAKE_CURRENT_SOURCE_DIR}/.."
 	${PERL_INCLUDE_DIRS})
-target_link_libraries(modperl_lib ${znc_link})
+target_link_libraries(modperl_lib ZNC)
 set_target_properties(modperl_lib PROPERTIES
 	PREFIX ""
 	SUFFIX ".${perl_ext}"

@@ -1,0 +1,31 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && "
+"n%100<20)) ? 1 : 2);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: ro\n"
+"X-Crowdin-File: /master/modules/po/notify_connect.pot\n"
+"X-Crowdin-File-ID: 187\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Romanian\n"
+"Language: ro_RO\n"
+
+#: notify_connect.cpp:24
+msgid "attached"
+msgstr ""
+
+#: notify_connect.cpp:26
+msgid "detached"
+msgstr ""
+
+#: notify_connect.cpp:41
+#, c++-format
+msgid "{1} {2} from {3}"
+msgstr ""
+
+#: notify_connect.cpp:52
+msgid "Notifies all admin users when a client connects or disconnects."
+msgstr ""

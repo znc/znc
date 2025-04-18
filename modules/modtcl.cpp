@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,6 +115,8 @@ class CModTcl : public CModule {
 
         Tcl_CreateCommand(interp, "GetCurNick", tcl_GetCurNick, this, nullptr);
         Tcl_CreateCommand(interp, "GetUsername", tcl_GetUsername, this,
+                          nullptr);
+        Tcl_CreateCommand(interp, "GetNetworkName", tcl_GetNetworkName, this,
                           nullptr);
         Tcl_CreateCommand(interp, "GetRealName", tcl_GetRealName, this,
                           nullptr);
@@ -246,8 +248,9 @@ class CModTcl : public CModule {
         // chan specific
         unsigned int nLength = vChans.size();
         for (unsigned int n = 0; n < nLength; n++) {
+            CString sChannel = TclEscape(CString(vChans[n]->GetName()));
             sCommand = "Binds::ProcessNick {" + sOldNick + "} {" + sHost +
-                       "} - {" + vChans[n]->GetName() + "} {" + sNewNickTmp +
+                       "} - {" + sChannel + "} {" + sNewNickTmp +
                        "}";
             int i = Tcl_Eval(interp, sCommand.c_str());
             if (i != TCL_OK) {
@@ -258,14 +261,16 @@ class CModTcl : public CModule {
 
     void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel,
                 const CString& sMessage) override {
+        CString sMes = TclEscape(sMessage);
         CString sOpNick = TclEscape(CString(OpNick.GetNick()));
         CString sNick = TclEscape(sKickedNick);
         CString sOpHost =
             TclEscape(CString(OpNick.GetIdent() + "@" + OpNick.GetHost()));
+        CString sChannel = TclEscape(Channel.GetName());
 
         CString sCommand = "Binds::ProcessKick {" + sOpNick + "} {" + sOpHost +
-                           "} - {" + Channel.GetName() + "} {" + sNick + "} {" +
-                           sMessage + "}";
+                           "} - {" + sChannel + "} {" + sNick + "} {" +
+                           sMes + "}";
         int i = Tcl_Eval(interp, sCommand.c_str());
         if (i != TCL_OK) {
             PutModule(Tcl_GetStringResult(interp));
@@ -300,7 +305,14 @@ class CModTcl : public CModule {
 
     static int tcl_GetUsername STDVAR {
         CModTcl* mod = static_cast<CModTcl*>(cd);
-        Tcl_SetResult(irp, (char*)mod->GetUser()->GetUserName().c_str(),
+        Tcl_SetResult(irp, (char*)mod->GetUser()->GetUsername().c_str(),
+                      TCL_VOLATILE);
+        return TCL_OK;
+    }
+
+    static int tcl_GetNetworkName STDVAR {
+        CModTcl* mod = static_cast<CModTcl*>(cd);
+        Tcl_SetResult(irp, (char*)mod->GetNetwork()->GetName().c_str(),
                       TCL_VOLATILE);
         return TCL_OK;
     }

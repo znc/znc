@@ -1,3 +1,8 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
 #: autoreply.cpp:25
 msgid "<reply>"
 msgstr ""
@@ -11,10 +16,12 @@ msgid "Displays the current query reply"
 msgstr ""
 
 #: autoreply.cpp:75
+#, c++-format
 msgid "Current reply is: {1} ({2})"
 msgstr ""
 
 #: autoreply.cpp:81
+#, c++-format
 msgid "New reply set to: {1} ({2})"
 msgstr ""
 

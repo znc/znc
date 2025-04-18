@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  * Author: imaginos <imaginos@imaginos.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -58,8 +58,8 @@ class CAwayJob : public CTimer {
 class CAway : public CModule {
     void AwayCommand(const CString& sCommand) {
         CString sReason;
-        time_t curtime;
-        time(&curtime);
+        timeval curtime;
+        gettimeofday(&curtime, nullptr);
 
         if (sCommand.Token(1) != "-quiet") {
             sReason = CUtils::FormatTime(curtime, sCommand.Token(1, true),
@@ -351,7 +351,7 @@ class CAway : public CModule {
     void OnClientDisconnect() override { Away(); }
 
     CString GetPath() {
-        CString sBuffer = GetUser()->GetUserName();
+        CString sBuffer = GetUser()->GetUsername();
         CString sRet = GetSavePath();
         sRet += "/.znc-away-" + CBlowfish::MD5(sBuffer, true);
         return (sRet);

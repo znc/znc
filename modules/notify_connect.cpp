@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ class CNotifyConnectMod : public CModule {
     }
 
     void NotifyAdmins(const CString& event) {
-        CString client = GetUser()->GetUserName();
+        CString client = GetUser()->GetUsername();
         if (GetClient()->GetIdentifier() != "") {
             client += "@";
             client += GetClient()->GetIdentifier();

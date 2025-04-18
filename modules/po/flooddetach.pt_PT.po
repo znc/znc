@@ -1,0 +1,102 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: pt-PT\n"
+"X-Crowdin-File: /master/modules/po/flooddetach.pot\n"
+"X-Crowdin-File-ID: 173\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Portuguese\n"
+"Language: pt_PT\n"
+
+#: flooddetach.cpp:30
+msgid "Show current limits"
+msgstr "Mostra os limites atuais"
+
+#: flooddetach.cpp:32 flooddetach.cpp:35
+msgid "[<limit>]"
+msgstr "[<limite>]"
+
+#: flooddetach.cpp:33
+msgid "Show or set number of seconds in the time interval"
+msgstr "Mostra ou define o número de segundos num intervalo de tempo"
+
+#: flooddetach.cpp:36
+msgid "Show or set number of lines in the time interval"
+msgstr "Mostra ou define o número de linhas num intervalo de tempo"
+
+#: flooddetach.cpp:39
+msgid "Show or set whether to notify you about detaching and attaching back"
+msgstr "Mostra ou define se o(a) notifica sobre a desunião e a união de volta"
+
+#: flooddetach.cpp:93
+#, c++-format
+msgid "Flood in {1} is over, reattaching..."
+msgstr "Flood em {1} terminou, a voltar a unir..."
+
+#: flooddetach.cpp:150
+#, c++-format
+msgid "Channel {1} was flooded, you've been detached"
+msgstr "O canal {1} estava com flood, foi desunido(a)"
+
+#: flooddetach.cpp:187
+#, c++-format
+msgid "1 line"
+msgid_plural "{1} lines"
+msgstr[0] "1 linha"
+msgstr[1] "{1} linhas"
+
+#: flooddetach.cpp:188
+#, c++-format
+msgid "every second"
+msgid_plural "every {1} seconds"
+msgstr[0] "a cada segundo"
+msgstr[1] "a cada {1} segundos"
+
+#: flooddetach.cpp:190
+#, c++-format
+msgid "Current limit is {1} {2}"
+msgstr "O limite atual é {1} {2}"
+
+#: flooddetach.cpp:197
+#, c++-format
+msgid "Seconds limit is {1}"
+msgstr "O limite de segundos é {1}"
+
+#: flooddetach.cpp:202
+#, c++-format
+msgid "Set seconds limit to {1}"
+msgstr "Definir o limite de segundos para {1}"
+
+#: flooddetach.cpp:211
+#, c++-format
+msgid "Lines limit is {1}"
+msgstr "O limite de linhas é {1}"
+
+#: flooddetach.cpp:216
+#, c++-format
+msgid "Set lines limit to {1}"
+msgstr "Definido número de linhas para {1}"
+
+#: flooddetach.cpp:229
+msgid "Module messages are disabled"
+msgstr "As mensagens do módulo estão desativadas"
+
+#: flooddetach.cpp:231
+msgid "Module messages are enabled"
+msgstr "As mensagens do módulo estão ativadas"
+
+#: flooddetach.cpp:247
+msgid ""
+"This user module takes up to two arguments. Arguments are numbers of "
+"messages and seconds."
+msgstr ""
+"Este módulo de utilizador leva até 2 argumentos. Os argumentos são o número "
+"de mensagens e o número de segundos."
+
+#: flooddetach.cpp:251
+msgid "Detach channels when flooded"
+msgstr "Desunir dos canais quando houver flood"

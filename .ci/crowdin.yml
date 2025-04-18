@@ -1,0 +1,13 @@
+# https://crowdin.com/project/znc-bouncer
+project_id: 289533
+preserve_hierarchy: true
+api_token_env: CROWDIN_API_KEY
+base_path_env: CROWDIN_BASE_PATH
+
+files:
+  - source: /src/po/znc.pot
+    translation: /src/po/znc.%locale_with_underscore%.po
+    update_option: update_as_unapproved
+  - source: "/modules/po/*.pot"
+    translation: /modules/po/%file_name%.%locale_with_underscore%.po
+    update_option: update_as_unapproved

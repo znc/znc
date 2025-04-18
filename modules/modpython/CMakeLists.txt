@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 # TODO: consider switching to swig_add_library() after bumping CMake
 # requirements to 3.8, when that command started using IMPLICIT_DEPENDS
 
-set(modinclude_modpython PUBLIC ${PYTHON_INCLUDE_DIRS}
+set(modinclude_modpython PUBLIC ${Python3_INCLUDE_DIRS}
 	"${CMAKE_CURRENT_BINARY_DIR}/.." PARENT_SCOPE)
-set(modlink_modpython PUBLIC ${PYTHON_LDFLAGS} PARENT_SCOPE)
+set(modlink_modpython PUBLIC ${Python3_LDFLAGS} PARENT_SCOPE)
 set(moddef_modpython PUBLIC "SWIG_TYPE_TABLE=znc" PARENT_SCOPE)
 set(moddepend_modpython modpython_functions modpython_swigruntime PARENT_SCOPE)
 
@@ -50,7 +50,6 @@ if(SWIG_FOUND)
 		"-I${PROJECT_BINARY_DIR}/include"
 		"-I${PROJECT_SOURCE_DIR}/include"
 		"-I${CMAKE_CURRENT_SOURCE_DIR}/.."
-		-DZNC_EXPORT_LIB_EXPORT
 		-outdir "${CMAKE_CURRENT_BINARY_DIR}"
 		-o "${CMAKE_CURRENT_BINARY_DIR}/modpython_biglib.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/modpython.i"
@@ -75,8 +74,8 @@ target_include_directories(modpython_lib PRIVATE
 	"${PROJECT_SOURCE_DIR}/include"
 	"${CMAKE_CURRENT_BINARY_DIR}/.."
 	"${CMAKE_CURRENT_SOURCE_DIR}/.."
-	${PYTHON_INCLUDE_DIRS})
-target_link_libraries(modpython_lib ${znc_link} ${PYTHON_LDFLAGS})
+	${Python3_INCLUDE_DIRS})
+target_link_libraries(modpython_lib ZNC ${Python3_LDFLAGS})
 set_target_properties(modpython_lib PROPERTIES
 	PREFIX "_"
 	OUTPUT_NAME "znc_core"

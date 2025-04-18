@@ -1,0 +1,204 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: /master/modules/po/watch.pot\n"
+"X-Crowdin-File-ID: 204\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Polish\n"
+"Language: pl_PL\n"
+
+#: watch.cpp:178
+msgid "<HostMask> [Target] [Pattern]"
+msgstr "<MaskaHosta> [Cel] [Wzorzec]"
+
+#: watch.cpp:178
+msgid "Used to add an entry to watch for."
+msgstr "Używany do dodawania wpisu, który będzie obserwowany."
+
+#: watch.cpp:180
+msgid "List all entries being watched."
+msgstr "Lista wszystkich obserwowanych wpisów."
+
+#: watch.cpp:182
+msgid "Dump a list of all current entries to be used later."
+msgstr ""
+"Zrzuca listę wszystkich bieżących wpisów do późniejszego wykorzystania."
+
+#: watch.cpp:184
+msgid "<Id>"
+msgstr "<Id>"
+
+#: watch.cpp:184
+msgid "Deletes Id from the list of watched entries."
+msgstr "Usuwa pozycję z listy obserwowanych wpisów."
+
+#: watch.cpp:186
+msgid "Delete all entries."
+msgstr "Usuwa wszystkie wpisy."
+
+#: watch.cpp:188 watch.cpp:190
+msgid "<Id | *>"
+msgstr "<Id | *>"
+
+#: watch.cpp:188
+msgid "Enable a disabled entry."
+msgstr "Włącza wyłączony wpis."
+
+#: watch.cpp:190
+msgid "Disable (but don't delete) an entry."
+msgstr "Wyłącza (ale nie usuwa) wpis."
+
+#: watch.cpp:192 watch.cpp:194
+msgid "<Id | *> <True | False>"
+msgstr "<Id | *> <True | False>"
+
+#: watch.cpp:192
+msgid "Enable or disable detached client only for an entry."
+msgstr "Włącza lub wyłącza odpiętego klienta dla wpisu."
+
+#: watch.cpp:194
+msgid "Enable or disable detached channel only for an entry."
+msgstr "Włącza lub wyłącza odpięty kanał dla wpisu."
+
+#: watch.cpp:196
+msgid "<Id> [#chan priv #foo* !#bar]"
+msgstr "<Id> [#kanał priv #foo* !#bar]"
+
+#: watch.cpp:196
+msgid "Set the source channels that you care about."
+msgstr "Ustawia kanały źródłowe, na których Ci zależy."
+
+#: watch.cpp:237
+msgid "WARNING: malformed entry found while loading"
+msgstr "UWAGA: wykryto nieprawidłowy wpis podczas ładowania"
+
+#: watch.cpp:382
+msgid "Disabled all entries."
+msgstr "Wyłączono wszystkie wpisy."
+
+#: watch.cpp:383
+msgid "Enabled all entries."
+msgstr "Włączono wszystkie wpisy."
+
+#: watch.cpp:390 watch.cpp:432 watch.cpp:474 watch.cpp:577 watch.cpp:619
+msgid "Invalid Id"
+msgstr "Nieprawidłowy nr Id"
+
+#: watch.cpp:399
+#, c++-format
+msgid "Id {1} disabled"
+msgstr "Identyfikator {1} został wyłączony"
+
+#: watch.cpp:401
+#, c++-format
+msgid "Id {1} enabled"
+msgstr "Identyfikator {1} został włączony"
+
+#: watch.cpp:423
+msgid "Set DetachedClientOnly for all entries to Yes"
+msgstr "Ustawiono DetachedClientOnly dla wszystkich wpisów na Tak"
+
+#: watch.cpp:425
+msgid "Set DetachedClientOnly for all entries to No"
+msgstr "Ustawiono DetachedClientOnly dla wszystkich wpisów na Nie"
+
+#: watch.cpp:441 watch.cpp:483
+#, c++-format
+msgid "Id {1} set to Yes"
+msgstr "Identyfikator {1} ustawiono na Tak"
+
+#: watch.cpp:443 watch.cpp:485
+#, c++-format
+msgid "Id {1} set to No"
+msgstr "Identyfikator {1} ustawiono na Nie"
+
+#: watch.cpp:465
+msgid "Set DetachedChannelOnly for all entries to Yes"
+msgstr "Ustawiono DetachedChannelOnly dla wszystkich wpisów na Tak"
+
+#: watch.cpp:467
+msgid "Set DetachedChannelOnly for all entries to No"
+msgstr "Ustawiono DetachedChannelOnly dla wszystkich wpisów na Nie"
+
+#: watch.cpp:491 watch.cpp:507
+msgid "Id"
+msgstr "Id"
+
+#: watch.cpp:492 watch.cpp:508
+msgid "HostMask"
+msgstr "MaskaHosta"
+
+#: watch.cpp:493 watch.cpp:509
+msgid "Target"
+msgstr "Cel"
+
+#: watch.cpp:494 watch.cpp:510
+msgid "Pattern"
+msgstr "Wzorzec"
+
+#: watch.cpp:495 watch.cpp:511
+msgid "Sources"
+msgstr "Źródła"
+
+#: watch.cpp:496 watch.cpp:512 watch.cpp:513
+msgid "Off"
+msgstr "Wyłączony"
+
+#: watch.cpp:497 watch.cpp:515
+msgid "DetachedClientOnly"
+msgstr "TylkoGdyOdpiętyKlient?"
+
+#: watch.cpp:498 watch.cpp:518
+msgid "DetachedChannelOnly"
+msgstr "TylkoGdyOdpiętyKanał?"
+
+#: watch.cpp:516 watch.cpp:519
+msgid "Yes"
+msgstr "Tak"
+
+#: watch.cpp:516 watch.cpp:519
+msgid "No"
+msgstr "Nie"
+
+#: watch.cpp:525 watch.cpp:531
+msgid "You have no entries."
+msgstr "Nie masz wpisów."
+
+#: watch.cpp:585
+#, c++-format
+msgid "Sources set for Id {1}."
+msgstr "Źródła zostały ustawione dla Id {1}."
+
+#: watch.cpp:609
+msgid "All entries cleared."
+msgstr "Wszystkie wpisy zostały usunięte."
+
+#: watch.cpp:627
+#, c++-format
+msgid "Id {1} removed."
+msgstr "Id {1} został usunięty."
+
+#: watch.cpp:646
+#, c++-format
+msgid "Entry for {1} already exists."
+msgstr "Wpis dla {1} już istnieje."
+
+#: watch.cpp:654
+#, c++-format
+msgid "Adding entry: {1} watching for [{2}] -> {3}"
+msgstr "Dodawanie wpisu: {1} obserwowanie [{2}] -> {3}"
+
+#: watch.cpp:660
+msgid "Watch: Not enough arguments.  Try Help"
+msgstr "Watch: Za mało argumentów. Spróbuj Help"
+
+#: watch.cpp:702
+msgid "Copy activity from a specific user into a separate window"
+msgstr "Skopiuj aktywność określonego użytkownika do osobnego okna"

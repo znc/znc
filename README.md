@@ -1,11 +1,9 @@
-# [![ZNC](https://wiki.znc.in/resources/assets/wiki.png)](https://znc.in) - An advanced IRC bouncer
+# [![ZNC](logo.png)](https://znc.in) - An advanced IRC bouncer
 
-[![Travis Build Status](https://img.shields.io/travis/znc/znc/master.svg?label=linux%2Fmacos)](https://travis-ci.org/znc/znc)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/znc/znc/build.yml?branch=master&label=linux)](https://github.com/znc/znc/actions/workflows/build.yml)
 [![Jenkins Build Status](https://img.shields.io/jenkins/s/https/jenkins.znc.in/job/znc/job/znc/job/master.svg?label=freebsd)](https://jenkins.znc.in/job/znc/job/znc/job/master/)
 [![AppVeyor Build status](https://img.shields.io/appveyor/ci/DarthGandalf/znc/master.svg?label=windows)](https://ci.appveyor.com/project/DarthGandalf/znc/branch/master)
-[![Bountysource](https://www.bountysource.com/badge/tracker?tracker_id=1759)](https://www.bountysource.com/trackers/1759-znc?utm_source=1759&utm_medium=shield&utm_campaign=TRACKER_BADGE)
 [![Coverage Status](https://img.shields.io/codecov/c/github/znc/znc.svg)](https://codecov.io/gh/znc/znc)
-[![Coverity Scan Build Status](https://img.shields.io/coverity/scan/6778.svg)](https://scan.coverity.com/projects/znc-coverity)
 
 ## Table of contents
 
@@ -26,10 +24,8 @@ Core:
 
 * GNU make
 * pkg-config
-* GCC 4.7 or clang 3.2
-* Either of:
-    * autoconf and automake (but only if building from git, not from tarball)
-    * CMake
+* GCC 8 or clang 5
+* CMake 3.13
 
 ## Optional Requirements
 
@@ -43,8 +39,8 @@ modperl:
 * SWIG if building from git
 
 modpython:
-* python and its bundled libpython
-* perl is required
+* python 3.4+ and its bundled libpython
+* perl is a build dependency
 * macOS: Python from Homebrew is preferred over system version
 * SWIG if building from git
 
@@ -54,46 +50,36 @@ cyrusauth:
 Character Encodings:
 * To get proper character encoding and charsets install ICU (`libicu4-dev`)
 
+I18N (UI translation):
+* Boost.Locale
+* gettext is a build dependency
+
+Argon2 password hash:
+* libargon2
+
 ## Installing ZNC
-
-Currently there are 2 build systems in place: CMake and `./configure`.
-`./configure` will eventually be removed.
-There is also `configure.sh` which should make migration to CMake easier:
-it accepts the same parameters as `./configure`,
-but calls CMake with CMake-style parameters.
-
-### Installing with CMake
 
 Installation from source code is performed using the CMake toolchain.
 
 ```shell
-cmake .
+mkdir build
+cd build
+cmake ..
 make
 make install
 ```
 
 You can use `cmake-gui` or `ccmake` for more interactiveness.
 
+There is also `configure.sh` which should make migration to CMake easier:
+it accepts the same parameters as old `./configure`,
+but calls CMake with CMake-style parameters.
+
 Note for FreeBSD users:
 By default base OpenSSL is selected.
 If you want the one from ports, use `-DOPENSSL_ROOT_DIR=/usr/local`.
 
 For troubleshooting, `cmake --system-information` will show you details.
-
-### Installing with `./configure`
-
-Installation from source code is performed using the `automake` toolchain.
-If you are building from git, you will need to run `./autogen.sh` first to
-produce the `configure` script.
-
-```shell
-./configure
-make
-make install
-```
-
-You can use `./configure --help` if you want to get a list of options, though
-the defaults should be suiting most needs.
 
 ## Setting up znc.conf
 
@@ -152,7 +138,7 @@ These directories are also in there:
 - moddata - Global modules save their settings here.
   (e.g. webadmin saves the current skin name in here)
 - users   - This is per-user data and mainly contains just a moddata
-  directory.
+  directory and a directory for each network configured.
 
 ## ZNC's config file
 
@@ -188,9 +174,8 @@ Python modules are loaded through the global module
 
 ## Further information
 
-Please visit https://znc.in/ or #znc on freenode if you still have questions:
-- [freenode webchat](https://webchat.freenode.net/?nick=znc_....&channels=znc) 
-- [ircs://irc.freenode.net:6697/znc](ircs://irc.freenode.net:6697/znc)
+Please visit https://znc.in/ or #znc on Libera.Chat if you still have questions:
+- [ircs://irc.libera.chat:6697/#znc](ircs://irc.libera.chat:6697/#znc)
 
 You can get the latest development version with git:
 `git clone https://github.com/znc/znc.git --recursive`

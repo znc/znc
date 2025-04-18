@@ -1,0 +1,129 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: it\n"
+"X-Crowdin-File: /master/modules/po/notes.pot\n"
+"X-Crowdin-File-ID: 186\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Italian\n"
+"Language: it_IT\n"
+
+#: modules/po/../data/notes/tmpl/index.tmpl:7
+msgid "Add A Note"
+msgstr "Aggiunge Una Nota"
+
+#: modules/po/../data/notes/tmpl/index.tmpl:11
+msgid "Key:"
+msgstr "Parola chiave:"
+
+#: modules/po/../data/notes/tmpl/index.tmpl:15
+msgid "Note:"
+msgstr "Nota:"
+
+#: modules/po/../data/notes/tmpl/index.tmpl:19
+msgid "Add Note"
+msgstr "Aggiungi Nota"
+
+#: modules/po/../data/notes/tmpl/index.tmpl:27
+msgid "You have no notes to display."
+msgstr "Non hai note da visualizzare."
+
+#: modules/po/../data/notes/tmpl/index.tmpl:34 notes.cpp:164 notes.cpp:170
+msgid "Key"
+msgstr "Parola chiave"
+
+#: modules/po/../data/notes/tmpl/index.tmpl:35 notes.cpp:165 notes.cpp:171
+msgid "Note"
+msgstr "Nota"
+
+#: modules/po/../data/notes/tmpl/index.tmpl:41
+msgid "[del]"
+msgstr "[del]"
+
+#: notes.cpp:32
+msgid "That note already exists.  Use MOD <key> <note> to overwrite."
+msgstr ""
+"Questa nota esiste già. Usa MOD <parola chiave> <nota> per sovrascrivere."
+
+#: notes.cpp:35 notes.cpp:137
+#, c++-format
+msgid "Added note {1}"
+msgstr "Aggiunta la nota {1}"
+
+#: notes.cpp:37 notes.cpp:48 notes.cpp:142
+#, c++-format
+msgid "Unable to add note {1}"
+msgstr "Impossibile aggiungere la nota {1}"
+
+#: notes.cpp:46 notes.cpp:139
+#, c++-format
+msgid "Set note for {1}"
+msgstr "Imposta la nota per {1}"
+
+#: notes.cpp:56
+msgid "This note doesn't exist."
+msgstr "Questa nota non esiste."
+
+#: notes.cpp:66 notes.cpp:116
+#, c++-format
+msgid "Deleted note {1}"
+msgstr "Eliminata la nota {1}"
+
+#: notes.cpp:68 notes.cpp:118
+#, c++-format
+msgid "Unable to delete note {1}"
+msgstr "Impossibile eliminare la nota {1}"
+
+#: notes.cpp:75
+msgid "List notes"
+msgstr "Elenca le note inserite"
+
+#: notes.cpp:77 notes.cpp:81
+msgid "<key> <note>"
+msgstr "<parola chive> <nota>"
+
+#: notes.cpp:77
+msgid "Add a note"
+msgstr "Aggiunge una nota"
+
+#: notes.cpp:79 notes.cpp:83
+msgid "<key>"
+msgstr "<parola chiave>"
+
+#: notes.cpp:79
+msgid "Delete a note"
+msgstr "Elimina la nota"
+
+#: notes.cpp:81
+msgid "Modify a note"
+msgstr "Modifica una nota"
+
+#: notes.cpp:94
+msgid "Notes"
+msgstr "Note"
+
+#: notes.cpp:133
+msgid "That note already exists.  Use /#+<key> <note> to overwrite."
+msgstr ""
+"Questa nota esiste già. Usa /#+<parola chiave> <nota> per sovrascrivere."
+
+#: notes.cpp:186 notes.cpp:188
+msgid "You have no entries."
+msgstr "Non hai voci."
+
+#: notes.cpp:224
+msgid ""
+"This user module takes up to one arguments. It can be -disableNotesOnLogin "
+"not to show notes upon client login"
+msgstr ""
+"Questo modulo utente accetta fino ad un argomento. Può essere disabilitato "
+"con il comando -disableNotesOnLogin per non mostrare le note all'accesso del "
+"client"
+
+#: notes.cpp:228
+msgid "Keep and replay notes"
+msgstr "Conserva e riproduce le note"

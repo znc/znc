@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,14 +31,20 @@ class CNickServ : public CModule {
         PutModule(t_s("Password set"));
     }
 
-    void ClearCommand(const CString& sLine) { DelNV("Password"); }
+    void ClearCommand(const CString& sLine) {
+        DelNV("Password");
+        PutModule(t_s("Done"));
+    }
 
     void SetNSNameCommand(const CString& sLine) {
         SetNV("NickServName", sLine.Token(1, true));
         PutModule(t_s("NickServ name set"));
     }
 
-    void ClearNSNameCommand(const CString& sLine) { DelNV("NickServName"); }
+    void ClearNSNameCommand(const CString& sLine) {
+        DelNV("NickServName");
+        PutModule(t_s("Done"));
+    }
 
     void ViewCommandsCommand(const CString& sLine) {
         PutModule("IDENTIFY " + GetNV("IdentifyCmd"));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ CMessage CBufLine::ToMessage(const CClient& Client,
         mssThisParams["text"] = m_sText;
     } else {
         mssThisParams["text"] =
-            Client.GetUser()->AddTimestamp(Line.GetTime().tv_sec, m_sText);
+            Client.GetUser()->AddTimestamp(Line.GetTime(), m_sText);
     }
 
     // make a copy of params, because the following loop modifies the original

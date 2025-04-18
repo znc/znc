@@ -1,0 +1,144 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: de\n"
+"X-Crowdin-File: /master/modules/po/bouncedcc.pot\n"
+"X-Crowdin-File-ID: 159\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+
+#: bouncedcc.cpp:101 bouncedcc.cpp:119 bouncedcc.cpp:121
+msgctxt "list"
+msgid "Type"
+msgstr "Typ"
+
+#: bouncedcc.cpp:102 bouncedcc.cpp:132
+msgctxt "list"
+msgid "State"
+msgstr "Status"
+
+#: bouncedcc.cpp:103
+msgctxt "list"
+msgid "Speed"
+msgstr "Geschwindigkeit"
+
+#: bouncedcc.cpp:104 bouncedcc.cpp:115
+msgctxt "list"
+msgid "Nick"
+msgstr "Nickname"
+
+#: bouncedcc.cpp:105 bouncedcc.cpp:116
+msgctxt "list"
+msgid "IP"
+msgstr "IP"
+
+#: bouncedcc.cpp:106 bouncedcc.cpp:122
+msgctxt "list"
+msgid "File"
+msgstr "Datei"
+
+#: bouncedcc.cpp:119
+msgctxt "list"
+msgid "Chat"
+msgstr "Chat"
+
+#: bouncedcc.cpp:121
+msgctxt "list"
+msgid "Xfer"
+msgstr "Xfer"
+
+#: bouncedcc.cpp:125
+msgid "Waiting"
+msgstr "Bitte warten"
+
+#: bouncedcc.cpp:127
+msgid "Halfway"
+msgstr "Fast geschafft"
+
+#: bouncedcc.cpp:129
+msgid "Connected"
+msgstr "Verbunden"
+
+#: bouncedcc.cpp:137
+msgid "You have no active DCCs."
+msgstr "Du hast keine aktiven DCCs."
+
+#: bouncedcc.cpp:148
+#, c++-format
+msgid "Use client IP: {1}"
+msgstr "Benutze Client-IP: {1}"
+
+#: bouncedcc.cpp:153
+msgid "List all active DCCs"
+msgstr "Liste alle aktiven DCCs auf"
+
+#: bouncedcc.cpp:156
+msgid "Change the option to use IP of client"
+msgstr "Ändere die Option, um die Client-IP zu nutzen"
+
+#: bouncedcc.cpp:383 bouncedcc.cpp:412 bouncedcc.cpp:436 bouncedcc.cpp:451
+msgctxt "type"
+msgid "Chat"
+msgstr "Chat"
+
+#: bouncedcc.cpp:383 bouncedcc.cpp:412 bouncedcc.cpp:436 bouncedcc.cpp:451
+msgctxt "type"
+msgid "Xfer"
+msgstr "Xfer"
+
+#: bouncedcc.cpp:385
+#, c++-format
+msgid "DCC {1} Bounce ({2}): Too long line received"
+msgstr "DCC {1} Bounce ({2}): Empfangene Zeile ist zu lang"
+
+#: bouncedcc.cpp:418
+#, c++-format
+msgid "DCC {1} Bounce ({2}): Timeout while connecting to {3} {4}"
+msgstr "DCC {1} Bounce ({2}): Zeitüberschreitung beim Verbinden mit {3} {4}"
+
+#: bouncedcc.cpp:422
+#, c++-format
+msgid "DCC {1} Bounce ({2}): Timeout while connecting."
+msgstr "DCC {1} Bounce ({2}): Zeitüberschreitung beim Verbindungsaufbau."
+
+#: bouncedcc.cpp:427
+#, c++-format
+msgid ""
+"DCC {1} Bounce ({2}): Timeout while waiting for incoming connection on {3} "
+"{4}"
+msgstr ""
+"DCC {1} Bounce ({2}): Zeitüberschreitung beim Warten auf eingehende "
+"Verbindung von {3} {4}"
+
+#: bouncedcc.cpp:440
+#, c++-format
+msgid "DCC {1} Bounce ({2}): Connection refused while connecting to {3} {4}"
+msgstr "DCC {1} Bounce ({2}): Verbindungsversuch zu {3} {4} zurückgewiesen"
+
+#: bouncedcc.cpp:444
+#, c++-format
+msgid "DCC {1} Bounce ({2}): Connection refused while connecting."
+msgstr "DCC {1} Bounce ({2}): Verbindungsversuch abgewiesen."
+
+#: bouncedcc.cpp:457 bouncedcc.cpp:465
+#, c++-format
+msgid "DCC {1} Bounce ({2}): Socket error on {3} {4}: {5}"
+msgstr "DCC {1} Bounce ({2}): Socketfehler bei {3} {4}: {5}"
+
+#: bouncedcc.cpp:460
+#, c++-format
+msgid "DCC {1} Bounce ({2}): Socket error: {3}"
+msgstr "DCC {1} Bounce ({2}): Sockefehler: {3}"
+
+#: bouncedcc.cpp:547
+msgid ""
+"Bounces DCC transfers through ZNC instead of sending them directly to the "
+"user. "
+msgstr ""
+"Leitet DCC-Übertragungen durch ZNC, anstatt sie direkt zum Benutzer zu "
+"schicken. "

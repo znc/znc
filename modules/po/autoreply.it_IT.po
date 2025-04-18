@@ -1,0 +1,47 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: it\n"
+"X-Crowdin-File: /master/modules/po/autoreply.pot\n"
+"X-Crowdin-File-ID: 154\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Italian\n"
+"Language: it_IT\n"
+
+#: autoreply.cpp:25
+msgid "<reply>"
+msgstr "<risposta>"
+
+#: autoreply.cpp:25
+msgid "Sets a new reply"
+msgstr "Imposta una nuova risposta"
+
+#: autoreply.cpp:27
+msgid "Displays the current query reply"
+msgstr "Mostra l'attuale risposta alle query"
+
+#: autoreply.cpp:75
+#, c++-format
+msgid "Current reply is: {1} ({2})"
+msgstr "La risposta attuale è: {1} ({2})"
+
+#: autoreply.cpp:81
+#, c++-format
+msgid "New reply set to: {1} ({2})"
+msgstr "Nuova risposta impostata: {1} ({2})"
+
+#: autoreply.cpp:94
+msgid ""
+"You might specify a reply text. It is used when automatically answering "
+"queries, if you are not connected to ZNC."
+msgstr ""
+"Puoi specificare un testo di risposta. Essa viene utilizzata automaticamente "
+"per rispondere alle query se non si è connessi a ZNC."
+
+#: autoreply.cpp:98
+msgid "Reply to queries when you are away"
+msgstr "Risponde alle query quando sei assente"

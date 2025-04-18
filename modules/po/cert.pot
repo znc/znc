@@ -3,10 +3,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#  this text is inserted into `click here` in the other string
 #: modules/po/../data/cert/tmpl/index.tmpl:5
 msgid "here"
 msgstr ""
 
+#  {1} is `here`, translateable in the other string
 #: modules/po/../data/cert/tmpl/index.tmpl:6
 msgid ""
 "You already have a certificate set, use the form below to overwrite the "
@@ -38,6 +40,7 @@ msgid "The pem file doesn't exist or there was a error deleting the pem file."
 msgstr ""
 
 #: cert.cpp:38
+#, c++-format
 msgid "You have a certificate in {1}"
 msgstr ""
 
@@ -48,7 +51,8 @@ msgid ""
 msgstr ""
 
 #: cert.cpp:44
-msgid "Alternatively you can either place one at {1}"
+#, c++-format
+msgid "Alternatively you can place one at {1}"
 msgstr ""
 
 #: cert.cpp:52

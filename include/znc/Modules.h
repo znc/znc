@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@
 #include <znc/main.h>
 #include <znc/Translation.h>
 #include <functional>
+#include <memory>
 #include <set>
 #include <queue>
 #include <sys/time.h>
@@ -165,6 +166,19 @@ class CModule;
 class CFPTimer;
 class CSockManager;
 // !Forward Declarations
+
+class CCapability {
+  public:
+    virtual ~CCapability() = default;
+    virtual void OnServerChangedSupport(CIRCNetwork* pNetwork, bool bState) {}
+    virtual void OnClientChangedSupport(CClient* pClient, bool bState) {}
+
+    CModule* GetModule() { return m_pModule; }
+    void SetModule(CModule* p) { m_pModule = p; }
+
+  protected:
+    CModule* m_pModule = nullptr;
+};
 
 class CTimer : public CCron {
   public:
@@ -335,7 +349,7 @@ CModule* TModLoad(ModHandle p, CUser* pUser, CIRCNetwork* pNetwork,
 }
 
 /** A helper class for handling commands in modules. */
-class CModCommand {
+class CModCommand : private CCoreTranslationMixin {
   public:
     /// Type for the callback function that handles the actual command.
     typedef void (CModule::*ModCmdFunc)(const CString& sLine);
@@ -575,16 +589,21 @@ class CModule {
      *  @param pOpNick The nick who sent the mode change, or nullptr if set by server.
      *  @param Nick The nick whose channel mode changes.
      *  @param Channel The channel on which the user mode is changed.
-     *  @param uMode The mode character that is changed, e.g. '@' for op.
+     *  @param cMode The mode character that is changed, e.g. '@' for op.
      *  @param bAdded True if the mode is added, else false.
      *  @param bNoChange true if this mode change doesn't change anything
      *                   because the nick already had this permission.
      *  @see CIRCSock::GetModeType() for converting uMode into a mode (e.g.
      *       'o' for op).
      */
+    virtual void OnChanPermission3(const CNick* pOpNick, const CNick& Nick,
+                                   CChan& Channel, char cMode,
+                                   bool bAdded, bool bNoChange);
+    /// @deprecated. Use OnChanPermission3.
     virtual void OnChanPermission2(const CNick* pOpNick, const CNick& Nick,
                                    CChan& Channel, unsigned char uMode,
                                    bool bAdded, bool bNoChange);
+    /// @deprecated. Use OnChanPermission3.
     virtual void OnChanPermission(const CNick& OpNick, const CNick& Nick,
                                   CChan& Channel, unsigned char uMode,
                                   bool bAdded, bool bNoChange);
@@ -800,7 +819,6 @@ class CModule {
 
     /** This module hook is called when a client sends a raw traffic line to ZNC.
      *  @param sLine The raw traffic line sent.
-     *  @note The line does not include message tags. Use OnUserRawMessage() to access them.
      *  @return See CModule::EModRet.
      */
     virtual EModRet OnUserRaw(CString& sLine);
@@ -994,13 +1012,28 @@ class CModule {
     virtual EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic);
 
     /** Called for every CAP received via CAP LS from server.
+     *  If you need to also advertise the cap to clients, use
+     *  AddServerDependentCapability() instead.
      *  @param sCap capability supported by server.
      *  @return true if your module supports this CAP and
      *          needs to turn it on with CAP REQ.
      */
     virtual bool OnServerCapAvailable(const CString& sCap);
+    /** Called for every CAP received via CAP LS from server.
+     *  By default just calls OnServerCapAvailable() without sValue, so
+     *  overriding one of the two is enough.
+     *  If you need to also advertise the cap to clients, use
+     *  AddServerDependentCapability() instead.
+     *  @param sCap capability name supported by server.
+     *  @param sValue value.
+     *  @return true if your module supports this CAP and
+     *          needs to turn it on with CAP REQ.
+     */
+    virtual bool OnServerCap302Available(const CString& sCap, const CString& sValue);
     /** Called for every CAP accepted or rejected by server
      *  (with CAP ACK or CAP NAK after our CAP REQ).
+     *  If you need to also advertise the cap to clients, use
+     *  AddServerDependentCapability() instead.
      *  @param sCap capability accepted/rejected by server.
      *  @param bSuccess true if capability was accepted, false if rejected.
      */
@@ -1046,14 +1079,39 @@ class CModule {
     /// @deprecated Use OnSendToIRCMessage() instead.
     virtual EModRet OnSendToIRC(CString& sLine);
 
+    /** This module hook is called when a user sends a TAGMSG message.
+     *  @since 1.10.0
+     *  @param Message The message which was sent.
+     *  @return See CModule::EModRet.
+     */
+    virtual EModRet OnUserTagMessage(CTargetMessage& Message);
+    /** Called when we receive a channel TAGMSG message <em>from IRC</em>.
+     *  @since 1.10.0
+     *  @param Message The channel message.
+     *  @return See CModule::EModRet.
+     */
+    virtual EModRet OnChanTagMessage(CTargetMessage& Message);
+    /** Called when we receive a private TAGMSG message <em>from IRC</em>.
+     *  @since 1.10.0
+     *  @param Message The message.
+     *  @return See CModule::EModRet.
+     */
+    virtual EModRet OnPrivTagMessage(CTargetMessage& Message);
+
     ModHandle GetDLL() { return m_pDLL; }
 
-    /** This function sends a given raw IRC line to the IRC server, if we
+    /** This function sends a given IRC line to the IRC server, if we
      *  are connected to one. Else this line is discarded.
      *  @param sLine The line which should be sent.
      *  @return true if the line was queued for sending.
      */
     virtual bool PutIRC(const CString& sLine);
+    /** This function sends a given IRC message to the IRC server, if we
+     *  are connected to one. Else this message is discarded.
+     *  @param Message The message which should be sent.
+     *  @return true if the message was queued for sending.
+     */
+    virtual bool PutIRC(const CMessage& Message);
     /** This function sends a given raw IRC line to a client.
      *  If we are in a module hook which is called for a specific client,
      *  only that client will get the line, else all connected clients will
@@ -1273,8 +1331,32 @@ class CModule {
     virtual EModRet OnUnknownUserRaw(CClient* pClient, CString& sLine);
     virtual EModRet OnUnknownUserRawMessage(CMessage& Message);
 
+    /** Called after login, and also during JumpNetwork. */
+    virtual void OnClientAttached();
+    /** Called upon disconnect, and also during JumpNetwork. */
+    virtual void OnClientDetached();
+
+#ifndef SWIG
+    /** Simple API to support client capabilities which depend on server to support that capability.
+     *  It is built on top of other CAP related API, but removes boilerplate,
+     *  and handles some tricky cases related to cap-notify and JumpNetwork. To
+     *  use, create a subclass of CCapability, and pass to this function; it
+     *  will automatically set the module pointer, then call the callbacks to
+     *  notify you when server and client accepted support of the capability, or
+     *  stopped supporting it. Note that it's not a strict toggle: e.g.
+     *  sometimes client will disable the cap even when it was already disabled
+     *  for that client.
+     *  For perl and python modules, this function accepts 3 parameters:
+     *  name, server callback, client callback; signatures of the callbacks are
+     *  the same as of the virtual functions you'd implement in C++.
+     */
+    void AddServerDependentCapability(const CString& sName, std::unique_ptr<CCapability> pCap);
+#endif
+
     /** Called when a client told us CAP LS. Use ssCaps.insert("cap-name")
      *  for announcing capabilities which your module supports.
+     *  If you need to adverite the cap to clients only when it's also supported
+     *  by the server, use AddServerDependentCapability() instead.
      *  @param pClient The client which requested the list.
      *  @param ssCaps set of caps which will be sent to client.
      */
@@ -1288,6 +1370,8 @@ class CModule {
     virtual bool IsClientCapSupported(CClient* pClient, const CString& sCap,
                                       bool bState);
     /** Called when we actually need to turn a capability on or off for a client.
+     *  If you need to adverite the cap to clients only when it's also supported
+     *  by the server, use AddServerDependentCapability() instead.
      *  If implementing a custom capability, make sure to call
      *  pClient->SetTagSupport("tag-name", bState) for each tag that the
      *  capability provides.
@@ -1298,6 +1382,47 @@ class CModule {
      */
     virtual void OnClientCapRequest(CClient* pClient, const CString& sCap,
                                     bool bState);
+
+    /** Called when a client requests SASL authentication. Use ssMechanisms.insert("MECHANISM")
+     *  for announcing SASL mechanisms which your module supports.
+     *  @param ssMechanisms The set of supported SASL mechanisms to append to.
+     *  @since 1.10.0
+     */
+    virtual void OnClientGetSASLMechanisms(SCString& ssMechanisms);
+    /** Called when a client has selected a SASL mechanism for SASL authentication.
+     *  If implementing a SASL authentication mechanism, set sResponse to
+     * specify an initial challenge message to send to the client. Otherwise, an
+     * empty response will be sent. To avoid sending any immediate response,
+     * return HALT; in that case the module should schedule calling
+     * GetClient()->SendSASLChallenge() with the initial response: in IRC SASL,
+     * server always responds first.
+     * @param sMechanism The SASL mechanism selected by the client.
+     * @param sResponse The optional value of an initial SASL challenge message
+     * to send to the client.
+     * @since 1.10.0
+     */
+    virtual EModRet OnClientSASLServerInitialChallenge(
+        const CString& sMechanism, CString& sResponse);
+    /** Called when a client is sending us a SASL message after the mechanism was selected.
+     *  If implementing a SASL authentication mechanism, check the passed
+     * credentials, then either request more data by sending a challenge in
+     * GetClient()->SendSASLChallenge(), or reject authentication by calling
+     * GetClient()->RefuseSASLLogin(), or accept it by calling
+     * GetClient()->AcceptSASLLogin().
+     * At some point before accepting the login, you should call
+     * GetClient()->ParseUser(authz-id) to let it know the network name to
+     * attach to and the client id.
+     * @param sMechanism The SASL mechanism selected by the client.
+     * @param sMessage The SASL opaque value/credentials sent by the client,
+     * after debase64ing and concatenating if it was split.
+     * @since 1.10.0
+     */
+    virtual EModRet OnClientSASLAuthenticate(const CString& sMechanism,
+                                             const CString& sMessage);
+    /** Called when a client sent '*' to abort SASL, or aborted it for another reason.
+     *  @since 1.10.0
+     */
+    virtual void OnClientSASLAborted();
 
     /** Called when a module is going to be loaded.
      *  @param sModName name of the module.
@@ -1349,6 +1474,26 @@ class CModule {
                             const CString& sContext = "") const;
 #endif
 
+    // Default implementations of several callbacks to make
+    // AddServerDependentCapability work in modpython/modperl.
+    // Don't worry about existence of these functions.
+    bool InternalServerDependentCapsOnServerCap302Available(
+        const CString& sCap, const CString& sValue);
+    void InternalServerDependentCapsOnServerCapResult(const CString& sCap,
+                                                      bool bSuccess);
+    void InternalServerDependentCapsOnClientCapLs(CClient* pClient,
+                                                  SCString& ssCaps);
+    bool InternalServerDependentCapsIsClientCapSupported(CClient* pClient,
+                                                         const CString& sCap,
+                                                         bool bState);
+    void InternalServerDependentCapsOnClientCapRequest(CClient* pClient,
+                                                       const CString& sCap,
+                                                       bool bState);
+    void InternalServerDependentCapsOnClientAttached();
+    void InternalServerDependentCapsOnClientDetached();
+    void InternalServerDependentCapsOnIRCConnected();
+    void InternalServerDependentCapsOnIRCDisconnected();
+
   protected:
     CModInfo::EModuleType m_eType;
     CString m_sDescription;
@@ -1368,6 +1513,7 @@ class CModule {
     CString m_sArgs;
     CString m_sModPath;
     CTranslationDomainRefHolder m_Translation;
+    std::map<CString, std::unique_ptr<CCapability>> m_mServerDependentCaps;
 
   private:
     MCString
@@ -1376,7 +1522,7 @@ class CModule {
     std::map<CString, CModCommand> m_mCommands;
 };
 
-class CModules : public std::vector<CModule*> {
+class CModules : public std::vector<CModule*>, private CCoreTranslationMixin {
   public:
     CModules();
     ~CModules();
@@ -1404,6 +1550,9 @@ class CModules : public std::vector<CModule*> {
                            CString& sRealName);
     bool OnBroadcast(CString& sMessage);
 
+    bool OnChanPermission3(const CNick* pOpNick, const CNick& Nick,
+                           CChan& Channel, char cMode, bool bAdded,
+                           bool bNoChange);
     bool OnChanPermission2(const CNick* pOpNick, const CNick& Nick,
                            CChan& Channel, unsigned char uMode, bool bAdded,
                            bool bNoChange);
@@ -1498,6 +1647,9 @@ class CModules : public std::vector<CModule*> {
     bool OnUserTopicRequest(CString& sChannel);
     bool OnUserQuit(CString& sMessage);
     bool OnUserQuitMessage(CQuitMessage& Message);
+    bool OnUserTagMessage(CTargetMessage& Message);
+    bool OnChanTagMessage(CTargetMessage& Message);
+    bool OnPrivTagMessage(CTargetMessage& Message);
 
     bool OnCTCPReply(CNick& Nick, CString& sMessage);
     bool OnCTCPReplyMessage(CCTCPMessage& Message);
@@ -1528,8 +1680,10 @@ class CModules : public std::vector<CModule*> {
     bool OnSendToClientMessage(CMessage& Message);
     bool OnSendToIRC(CString& sLine);
     bool OnSendToIRCMessage(CMessage& Message);
+    bool OnClientAttached();
+    bool OnClientDetached();
 
-    bool OnServerCapAvailable(const CString& sCap);
+    bool OnServerCapAvailable(const CString& sCap, const CString& sValue);
     bool OnServerCapResult(const CString& sCap, bool bSuccess);
 
     CModule* FindModule(const CString& sModule) const;
@@ -1574,6 +1728,14 @@ class CModules : public std::vector<CModule*> {
     bool IsClientCapSupported(CClient* pClient, const CString& sCap,
                               bool bState);
     bool OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState);
+
+    bool OnClientGetSASLMechanisms(SCString& ssMechanisms);
+    bool OnClientSASLAborted();
+    bool OnClientSASLServerInitialChallenge(const CString& sMechanism,
+                                            CString& sResponse);
+    bool OnClientSASLAuthenticate(const CString& sMechanism,
+                                  const CString& sBuffer);
+
     bool OnModuleLoading(const CString& sModName, const CString& sArgs,
                          CModInfo::EModuleType eType, bool& bSuccess,
                          CString& sRetMsg);
@@ -1587,6 +1749,7 @@ class CModules : public std::vector<CModule*> {
   private:
     static ModHandle OpenModule(const CString& sModule, const CString& sModPath,
                                 CModInfo& Info, CString& sRetMsg);
+    static bool ValidateModuleName(const CString& sModule, CString& sRetMsg);
 
   protected:
     CUser* m_pUser;

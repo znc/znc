@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,10 +54,10 @@ TEST_F(NetworkTest, FindChans) {
     EXPECT_TRUE(network.AddChan("#Bar", false));
     EXPECT_TRUE(network.AddChan("#BAZ", false));
 
-    EXPECT_EQ(1u, network.FindChans("#f*").size());
-    EXPECT_EQ(2u, network.FindChans("#b*").size());
-    EXPECT_EQ(2u, network.FindChans("#?A*").size());
-    EXPECT_EQ(1u, network.FindChans("*z").size());
+    EXPECT_EQ(network.FindChans("#f*").size(), 1u);
+    EXPECT_EQ(network.FindChans("#b*").size(), 2u);
+    EXPECT_EQ(network.FindChans("#?A*").size(), 2u);
+    EXPECT_EQ(network.FindChans("*z").size(), 1u);
 }
 
 TEST_F(NetworkTest, FindQuery) {
@@ -89,8 +89,8 @@ TEST_F(NetworkTest, FindQueries) {
     EXPECT_TRUE(network.AddQuery("Bar"));
     EXPECT_TRUE(network.AddQuery("BAZ"));
 
-    EXPECT_EQ(1u, network.FindQueries("f*").size());
-    EXPECT_EQ(2u, network.FindQueries("b*").size());
-    EXPECT_EQ(2u, network.FindQueries("?A*").size());
-    EXPECT_EQ(1u, network.FindQueries("*z").size());
+    EXPECT_EQ(network.FindQueries("f*").size(), 1u);
+    EXPECT_EQ(network.FindQueries("b*").size(), 2u);
+    EXPECT_EQ(network.FindQueries("?A*").size(), 2u);
+    EXPECT_EQ(network.FindQueries("*z").size(), 1u);
 }

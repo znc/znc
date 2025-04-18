@@ -1,0 +1,124 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: bg\n"
+"X-Crowdin-File: /master/modules/po/awaystore.pot\n"
+"X-Crowdin-File-ID: 156\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Bulgarian\n"
+"Language: bg_BG\n"
+
+#: awaystore.cpp:67
+msgid "You have been marked as away"
+msgstr "Вие сте отбелязани като отсъстващ"
+
+#: awaystore.cpp:78 awaystore.cpp:385 awaystore.cpp:388
+msgid "Welcome back!"
+msgstr "Добре дошли отново!"
+
+#: awaystore.cpp:100
+#, c++-format
+msgid "Deleted {1} messages"
+msgstr "Изтрити са {1} съобщения"
+
+#: awaystore.cpp:104
+msgid "USAGE: delete <num|all>"
+msgstr "УПОТРЕБА: delete <num|all>"
+
+#: awaystore.cpp:109
+msgid "Illegal message # requested"
+msgstr "Заявен е нелегален # на съобщение"
+
+#: awaystore.cpp:113
+msgid "Message erased"
+msgstr "Съобщението е изтрито"
+
+#: awaystore.cpp:122
+msgid "Messages saved to disk"
+msgstr "Съобщението е запазено в диска"
+
+#: awaystore.cpp:124
+msgid "There are no messages to save"
+msgstr "Няма съобщения за запаметяване"
+
+#: awaystore.cpp:135
+#, c++-format
+msgid "Password updated to [{1}]"
+msgstr "Паролата е актуализирана на [{1}]"
+
+#: awaystore.cpp:147
+#, c++-format
+msgid "Corrupt message! [{1}]"
+msgstr "Повредено съобщение! [{1}]"
+
+#: awaystore.cpp:159
+#, c++-format
+msgid "Corrupt time stamp! [{1}]"
+msgstr "Повреден времеви печат! [{1}]"
+
+#: awaystore.cpp:178
+msgid "#--- End of messages"
+msgstr "#-- Край на съобщенията"
+
+#: awaystore.cpp:183
+msgid "Timer set to 300 seconds"
+msgstr "Таймерът е зададен на 300 секунди"
+
+#: awaystore.cpp:188 awaystore.cpp:197
+msgid "Timer disabled"
+msgstr "Таймерът е изключен"
+
+#: awaystore.cpp:199
+#, c++-format
+msgid "Timer set to {1} seconds"
+msgstr "Таймерът е зададен на {1} секунди"
+
+#: awaystore.cpp:203
+#, c++-format
+msgid "Current timer setting: {1} seconds"
+msgstr "Текуща настройка за таймер: {1} секунди"
+
+#: awaystore.cpp:278
+msgid "This module needs as an argument a keyphrase used for encryption"
+msgstr ""
+"Този модул се нуждае от аргумент като ключова фраза, използвана за криптиране"
+
+#: awaystore.cpp:285
+msgid ""
+"Failed to decrypt your saved messages - Did you give the right encryption "
+"key as an argument to this module?"
+msgstr ""
+"Неуспешно дешифриране на вашите запазени съобщения - Дадохте ли правилния "
+"ключ за криптиране като аргумент на този модул?"
+
+#: awaystore.cpp:386 awaystore.cpp:389
+#, c++-format
+msgid "You have {1} messages!"
+msgstr "Имате {1} съобщения!"
+
+#: awaystore.cpp:456
+msgid "Unable to find buffer"
+msgstr "Не може да се намери буфера"
+
+#: awaystore.cpp:469
+msgid "Unable to decode encrypted messages"
+msgstr "Не може да се дешифрират шифрованите съобщения"
+
+#: awaystore.cpp:516
+msgid ""
+"[ -notimer | -timer N ] [-chans]  passw0rd . N is number of seconds, 600 by "
+"default."
+msgstr ""
+"[ -notimer | -timer N ] [-chans]  passw0rd . N е номер от секунди, 600 по "
+"подразбиране."
+
+#: awaystore.cpp:521
+msgid ""
+"Adds auto-away with logging, useful when you use ZNC from different locations"
+msgstr ""
+"Добавя автоматично маркиране като отсъстващ, полезано когато използвате ZNC "
+"от различни места"

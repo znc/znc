@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,3 +16,6 @@
 
 set(modinclude_modtcl PRIVATE ${TCL_INCLUDE_PATH} PARENT_SCOPE)
 set(modlink_modtcl PRIVATE ${TCL_LIBRARY} PARENT_SCOPE)
+
+install(FILES "modtcl.tcl" "binds.tcl"
+	DESTINATION "${CMAKE_INSTALL_DATADIR}/znc/modtcl")

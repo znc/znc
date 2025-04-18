@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -352,11 +352,11 @@ bool CFile::Open(int iFlags, mode_t iMode) {
     }
 
     // We never want to get a controlling TTY through this -> O_NOCTTY
-    iMode |= O_NOCTTY;
+    iFlags |= O_NOCTTY;
 
     // Some weird OS from MS needs O_BINARY or else it generates fake EOFs
     // when reading ^Z from a file.
-    iMode |= O_BINARY;
+    iFlags |= O_BINARY;
 
     m_iFD = open(m_sLongName.c_str(), iFlags, iMode);
     if (m_iFD < 0) {
@@ -645,6 +645,9 @@ int CExecSock::popen2(int& iReadFD, int& iWriteFD, const CString& sCommand) {
     }
 
     if (iPid == 0) {
+        sigset_t signals;
+        sigemptyset(&signals);
+        sigprocmask(SIG_SETMASK, &signals, nullptr);
         close(wpipes[1]);
         close(rpipes[0]);
         dup2(wpipes[0], 0);

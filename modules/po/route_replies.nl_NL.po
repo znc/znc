@@ -1,0 +1,66 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: nl\n"
+"X-Crowdin-File: /master/modules/po/route_replies.pot\n"
+"X-Crowdin-File-ID: 194\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Dutch\n"
+"Language: nl_NL\n"
+
+#: route_replies.cpp:228
+msgid "[yes|no]"
+msgstr "[yes|no]"
+
+#: route_replies.cpp:229
+msgid "Decides whether to show the timeout messages or not"
+msgstr "Beslist of time-out berichten laten zien worden of niet"
+
+#: route_replies.cpp:375
+msgid "This module hit a timeout which is probably a connectivity issue."
+msgstr ""
+"Deze module heeft een time-out geraakt, dit is waarschijnlijk een "
+"connectiviteitsprobleem."
+
+#: route_replies.cpp:378
+msgid ""
+"However, if you can provide steps to reproduce this issue, please do report "
+"a bug."
+msgstr ""
+"Maar, als je de stappen kan herproduceren, stuur alsjeblieft een bugrapport "
+"hier mee."
+
+#: route_replies.cpp:381
+#, c++-format
+msgid "To disable this message, do \"/msg {1} silent yes\""
+msgstr "Om dit bericht uit te zetten, doe \"/msg {1} silent yes\""
+
+#: route_replies.cpp:383
+#, c++-format
+msgid "Last request: {1}"
+msgstr "Laatste aanvraag: {1}"
+
+#: route_replies.cpp:384
+msgid "Expected replies:"
+msgstr "Verwachte antwoorden:"
+
+#: route_replies.cpp:388
+#, c++-format
+msgid "{1} (last)"
+msgstr "{1} (laatste)"
+
+#: route_replies.cpp:460
+msgid "Timeout messages are disabled."
+msgstr "Time-out berichten uitgeschakeld."
+
+#: route_replies.cpp:461
+msgid "Timeout messages are enabled."
+msgstr "Time-out berichten ingeschakeld."
+
+#: route_replies.cpp:482
+msgid "Send replies (e.g. to /who) to the right client only"
+msgstr "Stuur antwoorden (zoals /who) alleen naar de juiste clients"

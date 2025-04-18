@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,7 @@
 #include "znc/Buffer.h"
 #include "modperl/module.h"
 #define stat struct stat
+#include "modperl/pstring.h"
 %}
 
 %apply long { off_t };
@@ -66,28 +67,52 @@
 %include <std_deque.i>
 
 namespace std {
-	template<class K> class set {
-		public:
-		set();
-		set(const set<K>&);
-	};
+    template<class K> class set {
+        public:
+        set();
+        set(const set<K>&);
+        unsigned int size() const;
+        bool empty() const;
+        void clear();
+        void insert(const K& key);
+        void erase(const K& key);
+        %extend {
+            bool has_key(const K& key) {
+                auto i = self->find(key);
+                return i != self->end();
+            }
+            SV* keys_() {
+                AV* av = newAV_alloc_x(self->size());
+                // assume SCString
+                int i = 0;
+                for (const auto& a : *self) {
+                    av_store(av, i++, PString(a).GetSV(false));
+                }
+                SV* result = newRV_noinc((SV*)av);
+                return sv_2mortal(result);
+            }
+        }
+    };
 }
 %include "modperl/CString.i"
-%template(_stringlist) std::list<CString>;
-%typemap(out) std::list<CString> {
-	std::list<CString>::const_iterator i;
-	unsigned int j;
-	int len = $1.size();
-	SV **svs = new SV*[len];
-	for (i=$1.begin(), j=0; i!=$1.end(); i++, j++) {
-		svs[j] = sv_newmortal();
-		SwigSvFromString(svs[j], *i);
-	}
-	AV *myav = av_make(len, svs);
-	delete[] svs;
-	$result = newRV_noinc((SV*) myav);
-	sv_2mortal($result);
-	argvi++;
+
+%typemap(out) VCString {
+    EXTEND(sp, $1.size());
+    for (int i = 0; i < $1.size(); ++i) {
+        SV* x = newSV(0);
+        SwigSvFromString(x, $1[i]);
+        $result = sv_2mortal(x);
+        argvi++;
+    }
+}
+%typemap(out) const VCString& {
+    EXTEND(sp, $1->size());
+    for (int i = 0; i < $1->size(); ++i) {
+        SV* x = newSV(0);
+        SwigSvFromString(x, (*$1)[i]);
+        $result = sv_2mortal(x);
+        argvi++;
+    }
 }
 
 %template(VIRCNetworks) std::vector<CIRCNetwork*>;
@@ -95,9 +120,9 @@ namespace std {
 %template(VCString) std::vector<CString>;
 typedef std::vector<CString> VCString;
 /*%template(MNicks) std::map<CString, CNick>;*/
-/*%template(SModInfo) std::set<CModInfo>;
+/*%template(SModInfo) std::set<CModInfo>;*/
 %template(SCString) std::set<CString>;
-typedef std::set<CString> SCString;*/
+typedef std::set<CString> SCString;
 %template(PerlMCString) std::map<CString, CString>;
 class MCString : public std::map<CString, CString> {};
 /*%template(PerlModulesVector) std::vector<CModule*>;*/
@@ -176,25 +201,21 @@ class MCString : public std::map<CString, CString> {};
 %}
 
 %extend CModule {
-	std::list<CString> _GetNVKeys() {
-		std::list<CString> res;
-		for (MCString::iterator i = $self->BeginNV(); i != $self->EndNV(); ++i) {
-			res.push_back(i->first);
-		}
-		return res;
-	}
+    VCString GetNVKeys() {
+        VCString result;
+        for (auto i = $self->BeginNV(); i != $self->EndNV(); ++i) {
+            result.push_back(i->first);
+        }
+        return result;
+    }
 	bool ExistsNV(const CString& sName) {
 		return $self->EndNV() != $self->FindNV(sName);
 	}
-}
-
-%perlcode %{
-	package ZNC::CModule;
-	sub GetNVKeys {
-		my $result = _GetNVKeys(@_);
-		return @$result;
+    void AddServerDependentCapability(const CString& sName, SV* serverCb,
+                                      SV* clientCb) {
+        $self->AddServerDependentCapability(sName, std::make_unique<CPerlCapability>(serverCb, clientCb));
 	}
-%}
+}
 
 %extend CModules {
 	void push_back(CModule* p) {
@@ -295,6 +316,13 @@ typedef std::vector<std::pair<CString, CString> > VPair;
 		return %$result;
 	}
 	*GetNicks = *_GetNicks_;
+
+    package ZNC::SCString;
+    sub keys {
+        my $self = shift;
+        my $keys = $self->keys_;
+        return @$keys;
+	}
 %}
 
 /* vim: set filetype=cpp: */

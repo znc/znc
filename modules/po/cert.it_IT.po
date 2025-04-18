@@ -1,0 +1,84 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: it\n"
+"X-Crowdin-File: /master/modules/po/cert.pot\n"
+"X-Crowdin-File-ID: 161\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Italian\n"
+"Language: it_IT\n"
+
+#  this text is inserted into `click here` in the other string
+#: modules/po/../data/cert/tmpl/index.tmpl:5
+msgid "here"
+msgstr "qui"
+
+#  {1} is `here`, translateable in the other string
+#: modules/po/../data/cert/tmpl/index.tmpl:6
+msgid ""
+"You already have a certificate set, use the form below to overwrite the "
+"current certificate. Alternatively click {1} to delete your certificate."
+msgstr ""
+"Hai già un certificato impostato, utilizza il modulo sottostante per "
+"sovrascrivere il certificato corrente. In alternativa, fai click su {1} per "
+"eliminare il certificato."
+
+#: modules/po/../data/cert/tmpl/index.tmpl:8
+msgid "You do not have a certificate yet."
+msgstr "Non hai ancora un certificato."
+
+#: modules/po/../data/cert/tmpl/index.tmpl:14 cert.cpp:72
+msgid "Certificate"
+msgstr "Certificato"
+
+#: modules/po/../data/cert/tmpl/index.tmpl:18
+msgid "PEM File:"
+msgstr "File PEM:"
+
+#: modules/po/../data/cert/tmpl/index.tmpl:22
+msgid "Update"
+msgstr "Aggiornare"
+
+#: cert.cpp:28
+msgid "Pem file deleted"
+msgstr "File PEM eliminato"
+
+#: cert.cpp:31
+msgid "The pem file doesn't exist or there was a error deleting the pem file."
+msgstr ""
+"Il file pem non esiste o si è verificato un errore durante l'eliminazione "
+"del file pem."
+
+#: cert.cpp:38
+#, c++-format
+msgid "You have a certificate in {1}"
+msgstr "Hai un certificato in {1}"
+
+#: cert.cpp:41
+msgid ""
+"You do not have a certificate. Please use the web interface to add a "
+"certificate"
+msgstr ""
+"Non hai un certificato. Per favore usa l'interfaccia web per aggiungere un "
+"certificato"
+
+#: cert.cpp:44
+#, c++-format
+msgid "Alternatively you can place one at {1}"
+msgstr ""
+
+#: cert.cpp:52
+msgid "Delete the current certificate"
+msgstr "Elimina il certificato corrente"
+
+#: cert.cpp:54
+msgid "Show the current certificate"
+msgstr "Mostra il certificato corrente"
+
+#: cert.cpp:105
+msgid "Use a ssl certificate to connect to a server"
+msgstr "Utilizza un certificato ssl per connetterti al server"

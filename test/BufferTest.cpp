@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,59 +34,59 @@ TEST_F(BufferTest, BufLine) {
                    "hello there");
     const CBufLine& line = buffer.GetBufLine(0);
     EXPECT_THAT(line.GetTags(), ContainerEq(MCString{{"key", "value"}}));
-    EXPECT_EQ(":nick PRIVMSG {target} {text}", line.GetFormat());
-    EXPECT_EQ("hello there", line.GetText());
-    EXPECT_EQ("PRIVMSG", line.GetCommand());
+    EXPECT_EQ(line.GetFormat(), ":nick PRIVMSG {target} {text}");
+    EXPECT_EQ(line.GetText(), "hello there");
+    EXPECT_EQ(line.GetCommand(), "PRIVMSG");
 }
 
 TEST_F(BufferTest, LineCount) {
     CBuffer buffer(123);
-    EXPECT_EQ(123u, buffer.GetLineCount());
+    EXPECT_EQ(buffer.GetLineCount(), 123u);
 
-    EXPECT_EQ(500u, CZNC::Get().GetMaxBufferSize());
+    EXPECT_EQ(CZNC::Get().GetMaxBufferSize(), 500u);
     EXPECT_FALSE(buffer.SetLineCount(1000, false));
-    EXPECT_EQ(123u, buffer.GetLineCount());
+    EXPECT_EQ(buffer.GetLineCount(), 123u);
     EXPECT_TRUE(buffer.SetLineCount(500, false));
-    EXPECT_EQ(500u, buffer.GetLineCount());
+    EXPECT_EQ(buffer.GetLineCount(), 500u);
     EXPECT_TRUE(buffer.SetLineCount(1000, true));
-    EXPECT_EQ(1000u, buffer.GetLineCount());
+    EXPECT_EQ(buffer.GetLineCount(), 1000u);
 }
 
 TEST_F(BufferTest, AddLine) {
     CBuffer buffer(2);
     EXPECT_TRUE(buffer.IsEmpty());
-    EXPECT_EQ(0u, buffer.Size());
+    EXPECT_EQ(buffer.Size(), 0u);
 
-    EXPECT_EQ(1u, buffer.AddLine(CMessage("PRIVMSG nick :msg1")));
+    EXPECT_EQ(buffer.AddLine(CMessage("PRIVMSG nick :msg1")), 1u);
     EXPECT_FALSE(buffer.IsEmpty());
-    EXPECT_EQ(1u, buffer.Size());
-    EXPECT_EQ("PRIVMSG nick :msg1", buffer.GetBufLine(0).GetFormat());
+    EXPECT_EQ(buffer.Size(), 1u);
+    EXPECT_EQ(buffer.GetBufLine(0).GetFormat(), "PRIVMSG nick :msg1");
 
-    EXPECT_EQ(2u, buffer.AddLine(CMessage("PRIVMSG nick :msg2")));
+    EXPECT_EQ(buffer.AddLine(CMessage("PRIVMSG nick :msg2")), 2u);
     EXPECT_FALSE(buffer.IsEmpty());
-    EXPECT_EQ(2u, buffer.Size());
-    EXPECT_EQ("PRIVMSG nick :msg1", buffer.GetBufLine(0).GetFormat());
-    EXPECT_EQ("PRIVMSG nick :msg2", buffer.GetBufLine(1).GetFormat());
+    EXPECT_EQ(buffer.Size(), 2u);
+    EXPECT_EQ(buffer.GetBufLine(0).GetFormat(), "PRIVMSG nick :msg1");
+    EXPECT_EQ(buffer.GetBufLine(1).GetFormat(), "PRIVMSG nick :msg2");
 
-    EXPECT_EQ(2u, buffer.AddLine(CMessage("PRIVMSG nick :msg3")));
+    EXPECT_EQ(buffer.AddLine(CMessage("PRIVMSG nick :msg3")), 2u);
     EXPECT_FALSE(buffer.IsEmpty());
-    EXPECT_EQ(2u, buffer.Size());
-    EXPECT_EQ("PRIVMSG nick :msg2", buffer.GetBufLine(0).GetFormat());
-    EXPECT_EQ("PRIVMSG nick :msg3", buffer.GetBufLine(1).GetFormat());
+    EXPECT_EQ(buffer.Size(), 2u);
+    EXPECT_EQ(buffer.GetBufLine(0).GetFormat(), "PRIVMSG nick :msg2");
+    EXPECT_EQ(buffer.GetBufLine(1).GetFormat(), "PRIVMSG nick :msg3");
 
     buffer.SetLineCount(1);
     EXPECT_FALSE(buffer.IsEmpty());
-    EXPECT_EQ(1u, buffer.Size());
-    EXPECT_EQ("PRIVMSG nick :msg3", buffer.GetBufLine(0).GetFormat());
+    EXPECT_EQ(buffer.Size(), 1u);
+    EXPECT_EQ(buffer.GetBufLine(0).GetFormat(), "PRIVMSG nick :msg3");
 
     buffer.Clear();
     EXPECT_TRUE(buffer.IsEmpty());
-    EXPECT_EQ(0u, buffer.Size());
+    EXPECT_EQ(buffer.Size(), 0u);
 
     buffer.SetLineCount(0);
     buffer.AddLine(CMessage("TEST"));
     EXPECT_TRUE(buffer.IsEmpty());
-    EXPECT_EQ(0u, buffer.Size());
+    EXPECT_EQ(buffer.Size(), 0u);
 }
 
 TEST_F(BufferTest, UpdateLine) {
@@ -115,21 +115,21 @@ TEST_F(BufferTest, UpdateLine) {
     for (const CString& line : lines) {
         buffer.AddLine(line);
     }
-    EXPECT_EQ(15u, buffer.Size());
+    EXPECT_EQ(buffer.Size(), 15u);
 
-    EXPECT_EQ(15u, buffer.UpdateLine("002", CMessage(":irc.server.net 002 nick :Your host is irc.server.net[11.22.33.44/6697], running version ircd-fake-3.2.1")));
-    EXPECT_EQ(":irc.server.net 002 nick :Your host is irc.server.net[11.22.33.44/6697], running version ircd-fake-3.2.1", buffer.GetBufLine(1).GetFormat());
+    EXPECT_EQ(buffer.UpdateLine("002", CMessage(":irc.server.net 002 nick :Your host is irc.server.net[11.22.33.44/6697], running version ircd-fake-3.2.1")), 15u);
+    EXPECT_EQ(buffer.GetBufLine(1).GetFormat(), ":irc.server.net 002 nick :Your host is irc.server.net[11.22.33.44/6697], running version ircd-fake-3.2.1");
 
-    EXPECT_EQ(15u, buffer.UpdateLine("252", CMessage(":irc.server.com 252 nick 100 :IRC Operators online")));
-    EXPECT_EQ(":irc.server.com 252 nick 100 :IRC Operators online", buffer.GetBufLine(8).GetFormat());
+    EXPECT_EQ(buffer.UpdateLine("252", CMessage(":irc.server.com 252 nick 100 :IRC Operators online")), 15u);
+    EXPECT_EQ(buffer.GetBufLine(8).GetFormat(), ":irc.server.com 252 nick 100 :IRC Operators online");
 
-    EXPECT_EQ(16u, buffer.UpdateLine("123", CMessage(":irc.server.com 123 nick foo bar")));
-    EXPECT_EQ(":irc.server.com 123 nick foo bar", buffer.GetBufLine(15).GetFormat());
+    EXPECT_EQ(buffer.UpdateLine("123", CMessage(":irc.server.com 123 nick foo bar")), 16u);
+    EXPECT_EQ(buffer.GetBufLine(15).GetFormat(), ":irc.server.com 123 nick foo bar");
 
-    EXPECT_EQ(16u, buffer.UpdateExactLine(CMessage(":irc.server.com 005 nick EXTBAN=$,ajrxz WHOX CLIENTVER=3.0 SAFELIST ELIST=CTU :are supported by this server")));
-    EXPECT_EQ(":irc.server.com 005 nick EXTBAN=$,ajrxz WHOX CLIENTVER=3.0 SAFELIST ELIST=CTU :are supported by this server", buffer.GetBufLine(6).GetFormat());
+    EXPECT_EQ(buffer.UpdateExactLine(CMessage(":irc.server.com 005 nick EXTBAN=$,ajrxz WHOX CLIENTVER=3.0 SAFELIST ELIST=CTU :are supported by this server")), 16u);
+    EXPECT_EQ(buffer.GetBufLine(6).GetFormat(), ":irc.server.com 005 nick EXTBAN=$,ajrxz WHOX CLIENTVER=3.0 SAFELIST ELIST=CTU :are supported by this server");
 
-    EXPECT_EQ(17u, buffer.UpdateExactLine(CMessage(":irc.server.com 005 nick FOO=bar :are supported by this server")));
-    EXPECT_EQ(":irc.server.com 005 nick FOO=bar :are supported by this server", buffer.GetBufLine(16).GetFormat());
+    EXPECT_EQ(buffer.UpdateExactLine(CMessage(":irc.server.com 005 nick FOO=bar :are supported by this server")), 17u);
+    EXPECT_EQ(buffer.GetBufLine(16).GetFormat(), ":irc.server.com 005 nick FOO=bar :are supported by this server");
     // clang-format on
 }

@@ -1,0 +1,9 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: stripcontrols.cpp:63
+msgid ""
+"Strips control codes (Colors, Bold, ..) from channel and private messages."
+msgstr ""

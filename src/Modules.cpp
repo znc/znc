@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <znc/IRCSock.h>
 #include <znc/Modules.h>
 #include <znc/FileUtils.h>
 #include <znc/Template.h>
@@ -160,6 +161,31 @@ CModule::CModule(ModHandle pDLL, CUser* pUser, CIRCNetwork* pNetwork,
 }
 
 CModule::~CModule() {
+    for (const auto& [sName, pCap] : m_mServerDependentCaps) {
+        // pCap->OnClientChangedSupport is useless (and even dangerous) to call
+        // from the destructor, since the derived CModule class is gone already.
+        // But still need to tell clients via cap-notify that the cap is gone.
+        switch (GetType()) {
+            case CModInfo::NetworkModule:
+                GetNetwork()->NotifyClientsAboutServerDependentCap(sName,
+                                                                   false);
+                break;
+            case CModInfo::UserModule:
+                for (CIRCNetwork* pNetwork : GetUser()->GetNetworks()) {
+                    pNetwork->NotifyClientsAboutServerDependentCap(sName,
+                                                                   false);
+                }
+                break;
+            case CModInfo::GlobalModule:
+                for (auto& [_, pUser] : CZNC::Get().GetUserMap()) {
+                    for (CIRCNetwork* pNetwork : pUser->GetNetworks()) {
+                        pNetwork->NotifyClientsAboutServerDependentCap(sName,
+                                                                       false);
+                    }
+                }
+        }
+    }
+
     while (!m_sTimers.empty()) {
         RemTimer(*m_sTimers.begin());
     }
@@ -234,13 +260,13 @@ CString CModule::GetWebFilesPath() {
 }
 
 bool CModule::LoadRegistry() {
-    // CString sPrefix = (m_pUser) ? m_pUser->GetUserName() : ".global";
+    // CString sPrefix = (m_pUser) ? m_pUser->GetUsername() : ".global";
     return (m_mssRegistry.ReadFromDisk(GetSavePath() + "/.registry") ==
             MCString::MCS_SUCCESS);
 }
 
 bool CModule::SaveRegistry() const {
-    // CString sPrefix = (m_pUser) ? m_pUser->GetUserName() : ".global";
+    // CString sPrefix = (m_pUser) ? m_pUser->GetUsername() : ".global";
     return (m_mssRegistry.WriteToDisk(GetSavePath() + "/.registry", 0600) ==
             MCString::MCS_SUCCESS);
 }
@@ -525,8 +551,9 @@ bool CModule::AddCommand(const CString& sCmd, const COptionalTranslation& Args,
 }
 
 void CModule::AddHelpCommand() {
-    AddCommand("Help", &CModule::HandleHelpCommand, "search",
-               "Generate this output");
+    AddCommand("Help", t_d("<search>", "modhelpcmd"),
+               t_d("Generate this output", "modhelpcmd"),
+               [=](const CString& sLine) { HandleHelpCommand(sLine); });
 }
 
 bool CModule::RemCommand(const CString& sCmd) {
@@ -569,7 +596,7 @@ void CModule::HandleHelpCommand(const CString& sLine) {
         }
     }
     if (Table.empty()) {
-        PutModule("No matches for '" + sFilter + "'");
+        PutModule(t_f("No matches for '{1}'")(sFilter));
     } else {
         PutModule(Table);
     }
@@ -605,7 +632,24 @@ bool CModule::OnBoot() { return true; }
 void CModule::OnPreRehash() {}
 void CModule::OnPostRehash() {}
 void CModule::OnIRCDisconnected() {}
+void CModule::InternalServerDependentCapsOnIRCDisconnected() {
+    OnIRCDisconnected();
+    for (const auto& [sName, pCap] : m_mServerDependentCaps) {
+        GetNetwork()->NotifyClientsAboutServerDependentCap(sName, false);
+        for (CClient* pClient : GetNetwork()->GetClients()) {
+            pCap->OnClientChangedSupport(pClient, false);
+        }
+    }
+}
 void CModule::OnIRCConnected() {}
+void CModule::InternalServerDependentCapsOnIRCConnected() {
+    OnIRCConnected();
+    for (const auto& [sName, pCap] : m_mServerDependentCaps) {
+        if (GetNetwork()->IsServerCapAccepted(sName)) {
+            GetNetwork()->NotifyClientsAboutServerDependentCap(sName, true);
+        }
+    }
+}
 CModule::EModRet CModule::OnIRCConnecting(CIRCSock* IRCSock) {
     return CONTINUE;
 }
@@ -617,6 +661,11 @@ CModule::EModRet CModule::OnIRCRegistration(CString& sPass, CString& sNick,
 }
 CModule::EModRet CModule::OnBroadcast(CString& sMessage) { return CONTINUE; }
 
+void CModule::OnChanPermission3(const CNick* pOpNick, const CNick& Nick,
+                                CChan& Channel, char cMode,
+                                bool bAdded, bool bNoChange) {
+    OnChanPermission2(pOpNick, Nick, Channel, cMode, bAdded, bNoChange);
+}
 void CModule::OnChanPermission2(const CNick* pOpNick, const CNick& Nick,
                                 CChan& Channel, unsigned char uMode,
                                 bool bAdded, bool bNoChange) {
@@ -682,9 +731,9 @@ void CModule::OnUnknownModCommand(const CString& sLine) {
         // This function is only called if OnModCommand wasn't
         // overriden, so no false warnings for modules which don't use
         // CModCommand for command handling.
-        PutModule("This module doesn't implement any commands.");
+        PutModule(t_s("This module doesn't implement any commands."));
     else
-        PutModule("Unknown command!");
+        PutModule(t_s("Unknown command!"));
 }
 
 void CModule::OnQuit(const CNick& Nick, const CString& sMessage,
@@ -831,6 +880,15 @@ CModule::EModRet CModule::OnUserNoticeMessage(CNoticeMessage& Message) {
     Message.SetTarget(sTarget);
     Message.SetText(sText);
     return ret;
+}
+CModule::EModRet CModule::OnUserTagMessage(CTargetMessage& Message) {
+    return CONTINUE;
+}
+CModule::EModRet CModule::OnPrivTagMessage(CTargetMessage& Message) {
+    return CONTINUE;
+}
+CModule::EModRet CModule::OnChanTagMessage(CTargetMessage& Message) {
+    return CONTINUE;
 }
 CModule::EModRet CModule::OnUserJoin(CString& sChannel, CString& sKey) {
     return CONTINUE;
@@ -991,18 +1049,71 @@ CModule::EModRet CModule::OnSendToIRC(CString& sLine) { return CONTINUE; }
 CModule::EModRet CModule::OnSendToIRCMessage(CMessage& Message) {
     return CONTINUE;
 }
+void CModule::OnClientAttached() {}
+void CModule::InternalServerDependentCapsOnClientAttached() {
+    OnClientAttached();
+    if (!GetNetwork()) return;
+    for (const auto& [sName, pCap] : m_mServerDependentCaps) {
+        if (GetNetwork()->IsServerCapAccepted(sName)) {
+            GetClient()->NotifyServerDependentCap(sName, true, GetNetwork()->GetIRCSock()->GetCapLsValue(sName));
+        }
+    }
+}
+void CModule::OnClientDetached() {}
+void CModule::InternalServerDependentCapsOnClientDetached() {
+    OnClientDetached();
+    for (const auto& [sName, pCap] : m_mServerDependentCaps) {
+        GetClient()->NotifyServerDependentCap(sName, false, "");
+        pCap->OnClientChangedSupport(GetClient(), false);
+    }
+}
 
 bool CModule::OnServerCapAvailable(const CString& sCap) { return false; }
+bool CModule::OnServerCap302Available(const CString& sCap,
+                                      const CString& sValue) {
+    return OnServerCapAvailable(sCap);
+}
+bool CModule::InternalServerDependentCapsOnServerCap302Available(const CString& sCap,
+                                      const CString& sValue) {
+    auto it = m_mServerDependentCaps.find(sCap);
+    if (it == m_mServerDependentCaps.end())
+        return OnServerCap302Available(sCap, sValue);
+    if (GetNetwork()->IsServerCapAccepted(sCap)) {
+        // This can happen when server sent CAP NEW with another value.
+        GetNetwork()->NotifyClientsAboutServerDependentCap(sCap, true);
+        // It's enabled already, no need to REQ it again.
+        return false;
+    }
+    return true;
+}
 void CModule::OnServerCapResult(const CString& sCap, bool bSuccess) {}
+void CModule::InternalServerDependentCapsOnServerCapResult(const CString& sCap,
+                                                           bool bSuccess) {
+    OnServerCapResult(sCap, bSuccess);
+    auto it = m_mServerDependentCaps.find(sCap);
+    if (it == m_mServerDependentCaps.end()) return;
+    it->second->OnServerChangedSupport(GetNetwork(), bSuccess);
+    if (GetNetwork()->GetIRCSock()->IsAuthed()) {
+        GetNetwork()->NotifyClientsAboutServerDependentCap(sCap, bSuccess);
+        if (!bSuccess) {
+            for (CClient* pClient : GetNetwork()->GetClients()) {
+                it->second->OnClientChangedSupport(pClient, false);
+            }
+        }
+    }
+}
 
 bool CModule::PutIRC(const CString& sLine) {
-    return (m_pNetwork) ? m_pNetwork->PutIRC(sLine) : false;
+    return m_pNetwork ? m_pNetwork->PutIRC(sLine) : false;
+}
+bool CModule::PutIRC(const CMessage& Message) {
+    return m_pNetwork ? m_pNetwork->PutIRC(Message) : false;
 }
 bool CModule::PutUser(const CString& sLine) {
-    return (m_pNetwork) ? m_pNetwork->PutUser(sLine, m_pClient) : false;
+    return m_pNetwork ? m_pNetwork->PutUser(sLine, m_pClient) : false;
 }
 bool CModule::PutStatus(const CString& sLine) {
-    return (m_pNetwork) ? m_pNetwork->PutStatus(sLine, m_pClient) : false;
+    return m_pNetwork ? m_pNetwork->PutStatus(sLine, m_pClient) : false;
 }
 unsigned int CModule::PutModule(const CTable& table) {
     if (!m_pUser) return 0;
@@ -1060,12 +1171,60 @@ CModule::EModRet CModule::OnUnknownUserRawMessage(CMessage& Message) {
     return CONTINUE;
 }
 void CModule::OnClientCapLs(CClient* pClient, SCString& ssCaps) {}
+void CModule::InternalServerDependentCapsOnClientCapLs(CClient* pClient, SCString& ssCaps) {
+    for (const auto& [sName, pCap] : m_mServerDependentCaps) {
+        if (GetNetwork() && GetNetwork()->IsServerCapAccepted(sName)) {
+            if (pClient->HasCap302()) {
+                CString sValue =
+                    GetNetwork()->GetIRCSock()->GetCapLsValue(sName);
+                if (!sValue.empty()) {
+                    ssCaps.insert(sName + '=' + sValue);
+                } else {
+                    ssCaps.insert(sName);
+                }
+            } else {
+                ssCaps.insert(sName);
+            }
+        }
+    }
+    OnClientCapLs(pClient, ssCaps);
+}
 bool CModule::IsClientCapSupported(CClient* pClient, const CString& sCap,
-                                   bool bState) {
-    return false;
+                                   bool bState) { return false; }
+bool CModule::InternalServerDependentCapsIsClientCapSupported(
+    CClient* pClient, const CString& sCap, bool bState) {
+    auto it = m_mServerDependentCaps.find(sCap);
+    if (it == m_mServerDependentCaps.end())
+        return IsClientCapSupported(pClient, sCap, bState);
+    if (!bState) return true;
+    return GetNetwork() && GetNetwork()->IsServerCapAccepted(sCap);
 }
 void CModule::OnClientCapRequest(CClient* pClient, const CString& sCap,
                                  bool bState) {}
+
+void CModule::InternalServerDependentCapsOnClientCapRequest(CClient* pClient,
+                                                            const CString& sCap,
+                                                            bool bState) {
+    OnClientCapRequest(pClient, sCap, bState);
+    auto it = m_mServerDependentCaps.find(sCap);
+    if (it == m_mServerDependentCaps.end()) return;
+    it->second->OnClientChangedSupport(pClient, bState);
+}
+
+CModule::EModRet CModule::OnClientSASLAuthenticate(
+    const CString& sMechanism, const CString& sBuffer) {
+    return CONTINUE;
+}
+
+CModule::EModRet CModule::OnClientSASLServerInitialChallenge(
+    const CString& sMechanism, CString& sResponse) {
+    return CONTINUE;
+}
+
+void CModule::OnClientGetSASLMechanisms(SCString& ssMechanisms) {}
+
+void CModule::OnClientSASLAborted() {}
+
 CModule::EModRet CModule::OnModuleLoading(const CString& sModName,
                                           const CString& sArgs,
                                           CModInfo::EModuleType eType,
@@ -1083,6 +1242,11 @@ CModule::EModRet CModule::OnGetModInfo(CModInfo& ModInfo,
 }
 void CModule::OnGetAvailableMods(set<CModInfo>& ssMods,
                                  CModInfo::EModuleType eType) {}
+void CModule::AddServerDependentCapability(const CString& sName,
+                                           std::unique_ptr<CCapability> pCap) {
+    pCap->SetModule(this);
+    m_mServerDependentCaps[sName] = std::move(pCap);
+}
 
 CModules::CModules()
     : m_pUser(nullptr), m_pNetwork(nullptr), m_pClient(nullptr) {}
@@ -1122,7 +1286,7 @@ bool CModules::OnPostRehash() {
     return false;
 }
 bool CModules::OnIRCConnected() {
-    MODUNLOADCHK(OnIRCConnected());
+    MODUNLOADCHK(InternalServerDependentCapsOnIRCConnected());
     return false;
 }
 bool CModules::OnIRCConnecting(CIRCSock* pIRCSock) {
@@ -1140,10 +1304,17 @@ bool CModules::OnBroadcast(CString& sMessage) {
     MODHALTCHK(OnBroadcast(sMessage));
 }
 bool CModules::OnIRCDisconnected() {
-    MODUNLOADCHK(OnIRCDisconnected());
+    MODUNLOADCHK(InternalServerDependentCapsOnIRCDisconnected());
     return false;
 }
 
+bool CModules::OnChanPermission3(const CNick* pOpNick, const CNick& Nick,
+                                 CChan& Channel, char cMode,
+                                 bool bAdded, bool bNoChange) {
+    MODUNLOADCHK(
+        OnChanPermission3(pOpNick, Nick, Channel, cMode, bAdded, bNoChange));
+    return false;
+}
 bool CModules::OnChanPermission2(const CNick* pOpNick, const CNick& Nick,
                                  CChan& Channel, unsigned char uMode,
                                  bool bAdded, bool bNoChange) {
@@ -1267,6 +1438,15 @@ bool CModules::OnUserNotice(CString& sTarget, CString& sMessage) {
 }
 bool CModules::OnUserNoticeMessage(CNoticeMessage& Message) {
     MODHALTCHK(OnUserNoticeMessage(Message));
+}
+bool CModules::OnUserTagMessage(CTargetMessage& Message) {
+    MODHALTCHK(OnUserTagMessage(Message));
+}
+bool CModules::OnPrivTagMessage(CTargetMessage& Message) {
+    MODHALTCHK(OnPrivTagMessage(Message));
+}
+bool CModules::OnChanTagMessage(CTargetMessage& Message) {
+    MODHALTCHK(OnChanTagMessage(Message));
 }
 bool CModules::OnUserJoin(CString& sChannel, CString& sKey) {
     MODHALTCHK(OnUserJoin(sChannel, sKey));
@@ -1473,9 +1653,17 @@ bool CModules::OnModCTCP(const CString& sMessage) {
     MODUNLOADCHK(OnModCTCP(sMessage));
     return false;
 }
+bool CModules::OnClientAttached() {
+    MODUNLOADCHK(InternalServerDependentCapsOnClientAttached());
+    return false;
+}
+bool CModules::OnClientDetached() {
+    MODUNLOADCHK(InternalServerDependentCapsOnClientDetached());
+    return false;
+}
 
 // Why MODHALTCHK works only with functions returning EModRet ? :(
-bool CModules::OnServerCapAvailable(const CString& sCap) {
+bool CModules::OnServerCapAvailable(const CString& sCap, const CString& sValue) {
     bool bResult = false;
     for (CModule* pMod : *this) {
         try {
@@ -1483,12 +1671,19 @@ bool CModules::OnServerCapAvailable(const CString& sCap) {
             pMod->SetClient(m_pClient);
             if (m_pUser) {
                 CUser* pOldUser = pMod->GetUser();
+                CIRCNetwork* pOldNetwork = pMod->GetNetwork();
                 pMod->SetUser(m_pUser);
-                bResult |= pMod->OnServerCapAvailable(sCap);
+                pMod->SetNetwork(m_pNetwork);
+                bResult |=
+                    pMod->InternalServerDependentCapsOnServerCap302Available(
+                        sCap, sValue);
                 pMod->SetUser(pOldUser);
+                pMod->SetNetwork(pOldNetwork);
             } else {
                 // WTF? Is that possible?
-                bResult |= pMod->OnServerCapAvailable(sCap);
+                bResult |=
+                    pMod->InternalServerDependentCapsOnServerCap302Available(
+                        sCap, sValue);
             }
             pMod->SetClient(pOldClient);
         } catch (const CModule::EModException& e) {
@@ -1501,7 +1696,7 @@ bool CModules::OnServerCapAvailable(const CString& sCap) {
 }
 
 bool CModules::OnServerCapResult(const CString& sCap, bool bSuccess) {
-    MODUNLOADCHK(OnServerCapResult(sCap, bSuccess));
+    MODUNLOADCHK(InternalServerDependentCapsOnServerCapResult(sCap, bSuccess));
     return false;
 }
 
@@ -1539,7 +1734,7 @@ bool CModules::OnUnknownUserRawMessage(CMessage& Message) {
 }
 
 bool CModules::OnClientCapLs(CClient* pClient, SCString& ssCaps) {
-    MODUNLOADCHK(OnClientCapLs(pClient, ssCaps));
+    MODUNLOADCHK(InternalServerDependentCapsOnClientCapLs(pClient, ssCaps));
     return false;
 }
 
@@ -1553,12 +1748,19 @@ bool CModules::IsClientCapSupported(CClient* pClient, const CString& sCap,
             pMod->SetClient(m_pClient);
             if (m_pUser) {
                 CUser* pOldUser = pMod->GetUser();
+                CIRCNetwork* pOldNetwork = pMod->GetNetwork();
                 pMod->SetUser(m_pUser);
-                bResult |= pMod->IsClientCapSupported(pClient, sCap, bState);
+                pMod->SetNetwork(m_pNetwork);
+                bResult |=
+                    pMod->InternalServerDependentCapsIsClientCapSupported(
+                        pClient, sCap, bState);
                 pMod->SetUser(pOldUser);
+                pMod->SetNetwork(pOldNetwork);
             } else {
                 // WTF? Is that possible?
-                bResult |= pMod->IsClientCapSupported(pClient, sCap, bState);
+                bResult |=
+                    pMod->InternalServerDependentCapsIsClientCapSupported(
+                        pClient, sCap, bState);
             }
             pMod->SetClient(pOldClient);
         } catch (const CModule::EModException& e) {
@@ -1572,7 +1774,28 @@ bool CModules::IsClientCapSupported(CClient* pClient, const CString& sCap,
 
 bool CModules::OnClientCapRequest(CClient* pClient, const CString& sCap,
                                   bool bState) {
-    MODUNLOADCHK(OnClientCapRequest(pClient, sCap, bState));
+    MODUNLOADCHK(
+        InternalServerDependentCapsOnClientCapRequest(pClient, sCap, bState));
+    return false;
+}
+
+bool CModules::OnClientSASLAuthenticate(const CString& sMechanism,
+                                        const CString& sBuffer) {
+    MODHALTCHK(OnClientSASLAuthenticate(sMechanism, sBuffer));
+}
+
+bool CModules::OnClientSASLServerInitialChallenge(const CString& sMechanism,
+                                     CString& sResponse) {
+    MODHALTCHK(OnClientSASLServerInitialChallenge(sMechanism, sResponse));
+}
+
+bool CModules::OnClientGetSASLMechanisms(SCString& ssMechanisms) {
+    MODUNLOADCHK(OnClientGetSASLMechanisms(ssMechanisms));
+    return false;
+}
+
+bool CModules::OnClientSASLAborted() {
+    MODUNLOADCHK(OnClientSASLAborted());
     return false;
 }
 
@@ -1608,13 +1831,32 @@ CModule* CModules::FindModule(const CString& sModule) const {
     return nullptr;
 }
 
+bool CModules::ValidateModuleName(const CString& sModule, CString& sRetMsg) {
+    for (unsigned int a = 0; a < sModule.length(); a++) {
+        if (((sModule[a] < '0') || (sModule[a] > '9')) &&
+            ((sModule[a] < 'a') || (sModule[a] > 'z')) &&
+            ((sModule[a] < 'A') || (sModule[a] > 'Z')) && (sModule[a] != '_')) {
+            sRetMsg =
+                t_f("Module names can only contain letters, numbers and "
+                    "underscores, [{1}] is invalid")(sModule);
+            return false;
+        }
+    }
+
+    return true;
+}
+
 bool CModules::LoadModule(const CString& sModule, const CString& sArgs,
                           CModInfo::EModuleType eType, CUser* pUser,
                           CIRCNetwork* pNetwork, CString& sRetMsg) {
     sRetMsg = "";
 
+    if (!ValidateModuleName(sModule, sRetMsg)) {
+        return false;
+    }
+
     if (FindModule(sModule) != nullptr) {
-        sRetMsg = "Module [" + sModule + "] already loaded.";
+        sRetMsg = t_f("Module {1} already loaded.")(sModule);
         return false;
     }
 
@@ -1628,7 +1870,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs,
     CModInfo Info;
 
     if (!FindModPath(sModule, sModPath, sDataPath)) {
-        sRetMsg = "Unable to find module [" + sModule + "]";
+        sRetMsg = t_f("Unable to find module {1}")(sModule);
         return false;
     }
     Info.SetName(sModule);
@@ -1640,20 +1882,20 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs,
 
     if (!Info.SupportsType(eType)) {
         dlclose(p);
-        sRetMsg = "Module [" + sModule + "] does not support module type [" +
-                  CModInfo::ModuleTypeToString(eType) + "].";
+        sRetMsg = t_f("Module {1} does not support module type {2}.")(
+            sModule, CModInfo::ModuleTypeToString(eType));
         return false;
     }
 
     if (!pUser && eType == CModInfo::UserModule) {
         dlclose(p);
-        sRetMsg = "Module [" + sModule + "] requires a user.";
+        sRetMsg = t_f("Module {1} requires a user.")(sModule);
         return false;
     }
 
     if (!pNetwork && eType == CModInfo::NetworkModule) {
         dlclose(p);
-        sRetMsg = "Module [" + sModule + "] requires a network.";
+        sRetMsg = t_f("Module {1} requires a network.")(sModule);
         return false;
     }
 
@@ -1669,15 +1911,15 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs,
         bLoaded = pModule->OnLoad(sArgs, sRetMsg);
     } catch (const CModule::EModException&) {
         bLoaded = false;
-        sRetMsg = "Caught an exception";
+        sRetMsg = t_s("Caught an exception");
     }
 
     if (!bLoaded) {
         UnloadModule(sModule, sModPath);
         if (!sRetMsg.empty())
-            sRetMsg = "Module [" + sModule + "] aborted: " + sRetMsg;
+            sRetMsg = t_f("Module {1} aborted: {2}")(sModule, sRetMsg);
         else
-            sRetMsg = "Module [" + sModule + "] aborted.";
+            sRetMsg = t_f("Module {1} aborted.")(sModule);
         return false;
     }
 
@@ -1701,7 +1943,7 @@ bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
     sRetMsg = "";
 
     if (!pModule) {
-        sRetMsg = "Module [" + sMod + "] not loaded.";
+        sRetMsg = t_f("Module [{1}] not loaded.")(sMod);
         return false;
     }
 
@@ -1725,12 +1967,12 @@ bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
         }
 
         dlclose(p);
-        sRetMsg = "Module [" + sMod + "] unloaded";
+        sRetMsg = t_f("Module {1} unloaded.")(sMod);
 
         return true;
     }
 
-    sRetMsg = "Unable to unload module [" + sMod + "]";
+    sRetMsg = t_f("Unable to unload module {1}.")(sMod);
     return false;
 }
 
@@ -1743,7 +1985,7 @@ bool CModules::ReloadModule(const CString& sModule, const CString& sArgs,
     CModule* pModule = FindModule(sMod);
 
     if (!pModule) {
-        sRetMsg = "Module [" + sMod + "] not loaded";
+        sRetMsg = t_f("Module [{1}] not loaded.")(sMod);
         return false;
     }
 
@@ -1759,12 +2001,16 @@ bool CModules::ReloadModule(const CString& sModule, const CString& sArgs,
         return false;
     }
 
-    sRetMsg = "Reloaded module [" + sMod + "]";
+    sRetMsg = t_f("Reloaded module {1}.")(sMod);
     return true;
 }
 
 bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule,
                           CString& sRetMsg) {
+    if (!ValidateModuleName(sModule, sRetMsg)) {
+        return false;
+    }
+
     CString sModPath, sTmp;
 
     bool bSuccess;
@@ -1774,7 +2020,7 @@ bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule,
     if (bHandled) return bSuccess;
 
     if (!FindModPath(sModule, sModPath, sTmp)) {
-        sRetMsg = "Unable to find module [" + sModule + "]";
+        sRetMsg = t_f("Unable to find module {1}.")(sModule);
         return false;
     }
 
@@ -1783,6 +2029,10 @@ bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule,
 
 bool CModules::GetModPathInfo(CModInfo& ModInfo, const CString& sModule,
                               const CString& sModPath, CString& sRetMsg) {
+    if (!ValidateModuleName(sModule, sRetMsg)) {
+        return false;
+    }
+
     ModInfo.SetName(sModule);
     ModInfo.SetPath(sModPath);
 
@@ -1833,6 +2083,8 @@ void CModules::GetDefaultMods(set<CModInfo>& ssMods,
     const map<CString, CModInfo::EModuleType> ns = {
         {"chansaver", CModInfo::UserModule},
         {"controlpanel", CModInfo::UserModule},
+        {"corecaps", CModInfo::GlobalModule},
+        {"saslplainauth", CModInfo::GlobalModule},
         {"simple_away", CModInfo::NetworkModule},
         {"webadmin", CModInfo::GlobalModule}};
 
@@ -1895,16 +2147,8 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath,
     // Some sane defaults in case anything errors out below
     sRetMsg.clear();
 
-    for (unsigned int a = 0; a < sModule.length(); a++) {
-        if (((sModule[a] < '0') || (sModule[a] > '9')) &&
-            ((sModule[a] < 'a') || (sModule[a] > 'z')) &&
-            ((sModule[a] < 'A') || (sModule[a] > 'Z')) && (sModule[a] != '_')) {
-            sRetMsg =
-                "Module names can only contain letters, numbers and "
-                "underscores, [" +
-                sModule + "] is invalid.";
-            return nullptr;
-        }
+    if (!ValidateModuleName(sModule, sRetMsg)) {
+        return nullptr;
     }
 
     // The second argument to dlopen() has a long history. It seems clear
@@ -1925,8 +2169,8 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath,
         // dlerror() returns pointer to static buffer, which may be overwritten
         // very soon with another dl call also it may just return null.
         const char* cDlError = dlerror();
-        CString sDlError = cDlError ? cDlError : "Unknown error";
-        sRetMsg = "Unable to open module [" + sModule + "] [" + sDlError + "]";
+        CString sDlError = cDlError ? cDlError : t_s("Unknown error");
+        sRetMsg = t_f("Unable to open module {1}: {2}")(sModule, sDlError);
         return nullptr;
     }
 
@@ -1935,30 +2179,28 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath,
     *reinterpret_cast<void**>(&fpZNCModuleEntry) = dlsym(p, "ZNCModuleEntry");
     if (!fpZNCModuleEntry) {
         dlclose(p);
-        sRetMsg = "Could not find ZNCModuleEntry in module [" + sModule + "]";
+        sRetMsg = t_f("Could not find ZNCModuleEntry in module {1}")(sModule);
         return nullptr;
     }
     const CModuleEntry* pModuleEntry = fpZNCModuleEntry();
 
     if (std::strcmp(pModuleEntry->pcVersion, VERSION_STR) ||
         std::strcmp(pModuleEntry->pcVersionExtra, VERSION_EXTRA)) {
-        sRetMsg = "Version mismatch for module [" + sModule +
-                  "] (core is " VERSION_STR VERSION_EXTRA
-                  ", module is built for " +
-                  CString(pModuleEntry->pcVersion) +
-                  pModuleEntry->pcVersionExtra + "), recompile this module.";
+        sRetMsg = t_f(
+            "Version mismatch for module {1}: core is {2}, module is built for "
+            "{3}. Recompile this module.")(
+            sModule, VERSION_STR VERSION_EXTRA,
+            CString(pModuleEntry->pcVersion) + pModuleEntry->pcVersionExtra);
         dlclose(p);
         return nullptr;
     }
 
     if (std::strcmp(pModuleEntry->pcCompileOptions,
                     ZNC_COMPILE_OPTIONS_STRING)) {
-        sRetMsg =
-            "Module [" + sModule +
-            "] is built incompatibly (core is '" ZNC_COMPILE_OPTIONS_STRING
-            "', module is '" +
-            CString(pModuleEntry->pcCompileOptions) +
-            "'), recompile this module.";
+        sRetMsg = t_f(
+            "Module {1} is built incompatibly: core is '{2}', module is '{3}'. "
+            "Recompile this module.")(sModule, ZNC_COMPILE_OPTIONS_STRING,
+                                      pModuleEntry->pcCompileOptions);
         dlclose(p);
         return nullptr;
     }
@@ -1986,14 +2228,16 @@ CModCommand::CModCommand(const CString& sCmd, CmdFunc func,
     : m_sCmd(sCmd), m_pFunc(std::move(func)), m_Args(Args), m_Desc(Desc) {}
 
 void CModCommand::InitHelp(CTable& Table) {
-    Table.AddColumn("Command");
-    Table.AddColumn("Description");
+    Table.SetStyle(CTable::ListStyle);
+    Table.AddColumn(t_s("Command", "modhelpcmd"));
+    Table.AddColumn(t_s("Description", "modhelpcmd"));
 }
 
 void CModCommand::AddHelp(CTable& Table) const {
     Table.AddRow();
-    Table.SetCell("Command", GetCommand() + " " + GetArgs());
-    Table.SetCell("Description", GetDescription());
+    Table.SetCell(t_s("Command", "modhelpcmd"),
+                  GetCommand() + (GetArgs().empty() ? "" : " ") + GetArgs());
+    Table.SetCell(t_s("Description", "modhelpcmd"), GetDescription());
 }
 
 CString CModule::t_s(const CString& sEnglish, const CString& sContext) const {

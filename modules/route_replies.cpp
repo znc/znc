@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ struct reply {
 // TODO this list is far from complete, no errors are handled
 static const struct {
     const char* szRequest;
-    struct reply vReplies[19];
+    struct reply vReplies[21];
 } vRouteReplies[] = {
       {"WHO",
        {{"402", true},   /* rfc1459 ERR_NOSUCHSERVER */
@@ -44,8 +44,8 @@ static const struct {
        {
         {"353", false}, /* rfc1459 RPL_NAMREPLY */
         {"366", true},  /* rfc1459 RPL_ENDOFNAMES */
-        // No such nick/channel
-        {"401", true},
+        {"401", true},  /* rfc1459 ERR_NOSUCHNICK */
+        {"403", true},  /* rfc1459 ERR_NOSUCHCHANNEL */
         {nullptr, true},
        }},
       {"LUSERS",
@@ -65,11 +65,13 @@ static const struct {
         {"313", false}, /* rfc1459 RPL_WHOISOPERATOR */
         {"317", false}, /* rfc1459 RPL_WHOISIDLE */
         {"319", false}, /* rfc1459 RPL_WHOISCHANNELS */
+        {"320", false}, /* unreal RPL_WHOISSPECIAL */
         {"301", false}, /* rfc1459 RPL_AWAY */
         {"276", false}, /* oftc-hybrid RPL_WHOISCERTFP */
         {"330", false}, /* ratbox RPL_WHOISLOGGEDIN
                            aka ircu RPL_WHOISACCOUNT */
-        {"338", false}, /* RPL_WHOISACTUALLY -- "actually using host" */
+        {"337", false}, /* solanum RPL_WHOISTEXT -- "is hiding their idle time" */
+        {"338", false}, /* ircu RPL_WHOISACTUALLY -- "actually using host" */
         {"378", false}, /* RPL_WHOISHOST -- real address of vhosts */
         {"671", false}, /* RPL_WHOISSECURE */
         {"307", false}, /* RPL_WHOISREGNICK */
@@ -97,6 +99,9 @@ static const struct {
        {{"406", false}, /* rfc1459 ERR_WASNOSUCHNICK */
         {"312", false}, /* rfc1459 RPL_WHOISSERVER */
         {"314", false}, /* rfc1459 RPL_WHOWASUSER */
+        {"330", false}, /* ratbox RPL_WHOISLOGGEDIN
+                           aka ircu RPL_WHOISACCOUNT */
+        {"338", false}, /* ircu RPL_WHOISACTUALLY -- "actually using host" */
         {"369", true},  /* rfc1459 RPL_ENDOFWHOWAS */
         {"431", true},  /* rfc1459 ERR_NONICKNAMEGIVEN */
         {nullptr, true}}},
@@ -171,12 +176,26 @@ static const struct {
         // MODE e
         {"348", false},
         {"349", true},
+        {"403", true}, /* rfc1459 ERR_NOSUCHCHANNEL */
+        {"442", true}, /* rfc1459 ERR_NOTONCHANNEL */
         {"467", true}, /* rfc1459 ERR_KEYSET */
         {"472", true}, /* rfc1459 ERR_UNKNOWNMODE */
         {"501", true}, /* rfc1459 ERR_UMODEUNKNOWNFLAG */
         {"502", true}, /* rfc1459 ERR_USERSDONTMATCH */
         {nullptr, true},
        }},
+       {"TOPIC",
+        {
+         {"461", true}, /* rfc1459 ERR_NEEDMOREPARAMS */
+         {"403", true}, /* rfc1459 ERR_NOSUCHCHANNEL */
+         {"442", true}, /* rfc1459 ERR_NOTONCHANNEL */
+         {"482", true}, /* rfc1459 ERR_CHANOPRIVSNEEDED */
+         {"331", true}, /* rfc1459 RPL_NOTOPIC */
+         {"332", false}, /* rfc1459 RPL_TOPIC */
+         {"333", true}, /* ircu? RPL_TOPICWHOTIME */
+         {nullptr, true},
+       }},
+
       // END (last item!)
       {nullptr, {{nullptr, true}}}};
 
@@ -193,7 +212,7 @@ class CRouteTimeout : public CTimer {
 };
 
 struct queued_req {
-    CString sLine;
+    CMessage msg;
     const struct reply* reply;
 };
 
@@ -218,7 +237,7 @@ class CRouteRepliesMod : public CModule {
             it = m_vsPending.begin();
 
             while (!it->second.empty()) {
-                PutIRC(it->second[0].sLine);
+                PutIRC(it->second[0].msg);
                 it->second.erase(it->second.begin());
             }
 
@@ -268,7 +287,7 @@ class CRouteRepliesMod : public CModule {
             // :server 461 nick WHO :Not enough parameters
             CString sOrigCmd = msg.GetParam(1);
 
-            if (m_sLastRequest.Token(0).Equals(sOrigCmd)) {
+            if (m_LastRequest.GetCommand().Equals(sOrigCmd)) {
                 // This is the reply to the last request
                 if (RouteReply(msg, true)) return HALTCORE;
                 return CONTINUE;
@@ -290,22 +309,22 @@ class CRouteRepliesMod : public CModule {
         return CONTINUE;
     }
 
-    EModRet OnUserRaw(CString& sLine) override {
-        CString sCmd = sLine.Token(0).AsUpper();
+    EModRet OnUserRawMessage(CMessage& Message) override {
+        const CString& sCmd = Message.GetCommand();
 
         if (!GetNetwork()->GetIRCSock() ||
             !GetNetwork()->GetIRCSock()->IsConnected())
             return CONTINUE;
 
-        if (sCmd.Equals("MODE")) {
+        if (Message.GetType() == CMessage::Type::Mode) {
             // Check if this is a mode request that needs to be handled
 
             // If there are arguments to a mode change,
             // we must not route it.
-            if (!sLine.Token(3, true).empty()) return CONTINUE;
+            if (!Message.GetParamsColon(2).empty()) return CONTINUE;
 
             // Grab the mode change parameter
-            CString sMode = sLine.Token(2);
+            CString sMode = Message.GetParam(1);
 
             // If this is a channel mode request, znc core replies to it
             if (sMode.empty()) return CONTINUE;
@@ -327,11 +346,17 @@ class CRouteRepliesMod : public CModule {
 
             // Ok, this looks like we should route it.
             // Fall through to the next loop
+        } else if (Message.GetType() == CMessage::Type::Topic) {
+            // Check if this is a topic request that needs to be handled
+
+            // If there are arguments to a topic we must not route it.
+            // Topic change message may result in TOPIC change to go to every client
+            if (!Message.GetParamsColon(1).empty()) return CONTINUE;
         }
 
         for (size_t i = 0; vRouteReplies[i].szRequest != nullptr; i++) {
             if (vRouteReplies[i].szRequest == sCmd) {
-                struct queued_req req = {sLine, vRouteReplies[i].vReplies};
+                struct queued_req req = {Message, vRouteReplies[i].vReplies};
                 m_vsPending[GetClient()].push_back(req);
                 SendRequest();
 
@@ -355,7 +380,7 @@ class CRouteRepliesMod : public CModule {
             PutModule(
                 t_f("To disable this message, do \"/msg {1} silent yes\"")(
                     GetModNick()));
-            PutModule(t_f("Last request: {1}")(m_sLastRequest));
+            PutModule(t_f("Last request: {1}")(m_LastRequest.ToString()));
             PutModule(t_s("Expected replies:"));
 
             for (size_t i = 0; m_pReplies[i].szReply != nullptr; i++) {
@@ -419,8 +444,8 @@ class CRouteRepliesMod : public CModule {
 
         m_pDoing = it->first;
         m_pReplies = it->second[0].reply;
-        m_sLastRequest = it->second[0].sLine;
-        PutIRC(it->second[0].sLine);
+        m_LastRequest = it->second[0].msg;
+        PutIRC(it->second[0].msg);
         it->second.erase(it->second.begin());
     }
 
@@ -440,7 +465,7 @@ class CRouteRepliesMod : public CModule {
     const struct reply* m_pReplies;
     requestQueue m_vsPending;
     // This field is only used for display purpose.
-    CString m_sLastRequest;
+    CMessage m_LastRequest;
 };
 
 void CRouteTimeout::RunJob() {

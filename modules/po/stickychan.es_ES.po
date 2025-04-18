@@ -1,0 +1,107 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-File: /master/modules/po/stickychan.pot\n"
+"X-Crowdin-File-ID: 202\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Spanish\n"
+"Language: es_ES\n"
+
+#: modules/po/../data/stickychan/tmpl/index.tmpl:9
+msgid "Name"
+msgstr "Nombre"
+
+#: modules/po/../data/stickychan/tmpl/index.tmpl:10
+msgid "Sticky"
+msgstr "Fijo"
+
+#: modules/po/../data/stickychan/tmpl/index.tmpl:25
+msgid "Save"
+msgstr "Guardar"
+
+#: modules/po/../data/stickychan/tmpl/stickychan_WebadminChan.tmpl:8
+msgid "Channel is sticky"
+msgstr "El canal está fijado"
+
+#: stickychan.cpp:28
+msgid "<#channel> [key]"
+msgstr "<#canal> [clave]"
+
+#: stickychan.cpp:28
+msgid "Sticks a channel"
+msgstr "Fija un canal"
+
+#: stickychan.cpp:30
+msgid "<#channel>"
+msgstr "<#canal>"
+
+#: stickychan.cpp:30
+msgid "Unsticks a channel"
+msgstr "Desfija un canal"
+
+#: stickychan.cpp:32
+msgid "Lists sticky channels"
+msgstr "Muestra los canales fijos"
+
+#: stickychan.cpp:75
+msgid "Usage: Stick <#channel> [key]"
+msgstr "Uso: Stick <#canal> [clave]"
+
+#: stickychan.cpp:79
+#, c++-format
+msgid "Stuck {1}"
+msgstr "Fijado {1}"
+
+#: stickychan.cpp:85
+msgid "Usage: Unstick <#channel>"
+msgstr "Uso: Unstick <#canal>"
+
+#: stickychan.cpp:89
+#, c++-format
+msgid "Unstuck {1}"
+msgstr "Desfijado {1}"
+
+#: stickychan.cpp:101
+msgid " -- End of List"
+msgstr " -- Fin de la lista"
+
+#: stickychan.cpp:115
+#, c++-format
+msgid "Could not join {1} (# prefix missing?)"
+msgstr "No se ha podido entrar a {1} (¿Falta el prefijo #?)"
+
+#: stickychan.cpp:128
+msgid "Sticky Channels"
+msgstr "Canales fijados"
+
+#: stickychan.cpp:160
+msgid "Changes have been saved!"
+msgstr "Los cambios han sido guardados"
+
+#: stickychan.cpp:185
+msgid "Channel became sticky!"
+msgstr "Se ha fijado el canal"
+
+#: stickychan.cpp:189
+msgid "Channel stopped being sticky!"
+msgstr "El canal ya no está fijado"
+
+#: stickychan.cpp:209
+#, c++-format
+msgid ""
+"Channel {1} cannot be joined, it is an illegal channel name. Unsticking."
+msgstr "No se puede entrar al canal {1}, es un nombre no válido. Desfijado."
+
+#: stickychan.cpp:246
+msgid "List of channels, separated by comma."
+msgstr "Lista de canales, separados por comas."
+
+#: stickychan.cpp:251
+msgid "configless sticky chans, keeps you there very stickily even"
+msgstr ""
+"Fijación de canales sin configuración, te mantienen dentro todo lo posible"

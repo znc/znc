@@ -1,0 +1,55 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: tr\n"
+"X-Crowdin-File: /master/modules/po/keepnick.pot\n"
+"X-Crowdin-File-ID: 176\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Turkish\n"
+"Language: tr_TR\n"
+
+#: keepnick.cpp:39
+msgid "Try to get your primary nick"
+msgstr "Birincil nickinizi almaya çalışın"
+
+#: keepnick.cpp:42 keepnick.cpp:196
+msgid "No longer trying to get your primary nick"
+msgstr "Artık birincil nickinizi almaya çalışmıyorsunuz"
+
+#: keepnick.cpp:44
+msgid "Show the current state"
+msgstr "Mevcut durumu göster"
+
+#: keepnick.cpp:158
+msgid "ZNC is already trying to get this nickname"
+msgstr "ZNC zaten bu nicki almaya çalışıyor"
+
+#: keepnick.cpp:173
+#, c++-format
+msgid "Unable to obtain nick {1}: {2}, {3}"
+msgstr "{1} nicki alınamıyor: {2}, {3}"
+
+#: keepnick.cpp:181
+#, c++-format
+msgid "Unable to obtain nick {1}"
+msgstr "{1} nicki alınamıyor"
+
+#: keepnick.cpp:191
+msgid "Trying to get your primary nick"
+msgstr "Birincil nickinizi almaya çalışıyorum"
+
+#: keepnick.cpp:201
+msgid "Currently trying to get your primary nick"
+msgstr "Şu anda birincil nickinizi almaya çalışıyorum"
+
+#: keepnick.cpp:203
+msgid "Currently disabled, try 'enable'"
+msgstr "Şu anda devre dışı, 'enable' deneyin"
+
+#: keepnick.cpp:224
+msgid "Keeps trying for your primary nick"
+msgstr "Birincil nickinizi almayı denemeye devam ediyor"

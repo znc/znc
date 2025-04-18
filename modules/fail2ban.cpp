@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -176,6 +176,7 @@ class CFailToBanMod : public CModule {
         CTable Table;
         Table.AddColumn(t_s("Host", "list"));
         Table.AddColumn(t_s("Attempts", "list"));
+        Table.SetStyle(CTable::ListStyle);
 
         for (const auto& it : m_Cache.GetItems()) {
             Table.AddRow();
@@ -213,6 +214,10 @@ class CFailToBanMod : public CModule {
             Add(sRemoteIP, *pCount + 1);
         else
             Add(sRemoteIP, 1);
+    }
+
+    void OnClientLogin() override {
+        Remove(GetClient()->GetRemoteIP());
     }
 
     EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) override {

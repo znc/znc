@@ -1,0 +1,47 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: bg\n"
+"X-Crowdin-File: /master/modules/po/autoreply.pot\n"
+"X-Crowdin-File-ID: 154\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Bulgarian\n"
+"Language: bg_BG\n"
+
+#: autoreply.cpp:25
+msgid "<reply>"
+msgstr "<reply>"
+
+#: autoreply.cpp:25
+msgid "Sets a new reply"
+msgstr "Задава нов отговор"
+
+#: autoreply.cpp:27
+msgid "Displays the current query reply"
+msgstr "Показва сегашната заявка за отговор"
+
+#: autoreply.cpp:75
+#, c++-format
+msgid "Current reply is: {1} ({2})"
+msgstr "Сегашният отговор е: {1} ({2})"
+
+#: autoreply.cpp:81
+#, c++-format
+msgid "New reply set to: {1} ({2})"
+msgstr "Новият отговор е: {1} ({2})"
+
+#: autoreply.cpp:94
+msgid ""
+"You might specify a reply text. It is used when automatically answering "
+"queries, if you are not connected to ZNC."
+msgstr ""
+"Може да не задавате отговор. Той се използва за автоматичното отговаряне на "
+"заявки, ако не сте свързани към ZNC."
+
+#: autoreply.cpp:98
+msgid "Reply to queries when you are away"
+msgstr "Отговаря на заявки, когато отсъствате"

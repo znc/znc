@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,18 +14,14 @@
 # limitations under the License.
 #
 
-if(CMAKE_VERSION VERSION_LESS 3.2)
-	# Since 3.2 it does this automatically from BYPRODUCTS
-	set_source_files_properties("versionc.cpp" PROPERTIES GENERATED true)
-endif()
-
 set(znc_cpp "ZNCString.cpp" "znc.cpp" "IRCNetwork.cpp" "Translation.cpp"
 	"IRCSock.cpp" "Client.cpp" "Chan.cpp" "Nick.cpp" "Server.cpp"
 	"Modules.cpp" "MD5.cpp" "Buffer.cpp" "Utils.cpp" "FileUtils.cpp"
 	"HTTPSock.cpp" "Template.cpp" "ClientCommand.cpp" "Socket.cpp"
 	"SHA256.cpp" "WebModules.cpp" "Listener.cpp" "Config.cpp" "ZNCDebug.cpp"
 	"Threads.cpp" "Query.cpp" "SSLVerifyHost.cpp" "Message.cpp" "User.cpp")
-znc_add_library(znclib ${lib_type} ${znc_cpp} "Csocket.cpp" "versionc.cpp")
+znc_add_library(znclib ${lib_type} ${znc_cpp} "Csocket.cpp" "versionc.cpp"
+	${cctz_cc})
 znc_add_executable(znc "main.cpp")
 target_link_libraries(znc PRIVATE znclib)
 
@@ -63,23 +59,18 @@ set(znc_include_dirs
 	"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
 	"$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>"
 	"$<INSTALL_INTERFACE:${CMAKE_INSTALL_FULL_INCLUDEDIR}>")
-target_link_libraries(znclib ${CMAKE_DL_LIBS} Threads::Threads)
-if(OPENSSL_FOUND)
-	target_link_libraries(znclib ${OPENSSL_LIBRARIES})
-	list(APPEND znc_include_dirs "${OPENSSL_INCLUDE_DIR}")
-endif()
+target_link_libraries(znclib PRIVATE ${CMAKE_DL_LIBS} Threads::Threads)
 if(ZLIB_FOUND)
-	target_link_libraries(znclib ${ZLIB_LIBRARIES})
-	list(APPEND znc_include_dirs ${ZLIB_INCLUDE_DIRS})
-endif()
-if(ICU_FOUND)
-	target_link_libraries(znclib ${ICU_LDFLAGS})
-	list(APPEND znc_include_dirs ${ICU_INCLUDE_DIRS})
+	target_link_libraries(znclib PRIVATE ZLIB::ZLIB)
 endif()
 if(Boost_FOUND)
-	target_link_libraries(znclib ${Boost_LIBRARIES})
-	list(APPEND znc_include_dirs ${Boost_INCLUDE_DIRS})
+	target_link_libraries(znclib PRIVATE Boost::locale)
 endif()
+if(ZNC_HAVE_ARGON)
+	target_link_libraries(znclib PRIVATE PkgConfig::ARGON)
+endif()
+target_link_libraries(znclib PUBLIC ${zncpubdeps})
+target_link_libraries(znclib PRIVATE cctz::cctz)
 target_include_directories(znc PUBLIC ${znc_include_dirs})
 target_include_directories(znclib PUBLIC ${znc_include_dirs})
 
@@ -93,7 +84,13 @@ set_target_properties(znclib ${znc_link} PROPERTIES
 # The following options are relevant only on cygwin
 set_target_properties(znclib PROPERTIES
 	OUTPUT_NAME "znc"
-	SOVERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
+	SOVERSION "${ZNC_VERSION}")
+
+add_library(ZNC INTERFACE)
+target_link_libraries(ZNC INTERFACE ${znc_link} ${zncpubdeps})
+target_compile_definitions(ZNC INTERFACE "znc_export_lib_EXPORTS")
+target_compile_features(ZNC INTERFACE cxx_std_17)
+target_compile_features(znclib PUBLIC cxx_std_17)
 
 if(HAVE_I18N)
 	add_subdirectory(po)
@@ -101,11 +98,15 @@ endif()
 
 
 install(TARGETS znc ${install_lib}
-	EXPORT znc
+	EXPORT znc_internal
 	RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
 	LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 	# this one is libznc.dll.a for cygwin
 	ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
-install(EXPORT znc
+install(TARGETS ZNC EXPORT znc_public)
+install(EXPORT znc_internal
 	DESTINATION "${CMAKE_INSTALL_DATADIR}/znc/cmake"
-	NAMESPACE znc_internal_)
+	NAMESPACE ZNC::internal::)
+install(EXPORT znc_public
+	DESTINATION "${CMAKE_INSTALL_DATADIR}/znc/cmake"
+	NAMESPACE ZNC::)

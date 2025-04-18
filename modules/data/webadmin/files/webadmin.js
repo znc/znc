@@ -121,18 +121,31 @@ function serverlist_init($) {
 			row.remove();
 			serialize();
 		}
-		row.append(
-			$("<td/>").append($("<input/>").attr({"type":"text"})
-				.addClass("servers_row_host").val(host)),
-			$("<td/>").append($("<input/>").attr({"type":"number"})
-				.addClass("servers_row_port").val(port)),
-			$("<td/>").append($("<input/>").attr({"type":"checkbox"})
-				.addClass("servers_row_ssl").prop("checked", ssl)),
-			$("<td/>").append($("<input/>").attr({"type":"text"})
-				.addClass("servers_row_pass").val(pass)),
-			$("<td/>").append($("<input/>").attr({"type":"button"})
-				.val("X").click(delete_row))
-		);
+		if (NetworkEdit) {
+			row.append(
+				$("<td/>").append($("<input/>").attr({"type":"text"})
+					.addClass("servers_row_host").val(host)),
+				$("<td/>").append($("<input/>").attr({"type":"number"})
+					.addClass("servers_row_port").val(port)),
+				$("<td/>").append($("<input/>").attr({"type":"checkbox"})
+					.addClass("servers_row_ssl").prop("checked", ssl)),
+				$("<td/>").append($("<input/>").attr({"type":"text"})
+					.addClass("servers_row_pass").val(pass)),
+				$("<td/>").append($("<input/>").attr({"type":"button"})
+					.val("X").click(delete_row))
+			);
+		} else {
+			row.append(
+				$("<td/>").append($("<input/>").attr({"type":"text","disabled":true})
+						.addClass("servers_row_host").val(host)),
+				$("<td/>").append($("<input/>").attr({"type":"number","disabled":true})
+						.addClass("servers_row_port").val(port)),
+				$("<td/>").append($("<input/>").attr({"type":"checkbox","disabled":true})
+						.addClass("servers_row_ssl").prop("checked", ssl)),
+				$("<td/>").append($("<input/>").attr({"type":"text","disabled":true})
+						.addClass("servers_row_pass").val(pass))
+			);
+		}
 		$("input", row).change(serialize);
 		$("#servers_tbody").append(row);
 	}
@@ -165,6 +178,31 @@ function serverlist_init($) {
 	})();
 }
 
+function channellist_init($) {
+    function update_rows() {
+        $("#channels > tr").each(function(i) {
+            $(this).toggleClass("evenrow", i % 2 === 1).toggleClass("oddrow", i % 2 === 0);
+            $(this).find(".channel_index").val(i + 1);
+        });
+    }
+    $("#channels").sortable({
+        axis: "y",
+        update: update_rows
+    });
+    $(".channel_index").change(function() {
+        var src = $(this).closest("tr").detach();
+        var rows = $("#channels > tr");
+        var dst = rows[this.value - 1];
+
+        if (dst)
+            src.insertBefore(dst);
+        else
+            src.insertAfter(rows.last());
+
+        update_rows();
+    });
+}
+
 function ctcpreplies_init($) {
 	function serialize() {
 		var text = "";
@@ -185,16 +223,27 @@ function ctcpreplies_init($) {
 			row.remove();
 			serialize();
 		}
-		row.append(
-			$("<td/>").append($("<input/>").val(request)
-				.addClass("ctcpreplies_row_request")
-				.attr({"type":"text","list":"ctcpreplies_list"})),
-			$("<td/>").append($("<input/>").val(response)
-				.addClass("ctcpreplies_row_response")
-				.attr({"type":"text","placeholder":$("#ctcpreplies_js").data("placeholder")})),
-			$("<td/>").append($("<input/>").val("X")
-				.attr({"type":"button"}).click(delete_row))
-		);
+		if (CTCPEdit) {
+			row.append(
+				$("<td/>").append($("<input/>").val(request)
+					.addClass("ctcpreplies_row_request")
+					.attr({"type":"text","list":"ctcpreplies_list"})),
+				$("<td/>").append($("<input/>").val(response)
+					.addClass("ctcpreplies_row_response")
+					.attr({"type":"text","placeholder":$("#ctcpreplies_js").data("placeholder")})),
+				$("<td/>").append($("<input/>").val("X")
+					.attr({"type":"button"}).click(delete_row))
+			);
+		} else {
+			row.append(
+				$("<td/>").append($("<input/>").val(request)
+					.addClass("ctcpreplies_row_request")
+					.attr({"type":"text","list":"ctcpreplies_list","disabled":true})),
+				$("<td/>").append($("<input/>").val(response)
+					.addClass("ctcpreplies_row_response")
+					.attr({"type":"text","placeholder":$("#ctcpreplies_js").data("placeholder"),"disabled":true})),
+			);
+		}
 		$("input", row).change(serialize);
 		$("#ctcpreplies_tbody").append(row);
 	}

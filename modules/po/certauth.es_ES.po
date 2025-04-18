@@ -1,0 +1,112 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-File: /master/modules/po/certauth.pot\n"
+"X-Crowdin-File-ID: 162\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Spanish\n"
+"Language: es_ES\n"
+
+#: modules/po/../data/certauth/tmpl/index.tmpl:7
+msgid "Add a key"
+msgstr "Añadir una clave"
+
+#: modules/po/../data/certauth/tmpl/index.tmpl:11
+msgid "Key:"
+msgstr "Clave:"
+
+#: modules/po/../data/certauth/tmpl/index.tmpl:15
+msgid "Add Key"
+msgstr "Añadir clave"
+
+#: modules/po/../data/certauth/tmpl/index.tmpl:23
+msgid "You have no keys."
+msgstr "No tienes claves."
+
+#: modules/po/../data/certauth/tmpl/index.tmpl:30
+msgctxt "web"
+msgid "Key"
+msgstr "Clave"
+
+#: modules/po/../data/certauth/tmpl/index.tmpl:36
+msgid "del"
+msgstr "borrar"
+
+#: certauth.cpp:31
+msgid "[pubkey]"
+msgstr "[pubkey]"
+
+#: certauth.cpp:32
+msgid "Add a public key. If key is not provided will use the current key"
+msgstr ""
+"Añadir una clave pública. Si no se proporciona una clave se usará la actual"
+
+#: certauth.cpp:35
+msgid "id"
+msgstr "id"
+
+#: certauth.cpp:35
+msgid "Delete a key by its number in List"
+msgstr "Borrar una clave por su número en la lista"
+
+#: certauth.cpp:37
+msgid "List your public keys"
+msgstr "Muestra tus claves públicas"
+
+#: certauth.cpp:39
+msgid "Print your current key"
+msgstr "Muestra tu claves actual"
+
+#: certauth.cpp:239
+msgid "You are not connected with any valid public key"
+msgstr "No estás conectado con ninguna clave pública válida"
+
+#: certauth.cpp:241
+#, c++-format
+msgid "Your current public key is: {1}"
+msgstr "Tu clave pública actual es: {1}"
+
+#: certauth.cpp:254
+msgid "You did not supply a public key or connect with one."
+msgstr "No has proporcionado una clave pública."
+
+#: certauth.cpp:257
+#, c++-format
+msgid "Key '{1}' added."
+msgstr "Clave '{1}' añadida."
+
+#: certauth.cpp:259
+#, c++-format
+msgid "The key '{1}' is already added."
+msgstr "La clave '{1}' ya está añadida."
+
+#: certauth.cpp:267 certauth.cpp:280
+msgctxt "list"
+msgid "Id"
+msgstr "Id"
+
+#: certauth.cpp:268 certauth.cpp:281
+msgctxt "list"
+msgid "Key"
+msgstr "Clave"
+
+#: certauth.cpp:273 certauth.cpp:287 certauth.cpp:296
+msgid "No keys set for your user"
+msgstr "No hay claves configuradas para tu usuario"
+
+#: certauth.cpp:301
+msgid "Invalid #, check \"list\""
+msgstr "Código # inválido, comprueba la lista con \"list\""
+
+#: certauth.cpp:321
+msgid "Removed"
+msgstr "Eliminado"
+
+#: certauth.cpp:400
+msgid "Allows users to authenticate via SSL client certificates."
+msgstr "Permite a los usuarios autenticarse vía certificados SSL."

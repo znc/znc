@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,8 +34,8 @@
 // admin.
 //       The keys are currently stored in plain text, so anyone with access to
 //       your account (or root) can obtain them.
-//       It is strongly suggested that you enable SSL between znc and your
-//       client otherwise the encryption stops at znc and gets sent to your
+//       It is strongly suggested that you enable SSL between ZNC and your
+//       client otherwise the encryption stops at ZNC and gets sent to your
 //       client in plain text.
 //
 
@@ -58,7 +58,7 @@ class CCryptMod : public CModule {
      * ... all the way back to the original located at
      * http://mircryption.sourceforge.net/Extras/McpsFishDH.zip
      */
-    const char* m_sPrime1080 =
+    static constexpr const char* m_sPrime1080 =
         "FBE1022E23D213E8ACFA9AE8B9DFADA3EA6B7AC7A7B7E95AB5EB2DF858921FEADE95E6"
         "AC7BE7DE6ADBAB8A783E7AF7A7FA6A2B7BEB1E72EAE2B72F9FA2BFB2A2EFBEFAC868BA"
         "DB3E828FA8BADFADA3E4CC1BE7E8AFE85E9698A783EB68FA07A77AB6AD7BEB618ACF9C"
@@ -68,7 +68,8 @@ class CCryptMod : public CModule {
     CString m_sPrivKey;
     CString m_sPubKey;
 
-#if OPENSSL_VERSION_NUMBER < 0X10100000L
+#if OPENSSL_VERSION_NUMBER < 0X10100000L || \
+    (defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x02070000fL)
     static int DH_set0_pqg(DH* dh, BIGNUM* p, BIGNUM* q, BIGNUM* g) {
         /* If the fields p and g in dh are nullptr, the corresponding input
          * parameters MUST be non-nullptr.  q may remain nullptr.
@@ -142,7 +143,7 @@ class CCryptMod : public CModule {
     }
 
     bool DH1080_comp(CString& sOtherPubKey, CString& sSecretKey) {
-        unsigned long len;
+        long len;
         unsigned char* key = nullptr;
         BIGNUM* bOtherPubKey = nullptr;
 
@@ -228,35 +229,23 @@ class CCryptMod : public CModule {
         return true;
     }
 
-    EModRet OnUserMsg(CString& sTarget, CString& sMessage) override {
-        return FilterOutgoing(sTarget, sMessage, "PRIVMSG", "", "");
+    EModRet OnUserTextMessage(CTextMessage& Message) override {
+        FilterOutgoing(Message);
+        return CONTINUE;
     }
 
-    EModRet OnUserNotice(CString& sTarget, CString& sMessage) override {
-        return FilterOutgoing(sTarget, sMessage, "NOTICE", "", "");
+    EModRet OnUserNoticeMessage(CNoticeMessage& Message) override {
+        FilterOutgoing(Message);
+        return CONTINUE;
     }
 
-    EModRet OnUserAction(CString& sTarget, CString& sMessage) override {
-        return FilterOutgoing(sTarget, sMessage, "PRIVMSG", "\001ACTION ",
-                              "\001");
+    EModRet OnUserActionMessage(CActionMessage& Message) override {
+        FilterOutgoing(Message);
+        return CONTINUE;
     }
 
-    EModRet OnUserTopic(CString& sTarget, CString& sMessage) override {
-        sTarget.TrimPrefix(NickPrefix());
-
-        if (sMessage.TrimPrefix("``")) {
-            return CONTINUE;
-        }
-
-        MCString::iterator it = FindNV(sTarget.AsLower());
-
-        if (it != EndNV()) {
-            sMessage = MakeIvec() + sMessage;
-            sMessage.Encrypt(it->second);
-            sMessage.Base64Encode();
-            sMessage = "+OK *" + sMessage;
-        }
-
+    EModRet OnUserTopicMessage(CTopicMessage& Message) override {
+        FilterOutgoing(Message);
         return CONTINUE;
     }
 
@@ -346,62 +335,42 @@ class CCryptMod : public CModule {
         return CONTINUE;
     }
 
-    EModRet OnRaw(CString& sLine) override {
-        if (!sLine.Token(1).Equals("332")) {
+    EModRet OnNumericMessage(CNumericMessage& Message) override {
+        if (Message.GetCode() != 332) {
             return CONTINUE;
         }
 
-        CChan* pChan = GetNetwork()->FindChan(sLine.Token(3));
+        CChan* pChan = GetNetwork()->FindChan(Message.GetParam(1));
         if (pChan) {
-            CNick* Nick = pChan->FindNick(sLine.Token(2));
-            CString sTopic = sLine.Token(4, true);
-            sTopic.TrimPrefix(":");
+            CNick* Nick = pChan->FindNick(Message.GetParam(0));
+            CString sTopic = Message.GetParam(2);
 
             FilterIncoming(pChan->GetName(), *Nick, sTopic);
-            sLine = sLine.Token(0) + " " + sLine.Token(1) + " " +
-                    sLine.Token(2) + " " + pChan->GetName() + " :" + sTopic;
+            Message.SetParam(2, sTopic);
         }
 
         return CONTINUE;
     }
 
-    EModRet FilterOutgoing(CString& sTarget, CString& sMessage,
-                           const CString& sType, const CString& sPreMsg,
-                           const CString& sPostMsg) {
+    template <typename T>
+    void FilterOutgoing(T& Msg) {
+        CString sTarget = Msg.GetTarget();
         sTarget.TrimPrefix(NickPrefix());
+        Msg.SetTarget(sTarget);
+
+        CString sMessage = Msg.GetText();
 
         if (sMessage.TrimPrefix("``")) {
-            return CONTINUE;
+            return;
         }
 
         MCString::iterator it = FindNV(sTarget.AsLower());
-
         if (it != EndNV()) {
-            CChan* pChan = GetNetwork()->FindChan(sTarget);
-            CString sNickMask = GetNetwork()->GetIRCNick().GetNickMask();
-            if (pChan) {
-                if (!pChan->AutoClearChanBuffer())
-                    pChan->AddBuffer(":" + NickPrefix() + _NAMEDFMT(sNickMask) +
-                                         " " + sType + " " +
-                                         _NAMEDFMT(sTarget) + " :" + sPreMsg +
-                                         "{text}" + sPostMsg,
-                                     sMessage);
-                GetUser()->PutUser(":" + NickPrefix() + sNickMask + " " +
-                                       sType + " " + sTarget + " :" + sPreMsg +
-                                       sMessage + sPostMsg,
-                                   nullptr, GetClient());
-            }
-
-            CString sMsg = MakeIvec() + sMessage;
-            sMsg.Encrypt(it->second);
-            sMsg.Base64Encode();
-            sMsg = "+OK *" + sMsg;
-
-            PutIRC(sType + " " + sTarget + " :" + sPreMsg + sMsg + sPostMsg);
-            return HALTCORE;
+            sMessage = MakeIvec() + sMessage;
+            sMessage.Encrypt(it->second);
+            sMessage.Base64Encode();
+            Msg.SetText("+OK *" + sMessage);
         }
-
-        return CONTINUE;
     }
 
     void FilterIncoming(const CString& sTarget, CNick& Nick,
@@ -505,6 +474,7 @@ class CCryptMod : public CModule {
         CTable Table;
         Table.AddColumn(t_s("Target", "listkeys"));
         Table.AddColumn(t_s("Key", "listkeys"));
+        Table.SetStyle(CTable::ListStyle);
 
         for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
             if (!it->first.Equals(NICK_PREFIX_KEY)) {

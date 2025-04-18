@@ -1,0 +1,96 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: bg\n"
+"X-Crowdin-File: /master/modules/po/clientnotify.pot\n"
+"X-Crowdin-File-ID: 165\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Bulgarian\n"
+"Language: bg_BG\n"
+
+#: clientnotify.cpp:53
+msgid "<message|notice|off>"
+msgstr ""
+
+#: clientnotify.cpp:54
+msgid "Sets the notify method"
+msgstr ""
+
+#: clientnotify.cpp:56 clientnotify.cpp:59 clientnotify.cpp:63
+#: clientnotify.cpp:68
+msgid "<on|off>"
+msgstr ""
+
+#: clientnotify.cpp:57
+msgid "Turns notifications for unseen connections on or off"
+msgstr ""
+
+#: clientnotify.cpp:60
+msgid ""
+"Specifies whether you want to be notified about new connections with new IPs"
+msgstr ""
+
+#: clientnotify.cpp:64
+msgid ""
+"Specifies whether you want to be notified about new connections with new "
+"client IDs"
+msgstr ""
+
+#: clientnotify.cpp:69
+msgid "Turns notifications for clients disconnecting on or off"
+msgstr ""
+
+#: clientnotify.cpp:71
+msgid "Shows the current settings"
+msgstr ""
+
+#: clientnotify.cpp:104 clientnotify.cpp:134
+#, c++-format
+msgid "<This message is impossible for 1 client>"
+msgid_plural ""
+"Another client ({1}) authenticated as your user. Use the 'ListClients' "
+"command to see all {2} clients."
+msgstr[0] ""
+msgstr[1] ""
+
+#: clientnotify.cpp:147
+msgid "Usage: Method <message|notice|off>"
+msgstr ""
+
+#: clientnotify.cpp:153 clientnotify.cpp:166 clientnotify.cpp:179
+#: clientnotify.cpp:192 clientnotify.cpp:205
+msgid "Saved."
+msgstr ""
+
+#: clientnotify.cpp:160
+msgid "Usage: NewOnly <on|off>"
+msgstr ""
+
+#: clientnotify.cpp:173
+msgid "Usage: NotifyOnNewIP <on|off>"
+msgstr ""
+
+#: clientnotify.cpp:186
+msgid "Usage: NotifyOnNewID <on|off>"
+msgstr ""
+
+#: clientnotify.cpp:199
+msgid "Usage: OnDisconnect <on|off>"
+msgstr ""
+
+#: clientnotify.cpp:210
+#, c++-format
+msgid ""
+"Current settings: Method: {1}, for unseen only: {2}, notifyfor unseen IPs: "
+"{3}, notify for unseen IDs: {4}, notify ondisconnecting clients: {5}"
+msgstr ""
+
+#: clientnotify.cpp:224
+msgid ""
+"Notifies you when another IRC client logs into or out of your account. "
+"Configurable."
+msgstr ""

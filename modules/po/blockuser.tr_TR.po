@@ -1,0 +1,103 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: tr\n"
+"X-Crowdin-File: /master/modules/po/blockuser.pot\n"
+"X-Crowdin-File-ID: 158\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Turkish\n"
+"Language: tr_TR\n"
+
+#: modules/po/../data/blockuser/tmpl/blockuser_WebadminUser.tmpl:9
+msgid "Account is blocked"
+msgstr "Hesap bloke edildi"
+
+#: blockuser.cpp:23
+msgid "Your account has been disabled. Contact your administrator."
+msgstr "Hesabınız engellendi. Yöneticinizle iletişime geçin."
+
+#: blockuser.cpp:29
+msgid "List blocked users"
+msgstr "Bloke edilen kullanıcıları listele"
+
+#: blockuser.cpp:31 blockuser.cpp:33
+msgid "<user>"
+msgstr "<kullanıcı>"
+
+#: blockuser.cpp:31
+msgid "Block a user"
+msgstr "Bir kullanıcıyı bloke et"
+
+#: blockuser.cpp:33
+msgid "Unblock a user"
+msgstr "Bir kullanıcının blokesini kaldır"
+
+#: blockuser.cpp:55
+#, c++-format
+msgid "Could not block {1}"
+msgstr "{1} bloke edilemedi"
+
+#: blockuser.cpp:76
+msgid "Access denied"
+msgstr "Erişim reddedildi"
+
+#: blockuser.cpp:85
+msgid "No users are blocked"
+msgstr "Bloke edilen kullanıcı yok"
+
+#: blockuser.cpp:88
+msgid "Blocked users:"
+msgstr "Bloke edilen kullanıcılar:"
+
+#: blockuser.cpp:100
+msgid "Usage: Block <user>"
+msgstr "Kullanımı: Block <kullanıcı>"
+
+#: blockuser.cpp:105 blockuser.cpp:147
+msgid "You can't block yourself"
+msgstr "Kendinizi kendinizi bloke edemezsiniz"
+
+#: blockuser.cpp:110 blockuser.cpp:152
+#, c++-format
+msgid "Blocked {1}"
+msgstr "{1} bloke edildi"
+
+#: blockuser.cpp:112
+#, c++-format
+msgid "Could not block {1} (misspelled?)"
+msgstr "{1} bloke edilemedi (yanlış mı yazılmış?)"
+
+#: blockuser.cpp:120
+msgid "Usage: Unblock <user>"
+msgstr "Kullanımı: UnBlock <kullanıcı>"
+
+#: blockuser.cpp:125 blockuser.cpp:161
+#, c++-format
+msgid "Unblocked {1}"
+msgstr "{1} blokesi kaldırıldı"
+
+#: blockuser.cpp:127
+msgid "This user is not blocked"
+msgstr "Bu kullanıcı bloke edilmedi"
+
+#: blockuser.cpp:155
+#, c++-format
+msgid "Couldn't block {1}"
+msgstr "{1} bloke edilemedi"
+
+#: blockuser.cpp:164
+#, c++-format
+msgid "User {1} is not blocked"
+msgstr "{1} kullanıcısı bloke edilmedi"
+
+#: blockuser.cpp:216
+msgid "Enter one or more user names. Separate them by spaces."
+msgstr "Bir veya daha fazla kullanıcı adı girin. Bunları boşluklarla ayırın."
+
+#: blockuser.cpp:219
+msgid "Block certain users from logging in."
+msgstr "Belirli kullanıcıların giriş yapmasını bloke edin."

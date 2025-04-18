@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ class CConfigWriteTimer;
 class CConfig;
 class CFile;
 
-class CZNC {
+class CZNC : private CCoreTranslationMixin {
   public:
     CZNC();
     ~CZNC();
@@ -123,6 +123,7 @@ class CZNC {
     }
     void SetProtectWebSessions(bool b) { m_bProtectWebSessions = b; }
     void SetHideVersion(bool b) { m_bHideVersion = b; }
+    void SetAuthOnlyViaModule(bool b) { m_bAuthOnlyViaModule = b; }
     void SetConnectDelay(unsigned int i);
     void SetSSLCiphers(const CString& sCiphers) { m_sSSLCiphers = sCiphers; }
     bool SetSSLProtocols(const CString& sProtocols);
@@ -166,6 +167,7 @@ class CZNC {
     unsigned int GetConnectDelay() const { return m_uiConnectDelay; }
     bool GetProtectWebSessions() const { return m_bProtectWebSessions; }
     bool GetHideVersion() const { return m_bHideVersion; }
+    bool GetAuthOnlyViaModule() const { return m_bAuthOnlyViaModule; }
     CString GetSSLCiphers() const { return m_sSSLCiphers; }
     CString GetSSLProtocols() const { return m_sSSLProtocols; }
     Csock::EDisableProtocol GetDisabledSSLProtocols() const {
@@ -261,6 +263,8 @@ class CZNC {
     static void DumpConfig(const CConfig* Config);
 
   private:
+    static CString FormatBindError();
+
     CFile* InitPidFile();
 
     bool ReadConfig(CConfig& config, CString& sError);
@@ -315,6 +319,7 @@ class CZNC {
     TCacheMap<CString> m_sConnectThrottle;
     bool m_bProtectWebSessions;
     bool m_bHideVersion;
+    bool m_bAuthOnlyViaModule;
     CTranslationDomainRefHolder m_Translation;
     unsigned int m_uiConfigWriteDelay;
     CConfigWriteTimer* m_pConfigTimer;

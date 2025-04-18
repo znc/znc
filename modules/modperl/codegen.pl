@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-# Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ open my $out, ">", $ARGV[1] or die;
 
 print $out <<'EOF';
 /*
- * Copyright (C) 2004-2016 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,13 +44,6 @@ print $out <<'EOF';
  * This file is generated automatically using codegen.pl from functions.in *
  * Don't change it manually.                                               *
  ***************************************************************************/
-
-/*#include "module.h"
-#include "swigperlrun.h"
-#include <EXTERN.h>
-#include <perl.h>
-#include <XSUB.h>
-#include "pstring.h"*/
 
 namespace {
 	template<class T>
@@ -73,15 +66,8 @@ namespace {
 		return static_cast<CModule::EModRet>(SvUV(sv));
 	}
 }
-/*
-#define PSTART dSP; I32 ax; int ret = 0; ENTER; SAVETMPS; PUSHMARK(SP)
-#define PCALL(name) PUTBACK; ret = call_pv(name, G_EVAL|G_ARRAY); SPAGAIN; SP -= ret; ax = (SP - PL_stack_base) + 1
-#define PEND PUTBACK; FREETMPS; LEAVE
-#define PUSH_STR(s) XPUSHs(PString(s).GetSV())
-#define PUSH_PTR(type, p) XPUSHs(SWIG_NewInstanceObj(const_cast<type>(p), SWIG_TypeQuery(#type), SWIG_SHADOW))
-*/
 #define PSTART_IDF(Func) PSTART; XPUSHs(GetPerlObj()); PUSH_STR(#Func)
-#define PCALLMOD(Error, Success) PCALL("ZNC::Core::CallModFunc"); if (SvTRUE(ERRSV)) { DEBUG("Perl hook died with: " + PString(ERRSV)); Error; } else { Success; } PEND
+#define PCALLMOD(Error, Success) PCALL("ZNC::Core::CallModFunc"); if (SvTRUE(ERRSV)) { DEBUG("Perl hook died with: " + PString(ERRSV)); Error; } else if (SvIV(ST(0))) { Success; } else { Error; } PEND
 
 EOF
 
@@ -89,30 +75,18 @@ while (<$in>) {
 	my ($type, $name, $args, $default) = /(\S+)\s+(\w+)\((.*)\)(?:=(\w+))?/ or next;
 	$type =~ s/(EModRet)/CModule::$1/;
 	$type =~ s/^\s*(.*?)\s*$/$1/;
-	unless (defined $default) {
-		given ($type) {
-			when ('bool')			 { $default = 'true' }
-			when ('CModule::EModRet') { $default = 'CONTINUE' }
-			when ('CString')		  { $default = '""' }
-			when (/\*$/)			  { $default = "($type)nullptr" }
-		}
-	}
 	my @arg = map {
 		my ($t, $v) = /^\s*(.*\W)\s*(\w+)\s*$/;
 		$t =~ s/^\s*(.*?)\s*$/$1/;
 		my ($tt, $tm) = $t =~ /^(.*?)\s*?(\*|&)?$/;
 		{type=>$t, var=>$v, base=>$tt, mod=>$tm//''}
 	} split /,/, $args;
-	say $out "$type CPerlModule::$name($args) {";
-	say $out "\t$type result = $default;" if $type ne 'void';
-	say $out "\tPSTART_IDF($name);";
-	given ($type) {
-		when ('CString') { print $out "\tPUSH_STR($default);" }
-		when (/\*$/)	 { my $t=$type; $t=~s/^const//; print $out "\tPUSH_PTR($t, $default);" }
-		when ('void')	{ print $out "\tmXPUSHi(0);" }
-		default		  { print $out "\tmXPUSHi(static_cast<int>($default));" }
+	unless (defined $default) {
+		$default = "CModule::$name(" . (join ', ', map { $_->{var} } @arg) . ")";
 	}
-	say $out " // Default value";
+	say $out "$type CPerlModule::$name($args) {";
+	say $out "\t$type result{};" if $type ne 'void';
+	say $out "\tPSTART_IDF($name);";
 	for my $a (@arg) {
 		given ($a->{type}) {
 			when (/(vector\s*<\s*(.*)\*\s*>)/) {
@@ -124,6 +98,7 @@ while (<$in>) {
 				say $out "\t\tPUSH_PTR($sub*, *i);";
 				say $out "\t}";
 			}
+			when (/SCString/)	  { my $b=$a->{base}; $b=~s/^const//; say $out "\tPUSH_PTR($b*, &$a->{var});" }
 			when (/CString/) { say $out "\tPUSH_STR($a->{var});" }
 			when (/\*$/)	 { my $t=$a->{type}; $t=~s/^const//; say $out "\tPUSH_PTR($t, $a->{var});" }
 			when (/&$/)	  { my $b=$a->{base}; $b=~s/^const//; say $out "\tPUSH_PTR($b*, &$a->{var});" }
@@ -131,9 +106,12 @@ while (<$in>) {
 			default		  { say $out "\tmXPUSHi($a->{var});" }
 		}
 	}
-	say $out "\tPCALLMOD(,";
-	my $x = 0;
-	say $out "\t\tresult = ".sv($type)."(ST(0));" if $type ne 'void';
+	say $out "\tPCALLMOD(";
+	print $out "\t\t";
+	print $out "result = " if $type ne 'void';
+	say $out "$default;,";
+	my $x = 1;
+	say $out "\t\tresult = ".sv($type)."(ST(1));" if $type ne 'void';
 	for my $a (@arg) {
 		$x++;
 		say $out "\t\t$a->{var} = PString(ST($x));" if $a->{base} eq 'CString' && $a->{mod} eq '&';

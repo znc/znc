@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ class CMessage;
 class CChan;
 // !Forward Declarations
 
-class CAuthBase {
+class CAuthBase : private CCoreTranslationMixin {
   public:
     CAuthBase(const CString& sUsername, const CString& sPassword,
               CZNCSock* pSock)
@@ -98,71 +98,7 @@ class CClientAuth : public CAuthBase {
 
 class CClient : public CIRCSocket {
   public:
-    CClient()
-        : CIRCSocket(),
-          m_bGotPass(false),
-          m_bGotNick(false),
-          m_bGotUser(false),
-          m_bInCap(false),
-          m_bCapNotify(false),
-          m_bAwayNotify(false),
-          m_bAccountNotify(false),
-          m_bExtendedJoin(false),
-          m_bNamesx(false),
-          m_bUHNames(false),
-          m_bAway(false),
-          m_bServerTime(false),
-          m_bBatch(false),
-          m_bEchoMessage(false),
-          m_bSelfMessage(false),
-          m_bPlaybackActive(false),
-          m_pUser(nullptr),
-          m_pNetwork(nullptr),
-          m_sNick("unknown-nick"),
-          m_sPass(""),
-          m_sUser(""),
-          m_sNetwork(""),
-          m_sIdentifier(""),
-          m_spAuth(),
-          m_ssAcceptedCaps(),
-          m_ssSupportedTags(),
-          m_mCoreCaps({
-              {"multi-prefix",
-               {false, [this](bool bVal) { m_bNamesx = bVal; }}},
-              {"userhost-in-names",
-               {false, [this](bool bVal) { m_bUHNames = bVal; }}},
-              {"echo-message",
-               {false, [this](bool bVal) { m_bEchoMessage = bVal; }}},
-              {"server-time",
-               {false, [this](bool bVal) {
-                m_bServerTime = bVal;
-                SetTagSupport("time", bVal);
-               }}},
-              {"batch", {false, [this](bool bVal) {
-                m_bBatch = bVal;
-                SetTagSupport("batch", bVal);
-              }}},
-              {"cap-notify",
-               {false, [this](bool bVal) { m_bCapNotify = bVal; }}},
-              {"away-notify",
-               {true, [this](bool bVal) { m_bAwayNotify = bVal; }}},
-              {"account-notify",
-               {true, [this](bool bVal) { m_bAccountNotify = bVal; }}},
-              {"extended-join",
-               {true, [this](bool bVal) { m_bExtendedJoin = bVal; }}},
-          }) {
-        EnableReadLine();
-        // RFC says a line can have 512 chars max, but we are
-        // a little more gentle ;)
-        SetMaxBufferThreshold(1024);
-
-        // For compatibility with older clients
-        m_mCoreCaps["znc.in/server-time-iso"] = m_mCoreCaps["server-time"];
-        m_mCoreCaps["znc.in/batch"] = m_mCoreCaps["batch"];
-        m_mCoreCaps["znc.in/self-message"] = {
-            false, [this](bool bVal) { m_bSelfMessage = bVal; }};
-    }
-
+    CClient();
     virtual ~CClient();
 
     CClient(const CClient&) = delete;
@@ -175,12 +111,15 @@ class CClient : public CIRCSocket {
     CString GetNick(bool bAllowIRCNick = true) const;
     CString GetNickMask() const;
     CString GetIdentifier() const { return m_sIdentifier; }
+    unsigned short int CapVersion() const { return m_uCapVersion; }
+    bool HasCap302() const { return CapVersion() >= 302; }
     bool HasCapNotify() const { return m_bCapNotify; }
     bool HasAwayNotify() const { return m_bAwayNotify; }
     bool HasAccountNotify() const { return m_bAccountNotify; }
     bool HasExtendedJoin() const { return m_bExtendedJoin; }
     bool HasNamesx() const { return m_bNamesx; }
     bool HasUHNames() const { return m_bUHNames; }
+    bool HasChgHost() const { return m_bChgHost; }
     bool IsAway() const { return m_bAway; }
     bool HasServerTime() const { return m_bServerTime; }
     bool HasBatch() const { return m_bBatch; }
@@ -199,14 +138,23 @@ class CClient : public CIRCSocket {
     void SetPlaybackActive(bool bActive) { m_bPlaybackActive = bActive; }
 
     void PutIRC(const CString& sLine);
+    // Strips prefix and potentially tags before sending to server.
+    void PutIRCStripping(CMessage Message);
     /** Sends a raw data line to the client.
      *  @param sLine The line to be sent.
      *
-     *  The line is first passed \e unmodified to the \ref CModule::OnSendToClient()
-     *  module hook. If no module halts the process, the line is then sent to the client.
+     *  The line is first passed \e unmodified to the \ref
+     *  CModule::OnSendToClient() module hook. If no module halts the process,
+     *  the line is then sent to the client.
      *
      *  These lines appear in the debug output in the following syntax:
      *  \code [time] (user/network) ZNC -> CLI [line] \endcode
+     *
+     *  Prefer \l PutClient() instead.
+     */
+    bool PutClientRaw(const CString& sLine);
+    /** Sends a message to the client.
+     *  See \l PutClient(const CMessage&) for details.
      */
     void PutClient(const CString& sLine);
     /** Sends a message to the client.
@@ -245,14 +193,17 @@ class CClient : public CIRCSocket {
      *  ----------- | ----------
      *  \c time     | \l CClient::HasServerTime() (<a href="http://ircv3.net/specs/extensions/server-time-3.2.html">server-time</a>)
      *  \c batch    | \l CClient::HasBatch() (<a href="http://ircv3.net/specs/extensions/batch-3.2.html">batch</a>)
+     *  
+     *  Additional tags can be added via \l CClient::SetTagSupport().
      *
-     *  @warning Bypassing the filter may cause troubles to some older IRC clients.
+     *  @warning Bypassing the filter may cause troubles to some older IRC
+     *  clients.
      *
      *  It is possible to bypass the filter by converting a message to a string
      *  using \l CMessage::ToString(), and passing the resulting raw line to the
-     *  \l CClient::PutClient(const CString& sLine) overload:
+     *  \l CClient::PutClientRaw(const CString& sLine):
      *  \code
-     *  pClient->PutClient(Message.ToString());
+     *  pClient->PutClientRaw(Message.ToString());
      *  \endcode
      */
     bool PutClient(const CMessage& Message);
@@ -269,14 +220,16 @@ class CClient : public CIRCSocket {
     bool IsTagEnabled(const CString& sTag) const {
         return 1 == m_ssSupportedTags.count(sTag);
     }
-    /** Registers a tag as being supported or unsupported by a client.
+    /** Registers a tag as being supported or unsupported by the client.
+     *  This doesn't affect tags which the client sends.
      *  @param sTag The tag to register.
      *  @param bState Whether the client supports the tag.
      */
     void SetTagSupport(const CString& sTag, bool bState);
 
-    void NotifyServerDependentCaps(const SCString& ssCaps);
-    void ClearServerDependentCaps();
+    /** Notifies client about one specific cap which server has just notified us about.
+     */
+    void NotifyServerDependentCap(const CString& sCap, bool bValue, const CString& sValue);
 
     void ReadLine(const CString& sData) override;
     bool SendMotd();
@@ -299,11 +252,33 @@ class CClient : public CIRCSocket {
     CIRCSock* GetIRCSock();
     CString GetFullName() const;
 
+    /** Sends AUTHENTIATE message to client.
+     * It encodes it to Base64 and splits to multiple IRC messages if necessary.
+     */
+    void SendSASLChallenge(CString sMessage);
+    void RefuseSASLLogin(const CString& sReason);
+    void AcceptSASLLogin(CUser& User);
+    /** Start potentially asynchronous process of checking the credentials.
+     * When finished, will send the success/failure SASL numerics to the
+     * client. This is mostly useful for SASL PLAIN.
+     * sAuthorizationId is internally passed through ParseUser() to extract
+     * network and client id.
+     * Currently sUser should match the username from
+     * sAuthorizationId: either in full, or just the username part; but in a
+     * future version we may add an ability to actually login as a different
+     * user, but with your password.
+     */
+    void StartSASLPasswordCheck(const CString& sUser, const CString& sPassword,
+                                const CString& sAuthorizationId);
+    /** Gathers username, client id, network name, if present. Returns username
+     * cleaned from client id and network name.
+     */
+    CString ParseUser(const CString& sAuthLine);
+
   private:
     void HandleCap(const CMessage& Message);
     void RespondCap(const CString& sResponse);
     void ParsePass(const CString& sAuthLine);
-    void ParseUser(const CString& sAuthLine);
     void ParseIdentifier(const CString& sAuthLine);
 
     template <typename T>
@@ -315,6 +290,15 @@ class CClient : public CIRCSocket {
     unsigned int DetachChans(const std::set<CChan*>& sChans);
 
     bool OnActionMessage(CActionMessage& Message);
+    void OnAuthenticateMessage(const CAuthenticateMessage& Message);
+    void AbortSASL(const CString& sFullIRCLine);
+    bool IsDuringSASL() const { return !m_sSASLMechanism.empty(); }
+
+    /**
+     * Returns set of all available SASL mechanisms.
+     */
+    SCString EnumerateSASLMechanisms() const;
+
     bool OnCTCPMessage(CCTCPMessage& Message);
     bool OnJoinMessage(CJoinMessage& Message);
     bool OnModeMessage(CModeMessage& Message);
@@ -323,6 +307,7 @@ class CClient : public CIRCSocket {
     bool OnPingMessage(CMessage& Message);
     bool OnPongMessage(CMessage& Message);
     bool OnQuitMessage(CQuitMessage& Message);
+    bool OnTagMessage(CTargetMessage& Message);
     bool OnTextMessage(CTextMessage& Message);
     bool OnTopicMessage(CTopicMessage& Message);
     bool OnOtherMessage(CMessage& Message);
@@ -331,6 +316,7 @@ class CClient : public CIRCSocket {
     bool m_bGotPass;
     bool m_bGotNick;
     bool m_bGotUser;
+    unsigned short int m_uCapVersion;
     bool m_bInCap;
     bool m_bCapNotify;
     bool m_bAwayNotify;
@@ -338,32 +324,41 @@ class CClient : public CIRCSocket {
     bool m_bExtendedJoin;
     bool m_bNamesx;
     bool m_bUHNames;
+    bool m_bChgHost;
     bool m_bAway;
     bool m_bServerTime;
     bool m_bBatch;
     bool m_bEchoMessage;
     bool m_bSelfMessage;
+    bool m_bMessageTagCap;
+    bool m_bSASLCap;
     bool m_bPlaybackActive;
     CUser* m_pUser;
     CIRCNetwork* m_pNetwork;
     CString m_sNick;
     CString m_sPass;
+    // User who didn't necessarily login yet, or might not even exist.
     CString m_sUser;
     CString m_sNetwork;
     CString m_sIdentifier;
+    CString m_sSASLBuffer;
+    // Set while the exchange is in progress
+    CString m_sSASLMechanism;
+    // Username who successfully logged in using SASL. This is not a CUser*
+    // because between the 903 and CAP END the user could have been deleted.
+    CString m_sSASLUser;
     std::shared_ptr<CAuthBase> m_spAuth;
     SCString m_ssAcceptedCaps;
     SCString m_ssSupportedTags;
-    // The capabilities supported by the ZNC core - capability names mapped
-    // to a pair which contains a bool describing whether the capability is
-    // server-dependent, and a capability value change handler.
-    std::map<CString, std::pair<bool, std::function<void(bool bVal)>>>
-        m_mCoreCaps;
-    // A subset of CIRCSock::GetAcceptedCaps(), the caps that can be listed
-    // in CAP LS and may be notified to the client with CAP NEW (cap-notify).
-    SCString m_ssServerDependentCaps;
+    SCString m_ssPreviouslyFailedSASLMechanisms;
+    // The capabilities supported by the ZNC core - capability names mapped to
+    // change handler. Note: this lists caps which don't require support on IRC
+    // server.
+    static const std::map<CString, std::function<void(CClient*, bool bVal)>>&
+    CoreCaps();
 
     friend class ClientTest;
+    friend class CCoreCaps;
 };
 
 #endif  // !ZNC_CLIENT_H

@@ -1,3 +1,392 @@
+# ZNC 1.9.1 (2024-07-03)
+
+* This is a security release to fix CVE-2024-39844: remote code execution vulnerability in modtcl.
+    * To mitigate this for existing installations, simply unload the modtcl module for every user, if it's loaded. Note that only users with admin rights can load modtcl at all.
+    * Thanks to Johannes Kuhn (DasBrain) for reporting, to glguy for the patch, and to multiple IRC network operators for help with mitigating this on server side before disclosure.
+* Improve tooltips in webadmin.
+
+
+# ZNC 1.9.0 (2024-02-22)
+
+## New
+* Support for capability negotiation 302 and `cap-notify`. ZNC now has API `AddServerDependentCapability()`, using which modules can easily implement new capabilities: if server supports a cap, it will automatically be offered to clients which support `cap-notify` and ZNC will notify the module when the capability is enabled or disabled for server and for each client.
+    * Several capabilities (`away-notify`, `account-notify`, `extended-join`) were moved from the core to a new module: corecaps.
+    * The corecaps module is loaded automatically when upgrading from old config and when creating new config, but it's possible to unload it.
+        * Note: users who were using pre-release versions of 1.9.x (from git or from nightly tarballs) won't have it loaded automatically, because the existing config states `Version = 1.9`. In such case you can load it manually. This is to honor choice of users who decide to unload it, since we don't know whether the module is missing intentionally.
+    * Added support for `account-tag` capability, also in corecaps module.
+* Updated password hashing algorithm from SHA-256 to Argon2id (if libargon2 is installed). Existing passwords are transparently upgraded upon login.
+* Allow ordering of channels: via `ListChans`, `MoveChan` and `SwapChans` commands, and via webadmin.
+* New user options: `DenySetIdent`, `DenySetNetwork`, `DenySetRealName`, `DenySetQuitMsg`, `DenySetCTCPReplies`.
+* Switched `--makeconf` wizard default network from freenode to Libera.
+* Added Portuguese and Turkish translations.
+* znc-buildmod: output where the module was written to
+
+## Fixes
+* Fixed crash when receiving SASL lines from server without having negotiated SASL via CAP.
+* Fixed build with SWIG 4.2.0.
+* Fixed build with LibreSSL.
+* Fixed handling of timezones when parsing server-time tags received from server.
+* Use module names as the module ident, otherwise some clients were merging conversations with different modules together.
+* Stopped sending invalid 333 (`RPL_TOPICWHOTIME`) to client if topic owner is unknown.
+* Fixed an ODR violation.
+* Better hide password in PASS debug lines, sometimes it was not hidden.
+* CAP REQ sent by client without CAP LS now suspends the registration as the spec requires.
+
+## Modules
+* autoop: In some cases settings were parsed incorrectly, resulting in failure to do the autoop, now it's fixed.
+* clientnotify: Added options to reduce amount of notifications depending on the IP and the client ID of the connecting client.
+* controlpanel: Fixed help output.
+* log: Log nickserv account in the joins lines.
+* modperl: Allow overriding label for timers, which means now there can be more than 1 timer per module.
+* modpython:
+    * Rewrote internals of how modpython loads modules.
+    * Main motivation for the switch from using `imp` to using `importlib` was to support Python 3.12+.
+        * As an additional benefit, now it's possible to structure the module as a python package (a subdirectory with `__init__.py` and other .py files).
+        * All the old python modules should load as they were before.
+        * ZNC no longer supports loading a C python extension directly through modpython (though I doubt there were any users of that obscure feature): if you want to some parts of the module to be compiled, you can always import that from `__init__.py`.
+    * Implemented `Module.AddCommand()`
+* route_replies:
+    * Added Solanum-specific 337 (`RPL_WHOISTEXT`) to possible replies of `/whois`.
+    * Route replies to `/topic`.
+* sasl: Don't forward 908 (`RPL_SASLMECHS`) to clients.
+* webadmin: Fixed order of breadcrumbs in network page.
+* watch: Allow new entries to use spaces.
+
+## Notes for package maintainers
+* Require C++17 compiler. That is, GCC 8+ or Clang 5+.
+* Removed autoconf, leaving only CMake as the build system. The `configure` script is now merely a wrapper for CMake, and accepts mostly the same parameters as the old `configure`. You can use either `configure` as before, or CMake directly. Minimum supported CMake version is 3.13.
+* If cctz library is available on the system, it will be used, otherwise the bundled copy will be used.
+* libargon2 is new optional dependency.
+* Dropped support for Python < 3.4
+* Dropped support for SWIG < 4.0.1
+* The systemd unit now passes `--datadir=/var/lib/znc`.
+
+## Internal
+* Switched to steady clock for cache map and for sockets to fix certain issues with leap seconds and DST.
+* Made `CUser::Put...()` send to all clients instead of only networkless clients. Deprecate `CUser::PutAllUser()`.
+* Setup Github Actions to replace old Travis CI setup.
+* Added CIFuzz.
+* Added CodeQL.
+* List of translators is now automatically generated from Crowdin.
+* Modernized the way how CMake is used.
+* Updated default SSL settings from Mozilla recommendations.
+* Rewrote message parsing using `std::string_view`, improving the performance of the parser.
+* Web: removed legacy xhtml syntax.
+* Documented more functions.
+* Made some integration tests run faster by changing ServerThrottle value in the test.
+
+
+
+# ZNC 1.8.2 (2020-07-07)
+
+## New
+* Polish translation
+* List names of translators in TRANSLATORS.md file in source, as this contribution isn't directly reflected in git log
+* During --makeconf warn about listening on port 6697 too, not only about 6667
+
+## Fixes
+* webadmin: When confirming deletion of a network and selecting No, redirect to the edituser page instead of listusers page
+* Make more client command results translateable, which were missed before
+
+
+
+# ZNC 1.8.1 (2020-05-07)
+
+Fixed bug introduced in ZNC 1.8.0:
+
+Authenticated users can trigger an application crash (with a NULL pointer dereference) if echo-message is not enabled and there is no network. CVE-2020-13775
+
+
+
+# ZNC 1.8.0 (2020-05-01)
+
+## New
+* Output of various commands (e.g. `/znc help`) was switched from a table to a list
+* Support IP while verifying SSL certificates
+* Make it more visible that admins have lots of privileges
+
+## Fixes
+* Fix parsing of channel modes when the last parameter starts with a colon, improving compatibility with InspIRCd v3
+* Fix null dereference on startup when reading invalid config
+* Don't show server passwords on ZNC startup
+* Fix build with newer OpenSSL
+* Fix in-source CMake build
+* Fix echo-message for `status`
+
+## Modules
+* controlpanel: Add already supported NoTrafficTimeout User variable to help output
+* modpython:
+    * Use FindPython3 in addition to pkg-config in CMake to simplify builds on Gentoo when not using emerge
+    * Support python 3.9
+* modtcl: Added GetNetworkName
+* partyline: Module is removed
+* q: Module is removed
+* route_replies: Handle more numerics
+* sasl: Fix sending of long authentication information
+* shell: Unblock signals when spawning child processes
+* simple_away: Convert to UTC time
+* watch: Better support multiple clients
+* webadmin: Better wording for TrustPKI setting
+
+## Internal
+* Refactor the way how SSL certificate is checked to simplify future socket-related refactors
+* Build integration test and ZNC itself with the same compiler (https://bugs.gentoo.org/699258)
+* Various improvements for translation CI
+* Normalize variable name sUserName/sUsername
+* Make de-escaping less lenient
+
+
+
+# ZNC 1.7.5 (2019-09-23)
+
+* modpython: Add support for Python 3.8
+* modtcl: install .tcl files when building with CMake
+* nickserv: report success of Clear commands
+* Update translations, add Italian, Bulgarian, fix name of Dutch
+* Update error messages to be clearer
+* Add a deprecation warning to ./configure to use CMake instead in addition to an already existing warning in README
+
+
+
+# ZNC 1.7.4 (2019-06-19)
+
+## Fixes
+* This is a security release to fix CVE-2019-12816 (remote code execution by existing non-admin users). Thanks to Jeriko One for the bugreport.
+* Send "Connected!" messages to client to the correct nick.
+
+# Internal
+* Increase znc-buildmod timeout in the test.
+
+
+
+# ZNC 1.7.3 (2019-03-30)
+
+## Fixes
+This is a security release to fix CVE-2019-9917. Thanks to LunarBNC for the bugreport.
+
+## New
+Docker only: the znc image now supports --user option of docker run.
+
+
+
+# ZNC 1.7.2 (2019-01-19)
+
+## New
+* Add French translation
+* Update translations
+
+## Fixes
+* Fix compilation without deprecated APIs in OpenSSL
+* Distinguish Channel CTCP Requests and Replies
+* admindebug: Enforce need of TTY to turn on debug mode
+* controlpanel: Add missing return to ListNetMods
+* webadmin: Fix adding the last allowed network
+
+## Internal
+* Add more details to DNS error logs
+
+
+
+# ZNC 1.7.1 (2018-07-17)
+
+## Security critical fixes
+* CVE-2018-14055: non-admin user could gain admin privileges and shell access by injecting values into znc.conf.
+* CVE-2018-14056: path traversal in HTTP handler via ../ in a web skin name.
+
+## Core
+* Fix znc-buildmod to not hardcode the compiler used to build ZNC anymore in CMake build
+* Fix language selector. Russian and German were both not selectable.
+* Fix build without SSL support
+* Fix several broken strings
+* Stop spamming users about debug mode. This feature was added in 1.7.0, now reverted.
+
+## New
+* Add partial Spanish, Indonesian, and Dutch translations
+
+## Modules
+* adminlog: Log the error message again (regression of 1.7.0)
+* admindebug: New module, which allows admins to turn on/off --debug in runtime
+* flooddetach: Fix description of commands
+* modperl: Fix memory leak in NV handling
+* modperl: Fix functions which return VCString
+* modpython: Fix functions which return VCString
+* webadmin: Fix fancy CTCP replies editor for Firefox. It was showing the plain version even when JS is enabled
+
+## Internal
+* Deprecate one of the overloads of CMessage::GetParams(), rename it to CMessage::GetParamsColon()
+* Don't throw from destructor in the integration test
+* Fix a warning with integration test / gmake / znc-buildmod interaction.
+
+
+
+# ZNC 1.7.0 (2018-05-01)
+
+## New
+* Add CMake build. Minimum supported CMake version is 3.1. For now ZNC can be built with either CMake or autoconf. In future autoconf is going to be removed. 
+    * Currently `znc-buildmod` requires python if CMake was used; if that's a concern for you, please open a bug.
+* Increase minimum GCC version from 4.7 to 4.8. Minimum Clang version stays at 3.2.
+* Make ZNC UI translateable to different languages (only with CMake), add partial Russian and German translations.
+    * If you want to translate ZNC to your language, please join https://crowdin.com/project/znc-bouncer
+* Configs written before ZNC 0.206 can't be read anymore
+* Implement IRCv3.2 capabilities `away-notify`, `account-notify`, `extended-join`
+* Implement IRCv3.2 capabilities `echo-message`, `cap-notify` on the "client side"
+* Update capability names as they are named in IRCv3.2: `znc.in/server-time-iso`→`server-time`, `znc.in/batch`→`batch`. Old names will continue working for a while, then will be removed in some future version.
+* Make ZNC request `server-time` from server when available
+* Increase accepted line length from 1024 to 2048 to give some space to message tags
+* Separate buffer size settings for channels and queries
+* Support separate `SSLKeyFile` and `SSLDHParamFile` configuration in addition to existing `SSLCertFile`
+* Add "AuthOnlyViaModule" global/user setting
+* Added pyeval module
+* Added stripcontrols module
+* Add new substitutions to ExpandString: `%empty%` and `%network%`.
+* Stop defaulting real name to "Got ZNC?"
+* Make the user aware that debug mode is enabled.
+* Added `ClearAllBuffers` command
+* Don't require CSRF token for POSTs if the request uses HTTP Basic auth.
+* Set `HttpOnly` and `SameSite=strict` for session cookies
+* Add SNI SSL client support
+* Add support for CIDR notation in allowed hosts list and in trusted proxy list
+* Add network-specific config for cert validation in addition to user-supplied fingerprints: `TrustAllCerts`, defaults to false, and `TrustPKI`, defaults to true.
+* Add `/attach` command for symmetry with `/detach`. Unlike `/join` it allows wildcards.
+* Timestamp format now supports sub-second precision with `%f`. Used in awaystore, listsockets, log modules and buffer playback when client doesn't support server-time
+* Build on macOS using ICU, Python, and OpenSSL from Homebrew, if available
+* Remove `--with-openssl=/path` option from ./configure. SSL is still supported and is still configurable
+
+## Fixes
+* Revert tables to how they were in ZNC 1.4
+* Remove flawed Add/Del/ListBindHost(s). They didn't correctly do what they were intended for, but users often confused them with the SetBindHost option. SetBindHost still works.
+* Fix disconnection issues when being behind NAT by decreasing the interval how often PING is sent and making it configurable via a setting to change ping timeout time
+* Change default flood rates to match RFC1459, prevent excess flood problems
+* Match channel names and hostmasks case-insensitively in autoattach, autocycle, autoop, autovoice, log, watch modules
+* Fix crash in shell module which happens if client disconnects at a wrong time
+* Decrease CPU usage when joining channels during startup or reconnect, add config write delay setting
+* Always send the users name in NOTICE when logging in.
+* Don't try to quit multiple times
+* Don't send PART to client which sent QUIT
+* Send failed logins to NOTICE instead of PRIVMSG
+* Stop creating files with odd permissions on Solaris
+* Save channel key on JOIN even if user was not on the channel yet
+* Stop buffering and echoing CTCP requests and responses to other clients with self-message, except for /me
+* Support discovery of tcl 8.6 during `./configure`
+
+## Modules
+* adminlog:
+    * Make path configurable
+* alias:
+    * Add `Dump` command to copy your config between users
+* awaystore:
+    * Add `-chans` option which records channel highlights
+* blockmotd:
+    * Add `GetMotd` command
+* clearbufferonmsg:
+    * Add options which events trigger clearation of buffers.
+* controlpanel:
+    * Add the `DelServer` command.
+    * Add `$user` and `$network` aliases for `$me` and `$net` respectively
+    * Allow reseting channel-specific `AutoClearChanBuffer` and `BufferSize` settings by setting them to `-`
+    * Change type of values from "double" to "number", which is more obvious for non-programmers
+* crypt:
+    * Fix build with LibreSSL
+    * Cover notices, actions and topics
+    * Don't use the same or overlapping NickPrefix as StatusPrefix
+    * Add DH1080 key exchange
+    * Add Get/SetNickPrefix commands, hide the internal keyword from ListKeys
+* cyrusauth:
+    * Improve UI
+* fail2ban:
+    * Make timeout and attempts configurable, add BAN, UNBAN and LIST commands
+* flooddetach:
+    * Detach on nick floods
+* keepnick:
+    * Improve behaviour by listening to ircd-side numeric errors
+* log:
+    * Add `-timestamp` option
+    * Add options to hide joins, quits and nick changes.
+    * Stop forcing username and network name to be lower case in filenames
+    * Log user quit messages
+* missingmotd:
+    * Include nick in IRC numeric 422 command, reduce client confusion
+* modperl:
+    * Provide `operator ""` for `ZNC::String`
+    * Honor `PERL5LIB` env var
+    * Fix functions like `HasPerm()` which accept `char`
+    * When a broken module couldn't be loaded, it couldn't be loaded anymore even if it was fixed later.
+    * Force strings to UTF-8 in modperl to fix double encoding during concatenation/interpolation.
+* modpython:
+    * Require ZNC to be built with encodings support
+    * Disable legacy encoding mode when modpython is loaded.
+    * Support `CQuery` and `CServer`
+* nickserv:
+    * Use `/nickserv identify` by default instead of `/msg nickserv`.
+    * Support messages from X3 services
+* notify_connect:
+    * Show client identification
+* sasl:
+    * Add web interface
+    * Enable all known mechanisms by default
+    * Make the first requirement for SET actually mandatory, return information about settings if no input for SET
+* schat:
+    * Require explicit path to certificate.
+* simple_away:
+    * Use ExpandString for away reason, rename old `%s` to `%awaytime%`
+    * Add `MinClients` option
+* stickychan:
+    * Save registry on every stick/unstick action, auto-save if channel key changes
+    * Stop checking so often, increase delay to once every 3 minutes
+* webadmin:
+    * Make server editor and CTCP replies editor more fancy, when JS is enabled
+    * Make tables sortable. 
+    * Allow reseting chan buffer size by entering an empty value
+    * Show per-network traffic info
+    * Make the traffic info page visible for non-admins, non-admins can see only their traffic
+
+## Internal
+* Stop pretending that ZNC ABI is stable, when it's not. Make module version checks more strict and prevent crashes when loading a module which are built for the wrong ZNC version.
+* Add an integration test
+* Various HTML changes
+* Introduce a CMessage class and its subclasses
+* Add module callbacks which accept CMessage, deprecate old callbacks
+* Add `OnNumericMessage` module callback, which previously was possible only with `OnRaw`, which could give unexpected results if the message has IRCv3.2 tags.
+* Modernize code to use more C++11 features
+* Various code cleanups
+* Fix CSS of `_default_` skin for Fingerprints section
+* Add `OnUserQuitMessage()` module hook.
+* Add `OnPrivBufferStarting()` and `OnPrivBufferEnding()` hooks
+* `CString::WildCmp()`: add an optional case-sensitivity argument
+* Do not call `OnAddUser()` hook during ZNC startup
+* Allow modules to override CSRF protection.
+* Rehash now reloads only global settings
+* Remove `CAP CLEAR`
+* Add `CChan::GetNetwork()`
+* `CUser`: add API for removing and clearing allowed hosts
+* `CZNC`: add missing SSL-related getters and setters
+* Add a possibility (not an "option") to disable launch after --makeconf
+* Move Unix signal processing to a dedicated thread.
+* Add clang-format configuration, switch tabs to spaces.
+* `CString::StripControls()`: Strip background colors when we reset foreground
+* Make chan modes and permissions to be char instead of unsigned char.
+
+## Cosmetic
+* Alphabetically sort the modules we compile using autoconf/Makefile
+* Alphabetically sort output of `znc --help`
+* Change output during startup to be more compact
+* Show new server name when reconnecting to a different server with `/znc jump`
+* Hide passwords in listservers output
+* Filter out ZNC passwords in output of `znc -D`
+* Switch znc.in URLs to https
+
+
+
+# ZNC 1.6.6 (2018-03-05)
+
+* Fix use-after-free in `znc --makepem`. It was broken for a long time, but
+  started segfaulting only now. This is a useability fix, not a security fix,
+  because self-signed (or signed by a CA) certificates can be created
+  without using `--makepem`, and then combined into znc.pem.
+* Fix build on Cygwin.
+
+
+
 # ZNC 1.6.5 (2017-03-12)
 
 ## Fixes

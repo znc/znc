@@ -1,0 +1,1336 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: /master/modules/po/webadmin.pot\n"
+"X-Crowdin-File-ID: 205\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Polish\n"
+"Language: pl_PL\n"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:12
+msgid "Channel Info"
+msgstr "Informacje o kanale"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:17
+msgid "Channel Name:"
+msgstr "Nazwa kanału:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:19
+msgid "The channel name."
+msgstr "Podaj nazwę kanału."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:24
+msgid "Key:"
+msgstr "Klucz:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:26
+msgid "The password of the channel, if there is one."
+msgstr "Hasło kanału, jeśli takie istnieje."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:30
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:258
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:277
+msgid "Buffer size:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:32
+msgid "The buffer count."
+msgstr "Liczba bufora."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:36
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:252
+msgid "Default modes:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:38
+msgid "The default modes of the channel."
+msgstr "Domyślne tryby kanału."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:46
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:287
+msgid "Flags"
+msgstr "Flagi"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:51
+msgid "Save to config"
+msgstr "Zapisz do konfiguracji"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:67
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:294
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:429
+msgid "Module {1}"
+msgstr "Moduł {1}"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:75
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:302
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:438
+msgid "Save and return"
+msgstr "Zapisz i wróć"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:76
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:303
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:439
+msgid "Save and continue"
+msgstr "Zapisz i kontynuuj"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:78
+msgid "Add Channel and return"
+msgstr "Dodaj kanał i wróć"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:79
+msgid "Add Channel and continue"
+msgstr "Dodaj kanał i kontynuuj"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:12
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:15
+msgid "&lt;password&gt;"
+msgstr "&lt;hasło&gt;"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:15
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:16
+msgid "&lt;network&gt;"
+msgstr "&lt;sieć&gt;"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:18
+msgid ""
+"To connect to this network from your IRC client, you can set the server "
+"password field as <code>{1}</code> or username field as <code>{2}</code>"
+msgstr ""
+"Aby połączyć się z tą siecią za pomocą klienta IRC, możesz ustawić pole "
+"hasła serwera jako <code>{1}</code> lub pole nazwy użytkownika jako <code>{2}"
+"</code>"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:28
+msgid "Network Info"
+msgstr "Informacje o sieci"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:29
+msgid ""
+"Nick, AltNick, Ident, RealName, BindHost can be left empty to use the value "
+"from the user."
+msgstr ""
+"Pseudonim, PseudonimAlternatywny, Ident, PrawdziweImię, HostPrzypięcia mogą "
+"pozostać puste, aby użyć wartości użytkownika."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:33
+msgid "Network Name:"
+msgstr "Nazwa sieci:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:35
+msgid "The name of the IRC network."
+msgstr "Nazwa sieci IRC."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:39
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:73
+msgid "Nickname:"
+msgstr "Pseudonim:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:41
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:75
+msgid "Your nickname on IRC."
+msgstr "Twój pseudonim na IRC."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:44
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:78
+msgid "Alt. Nickname:"
+msgstr "Alternatywny pseudonim:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:46
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:80
+msgid "Your secondary nickname, if the first is not available on IRC."
+msgstr "Twój dodatkowy pseudonim, jeśli pierwszy nie jest dostępny na IRC."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:50
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:84
+msgid "Ident:"
+msgstr "Ident:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:52
+msgid "Your ident."
+msgstr "Twój ident."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:55
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:96
+msgid "Realname:"
+msgstr "Prawdziwe imię:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:57
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:98
+msgid "Your real name."
+msgstr "Twoje prawdziwe imię."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:62
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:104
+msgid "BindHost:"
+msgstr "Host przypięcia:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:69
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:117
+msgid "Quit message:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:71
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:119
+msgid "You may define a Message shown, when you quit IRC."
+msgstr "Możesz zdefiniować wyświetlaną wiadomość po wyjściu z IRC."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:76
+msgid "Active:"
+msgstr "Aktywne:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:78
+msgid "Connect to IRC &amp; automatically re-connect"
+msgstr "Połącz się z IRC &amp; automatycznie połącz ponownie"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:82
+msgid "Trust all certs:"
+msgstr "Zaufaj wszystkim certyfikatom:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:84
+msgid ""
+"Disable certificate validation (takes precedence over TrustPKI). INSECURE!"
+msgstr ""
+"Wyłącz sprawdzanie poprawności certyfikatu (ma pierwszeństwo przed "
+"ZaufajPKI). NIEBEZPIECZNE!"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:88
+msgid "Automatically detect trusted certificates (Trust the PKI):"
+msgstr "Automatycznie wykryj zaufane certyfikaty (Zaufaj PKI):"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:90
+msgid ""
+"When disabled, manually whitelist all server fingerprints, even if the "
+"certificate is valid"
+msgstr ""
+"Gdy wyłączone, ręcznie musisz dodać wszystkie odciski palców serwera, nawet "
+"jeżeli certyfikat jest poprawny"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:94
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:101
+msgid "Servers of this IRC network:"
+msgstr "Serwery tej sieci IRC:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:98
+msgid "One server per line, “host [[+]port] [password]”, + means SSL"
+msgstr "Jeden serwer w wierszu, “host [[+]port] [hasło]”, + oznacza SSL"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:106
+msgid "Hostname"
+msgstr "Nazwa hosta"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:107
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:13
+msgid "Port"
+msgstr "Port"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:108
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:15
+msgid "SSL"
+msgstr "SSL"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:109
+msgid "Password"
+msgstr "Hasło"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:125
+msgid "SHA-256 fingerprints of trusted SSL certificates of this IRC network:"
+msgstr "Odciski palców SHA-256 zaufanych certyfikatów SSL tej sieci IRC:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:129
+msgid ""
+"When these certificates are encountered, checks for hostname, expiration "
+"date, CA are skipped"
+msgstr ""
+"Po napotkaniu tych certyfikatów pomijane jest sprawdzanie nazwy hosta, daty "
+"ważności i urzędu certyfikacji"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:133
+msgid "Flood protection:"
+msgstr "Ochrona przed zalaniem:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:136
+msgid ""
+"You might enable the flood protection. This prevents “excess flood” errors, "
+"which occur, when your IRC bot is command flooded or spammed. After changing "
+"this, reconnect ZNC to server."
+msgstr ""
+"Możesz włączyć zabezpieczenie przed zalaniem. To zapobiega przed błędami "
+"\"nadmiernego zalania\", które wystąpią gdy Twój bot IRC jest zalewany "
+"poleceniami lub spamowany. Po zmianie tego, połącz się ponownie z serwerem "
+"ZNC."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:139
+msgctxt "Flood Protection"
+msgid "Enabled"
+msgstr "Włączone"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:143
+msgid "Flood protection rate:"
+msgstr "Częstość ochrony przed zalaniem:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:146
+msgid ""
+"The number of seconds per line. After changing this, reconnect ZNC to server."
+msgstr ""
+"Liczba sekund na linię. Po zmianie tego ponownie podłącz ZNC do serwera."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:149
+msgid "{1} seconds per line"
+msgstr "{1} sekund na linię"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:153
+msgid "Flood protection burst:"
+msgstr "Ochrona przed zalaniem serią:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:156
+msgid ""
+"Defines the number of lines, which can be sent immediately. After changing "
+"this, reconnect ZNC to server."
+msgstr ""
+"Określa liczbę linii, które można wysłać jednocześnie. Po dostosowaniu ZNC "
+"musi ponownie połączyć się z IRC."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:159
+msgid "{1} lines can be sent immediately"
+msgstr "{1} linii można wysłać natychmiast"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:163
+msgid "Channel join delay:"
+msgstr "Opóźnienie dołączenia do kanału:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:166
+msgid ""
+"Defines the delay in seconds, until channels are joined after getting "
+"connected."
+msgstr ""
+"Określa opóźnienie w sekundach, zanim dołączy się do kanałów po ustanowieniu "
+"połączenia."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:169
+msgid "{1} seconds"
+msgstr "{1} sekund"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:174
+msgid "Character encoding used between ZNC and IRC server."
+msgstr "Kodowanie znaków używane między ZNC a serwerem IRC."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:175
+msgid "Server encoding:"
+msgstr "Kodowanie serwera:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:185
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:248
+msgid "Channels"
+msgstr "Kanały"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:187
+msgid ""
+"You will be able to add + modify channels here after you created the network."
+msgstr "Będziesz mógł tutaj dodawać + modyfikować kanały po utworzeniu sieci."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:194
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:140
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:373
+#: modules/po/../data/webadmin/tmpl/listusers.tmpl:15
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:72
+msgid "Add"
+msgstr "Dodaj"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:196
+msgid "Index"
+msgstr "Indeks"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:197
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:449
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:237
+msgid "Save"
+msgstr "Zapisz"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:198
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:240
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:146
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:191
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:176
+msgid "Name"
+msgstr "Nazwa"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:199
+msgid "CurModes"
+msgstr "AktualneTryby"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:200
+msgid "DefModes"
+msgstr "DomyślneTryby"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:201
+msgid "BufferSize"
+msgstr "RozmiarBufora"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:202
+msgid "Options"
+msgstr "Opcje"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:204
+msgid "← Add a channel (opens in same page)"
+msgstr "← Dodaj kanał (otwiera się na tej samej stronie)"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:214
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:161
+#: modules/po/../data/webadmin/tmpl/listusers.tmpl:27
+msgid "Edit"
+msgstr "Edytuj"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:214
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:162
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:53
+msgid "Del"
+msgstr "Usuń"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:234
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:185
+msgid "Modules"
+msgstr "Moduły"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:241
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:192
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:177
+msgid "Arguments"
+msgstr "Argumenty"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:242
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:193
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:178
+msgid "Description"
+msgstr "Opis"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:243
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:194
+msgid "Loaded globally"
+msgstr "Załadowany globalnie"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:244
+msgid "Loaded by user"
+msgstr "Załadowany przez użytkownika"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:305
+msgid "Add Network and return"
+msgstr "Dodaj sieć i wróć"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:306
+msgid "Add Network and continue"
+msgstr "Dodaj sieć i kontynuuj"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:19
+msgid "Authentication"
+msgstr "Uwierzytelnianie"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:23
+msgid "Username:"
+msgstr "Nazwa użytkownika:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:33
+msgid "Please enter a username."
+msgstr "Proszę wpisać nazwę użytkownika."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:38
+msgid "Password:"
+msgstr "Hasło:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:40
+msgid "Please enter a password."
+msgstr "Proszę wpisać hasło."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:43
+msgid "Confirm password:"
+msgstr "Potwierdź hasło:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:45
+msgid "Please re-type the above password."
+msgstr "Proszę powtórzyć powyższe hasło."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:48
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:151
+msgid "Auth only via module:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:50
+msgid ""
+"Allow user authentication by external modules only, disabling built-in "
+"password authentication."
+msgstr ""
+"Zezwalaj na uwierzytelnianie użytkowników tylko przez moduły zewnętrzne, "
+"wyłączając wbudowane uwierzytelnianie hasłem."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:54
+msgid "Allowed IPs:"
+msgstr "Dozwolone adresy IP:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:58
+msgid ""
+"Leave empty to allow connections from all IPs.<br/>Otherwise, one entry per "
+"line, wildcards * and ? are available."
+msgstr ""
+"Pozostaw puste, aby zezwolić na połączenia ze wszystkich adresów IP. <br/> W "
+"przeciwnym razie jeden wpis na linię, symbole wieloznaczne * i ? są dostępne."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:66
+msgid "IRC Information"
+msgstr "Informacje IRC"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:68
+msgid ""
+"Nick, AltNick, Ident, RealName and QuitMsg can be left empty to use default "
+"values."
+msgstr ""
+"Pseudonim, AlternatPseudonim, Ident, PrawdziweImię i WiadomośćZakończenia "
+"mogą pozostać puste aby użyć domyślnych wartości."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:86
+msgid "The Ident is sent to server as username."
+msgstr "Ident jest wysyłany do serwera jako nazwa użytkownika."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:90
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:102
+msgid "Status prefix:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:92
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:104
+msgid "The prefix for the status and module queries."
+msgstr "Przedrostek dla modułu status i pozostałych zapytań modułów."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:110
+msgid "DCCBindHost:"
+msgstr "Host przypięcia DCC:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:128
+#: modules/po/../data/webadmin/tmpl/listusers.tmpl:17
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:39
+msgid "Networks"
+msgstr "Sieci"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:133
+msgid "No networks have been added for you yet."
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:147
+#: modules/po/../data/webadmin/tmpl/listusers.tmpl:18
+msgid "Clients"
+msgstr "Klienci"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:148
+msgid "Current Server"
+msgstr "Bieżący serwer"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:149
+msgid "Nick"
+msgstr "Pseudonim"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:151
+msgid "← Add a network (opens in same page)"
+msgstr "← Dodaj sieć (otwiera się na tej samej stronie)"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:177
+msgid ""
+"You will be able to add + modify networks here after you have cloned the "
+"user."
+msgstr ""
+"Będziesz mógł tutaj dodawać + modyfikować sieci po sklonowaniu użytkownika."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:179
+msgid ""
+"You will be able to add + modify networks here after you have created the "
+"user."
+msgstr ""
+"Będziesz mógł tutaj dodawać + modyfikować sieci po utworzeniu użytkownika."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:195
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:179
+msgid "Loaded by networks"
+msgstr "Załadowany przez sieci"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:254
+msgid ""
+"These are the default modes ZNC will set when you join an empty channel."
+msgstr "Są to domyślne tryby, które ZNC ustawi po wejściu do pustego kanału."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:255
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:261
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:280
+msgid "Empty = use standard value"
+msgstr "Puste = użyj wartości standardowej"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:260
+msgid ""
+"This is the amount of lines that the playback buffer will store for channels "
+"before dropping off the oldest line. The buffers are stored in the memory by "
+"default."
+msgstr ""
+"To jest ilość linii, których bufor odtwarzania będzie przechowywał dla "
+"kanałów przed porzuceniem najstarszej linii. Domyślnie bufory są "
+"przechowywane w pamięci operacyjnej."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:268
+msgid "Queries"
+msgstr "Rozmowy"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:272
+msgid "Max buffers:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:274
+msgid "Maximum number of query buffers. 0 is unlimited."
+msgstr "Maksymalna liczba buforów rozmów. 0 jest nieograniczona."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:279
+msgid ""
+"This is the amount of lines that the playback buffer will store for queries "
+"before dropping off the oldest line. The buffers are stored in the memory by "
+"default."
+msgstr ""
+"To jest ilość linii, których bufor odtwarzania będzie przechowywał dla "
+"rozmów przed porzuceniem najstarszej linii. Domyślnie bufory są "
+"przechowywane w pamięci operacyjnej."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:302
+msgid "ZNC Behavior"
+msgstr "Zachowanie ZNC"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:303
+msgid ""
+"Any of the following text boxes can be left empty to use their default value."
+msgstr ""
+"Każde z poniższych pól tekstowych można pozostawić puste, aby użyć ich "
+"wartości domyślnej."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:307
+msgid "Timestamp format:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:309
+msgid ""
+"The format for the timestamps used in buffers, for example [%H:%M:%S]. This "
+"setting is ignored in new IRC clients, which use server-time. If your client "
+"supports server-time, change timestamp format in client settings instead."
+msgstr ""
+"Format znaczników czasu używanych w buforach, na przykład [%H:%M:%S]. To "
+"ustawienie jest ignorowane w nowych klientach IRC, które używają czasu "
+"serwera. Jeśli Twój klient obsługuje czas serwera, zmień format znacznika "
+"czasu w ustawieniach klienta."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:312
+msgid "Timezone:"
+msgstr "Strefa czasowa:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:315
+msgid "E.g. <code>Europe/Berlin</code>, or <code>GMT-6</code>"
+msgstr "Np. <code>Europa/Warszawa</code>, lub <code>GMT+1</code>"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:323
+msgid "Character encoding used between IRC client and ZNC."
+msgstr "Kodowanie znaków używane między klientem IRC a ZNC."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:324
+msgid "Client encoding:"
+msgstr "Kodowanie klienta:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:329
+msgid "Join tries:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:331
+msgid ""
+"This defines how many times ZNC tries to join a channel, if the first join "
+"failed, e.g. due to channel mode +i/+k or if you are banned."
+msgstr ""
+"Określa, ile razy ZNC próbuje dołączyć do kanału, jeśli pierwsze dołączenie "
+"nie powiodło się, np. z powodu trybu kanału +i/+k lub jeśli jesteś "
+"zablokowany."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:334
+msgid "Join speed:"
+msgstr "Szybkość dołączania:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:336
+msgid ""
+"How many channels are joined in one JOIN command. 0 is unlimited (default). "
+"Set to small positive value if you get disconnected with “Max SendQ Exceeded”"
+msgstr ""
+"Do ilu kanałów dołączasz w jednym poleceniu JOIN. 0 jest nieograniczone "
+"(domyślnie). Ustaw na małą wartość dodatnią, jeśli rozłączy Ciebie "
+"wiadomością “Max SendQ Exceeded”"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:339
+msgid "Timeout before reconnect:"
+msgstr "Czas oczekiwania przed ponownym połączeniem:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:341
+msgid ""
+"How much time ZNC waits (in seconds) until it receives something from "
+"network or declares the connection timeout. This happens after attempts to "
+"ping the peer."
+msgstr ""
+"Jak długo czasu ZNC oczekuje (w sekundach) zanim otrzyma coś z sieci lub "
+"zadeklaruje wygaśnięcie czasu oczekiwania na połączenie. To się dzieje po "
+"próbach wysłania pakietu początkowego zdalnej stronie."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:344
+msgid "Max IRC networks number:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:346
+msgid "Maximum number of IRC networks allowed for this user."
+msgstr "Maksymalna liczba sieci IRC dozwolona dla tego użytkownika."
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:349
+msgid "Substitutions"
+msgstr "Podstawienia"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:351
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:359
+msgid "CTCP replies:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:355
+msgid "One reply per line. Example: <code>TIME Buy a watch!</code>"
+msgstr "Jedna odpowiedź na linię. Przykład:<code>TIME Kup zegarek!</code>"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:356
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:374
+msgid "{1} are available"
+msgstr "{1} są dostępne"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:358
+msgid "Empty value means this CTCP request will be ignored"
+msgstr "Pusta wartość oznacza, że to zapytanie CTCP zostanie zignorowane"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:364
+msgid "Request"
+msgstr "Zapytanie"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:365
+msgid "Response"
+msgstr "Odpowiedź"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:392
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:90
+msgid "Skin:"
+msgstr "Skórka:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:396
+msgid "- Global -"
+msgstr "- Globalna -"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:398
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:94
+msgid "Default"
+msgstr "Domyślna"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:402
+msgid "No other skins found"
+msgstr "Nie znaleziono innych skórek"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:408
+msgid "Language:"
+msgstr "Język:"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:441
+msgid "Clone and return"
+msgstr "Sklonuj i wróć"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:442
+msgid "Clone and continue"
+msgstr "Sklonuj i kontynuuj"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:444
+msgid "Create and return"
+msgstr "Utwórz i wróć"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:445
+msgid "Create and continue"
+msgstr "Utwórz i kontynuuj"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:451
+#: modules/po/../data/webadmin/tmpl/listusers.tmpl:28
+msgid "Clone"
+msgstr "Sklonuj"
+
+#: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:453
+msgid "Create"
+msgstr "Stwórz"
+
+#: modules/po/../data/webadmin/tmpl/del_network.tmpl:5
+msgid "Confirm Network Deletion"
+msgstr "Potwierdź usunięcie sieci"
+
+#: modules/po/../data/webadmin/tmpl/del_network.tmpl:9
+msgid "Are you sure you want to delete network “{2}” of user “{1}”?"
+msgstr "Czy na pewno chcesz usunąć sieć „{2}” użytkownika „{1}”?"
+
+#: modules/po/../data/webadmin/tmpl/del_network.tmpl:14
+#: modules/po/../data/webadmin/tmpl/del_user.tmpl:14
+msgid "Yes"
+msgstr "Tak"
+
+#: modules/po/../data/webadmin/tmpl/del_network.tmpl:17
+#: modules/po/../data/webadmin/tmpl/del_user.tmpl:17
+msgid "No"
+msgstr "Nie"
+
+#: modules/po/../data/webadmin/tmpl/del_user.tmpl:5
+msgid "Confirm User Deletion"
+msgstr "Potwierdź usunięcie użytkownika"
+
+#: modules/po/../data/webadmin/tmpl/del_user.tmpl:9
+msgid "Are you sure you want to delete user “{1}”?"
+msgstr "Czy na pewno chcesz usunąć użytkownika “{1}”?"
+
+#: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:6
+msgid "ZNC is compiled without encodings support. {1} is required for it."
+msgstr ""
+"ZNC jest skompilowany bez obsługi kodowania. Wymagane jest do tego {1}."
+
+#: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:11
+msgid "Legacy mode is disabled by modpython."
+msgstr "Tryb starszego typu jest wyłączony przez modpython."
+
+#: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:18
+msgid "Don't ensure any encoding at all (legacy mode, not recommended)"
+msgstr "Nie zapewniaj w ogóle żadnego kodowania (starszy tryb, niezalecane)"
+
+#: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:22
+msgid "Try to parse as UTF-8 and as {1}, send as UTF-8 (recommended)"
+msgstr "Próbuj parsować jako UTF-8 i jako {1}, wyślij jako UTF-8 (zalecane)"
+
+#: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:26
+msgid "Try to parse as UTF-8 and as {1}, send as {1}"
+msgstr "Próbuj parsować jako UTF-8 i jako {1}, wyślij jako {1}"
+
+#: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:30
+msgid "Parse and send as {1} only"
+msgstr "Parsuj i wyślij tylko jako {1}"
+
+#: modules/po/../data/webadmin/tmpl/encoding_settings.tmpl:36
+msgid "E.g. <code>UTF-8</code>, or <code>ISO-8859-15</code>"
+msgstr "Np. <code>UTF-8</code>, lub <code>ISO-8859-2</code>"
+
+#: modules/po/../data/webadmin/tmpl/index.tmpl:5
+msgid "Welcome to the ZNC webadmin module."
+msgstr "Witaj w module webadmin ZNC."
+
+#: modules/po/../data/webadmin/tmpl/index.tmpl:6
+msgid ""
+"All changes you make will be in effect immediately after you submitted them."
+msgstr ""
+"Wszelkie wprowadzone zmiany zostaną zastosowane natychmiast po ich "
+"przesłaniu."
+
+#: modules/po/../data/webadmin/tmpl/listusers.tmpl:16
+msgid "Username"
+msgstr "Nazwa użytkownika"
+
+#: modules/po/../data/webadmin/tmpl/listusers.tmpl:29
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:21
+msgid "Delete"
+msgstr "Usuń"
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:6
+msgid "Listen Port(s)"
+msgstr "Port(y) nasłuchu"
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:14
+msgid "BindHost"
+msgstr "HostPrzypięcia"
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:16
+msgid "IPv4"
+msgstr "IPv4"
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:17
+msgid "IPv6"
+msgstr "IPv6"
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:18
+msgid "IRC"
+msgstr "IRC"
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:19
+msgid "HTTP"
+msgstr "HTTP"
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:20
+msgid "URIPrefix"
+msgstr "PrzedrostekURI"
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:56
+msgid ""
+"To delete port which you use to access webadmin itself, either connect to "
+"webadmin via another port, or do it in IRC (/znc DelPort)"
+msgstr ""
+"Aby usunąć port, którego używasz do uzyskania dostępu do samego webadmin, "
+"albo połącz się z webadmin przez inny port, albo zrób to w IRC (/znc DelPort)"
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:56
+msgid "Current"
+msgstr "Bieżący"
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:86
+msgid "Settings"
+msgstr "Ustawienia"
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:105
+msgid "Default for new users only."
+msgstr "Jest to wartość domyślna dla nowych użytkowników."
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:110
+msgid "Maximum buffer size:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:112
+msgid "Sets the global Max Buffer Size a user can have."
+msgstr "Ustawia globalny maksymalny rozmiar bufora, jaki może mieć użytkownik."
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:117
+msgid "Connect delay:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:119
+msgid ""
+"The time between connection attempts to IRC servers, in seconds. This "
+"affects the connection between ZNC and the IRC server; not the connection "
+"between your IRC client and ZNC."
+msgstr ""
+"Czas między próbami połączenia z serwerami IRC, w sekundach. Wpływa to na "
+"połączenie między ZNC a serwerem IRC; nie na połączenie między Twoim "
+"klientem IRC a ZNC."
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:124
+msgid "Server throttle:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:126
+msgid ""
+"The minimal time between two connect attempts to the same hostname, in "
+"seconds. Some servers refuse your connection if you reconnect too fast."
+msgstr ""
+"Minimalny czas między dwiema próbami połączenia z tą samą nazwą hosta, w "
+"sekundach. Niektóre serwery odmawiają połączenia, jeśli nastąpi zbyt szybkie "
+"ponowne połączenie."
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:131
+msgid "Anonymous connection limit per IP:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:133
+msgid "Limits the number of unidentified connections per IP."
+msgstr "Ogranicza liczbę niezidentyfikowanych połączeń na IP."
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:138
+msgid "Protect web sessions:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:140
+msgid "Disallow IP changing during each web session"
+msgstr "Nie zezwalaj na zmianę adresu IP podczas każdej sesji WWW"
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:145
+msgid "Hide ZNC version:"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:147
+msgid "Hide version number from non-ZNC users"
+msgstr "Ukryj numer wersji przed użytkownikami spoza ZNC"
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:153
+msgid "Allow user authentication by external modules only"
+msgstr "Zezwól na uwierzytelnianie użytkownika tylko przez moduły zewnętrzne"
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:158
+msgid "MOTD:"
+msgstr "Wiadomość dnia:"
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:162
+msgid "“Message of the Day”, sent to all ZNC users on connect."
+msgstr ""
+"„Wiadomość dnia”, wysyłana do wszystkich użytkowników ZNC na połączeniu."
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:170
+msgid "Global Modules"
+msgstr "Moduły globalne"
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:180
+msgid "Loaded by users"
+msgstr "Załadowany przez użytkowników"
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:7
+msgid "Information"
+msgstr "Informacja"
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:13
+msgid "Uptime"
+msgstr "Czas działania"
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:18
+msgid "Total users"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:22
+msgid "Total networks"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:26
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:43
+msgid "Attached networks"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:30
+msgid "Total client connections"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:34
+msgid "Total IRC connections"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:47
+msgid "Client Connections"
+msgstr "Połączenia klienta"
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:51
+msgid "IRC Connections"
+msgstr "Połączenia IRC"
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:63
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:72
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:89
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:117
+msgid "Total"
+msgstr "Suma"
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:70
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:115
+msgctxt "Traffic"
+msgid "In"
+msgstr "Przychodzący"
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:71
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:116
+msgctxt "Traffic"
+msgid "Out"
+msgstr "Wychodzący"
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:77
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:104
+msgid "Users"
+msgstr "Użytkownicy"
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:106
+msgid "Traffic"
+msgstr "Ruch sieciowy"
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:113
+msgid "User"
+msgstr "Użytkownik"
+
+#: modules/po/../data/webadmin/tmpl/traffic.tmpl:114
+msgid "Network"
+msgstr "Sieć"
+
+#: webadmin.cpp:91 webadmin.cpp:2025
+msgid "Global Settings"
+msgstr "Ustawienia globalne"
+
+#: webadmin.cpp:93
+msgid "Your Settings"
+msgstr "Twoje ustawienia"
+
+#: webadmin.cpp:94 webadmin.cpp:1837
+msgid "Traffic Info"
+msgstr "Informacje o ruchu sieciowym"
+
+#: webadmin.cpp:97 webadmin.cpp:1816
+msgid "Manage Users"
+msgstr "Zarządzanie użytkownikami"
+
+#: webadmin.cpp:188
+msgid "Invalid Submission [Username is required]"
+msgstr "Niepoprawne przesłanie [nazwa użytkownika jest wymagana]"
+
+#: webadmin.cpp:201
+msgid "Invalid Submission [Passwords do not match]"
+msgstr "Niepoprawne przesłanie [Hasła do siebie nie pasują]"
+
+#: webadmin.cpp:337
+msgid "Timeout can't be less than 30 seconds!"
+msgstr "Limit czasu nie może być krótszy niż 30 sekund!"
+
+#: webadmin.cpp:436 webadmin.cpp:464 webadmin.cpp:1272 webadmin.cpp:2210
+#, c++-format
+msgid "Unable to load module [{1}]: {2}"
+msgstr "Nie można załadować modułu [{1}]: {2}"
+
+#: webadmin.cpp:441 webadmin.cpp:469
+#, c++-format
+msgid "Unable to load module [{1}] with arguments [{2}]"
+msgstr "Nie można załadować modułu [{1}] z argumentami [{2}]"
+
+#: webadmin.cpp:547 webadmin.cpp:664 webadmin.cpp:689 webadmin.cpp:711
+#: webadmin.cpp:745 webadmin.cpp:1339
+msgid "No such user"
+msgstr "Nie ma takiego użytkownika"
+
+#: webadmin.cpp:555 webadmin.cpp:592 webadmin.cpp:925
+msgid "Permission denied"
+msgstr ""
+
+#: webadmin.cpp:568 webadmin.cpp:605 webadmin.cpp:634 webadmin.cpp:650
+msgid "No such user or network"
+msgstr "Nie ma takiego użytkownika lub sieci"
+
+#: webadmin.cpp:615
+msgid "No such channel"
+msgstr "Nie ma takiego kanału"
+
+#: webadmin.cpp:681
+msgid "Please don't delete yourself, suicide is not the answer!"
+msgstr "Nie usuwaj siebie, samobójstwo nie jest odpowiedzią!"
+
+#: webadmin.cpp:754 webadmin.cpp:942 webadmin.cpp:1404
+#, c++-format
+msgid "Edit User [{1}]"
+msgstr "Edytuj użytkownika [{1}]"
+
+#: webadmin.cpp:758 webadmin.cpp:956
+#, c++-format
+msgid "Edit Network [{1}]"
+msgstr "Edytuj sieć [{1}]"
+
+#: webadmin.cpp:768
+#, c++-format
+msgid "Edit Channel [{1}] of Network [{2}] of User [{3}]"
+msgstr "Edytuj kanał [{1}] z sieci [{2}] użytkownika [{3}]"
+
+#: webadmin.cpp:775
+#, c++-format
+msgid "Edit Channel [{1}]"
+msgstr "Edytuj kanał [{1}]"
+
+#: webadmin.cpp:783
+#, c++-format
+msgid "Add Channel to Network [{1}] of User [{2}]"
+msgstr "Dodaj kanał do sieci [{1}] użytkownika [{2}]"
+
+#: webadmin.cpp:788
+msgid "Add Channel"
+msgstr "Dodaj kanał"
+
+#: webadmin.cpp:795 webadmin.cpp:1624
+msgid "Auto clear chan buffer"
+msgstr ""
+
+#: webadmin.cpp:797
+msgid "Automatically clear channel buffer after playback"
+msgstr ""
+
+#: webadmin.cpp:805
+msgid "Detached"
+msgstr "Odpięty"
+
+#: webadmin.cpp:812
+msgid "Enabled"
+msgstr "Włączony"
+
+#: webadmin.cpp:836
+msgid "Channel name is a required argument"
+msgstr "Nazwa kanału jest wymaganym argumentem"
+
+#: webadmin.cpp:845
+#, c++-format
+msgid "Channel [{1}] already exists"
+msgstr "Kanał [{1}] już istnieje"
+
+#: webadmin.cpp:852
+#, c++-format
+msgid "Could not add channel [{1}]"
+msgstr "Nie można dodać kanału [{1}]"
+
+#: webadmin.cpp:900
+msgid "Channel was added/modified, but config file was not written"
+msgstr ""
+"Kanał został dodany/zmodyfikowany, ale plik konfiguracyjny nie został "
+"zapisany"
+
+#: webadmin.cpp:932
+msgid ""
+"Network number limit reached. Ask an admin to increase the limit for you, or "
+"delete unneeded networks from Your Settings."
+msgstr ""
+"Osiągnięto maksymalną liczbę sieci. Poproś administratora o zwiększenie "
+"limitu dla Ciebie lub usuń niepotrzebne sieci z Twoich ustawień."
+
+#: webadmin.cpp:953
+#, c++-format
+msgid "Edit Network [{1}] of User [{2}]"
+msgstr "Edytuj sieć [{1}] użytkownika [{2}]"
+
+#: webadmin.cpp:960
+#, c++-format
+msgid "Add Network for User [{1}]"
+msgstr "Dodaj sieć dla użytkownika [{1}]"
+
+#: webadmin.cpp:961
+msgid "Add Network"
+msgstr "Dodaj sieć"
+
+#: webadmin.cpp:1144
+msgid "Network name is a required argument"
+msgstr "Nazwa sieci jest wymaganym argumentem"
+
+#: webadmin.cpp:1279 webadmin.cpp:2217
+#, c++-format
+msgid "Unable to reload module [{1}]: {2}"
+msgstr "Nie można przeładować modułu [{1}]: {2}"
+
+#: webadmin.cpp:1316
+msgid "Network was added/modified, but config file was not written"
+msgstr ""
+"Sieć została dodana/zmodyfikowana, ale plik konfiguracyjny nie został "
+"zapisany"
+
+#: webadmin.cpp:1345
+msgid "That network doesn't exist for this user"
+msgstr "Ta sieć nie istnieje dla tego użytkownika"
+
+#: webadmin.cpp:1362
+msgid "Network was deleted, but config file was not written"
+msgstr "Sieć została usunięta, ale plik konfiguracyjny nie został zapisany"
+
+#: webadmin.cpp:1376
+msgid "That channel doesn't exist for this network"
+msgstr "Ten kanał nie istnieje dla tej sieci"
+
+#: webadmin.cpp:1385
+msgid "Channel was deleted, but config file was not written"
+msgstr "Kanał został usunięty, ale plik konfiguracyjny nie został zapisany"
+
+#: webadmin.cpp:1413
+#, c++-format
+msgid "Clone User [{1}]"
+msgstr "Sklonuj użytkownika [{1}]"
+
+#: webadmin.cpp:1626
+msgid ""
+"Automatically clear channel buffer after playback (the default value for new "
+"channels)"
+msgstr ""
+
+#: webadmin.cpp:1636
+msgid "Allow multiple clients"
+msgstr ""
+
+#: webadmin.cpp:1643
+msgid "Append timestamps"
+msgstr ""
+
+#: webadmin.cpp:1650
+msgid "Prepend timestamps"
+msgstr ""
+
+#: webadmin.cpp:1658
+msgid "Deny LoadMod"
+msgstr "Odmawiaj LoadMod"
+
+#: webadmin.cpp:1665
+msgid "Admin (dangerous! may gain shell access)"
+msgstr "Administrator (niebezpieczne! Może uzyskać dostęp do powłoki)"
+
+#: webadmin.cpp:1675
+msgid "Deny setting BindHost"
+msgstr ""
+
+#: webadmin.cpp:1682
+msgid "Deny setting Ident"
+msgstr ""
+
+#: webadmin.cpp:1689
+msgid "Deny editing networks/servers"
+msgstr ""
+
+#: webadmin.cpp:1691
+msgid ""
+"Deny adding/deleting networks, setting network name and editing the server "
+"list"
+msgstr ""
+
+#: webadmin.cpp:1698
+msgid "Deny setting RealName"
+msgstr ""
+
+#: webadmin.cpp:1705
+msgid "Deny setting quit message"
+msgstr ""
+
+#: webadmin.cpp:1712
+msgid "Deny setting CTCP replies"
+msgstr ""
+
+#: webadmin.cpp:1714
+msgid "Block customizing CTCP replies for non-admin users"
+msgstr ""
+
+#: webadmin.cpp:1722
+msgid "Auto clear query buffer"
+msgstr ""
+
+#: webadmin.cpp:1724
+msgid "Automatically clear query buffer after playback"
+msgstr ""
+
+#: webadmin.cpp:1748
+#, c++-format
+msgid "Invalid Submission: User {1} already exists"
+msgstr "Niepoprawne przesłanie: Użytkownik {1} już istnieje"
+
+#: webadmin.cpp:1770 webadmin.cpp:1781
+#, c++-format
+msgid "Invalid submission: {1}"
+msgstr "Niepoprawne przesłanie: {1}"
+
+#: webadmin.cpp:1776
+msgid "User was added, but config file was not written"
+msgstr "Użytkownik został dodany, ale konfiguracja nie została zapisana"
+
+#: webadmin.cpp:1787
+msgid "User was edited, but config file was not written"
+msgstr "Użytkownik został zedytowany, ale konfiguracja nie została zapisana"
+
+#: webadmin.cpp:1945
+msgid "Choose either IPv4 or IPv6 or both."
+msgstr "Wybierz IPv4 lub IPv6 lub oba."
+
+#: webadmin.cpp:1962
+msgid "Choose either IRC or HTTP or both."
+msgstr "Wybierz IRC, HTTP lub oba."
+
+#: webadmin.cpp:1975 webadmin.cpp:2011
+msgid "Port was changed, but config file was not written"
+msgstr "Port został zmieniony, ale plik konfiguracyjny nie został zapisany"
+
+#: webadmin.cpp:2001
+msgid "Invalid request."
+msgstr "Nieprawidłowe zapytanie."
+
+#: webadmin.cpp:2015
+msgid "The specified listener was not found."
+msgstr "Określony nasłuchiwacz nie został znaleziony."
+
+#: webadmin.cpp:2246
+msgid "Settings were changed, but config file was not written"
+msgstr ""
+"Ustawienia zostały zmienione, ale plik konfiguracyjny nie został zapisany"

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -372,6 +372,41 @@ CPerlSocket::~CPerlSocket() {
         PCALL("ZNC::Core::RemoveSocket");
         PEND;
     }
+}
+
+CPerlCapability::~CPerlCapability() {
+    SvREFCNT_dec(m_serverCb);
+    SvREFCNT_dec(m_clientCb);
+}
+
+void CPerlCapability::OnServerChangedSupport(CIRCNetwork* pNetwork, bool bState) {
+    PSTART;
+    PUSH_PTR(CIRCNetwork*, pNetwork);
+    mXPUSHi(bState);
+    PUTBACK;
+    ret = call_sv(m_serverCb, G_EVAL | G_ARRAY);
+    SPAGAIN;
+    SP -= ret;
+    ax = (SP - PL_stack_base) + 1;
+    if (SvTRUE(ERRSV)) {
+        DEBUG("Perl hook OnServerChangedSupport died with: " + PString(ERRSV));
+    }
+    PEND;
+}
+
+void CPerlCapability::OnClientChangedSupport(CClient* pClient, bool bState) {
+    PSTART;
+    PUSH_PTR(CClient*, pClient);
+    mXPUSHi(bState);
+    PUTBACK;
+    ret = call_sv(m_clientCb, G_EVAL | G_ARRAY);
+    SPAGAIN;
+    SP -= ret;
+    ax = (SP - PL_stack_base) + 1;
+    if (SvTRUE(ERRSV)) {
+        DEBUG("Perl hook OnServerChangedSupport died with: " + PString(ERRSV));
+    }
+    PEND;
 }
 
 template <>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,19 +28,19 @@ class ClientTest : public IRCTest {
                   const CString& sPass) const {
         CClient client;
         client.ParsePass(sInput);
-        EXPECT_EQ(sUser, client.m_sUser);
-        EXPECT_EQ(sIdentifier, client.m_sIdentifier);
-        EXPECT_EQ(sNetwork, client.m_sNetwork);
-        EXPECT_EQ(sPass, client.m_sPass);
+        EXPECT_EQ(client.m_sUser, sUser);
+        EXPECT_EQ(client.m_sIdentifier, sIdentifier);
+        EXPECT_EQ(client.m_sNetwork, sNetwork);
+        EXPECT_EQ(client.m_sPass, sPass);
     }
 
     void testUser(const CString& sInput, const CString& sUser,
                   const CString& sIdentifier, const CString& sNetwork) const {
         CClient client;
         client.ParseUser(sInput);
-        EXPECT_EQ(sUser, client.m_sUser);
-        EXPECT_EQ(sIdentifier, client.m_sIdentifier);
-        EXPECT_EQ(sNetwork, client.m_sNetwork);
+        EXPECT_EQ(client.m_sUser, sUser);
+        EXPECT_EQ(client.m_sIdentifier, sIdentifier);
+        EXPECT_EQ(client.m_sNetwork, sNetwork);
     }
 };
 
@@ -80,6 +80,22 @@ TEST_F(ClientTest, AccountNotify) {
     EXPECT_TRUE(m_pTestClient->HasAccountNotify());
     m_pTestClient->PutClient(msg);
     EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString()));
+}
+
+TEST_F(ClientTest, AccountTag) {
+    m_pTestSock->ReadLine(":server CAP * ACK :account-tag");
+    m_pTestClient->Reset();
+
+    CMessage msg(":nick!user@host PRIVMSG #channel :text");
+    CMessage extmsg("@account=account-name :nick!user@host PRIVMSG #channel :text");
+    EXPECT_FALSE(m_pTestClient->IsTagEnabled("account"));
+    m_pTestClient->PutClient(extmsg);
+    EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString()));
+    m_pTestClient->SetTagSupport("account", true);
+    EXPECT_TRUE(m_pTestClient->IsTagEnabled("account"));
+    m_pTestClient->PutClient(extmsg);
+    EXPECT_THAT(m_pTestClient->vsLines,
+                ElementsAre(msg.ToString(), extmsg.ToString()));
 }
 
 TEST_F(ClientTest, AwayNotify) {
@@ -155,22 +171,6 @@ TEST_F(ClientTest, UserhostInNames) {  // aka UHNAMES
                 ElementsAre(msg.ToString(), extmsg.ToString()));
 }
 
-TEST_F(ClientTest, ExtendedJoin) {
-    m_pTestSock->ReadLine(":server CAP * ACK :extended-join");
-    m_pTestClient->Reset();
-
-    CMessage msg(":nick!user@host JOIN #channel");
-    CMessage extmsg(":nick!user@host JOIN #channel account :Real Name");
-    EXPECT_FALSE(m_pTestClient->HasExtendedJoin());
-    m_pTestClient->PutClient(extmsg);
-    EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString()));
-    m_pTestClient->SetExtendedJoin(true);
-    EXPECT_TRUE(m_pTestClient->HasExtendedJoin());
-    m_pTestClient->PutClient(extmsg);
-    EXPECT_THAT(m_pTestClient->vsLines,
-                ElementsAre(msg.ToString(), extmsg.ToString()));
-}
-
 TEST_F(ClientTest, StatusMsg) {
     m_pTestSock->ReadLine(
         ":irc.znc.in 001 me :Welcome to the Internet Relay Network me");
@@ -181,11 +181,11 @@ TEST_F(ClientTest, StatusMsg) {
     m_pTestUser->SetAutoClearChanBuffer(false);
     m_pTestClient->ReadLine("PRIVMSG @#chan :hello ops");
 
-    EXPECT_EQ(1u, m_pTestChan->GetBuffer().Size());
+    EXPECT_EQ(m_pTestChan->GetBuffer().Size(), 1u);
 
     m_pTestUser->SetTimestampPrepend(false);
-    EXPECT_EQ(":me PRIVMSG @#chan :hello ops",
-              m_pTestChan->GetBuffer().GetLine(0, *m_pTestClient));
+    EXPECT_EQ(m_pTestChan->GetBuffer().GetLine(0, *m_pTestClient),
+              ":me PRIVMSG @#chan :hello ops");
 }
 
 TEST_F(ClientTest, TagSupport) {
@@ -250,7 +250,7 @@ TEST_F(ClientTest, OnUserActionMessage) {
     EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
     EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
     EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
-    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(m_pTestChan));
     EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
 
     m_pTestModule->eAction = CModule::CONTINUE;
@@ -267,7 +267,7 @@ TEST_F(ClientTest, OnUserTextMessage) {
     EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
     EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
     EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
-    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(m_pTestChan));
     EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
 
     m_pTestModule->eAction = CModule::CONTINUE;
@@ -284,7 +284,7 @@ TEST_F(ClientTest, OnUserNoticeMessage) {
     EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
     EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
     EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
-    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(m_pTestChan));
     EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
 
     m_pTestModule->eAction = CModule::CONTINUE;
@@ -301,7 +301,7 @@ TEST_F(ClientTest, OnUserJoinMessage) {
     EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
     EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
     EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
-    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(m_pTestChan));
     EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
 
     m_pTestModule->eAction = CModule::CONTINUE;
@@ -310,7 +310,8 @@ TEST_F(ClientTest, OnUserJoinMessage) {
 }
 
 TEST_F(ClientTest, OnUserPartMessage) {
-    CMessage msg("PART #znc");
+    m_pTestChan->SetIsOn(true);
+    CMessage msg("PART #chan");
     m_pTestModule->eAction = CModule::HALT;
     m_pTestClient->ReadLine(msg.ToString());
 
@@ -318,7 +319,7 @@ TEST_F(ClientTest, OnUserPartMessage) {
     EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
     EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
     EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
-    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(m_pTestChan));
     EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
 
     m_pTestModule->eAction = CModule::CONTINUE;
@@ -335,7 +336,7 @@ TEST_F(ClientTest, OnUserTopicMessage) {
     EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
     EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
     EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
-    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+    EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(m_pTestChan));
     EXPECT_THAT(m_pTestSock->vsLines, IsEmpty());  // halt
 
     m_pTestModule->eAction = CModule::CONTINUE;

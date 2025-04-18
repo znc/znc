@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,9 +46,15 @@ static void locking_callback(int mode, int type, const char* file, int line) {
     }
 }
 
+#if OPENSSL_VERSION_NUMBER >= 0x10000000
+static void thread_id_callback(CRYPTO_THREADID *id) {
+    CRYPTO_THREADID_set_numeric(id, (unsigned long)pthread_self());
+}
+#else
 static unsigned long thread_id_callback() {
     return (unsigned long)pthread_self();
 }
+#endif
 
 static CRYPTO_dynlock_value* dyn_create_callback(const char* file, int line) {
     return (CRYPTO_dynlock_value*)new CMutex;
@@ -78,7 +84,11 @@ static void thread_setup() {
     for (std::unique_ptr<CMutex>& mtx : lock_cs)
         mtx = std::unique_ptr<CMutex>(new CMutex());
 
+#if OPENSSL_VERSION_NUMBER >= 0x10000000
+    CRYPTO_THREADID_set_callback(&thread_id_callback);
+#else
     CRYPTO_set_id_callback(&thread_id_callback);
+#endif
     CRYPTO_set_locking_callback(&locking_callback);
 
     CRYPTO_set_dynlock_create_callback(&dyn_create_callback);
@@ -373,20 +383,15 @@ int main(int argc, char** argv) {
 #endif /* HAVE_LIBSSL */
 
     if (bMakePass) {
-        CString sSalt;
         CUtils::PrintMessage("Type your new password.");
-        CString sHash = CUtils::GetSaltedHashPass(sSalt);
+        CString sPass = CUtils::AskSaltedHashPassForConfig();
         CUtils::PrintMessage("Kill ZNC process, if it's running.");
         CUtils::PrintMessage(
             "Then replace password in the <User> section of your config with "
             "this:");
         // Not PrintMessage(), to remove [**] from the beginning, to ease
         // copypasting
-        std::cout << "<Pass password>" << std::endl;
-        std::cout << "\tMethod = " << CUtils::sDefaultHash << std::endl;
-        std::cout << "\tHash = " << sHash << std::endl;
-        std::cout << "\tSalt = " << sSalt << std::endl;
-        std::cout << "</Pass>" << std::endl;
+        std::cout << sPass << std::endl;
         CUtils::PrintMessage(
             "After that start ZNC again, and you should be able to login with "
             "the new password.");
@@ -462,7 +467,7 @@ int main(int argc, char** argv) {
 
     if (bForeground) {
         int iPid = getpid();
-        CUtils::PrintMessage("Staying open for debugging [pid: " +
+        CUtils::PrintMessage("Running in foreground [pid: " +
                              CString(iPid) + "]");
 
         pZNC->WritePidFile(iPid);

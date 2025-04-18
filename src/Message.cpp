@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#include <string_view>
 
 #include <znc/Message.h>
 #include <znc/Utils.h>
@@ -48,7 +50,7 @@ void CMessage::SetCommand(const CString& sCommand) {
     InitType();
 }
 
-CString CMessage::GetParams(unsigned int uIdx, unsigned int uLen) const {
+CString CMessage::GetParamsColon(unsigned int uIdx, unsigned int uLen) const {
     if (m_vsParams.empty() || uLen == 0) {
         return "";
     }
@@ -71,6 +73,16 @@ CString CMessage::GetParams(unsigned int uIdx, unsigned int uLen) const {
 
 void CMessage::SetParams(const VCString& vsParams) {
     m_vsParams = vsParams;
+    m_bColon = false;
+
+    if (m_eType == Type::Text || m_eType == Type::Notice ||
+        m_eType == Type::Action || m_eType == Type::CTCP) {
+        InitType();
+    }
+}
+
+void CMessage::SetParams(VCString&& vsParams) {
+    m_vsParams = std::move(vsParams);
     m_bColon = false;
 
     if (m_eType == Type::Text || m_eType == Type::Notice ||
@@ -151,25 +163,49 @@ CString CMessage::ToString(unsigned int uFlags) const {
         if (!sMessage.empty()) {
             sMessage += " ";
         }
-        sMessage += GetParams(0);
+        sMessage += GetParamsColon(0);
     }
 
     return sMessage;
 }
 
-void CMessage::Parse(CString sMessage) {
+void CMessage::Parse(const CString& sMessage) {
+    const char* begin = sMessage.c_str();
+    const char* const end = begin + sMessage.size();
+    auto next_word = [&]() {
+        // Find the end of the first word
+        const char* p = begin;
+        while (p < end && *p != ' ') ++p;
+        std::string_view result(begin, p - begin);
+        begin = p;
+        // Prepare for the following word
+        while (begin < end && *begin == ' ') ++begin;
+        return result;
+    };
+
     // <tags>
     m_mssTags.clear();
-    if (sMessage.StartsWith("@")) {
-        VCString vsTags;
-        sMessage.Token(0).TrimPrefix_n("@").Split(";", vsTags, false);
-        for (const CString& sTag : vsTags) {
-            CString sKey = sTag.Token(0, false, "=", true);
-            CString sValue = sTag.Token(1, true, "=", true);
+    if (begin < end && *begin == '@') {
+        std::string_view svTags = next_word().substr(1);
+        std::vector<std::string_view> vsTags;
+        // Split by ';'
+        while (true) {
+            auto delim = svTags.find_first_of(';');
+            if (delim == std::string_view::npos) {
+                vsTags.push_back(svTags);
+                break;
+            }
+            vsTags.push_back(svTags.substr(0, delim));
+            svTags = svTags.substr(delim + 1);
+        }
+        // Save key and value
+        for (std::string_view svTag : vsTags) {
+            auto delim = svTag.find_first_of('=');
+            CString sKey = std::string(delim == std::string_view::npos ? svTag : svTag.substr(0, delim));
+            CString sValue = delim == std::string_view::npos ? std::string() : std::string(svTag.substr(delim + 1));
             m_mssTags[sKey] =
                 sValue.Escape(CString::EMSGTAG, CString::CString::EASCII);
         }
-        sMessage = sMessage.Token(1, true);
     }
 
     //  <message>  ::= [':' <prefix> <SPACE> ] <command> <params> <crlf>
@@ -183,26 +219,24 @@ void CMessage::Parse(CString sMessage) {
     //                   NUL or CR or LF>
 
     // <prefix>
-    if (sMessage.TrimPrefix(":")) {
-        m_Nick.Parse(sMessage.Token(0));
-        sMessage = sMessage.Token(1, true);
+    if (begin < end && *begin == ':') {
+        m_Nick.Parse(std::string(next_word().substr(1)));
     }
 
     // <command>
-    m_sCommand = sMessage.Token(0);
-    sMessage = sMessage.Token(1, true);
+    m_sCommand = std::string(next_word());
 
     // <params>
     m_bColon = false;
     m_vsParams.clear();
-    while (!sMessage.empty()) {
-        m_bColon = sMessage.TrimPrefix(":");
+    while (begin < end) {
+        m_bColon = *begin == ':';
         if (m_bColon) {
-            m_vsParams.push_back(sMessage);
-            sMessage.clear();
+            ++begin;
+            m_vsParams.push_back(std::string(begin, end - begin));
+            begin = end;
         } else {
-            m_vsParams.push_back(sMessage.Token(0));
-            sMessage = sMessage.Token(1, true);
+            m_vsParams.push_back(std::string(next_word()));
         }
     }
 
@@ -242,10 +276,12 @@ void CMessage::InitType() {
             m_eType = Type::Notice;
         }
     } else {
-        std::map<CString, Type> mTypes = {
+        static std::map<CString, Type> mTypes = {
             {"ACCOUNT", Type::Account},
+            {"AUTHENTICATE", Type::Authenticate},
             {"AWAY", Type::Away},
             {"CAP", Type::Capability},
+            {"CHGHOST", Type::ChgHost},
             {"ERROR", Type::Error},
             {"INVITE", Type::Invite},
             {"JOIN", Type::Join},
@@ -256,6 +292,7 @@ void CMessage::InitType() {
             {"PING", Type::Ping},
             {"PONG", Type::Pong},
             {"QUIT", Type::Quit},
+            {"TAGMSG", Type::TagMsg},
             {"TOPIC", Type::Topic},
             {"WALLOPS", Type::Wallops},
         };
@@ -266,4 +303,24 @@ void CMessage::InitType() {
             m_eType = Type::Unknown;
         }
     }
+}
+
+VCString CMessage::GetParamsSplit(unsigned int uIdx, unsigned int uLen) const {
+    VCString splitParams;
+    const VCString &params = GetParams();
+
+    if (params.empty() || uLen == 0 || uIdx >= params.size()) {
+        return splitParams;
+    }
+
+    if (uLen > params.size() - uIdx - 1) {
+        uLen = params.size() - uIdx;
+    }
+
+    VCString::const_iterator startIt = params.begin() + uIdx;
+    VCString::const_iterator endIt = startIt + uLen;
+
+    splitParams.assign(startIt, endIt);
+
+    return splitParams;
 }

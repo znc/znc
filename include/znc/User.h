@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@
 #include <znc/Utils.h>
 #include <znc/Buffer.h>
 #include <znc/Nick.h>
+#include <znc/Translation.h>
 #include <set>
 #include <vector>
 
@@ -34,9 +35,9 @@ class CIRCSock;
 class CUserTimer;
 class CServer;
 
-class CUser {
+class CUser : private CCoreTranslationMixin {
   public:
-    CUser(const CString& sUserName);
+    CUser(const CString& sUsername);
     ~CUser();
 
     CUser(const CUser&) = delete;
@@ -44,31 +45,38 @@ class CUser {
 
     bool ParseConfig(CConfig* Config, CString& sError);
 
-    // TODO refactor this
     enum eHashType {
         HASH_NONE,
         HASH_MD5,
         HASH_SHA256,
+        HASH_ARGON2ID,
 
-        HASH_DEFAULT = HASH_SHA256
+        // This should be kept in sync with CUtils::SaltedHash
+#if ZNC_HAVE_ARGON
+        HASH_DEFAULT = HASH_ARGON2ID,
+#else
+        HASH_DEFAULT = HASH_SHA256,
+#endif
     };
 
-    // If you change the default hash here and in HASH_DEFAULT,
-    // don't forget CUtils::sDefaultHash!
-    // TODO refactor this
     static CString SaltedHash(const CString& sPass, const CString& sSalt) {
-        return CUtils::SaltedSHA256Hash(sPass, sSalt);
+        return CUtils::SaltedHash(sPass, sSalt);
     }
 
     CConfig ToConfig() const;
-    bool CheckPass(const CString& sPass) const;
+    /** Checks password, may upgrade the hash method. */
+    bool CheckPass(const CString& sPass);
     bool AddAllowedHost(const CString& sHostMask);
     bool RemAllowedHost(const CString& sHostMask);
     void ClearAllowedHosts();
     bool IsHostAllowed(const CString& sHost) const;
     bool IsValid(CString& sErrMsg, bool bSkipPass = false) const;
-    static bool IsValidUserName(const CString& sUserName);
-    static CString MakeCleanUserName(const CString& sUserName);
+    static bool IsValidUsername(const CString& sUsername);
+    /** @deprecated Use IsValidUsername() instead. */
+    static bool IsValidUserName(const CString& sUsername);
+    static CString MakeCleanUsername(const CString& sUsername);
+    /** @deprecated Use MakeCleanUsername() instead. */
+    static CString MakeCleanUserName(const CString& sUsername);
 
     // Modules
     CModules& GetModules() { return *m_pModules; }
@@ -88,7 +96,10 @@ class CUser {
     bool PutUser(const CString& sLine, CClient* pClient = nullptr,
                  CClient* pSkipClient = nullptr);
     bool PutAllUser(const CString& sLine, CClient* pClient = nullptr,
-                    CClient* pSkipClient = nullptr);
+                    CClient* pSkipClient = nullptr)
+        ZNC_MSG_DEPRECATED("Use PutUser() instead") {
+        return PutUser(sLine, pClient, pSkipClient);
+    }
     bool PutStatus(const CString& sLine, CClient* pClient = nullptr,
                    CClient* pSkipClient = nullptr);
     bool PutStatusNotice(const CString& sLine, CClient* pClient = nullptr,
@@ -110,6 +121,7 @@ class CUser {
 
     CString AddTimestamp(const CString& sStr) const;
     CString AddTimestamp(time_t tm, const CString& sStr) const;
+    CString AddTimestamp(timeval tv, const CString& sStr) const;
 
     void CloneNetworks(const CUser& User);
     bool Clone(const CUser& User, CString& sErrorRet,
@@ -131,6 +143,11 @@ class CUser {
     void SetDenyLoadMod(bool b);
     void SetAdmin(bool b);
     void SetDenySetBindHost(bool b);
+    void SetDenySetIdent(bool b);
+    void SetDenySetNetwork(bool b);
+    void SetDenySetRealName(bool b);
+    void SetDenySetQuitMsg(bool b);
+    void SetDenySetCTCPReplies(bool b);
     bool SetStatusPrefix(const CString& s);
     void SetDefaultChanModes(const CString& s);
     void SetClientEncoding(const CString& s);
@@ -149,6 +166,7 @@ class CUser {
     void SetTimestampFormat(const CString& s) { m_sTimestampFormat = s; }
     void SetTimestampAppend(bool b) { m_bAppendTimestamp = b; }
     void SetTimestampPrepend(bool b) { m_bPrependTimestamp = b; }
+    void SetAuthOnlyViaModule(bool b) { m_bAuthOnlyViaModule = b; }
     void SetTimezone(const CString& s) { m_sTimezone = s; }
     void SetJoinTries(unsigned int i) { m_uMaxJoinTries = i; }
     void SetMaxJoins(unsigned int i) { m_uMaxJoins = i; }
@@ -161,7 +179,9 @@ class CUser {
     // Getters
     const std::vector<CClient*>& GetUserClients() const { return m_vClients; }
     std::vector<CClient*> GetAllClients() const;
+    /** @deprecated Use GetUsername() instead. */
     const CString& GetUserName() const;
+    const CString& GetUsername() const;
     const CString& GetCleanUserName() const;
     const CString& GetNick(bool bAllowDefault = true) const;
     const CString& GetAltNick(bool bAllowDefault = true) const;
@@ -183,7 +203,13 @@ class CUser {
     bool DenyLoadMod() const;
     bool IsAdmin() const;
     bool DenySetBindHost() const;
+    bool DenySetIdent() const;
+    bool DenySetNetwork() const;
+    bool DenySetRealName() const;
+    bool DenySetQuitMsg() const;
+    bool DenySetCTCPReplies() const;
     bool MultiClients() const;
+    bool AuthOnlyViaModule() const;
     const CString& GetStatusPrefix() const;
     const CString& GetDefaultChanModes() const;
     /** How long must an IRC connection be idle before ZNC sends a ping */
@@ -216,8 +242,8 @@ class CUser {
     // !Getters
 
   protected:
-    const CString m_sUserName;
-    const CString m_sCleanUserName;
+    const CString m_sUsername;
+    const CString m_sCleanUsername;
     CString m_sNick;
     CString m_sAltNick;
     CString m_sIdent;
@@ -244,11 +270,17 @@ class CUser {
     bool m_bDenyLoadMod;
     bool m_bAdmin;
     bool m_bDenySetBindHost;
+    bool m_bDenySetIdent;
+    bool m_bDenySetNetwork;
+    bool m_bDenySetRealName;
+    bool m_bDenySetQuitMsg;
+    bool m_bDenySetCTCPReplies;
     bool m_bAutoClearChanBuffer;
     bool m_bAutoClearQueryBuffer;
     bool m_bBeingDeleted;
     bool m_bAppendTimestamp;
     bool m_bPrependTimestamp;
+    bool m_bAuthOnlyViaModule;
 
     CUserTimer* m_pUserTimer;
 

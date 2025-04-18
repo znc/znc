@@ -1,0 +1,115 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: /master/modules/po/listsockets.pot\n"
+"X-Crowdin-File-ID: 179\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Polish\n"
+"Language: pl_PL\n"
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:7 listsockets.cpp:213
+#: listsockets.cpp:229
+msgid "Name"
+msgstr "Nazwa"
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:8 listsockets.cpp:214
+#: listsockets.cpp:230
+msgid "Created"
+msgstr "Utworzono"
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:9 listsockets.cpp:215
+#: listsockets.cpp:231
+msgid "State"
+msgstr "Stan"
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:10 listsockets.cpp:217
+#: listsockets.cpp:234
+msgid "SSL"
+msgstr "SSL"
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:11 listsockets.cpp:219
+#: listsockets.cpp:239
+msgid "Local"
+msgstr "Lokalnie"
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:12 listsockets.cpp:220
+#: listsockets.cpp:241
+msgid "Remote"
+msgstr "Zdalne"
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:13
+msgid "Data In"
+msgstr "Dane przychodzące"
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:14
+msgid "Data Out"
+msgstr "Dane wychodzące"
+
+#: listsockets.cpp:62
+msgid "[-n]"
+msgstr "[-n]"
+
+#: listsockets.cpp:62
+msgid "Shows the list of active sockets. Pass -n to show IP addresses"
+msgstr "Pokazuje listę aktywnych gniazd. Podaj -n, aby zobaczyć adresy IP"
+
+#: listsockets.cpp:70
+msgid "You must be admin to use this module"
+msgstr "Musisz być administratorem, aby korzystać z tego modułu"
+
+#: listsockets.cpp:95
+msgid "List sockets"
+msgstr "Lista gniazd"
+
+#: listsockets.cpp:115 listsockets.cpp:235
+msgctxt "ssl"
+msgid "Yes"
+msgstr "Tak"
+
+#: listsockets.cpp:115 listsockets.cpp:236
+msgctxt "ssl"
+msgid "No"
+msgstr "Nie"
+
+#: listsockets.cpp:141
+msgid "Listener"
+msgstr "Nasłuchiwacz"
+
+#: listsockets.cpp:143
+msgid "Inbound"
+msgstr "Przychodzące"
+
+#: listsockets.cpp:146
+msgid "Outbound"
+msgstr "Wychodzące"
+
+#: listsockets.cpp:148
+msgid "Connecting"
+msgstr "‎Łączenie"
+
+#: listsockets.cpp:151
+msgid "UNKNOWN"
+msgstr "NIEZNANY"
+
+#: listsockets.cpp:206
+msgid "You have no open sockets."
+msgstr "Nie masz otwartych gniazd."
+
+#: listsockets.cpp:221 listsockets.cpp:243
+msgid "In"
+msgstr "Przych."
+
+#: listsockets.cpp:222 listsockets.cpp:245
+msgid "Out"
+msgstr "Wych."
+
+#: listsockets.cpp:261
+msgid "Lists active sockets"
+msgstr "Lista aktywnych gniazd"

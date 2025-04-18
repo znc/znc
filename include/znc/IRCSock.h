@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,8 +56,49 @@ class CIRCSock : public CIRCSocket {
     void SockError(int iErrno, const CString& sDescription) override;
     void Timeout() override;
     void ReachedMaxBuffer() override;
-
+#ifdef HAVE_LIBSSL
+    void SSLCertError(X509* pCert) override;
+#endif
+    /** Sends a raw data line to the server.
+     *  @param sLine The line to be sent.
+     *
+     *  The line is first passed \e unmodified to the \ref
+     *  CModule::OnSendToIRC() module hook. If no module halts the process,
+     *  the line is then sent to the server.
+     *
+     *  Prefer \l PutIRC() instead.
+     */
+    void PutIRCRaw(const CString& sLine);
+    /** Sends a message to the server.
+     *  See \l PutIRC(const CMessage&) for details.
+     */
     void PutIRC(const CString& sLine);
+    /** Sends a message to the server.
+     *  @param  Message The message to be sent.
+     *  @note   Only known and compatible messages and tags are sent.
+     *
+     *  This method can delay the delivery of the message to honor protection
+     *  from flood.
+     *
+     *  This method ensures that only tags, that were negotiated with CAP REQ
+     *  and CAP ACK, are sent. Not all IRC server are capable of handling all
+     *  messages and tags. Thus, in order to stay compatible with a variety of
+     *  IRC servers, ZNC has to filter out messages and tags that the server
+     *  has not explicitly acknowleged.
+     *
+     *  Additional tags can be added via \l CIRCSock::SetTagSupport().
+     *
+     *  @warning Bypassing the filter may cause troubles to some older IRC
+     *  servers.
+     *
+     *  It is possible to bypass the filter by converting a message to a string
+     *  using \l CMessage::ToString(), and passing the resulting raw line to the
+     *  \l CIRCSock::PutIRCRaw(const CString& sLine):
+     *  \code
+     *  pServer->PutIRCRaw(Message.ToString());
+     *  \endcode
+     */
+    void PutIRC(const CMessage& Message);
     void PutIRCQuick(const CString& sLine);  //!< Should be used for PONG only
     void ResetChans();
     void Quit(const CString& sQuitMsg = "");
@@ -71,6 +112,16 @@ class CIRCSock : public CIRCSocket {
      *  should be resumed again.
      */
     void ResumeCap();
+    
+    bool IsTagEnabled(const CString& sTag) const {
+        return 1 == m_ssSupportedTags.count(sTag);
+    }
+    /** Registers a tag as being supported or unsupported by the server.
+     *  This doesn't affect tags which the server sends.
+     *  @param sTag The tag to register.
+     *  @param bState Whether the client supports the tag.
+     */
+    void SetTagSupport(const CString& sTag, bool bState);
 
     // Setters
     void SetPass(const CString& s) { m_sPass = s; }
@@ -78,10 +129,11 @@ class CIRCSock : public CIRCSocket {
 
     // Getters
     unsigned int GetMaxNickLen() const { return m_uMaxNickLen; }
-    EChanModeArgs GetModeType(unsigned char uMode) const;
-    unsigned char GetPermFromMode(unsigned char uMode) const;
-    const std::map<unsigned char, EChanModeArgs>& GetChanModes() const {
-        return m_mueChanModes;
+    EChanModeArgs GetModeType(char cMode) const;
+    char GetPermFromMode(char cMode) const;
+    char GetModeFromPerm(char cPerm) const;
+    const std::map<char, EChanModeArgs>& GetChanModes() const {
+        return m_mceChanModes;
     }
     bool IsPermChar(const char c) const {
         return (c != '\0' && GetPerms().find(c) != CString::npos);
@@ -101,15 +153,16 @@ class CIRCSock : public CIRCSocket {
     bool HasAccountNotify() const { return m_bAccountNotify; }
     bool HasExtendedJoin() const { return m_bExtendedJoin; }
     bool HasServerTime() const { return m_bServerTime; }
-    const std::set<unsigned char>& GetUserModes() const {
-        return m_scUserModes;
-    }
+    bool HasMessageTagCap() const { return m_bMessageTagCap; }
+    const std::set<char>& GetUserModes() const { return m_scUserModes; }
     // This is true if we are past raw 001
     bool IsAuthed() const { return m_bAuthed; }
     const SCString& GetAcceptedCaps() const { return m_ssAcceptedCaps; }
     bool IsCapAccepted(const CString& sCap) {
         return 1 == m_ssAcceptedCaps.count(sCap);
     }
+    CString GetCapLsValue(const CString& sKey,
+                          const CString& sDefault = "") const;
     const MCString& GetISupport() const { return m_mISupport; }
     CString GetISupport(const CString& sKey,
                         const CString& sDefault = "") const;
@@ -124,6 +177,7 @@ class CIRCSock : public CIRCSocket {
     bool OnActionMessage(CActionMessage& Message);
     bool OnAwayMessage(CMessage& Message);
     bool OnCapabilityMessage(CMessage& Message);
+    bool OnChgHostMessage(CChgHostMessage& Message);
     bool OnCTCPMessage(CCTCPMessage& Message);
     bool OnErrorMessage(CMessage& Message);
     bool OnInviteMessage(CMessage& Message);
@@ -137,10 +191,11 @@ class CIRCSock : public CIRCSocket {
     bool OnPingMessage(CMessage& Message);
     bool OnPongMessage(CMessage& Message);
     bool OnQuitMessage(CQuitMessage& Message);
+    bool OnTagMessage(CTargetMessage& Message);
     bool OnTextMessage(CTextMessage& Message);
     bool OnTopicMessage(CTopicMessage& Message);
     bool OnWallopsMessage(CMessage& Message);
-    bool OnServerCapAvailable(const CString& sCap);
+    bool OnServerCapAvailable(const CString& sCap, const CString& sValue);
     // !Message Handlers
 
     void SetNick(const CString& sNick);
@@ -158,10 +213,11 @@ class CIRCSock : public CIRCSocket {
     bool m_bAccountNotify;
     bool m_bExtendedJoin;
     bool m_bServerTime;
+    bool m_bMessageTagCap;
     CString m_sPerms;
     CString m_sPermModes;
-    std::set<unsigned char> m_scUserModes;
-    std::map<unsigned char, EChanModeArgs> m_mueChanModes;
+    std::set<char> m_scUserModes;
+    std::map<char, EChanModeArgs> m_mceChanModes;
     CIRCNetwork* m_pNetwork;
     CNick m_Nick;
     CString m_sPass;
@@ -170,18 +226,22 @@ class CIRCSock : public CIRCSocket {
     unsigned int m_uCapPaused;
     SCString m_ssAcceptedCaps;
     SCString m_ssPendingCaps;
+    MCString m_msCapLsValues;
     time_t m_lastCTCP;
     unsigned int m_uNumCTCP;
     static const time_t m_uCTCPFloodTime;
     static const unsigned int m_uCTCPFloodCount;
     MCString m_mISupport;
-    std::deque<CString> m_vsSendQueue;
+    std::deque<CMessage> m_vSendQueue;
     short int m_iSendsAllowed;
     unsigned short int m_uFloodBurst;
     double m_fFloodRate;
     bool m_bFloodProtection;
+    SCString m_ssSupportedTags;
+    VCString m_vsSSLError;
 
     friend class CIRCFloodTimer;
+    friend class CCoreCaps;
 };
 
 #endif  // !ZNC_IRCSOCK_H

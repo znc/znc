@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,6 +68,7 @@ bool CConfig::Parse(CFile& file, CString& sErrorMsg) {
         std::stringstream stream;                              \
         stream << "Error on line " << uLineNum << ": " << arg; \
         sErrorMsg = stream.str();                              \
+        m_SubConfigNameSets.clear();                           \
         m_SubConfigs.clear();                                  \
         m_ConfigEntries.clear();                               \
         return false;                                          \
@@ -122,14 +123,16 @@ bool CConfig::Parse(CFile& file, CString& sErrorMsg) {
                 else
                     pActiveConfig = &ConfigStack.top().Config;
 
-                SubConfig& conf = pActiveConfig->m_SubConfigs[sTag.AsLower()];
-                SubConfig::const_iterator it = conf.find(sName);
+                const auto sTagLower = sTag.AsLower();
+                auto& nameset = pActiveConfig->m_SubConfigNameSets[sTagLower];
 
-                if (it != conf.end())
+                if (nameset.find(sName) != nameset.end())
                     ERROR("Duplicate entry for tag \"" << sTag << "\" name \""
                                                        << sName << "\".");
 
-                conf[sName] = CConfigEntry(myConfig);
+                nameset.insert(sName);
+                pActiveConfig->m_SubConfigs[sTagLower].emplace_back(sName,
+                                                                    myConfig);
             } else {
                 if (sValue.empty())
                     ERROR("Empty block name at begin of block.");
@@ -174,9 +177,14 @@ bool CConfig::Parse(CFile& file, CString& sErrorMsg) {
 void CConfig::Write(CFile& File, unsigned int iIndentation) {
     CString sIndentation = CString(iIndentation, '\t');
 
+    auto SingleLine = [](const CString& s) {
+        return s.Replace_n("\r", "").Replace_n("\n", "");
+    };
+
     for (const auto& it : m_ConfigEntries) {
         for (const CString& sValue : it.second) {
-            File.Write(sIndentation + it.first + " = " + sValue + "\n");
+            File.Write(SingleLine(sIndentation + it.first + " = " + sValue) +
+                       "\n");
         }
     }
 
@@ -184,9 +192,11 @@ void CConfig::Write(CFile& File, unsigned int iIndentation) {
         for (const auto& it2 : it.second) {
             File.Write("\n");
 
-            File.Write(sIndentation + "<" + it.first + " " + it2.first + ">\n");
+            File.Write(SingleLine(sIndentation + "<" + it.first + " " +
+                                  it2.first + ">") +
+                       "\n");
             it2.second.m_pSubConfig->Write(File, iIndentation + 1);
-            File.Write(sIndentation + "</" + it.first + ">\n");
+            File.Write(SingleLine(sIndentation + "</" + it.first + ">") + "\n");
         }
     }
 }

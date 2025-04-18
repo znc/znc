@@ -1,0 +1,106 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: /master/modules/po/blockuser.pot\n"
+"X-Crowdin-File-ID: 158\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Polish\n"
+"Language: pl_PL\n"
+
+#: modules/po/../data/blockuser/tmpl/blockuser_WebadminUser.tmpl:9
+msgid "Account is blocked"
+msgstr "Konto jest zablokowane"
+
+#: blockuser.cpp:23
+msgid "Your account has been disabled. Contact your administrator."
+msgstr ""
+"Twoje konto zostało wyłączone. Skontaktuj się ze swoim administratorem."
+
+#: blockuser.cpp:29
+msgid "List blocked users"
+msgstr "Lista zablokowanych użytkowników"
+
+#: blockuser.cpp:31 blockuser.cpp:33
+msgid "<user>"
+msgstr "<użytkownik>"
+
+#: blockuser.cpp:31
+msgid "Block a user"
+msgstr "Zablokowuje użytkownika"
+
+#: blockuser.cpp:33
+msgid "Unblock a user"
+msgstr "Odblokowuje użytkownika"
+
+#: blockuser.cpp:55
+#, c++-format
+msgid "Could not block {1}"
+msgstr "Nie można zablokować {1}"
+
+#: blockuser.cpp:76
+msgid "Access denied"
+msgstr "Odmowa dostępu"
+
+#: blockuser.cpp:85
+msgid "No users are blocked"
+msgstr "Żaden użytkownik nie jest zablokowany"
+
+#: blockuser.cpp:88
+msgid "Blocked users:"
+msgstr "Zablokowani użytkownicy:"
+
+#: blockuser.cpp:100
+msgid "Usage: Block <user>"
+msgstr "Użycie: Block <użytkownik>"
+
+#: blockuser.cpp:105 blockuser.cpp:147
+msgid "You can't block yourself"
+msgstr "Nie możesz zablokować samego siebie"
+
+#: blockuser.cpp:110 blockuser.cpp:152
+#, c++-format
+msgid "Blocked {1}"
+msgstr "Zablokowano {1}"
+
+#: blockuser.cpp:112
+#, c++-format
+msgid "Could not block {1} (misspelled?)"
+msgstr "Nie można zablokować {1} (błędnie napisano?)"
+
+#: blockuser.cpp:120
+msgid "Usage: Unblock <user>"
+msgstr "Użycie: Unblock <użytkownik>"
+
+#: blockuser.cpp:125 blockuser.cpp:161
+#, c++-format
+msgid "Unblocked {1}"
+msgstr "Odblokowano {1}"
+
+#: blockuser.cpp:127
+msgid "This user is not blocked"
+msgstr "Ten użytkownik nie jest zablokowany"
+
+#: blockuser.cpp:155
+#, c++-format
+msgid "Couldn't block {1}"
+msgstr "Nie można zablokować {1}"
+
+#: blockuser.cpp:164
+#, c++-format
+msgid "User {1} is not blocked"
+msgstr "Użytkownik {1} nie jest zablokowany"
+
+#: blockuser.cpp:216
+msgid "Enter one or more user names. Separate them by spaces."
+msgstr "Wprowadź jedną lub więcej nazw użytkowników. Rozdziel je spacjami."
+
+#: blockuser.cpp:219
+msgid "Block certain users from logging in."
+msgstr "Blokuje niektórym użytkownikom możliwość logowania."

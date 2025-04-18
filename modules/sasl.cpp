@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,6 +87,7 @@ class CSASLMod : public CModule {
         CTable Mechanisms;
         Mechanisms.AddColumn(t_s("Mechanism"));
         Mechanisms.AddColumn(t_s("Description"));
+        Mechanisms.SetStyle(CTable::ListStyle);
 
         for (const auto& it : SupportedMechanisms) {
             Mechanisms.AddRow();
@@ -94,6 +95,7 @@ class CSASLMod : public CModule {
             Mechanisms.SetCell(t_s("Description"), it.sDescription.Resolve());
         }
 
+        PutModule("");
         PutModule(t_s("The following mechanisms are available:"));
         PutModule(Mechanisms);
     }
@@ -187,20 +189,28 @@ class CSASLMod : public CModule {
 
     void CheckRequireAuth() {
         if (!m_bAuthenticated && GetNV(NV_REQUIRE_AUTH).ToBool()) {
-            GetNetwork()->SetIRCConnectEnabled(false);
-            PutModule(t_s("Disabling network, we require authentication."));
-            PutModule(t_s("Use 'RequireAuth no' to disable."));
+            GetNetwork()->GetIRCSock()->Quit("SASL not available");
         }
     }
 
     void Authenticate(const CString& sLine) {
+        if (m_Mechanisms.empty()) return;
+        /* Send blank authenticate for other mechanisms (like EXTERNAL). */
+        CString sAuthLine;
         if (m_Mechanisms.GetCurrent().Equals("PLAIN") && sLine.Equals("+")) {
-            CString sAuthLine = GetNV("username") + '\0' + GetNV("username") +
+            sAuthLine = GetNV("username") + '\0' + GetNV("username") +
                                 '\0' + GetNV("password");
             sAuthLine.Base64Encode();
-            PutIRC("AUTHENTICATE " + sAuthLine);
-        } else {
-            /* Send blank authenticate for other mechanisms (like EXTERNAL). */
+        }
+
+        /* The spec requires authentication data to be sent in chunks */
+        const size_t chunkSize = 400;
+        for (size_t offset = 0; offset < sAuthLine.length(); offset += chunkSize) {
+            size_t size = std::min(chunkSize, sAuthLine.length() - offset);
+            PutIRC("AUTHENTICATE " + sAuthLine.substr(offset, size));
+        }
+        if (sAuthLine.length() % chunkSize == 0) {
+            /* Signal end if we have a multiple of the chunk size */
             PutIRC("AUTHENTICATE +");
         }
     }
@@ -238,6 +248,7 @@ class CSASLMod : public CModule {
     }
 
     EModRet OnNumericMessage(CNumericMessage& msg) override {
+        if (m_Mechanisms.empty()) return CONTINUE;
         if (msg.GetCode() == 903) {
             /* SASL success! */
             if (m_bVerbose) {
@@ -272,6 +283,8 @@ class CSASLMod : public CModule {
             m_bAuthenticated = true;
             GetNetwork()->GetIRCSock()->ResumeCap();
             DEBUG("sasl: Received 907 -- We are already registered");
+        } else if (msg.GetCode() == 908) {
+            return HALT;
         } else {
             return CONTINUE;
         }

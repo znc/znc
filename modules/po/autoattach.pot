@@ -1,8 +1,14 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
 #: autoattach.cpp:94
 msgid "Added to list"
 msgstr ""
 
 #: autoattach.cpp:96
+#, c++-format
 msgid "{1} is already added"
 msgstr ""
 
@@ -15,6 +21,7 @@ msgid "Wildcards are allowed"
 msgstr ""
 
 #: autoattach.cpp:113
+#, c++-format
 msgid "Removed {1} from list"
 msgstr ""
 
@@ -59,6 +66,7 @@ msgid "List all entries"
 msgstr ""
 
 #: autoattach.cpp:171
+#, c++-format
 msgid "Unable to add [{1}]"
 msgstr ""
 

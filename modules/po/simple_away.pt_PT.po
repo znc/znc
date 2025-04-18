@@ -1,0 +1,107 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: pt-PT\n"
+"X-Crowdin-File: /master/modules/po/simple_away.pot\n"
+"X-Crowdin-File-ID: 201\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Portuguese\n"
+"Language: pt_PT\n"
+
+#: simple_away.cpp:56
+msgid "[<text>]"
+msgstr "[<text>]"
+
+#: simple_away.cpp:57
+#, c-format
+msgid ""
+"Prints or sets the away reason (%awaytime% is replaced with the time you "
+"were set away, supports substitutions using ExpandString)"
+msgstr ""
+"Mostra ou define a razão do away (ausência) (%awaytime% é substituído pelo o "
+"tempo que foi definido como ausente, suporta substituições utilizando "
+"ExpandString)"
+
+#: simple_away.cpp:63
+msgid "Prints the current time to wait before setting you away"
+msgstr ""
+"Mostra o tempo atual para espera antes de defini-lo(a) como away (ausente)"
+
+#: simple_away.cpp:65
+msgid "<seconds>"
+msgstr "<segundos>"
+
+#: simple_away.cpp:66
+msgid "Sets the time to wait before setting you away"
+msgstr "Define o tempo para espera antes de defini-lo(a) como away (ausente)"
+
+#: simple_away.cpp:69
+msgid "Disables the wait time before setting you away"
+msgstr "Desativa o tempo de espera antes de defini-lo(a) como away (ausente)"
+
+#: simple_away.cpp:73
+msgid "Get or set the minimum number of clients before going away"
+msgstr ""
+"Obtém ou define o número mínimo de clientes antes de entrar em away (ausente)"
+
+#: simple_away.cpp:136
+msgid "Away reason set"
+msgstr "Razão do away definida"
+
+#: simple_away.cpp:138
+#, c++-format
+msgid "Away reason: {1}"
+msgstr "Razão do Away: {1}"
+
+#: simple_away.cpp:139
+#, c++-format
+msgid "Current away reason would be: {1}"
+msgstr "A razão atual do away seria: {1}"
+
+#: simple_away.cpp:144
+#, c++-format
+msgid "Current timer setting: 1 second"
+msgid_plural "Current timer setting: {1} seconds"
+msgstr[0] "Definição atual do temporizador: 1 segundo"
+msgstr[1] "Definição atual do temporizador: {1} segundos"
+
+#: simple_away.cpp:153 simple_away.cpp:161
+msgid "Timer disabled"
+msgstr "Temporizador desativado"
+
+#: simple_away.cpp:155
+#, c++-format
+msgid "Timer set to 1 second"
+msgid_plural "Timer set to: {1} seconds"
+msgstr[0] "Temporizador definido para 1 segundo"
+msgstr[1] "Temporizador definido para: {1} segundos"
+
+#: simple_away.cpp:166
+#, c++-format
+msgid "Current MinClients setting: {1}"
+msgstr "Definição atual de MinClients: {1}"
+
+#: simple_away.cpp:169
+#, c++-format
+msgid "MinClients set to {1}"
+msgstr "MinClients definido para {1}"
+
+#: simple_away.cpp:248
+msgid ""
+"You might enter up to 3 arguments, like -notimer awaymessage or -timer 5 "
+"awaymessage."
+msgstr ""
+"Pode introduzir até 3 argumentos, como -notimer mensagemaway ou -timer 5 "
+"mensagemaway."
+
+#: simple_away.cpp:253
+msgid ""
+"This module will automatically set you away on IRC while you are "
+"disconnected from the bouncer."
+msgstr ""
+"Este módulo vai automaticamente defini-lo(a) como away (ausente) no IRC "
+"enquanto estiver desligado(a) do ZNC."

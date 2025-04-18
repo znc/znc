@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 #include <znc/Translation.h>
 #include <znc/FileUtils.h>
+#include <znc/znc.h>
 
 #ifdef HAVE_I18N
 #include <boost/locale.hpp>
@@ -88,6 +89,7 @@ const std::locale& CTranslation::LoadTranslation(const CString& sDomain) {
     if (lang_it == domain.end()) {
         boost::locale::generator gen;
         gen.add_messages_path(LOCALE_DIR);
+        gen.add_messages_path(CZNC::Get().GetModPath() + "/locale");
         gen.add_messages_domain(sDomain);
         std::tie(lang_it, std::ignore) =
             domain.emplace(sLanguage, gen(sLanguage + ".UTF-8"));

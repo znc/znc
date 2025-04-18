@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
 
 class CModule;
 
-class CZNCSock : public Csock, public CCoreTranslationMixin {
+class CZNCSock : public Csock, protected CCoreTranslationMixin {
   public:
     CZNCSock(int timeout = 60);
     CZNCSock(const CString& sHost, u_short port, int timeout = 60);
@@ -36,12 +36,16 @@ class CZNCSock : public Csock, public CCoreTranslationMixin {
     int VerifyPeerCertificate(int iPreVerify,
                               X509_STORE_CTX* pStoreCTX) override;
     void SSLHandShakeFinished() override;
+    bool CheckSSLCert(X509* pCert);
+    virtual void SSLCertError(X509* pCert) {}
     bool SNIConfigureClient(CString& sHostname) override;
+    CString GetSSLPeerFingerprint(X509* pCert = nullptr) const;
+#else
+    CString GetSSLPeerFingerprint() const { return ""; }
 #endif
     void SetHostToVerifySSL(const CString& sHost) {
         m_sHostToVerifySSL = sHost;
     }
-    CString GetSSLPeerFingerprint() const;
     void SetSSLTrustedPeerFingerprints(const SCString& ssFPs) {
         m_ssTrustedFingerprints = ssFPs;
     }
@@ -72,7 +76,8 @@ class CZNCSock : public Csock, public CCoreTranslationMixin {
 
 enum EAddrType { ADDR_IPV4ONLY, ADDR_IPV6ONLY, ADDR_ALL };
 
-class CSockManager : public TSocketManager<CZNCSock> {
+class CSockManager : public TSocketManager<CZNCSock>,
+                     private CCoreTranslationMixin {
   public:
     CSockManager();
     virtual ~CSockManager();

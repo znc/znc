@@ -1,0 +1,91 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: it\n"
+"X-Crowdin-File: /master/modules/po/identfile.pot\n"
+"X-Crowdin-File-ID: 174\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Italian\n"
+"Language: it_IT\n"
+
+#: identfile.cpp:30
+msgid "Show file name"
+msgstr "Mostra il nome del file"
+
+#: identfile.cpp:32
+msgid "<file>"
+msgstr "<file>"
+
+#: identfile.cpp:32
+msgid "Set file name"
+msgstr "Imposta il nome del file"
+
+#: identfile.cpp:34
+msgid "Show file format"
+msgstr "Mostra il formato del file"
+
+#: identfile.cpp:36
+msgid "<format>"
+msgstr "<formato>"
+
+#: identfile.cpp:36
+msgid "Set file format"
+msgstr "Imposta il formato del file"
+
+#: identfile.cpp:38
+msgid "Show current state"
+msgstr "Mostra lo stato corrente"
+
+#: identfile.cpp:48
+#, c++-format
+msgid "File is set to: {1}"
+msgstr "File impostato su: {1}"
+
+#: identfile.cpp:53
+#, c++-format
+msgid "File has been set to: {1}"
+msgstr "Il file è stato impostato su: {1}"
+
+#: identfile.cpp:58
+#, c++-format
+msgid "Format has been set to: {1}"
+msgstr "Il formato è stato impostato su: {1}"
+
+#: identfile.cpp:59 identfile.cpp:65
+#, c++-format
+msgid "Format would be expanded to: {1}"
+msgstr "Il formato verrà espanso su: {1}"
+
+#: identfile.cpp:64
+#, c++-format
+msgid "Format is set to: {1}"
+msgstr "Il formato è impostato su: {1}"
+
+#: identfile.cpp:78
+msgid "identfile is free"
+msgstr "l'identfile è libero"
+
+#: identfile.cpp:86
+msgid "Access denied"
+msgstr "Accesso negato"
+
+#: identfile.cpp:181
+msgid ""
+"Aborting connection, another user or network is currently connecting and "
+"using the ident spoof file"
+msgstr ""
+"Connessione interrotta, un altro utente o network è attualmente connesso "
+"utilizzando un file ident spoof"
+
+#: identfile.cpp:189
+#, c++-format
+msgid "[{1}] could not be written, retrying..."
+msgstr "[{1}] non può essere scritto, riprovo..."
+
+#: identfile.cpp:223
+msgid "Write the ident of a user to a file when they are trying to connect."
+msgstr "Scrive l'ident di un utente in un file quando tenta di connettersi."

@@ -1,0 +1,8 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: saslplainauth.cpp:55
+msgid "Allows users to authenticate via the PLAIN SASL mechanism."
+msgstr ""

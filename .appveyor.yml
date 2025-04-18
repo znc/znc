@@ -4,48 +4,27 @@
 # TODO: test msvc
 version: 0.0.0.0.1-branch-{branch}-build-{build}
 clone_depth: 10
-environment:
-    matrix:
-        - cygwin_url: https://cygwin.com/setup-x86_64.exe
-          build_with: cmake
-        - cygwin_url: https://cygwin.com/setup-x86.exe
-          build_with: cmake
-        - cygwin_url: https://cygwin.com/setup-x86_64.exe
-          build_with: autoconf
-        - cygwin_url: https://cygwin.com/setup-x86.exe
-          build_with: autoconf
 install:
-    - ps: Invoke-WebRequest $env:cygwin_url -OutFile c:\cygwin-setup.exe
+    - ps: Invoke-WebRequest https://cygwin.com/setup-x86_64.exe -OutFile c:\cygwin-setup.exe
       # libcrypt-devel is needed only on x86_64 and only for modperl... probably some dependency problem.
-    - c:\cygwin-setup.exe --quiet-mode --no-shortcuts --no-startmenu --no-desktop --upgrade-also --only-site --site http://cygwin.mirror.constant.com/ --root c:\cygwin-root --local-package-dir c:\cygwin-setup-cache --packages automake,gcc-g++,make,pkg-config,wget,openssl-devel,libicu-devel,zlib-devel,libcrypt-devel,perl,python3-devel,swig,libsasl2-devel,libQt5Core-devel,cmake,libboost-devel,gettext-devel
+    - c:\cygwin-setup.exe --quiet-mode --no-shortcuts --no-startmenu --no-desktop --upgrade-also --only-site --site http://cygwin.mirror.constant.com/ --root c:\cygwin-root --local-package-dir c:\cygwin-setup-cache --packages gcc-g++,make,pkg-config,wget,libssl-devel,libicu-devel,zlib-devel,libcrypt-devel,perl,python3-devel,swig,libsasl2-devel,libQt5Core-devel,cmake,libboost-devel,gettext-devel,libargon2-devel
     - c:\cygwin-root\bin\sh -lc "echo Hi"
     - c:\cygwin-root\bin\sh -lc "uname -a"
     - c:\cygwin-root\bin\sh -lc "cat /proc/cpuinfo"
     - c:\cygwin-root\bin\sh -lc "cat /proc/meminfo"
     - c:\cygwin-root\bin\sh -lc "cygcheck -s -v > $APPVEYOR_BUILD_FOLDER/cygcheck.log 2>&1"
     - ps: Push-AppveyorArtifact cygcheck.log
-    - ps: |
-        if ($env:build_with -eq "cmake") {
-          $env:cfg_suffix = ".sh"
-          $env:unittest = "unittest"
-          $env:inttest = "inttest"
-        } else {
-          $env:cfg_suffix = ""
-          $env:unittest = "test"
-          $env:inttest = "test2"
-        }
 # stdin is broken at AppVeyor, so we open it explicitly as /dev/null
 build_script:
     - git submodule update --init
-    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER; ./autogen.sh < /dev/null"
     - mkdir build
-    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; ../configure$cfg_suffix --enable-charset --enable-zlib --enable-openssl --enable-perl --enable-python --enable-cyrus < /dev/null; result=$?; if [[ $build_with == cmake ]]; then cmake --system-information > config.log; fi; appveyor PushArtifact config.log; exit $result"
+    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; env ZNC_QT_VER=5 ../configure --enable-charset --enable-zlib --enable-openssl --enable-perl --enable-python --enable-cyrus --enable-argon < /dev/null; result=$?; cmake --system-information > config.log; appveyor PushArtifact config.log; exit $result"
     - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make VERBOSE=1 -j2 < /dev/null"
     - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make install < /dev/null"
     - c:\cygwin-root\bin\sh -lc "znc --version"
       # fix fork()
     - c:\cygwin-root\bin\sh -lc "find /usr/local/lib/znc -iname '*.dll' -o -iname '*.so' | tee /tmp/files-to-rebase"
-    - c:\cygwin-root\bin\sh -lc "rebaseall -v -T /tmp/files-to-rebase"
+    - c:\cygwin-root\bin\sh -lc "rebase -s -v $(cat /tmp/files-to-rebase)"
 test_script:
-    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make VERBOSE=1 $unittest < /dev/null"
-    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make VERBOSE=1 $inttest < /dev/null"
+    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make VERBOSE=1 unittest < /dev/null"
+    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; env ZNC_QT_VER=5 make VERBOSE=1 inttest < /dev/null"

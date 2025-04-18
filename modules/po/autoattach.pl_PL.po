@@ -1,0 +1,90 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: /master/modules/po/autoattach.pot\n"
+"X-Crowdin-File-ID: 151\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Polish\n"
+"Language: pl_PL\n"
+
+#: autoattach.cpp:94
+msgid "Added to list"
+msgstr "Dodano do listy"
+
+#: autoattach.cpp:96
+#, c++-format
+msgid "{1} is already added"
+msgstr "{1} już jest dodany"
+
+#: autoattach.cpp:100
+msgid "Usage: Add [!]<#chan> <search> <host>"
+msgstr "Użycie: Add [!]<#kanał> <szukaj> <host>"
+
+#: autoattach.cpp:101
+msgid "Wildcards are allowed"
+msgstr "Wieloznaczniki są dozwolone"
+
+#: autoattach.cpp:113
+#, c++-format
+msgid "Removed {1} from list"
+msgstr "Usunięto {1} z listy"
+
+#: autoattach.cpp:115
+msgid "Usage: Del [!]<#chan> <search> <host>"
+msgstr "Użycie: Del [!]<#kanał> <szukaj> <host>"
+
+#: autoattach.cpp:121 autoattach.cpp:129
+msgid "Neg"
+msgstr "Negacja"
+
+#: autoattach.cpp:122 autoattach.cpp:130
+msgid "Chan"
+msgstr "Kanał"
+
+#: autoattach.cpp:123 autoattach.cpp:131
+msgid "Search"
+msgstr "Szukaj"
+
+#: autoattach.cpp:124 autoattach.cpp:132
+msgid "Host"
+msgstr "Host"
+
+#: autoattach.cpp:138
+msgid "You have no entries."
+msgstr "Nie masz wpisów."
+
+#: autoattach.cpp:146 autoattach.cpp:149
+msgid "[!]<#chan> <search> <host>"
+msgstr "[!]<#chan> <szukaj> <host>"
+
+#: autoattach.cpp:147
+msgid "Add an entry, use !#chan to negate and * for wildcards"
+msgstr "Dodaj wpis, użyj !#kanał aby zanegować i * dla wieloznaczników"
+
+#: autoattach.cpp:150
+msgid "Remove an entry, needs to be an exact match"
+msgstr "Usuń wpis, musi być dokładnie dopasowany"
+
+#: autoattach.cpp:152
+msgid "List all entries"
+msgstr "Lista wszystkich wpisów"
+
+#: autoattach.cpp:171
+#, c++-format
+msgid "Unable to add [{1}]"
+msgstr "Nie można dodać [{1}]"
+
+#: autoattach.cpp:283
+msgid "List of channel masks and channel masks with ! before them."
+msgstr "Lista masek kanałów i masek kanałów z ! (negującym) przed nimi."
+
+#: autoattach.cpp:286
+msgid "Reattaches you to channels on activity."
+msgstr "Przypina do kanałów gdy pojawi się na nich jakaś aktywność."

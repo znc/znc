@@ -1,0 +1,109 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: nl\n"
+"X-Crowdin-File: /master/modules/po/stickychan.pot\n"
+"X-Crowdin-File-ID: 202\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Dutch\n"
+"Language: nl_NL\n"
+
+#: modules/po/../data/stickychan/tmpl/index.tmpl:9
+msgid "Name"
+msgstr "Naam"
+
+#: modules/po/../data/stickychan/tmpl/index.tmpl:10
+msgid "Sticky"
+msgstr "Vasthoudend"
+
+#: modules/po/../data/stickychan/tmpl/index.tmpl:25
+msgid "Save"
+msgstr "Opslaan"
+
+#: modules/po/../data/stickychan/tmpl/stickychan_WebadminChan.tmpl:8
+msgid "Channel is sticky"
+msgstr "Kanaal is vasthoudend"
+
+#: stickychan.cpp:28
+msgid "<#channel> [key]"
+msgstr "<#kanaal> [sleutel]"
+
+#: stickychan.cpp:28
+msgid "Sticks a channel"
+msgstr "Houd een kanaal vast"
+
+#: stickychan.cpp:30
+msgid "<#channel>"
+msgstr "<#kanaal>"
+
+#: stickychan.cpp:30
+msgid "Unsticks a channel"
+msgstr "Houd een kanaal niet meer vast"
+
+#: stickychan.cpp:32
+msgid "Lists sticky channels"
+msgstr "Laat vastgehouden kanalen zien"
+
+#: stickychan.cpp:75
+msgid "Usage: Stick <#channel> [key]"
+msgstr "Gebruik: Stick <#kanaal> [sleutel]"
+
+#: stickychan.cpp:79
+#, c++-format
+msgid "Stuck {1}"
+msgstr "Vastgezet {1}"
+
+#: stickychan.cpp:85
+msgid "Usage: Unstick <#channel>"
+msgstr "Gebruik: Unstick <#kanaal>"
+
+#: stickychan.cpp:89
+#, c++-format
+msgid "Unstuck {1}"
+msgstr "Losgemaakt {1}"
+
+#: stickychan.cpp:101
+msgid " -- End of List"
+msgstr " -- Einde van lijst"
+
+#: stickychan.cpp:115
+#, c++-format
+msgid "Could not join {1} (# prefix missing?)"
+msgstr "Kon {1} niet toetreden (Mist de # voor het kanaal?)"
+
+#: stickychan.cpp:128
+msgid "Sticky Channels"
+msgstr "Vastgehouden kanalen"
+
+#: stickychan.cpp:160
+msgid "Changes have been saved!"
+msgstr "Wijzigingen zijn opgeslagen!"
+
+#: stickychan.cpp:185
+msgid "Channel became sticky!"
+msgstr "Kanalen zijn vastgehouden!"
+
+#: stickychan.cpp:189
+msgid "Channel stopped being sticky!"
+msgstr "Kanalen zijn losgelaten!"
+
+#: stickychan.cpp:209
+#, c++-format
+msgid ""
+"Channel {1} cannot be joined, it is an illegal channel name. Unsticking."
+msgstr ""
+"Kanaal {1} kon niet toegetreden worden, het is een onjuiste naam voor een "
+"kanaal. Laat deze los."
+
+#: stickychan.cpp:246
+msgid "List of channels, separated by comma."
+msgstr "Lijst van kanalen, gescheiden met comma."
+
+#: stickychan.cpp:251
+msgid "configless sticky chans, keeps you there very stickily even"
+msgstr ""
+"Vastgehouden kanalen zonder configuratie, houd je daar heel stevig vast"

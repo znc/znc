@@ -1,0 +1,156 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: tr\n"
+"X-Crowdin-File: /master/modules/po/crypt.pot\n"
+"X-Crowdin-File-ID: 167\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Turkish\n"
+"Language: tr_TR\n"
+
+#: crypt.cpp:199
+msgid "<#chan|Nick>"
+msgstr "<#kanal|Nick>"
+
+#: crypt.cpp:200
+msgid "Remove a key for nick or channel"
+msgstr "Nick veya kanal için bir anahtarı kaldırın"
+
+#: crypt.cpp:202
+msgid "<#chan|Nick> <Key>"
+msgstr "<#kanal|Nick> <Anahtar>"
+
+#: crypt.cpp:203
+msgid "Set a key for nick or channel"
+msgstr "Nick veya kanal için bir anahtar ayarlayın"
+
+#: crypt.cpp:205
+msgid "List all keys"
+msgstr "Tüm anahtarları listeleyin"
+
+#: crypt.cpp:207
+msgid "<Nick>"
+msgstr "<Nick>"
+
+#: crypt.cpp:208
+msgid "Start a DH1080 key exchange with nick"
+msgstr "Nick ile bir DH1080 anahtar değişimini başlatın"
+
+#: crypt.cpp:211
+msgid "Get the nick prefix"
+msgstr "Nick önekini alın"
+
+#: crypt.cpp:214
+msgid "[Prefix]"
+msgstr "[Önek]"
+
+#: crypt.cpp:215
+msgid "Set the nick prefix, with no argument it's disabled."
+msgstr "Hiçbir argüman olmadan, devre dışı bırakılan nick önekini ayarlayın."
+
+#: crypt.cpp:271
+#, c++-format
+msgid "Received DH1080 public key from {1}, sending mine..."
+msgstr ""
+"{1} adlı kişiden DH1080 genel anahtarı alındı, benimkini gönderiyorum..."
+
+#: crypt.cpp:276 crypt.cpp:297
+#, c++-format
+msgid "Key for {1} successfully set."
+msgstr "{1} için anahtar başarıyla ayarlandı."
+
+#: crypt.cpp:279 crypt.cpp:300
+#, c++-format
+msgid "Error in {1} with {2}: {3}"
+msgstr "{1}'de {2} ile hata: {3}"
+
+#: crypt.cpp:281 crypt.cpp:302
+msgid "no secret key computed"
+msgstr "hesaplanan gizli anahtar yok"
+
+#: crypt.cpp:396
+#, c++-format
+msgid "Target [{1}] deleted"
+msgstr "[{1}] hedefi silindi"
+
+#: crypt.cpp:398
+#, c++-format
+msgid "Target [{1}] not found"
+msgstr "[{1}] hedefi bulunamadı"
+
+#: crypt.cpp:401
+msgid "Usage DelKey <#chan|Nick>"
+msgstr "Kullanımı: DelKey <#kanal|Nick>"
+
+#: crypt.cpp:416
+#, c++-format
+msgid "Set encryption key for [{1}] to [{2}]"
+msgstr "[{1}] için olan şifreleme anahtarını [{2}] olarak ayarlayın"
+
+#: crypt.cpp:418
+msgid "Usage: SetKey <#chan|Nick> <Key>"
+msgstr "Kullanımı: SetKey <#kanal|Nick> <Anahtar>"
+
+#: crypt.cpp:429
+#, c++-format
+msgid "Sent my DH1080 public key to {1}, waiting for reply ..."
+msgstr "DH1080 genel anahtarımı {1}'e gönderdim, yanıt bekliyorum..."
+
+#: crypt.cpp:431
+msgid "Error generating our keys, nothing sent."
+msgstr "Anahtarlarımız oluşturulurken hata oluştu, hiçbir şey gönderilmedi."
+
+#: crypt.cpp:434
+msgid "Usage: KeyX <Nick>"
+msgstr "Kullanımı: KeyX <Nick>"
+
+#: crypt.cpp:441
+msgid "Nick Prefix disabled."
+msgstr "Nick Öneki devre dışı bırakıldı."
+
+#: crypt.cpp:443
+#, c++-format
+msgid "Nick Prefix: {1}"
+msgstr "Nick Öneki: {1}"
+
+#: crypt.cpp:452
+msgid "You cannot use :, even followed by other symbols, as Nick Prefix."
+msgstr ""
+": karakterini, ardından başka semboller gelse bile Nick Öneki olarak "
+"kullanamazsınız."
+
+#: crypt.cpp:461
+#, c++-format
+msgid "Overlap with Status Prefix ({1}), this Nick Prefix will not be used!"
+msgstr "Durum Öneki ({1}) ile örtüştüğünde, bu Nick Öneki kullanılmayacaktır!"
+
+#: crypt.cpp:466
+msgid "Disabling Nick Prefix."
+msgstr "Nick Öneki'ni devre dışı bırakma."
+
+#: crypt.cpp:468
+#, c++-format
+msgid "Setting Nick Prefix to {1}"
+msgstr "Nick Öneki {1} olarak ayarlanıyor"
+
+#: crypt.cpp:475 crypt.cpp:482
+msgctxt "listkeys"
+msgid "Target"
+msgstr "Hedef"
+
+#: crypt.cpp:476 crypt.cpp:483
+msgctxt "listkeys"
+msgid "Key"
+msgstr "Anahtar"
+
+#: crypt.cpp:487
+msgid "You have no encryption keys set."
+msgstr "Ayarlanmış şifreleme anahtarınız yok."
+
+#: crypt.cpp:509
+msgid "Encryption for channel/private messages"
+msgstr "Kanal/özel mesajlar için şifreleme"

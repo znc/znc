@@ -1,0 +1,125 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: /master/modules/po/awaystore.pot\n"
+"X-Crowdin-File-ID: 156\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Polish\n"
+"Language: pl_PL\n"
+
+#: awaystore.cpp:67
+msgid "You have been marked as away"
+msgstr "Zostałeś oznaczony jako nieobecny"
+
+#: awaystore.cpp:78 awaystore.cpp:385 awaystore.cpp:388
+msgid "Welcome back!"
+msgstr "Witamy ponownie!"
+
+#: awaystore.cpp:100
+#, c++-format
+msgid "Deleted {1} messages"
+msgstr "Usunięto {1} wiadomości"
+
+#: awaystore.cpp:104
+msgid "USAGE: delete <num|all>"
+msgstr "UŻYCIE: delete <numer|all>"
+
+#: awaystore.cpp:109
+msgid "Illegal message # requested"
+msgstr "Zażądano niedozwolonej wiadomości #"
+
+#: awaystore.cpp:113
+msgid "Message erased"
+msgstr "Wiadomość została usunięta"
+
+#: awaystore.cpp:122
+msgid "Messages saved to disk"
+msgstr "Wiadomości zapisane na dysku"
+
+#: awaystore.cpp:124
+msgid "There are no messages to save"
+msgstr "Brak wiadomości do zapisania"
+
+#: awaystore.cpp:135
+#, c++-format
+msgid "Password updated to [{1}]"
+msgstr "Hasło zaktualizowano do [{1}]"
+
+#: awaystore.cpp:147
+#, c++-format
+msgid "Corrupt message! [{1}]"
+msgstr "Uszkodzona wiadomość! [{1}]"
+
+#: awaystore.cpp:159
+#, c++-format
+msgid "Corrupt time stamp! [{1}]"
+msgstr "Uszkodzony znacznik czasu! [{1}]"
+
+#: awaystore.cpp:178
+msgid "#--- End of messages"
+msgstr "#--- Koniec wiadomości"
+
+#: awaystore.cpp:183
+msgid "Timer set to 300 seconds"
+msgstr "Odliczarka ustawiona na 300 sekund"
+
+#: awaystore.cpp:188 awaystore.cpp:197
+msgid "Timer disabled"
+msgstr "Odliczarka wyłączona"
+
+#: awaystore.cpp:199
+#, c++-format
+msgid "Timer set to {1} seconds"
+msgstr "Odliczarka ustawiona na {1} sekund"
+
+#: awaystore.cpp:203
+#, c++-format
+msgid "Current timer setting: {1} seconds"
+msgstr "Bieżące ustawienie odliczarki: {1} sekund"
+
+#: awaystore.cpp:278
+msgid "This module needs as an argument a keyphrase used for encryption"
+msgstr "Ten moduł potrzebuje hasła jako argumentu do szyfrowania"
+
+#: awaystore.cpp:285
+msgid ""
+"Failed to decrypt your saved messages - Did you give the right encryption "
+"key as an argument to this module?"
+msgstr ""
+"Nie udało się odszyfrować zapisanych wiadomości - Czy podałeś odpowiedni "
+"klucz szyfrowania jako argument dla tego modułu?"
+
+#: awaystore.cpp:386 awaystore.cpp:389
+#, c++-format
+msgid "You have {1} messages!"
+msgstr "Masz {1} wiadomość/(ści)!"
+
+#: awaystore.cpp:456
+msgid "Unable to find buffer"
+msgstr "Nie można znaleźć bufora"
+
+#: awaystore.cpp:469
+msgid "Unable to decode encrypted messages"
+msgstr "Nie można odszyfrować zaszyfrowanych wiadomości"
+
+#: awaystore.cpp:516
+msgid ""
+"[ -notimer | -timer N ] [-chans]  passw0rd . N is number of seconds, 600 by "
+"default."
+msgstr ""
+"[ -notimer | -timer N ] [-kanały]  h@sł0 . N jest liczbą sekund, 600 "
+"domyślnie."
+
+#: awaystore.cpp:521
+msgid ""
+"Adds auto-away with logging, useful when you use ZNC from different locations"
+msgstr ""
+"Dodaje automatyczną nieobecność z dziennikowaniem, przydatne, gdy używasz "
+"ZNC z różnych lokalizacji"

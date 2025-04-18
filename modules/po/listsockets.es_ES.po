@@ -1,0 +1,113 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-File: /master/modules/po/listsockets.pot\n"
+"X-Crowdin-File-ID: 179\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Spanish\n"
+"Language: es_ES\n"
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:7 listsockets.cpp:213
+#: listsockets.cpp:229
+msgid "Name"
+msgstr "Nombre"
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:8 listsockets.cpp:214
+#: listsockets.cpp:230
+msgid "Created"
+msgstr "Creado"
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:9 listsockets.cpp:215
+#: listsockets.cpp:231
+msgid "State"
+msgstr "Estado"
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:10 listsockets.cpp:217
+#: listsockets.cpp:234
+msgid "SSL"
+msgstr "SSL"
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:11 listsockets.cpp:219
+#: listsockets.cpp:239
+msgid "Local"
+msgstr "Local"
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:12 listsockets.cpp:220
+#: listsockets.cpp:241
+msgid "Remote"
+msgstr "Remoto"
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:13
+msgid "Data In"
+msgstr "Data In"
+
+#: modules/po/../data/listsockets/tmpl/index.tmpl:14
+msgid "Data Out"
+msgstr "Data Out"
+
+#: listsockets.cpp:62
+msgid "[-n]"
+msgstr "[-n]"
+
+#: listsockets.cpp:62
+msgid "Shows the list of active sockets. Pass -n to show IP addresses"
+msgstr "Muestra una lista de sockets activos. Añade -n para mostrar IPs"
+
+#: listsockets.cpp:70
+msgid "You must be admin to use this module"
+msgstr "Debes ser admin para usar este módulo"
+
+#: listsockets.cpp:95
+msgid "List sockets"
+msgstr "Mostrar sockets"
+
+#: listsockets.cpp:115 listsockets.cpp:235
+msgctxt "ssl"
+msgid "Yes"
+msgstr "Sí"
+
+#: listsockets.cpp:115 listsockets.cpp:236
+msgctxt "ssl"
+msgid "No"
+msgstr "No"
+
+#: listsockets.cpp:141
+msgid "Listener"
+msgstr "En escucha"
+
+#: listsockets.cpp:143
+msgid "Inbound"
+msgstr "Entrantes"
+
+#: listsockets.cpp:146
+msgid "Outbound"
+msgstr "Salientes"
+
+#: listsockets.cpp:148
+msgid "Connecting"
+msgstr "Conectando"
+
+#: listsockets.cpp:151
+msgid "UNKNOWN"
+msgstr "Desconocido"
+
+#: listsockets.cpp:206
+msgid "You have no open sockets."
+msgstr "No tienes sockets abiertos."
+
+#: listsockets.cpp:221 listsockets.cpp:243
+msgid "In"
+msgstr "Entrada"
+
+#: listsockets.cpp:222 listsockets.cpp:245
+msgid "Out"
+msgstr "Salida"
+
+#: listsockets.cpp:261
+msgid "Lists active sockets"
+msgstr "Mostrar sockets activos"

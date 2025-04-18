@@ -1,0 +1,77 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: tr\n"
+"X-Crowdin-File: /master/modules/po/autocycle.pot\n"
+"X-Crowdin-File-ID: 207\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Turkish\n"
+"Language: tr_TR\n"
+
+#: autocycle.cpp:27 autocycle.cpp:30
+msgid "[!]<#chan>"
+msgstr "[!]<#kanal>"
+
+#: autocycle.cpp:28
+msgid "Add an entry, use !#chan to negate and * for wildcards"
+msgstr ""
+"Bir giriş ekleyin, reddetmek için !#kanal ve joker karakterler için * "
+"kullanın"
+
+#: autocycle.cpp:31
+msgid "Remove an entry, needs to be an exact match"
+msgstr "Bir girişi kaldırın; tam eşleşme olması gerekiyor"
+
+#: autocycle.cpp:33
+msgid "List all entries"
+msgstr "Tüm girişleri listele"
+
+#: autocycle.cpp:46
+#, c++-format
+msgid "Unable to add {1}"
+msgstr "{1} eklenemiyor"
+
+#: autocycle.cpp:66
+#, c++-format
+msgid "{1} is already added"
+msgstr "{1} zaten eklendi"
+
+#: autocycle.cpp:68
+#, c++-format
+msgid "Added {1} to list"
+msgstr "{1} listeye eklendi"
+
+#: autocycle.cpp:70
+msgid "Usage: Add [!]<#chan>"
+msgstr "Kullanımı: Add [!]<#kanal>"
+
+#: autocycle.cpp:78
+#, c++-format
+msgid "Removed {1} from list"
+msgstr "{1} listeden kaldırıldı"
+
+#: autocycle.cpp:80
+msgid "Usage: Del [!]<#chan>"
+msgstr "Kullanımı: Del [!]<#kanal>"
+
+#: autocycle.cpp:85 autocycle.cpp:90 autocycle.cpp:95
+msgid "Channel"
+msgstr "Kanal"
+
+#: autocycle.cpp:101
+msgid "You have no entries."
+msgstr "Hiçbir girdiniz yok."
+
+#: autocycle.cpp:230
+msgid "List of channel masks and channel masks with ! before them."
+msgstr "Kanal maskeleri ve kanal maskelerinin listesi ! ile onlardan önce."
+
+#: autocycle.cpp:235
+msgid "Rejoins channels to gain Op if you're the only user left"
+msgstr ""
+"Geriye kalan tek kullanıcı sizseniz Op kazanmak için kanallara yeniden "
+"katılır"

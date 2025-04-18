@@ -1,0 +1,112 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && "
+"n%100<20)) ? 1 : 2);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: ro\n"
+"X-Crowdin-File: /master/modules/po/certauth.pot\n"
+"X-Crowdin-File-ID: 162\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Romanian\n"
+"Language: ro_RO\n"
+
+#: modules/po/../data/certauth/tmpl/index.tmpl:7
+msgid "Add a key"
+msgstr ""
+
+#: modules/po/../data/certauth/tmpl/index.tmpl:11
+msgid "Key:"
+msgstr ""
+
+#: modules/po/../data/certauth/tmpl/index.tmpl:15
+msgid "Add Key"
+msgstr ""
+
+#: modules/po/../data/certauth/tmpl/index.tmpl:23
+msgid "You have no keys."
+msgstr ""
+
+#: modules/po/../data/certauth/tmpl/index.tmpl:30
+msgctxt "web"
+msgid "Key"
+msgstr ""
+
+#: modules/po/../data/certauth/tmpl/index.tmpl:36
+msgid "del"
+msgstr ""
+
+#: certauth.cpp:31
+msgid "[pubkey]"
+msgstr ""
+
+#: certauth.cpp:32
+msgid "Add a public key. If key is not provided will use the current key"
+msgstr ""
+
+#: certauth.cpp:35
+msgid "id"
+msgstr ""
+
+#: certauth.cpp:35
+msgid "Delete a key by its number in List"
+msgstr ""
+
+#: certauth.cpp:37
+msgid "List your public keys"
+msgstr ""
+
+#: certauth.cpp:39
+msgid "Print your current key"
+msgstr ""
+
+#: certauth.cpp:239
+msgid "You are not connected with any valid public key"
+msgstr ""
+
+#: certauth.cpp:241
+#, c++-format
+msgid "Your current public key is: {1}"
+msgstr ""
+
+#: certauth.cpp:254
+msgid "You did not supply a public key or connect with one."
+msgstr ""
+
+#: certauth.cpp:257
+#, c++-format
+msgid "Key '{1}' added."
+msgstr ""
+
+#: certauth.cpp:259
+#, c++-format
+msgid "The key '{1}' is already added."
+msgstr ""
+
+#: certauth.cpp:267 certauth.cpp:280
+msgctxt "list"
+msgid "Id"
+msgstr ""
+
+#: certauth.cpp:268 certauth.cpp:281
+msgctxt "list"
+msgid "Key"
+msgstr ""
+
+#: certauth.cpp:273 certauth.cpp:287 certauth.cpp:296
+msgid "No keys set for your user"
+msgstr ""
+
+#: certauth.cpp:301
+msgid "Invalid #, check \"list\""
+msgstr ""
+
+#: certauth.cpp:321
+msgid "Removed"
+msgstr ""
+
+#: certauth.cpp:400
+msgid "Allows users to authenticate via SSL client certificates."
+msgstr ""

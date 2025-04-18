@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ CChan::CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig,
       m_msNicks(),
       m_Buffer(),
       m_bModeKnown(false),
-      m_musModes() {
+      m_mcsModes() {
     if (!m_pNetwork->IsChan(m_sName)) {
         m_sName = "#" + m_sName;
     }
@@ -85,7 +85,7 @@ CChan::~CChan() { ClearNicks(); }
 void CChan::Reset() {
     m_bIsOn = false;
     m_bModeKnown = false;
-    m_musModes.clear();
+    m_mcsModes.clear();
     m_sTopic = "";
     m_sTopicOwner = "";
     m_ulTopicDate = 0;
@@ -156,11 +156,13 @@ void CChan::AttachUser(CClient* pClient) {
                                 m_pNetwork->GetIRCNick().GetNick() + " " +
                                 GetName() + " :" + GetTopic(),
                             pClient);
-        m_pNetwork->PutUser(":" + m_pNetwork->GetIRCServer() + " 333 " +
-                                m_pNetwork->GetIRCNick().GetNick() + " " +
-                                GetName() + " " + GetTopicOwner() + " " +
-                                CString(GetTopicDate()),
-                            pClient);
+        if (!GetTopicOwner().empty()) {
+            m_pNetwork->PutUser(":" + m_pNetwork->GetIRCServer() + " 333 " +
+                                    m_pNetwork->GetIRCNick().GetNick() + " " +
+                                    GetName() + " " + GetTopicOwner() + " " +
+                                    CString(GetTopicDate()),
+                                pClient);
+        }
     }
 
     CString sPre = ":" + m_pNetwork->GetIRCServer() + " 353 " +
@@ -231,7 +233,7 @@ void CChan::DetachUser() {
 CString CChan::GetModeString() const {
     CString sModes, sArgs;
 
-    for (const auto& it : m_musModes) {
+    for (const auto& it : m_mcsModes) {
         sModes += it.first;
         if (it.second.size()) {
             sArgs += " " + it.second;
@@ -244,7 +246,7 @@ CString CChan::GetModeString() const {
 CString CChan::GetModeForNames() const {
     CString sMode;
 
-    for (const auto& it : m_musModes) {
+    for (const auto& it : m_mcsModes) {
         if (it.first == 's') {
             sMode = "@";
         } else if ((it.first == 'p') && sMode.empty()) {
@@ -256,8 +258,13 @@ CString CChan::GetModeForNames() const {
 }
 
 void CChan::SetModes(const CString& sModes) {
-    m_musModes.clear();
+    m_mcsModes.clear();
     ModeChange(sModes);
+}
+
+void CChan::SetModes(const CString& modes, const VCString& vsModeParams) {
+    m_mcsModes.clear();
+    ModeChange(modes, vsModeParams);
 }
 
 void CChan::SetAutoClearChanBuffer(bool b) {
@@ -295,9 +302,8 @@ void CChan::OnWho(const CString& sNick, const CString& sIdent,
     }
 }
 
-void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
-    CString sModeArg = sModes.Token(0);
-    CString sArgs = sModes.Token(1, true);
+void CChan::ModeChange(const CString& sModes, const VCString& vsModes,
+                       const CNick* pOpNick) {
     bool bAdd = true;
 
     /* Try to find a CNick* from this channel so that pOpNick->HasPerm()
@@ -309,46 +315,56 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
         if (OpNick) pOpNick = OpNick;
     }
 
-    NETWORKMODULECALL(OnRawMode2(pOpNick, *this, sModeArg, sArgs),
-                      m_pNetwork->GetUser(), m_pNetwork, nullptr, NOTHING);
+    {
+        CString sArgs = CString(" ").Join(vsModes.begin(), vsModes.end());
+        NETWORKMODULECALL(OnRawMode2(pOpNick, *this, sModes, sArgs),
+                          m_pNetwork->GetUser(), m_pNetwork, nullptr, NOTHING);
+    }
 
-    for (unsigned int a = 0; a < sModeArg.size(); a++) {
-        const unsigned char& uMode = sModeArg[a];
+    VCString::const_iterator argIter = vsModes.begin();
+    const CString sEmpty;
+    auto nextArg = [&]() -> const CString& {
+        if (argIter == vsModes.end()) {
+            return sEmpty;
+        }
+        return *argIter++;
+    };
+    for (unsigned int a = 0; a < sModes.size(); a++) {
+        const char& cMode = sModes[a];
 
-        if (uMode == '+') {
+        if (cMode == '+') {
             bAdd = true;
-        } else if (uMode == '-') {
+        } else if (cMode == '-') {
             bAdd = false;
-        } else if (m_pNetwork->GetIRCSock()->IsPermMode(uMode)) {
-            CString sArg = GetModeArg(sArgs);
+        } else if (m_pNetwork->GetIRCSock()->IsPermMode(cMode)) {
+            const CString& sArg = nextArg();
             CNick* pNick = FindNick(sArg);
             if (pNick) {
-                unsigned char uPerm =
-                    m_pNetwork->GetIRCSock()->GetPermFromMode(uMode);
+                char cPerm = m_pNetwork->GetIRCSock()->GetPermFromMode(cMode);
 
-                if (uPerm) {
-                    bool bNoChange = (pNick->HasPerm(uPerm) == bAdd);
+                if (cPerm) {
+                    bool bNoChange = (pNick->HasPerm(cPerm) == bAdd);
 
                     if (bAdd) {
-                        pNick->AddPerm(uPerm);
+                        pNick->AddPerm(cPerm);
 
                         if (pNick->NickEquals(m_pNetwork->GetCurNick())) {
-                            AddPerm(uPerm);
+                            AddPerm(cPerm);
                         }
                     } else {
-                        pNick->RemPerm(uPerm);
+                        pNick->RemPerm(cPerm);
 
                         if (pNick->NickEquals(m_pNetwork->GetCurNick())) {
-                            RemPerm(uPerm);
+                            RemPerm(cPerm);
                         }
                     }
 
-                    NETWORKMODULECALL(OnChanPermission2(pOpNick, *pNick, *this,
-                                                        uMode, bAdd, bNoChange),
+                    NETWORKMODULECALL(OnChanPermission3(pOpNick, *pNick, *this,
+                                                        cMode, bAdd, bNoChange),
                                       m_pNetwork->GetUser(), m_pNetwork,
                                       nullptr, NOTHING);
 
-                    if (uMode == CChan::M_Op) {
+                    if (cMode == CChan::M_Op) {
                         if (bAdd) {
                             NETWORKMODULECALL(
                                 OnOp2(pOpNick, *pNick, *this, bNoChange),
@@ -360,7 +376,7 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
                                 m_pNetwork->GetUser(), m_pNetwork, nullptr,
                                 NOTHING);
                         }
-                    } else if (uMode == CChan::M_Voice) {
+                    } else if (cMode == CChan::M_Voice) {
                         if (bAdd) {
                             NETWORKMODULECALL(
                                 OnVoice2(pOpNick, *pNick, *this, bNoChange),
@@ -379,19 +395,19 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
             bool bList = false;
             CString sArg;
 
-            switch (m_pNetwork->GetIRCSock()->GetModeType(uMode)) {
+            switch (m_pNetwork->GetIRCSock()->GetModeType(cMode)) {
                 case CIRCSock::ListArg:
                     bList = true;
-                    sArg = GetModeArg(sArgs);
+                    sArg = nextArg();
                     break;
                 case CIRCSock::HasArg:
-                    sArg = GetModeArg(sArgs);
+                    sArg = nextArg();
                     break;
                 case CIRCSock::NoArg:
                     break;
                 case CIRCSock::ArgWhenSet:
                     if (bAdd) {
-                        sArg = GetModeArg(sArgs);
+                        sArg = nextArg();
                     }
 
                     break;
@@ -401,26 +417,52 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
             if (bList) {
                 bNoChange = false;
             } else if (bAdd) {
-                bNoChange = HasMode(uMode) && GetModeArg(uMode) == sArg;
+                bNoChange = HasMode(cMode) && GetModeArg(cMode) == sArg;
             } else {
-                bNoChange = !HasMode(uMode);
+                bNoChange = !HasMode(cMode);
             }
             NETWORKMODULECALL(
-                OnMode2(pOpNick, *this, uMode, sArg, bAdd, bNoChange),
+                OnMode2(pOpNick, *this, cMode, sArg, bAdd, bNoChange),
                 m_pNetwork->GetUser(), m_pNetwork, nullptr, NOTHING);
 
             if (!bList) {
-                (bAdd) ? AddMode(uMode, sArg) : RemMode(uMode);
+                (bAdd) ? AddMode(cMode, sArg) : RemMode(cMode);
             }
 
             // This is called when we join (ZNC requests the channel modes
             // on join) *and* when someone changes the channel keys.
             // We ignore channel key "*" because of some broken nets.
-            if (uMode == M_Key && !bNoChange && bAdd && sArg != "*") {
+            if (cMode == M_Key && !bNoChange && bAdd && sArg != "*") {
                 SetKey(sArg);
             }
         }
     }
+}
+
+void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
+    VCString vsModes;
+    CString sModeArg = sModes.Token(0);
+    bool colon = sModeArg.TrimPrefix(":");
+
+    // Only handle parameters if sModes doesn't start with a colon
+    // because if it does, we only have the mode string with no parameters
+    if (!colon) {
+        CString sArgs = sModes.Token(1, true);
+
+        while (!sArgs.empty()) {
+            // Check if this parameter is a trailing parameter
+            // If so, treat the rest of sArgs as one parameter
+            if (sArgs.TrimPrefix(":")) {
+                vsModes.push_back(sArgs);
+                sArgs.clear();
+            } else {
+                vsModes.push_back(sArgs.Token(0));
+                sArgs = sArgs.Token(1, true);
+            }
+        }
+    }
+
+    ModeChange(sModeArg, vsModes, pOpNick);
 }
 
 CString CChan::GetOptions() const {
@@ -441,11 +483,11 @@ CString CChan::GetOptions() const {
     return CString(", ").Join(vsRet.begin(), vsRet.end());
 }
 
-CString CChan::GetModeArg(unsigned char uMode) const {
-    if (uMode) {
-        map<unsigned char, CString>::const_iterator it = m_musModes.find(uMode);
+CString CChan::GetModeArg(char cMode) const {
+    if (cMode) {
+        map<char, CString>::const_iterator it = m_mcsModes.find(cMode);
 
-        if (it != m_musModes.end()) {
+        if (it != m_mcsModes.end()) {
             return it->second;
         }
     }
@@ -453,21 +495,21 @@ CString CChan::GetModeArg(unsigned char uMode) const {
     return "";
 }
 
-bool CChan::HasMode(unsigned char uMode) const {
-    return (uMode && m_musModes.find(uMode) != m_musModes.end());
+bool CChan::HasMode(char cMode) const {
+    return (cMode && m_mcsModes.find(cMode) != m_mcsModes.end());
 }
 
-bool CChan::AddMode(unsigned char uMode, const CString& sArg) {
-    m_musModes[uMode] = sArg;
+bool CChan::AddMode(char cMode, const CString& sArg) {
+    m_mcsModes[cMode] = sArg;
     return true;
 }
 
-bool CChan::RemMode(unsigned char uMode) {
-    if (!HasMode(uMode)) {
+bool CChan::RemMode(char cMode) {
+    if (!HasMode(cMode)) {
         return false;
     }
 
-    m_musModes.erase(uMode);
+    m_mcsModes.erase(cMode);
     return true;
 }
 
@@ -556,7 +598,6 @@ map<char, unsigned int> CChan::GetPermCounts() const {
 
 bool CChan::RemNick(const CString& sNick) {
     map<CString, CNick>::iterator it;
-    set<unsigned char>::iterator it2;
 
     it = m_msNicks.find(sNick);
     if (it == m_msNicks.end()) {
@@ -636,7 +677,7 @@ void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 
                 if (!bSkipStatusMsg) {
                     m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() +
-                                            " :Buffer Playback...",
+                                            " :" + t_s("Buffer Playback..."),
                                         pUseClient);
                 }
 
@@ -674,7 +715,7 @@ void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
                                   &bSkipStatusMsg);
                 if (!bSkipStatusMsg) {
                     m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() +
-                                            " :Playback Complete.",
+                                            " :" + t_s("Playback Complete."),
                                         pUseClient);
                 }
 

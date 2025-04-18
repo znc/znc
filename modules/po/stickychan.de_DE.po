@@ -1,0 +1,107 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: de\n"
+"X-Crowdin-File: /master/modules/po/stickychan.pot\n"
+"X-Crowdin-File-ID: 202\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+
+#: modules/po/../data/stickychan/tmpl/index.tmpl:9
+msgid "Name"
+msgstr "Name"
+
+#: modules/po/../data/stickychan/tmpl/index.tmpl:10
+msgid "Sticky"
+msgstr "Angepinnt"
+
+#: modules/po/../data/stickychan/tmpl/index.tmpl:25
+msgid "Save"
+msgstr "Speichern"
+
+#: modules/po/../data/stickychan/tmpl/stickychan_WebadminChan.tmpl:8
+msgid "Channel is sticky"
+msgstr "Kanal ist angepinnt"
+
+#: stickychan.cpp:28
+msgid "<#channel> [key]"
+msgstr "<#channel> [key]"
+
+#: stickychan.cpp:28
+msgid "Sticks a channel"
+msgstr "Pinnt einen Kanal"
+
+#: stickychan.cpp:30
+msgid "<#channel>"
+msgstr "<#channel>"
+
+#: stickychan.cpp:30
+msgid "Unsticks a channel"
+msgstr "Unpinnt einen Kanal"
+
+#: stickychan.cpp:32
+msgid "Lists sticky channels"
+msgstr "Zeigt alle gepinnten Kanäle"
+
+#: stickychan.cpp:75
+msgid "Usage: Stick <#channel> [key]"
+msgstr "Benutzung: Stick <#channel> [key]"
+
+#: stickychan.cpp:79
+#, c++-format
+msgid "Stuck {1}"
+msgstr "{1} angepinnt"
+
+#: stickychan.cpp:85
+msgid "Usage: Unstick <#channel>"
+msgstr "Benutzung: Unstick <#channel>"
+
+#: stickychan.cpp:89
+#, c++-format
+msgid "Unstuck {1}"
+msgstr "{1} ungepinnt"
+
+#: stickychan.cpp:101
+msgid " -- End of List"
+msgstr " -- Ende der Liste"
+
+#: stickychan.cpp:115
+#, c++-format
+msgid "Could not join {1} (# prefix missing?)"
+msgstr "Konnte {1} nicht beitreten (# Präfix fehlt?)"
+
+#: stickychan.cpp:128
+msgid "Sticky Channels"
+msgstr "Angepinnte Kanäle"
+
+#: stickychan.cpp:160
+msgid "Changes have been saved!"
+msgstr "Änderungen wurden gespeichert!"
+
+#: stickychan.cpp:185
+msgid "Channel became sticky!"
+msgstr "Kanal ist nun angepinnt!"
+
+#: stickychan.cpp:189
+msgid "Channel stopped being sticky!"
+msgstr "Kanal ist nicht mehr angepinnt!"
+
+#: stickychan.cpp:209
+#, c++-format
+msgid ""
+"Channel {1} cannot be joined, it is an illegal channel name. Unsticking."
+msgstr ""
+"Kanal {1} konnte nicht beigetreten werden, es ist ein ungültiger Kanalname."
+
+#: stickychan.cpp:246
+msgid "List of channels, separated by comma."
+msgstr "Liste von Kanälen, komma-getrennt."
+
+#: stickychan.cpp:251
+msgid "configless sticky chans, keeps you there very stickily even"
+msgstr "konfigurationslose angepinnte Kanäle"

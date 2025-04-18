@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,6 @@
 #include <gtest/gtest.h>
 #include <znc/ZNCString.h>
 
-// GTest uses this function to output objects
-static void PrintTo(const CString& s, std::ostream* o) {
-    *o << '"' << s.Escape_n(CString::EASCII, CString::EDEBUG) << '"';
-}
-
 class EscapeTest : public ::testing::Test {
   protected:
     void testEncode(const CString& in, const CString& expectedOut,
@@ -33,9 +28,9 @@ class EscapeTest : public ::testing::Test {
 
         // Encode, then decode again and check we still got the same string
         out = in.Escape_n(CString::EASCII, format);
-        EXPECT_EQ(expectedOut, out);
+        EXPECT_EQ(out, expectedOut);
         out = out.Escape_n(format, CString::EASCII);
-        EXPECT_EQ(in, out);
+        EXPECT_EQ(out, in);
     }
 
     void testString(const CString& in, const CString& url, const CString& html,
@@ -58,6 +53,8 @@ TEST_F(EscapeTest, Test) {
     testString("&<>",    "%26%3C%3E", "&amp;&lt;&gt;", "&<>",       "&<>");
     testString(" ;",     "+%3B",      " ;",            " ;",        "\\s\\:");
     // clang-format on
+    EXPECT_EQ(CString("a&lt.b&gt;c").Escape_n(CString::EHTML, CString::EASCII),
+              "a&lt.b>c");
 }
 
 TEST(StringTest, Bool) {
@@ -70,15 +67,15 @@ TEST(StringTest, Bool) {
 TEST(StringTest, Cmp) {
     CString s = "Bbb";
 
-    EXPECT_EQ(CString("Bbb"), s);
+    EXPECT_EQ(s, CString("Bbb"));
     EXPECT_LT(CString("Aaa"), s);
     EXPECT_GT(CString("Ccc"), s);
-    EXPECT_EQ(0, s.StrCmp("Bbb"));
+    EXPECT_EQ(s.StrCmp("Bbb"), 0);
     EXPECT_GT(0, s.StrCmp("bbb"));
     EXPECT_LT(0, s.StrCmp("Aaa"));
     EXPECT_GT(0, s.StrCmp("Ccc"));
-    EXPECT_EQ(0, s.CaseCmp("Bbb"));
-    EXPECT_EQ(0, s.CaseCmp("bbb"));
+    EXPECT_EQ(s.CaseCmp("Bbb"), 0);
+    EXPECT_EQ(s.CaseCmp("bbb"), 0);
     EXPECT_LT(0, s.CaseCmp("Aaa"));
     EXPECT_GT(0, s.CaseCmp("Ccc"));
 
@@ -123,43 +120,43 @@ TEST(StringTest, Wild) {
 TEST(StringTest, Case) {
     CString x = CS("xx");
     CString X = CS("XX");
-    EXPECT_EQ(X, x.AsUpper());
-    EXPECT_EQ(x, X.AsLower());
+    EXPECT_EQ(x.AsUpper(), X);
+    EXPECT_EQ(X.AsLower(), x);
 }
 
 TEST(StringTest, Replace) {
-    EXPECT_EQ("(b()b)", CString("(a()a)").Replace_n("a", "b"));
-    EXPECT_EQ("(a()b)", CString("(a()a)").Replace_n("a", "b", "(", ")"));
-    EXPECT_EQ("a(b)", CString("(a()a)").Replace_n("a", "b", "(", ")", true));
+    EXPECT_EQ(CString("(a()a)").Replace_n("a", "b"), "(b()b)");
+    EXPECT_EQ(CString("(a()a)").Replace_n("a", "b", "(", ")"), "(a()b)");
+    EXPECT_EQ(CString("(a()a)").Replace_n("a", "b", "(", ")", true), "a(b)");
 }
 
 TEST(StringTest, Misc) {
-    EXPECT_EQ("Hello,...", CString("Hello, I'm Bob").Ellipsize(9));
-    EXPECT_EQ("Hello, I'm Bob", CString("Hello, I'm Bob").Ellipsize(90));
-    EXPECT_EQ("..", CString("Hello, I'm Bob").Ellipsize(2));
+    EXPECT_EQ(CString("Hello, I'm Bob").Ellipsize(9), "Hello,...");
+    EXPECT_EQ(CString("Hello, I'm Bob").Ellipsize(90), "Hello, I'm Bob");
+    EXPECT_EQ(CString("Hello, I'm Bob").Ellipsize(2), "..");
 
-    EXPECT_EQ("Xy", CS("Xyz").Left(2));
-    EXPECT_EQ("Xyz", CS("Xyz").Left(20));
+    EXPECT_EQ(CS("Xyz").Left(2), "Xy");
+    EXPECT_EQ(CS("Xyz").Left(20), "Xyz");
 
-    EXPECT_EQ("yz", CS("Xyz").Right(2));
-    EXPECT_EQ("Xyz", CS("Xyz").Right(20));
+    EXPECT_EQ(CS("Xyz").Right(2), "yz");
+    EXPECT_EQ(CS("Xyz").Right(20), "Xyz");
 }
 
 TEST(StringTest, Split) {
-    EXPECT_EQ("a", CS("a b c").Token(0));
-    EXPECT_EQ("b", CS("a b c").Token(1));
-    EXPECT_EQ("", CS("a b c").Token(100));
-    EXPECT_EQ("b c", CS("a b c").Token(1, true));
-    EXPECT_EQ("c", CS("a  c").Token(1));
-    EXPECT_EQ("", CS("a  c").Token(1, false, " ", true));
-    EXPECT_EQ("c", CS("a  c").Token(1, false, "  "));
-    EXPECT_EQ(" c", CS("a   c").Token(1, false, "  "));
-    EXPECT_EQ("c", CS("a    c").Token(1, false, "  "));
-    EXPECT_EQ("b c", CS("a (b c) d").Token(1, false, " ", false, "(", ")"));
-    EXPECT_EQ("(b c)",
-              CS("a (b c) d").Token(1, false, " ", false, "(", ")", false));
-    EXPECT_EQ("d",
-              CS("a (b c) d").Token(2, false, " ", false, "(", ")", false));
+    EXPECT_EQ(CS("a b c").Token(0), "a");
+    EXPECT_EQ(CS("a b c").Token(1), "b");
+    EXPECT_EQ(CS("a b c").Token(100), "");
+    EXPECT_EQ(CS("a b c").Token(1, true), "b c");
+    EXPECT_EQ(CS("a  c").Token(1), "c");
+    EXPECT_EQ(CS("a  c").Token(1, false, " ", true), "");
+    EXPECT_EQ(CS("a  c").Token(1, false, "  "), "c");
+    EXPECT_EQ(CS("a   c").Token(1, false, "  "), " c");
+    EXPECT_EQ(CS("a    c").Token(1, false, "  "), "c");
+    EXPECT_EQ(CS("a (b c) d").Token(1, false, " ", false, "(", ")"), "b c");
+    EXPECT_EQ(CS("a (b c) d").Token(1, false, " ", false, "(", ")", false),
+              "(b c)");
+    EXPECT_EQ(CS("a (b c) d").Token(2, false, " ", false, "(", ")", false),
+              "d");
 
     VCString vexpected;
     VCString vresult;
@@ -168,7 +165,7 @@ TEST(StringTest, Split) {
     vexpected.push_back("b");
     vexpected.push_back("c");
     CS("a b c").Split(" ", vresult);
-    EXPECT_EQ(vexpected, vresult);
+    EXPECT_EQ(vresult, vexpected);
 
     MCString mexpected = {{"a", "b"}, {"c", "d"}};
     MCString mresult;
@@ -179,19 +176,19 @@ TEST(StringTest, Split) {
 
 TEST(StringTest, NamedFormat) {
     MCString m = {{"a", "b"}};
-    EXPECT_EQ("{xbyb", CString::NamedFormat(CS("\\{x{a}y{a}"), m));
+    EXPECT_EQ(CString::NamedFormat(CS("\\{x{a}y{a}"), m), "{xbyb");
 }
 
 TEST(StringTest, Hash) {
-    EXPECT_EQ("d41d8cd98f00b204e9800998ecf8427e", CS("").MD5());
-    EXPECT_EQ("0cc175b9c0f1b6a831c399e269772661", CS("a").MD5());
+    EXPECT_EQ(CS("").MD5(), "d41d8cd98f00b204e9800998ecf8427e");
+    EXPECT_EQ(CS("a").MD5(), "0cc175b9c0f1b6a831c399e269772661");
 
     EXPECT_EQ(
-        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        CS("").SHA256());
+        CS("").SHA256(),
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
     EXPECT_EQ(
-        "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
-        CS("a").SHA256());
+        CS("a").SHA256(),
+        "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb");
 }
 
 TEST(StringTest, Equals) {
@@ -203,17 +200,17 @@ TEST(StringTest, Equals) {
 }
 
 TEST(StringTest, Find) {
-    EXPECT_EQ(0u, CString("Hello, I'm Bob").Find("Hello"));
-    EXPECT_EQ(
-        0u, CString("Hello, I'm Bob").Find("Hello", CString::CaseInsensitive));
-    EXPECT_EQ(0u,
-              CString("Hello, I'm Bob").Find("Hello", CString::CaseSensitive));
+    EXPECT_EQ(CString("Hello, I'm Bob").Find("Hello"), 0u);
+    EXPECT_EQ(CString("Hello, I'm Bob").Find("Hello", CString::CaseInsensitive),
+              0u);
+    EXPECT_EQ(CString("Hello, I'm Bob").Find("Hello", CString::CaseSensitive),
+              0u);
 
-    EXPECT_EQ(7u, CString("Hello, I'm Bob").Find("i'm"));
-    EXPECT_EQ(7u,
-              CString("Hello, I'm Bob").Find("i'm", CString::CaseInsensitive));
-    EXPECT_EQ(CString::npos,
-              CString("Hello, I'm Bob").Find("i'm", CString::CaseSensitive));
+    EXPECT_EQ(CString("Hello, I'm Bob").Find("i'm"), 7u);
+    EXPECT_EQ(CString("Hello, I'm Bob").Find("i'm", CString::CaseInsensitive),
+              7u);
+    EXPECT_EQ(CString("Hello, I'm Bob").Find("i'm", CString::CaseSensitive),
+              CString::npos);
 }
 
 TEST(StringTest, StartsWith) {

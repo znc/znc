@@ -1,0 +1,88 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: bg\n"
+"X-Crowdin-File: /master/modules/po/autoattach.pot\n"
+"X-Crowdin-File-ID: 151\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Bulgarian\n"
+"Language: bg_BG\n"
+
+#: autoattach.cpp:94
+msgid "Added to list"
+msgstr "Добавено към списъка"
+
+#: autoattach.cpp:96
+#, c++-format
+msgid "{1} is already added"
+msgstr "{1} е вече добавено"
+
+#: autoattach.cpp:100
+msgid "Usage: Add [!]<#chan> <search> <host>"
+msgstr "Употреба: Add [!]<#chan> <search> <host>"
+
+#: autoattach.cpp:101
+msgid "Wildcards are allowed"
+msgstr "Wildcards са позволени"
+
+#: autoattach.cpp:113
+#, c++-format
+msgid "Removed {1} from list"
+msgstr "{1} е премахнат от списъка"
+
+#: autoattach.cpp:115
+msgid "Usage: Del [!]<#chan> <search> <host>"
+msgstr "Употреба: Del [!]<#chan> <search> <host>"
+
+#: autoattach.cpp:121 autoattach.cpp:129
+msgid "Neg"
+msgstr "Neg"
+
+#: autoattach.cpp:122 autoattach.cpp:130
+msgid "Chan"
+msgstr "Канал"
+
+#: autoattach.cpp:123 autoattach.cpp:131
+msgid "Search"
+msgstr "Търсене"
+
+#: autoattach.cpp:124 autoattach.cpp:132
+msgid "Host"
+msgstr "Хост"
+
+#: autoattach.cpp:138
+msgid "You have no entries."
+msgstr "Нямате записи."
+
+#: autoattach.cpp:146 autoattach.cpp:149
+msgid "[!]<#chan> <search> <host>"
+msgstr "[!]<#chan> <search> <host>"
+
+#: autoattach.cpp:147
+msgid "Add an entry, use !#chan to negate and * for wildcards"
+msgstr "Добавяне на запис, използвайте !#chan, за отказ и * за wildcards"
+
+#: autoattach.cpp:150
+msgid "Remove an entry, needs to be an exact match"
+msgstr "Премахване на запис, трябва да е точно същият"
+
+#: autoattach.cpp:152
+msgid "List all entries"
+msgstr "Показване на всички записи"
+
+#: autoattach.cpp:171
+#, c++-format
+msgid "Unable to add [{1}]"
+msgstr "[{1}] не може да бъде добавен"
+
+#: autoattach.cpp:283
+msgid "List of channel masks and channel masks with ! before them."
+msgstr "Списък на канали с маски и канали с маски с ! преди тях."
+
+#: autoattach.cpp:286
+msgid "Reattaches you to channels on activity."
+msgstr "Отново ви включва в канали при активност."

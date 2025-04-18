@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@
 #include <znc/Nick.h>
 #include <znc/ZNCString.h>
 #include <znc/Buffer.h>
+#include <znc/Translation.h>
 #include <map>
 
 // Forward Declarations
@@ -31,7 +32,7 @@ class CConfig;
 class CFile;
 // !Forward Declarations
 
-class CChan {
+class CChan : private CCoreTranslationMixin {
   public:
     typedef enum {
         Voice = '+',
@@ -75,10 +76,24 @@ class CChan {
                const CString& sHost);
 
     // Modes
+    /// @deprecated Use SetModes(CString, VCString)
     void SetModes(const CString& s);
+    /**
+     * Set the current modes for this channel
+     * @param sModes The mode characters being changed
+     * @param vsModeParams The parameters for the modes to be set
+     */
+    void SetModes(const CString& sModes, const VCString& vsModeParams);
+    /// @deprecated Use ModeChange(CString, VCString, CNick*)
     void ModeChange(const CString& sModes, const CNick* OpNick = nullptr);
-    bool AddMode(unsigned char uMode, const CString& sArg);
-    bool RemMode(unsigned char uMode);
+    /**
+     * Handle changing the modes on a channel
+     * @param sModes The mode string (eg. +ovbs-pbo)
+     * @param vsModeParams The parameters for the mode string
+     */
+    void ModeChange(const CString& sModes,const VCString& vsModeParams, const CNick* OpNick = nullptr);
+    bool AddMode(char cMode, const CString& sArg);
+    bool RemMode(char cMode);
     CString GetModeString() const;
     CString GetModeArg(CString& sArgs) const;
     CString GetModeForNames() const;
@@ -120,10 +135,14 @@ class CChan {
     // !Buffer
 
     // m_Nick wrappers
+    /// e.g. '@' for chanop.
     CString GetPermStr() const { return m_Nick.GetPermStr(); }
-    bool HasPerm(unsigned char uPerm) const { return m_Nick.HasPerm(uPerm); }
-    bool AddPerm(unsigned char uPerm) { return m_Nick.AddPerm(uPerm); }
-    bool RemPerm(unsigned char uPerm) { return m_Nick.RemPerm(uPerm); }
+    /// e.g. '@' for chanop.
+    bool HasPerm(char cPerm) const { return m_Nick.HasPerm(cPerm); }
+    /// e.g. '@' for chanop.
+    bool AddPerm(char cPerm) { return m_Nick.AddPerm(cPerm); }
+    /// e.g. '@' for chanop.
+    bool RemPerm(char cPerm) { return m_Nick.RemPerm(cPerm); }
     // !wrappers
 
     // Setters
@@ -154,14 +173,14 @@ class CChan {
     // Getters
     CIRCNetwork* GetNetwork() const { return m_pNetwork; }
     bool IsModeKnown() const { return m_bModeKnown; }
-    bool HasMode(unsigned char uMode) const;
+    bool HasMode(char cMode) const;
     CString GetOptions() const;
-    CString GetModeArg(unsigned char uMode) const;
+    CString GetModeArg(char cMode) const;
     std::map<char, unsigned int> GetPermCounts() const;
     bool IsOn() const { return m_bIsOn; }
     const CString& GetName() const { return m_sName; }
-    const std::map<unsigned char, CString>& GetModes() const {
-        return m_musModes;
+    const std::map<char, CString>& GetModes() const {
+        return m_mcsModes;
     }
     const CString& GetKey() const { return m_sKey; }
     const CString& GetTopic() const { return m_sTopic; }
@@ -204,7 +223,7 @@ class CChan {
     CBuffer m_Buffer;
 
     bool m_bModeKnown;
-    std::map<unsigned char, CString> m_musModes;
+    std::map<char, CString> m_mcsModes;
 };
 
 #endif  // !ZNC_CHAN_H

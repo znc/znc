@@ -1,0 +1,130 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: bg\n"
+"X-Crowdin-File: /master/modules/po/notes.pot\n"
+"X-Crowdin-File-ID: 186\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Bulgarian\n"
+"Language: bg_BG\n"
+
+#: modules/po/../data/notes/tmpl/index.tmpl:7
+msgid "Add A Note"
+msgstr "Добавяне на бележка"
+
+#: modules/po/../data/notes/tmpl/index.tmpl:11
+msgid "Key:"
+msgstr "Ключ:"
+
+#: modules/po/../data/notes/tmpl/index.tmpl:15
+msgid "Note:"
+msgstr "Бележка:"
+
+#: modules/po/../data/notes/tmpl/index.tmpl:19
+msgid "Add Note"
+msgstr "Добавяне на бележка"
+
+#: modules/po/../data/notes/tmpl/index.tmpl:27
+msgid "You have no notes to display."
+msgstr "Нямате бележки за показване."
+
+#: modules/po/../data/notes/tmpl/index.tmpl:34 notes.cpp:164 notes.cpp:170
+msgid "Key"
+msgstr "Ключ"
+
+#: modules/po/../data/notes/tmpl/index.tmpl:35 notes.cpp:165 notes.cpp:171
+msgid "Note"
+msgstr "Бележка"
+
+#: modules/po/../data/notes/tmpl/index.tmpl:41
+msgid "[del]"
+msgstr "[del]"
+
+#: notes.cpp:32
+msgid "That note already exists.  Use MOD <key> <note> to overwrite."
+msgstr ""
+"Тази бележка вече съществува. Използвайте MOD <key> <note> за да я "
+"презапишете."
+
+#: notes.cpp:35 notes.cpp:137
+#, c++-format
+msgid "Added note {1}"
+msgstr "Добавена бележка {1}"
+
+#: notes.cpp:37 notes.cpp:48 notes.cpp:142
+#, c++-format
+msgid "Unable to add note {1}"
+msgstr "Не може да се добави бележка {1}"
+
+#: notes.cpp:46 notes.cpp:139
+#, c++-format
+msgid "Set note for {1}"
+msgstr "Задаване на бележка за {1}"
+
+#: notes.cpp:56
+msgid "This note doesn't exist."
+msgstr "Тази бележка не съществува."
+
+#: notes.cpp:66 notes.cpp:116
+#, c++-format
+msgid "Deleted note {1}"
+msgstr "Изтрита бележка {1}"
+
+#: notes.cpp:68 notes.cpp:118
+#, c++-format
+msgid "Unable to delete note {1}"
+msgstr "Не може да се изтрие бележка {1}"
+
+#: notes.cpp:75
+msgid "List notes"
+msgstr "Показване не бележка"
+
+#: notes.cpp:77 notes.cpp:81
+msgid "<key> <note>"
+msgstr "<key><note>"
+
+#: notes.cpp:77
+msgid "Add a note"
+msgstr "Добавяне на бележка"
+
+#: notes.cpp:79 notes.cpp:83
+msgid "<key>"
+msgstr "<key>"
+
+#: notes.cpp:79
+msgid "Delete a note"
+msgstr "Изтриване на бележка"
+
+#: notes.cpp:81
+msgid "Modify a note"
+msgstr "Модифициране на бележка"
+
+#: notes.cpp:94
+msgid "Notes"
+msgstr "Бележки"
+
+#: notes.cpp:133
+msgid "That note already exists.  Use /#+<key> <note> to overwrite."
+msgstr ""
+"Тази бележка вече съществува. Използвайте /#+<key> <note> за да я "
+"презапишете."
+
+#: notes.cpp:186 notes.cpp:188
+msgid "You have no entries."
+msgstr "Вие нямате записи."
+
+#: notes.cpp:224
+msgid ""
+"This user module takes up to one arguments. It can be -disableNotesOnLogin "
+"not to show notes upon client login"
+msgstr ""
+"Този потребителски модул приема до един аргумент. Може да се използва -"
+"disableNotesOnLogin за да не се показват бележки при влизане"
+
+#: notes.cpp:228
+msgid "Keep and replay notes"
+msgstr "Пази и повтаря на бележки"

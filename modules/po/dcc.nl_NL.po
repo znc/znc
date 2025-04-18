@@ -1,0 +1,258 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: nl\n"
+"X-Crowdin-File: /master/modules/po/dcc.pot\n"
+"X-Crowdin-File-ID: 170\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Dutch\n"
+"Language: nl_NL\n"
+
+#: dcc.cpp:88
+msgid "<nick> <file>"
+msgstr "<naam> <bestand>"
+
+#: dcc.cpp:89
+msgid "Send a file from ZNC to someone"
+msgstr "Stuur een bestand van ZNC naar iemand"
+
+#: dcc.cpp:91
+msgid "<file>"
+msgstr "<bestand>"
+
+#: dcc.cpp:92
+msgid "Send a file from ZNC to your client"
+msgstr "Stuur een bestand van ZNC naar je client"
+
+#: dcc.cpp:94
+msgid "List current transfers"
+msgstr "Laat huidige overdrachten zien"
+
+#: dcc.cpp:103
+msgid "You must be admin to use the DCC module"
+msgstr "Je moet een beheerder zijn om de DCC module te mogen gebruiken"
+
+#: dcc.cpp:140
+#, c++-format
+msgid "Attempting to send [{1}] to [{2}]."
+msgstr "Proberen [{1}] naar [{2}] te sturen."
+
+#: dcc.cpp:149 dcc.cpp:554
+#, c++-format
+msgid "Receiving [{1}] from [{2}]: File already exists."
+msgstr "Ontvangst [{1}] van [{2}]: Bestand bestaat al."
+
+#: dcc.cpp:167
+#, c++-format
+msgid ""
+"Attempting to connect to [{1} {2}] in order to download [{3}] from [{4}]."
+msgstr "Proberen te verbinden naar [{1} {2}] om [{3}] te downloaden van [{4}]."
+
+#: dcc.cpp:179
+msgid "Usage: Send <nick> <file>"
+msgstr "Gebruik: Send <naam> <bestand>"
+
+#: dcc.cpp:186 dcc.cpp:206
+msgid "Illegal path."
+msgstr "Ongeldig pad."
+
+#: dcc.cpp:199
+msgid "Usage: Get <file>"
+msgstr "Gebruik: Get <bestand>"
+
+#: dcc.cpp:215 dcc.cpp:232 dcc.cpp:234
+msgctxt "list"
+msgid "Type"
+msgstr "Type"
+
+#: dcc.cpp:216 dcc.cpp:238 dcc.cpp:241
+msgctxt "list"
+msgid "State"
+msgstr "Status"
+
+#: dcc.cpp:217 dcc.cpp:243
+msgctxt "list"
+msgid "Speed"
+msgstr "Snelheid"
+
+#: dcc.cpp:218 dcc.cpp:227
+msgctxt "list"
+msgid "Nick"
+msgstr "Naam"
+
+#: dcc.cpp:219 dcc.cpp:228
+msgctxt "list"
+msgid "IP"
+msgstr "IP-adres"
+
+#: dcc.cpp:220 dcc.cpp:229
+msgctxt "list"
+msgid "File"
+msgstr "Bestand"
+
+#: dcc.cpp:232
+msgctxt "list-type"
+msgid "Sending"
+msgstr "Versturen"
+
+#: dcc.cpp:234
+msgctxt "list-type"
+msgid "Getting"
+msgstr "Ontvangen"
+
+#: dcc.cpp:239
+msgctxt "list-state"
+msgid "Waiting"
+msgstr "Wachten"
+
+#: dcc.cpp:244
+#, c++-format
+msgid "{1} KiB/s"
+msgstr "{1} KiB/s"
+
+#: dcc.cpp:250
+msgid "You have no active DCC transfers."
+msgstr "Je hebt geen actieve DCC overdrachten."
+
+#: dcc.cpp:267
+#, c++-format
+msgid "Attempting to resume send from position {1} of file [{2}] for [{3}]"
+msgstr "Proberen te hervatten van positie {1} van bestand [{2}] voor [{3}]"
+
+#: dcc.cpp:277
+#, c++-format
+msgid "Couldn't resume file [{1}] for [{2}]: not sending anything."
+msgstr "Kon bestand [{1}] voor [{2}] niet hervatten: verstuurd niks."
+
+#: dcc.cpp:286
+#, c++-format
+msgid "Bad DCC file: {1}"
+msgstr "Slecht DCC bestand: {1}"
+
+#: dcc.cpp:341
+#, c++-format
+msgid "Sending [{1}] to [{2}]: File not open!"
+msgstr "Versturen [{1}] naar [{2}]: Bestand niet open!"
+
+#: dcc.cpp:345
+#, c++-format
+msgid "Receiving [{1}] from [{2}]: File not open!"
+msgstr "Ontvangen [{1}] van [{2}]: Bestand niet open!"
+
+#: dcc.cpp:385
+#, c++-format
+msgid "Sending [{1}] to [{2}]: Connection refused."
+msgstr "Versturen [{1}] naar [{2}]: verbinding geweigerd."
+
+#: dcc.cpp:389
+#, c++-format
+msgid "Receiving [{1}] from [{2}]: Connection refused."
+msgstr "Ontvangen [{1}] van [{2}]: verbinding geweigerd."
+
+#: dcc.cpp:397
+#, c++-format
+msgid "Sending [{1}] to [{2}]: Timeout."
+msgstr "Versturen [{1}] naar [{2}]: Time-out."
+
+#: dcc.cpp:401
+#, c++-format
+msgid "Receiving [{1}] from [{2}]: Timeout."
+msgstr "Ontvangen [{1}] van [{2}]: Time-out."
+
+#: dcc.cpp:411
+#, c++-format
+msgid "Sending [{1}] to [{2}]: Socket error {3}: {4}"
+msgstr "Versturen [{1}] naar [{2}]: Socket fout {3}: {4}"
+
+#: dcc.cpp:415
+#, c++-format
+msgid "Receiving [{1}] from [{2}]: Socket error {3}: {4}"
+msgstr "Ontvangen [{1}] van [{2}]: Socket fout {3}: {4}"
+
+#: dcc.cpp:423
+#, c++-format
+msgid "Sending [{1}] to [{2}]: Transfer started."
+msgstr "Versturen [{1}] naar [{2}]: Overdracht gestart."
+
+#: dcc.cpp:427
+#, c++-format
+msgid "Receiving [{1}] from [{2}]: Transfer started."
+msgstr "Ontvangen [{1}] van [{2}]: Overdracht gestart."
+
+#: dcc.cpp:446
+#, c++-format
+msgid "Sending [{1}] to [{2}]: Too much data!"
+msgstr "Versturen [{1}] naar [{2}]: Te veel data!"
+
+#: dcc.cpp:450
+#, c++-format
+msgid "Receiving [{1}] from [{2}]: Too much data!"
+msgstr "Ontvangen [{1}] van [{2}]: Te veel data!"
+
+#: dcc.cpp:456
+#, c++-format
+msgid "Sending [{1}] to [{2}] completed at {3} KiB/s"
+msgstr "Versturen [{1}] naar [{2}] afgerond met {3} KiB/s"
+
+#: dcc.cpp:461
+#, c++-format
+msgid "Receiving [{1}] from [{2}] completed at {3} KiB/s"
+msgstr "Ontvangen [{1}] van [{2}] afgerond met {3} KiB/s"
+
+#: dcc.cpp:474
+#, c++-format
+msgid "Sending [{1}] to [{2}]: File closed prematurely."
+msgstr "Versturen [{1}] naar [{2}]: Bestand te vroeg afgesloten."
+
+#: dcc.cpp:478
+#, c++-format
+msgid "Receiving [{1}] from [{2}]: File closed prematurely."
+msgstr "Ontvangst [{1}] van [{2}]: Bestand te vroeg afgesloten."
+
+#: dcc.cpp:501
+#, c++-format
+msgid "Sending [{1}] to [{2}]: Error reading from file."
+msgstr "Versturen [{1}] naar [{2}]: Fout bij lezen van bestand."
+
+#: dcc.cpp:505
+#, c++-format
+msgid "Receiving [{1}] from [{2}]: Error reading from file."
+msgstr "Ontvangen [{1}] van [{2}]: Fout bij lezen van bestand."
+
+#: dcc.cpp:537
+#, c++-format
+msgid "Sending [{1}] to [{2}]: Unable to open file."
+msgstr "Versturen [{1}] naar [{2}]: Kan bestand niet openen."
+
+#: dcc.cpp:541
+#, c++-format
+msgid "Receiving [{1}] from [{2}]: Unable to open file."
+msgstr "Ontvangen [{1}] van [{2}]: Kan bestand niet openen."
+
+#: dcc.cpp:563
+#, c++-format
+msgid "Receiving [{1}] from [{2}]: Could not open file."
+msgstr "Ontvangen [{1}] van [{2}]: Kan bestand niet openen."
+
+#: dcc.cpp:572
+#, c++-format
+msgid "Sending [{1}] to [{2}]: Not a file."
+msgstr "Versturen [{1}] naar [{2}]: Geen bestand."
+
+#: dcc.cpp:581
+#, c++-format
+msgid "Sending [{1}] to [{2}]: Could not open file."
+msgstr "Versturen [{1}] naar [{2}]: Kan bestand niet openen."
+
+#: dcc.cpp:593
+#, c++-format
+msgid "Sending [{1}] to [{2}]: File too large (>4 GiB)."
+msgstr "Versturen [{1}] naar [{2}]: Bestand te groot (>4 GiB)."
+
+#: dcc.cpp:623
+msgid "This module allows you to transfer files to and from ZNC"
+msgstr "Deze module stelt je in staat bestanden van en naar ZNC te sturen"

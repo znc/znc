@@ -1,0 +1,189 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: bg\n"
+"X-Crowdin-File: /master/modules/po/autoop.pot\n"
+"X-Crowdin-File-ID: 153\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Bulgarian\n"
+"Language: bg_BG\n"
+
+#: autoop.cpp:155
+msgid "List all users"
+msgstr "Показване на всички потребители"
+
+#: autoop.cpp:157 autoop.cpp:160
+msgid "<user> <channel> [channel] ..."
+msgstr "<user><channel> [канал] ......."
+
+#: autoop.cpp:158
+msgid "Adds channels to a user"
+msgstr "Добавя канали към потребител"
+
+#: autoop.cpp:161
+msgid "Removes channels from a user"
+msgstr "Премахва канали от потребител"
+
+#: autoop.cpp:163 autoop.cpp:166
+msgid "<user> <mask>,[mask] ..."
+msgstr "<user><mask>, [маска] ..."
+
+#: autoop.cpp:164
+msgid "Adds masks to a user"
+msgstr "Добавя маски към потребител"
+
+#: autoop.cpp:167
+msgid "Removes masks from a user"
+msgstr "Премахва маски от потребител"
+
+#: autoop.cpp:170
+msgid "<user> <hostmask>[,<hostmasks>...] <key> [channels]"
+msgstr "<user> <hostmask>[,<hostmasks>...] <key> [канали]"
+
+#: autoop.cpp:171
+msgid "Adds a user"
+msgstr "Добавя потребител"
+
+#: autoop.cpp:173
+msgid "<user>"
+msgstr "<user>"
+
+#: autoop.cpp:173
+msgid "Removes a user"
+msgstr "Премахва потребител"
+
+#: autoop.cpp:276
+msgid "Usage: AddUser <user> <hostmask>[,<hostmasks>...] <key> [channels]"
+msgstr "Употреба: AddUser <user><hostmask> [,<hostmasks>...] <key> [канали]"
+
+#: autoop.cpp:292
+msgid "Usage: DelUser <user>"
+msgstr "Употреба: DelUser <user>"
+
+#: autoop.cpp:301
+msgid "There are no users defined"
+msgstr "Няма избрани потребители"
+
+#: autoop.cpp:307 autoop.cpp:318 autoop.cpp:322 autoop.cpp:324
+msgid "User"
+msgstr "Потребител"
+
+#: autoop.cpp:308 autoop.cpp:326
+msgid "Hostmasks"
+msgstr "Hostmasks"
+
+#: autoop.cpp:309 autoop.cpp:319
+msgid "Key"
+msgstr "Ключ"
+
+#: autoop.cpp:310 autoop.cpp:320
+msgid "Channels"
+msgstr "Канали"
+
+#: autoop.cpp:338
+msgid "Usage: AddChans <user> <channel> [channel] ..."
+msgstr "Употреба: AddChans <user> <channel> [канал] ..."
+
+#: autoop.cpp:345 autoop.cpp:366 autoop.cpp:388 autoop.cpp:409 autoop.cpp:473
+msgid "No such user"
+msgstr "Няма такъв потребител"
+
+#: autoop.cpp:350
+#, c++-format
+msgid "Channel(s) added to user {1}"
+msgstr "Канал(и) добавени към потребител {1}"
+
+#: autoop.cpp:359
+msgid "Usage: DelChans <user> <channel> [channel] ..."
+msgstr "Употреба: DelChans <user> <channel> [channel] ..."
+
+#: autoop.cpp:372
+#, c++-format
+msgid "Channel(s) Removed from user {1}"
+msgstr "Канал(и) премахнати от потребител {1}"
+
+#: autoop.cpp:381
+msgid "Usage: AddMasks <user> <mask>,[mask] ..."
+msgstr "Употреба: AddMasks <user> <mask>,[маска] ..."
+
+#: autoop.cpp:393
+#, c++-format
+msgid "Hostmasks(s) added to user {1}"
+msgstr "Hostmasks(s) добавени към потребител {1}"
+
+#: autoop.cpp:402
+msgid "Usage: DelMasks <user> <mask>,[mask] ..."
+msgstr "Употреба: DelMasks <user> <mask>,[маска] ..."
+
+#: autoop.cpp:414
+#, c++-format
+msgid "Removed user {1} with key {2} and channels {3}"
+msgstr "Потребителят {1} е премахнат с ключ {2} и канали {3}"
+
+#: autoop.cpp:420
+#, c++-format
+msgid "Hostmasks(s) Removed from user {1}"
+msgstr "Hostmasks(s) премахнати от потребител {1}"
+
+#: autoop.cpp:479
+#, c++-format
+msgid "User {1} removed"
+msgstr "Потребителят {1} е премахнат"
+
+#: autoop.cpp:485
+msgid "That user already exists"
+msgstr "Този потребител вече съществува"
+
+#: autoop.cpp:491
+#, c++-format
+msgid "User {1} added with hostmask(s) {2}"
+msgstr "Потребителят {1} е добавен с hostmask(s) {2}"
+
+#: autoop.cpp:533
+#, c++-format
+msgid ""
+"[{1}] sent us a challenge but they are not opped in any defined channels."
+msgstr ""
+"[{1}] ни изпрати предизвикателство, но те не са оператори в никакви "
+"определени канали."
+
+#: autoop.cpp:537
+#, c++-format
+msgid "[{1}] sent us a challenge but they do not match a defined user."
+msgstr ""
+"[{1}] ни изпрати предизвикателство, но то не съвпада с определен потребител."
+
+#: autoop.cpp:545
+#, c++-format
+msgid "WARNING! [{1}] sent an invalid challenge."
+msgstr "ВНИМАНИЕ! [{1}] ни изпрати грешно предизвикателство."
+
+#: autoop.cpp:561
+#, c++-format
+msgid "[{1}] sent an unchallenged response.  This could be due to lag."
+msgstr ""
+"[{1}] ни изпрати отговор без предизвикателство. Това може да е поради лаг."
+
+#: autoop.cpp:578
+#, c++-format
+msgid ""
+"WARNING! [{1}] sent a bad response.  Please verify that you have their "
+"correct password."
+msgstr ""
+"ВНИМАНИЕ!  [{1}] изпрати лош отговор. Моля потвърдете че имате правилната им "
+"парола."
+
+#: autoop.cpp:587
+#, c++-format
+msgid "WARNING! [{1}] sent a response but did not match any defined users."
+msgstr ""
+"ВНИМАНИЕ! [{1}] изпрати отговор, но той не съвпада с никакви определени "
+"потребители."
+
+#: autoop.cpp:645
+msgid "Auto op the good people"
+msgstr "Автоматичен Op за добрите хора"

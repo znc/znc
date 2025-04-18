@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,8 @@ class ZNC_EXPORT_LIB_EXPORT CPerlModule : public CModule {
     bool OnWebPreRequest(CWebSock& WebSock, const CString& sPageName) override;
     bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
                       CTemplate& Tmpl) override;
+    bool ValidateWebRequestCSRFCheck(CWebSock& WebSock,
+                                     const CString& sPageName) override;
     VWebSubPages& GetSubPages() override;
     void OnPreRehash() override;
     void OnPostRehash() override;
@@ -114,7 +116,10 @@ class ZNC_EXPORT_LIB_EXPORT CPerlModule : public CModule {
                          CString& sMessage) override;
     EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) override;
     bool OnServerCapAvailable(const CString& sCap) override;
+    bool OnServerCap302Available(const CString& sCap, const CString& sValue) override;
     void OnServerCapResult(const CString& sCap, bool bSuccess) override;
+    void OnClientAttached() override;
+    void OnClientDetached() override;
     EModRet OnTimerAutoJoin(CChan& Channel) override;
     bool OnEmbeddedWebRequest(CWebSock&, const CString&, CTemplate&) override;
     EModRet OnAddNetwork(CIRCNetwork& Network, CString& sErrorRet) override;
@@ -155,6 +160,16 @@ class ZNC_EXPORT_LIB_EXPORT CPerlModule : public CModule {
     EModRet OnTopicMessage(CTopicMessage& Message) override;
     EModRet OnSendToClientMessage(CMessage& Message) override;
     EModRet OnSendToIRCMessage(CMessage& Message) override;
+    EModRet OnUserTagMessage(CTargetMessage& Message) override;
+    EModRet OnChanTagMessage(CTargetMessage& Message) override;
+    EModRet OnPrivTagMessage(CTargetMessage& Message) override;
+
+    void OnClientGetSASLMechanisms(SCString& ssMechanisms) override;
+    EModRet OnClientSASLServerInitialChallenge(const CString& sMechanism,
+                                               CString& sResponse) override;
+    EModRet OnClientSASLAuthenticate(const CString& sMechanism,
+                                     const CString& sMessage) override;
+    void OnClientSASLAborted() override;
 };
 
 static inline CPerlModule* AsPerlModule(CModule* p) {
@@ -210,6 +225,20 @@ class ZNC_EXPORT_LIB_EXPORT CPerlSocket : public CSocket {
 inline CPerlSocket* CreatePerlSocket(CPerlModule* pModule, SV* perlObj) {
     return new CPerlSocket(pModule, perlObj);
 }
+
+class ZNC_EXPORT_LIB_EXPORT CPerlCapability : public CCapability {
+  public:
+    CPerlCapability(SV* serverCb, SV* clientCb)
+        : m_serverCb(newSVsv(serverCb)), m_clientCb(newSVsv(clientCb)) {}
+    ~CPerlCapability();
+
+    void OnServerChangedSupport(CIRCNetwork* pNetwork, bool bState) override;
+    void OnClientChangedSupport(CClient* pClient, bool bState) override;
+
+  private:
+    SV* m_serverCb;
+    SV* m_clientCb;
+};
 
 inline bool HaveIPv6() {
 #ifdef HAVE_IPV6

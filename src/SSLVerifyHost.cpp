@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 #include <znc/SSLVerifyHost.h>
+#include <znc/Translation.h>
+#include <arpa/inet.h>
 
 #ifdef HAVE_LIBSSL
 #if defined(OPENSSL_VERSION_NUMBER) && !defined(LIBRESSL_VERSION_NUMBER) && OPENSSL_VERSION_NUMBER >= 0x10100007
@@ -368,6 +370,14 @@ static HostnameValidationResult matches_subject_alternative_name(
     }
     san_names_nb = sk_GENERAL_NAME_num(san_names);
 
+    // Precompute binary representation of hostname in case if it's IP address.
+    // Not the other way around, because there can be multiple text
+    // representation of the same IP.
+    char ip4[4] = {};
+    char ip6[16] = {};
+    const int ip4try = inet_pton(AF_INET, hostname, ip4);
+    const int ip6try = inet_pton(AF_INET6, hostname, ip6);
+
     // Check each name within the extension
     for (i = 0; i < san_names_nb; i++) {
         const GENERAL_NAME* current_name = sk_GENERAL_NAME_value(san_names, i);
@@ -380,12 +390,36 @@ static HostnameValidationResult matches_subject_alternative_name(
 
             // Make sure there isn't an embedded NUL character in the DNS name
             if (ASN1_STRING_length(current_name->d.dNSName) !=
-                static_cast<int>(strlen(dns_name))) {
+                static_cast<int>(strnlen(
+                    dns_name, ASN1_STRING_length(current_name->d.dNSName)))) {
+                DEBUG("SSLVerifyHost: embedded null in DNS SAN");
                 result = MalformedCertificate;
                 break;
             } else {  // Compare expected hostname with the DNS name
-                DEBUG("SSLVerifyHost: Found SAN " << dns_name);
+                DEBUG("SSLVerifyHost: Found DNS SAN " << dns_name);
                 if (ZNC_Curl::Curl_cert_hostcheck(dns_name, hostname)) {
+                    result = MatchFound;
+                    break;
+                }
+            }
+        } else if (current_name->type == GEN_IPADD) {
+            CString ip(reinterpret_cast<const char*>(
+                           ASN1_STRING_get0_data(current_name->d.iPAddress)),
+                       ASN1_STRING_length(current_name->d.iPAddress));
+            DEBUG("SSLVerifyHost: Found IP SAN "
+                  << ip.Escape_n(CString::EHEXCOLON));
+            if (ip4try && ASN1_STRING_length(current_name->d.iPAddress) == 4) {
+                if (memcmp(ip4,
+                           ASN1_STRING_get0_data(current_name->d.iPAddress),
+                           4) == 0) {
+                    result = MatchFound;
+                    break;
+                }
+            } else if (ip6try &&
+                       ASN1_STRING_length(current_name->d.iPAddress) == 16) {
+                if (memcmp(ip6,
+                           ASN1_STRING_get0_data(current_name->d.iPAddress),
+                           16) == 0) {
                     result = MatchFound;
                     break;
                 }
@@ -432,6 +466,9 @@ static HostnameValidationResult validate_hostname(const char* hostname,
 
 bool ZNC_SSLVerifyHost(const CString& sHost, const X509* pCert,
                        CString& sError) {
+    struct Tr : CCoreTranslationMixin {
+        using CCoreTranslationMixin::t_s;
+    };
     DEBUG("SSLVerifyHost: checking " << sHost);
     ZNC_iSECPartners::HostnameValidationResult eResult =
         ZNC_iSECPartners::validate_hostname(sHost.c_str(), pCert);
@@ -441,15 +478,15 @@ bool ZNC_SSLVerifyHost(const CString& sHost, const X509* pCert,
             return true;
         case ZNC_iSECPartners::MatchNotFound:
             DEBUG("SSLVerifyHost: host doesn't match");
-            sError = "hostname doesn't match";
+            sError = Tr::t_s("hostname doesn't match");
             return false;
         case ZNC_iSECPartners::MalformedCertificate:
             DEBUG("SSLVerifyHost: malformed cert");
-            sError = "malformed hostname in certificate";
+            sError = Tr::t_s("malformed hostname in certificate");
             return false;
         default:
             DEBUG("SSLVerifyHost: error");
-            sError = "hostname verification error";
+            sError = Tr::t_s("hostname verification error");
             return false;
     }
 }

@@ -1,0 +1,159 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: de\n"
+"X-Crowdin-File: /master/modules/po/crypt.pot\n"
+"X-Crowdin-File-ID: 167\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+
+#: crypt.cpp:199
+msgid "<#chan|Nick>"
+msgstr "<#chan|Nick>"
+
+#: crypt.cpp:200
+msgid "Remove a key for nick or channel"
+msgstr "Einen Schlüssel für Nick oder Kanal entfernen"
+
+#: crypt.cpp:202
+msgid "<#chan|Nick> <Key>"
+msgstr "<#chan|Nick> <Schlüssel>"
+
+#: crypt.cpp:203
+msgid "Set a key for nick or channel"
+msgstr "Einen Schlüssel für Nick oder Kanal setzen"
+
+#: crypt.cpp:205
+msgid "List all keys"
+msgstr "Alle Schlüssel auflisten"
+
+#: crypt.cpp:207
+msgid "<Nick>"
+msgstr "<Nick>"
+
+#: crypt.cpp:208
+msgid "Start a DH1080 key exchange with nick"
+msgstr "Starte DH1080 Schlüsselaustausch mit Nick"
+
+#: crypt.cpp:211
+msgid "Get the nick prefix"
+msgstr "Nick Präfix anzeigen"
+
+#: crypt.cpp:214
+msgid "[Prefix]"
+msgstr "[Präfix]"
+
+#: crypt.cpp:215
+msgid "Set the nick prefix, with no argument it's disabled."
+msgstr "Die Nick Präfix setzen; ohne Argument wird sie deaktiviert."
+
+#: crypt.cpp:271
+#, c++-format
+msgid "Received DH1080 public key from {1}, sending mine..."
+msgstr "DH1080 Public Key von {1} empfangen, sende meinen..."
+
+#: crypt.cpp:276 crypt.cpp:297
+#, c++-format
+msgid "Key for {1} successfully set."
+msgstr "Schlüssel für {1} erfolgreich gesetzt."
+
+#: crypt.cpp:279 crypt.cpp:300
+#, c++-format
+msgid "Error in {1} with {2}: {3}"
+msgstr "Fehler in {1} mit {2}: {3}"
+
+#: crypt.cpp:281 crypt.cpp:302
+msgid "no secret key computed"
+msgstr "keinen Geheim-Schlüssel generiert"
+
+#: crypt.cpp:396
+#, c++-format
+msgid "Target [{1}] deleted"
+msgstr "Ziel [{1}] gelöscht"
+
+#: crypt.cpp:398
+#, c++-format
+msgid "Target [{1}] not found"
+msgstr "Ziel [{1}] nicht gefunden"
+
+#: crypt.cpp:401
+msgid "Usage DelKey <#chan|Nick>"
+msgstr "Benutzung DelKey <#chan|Nick>"
+
+#: crypt.cpp:416
+#, c++-format
+msgid "Set encryption key for [{1}] to [{2}]"
+msgstr "Setze Verschlüsselungs-Schlüssel für [{1}] auf [{2}]"
+
+#: crypt.cpp:418
+msgid "Usage: SetKey <#chan|Nick> <Key>"
+msgstr "Benutzung SetKey <#chan|Nick> <Schlüssel>"
+
+#: crypt.cpp:429
+#, c++-format
+msgid "Sent my DH1080 public key to {1}, waiting for reply ..."
+msgstr ""
+"Mein öffentlicher DH1080 Schlüssel wurde an {1} gesendet, warte auf "
+"Antwort..."
+
+#: crypt.cpp:431
+msgid "Error generating our keys, nothing sent."
+msgstr "Fehler beim generieren unserer Schlüssel, nichts gesendet."
+
+#: crypt.cpp:434
+msgid "Usage: KeyX <Nick>"
+msgstr "Benutzung: KeyX <Nick>"
+
+#: crypt.cpp:441
+msgid "Nick Prefix disabled."
+msgstr "Nick Präfix deaktiviert."
+
+#: crypt.cpp:443
+#, c++-format
+msgid "Nick Prefix: {1}"
+msgstr "Nick Präfix: {1}"
+
+#: crypt.cpp:452
+msgid "You cannot use :, even followed by other symbols, as Nick Prefix."
+msgstr ""
+"Du kannst \":;\" nicht als Nick Präfix nutzen, auch nicht gefolgt von "
+"anderen Zeichen."
+
+#: crypt.cpp:461
+#, c++-format
+msgid "Overlap with Status Prefix ({1}), this Nick Prefix will not be used!"
+msgstr ""
+"Überschneidung mit Status Präfix ({1}). Dieser Nick Präfix wird nicht "
+"genutzt werden!"
+
+#: crypt.cpp:466
+msgid "Disabling Nick Prefix."
+msgstr "Nick Präfix deaktivieren."
+
+#: crypt.cpp:468
+#, c++-format
+msgid "Setting Nick Prefix to {1}"
+msgstr "Setze Nick Präfix auf {1}"
+
+#: crypt.cpp:475 crypt.cpp:482
+msgctxt "listkeys"
+msgid "Target"
+msgstr "Ziel"
+
+#: crypt.cpp:476 crypt.cpp:483
+msgctxt "listkeys"
+msgid "Key"
+msgstr "Schlüssel"
+
+#: crypt.cpp:487
+msgid "You have no encryption keys set."
+msgstr "Du hast kein Verschlüsselungsschlüsselsatz."
+
+#: crypt.cpp:509
+msgid "Encryption for channel/private messages"
+msgstr "Verschlüsselung für Räume/private Nachrichten"

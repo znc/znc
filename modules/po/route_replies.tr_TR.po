@@ -1,0 +1,66 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: tr\n"
+"X-Crowdin-File: /master/modules/po/route_replies.pot\n"
+"X-Crowdin-File-ID: 194\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Turkish\n"
+"Language: tr_TR\n"
+
+#: route_replies.cpp:228
+msgid "[yes|no]"
+msgstr "[yes|no]"
+
+#: route_replies.cpp:229
+msgid "Decides whether to show the timeout messages or not"
+msgstr "Zaman aşımı mesajlarının gösterilip gösterilmeyeceğine karar verir"
+
+#: route_replies.cpp:375
+msgid "This module hit a timeout which is probably a connectivity issue."
+msgstr ""
+"Bu modül, muhtemelen bir bağlantı sorunu olan bir zaman aşımına uğruyor."
+
+#: route_replies.cpp:378
+msgid ""
+"However, if you can provide steps to reproduce this issue, please do report "
+"a bug."
+msgstr ""
+"Ancak, bu sorunu yeniden oluşturmak için gerekli adımları sağlayabilirseniz, "
+"lütfen bir hata raporlayın"
+
+#: route_replies.cpp:381
+#, c++-format
+msgid "To disable this message, do \"/msg {1} silent yes\""
+msgstr ""
+"Bu mesajı devre dışı bırakmak için \"/msg {1} silent yes\" komutunu kullanın"
+
+#: route_replies.cpp:383
+#, c++-format
+msgid "Last request: {1}"
+msgstr "Son istek: {1}"
+
+#: route_replies.cpp:384
+msgid "Expected replies:"
+msgstr "Beklenen yanıtlar:"
+
+#: route_replies.cpp:388
+#, c++-format
+msgid "{1} (last)"
+msgstr "{1} (son)"
+
+#: route_replies.cpp:460
+msgid "Timeout messages are disabled."
+msgstr "Zaman aşımı mesajları devre dışı bırakıldı."
+
+#: route_replies.cpp:461
+msgid "Timeout messages are enabled."
+msgstr "Zaman aşımı mesajları etkinleştirildi."
+
+#: route_replies.cpp:482
+msgid "Send replies (e.g. to /who) to the right client only"
+msgstr "Yanıtları (örneğin /who'ya) yalnızca doğru istemciye gönderin"

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,18 +19,18 @@
 
 TEST(NickTest, Parse) {
     CNick Nick1("nick!~ident@host");
-    EXPECT_EQ("nick", Nick1.GetNick());
-    EXPECT_EQ("~ident", Nick1.GetIdent());
-    EXPECT_EQ("host", Nick1.GetHost());
-    EXPECT_EQ("nick!~ident@host", Nick1.GetNickMask());
-    EXPECT_EQ("nick!~ident@host", Nick1.GetHostMask());
+    EXPECT_EQ(Nick1.GetNick(), "nick");
+    EXPECT_EQ(Nick1.GetIdent(), "~ident");
+    EXPECT_EQ(Nick1.GetHost(), "host");
+    EXPECT_EQ(Nick1.GetNickMask(), "nick!~ident@host");
+    EXPECT_EQ(Nick1.GetHostMask(), "nick!~ident@host");
     EXPECT_TRUE(Nick1.NickEquals("nick"));
 
     CNick Nick2(":nick!~ident@host");
-    EXPECT_EQ("nick", Nick2.GetNick());
-    EXPECT_EQ("~ident", Nick2.GetIdent());
-    EXPECT_EQ("host", Nick2.GetHost());
-    EXPECT_EQ("nick!~ident@host", Nick2.GetNickMask());
-    EXPECT_EQ("nick!~ident@host", Nick2.GetHostMask());
+    EXPECT_EQ(Nick2.GetNick(), "nick");
+    EXPECT_EQ(Nick2.GetIdent(), "~ident");
+    EXPECT_EQ(Nick2.GetHost(), "host");
+    EXPECT_EQ(Nick2.GetNickMask(), "nick!~ident@host");
+    EXPECT_EQ(Nick2.GetHostMask(), "nick!~ident@host");
     EXPECT_TRUE(Nick2.NickEquals("nick"));
 }

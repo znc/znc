@@ -1,0 +1,91 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: znc-bouncer\n"
+"X-Crowdin-Project-ID: 289533\n"
+"X-Crowdin-Language: tr\n"
+"X-Crowdin-File: /master/modules/po/identfile.pot\n"
+"X-Crowdin-File-ID: 174\n"
+"Project-Id-Version: znc-bouncer\n"
+"Language-Team: Turkish\n"
+"Language: tr_TR\n"
+
+#: identfile.cpp:30
+msgid "Show file name"
+msgstr "Dosya adını göster"
+
+#: identfile.cpp:32
+msgid "<file>"
+msgstr "<dosya>"
+
+#: identfile.cpp:32
+msgid "Set file name"
+msgstr "Dosya adını ayarla"
+
+#: identfile.cpp:34
+msgid "Show file format"
+msgstr "Dosya formatını göster"
+
+#: identfile.cpp:36
+msgid "<format>"
+msgstr "<format>"
+
+#: identfile.cpp:36
+msgid "Set file format"
+msgstr "Dosya formatını ayarla"
+
+#: identfile.cpp:38
+msgid "Show current state"
+msgstr "Mevcut durumu göster"
+
+#: identfile.cpp:48
+#, c++-format
+msgid "File is set to: {1}"
+msgstr "Dosya şu şekilde ayarlandı: {1}"
+
+#: identfile.cpp:53
+#, c++-format
+msgid "File has been set to: {1}"
+msgstr "Dosya şu şekilde ayarlandı: {1}"
+
+#: identfile.cpp:58
+#, c++-format
+msgid "Format has been set to: {1}"
+msgstr "Biçim şu şekilde ayarlandı: {1}"
+
+#: identfile.cpp:59 identfile.cpp:65
+#, c++-format
+msgid "Format would be expanded to: {1}"
+msgstr "Biçim şu şekilde genişletilecektir: {1}"
+
+#: identfile.cpp:64
+#, c++-format
+msgid "Format is set to: {1}"
+msgstr "Biçim şu şekilde ayarlandı: {1}"
+
+#: identfile.cpp:78
+msgid "identfile is free"
+msgstr "kimlik dosyası boştur"
+
+#: identfile.cpp:86
+msgid "Access denied"
+msgstr "Erişim reddedildi"
+
+#: identfile.cpp:181
+msgid ""
+"Aborting connection, another user or network is currently connecting and "
+"using the ident spoof file"
+msgstr ""
+"Bağlantı iptal ediliyor, başka bir kullanıcı veya ağ şu anda kimlik "
+"sahtekarlığı dosyasına bağlanıyor ve kullanıyor"
+
+#: identfile.cpp:189
+#, c++-format
+msgid "[{1}] could not be written, retrying..."
+msgstr "[{1}] yazılamadı, yeniden deneniyor..."
+
+#: identfile.cpp:223
+msgid "Write the ident of a user to a file when they are trying to connect."
+msgstr "Bağlanmaya çalışan bir kullanıcının kimliğini bir dosyaya yazın."

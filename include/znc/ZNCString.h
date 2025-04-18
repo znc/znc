@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -696,5 +696,12 @@ class CInlineFormatMessage {
 
     CString m_sFormat;
 };
+
+// For gtest
+#ifdef GTEST_FAIL
+inline void PrintTo(const CString& s, std::ostream* os) {
+    *os << '"' << s.Escape_n(CString::EDEBUG) << '"';
+}
+#endif
 
 #endif  // !ZNCSTRING_H

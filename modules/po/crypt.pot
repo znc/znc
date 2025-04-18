@@ -1,0 +1,144 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: crypt.cpp:199
+msgid "<#chan|Nick>"
+msgstr ""
+
+#: crypt.cpp:200
+msgid "Remove a key for nick or channel"
+msgstr ""
+
+#: crypt.cpp:202
+msgid "<#chan|Nick> <Key>"
+msgstr ""
+
+#: crypt.cpp:203
+msgid "Set a key for nick or channel"
+msgstr ""
+
+#: crypt.cpp:205
+msgid "List all keys"
+msgstr ""
+
+#: crypt.cpp:207
+msgid "<Nick>"
+msgstr ""
+
+#: crypt.cpp:208
+msgid "Start a DH1080 key exchange with nick"
+msgstr ""
+
+#: crypt.cpp:211
+msgid "Get the nick prefix"
+msgstr ""
+
+#: crypt.cpp:214
+msgid "[Prefix]"
+msgstr ""
+
+#: crypt.cpp:215
+msgid "Set the nick prefix, with no argument it's disabled."
+msgstr ""
+
+#: crypt.cpp:271
+#, c++-format
+msgid "Received DH1080 public key from {1}, sending mine..."
+msgstr ""
+
+#: crypt.cpp:276 crypt.cpp:297
+#, c++-format
+msgid "Key for {1} successfully set."
+msgstr ""
+
+#: crypt.cpp:279 crypt.cpp:300
+#, c++-format
+msgid "Error in {1} with {2}: {3}"
+msgstr ""
+
+#: crypt.cpp:281 crypt.cpp:302
+msgid "no secret key computed"
+msgstr ""
+
+#: crypt.cpp:396
+#, c++-format
+msgid "Target [{1}] deleted"
+msgstr ""
+
+#: crypt.cpp:398
+#, c++-format
+msgid "Target [{1}] not found"
+msgstr ""
+
+#: crypt.cpp:401
+msgid "Usage DelKey <#chan|Nick>"
+msgstr ""
+
+#: crypt.cpp:416
+#, c++-format
+msgid "Set encryption key for [{1}] to [{2}]"
+msgstr ""
+
+#: crypt.cpp:418
+msgid "Usage: SetKey <#chan|Nick> <Key>"
+msgstr ""
+
+#: crypt.cpp:429
+#, c++-format
+msgid "Sent my DH1080 public key to {1}, waiting for reply ..."
+msgstr ""
+
+#: crypt.cpp:431
+msgid "Error generating our keys, nothing sent."
+msgstr ""
+
+#: crypt.cpp:434
+msgid "Usage: KeyX <Nick>"
+msgstr ""
+
+#: crypt.cpp:441
+msgid "Nick Prefix disabled."
+msgstr ""
+
+#: crypt.cpp:443
+#, c++-format
+msgid "Nick Prefix: {1}"
+msgstr ""
+
+#: crypt.cpp:452
+msgid "You cannot use :, even followed by other symbols, as Nick Prefix."
+msgstr ""
+
+#: crypt.cpp:461
+#, c++-format
+msgid "Overlap with Status Prefix ({1}), this Nick Prefix will not be used!"
+msgstr ""
+
+#: crypt.cpp:466
+msgid "Disabling Nick Prefix."
+msgstr ""
+
+#: crypt.cpp:468
+#, c++-format
+msgid "Setting Nick Prefix to {1}"
+msgstr ""
+
+#: crypt.cpp:475 crypt.cpp:482
+msgctxt "listkeys"
+msgid "Target"
+msgstr ""
+
+#: crypt.cpp:476 crypt.cpp:483
+msgctxt "listkeys"
+msgid "Key"
+msgstr ""
+
+#: crypt.cpp:487
+msgid "You have no encryption keys set."
+msgstr ""
+
+#: crypt.cpp:509
+msgid "Encryption for channel/private messages"
+msgstr ""

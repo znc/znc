@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2025 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,10 +35,11 @@ struct CConfigEntry {
 
 class CConfig {
   public:
-    CConfig() : m_ConfigEntries(), m_SubConfigs() {}
+    CConfig() : m_ConfigEntries(), m_SubConfigs(), m_SubConfigNameSets() {}
 
     typedef std::map<CString, VCString> EntryMap;
-    typedef std::map<CString, CConfigEntry> SubConfig;
+    typedef std::pair<CString, CConfigEntry> SubConfigEntry;
+    typedef std::vector<SubConfigEntry> SubConfig;
     typedef std::map<CString, SubConfig> SubConfigMap;
 
     typedef EntryMap::const_iterator EntryMapIterator;
@@ -62,14 +63,13 @@ class CConfig {
 
     bool AddSubConfig(const CString& sTag, const CString& sName,
                       CConfig Config) {
-        SubConfig& conf = m_SubConfigs[sTag];
-        SubConfig::const_iterator it = conf.find(sName);
+        auto& nameset = m_SubConfigNameSets[sTag];
 
-        if (it != conf.end()) {
-            return false;
-        }
+        if (nameset.find(sName) != nameset.end()) return false;
 
-        conf[sName] = Config;
+        nameset.insert(sName);
+        m_SubConfigs[sTag].emplace_back(sName, Config);
+
         return true;
     }
 
@@ -142,9 +142,9 @@ class CConfig {
         return false;
     }
 
-    bool FindSubConfig(const CString& sName, SubConfig& Config,
+    bool FindSubConfig(const CString& sTag, SubConfig& Config,
                        bool bErase = true) {
-        SubConfigMap::iterator it = m_SubConfigs.find(sName);
+        auto it = m_SubConfigs.find(sTag);
         if (it == m_SubConfigs.end()) {
             Config.clear();
             return false;
@@ -153,6 +153,7 @@ class CConfig {
 
         if (bErase) {
             m_SubConfigs.erase(it);
+            m_SubConfigNameSets.erase(sTag);
         }
 
         return true;
@@ -166,8 +167,12 @@ class CConfig {
     void Write(CFile& file, unsigned int iIndentation = 0);
 
   private:
+    typedef SCString SubConfigNameSet;
+    typedef std::map<CString, SubConfigNameSet> SubConfigNameSetMap;
+
     EntryMap m_ConfigEntries;
     SubConfigMap m_SubConfigs;
+    SubConfigNameSetMap m_SubConfigNameSets;
 };
 
 #endif  // !ZNC_CONFIG_H

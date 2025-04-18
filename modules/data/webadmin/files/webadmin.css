@@ -21,3 +21,4 @@ table .reverse-sorted::after {
 	width: 400px;
 }
 
+table.networks[data-network-edit="0"] .network_delete { display: none; }
