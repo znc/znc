@@ -31,8 +31,9 @@
 			<div class="sectionbody">
 				<div class="subsection">
 					<div class="inputlabel"><label for="name"><? FORMAT "Network Name:" ?></label></div>
-					<input id="name" type="text" name="name" value="<? VAR Name ?>" class="half" maxlength="128"
+					<input id="name" type="text" name="name<? IF !NameEdit ?>_disabled<? ENDIF ?>" value="<? VAR Name ?>" class="half" maxlength="128"
 						   title="<? FORMAT "The name of the IRC network." ?>" <? IF !NameEdit ?>disabled<? ENDIF ?> />
+					<? IF !NameEdit ?><input type="hidden" name="name" value="<? VAR Name ?>"><? ENDIF ?>
 				</div>
 
             	<div class="subsection">
