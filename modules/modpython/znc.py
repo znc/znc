@@ -713,6 +713,9 @@ class Module:
     def OnPrivTagMessage(self, msg):
         pass
 
+    def OnInviteMessage(self, msg):
+        pass
+
 
 class Command:
     command = ''

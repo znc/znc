@@ -106,6 +106,7 @@ EModRet OnSendToIRCMessage(CMessage& Message)
 EModRet OnUserTagMessage(CTargetMessage& Message)
 EModRet OnChanTagMessage(CTargetMessage& Message)
 EModRet OnPrivTagMessage(CTargetMessage& Message)
+EModRet OnInviteMessage(CInviteMessage& Message)
 
 void OnClientGetSASLMechanisms(SCString& ssMechanisms)
 EModRet OnClientSASLServerInitialChallenge(const CString& sMechanism, CString& sResponse)

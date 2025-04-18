@@ -1040,5 +1040,24 @@ TEST_F(ZNCTest, StatusAction) {
     ASSERT_THAT(ircd.ReadRemainder().toStdString(), Not(HasSubstr("PRIVMSG")));
 }
 
+TEST_F(ZNCTest, InviteNotify) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("CAP REQ invite-notify");
+    client.ReadUntil("ACK");
+    auto client2 = LoginClient();
+
+    ircd.Write("001 nick Welcome");
+
+    ircd.Write(":source!id@ho INVITE nick #chan");
+    client.ReadUntil(":source!id@ho INVITE nick #chan");
+    client2.ReadUntil(":source!id@ho INVITE nick #chan");
+
+    ircd.Write(":source!id@ho INVITE someone #chan");
+    client.ReadUntil(":source!id@ho INVITE someone #chan");
+    ASSERT_THAT(client2.ReadRemainder().toStdString(), Not(HasSubstr("someone")));
+}
+
 }  // namespace
 }  // namespace znc_inttest

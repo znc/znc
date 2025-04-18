@@ -751,11 +751,19 @@ class CModule {
     virtual void OnPart(const CNick& Nick, CChan& Channel,
                         const CString& sMessage);
 
-    /** Called when user is invited into a channel
+    /** Called when a user is invited to a channel.
+     *  That includes the case of `invite-notify`.
+     *  @since 1.10.0
+     *  @param Message The message.
+     */
+    virtual EModRet OnInviteMessage(CInviteMessage& Message);
+    /** Called when user is invited into a channel.
+     *  @note even in case of `invite-notify` this is only called for "you"
+     *  being invited, as this function has no way to tell you whom is
+     *  invited instead.
      *  @param Nick The nick who invited you.
      *  @param sChan The channel the user got invited into
      *  @return See CModule::EModRet.
-     *  @todo Add OnInviteMessage() hook
      */
     virtual EModRet OnInvite(const CNick& Nick, const CString& sChan);
 
@@ -1610,6 +1618,7 @@ class CModules : public std::vector<CModule*>, private CCoreTranslationMixin {
     bool OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage);
     bool OnPartMessage(CPartMessage& Message);
     bool OnInvite(const CNick& Nick, const CString& sChan);
+    bool OnInviteMessage(CInviteMessage& Message);
 
     bool OnChanBufferStarting(CChan& Chan, CClient& Client);
     bool OnChanBufferEnding(CChan& Chan, CClient& Client);

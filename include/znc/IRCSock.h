@@ -180,7 +180,7 @@ class CIRCSock : public CIRCSocket {
     bool OnChgHostMessage(CChgHostMessage& Message);
     bool OnCTCPMessage(CCTCPMessage& Message);
     bool OnErrorMessage(CMessage& Message);
-    bool OnInviteMessage(CMessage& Message);
+    bool OnInviteMessage(CInviteMessage& Message);
     bool OnJoinMessage(CJoinMessage& Message);
     bool OnKickMessage(CKickMessage& Message);
     bool OnModeMessage(CModeMessage& Message);

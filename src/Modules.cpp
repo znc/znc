@@ -890,6 +890,9 @@ CModule::EModRet CModule::OnPrivTagMessage(CTargetMessage& Message) {
 CModule::EModRet CModule::OnChanTagMessage(CTargetMessage& Message) {
     return CONTINUE;
 }
+CModule::EModRet CModule::OnInviteMessage(CInviteMessage& Message) {
+    return CONTINUE;
+}
 CModule::EModRet CModule::OnUserJoin(CString& sChannel, CString& sKey) {
     return CONTINUE;
 }
@@ -1447,6 +1450,9 @@ bool CModules::OnPrivTagMessage(CTargetMessage& Message) {
 }
 bool CModules::OnChanTagMessage(CTargetMessage& Message) {
     MODHALTCHK(OnChanTagMessage(Message));
+}
+bool CModules::OnInviteMessage(CInviteMessage& Message) {
+    MODHALTCHK(OnInviteMessage(Message));
 }
 bool CModules::OnUserJoin(CString& sChannel, CString& sKey) {
     MODHALTCHK(OnUserJoin(sChannel, sKey));

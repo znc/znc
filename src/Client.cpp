@@ -85,6 +85,7 @@ CClient::CClient()
       m_bCapNotify(false),
       m_bAwayNotify(false),
       m_bAccountNotify(false),
+      m_bInviteNotify(false),
       m_bExtendedJoin(false),
       m_bNamesx(false),
       m_bUHNames(false),
@@ -587,14 +588,25 @@ void CClient::PutClient(const CString& sLine) {
 }
 
 bool CClient::PutClient(const CMessage& Message) {
-    if (!m_bAwayNotify && Message.GetType() == CMessage::Type::Away) {
-        return false;
-    } else if (!m_bAccountNotify &&
-               Message.GetType() == CMessage::Type::Account) {
-        return false;
-    } else if (!m_bMessageTagCap &&
-               Message.GetType() == CMessage::Type::TagMsg) {
-        return false;
+    switch (Message.GetType()) {
+        case CMessage::Type::Away:
+            if (!m_bAwayNotify) return false;
+            break;
+        case CMessage::Type::Account:
+            if (!m_bAccountNotify) return false;
+            break;
+        case CMessage::Type::TagMsg:
+            if (!m_bMessageTagCap) return false;
+            break;
+        case CMessage::Type::Invite:
+            if (!m_bInviteNotify &&
+                !CNick(Message.As<CInviteMessage>().GetInvitedNick())
+                     .NickEquals(m_sNick)) {
+                return false;
+            }
+            break;
+        default:
+            break;
     }
 
     CMessage Msg(Message);
@@ -853,6 +865,10 @@ CClient::CoreCaps() {
                     {"cap-notify",
                      [](CClient* pClient, bool bVal) {
                          pClient->m_bCapNotify = bVal;
+                     }},
+                    {"invite-notify",
+                     [](CClient* pClient, bool bVal) {
+                         pClient->m_bInviteNotify = bVal;
                      }},
                     {"chghost", [](CClient* pClient,
                                    bool bVal) { pClient->m_bChgHost = bVal; }},
