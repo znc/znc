@@ -63,19 +63,19 @@ msgid "Save to config"
 msgstr "Salva in confg"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:67
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:294
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:295
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:429
 msgid "Module {1}"
 msgstr "Modulo {1}"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:75
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:302
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:303
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:438
 msgid "Save and return"
 msgstr "Salva e ritorna"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_chan.tmpl:76
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:303
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:304
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:439
 msgid "Save and continue"
 msgstr "Salva e continua"
@@ -131,90 +131,90 @@ msgstr "Nome del Network:"
 msgid "The name of the IRC network."
 msgstr "Inserisci il nome del network che stai aggiungendo"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:39
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:40
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:73
 msgid "Nickname:"
 msgstr "Nickname:"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:41
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:42
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:75
 msgid "Your nickname on IRC."
 msgstr "Inserisci il nickname che intendi usare in questo network"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:44
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:45
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:78
 msgid "Alt. Nickname:"
 msgstr "Nickname alternativo:"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:46
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:47
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:80
 msgid "Your secondary nickname, if the first is not available on IRC."
 msgstr ""
 "Inserisci un nickname di riserva qual'ora il primo fosse momentaneamente "
 "occupato"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:50
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:51
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:84
 msgid "Ident:"
 msgstr "Ident: (userID)"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:52
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:53
 msgid "Your ident."
 msgstr "Inserisci il tuo ident (userID)"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:55
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:56
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:96
 msgid "Realname:"
 msgstr "Nome reale:"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:57
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:58
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:98
 msgid "Your real name."
 msgstr "Inserisci il tuo nome reale"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:62
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:63
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:104
 msgid "BindHost:"
 msgstr "BindHost:"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:69
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:70
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:117
 msgid "Quit message:"
 msgstr ""
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:71
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:72
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:119
 msgid "You may define a Message shown, when you quit IRC."
 msgstr ""
 "Inserisci un messaggio per il Quit per mostrarlo a tutti quando ti scolleghi "
 "da IRC"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:76
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:77
 msgid "Active:"
 msgstr "Attivo:"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:78
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:79
 msgid "Connect to IRC &amp; automatically re-connect"
 msgstr "Connetti ad IRC &amp; riconnetti automaticamente"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:82
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:83
 msgid "Trust all certs:"
 msgstr "Fidati di tutti i certificati:"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:84
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:85
 msgid ""
 "Disable certificate validation (takes precedence over TrustPKI). INSECURE!"
 msgstr ""
 "Disabilita la convalida del certificato (ha la precedenza su TrustPKI). "
 "INSICURO!"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:88
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:89
 msgid "Automatically detect trusted certificates (Trust the PKI):"
 msgstr ""
 "Rileva automaticamente i certificati attendibili (Fidati del PKI - Public "
 "Key Infrastructure):"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:90
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:91
 msgid ""
 "When disabled, manually whitelist all server fingerprints, even if the "
 "certificate is valid"
@@ -222,42 +222,42 @@ msgstr ""
 "Quando è disabilitato, tutte le fingerprints del server (impronte digitali) "
 "vanno autorizzate manualmente, anche se il certificato è valido"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:94
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:101
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:95
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:102
 msgid "Servers of this IRC network:"
 msgstr "Elenco dei Server IRC di questo Network:"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:98
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:99
 msgid "One server per line, “host [[+]port] [password]”, + means SSL"
 msgstr ""
 "Un server per linea, “host [[+]porta] [password]”, (il + significa che la "
 "porta sarà SSL)"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:106
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:107
 msgid "Hostname"
 msgstr "Hostname"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:107
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:108
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:13
 msgid "Port"
 msgstr "Porta"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:108
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:109
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:15
 msgid "SSL"
 msgstr "SSL"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:109
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:110
 msgid "Password"
 msgstr "Password"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:125
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:126
 msgid "SHA-256 fingerprints of trusted SSL certificates of this IRC network:"
 msgstr ""
 "Impronte digitali (fingerprints) SHA-256 dei certificati SSL attendibili di "
 "questo network IRC:"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:129
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:130
 msgid ""
 "When these certificates are encountered, checks for hostname, expiration "
 "date, CA are skipped"
@@ -265,11 +265,11 @@ msgstr ""
 "Quando vengono rilevati questi certificati, i controlli per hostname, date "
 "di scadenza e CA vengono saltati"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:133
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:134
 msgid "Flood protection:"
 msgstr "Protezione Flood:"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:136
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:137
 msgid ""
 "You might enable the flood protection. This prevents “excess flood” errors, "
 "which occur, when your IRC bot is command flooded or spammed. After changing "
@@ -280,31 +280,31 @@ msgstr ""
 "bot IRC ne viene colpito. Dopo averlo modificato, ricollegare lo ZNC al "
 "server."
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:139
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:140
 msgctxt "Flood Protection"
 msgid "Enabled"
 msgstr "Abilitato"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:143
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:144
 msgid "Flood protection rate:"
 msgstr "Tasso di protezione dai flood:"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:146
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:147
 msgid ""
 "The number of seconds per line. After changing this, reconnect ZNC to server."
 msgstr ""
 "Il numero di secondi per riga. Dopo averlo modificato, ricollegare lo ZNC al "
 "server."
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:149
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:150
 msgid "{1} seconds per line"
 msgstr "{1} secondi per linea"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:153
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:154
 msgid "Flood protection burst:"
 msgstr "Scoppio di protezione dai flood:"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:156
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:157
 msgid ""
 "Defines the number of lines, which can be sent immediately. After changing "
 "this, reconnect ZNC to server."
@@ -312,15 +312,15 @@ msgstr ""
 "Definisce il numero di righe che possono essere inviate immediatamente. Dopo "
 "averlo modificato, ricollegare lo ZNC al server."
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:159
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:160
 msgid "{1} lines can be sent immediately"
 msgstr "{1} linee possono essere spedite immediatamente"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:163
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:164
 msgid "Channel join delay:"
 msgstr "Ritardo per l'ingresso al canale:"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:166
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:167
 msgid ""
 "Defines the delay in seconds, until channels are joined after getting "
 "connected."
@@ -328,30 +328,30 @@ msgstr ""
 "Definisce il ritardo in secondi, per l'ingresso dei canali dopo la "
 "connessione."
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:169
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:170
 msgid "{1} seconds"
 msgstr "{1} secondi"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:174
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:175
 msgid "Character encoding used between ZNC and IRC server."
 msgstr "Codifica caratteri utilizzata tra lo ZNC ed il server IRC."
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:175
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:176
 msgid "Server encoding:"
 msgstr "Codifica del server:"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:185
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:186
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:248
 msgid "Channels"
 msgstr "Canali"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:187
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:188
 msgid ""
 "You will be able to add + modify channels here after you created the network."
 msgstr ""
 "Qui potrai aggiungere e modificare i canali dopo aver creato il network."
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:194
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:195
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:140
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:373
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:15
@@ -359,87 +359,87 @@ msgstr ""
 msgid "Add"
 msgstr "Inserisci"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:196
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:197
 msgid "Index"
 msgstr ""
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:197
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:198
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:449
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:237
 msgid "Save"
 msgstr "Salva"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:198
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:240
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:199
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:241
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:146
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:191
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:176
 msgid "Name"
 msgstr "Nome"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:199
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:200
 msgid "CurModes"
 msgstr "Modes correnti"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:200
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:201
 msgid "DefModes"
 msgstr "Modes di default"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:201
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:202
 msgid "BufferSize"
 msgstr "Dimensione Buffer"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:202
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:203
 msgid "Options"
 msgstr "Opzioni"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:204
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:205
 msgid "← Add a channel (opens in same page)"
 msgstr "← Aggiungi un canale (si apre nella stessa pagina)"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:214
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:215
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:161
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:27
 msgid "Edit"
 msgstr "Modifica"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:214
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:215
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:162
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:53
 msgid "Del"
 msgstr "Elimina"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:234
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:235
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:185
 msgid "Modules"
 msgstr "Moduli"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:241
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:242
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:192
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:177
 msgid "Arguments"
 msgstr "Argomenti"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:242
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:243
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:193
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:178
 msgid "Description"
 msgstr "Descrizione"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:243
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:244
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:194
 msgid "Loaded globally"
 msgstr "Caricato globalmente"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:244
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:245
 msgid "Loaded by user"
 msgstr "Caricato dell'utente"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:305
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:306
 msgid "Add Network and return"
 msgstr "Aggiungi Network e ritorna"
 
-#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:306
+#: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:307
 msgid "Add Network and continue"
 msgstr "Aggiungi Network e continua"
 
