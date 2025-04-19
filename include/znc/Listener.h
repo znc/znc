@@ -57,7 +57,7 @@ class CListener {
 
   private:
   protected:
-    void setupSSL(CRealListener* listener) const;
+    void SetupSSL() const;
 
     bool m_bSSL;
     CString m_sURIPrefix;

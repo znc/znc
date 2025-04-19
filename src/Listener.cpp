@@ -39,7 +39,7 @@ CConfig CListener::ToConfig() const {
     return listenerConfig;
 }
 
-void CListener::setupSSL(CRealListener* listener) const {
+void CListener::SetupSSL() const {
 #ifdef HAVE_LIBSSL
     if (IsSSL()) {
         m_pListener->SetSSL(true);
@@ -60,19 +60,14 @@ bool CTCPListener::Listen() {
     }
 
     m_pListener = new CRealListener(*this);
-
-    setupSSL(m_pListener);
-    bool bSSL = false;
-#ifdef HAVE_LIBSSL
-    bSSL = IsSSL();
-#endif
+    SetupSSL();
 
     // If e.g. getaddrinfo() fails, the following might not set errno.
     // Make sure there is a consistent error message, not something random
     // which might even be "Error: Success".
     errno = EINVAL;
     return CZNC::Get().GetManager().ListenHost(m_uPort, "_LISTENER",
-                                               m_sBindHost, bSSL, SOMAXCONN,
+                                               m_sBindHost, IsSSL(), SOMAXCONN,
                                                m_pListener, 0, m_eAddr);
 }
 
@@ -94,13 +89,21 @@ CUnixListener::~CUnixListener() {
 }
 
 bool CUnixListener::Listen() {
-    CString sName = "unix:" + m_sPath;
+    if (m_pListener) {
+        errno = EINVAL;
+        return false;
+    }
 
     m_pListener = new CRealListener(*this);
-    setupSSL(m_pListener);
+    SetupSSL();
 
-    CZNC::Get().GetManager().AddSock(m_pListener, sName);
-    return m_pListener->ListenUnix(m_sPath);
+    if (m_pListener->ListenUnix(m_sPath)) {
+        CZNC::Get().GetManager().AddSock(m_pListener, "UNIX_LISTENER");
+        return true;
+    }
+
+    delete m_pListener;
+    return false;
 }
 
 CConfig CUnixListener::ToConfig() const {

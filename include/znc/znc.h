@@ -277,6 +277,8 @@ class CZNC : private CCoreTranslationMixin {
     CString MakeConfigHeader();
     bool AddListener(const CString& sLine, CString& sError);
     bool AddListener(CConfig* pConfig, CString& sError);
+    bool CheckSslAndPemFile(bool bSSL, CString& sError);
+    bool FinishAddingListener(CListener* pListener, CString& sError);
 
   protected:
     time_t m_TimeStarted;
