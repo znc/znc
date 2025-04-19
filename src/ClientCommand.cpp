@@ -1620,6 +1620,10 @@ void CClient::UserCommand(CString& sLine) {
     }
 }
 
+namespace {
+struct PortCommandUsage {};
+}
+
 void CClient::UserPortCommand(CString& sLine) {
     const CString sCommand = sLine.Token(0);
 
@@ -1654,7 +1658,7 @@ void CClient::UserPortCommand(CString& sLine) {
                                                   : t_s("IPv6", "listports")));
             } else if (const CUnixListener* pUnixListener =
                            dynamic_cast<const CUnixListener*>(pListener)) {
-                Table.SetCell(t_s("BindHost", "listports"),
+                Table.SetCell(t_s("Port", "listports"),
                               pUnixListener->GetPath());
             }
             Table.SetCell(t_s("SSL", "listports"),
@@ -1680,68 +1684,92 @@ void CClient::UserPortCommand(CString& sLine) {
         return;
     }
 
+    auto ParseEAddr = [](const CString& sAddr) {
+        if (sAddr.Equals("IPV4")) {
+            return ADDR_IPV4ONLY;
+        } else if (sAddr.Equals("IPV6")) {
+            return ADDR_IPV6ONLY;
+        } else if (sAddr.Equals("ALL")) {
+            return ADDR_ALL;
+        } else {
+            throw PortCommandUsage{};
+        }
+    };
+
+    auto ParseEAccept = [](const CString& sAccept) {
+        if (sAccept.Equals("WEB")) {
+            return CListener::ACCEPT_HTTP;
+        } else if (sAccept.Equals("IRC")) {
+            return CListener::ACCEPT_IRC;
+        } else if (sAccept.Equals("ALL")) {
+            return CListener::ACCEPT_ALL;
+        } else {
+            throw PortCommandUsage{};
+        }
+    };
+
     CString sPort = sLine.Token(1);
-    CString sAddr = sLine.Token(2);
-    EAddrType eAddr = ADDR_ALL;
-
-    if (sAddr.Equals("IPV4")) {
-        eAddr = ADDR_IPV4ONLY;
-    } else if (sAddr.Equals("IPV6")) {
-        eAddr = ADDR_IPV6ONLY;
-    } else if (sAddr.Equals("ALL")) {
-        eAddr = ADDR_ALL;
-    } else {
-        sAddr.clear();
-    }
-
     unsigned short uPort = sPort.ToUShort();
 
     if (sCommand.Equals("ADDPORT")) {
-        CListener::EAcceptType eAccept = CListener::ACCEPT_ALL;
-        CString sAccept = sLine.Token(3);
+        try {
+            if (sPort.empty()) {
+                throw PortCommandUsage{};
+            }
 
-        if (sAccept.Equals("WEB")) {
-            eAccept = CListener::ACCEPT_HTTP;
-        } else if (sAccept.Equals("IRC")) {
-            eAccept = CListener::ACCEPT_IRC;
-        } else if (sAccept.Equals("ALL")) {
-            eAccept = CListener::ACCEPT_ALL;
-        } else {
-            sAccept.clear();
-        }
+            std::unique_ptr<CListener> pListener;
+            if (sPort.TrimPrefix("unix:")) {
+                bool bSSL = sPort.TrimPrefix("+");
+                const CString& sPath = sPort;
+                CListener::EAcceptType eAccept = ParseEAccept(sLine.Token(2));
+                CString sURIPrefix = sLine.Token(3);
 
-        if (sPort.empty() || sAddr.empty() || sAccept.empty()) {
-            PutStatus(
-                t_s("Usage: AddPort <[+]port> <ipv4|ipv6|all> <web|irc|all> "
-                    "[bindhost [uriprefix]]"));
-        } else {
-            bool bSSL = (sPort.StartsWith("+"));
-            const CString sBindHost = sLine.Token(4);
-            const CString sURIPrefix = sLine.Token(5);
+                pListener.reset(new CUnixListener(sPath, sURIPrefix, bSSL, eAccept));
+            } else {
+                bool bSSL = sPort.StartsWith("+");
+                EAddrType eAddr = ParseEAddr(sLine.Token(2));
+                CListener::EAcceptType eAccept = ParseEAccept(sLine.Token(3));
+                const CString sBindHost = sLine.Token(4);
+                const CString sURIPrefix = sLine.Token(5);
 
-            CListener* pListener = new CTCPListener(uPort, sBindHost, sURIPrefix,
-                                                 bSSL, eAddr, eAccept);
+                pListener.reset(new CTCPListener(uPort, sBindHost, sURIPrefix,
+                                                 bSSL, eAddr, eAccept));
+            }
 
             if (!pListener->Listen()) {
                 auto e = errno;
-                delete pListener;
                 PutStatus(t_f("Unable to bind: {1}")(CString(strerror(e))));
             } else {
-                if (CZNC::Get().AddListener(pListener)) {
+                if (CZNC::Get().AddListener(pListener.release())) {
                     PutStatus(t_s("Port added"));
                 } else {
                     PutStatus(t_s("Couldn't add port"));
                 }
             }
+        } catch (PortCommandUsage) {
+            PutStatus(
+                t_s("Usage: AddPort <[+]port> <ipv4|ipv6|all> <web|irc|all> "
+                    "[bindhost [uriprefix]]"));
+            PutStatus(
+                t_s("Or: AddPort unix:[+]/path/to/socket <web|irc|all> "
+                    "[uriprefix]"));
+            PutStatus(t_s("+ means SSL"));
         }
     } else if (sCommand.Equals("DELPORT")) {
-        if (sPort.empty() || sAddr.empty()) {
-            PutStatus(t_s("Usage: DelPort <port> <ipv4|ipv6|all> [bindhost]"));
-        } else {
-            const CString sBindHost = sLine.Token(3);
-
-            CListener* pListener =
-                CZNC::Get().FindListener(uPort, sBindHost, eAddr);
+        try {
+            if (sPort.empty()) {
+                throw PortCommandUsage{};
+            }
+            CListener* pListener;
+            if (sPort.TrimPrefix("unix:")) {
+                sPort.TrimPrefix("+");
+                pListener = CZNC::Get().FindUnixListener(sPort);
+            } else {
+                CString sAddr = sLine.Token(2);
+                CString sBindHost = sLine.Token(3);
+                pListener = CZNC::Get().FindListener(
+                    uPort, sBindHost, ParseEAddr(sAddr));
+            }
 
             if (pListener) {
                 CZNC::Get().DelListener(pListener);
@@ -1749,6 +1777,9 @@ void CClient::UserPortCommand(CString& sLine) {
             } else {
                 PutStatus(t_s("Unable to find a matching port"));
             }
+        } catch (PortCommandUsage) {
+            PutStatus(t_s("Usage: DelPort <port> <ipv4|ipv6|all> [bindhost]"));
+            PutStatus(t_s("Or: DelPort unix:/path/to/socket"));
         }
     }
 }

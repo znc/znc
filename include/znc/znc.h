@@ -202,6 +202,7 @@ class CZNC : private CCoreTranslationMixin {
     // Listener yummy
     CListener* FindListener(u_short uPort, const CString& BindHost,
                             EAddrType eAddr);
+    CListener* FindUnixListener(const CString& sPath);
     bool AddListener(CListener*);
     bool AddTCPListener(unsigned short uPort, const CString& sBindHost,
                         const CString& sURIPrefix, bool bSSL, EAddrType eAddr,

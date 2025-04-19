@@ -1575,6 +1575,16 @@ CListener* CZNC::FindListener(u_short uPort, const CString& sBindHost,
     return nullptr;
 }
 
+CListener* CZNC::FindUnixListener(const CString& sPath) {
+    for (CListener* pListener : m_vpListeners) {
+        CUnixListener* pUnixListener = dynamic_cast<CUnixListener*>(pListener);
+        if (!pUnixListener) continue;
+        if (pUnixListener->GetPath() != sPath) continue;
+        return pListener;
+    }
+    return nullptr;
+}
+
 bool CZNC::AddListener(const CString& sLine, CString& sError) {
     CString sName = sLine.Token(0);
     CString sValue = sLine.Token(1, true);
