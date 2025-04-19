@@ -1447,9 +1447,13 @@ bool CClient::OnJoinMessage(CJoinMessage& Message) {
                     pChan->JoinUser(sKey);
                 continue;
             } else if (!sChannel.empty()) {
-                pChan = new CChan(sChannel, m_pNetwork, false);
-                if (m_pNetwork->AddChan(pChan)) {
-                    pChan->SetKey(sKey);
+                // https://github.com/znc/znc/issues/1794
+                // Do not prepend "#" if user sends "/join 0".
+                if (Message.GetTarget() != "0") {
+                    pChan = new CChan(sChannel, m_pNetwork, false);
+                        if (m_pNetwork->AddChan(pChan)) {
+                        pChan->SetKey(sKey);
+                    }
                 }
             }
         }
