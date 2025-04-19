@@ -1844,33 +1844,10 @@ class CWebAdminMod : public CModule {
     }
 
     bool AddListener(CWebSock& WebSock, CTemplate& Tmpl) {
-        unsigned short uPort = WebSock.GetParam("port").ToUShort();
-        CString sHost = WebSock.GetParam("host");
         CString sURIPrefix = WebSock.GetParam("uriprefix");
-        if (sHost == "*") sHost = "";
         bool bSSL = WebSock.GetParam("ssl").ToBool();
-        bool bIPv4 = WebSock.GetParam("ipv4").ToBool();
-        bool bIPv6 = WebSock.GetParam("ipv6").ToBool();
         bool bIRC = WebSock.GetParam("irc").ToBool();
         bool bWeb = WebSock.GetParam("web").ToBool();
-
-        EAddrType eAddr = ADDR_ALL;
-        if (bIPv4) {
-            if (bIPv6) {
-                eAddr = ADDR_ALL;
-            } else {
-                eAddr = ADDR_IPV4ONLY;
-            }
-        } else {
-            if (bIPv6) {
-                eAddr = ADDR_IPV6ONLY;
-            } else {
-                WebSock.GetSession()->AddError(
-                    t_s("Choose either IPv4 or IPv6 or both."));
-                return SettingsPage(WebSock, Tmpl);
-            }
-        }
-
         CListener::EAcceptType eAccept;
         if (bIRC) {
             if (bWeb) {
@@ -1889,8 +1866,39 @@ class CWebAdminMod : public CModule {
         }
 
         CString sMessage;
-        if (CZNC::Get().AddListener(uPort, sHost, sURIPrefix, bSSL, eAddr,
-                                    eAccept, sMessage)) {
+        bool bResult;
+        if (WebSock.GetParam("type") == "TCP") {
+            unsigned short uPort = WebSock.GetParam("port").ToUShort();
+            CString sHost = WebSock.GetParam("host");
+            if (sHost == "*") sHost = "";
+            bool bIPv4 = WebSock.GetParam("ipv4").ToBool();
+            bool bIPv6 = WebSock.GetParam("ipv6").ToBool();
+
+            EAddrType eAddr = ADDR_ALL;
+            if (bIPv4) {
+                if (bIPv6) {
+                    eAddr = ADDR_ALL;
+                } else {
+                    eAddr = ADDR_IPV4ONLY;
+                }
+            } else {
+                if (bIPv6) {
+                    eAddr = ADDR_IPV6ONLY;
+                } else {
+                    WebSock.GetSession()->AddError(
+                        t_s("Choose either IPv4 or IPv6 or both."));
+                    return SettingsPage(WebSock, Tmpl);
+                }
+            }
+            bResult = CZNC::Get().AddListener(uPort, sHost, sURIPrefix, bSSL,
+                                              eAddr, eAccept, sMessage);
+        } else {
+            CString sPath = WebSock.GetParam("path");
+            bResult = CZNC::Get().AddUnixListener(sPath, sURIPrefix, bSSL,
+                                                  eAccept, sMessage);
+        }
+
+        if (bResult) {
             if (!sMessage.empty()) {
                 WebSock.GetSession()->AddSuccess(sMessage);
             }
@@ -1906,28 +1914,34 @@ class CWebAdminMod : public CModule {
     }
 
     bool DelListener(CWebSock& WebSock, CTemplate& Tmpl) {
-        unsigned short uPort = WebSock.GetParam("port").ToUShort();
-        CString sHost = WebSock.GetParam("host");
-        bool bIPv4 = WebSock.GetParam("ipv4").ToBool();
-        bool bIPv6 = WebSock.GetParam("ipv6").ToBool();
+        CListener* pListener;
 
-        EAddrType eAddr = ADDR_ALL;
-        if (bIPv4) {
-            if (bIPv6) {
-                eAddr = ADDR_ALL;
+        if (WebSock.GetParam("type") == "TCP") {
+            unsigned short uPort = WebSock.GetParam("port").ToUShort();
+            CString sHost = WebSock.GetParam("host");
+            bool bIPv4 = WebSock.GetParam("ipv4").ToBool();
+            bool bIPv6 = WebSock.GetParam("ipv6").ToBool();
+
+            EAddrType eAddr = ADDR_ALL;
+            if (bIPv4) {
+                if (bIPv6) {
+                    eAddr = ADDR_ALL;
+                } else {
+                    eAddr = ADDR_IPV4ONLY;
+                }
             } else {
-                eAddr = ADDR_IPV4ONLY;
+                if (bIPv6) {
+                    eAddr = ADDR_IPV6ONLY;
+                } else {
+                    WebSock.GetSession()->AddError(t_s("Invalid request."));
+                    return SettingsPage(WebSock, Tmpl);
+                }
             }
+
+            pListener = CZNC::Get().FindListener(uPort, sHost, eAddr);
         } else {
-            if (bIPv6) {
-                eAddr = ADDR_IPV6ONLY;
-            } else {
-                WebSock.GetSession()->AddError(t_s("Invalid request."));
-                return SettingsPage(WebSock, Tmpl);
-            }
+            pListener = CZNC::Get().FindUnixListener(WebSock.GetParam("path"));
         }
-
-        CListener* pListener = CZNC::Get().FindListener(uPort, sHost, eAddr);
         if (pListener) {
             CZNC::Get().DelListener(pListener);
             if (!CZNC::Get().WriteConfig()) {
@@ -1967,8 +1981,9 @@ class CWebAdminMod : public CModule {
             for (const CListener* pListener : vpListeners) {
                 CTemplate& l = Tmpl.AddRow("ListenLoop");
 
-                const CTCPListener* pTCPListener = dynamic_cast<const CTCPListener*>(pListener);
-                if (pTCPListener != nullptr) {
+                if (const CTCPListener* pTCPListener =
+                        dynamic_cast<const CTCPListener*>(pListener)) {
+                    l["Type"] = "TCP";
                     l["Port"] = CString(pTCPListener->GetPort());
                     l["BindHost"] = pTCPListener->GetBindHost();
 
@@ -1978,23 +1993,6 @@ class CWebAdminMod : public CModule {
                     // delete web port
                     l["SuggestDeletion"] =
                         CString(pTCPListener->GetPort() != WebSock.GetLocalPort());
-                }
-                // TODO: Handle CUnixListener
-
-                l["IsHTTP"] = CString(pListener->GetAcceptType() !=
-                                     CListener::ACCEPT_IRC);
-                l["IsIRC"] = CString(pListener->GetAcceptType() !=
-                                     CListener::ACCEPT_HTTP);
-
-                l["URIPrefix"] = pListener->GetURIPrefix() + "/";
-
-#ifdef HAVE_LIBSSL
-                if (pListener->IsSSL()) {
-                    l["IsSSL"] = "true";
-                }
-#endif
-
-                if (pTCPListener != nullptr) {
 #ifdef HAVE_IPV6
                     switch (pTCPListener->GetAddrType()) {
                         case ADDR_IPV4ONLY:
@@ -2012,6 +2010,32 @@ class CWebAdminMod : public CModule {
                     l["IsIPV4"] = "true";
 #endif
                 }
+                if (const CUnixListener* pUnixListener =
+                        dynamic_cast<const CUnixListener*>(pListener)) {
+                    l["Type"] = "Unix";
+                    l["Path"] = pUnixListener->GetPath();
+                    // We can't determine whether it's the same port, as it's
+                    // always "localhost". Just assume the user knows what he's
+                    // doing. Unix sockets are advanced topic anyway.
+                    l["SuggestDeletion"] = "true";
+                }
+
+                l["IsHTTP"] = CString(pListener->GetAcceptType() !=
+                                     CListener::ACCEPT_IRC);
+                l["IsIRC"] = CString(pListener->GetAcceptType() !=
+                                     CListener::ACCEPT_HTTP);
+
+                CString sURIPrefix = pListener->GetURIPrefix();
+                if (!sURIPrefix.EndsWith("/")) {
+                    sURIPrefix += "/";
+                }
+                l["URIPrefix"] = sURIPrefix;
+
+#ifdef HAVE_LIBSSL
+                if (pListener->IsSSL()) {
+                    l["IsSSL"] = "true";
+                }
+#endif
             }
 
             vector<CString> vDirs;
