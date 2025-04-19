@@ -386,6 +386,7 @@ bool CIRCSock::OnCapabilityMessage(CMessage& Message) {
         {"multi-prefix", [this](bool bVal) { m_bNamesx = bVal; }},
         {"userhost-in-names", [this](bool bVal) { m_bUHNames = bVal; }},
         {"cap-notify", [](bool bVal) {}},
+        {"invite-notify", [](bool bVal) {}},
         {"server-time", [this](bool bVal) { m_bServerTime = bVal; }},
         {"znc.in/server-time-iso", [this](bool bVal) { m_bServerTime = bVal; }},
         {"chghost", [](bool) {}},
@@ -596,10 +597,16 @@ bool CIRCSock::OnErrorMessage(CMessage& Message) {
     return true;
 }
 
-bool CIRCSock::OnInviteMessage(CMessage& Message) {
+bool CIRCSock::OnInviteMessage(CInviteMessage& Message) {
+    Message.SetChan(GetNetwork()->FindChan(Message.GetChannel()));
     bool bResult = false;
-    IRCSOCKMODULECALL(OnInvite(Message.GetNick(), Message.GetParam(1)),
-                      &bResult);
+    IRCSOCKMODULECALL(OnInviteMessage(Message), &bResult);
+    if (bResult) return true;
+    CNick InvitedNick = Message.GetInvitedNick();
+    if (InvitedNick.NickEquals(GetNick())) {
+        IRCSOCKMODULECALL(OnInvite(Message.GetNick(), Message.GetParam(1)),
+                          &bResult);
+    }
     return bResult;
 }
 

@@ -311,6 +311,15 @@ class CKickMessage : public CTargetMessage {
 };
 REGISTER_ZNC_MESSAGE(CKickMessage);
 
+class CInviteMessage : public CMessage {
+  public:
+    CString GetInvitedNick() const { return GetParam(0); }
+    void SetInvitedNick(const CString& sNick) { SetParam(0, sNick); }
+    CString GetChannel() const { return GetParam(1); }
+    void SetChannel(const CString& sChannel) { SetParam(1, sChannel); }
+};
+REGISTER_ZNC_MESSAGE(CInviteMessage);
+
 class CPartMessage : public CTargetMessage {
   public:
     CString GetReason() const { return GetParam(1); }

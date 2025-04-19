@@ -116,6 +116,7 @@ class CClient : public CIRCSocket {
     bool HasCapNotify() const { return m_bCapNotify; }
     bool HasAwayNotify() const { return m_bAwayNotify; }
     bool HasAccountNotify() const { return m_bAccountNotify; }
+    bool HasInviteNotify() const { return m_bInviteNotify; }
     bool HasExtendedJoin() const { return m_bExtendedJoin; }
     bool HasNamesx() const { return m_bNamesx; }
     bool HasUHNames() const { return m_bUHNames; }
@@ -180,8 +181,10 @@ class CClient : public CIRCSocket {
      *
      *  Message type | Capability
      *  ------------ | ----------
-     *  \c ACCOUNT   | \l CClient::HasAccountNotify() (<a href="http://ircv3.net/specs/extensions/account-notify-3.1.html">account-notify</a>)
-     *  \c AWAY      | \l CClient::HasAwayNotify() (<a href="http://ircv3.net/specs/extensions/away-notify-3.1.html">away-notify</a>)
+     *  \c ACCOUNT   | \l CClient::HasAccountNotify() (<a href="http://ircv3.net/specs/extensions/account-notify">account-notify</a>)
+     *  \c AWAY      | \l CClient::HasAwayNotify() (<a href="http://ircv3.net/specs/extensions/away-notify">away-notify</a>)
+     *  \c INVITE    | \l CClient::HasInviteNotify() (<a href="http://ircv3.net/specs/extensions/invite-notify">invite-notify</a>) if someone else is invited; invites sent to this user are not filtered out regardless of any capability.
+     *  \c TAGMSG    | \l CClient::HasMessageTagCap() (<a href="http://ircv3.net/specs/extensions/message-tags">message-tags</a>)
      *
      *  ### Message tags
      *
@@ -193,6 +196,7 @@ class CClient : public CIRCSocket {
      *  ----------- | ----------
      *  \c time     | \l CClient::HasServerTime() (<a href="http://ircv3.net/specs/extensions/server-time-3.2.html">server-time</a>)
      *  \c batch    | \l CClient::HasBatch() (<a href="http://ircv3.net/specs/extensions/batch-3.2.html">batch</a>)
+     *  any tag     | \l CClient::HasMessageTagCap() (<a href="http://ircv3.net/specs/extensions/message-tags">message-tags</a>)
      *  
      *  Additional tags can be added via \l CClient::SetTagSupport().
      *
@@ -321,6 +325,7 @@ class CClient : public CIRCSocket {
     bool m_bCapNotify;
     bool m_bAwayNotify;
     bool m_bAccountNotify;
+    bool m_bInviteNotify;
     bool m_bExtendedJoin;
     bool m_bNamesx;
     bool m_bUHNames;

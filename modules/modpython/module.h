@@ -183,6 +183,7 @@ class ZNC_EXPORT_LIB_EXPORT CPyModule : public CModule {
     EModRet OnUserTagMessage(CTargetMessage& Message) override;
     EModRet OnChanTagMessage(CTargetMessage& Message) override;
     EModRet OnPrivTagMessage(CTargetMessage& Message) override;
+    EModRet OnInviteMessage(CInviteMessage& Message) override;
 
     // Global Modules
     EModRet OnAddUser(CUser& User, CString& sErrorRet) override;
