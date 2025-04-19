@@ -1636,18 +1636,14 @@ void CClient::UserPortCommand(CString& sLine) {
 
         for (const CListener* pListener : vpListeners) {
             Table.AddRow();
-            const CTCPListener* pTCPListener =
-                dynamic_cast<const CTCPListener*>(pListener);
-            if (pTCPListener != nullptr) {
+            if (const CTCPListener* pTCPListener =
+                    dynamic_cast<const CTCPListener*>(pListener)) {
                 Table.SetCell(t_s("Port", "listports"),
                               CString(pTCPListener->GetPort()));
                 Table.SetCell(t_s("BindHost", "listports"),
                               (pTCPListener->GetBindHost().empty()
                                    ? CString("*")
                                    : pTCPListener->GetBindHost()));
-                Table.SetCell(t_s("SSL", "listports"),
-                              pListener->IsSSL() ? t_s("yes", "listports|ssl")
-                                                 : t_s("no", "listports|ssl"));
 
                 EAddrType eAddr = pTCPListener->GetAddrType();
                 Table.SetCell(
@@ -1656,10 +1652,14 @@ void CClient::UserPortCommand(CString& sLine) {
                         ? t_s("IPv4 and IPv6", "listports")
                         : (eAddr == ADDR_IPV4ONLY ? t_s("IPv4", "listports")
                                                   : t_s("IPv6", "listports")));
-            } else {
-                // TODO: Handle CUnixListener
-                Table.SetCell("Port", "unknown");
+            } else if (const CUnixListener* pUnixListener =
+                           dynamic_cast<const CUnixListener*>(pListener)) {
+                Table.SetCell(t_s("BindHost", "listports"),
+                              pUnixListener->GetPath());
             }
+            Table.SetCell(t_s("SSL", "listports"),
+                          pListener->IsSSL() ? t_s("yes", "listports|ssl")
+                                             : t_s("no", "listports|ssl"));
 
             CListener::EAcceptType eAccept = pListener->GetAcceptType();
             Table.SetCell(t_s("IRC", "listports"),

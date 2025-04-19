@@ -1994,8 +1994,8 @@ class CWebAdminMod : public CModule {
                 }
 #endif
 
-#ifdef HAVE_IPV6
                 if (pTCPListener != nullptr) {
+#ifdef HAVE_IPV6
                     switch (pTCPListener->GetAddrType()) {
                         case ADDR_IPV4ONLY:
                             l["IsIPV4"] = "true";
@@ -2008,12 +2008,10 @@ class CWebAdminMod : public CModule {
                             l["IsIPV6"] = "true";
                             break;
                     }
-                }
 #else
-                if (pTCPListener != nullptr) {
                     l["IsIPV4"] = "true";
-                }
 #endif
+                }
             }
 
             vector<CString> vDirs;
