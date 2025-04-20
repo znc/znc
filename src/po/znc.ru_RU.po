@@ -127,76 +127,76 @@ msgstr "Не могу подключиться к {1}, т. к. ZNC собран 
 msgid "Some module aborted the connection attempt"
 msgstr "Какой-то модуль оборвал попытку соединения"
 
-#: IRCSock.cpp:595
+#: IRCSock.cpp:596
 #, c++-format
 msgid "Error from server: {1}"
 msgstr "Ошибка от сервера: {1}"
 
-#: IRCSock.cpp:797
+#: IRCSock.cpp:804
 msgid "ZNC seems to be connected to itself, disconnecting..."
 msgstr "Похоже, ZNC подключён к самому себе, отключаюсь..."
 
-#: IRCSock.cpp:844
+#: IRCSock.cpp:851
 #, c++-format
 msgid "Server {1} redirects us to {2}:{3} with reason: {4}"
 msgstr ""
 
-#: IRCSock.cpp:848
+#: IRCSock.cpp:855
 msgid "Perhaps you want to add it as a new server."
 msgstr "Возможно, вам стоит добавить его в качестве нового сервера."
 
-#: IRCSock.cpp:1078
+#: IRCSock.cpp:1085
 #, c++-format
 msgid "Channel {1} is linked to another channel and was thus disabled."
 msgstr "Канал {1} отсылает к другому каналу и потому будет выключен."
 
-#: IRCSock.cpp:1090
+#: IRCSock.cpp:1097
 msgid "Switched to SSL (STARTTLS)"
 msgstr "Перешёл на SSL (STARTTLS)"
 
-#: IRCSock.cpp:1143
+#: IRCSock.cpp:1150
 #, c++-format
 msgid "You quit: {1}"
 msgstr "Вы вышли: {1}"
 
-#: IRCSock.cpp:1394
+#: IRCSock.cpp:1401
 msgid "Disconnected from IRC. Reconnecting..."
 msgstr "Отключён от IRC. Переподключаюсь..."
 
-#: IRCSock.cpp:1425
+#: IRCSock.cpp:1432
 #, c++-format
 msgid "Cannot connect to IRC ({1}). Retrying..."
 msgstr "Не могу подключиться к IRC ({1}). Пытаюсь ещё раз..."
 
-#: IRCSock.cpp:1428
+#: IRCSock.cpp:1435
 #, c++-format
 msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr "Отключён от IRC ({1}). Переподключаюсь..."
 
-#: IRCSock.cpp:1464
+#: IRCSock.cpp:1471
 #, c++-format
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 "Если вы доверяете этому сертификату, введите /znc "
 "AddTrustedServerFingerprint {1}"
 
-#: IRCSock.cpp:1473
+#: IRCSock.cpp:1480
 msgid "IRC connection timed out.  Reconnecting..."
 msgstr "Подключение IRC завершилось по тайм-ауту. Переподключаюсь..."
 
-#: IRCSock.cpp:1485
+#: IRCSock.cpp:1492
 msgid "Connection Refused.  Reconnecting..."
 msgstr "В соединении отказано. Переподключаюсь..."
 
-#: IRCSock.cpp:1493
+#: IRCSock.cpp:1500
 msgid "Received a too long line from the IRC server!"
 msgstr "От IRC-сервера получена слишком длинная строка!"
 
-#: IRCSock.cpp:1607
+#: IRCSock.cpp:1614
 msgid "No free nick available"
 msgstr "Не могу найти свободный ник"
 
-#: IRCSock.cpp:1615
+#: IRCSock.cpp:1622
 msgid "No free nick found"
 msgstr "Не могу найти свободный ник"
 
@@ -205,24 +205,24 @@ msgstr "Не могу найти свободный ник"
 msgid "No such module {1}"
 msgstr "Нет модуля {1}"
 
-#: Client.cpp:446
+#: Client.cpp:447
 #, c++-format
 msgid "A client from {1} attempted to login as you, but was rejected: {2}"
 msgstr "Клиент с {1} попытался зайти под вашим именем, но был отвергнут: {2}"
 
-#: Client.cpp:490
+#: Client.cpp:491
 #, c++-format
 msgid "Network {1} doesn't exist."
 msgstr "Сеть {1} не существует."
 
-#: Client.cpp:504
+#: Client.cpp:505
 msgid ""
 "You have several networks configured, but no network was specified for the "
 "connection."
 msgstr ""
 "У вас настроены несколько сетей, но для этого соединения ни одна не указана."
 
-#: Client.cpp:507
+#: Client.cpp:508
 #, c++-format
 msgid ""
 "Selecting network {1}. To see list of all configured networks, use /znc "
@@ -231,7 +231,7 @@ msgstr ""
 "Выбираю сеть {1}. Чтобы увидеть весь список, введите команду /znc "
 "ListNetworks"
 
-#: Client.cpp:510
+#: Client.cpp:511
 #, c++-format
 msgid ""
 "If you want to choose another network, use /znc JumpNetwork <network>, or "
@@ -240,55 +240,55 @@ msgstr ""
 "Чтобы выбрать другую сеть, введите /znc JumpNetwork <сеть> либо "
 "подключайтесь к ZNC с именем пользователя {1}/<сеть> вместо {1}"
 
-#: Client.cpp:516
+#: Client.cpp:517
 msgid ""
 "You have no networks configured. Use /znc AddNetwork <network> to add one."
 msgstr ""
 "Вы не настроили ни одну сеть. Введите команду /znc AddNetwork <сеть> чтобы "
 "добавить сеть."
 
-#: Client.cpp:527
+#: Client.cpp:528
 msgid "Closing link: Timeout"
 msgstr "Завершаю связь по тайм-ауту"
 
-#: Client.cpp:549
+#: Client.cpp:550
 msgid "Closing link: Too long raw line"
 msgstr "Завершаю связь: получена слишком длинная строка"
 
-#: Client.cpp:556
+#: Client.cpp:557
 msgid ""
 "You are being disconnected because another user just authenticated as you."
 msgstr "Другой пользователь зашёл под вашим именем, отключаем."
 
-#: Client.cpp:1401
+#: Client.cpp:1417
 #, c++-format
 msgid "Your CTCP to {1} got lost, you are not connected to IRC!"
 msgstr "Вы не подключены к IRC, ваш CTCP-запрос к {1} утерян!"
 
-#: Client.cpp:1528
+#: Client.cpp:1544
 #, c++-format
 msgid "Your notice to {1} got lost, you are not connected to IRC!"
 msgstr "Вы не подключены к IRC, ваше сообщение к {1} утеряно!"
 
-#: Client.cpp:1566
+#: Client.cpp:1582
 #, c++-format
 msgid "Removing channel {1}"
 msgstr "Убираю канал {1}"
 
-#: Client.cpp:1679
+#: Client.cpp:1695
 #, c++-format
 msgid "Your message to {1} got lost, you are not connected to IRC!"
 msgstr "Вы не подключены к IRC, ваше сообщение к {1} утеряно!"
 
-#: Client.cpp:1731 Client.cpp:1737
+#: Client.cpp:1747 Client.cpp:1753
 msgid "Hello. How may I help you?"
 msgstr "Привет, чем могу быть вам полезен?"
 
-#: Client.cpp:1751
+#: Client.cpp:1767
 msgid "Usage: /attach <#chans>"
 msgstr "Использование: /attach <#каналы>"
 
-#: Client.cpp:1758 Client.cpp:1780 ClientCommand.cpp:129 ClientCommand.cpp:151
+#: Client.cpp:1774 Client.cpp:1796 ClientCommand.cpp:129 ClientCommand.cpp:151
 #: ClientCommand.cpp:423 ClientCommand.cpp:450
 #, c++-format
 msgid "There was {1} channel matching [{2}]"
@@ -298,7 +298,7 @@ msgstr[1] "{1} канала подходят под маску [{2}]"
 msgstr[2] "{1} каналов подходят под маску [{2}]"
 msgstr[3] "{1} каналов подходят под маску [{2}]"
 
-#: Client.cpp:1761 ClientCommand.cpp:132
+#: Client.cpp:1777 ClientCommand.cpp:132
 #, c++-format
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
@@ -307,11 +307,11 @@ msgstr[1] "Прицепляю {1} канала"
 msgstr[2] "Прицепляю {1} каналов"
 msgstr[3] "Прицепляю {1} каналов"
 
-#: Client.cpp:1773
+#: Client.cpp:1789
 msgid "Usage: /detach <#chans>"
 msgstr "Использование: /detach <#каналы>"
 
-#: Client.cpp:1783 ClientCommand.cpp:154
+#: Client.cpp:1799 ClientCommand.cpp:154
 #, c++-format
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
@@ -351,7 +351,7 @@ msgstr "Этот модуль не принимает команды."
 msgid "Unknown command!"
 msgstr "Неизвестная команда!"
 
-#: Modules.cpp:1840
+#: Modules.cpp:1846
 #, c++-format
 msgid ""
 "Module names can only contain letters, numbers and underscores, [{1}] is "
@@ -360,85 +360,85 @@ msgstr ""
 "Названия модуля может содержать только латинские буквы, цифры и знак "
 "подчёркивания; [{1}] не соответствует требованиям"
 
-#: Modules.cpp:1859
+#: Modules.cpp:1865
 #, c++-format
 msgid "Module {1} already loaded."
 msgstr "Модуль {1} уже загружен."
 
-#: Modules.cpp:1873
+#: Modules.cpp:1879
 #, c++-format
 msgid "Unable to find module {1}"
 msgstr "Не могу найти модуль {1}"
 
-#: Modules.cpp:1885
+#: Modules.cpp:1891
 #, c++-format
 msgid "Module {1} does not support module type {2}."
 msgstr "Модуль {1} не поддерживает тип модулей «{2}»."
 
-#: Modules.cpp:1892
+#: Modules.cpp:1898
 #, c++-format
 msgid "Module {1} requires a user."
 msgstr "Модулю {1} необходим пользователь."
 
-#: Modules.cpp:1898
+#: Modules.cpp:1904
 #, c++-format
 msgid "Module {1} requires a network."
 msgstr "Модулю {1} необходима сеть."
 
-#: Modules.cpp:1914
+#: Modules.cpp:1920
 msgid "Caught an exception"
 msgstr "Поймано исключение"
 
-#: Modules.cpp:1920
+#: Modules.cpp:1926
 #, c++-format
 msgid "Module {1} aborted: {2}"
 msgstr "Модуль {1} прервал: {2}"
 
-#: Modules.cpp:1922
+#: Modules.cpp:1928
 #, c++-format
 msgid "Module {1} aborted."
 msgstr "Модуль {1} прервал."
 
-#: Modules.cpp:1946 Modules.cpp:1988
+#: Modules.cpp:1952 Modules.cpp:1994
 #, c++-format
 msgid "Module [{1}] not loaded."
 msgstr "Модуль [{1}] не загружен."
 
-#: Modules.cpp:1970
+#: Modules.cpp:1976
 #, c++-format
 msgid "Module {1} unloaded."
 msgstr "Модуль {1} выгружен."
 
-#: Modules.cpp:1975
+#: Modules.cpp:1981
 #, c++-format
 msgid "Unable to unload module {1}."
 msgstr "Не могу выгрузить модуль {1}."
 
-#: Modules.cpp:2004
+#: Modules.cpp:2010
 #, c++-format
 msgid "Reloaded module {1}."
 msgstr "Модуль {1} перезагружен."
 
-#: Modules.cpp:2023
+#: Modules.cpp:2029
 #, c++-format
 msgid "Unable to find module {1}."
 msgstr "Не могу найти модуль {1}."
 
-#: Modules.cpp:2172
+#: Modules.cpp:2178
 msgid "Unknown error"
 msgstr "Неизвестная ошибка"
 
-#: Modules.cpp:2173
+#: Modules.cpp:2179
 #, c++-format
 msgid "Unable to open module {1}: {2}"
 msgstr "Не могу открыть модуль {1}: {2}"
 
-#: Modules.cpp:2182
+#: Modules.cpp:2188
 #, c++-format
 msgid "Could not find ZNCModuleEntry in module {1}"
 msgstr "Не могу найти ZNCModuleEntry в модуле {1}"
 
-#: Modules.cpp:2190
+#: Modules.cpp:2196
 #, c++-format
 msgid ""
 "Version mismatch for module {1}: core is {2}, module is built for {3}. "
@@ -446,7 +446,7 @@ msgid ""
 msgstr ""
 "Ядро имеет версию {2}, а модуль {1} собран для {3}. Пересоберите этот модуль."
 
-#: Modules.cpp:2201
+#: Modules.cpp:2207
 #, c++-format
 msgid ""
 "Module {1} is built incompatibly: core is '{2}', module is '{3}'. Recompile "
@@ -455,12 +455,12 @@ msgstr ""
 "Модуль {1} собран не так: ядро — «{2}», а модуль — «{3}». Пересоберите этот "
 "модуль."
 
-#: Modules.cpp:2232 Modules.cpp:2238
+#: Modules.cpp:2238 Modules.cpp:2244
 msgctxt "modhelpcmd"
 msgid "Command"
 msgstr "Команда"
 
-#: Modules.cpp:2233 Modules.cpp:2240
+#: Modules.cpp:2239 Modules.cpp:2246
 msgctxt "modhelpcmd"
 msgid "Description"
 msgstr "Описание"
