@@ -16,16 +16,17 @@
 
 #pragma once
 
-#include "base.h"
+#include <QLocalServer>
 #include <QNetworkAccessManager>
-#include <QNetworkRequest>
 #include <QNetworkReply>
-#include <QTcpServer>
+#include <QNetworkRequest>
 #include <QTemporaryDir>
 #include <QTextStream>
 #include <QTimer>
 #include <QUrl>
 #include <QUrlQuery>
+
+#include "base.h"
 
 namespace znc_inttest {
 
@@ -52,8 +53,8 @@ class ZNCTest : public testing::Test {
     App m_app;
     QNetworkAccessManager m_network;
     QTemporaryDir m_dir;
-    QTcpServer m_server;
-    std::list<QTcpSocket> m_clients;
+    QLocalServer m_server;
+    std::list<QLocalSocket> m_clients;
 };
 
 }  // namespace znc_inttest

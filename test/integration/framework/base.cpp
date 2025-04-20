@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-#include <gmock/gmock.h>
 #include "base.h"
+
+#include <gmock/gmock.h>
+
+#include <QTcpServer>
 
 using testing::AnyOf;
 using testing::Eq;
@@ -56,6 +59,12 @@ Process::~Process() {
             EXPECT_EQ(m_proc.exitCode(), m_exit);
         }
     }
+}
+
+int PickPortNumber() {
+    QTcpServer tcp;
+    tcp.listen(QHostAddress::LocalHost);
+    return tcp.serverPort();
 }
 
 }  // namespace znc_inttest

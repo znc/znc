@@ -21,6 +21,7 @@
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QProcess>
+#include <QLocalSocket>
 #include <QTcpSocket>
 
 #include <memory>
@@ -49,6 +50,7 @@ class IO {
     // Need to flush QTcpSocket, and QIODevice doesn't have flush at all...
     static void FlushIfCan(QIODevice*) {}
     static void FlushIfCan(QTcpSocket* sock) { sock->flush(); }
+    static void FlushIfCan(QLocalSocket* sock) { sock->flush(); }
 
     Device* m_device;
     bool m_verbose;
@@ -60,7 +62,7 @@ IO<Device> WrapIO(Device* d) {
     return IO<Device>(d);
 }
 
-using Socket = IO<QTcpSocket>;
+using Socket = IO<QLocalSocket>;
 
 class Process : public IO<QProcess> {
   public:
@@ -202,6 +204,9 @@ void IO<Device>::Write(QByteArray s, bool new_line) {
     FlushIfCan(m_device);
 }
 
+inline void DisconnectFromServer(QTcpSocket* s) { s->disconnectFromHost(); }
+inline void DisconnectFromServer(QLocalSocket* s) { s->disconnectFromServer(); }
+
 template <typename Device>
 void IO<Device>::Close() {
 #ifdef __CYGWIN__
@@ -209,8 +214,10 @@ void IO<Device>::Close() {
     // without this line
     sleep(1);
 #endif
-    m_device->disconnectFromHost();
+    DisconnectFromServer(m_device);
 }
+
+int PickPortNumber();
 
 }  // namespace znc_inttest
 

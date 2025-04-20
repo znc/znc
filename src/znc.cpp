@@ -625,49 +625,57 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
     unsigned int uListenPort = 0;
     bool bSuccess;
 
-    do {
-        bSuccess = true;
-        while (true) {
-            if (!CUtils::GetNumInput("Listen on port", uListenPort, 1025,
-                                     65534)) {
-                continue;
-            }
-            if (uListenPort == 6667 || uListenPort == 6697) {
-                CUtils::PrintStatus(false,
-                                    "WARNING: Some web browsers reject ports "
-                                    "6667 and 6697. If you intend to");
-                CUtils::PrintStatus(false,
-                                    "use ZNC's web interface, you might want "
-                                    "to use another port.");
-                if (!CUtils::GetBoolInput("Proceed anyway?",
-                                          true)) {
+    // Unix sockets are not exposed in --makeconf by default, but it's possible
+    // to trigger this using env var. This is mostly useful for the integration
+    // test.
+    char* szListenUnixSocket = getenv("ZNC_LISTEN_UNIX_SOCKET");
+    if (!szListenUnixSocket) {
+        do {
+            bSuccess = true;
+            while (true) {
+                if (!CUtils::GetNumInput("Listen on port", uListenPort, 1025,
+                                         65534)) {
                     continue;
                 }
+                if (uListenPort == 6667 || uListenPort == 6697) {
+                    CUtils::PrintStatus(
+                        false,
+                        "WARNING: Some web browsers reject ports "
+                        "6667 and 6697. If you intend to");
+                    CUtils::PrintStatus(
+                        false,
+                        "use ZNC's web interface, you might want "
+                        "to use another port.");
+                    if (!CUtils::GetBoolInput("Proceed anyway?", true)) {
+                        continue;
+                    }
+                }
+                break;
             }
-            break;
-        }
 
 #ifdef HAVE_LIBSSL
-        bListenSSL = CUtils::GetBoolInput("Listen using SSL", bListenSSL);
+            bListenSSL = CUtils::GetBoolInput("Listen using SSL", bListenSSL);
 #endif
 
 #ifdef HAVE_IPV6
-        b6 = CUtils::GetBoolInput("Listen using both IPv4 and IPv6", b6);
+            b6 = CUtils::GetBoolInput("Listen using both IPv4 and IPv6", b6);
 #endif
 
-        // Don't ask for listen host, it may be configured later if needed.
+            // Don't ask for listen host, it may be configured later if needed.
 
-        CUtils::PrintAction("Verifying the listener");
-        CListener* pListener = new CTCPListener(
-            (unsigned short int)uListenPort, sListenHost, sURIPrefix,
-            bListenSSL, b6 ? ADDR_ALL : ADDR_IPV4ONLY, CListener::ACCEPT_ALL);
-        if (!pListener->Listen()) {
-            CUtils::PrintStatus(false, FormatBindError());
-            bSuccess = false;
-        } else
-            CUtils::PrintStatus(true);
-        delete pListener;
-    } while (!bSuccess);
+            CUtils::PrintAction("Verifying the listener");
+            CListener* pListener = new CTCPListener(
+                (unsigned short int)uListenPort, sListenHost, sURIPrefix,
+                bListenSSL, b6 ? ADDR_ALL : ADDR_IPV4ONLY,
+                CListener::ACCEPT_ALL);
+            if (!pListener->Listen()) {
+                CUtils::PrintStatus(false, FormatBindError());
+                bSuccess = false;
+            } else
+                CUtils::PrintStatus(true);
+            delete pListener;
+        } while (!bSuccess);
+    }
 
 #ifdef HAVE_LIBSSL
     CString sPemFile = GetPemLocation();
@@ -679,9 +687,13 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 #endif
 
     vsLines.push_back("<Listener l>");
-    vsLines.push_back("\tPort = " + CString(uListenPort));
-    vsLines.push_back("\tIPv4 = true");
-    vsLines.push_back("\tIPv6 = " + CString(b6));
+    if (szListenUnixSocket) {
+        vsLines.push_back("\tPath = " + CString(szListenUnixSocket));
+    } else {
+        vsLines.push_back("\tPort = " + CString(uListenPort));
+        vsLines.push_back("\tIPv4 = true");
+        vsLines.push_back("\tIPv6 = " + CString(b6));
+    }
     vsLines.push_back("\tSSL = " + CString(bListenSSL));
     if (!sListenHost.empty()) {
         vsLines.push_back("\tHost = " + sListenHost);
@@ -788,12 +800,16 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
         bSSL = CUtils::GetBoolInput("Server uses SSL?", bSSL);
 #endif
         while (!CUtils::GetNumInput("Server port", uServerPort, 1, 65535,
-                                    bSSL ? 6697 : 6667))
-            ;
+                                    bSSL ? 6697 : 6667));
         CUtils::GetInput("Server password (probably empty)", sPass);
 
-        vsLines.push_back("\t\tServer     = " + sHost + ((bSSL) ? " +" : " ") +
-                          CString(uServerPort) + " " + sPass);
+        if (sHost.StartsWith("unix:")) {
+            vsLines.push_back("\t\tServer = " + sHost + " " + sPass);
+        } else {
+            vsLines.push_back("\t\tServer     = " + sHost +
+                              ((bSSL) ? " +" : " ") + CString(uServerPort) +
+                              " " + sPass);
+        }
 
         CString sChans;
         if (CUtils::GetInput("Initial channels", sChans)) {
