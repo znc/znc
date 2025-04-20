@@ -31,8 +31,11 @@ env LLVM_PROFILE_FILE="$PWD/unittest.profraw" make VERBOSE=1 unittest
 sudo make install
 /usr/local/bin/znc --version
 
+git clone --depth=1 https://github.com/google/gtest-parallel
+make VERBOSE=1 inttest_bin
+
 # TODO: use DEVEL_COVER_OPTIONS for https://metacpan.org/pod/Devel::Cover
-env LLVM_PROFILE_FILE="$PWD/inttest.profraw" ZNC_MODPERL_COVERAGE_OPTS="-db,$PWD/cover_db" PYTHONWARNINGS=error make VERBOSE=1 inttest
+env LLVM_PROFILE_FILE="$PWD/inttest.profraw" ZNC_MODPERL_COVERAGE_OPTS="-db,$PWD/cover_db" PYTHONWARNINGS=error gtest-parallel/gtest-parallel test/integration/inttest
 ls -lRa
 
 ~/perl5/bin/cover --no-gcov --report=clover

@@ -26,7 +26,9 @@ timestamps {
         stage('Integration test') {
           withEnv(['GTEST_OUTPUT=xml:integration-test.xml']) {
             sh 'make install'
-            sh 'make inttest'
+            sh 'make inttest_bin'
+            sh 'git clone --depth=1 https://github.com/google/gtest-parallel'
+            sh 'gtest-parallel/gtest-parallel test/integration/inttest'
           }
         }
         junit '**/*test.xml'
