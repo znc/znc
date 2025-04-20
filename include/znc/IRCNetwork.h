@@ -114,6 +114,8 @@ class CIRCNetwork : private CCoreTranslationMixin {
     CServer* FindServer(const CString& sName) const;
     bool DelServer(const CString& sName, unsigned short uPort,
                    const CString& sPass);
+    bool DelServer(const CServer& Server);
+    bool AddServer(CServer Server);
     bool AddServer(const CString& sName);
     bool AddServer(const CString& sName, unsigned short uPort,
                    const CString& sPass = "", bool bSSL = false);

@@ -972,6 +972,7 @@ class CWebAdminMod : public CModule {
             Tmpl["NetworkEdit"] =
                 spSession->IsAdmin() || !spSession->GetUser()->DenySetNetwork()
                 ? "true" : "false";
+            Tmpl["EditUnixSockets"] = spSession->IsAdmin() ? "true" : "false";
 
             Tmpl["FloodProtection"] =
                 CString(CIRCSock::IsFloodProtected(pNetwork->GetFloodRate()));
@@ -1147,9 +1148,22 @@ class CWebAdminMod : public CModule {
         VCString vsArgs;
 
         if (spSession->IsAdmin() || !spSession->GetUser()->DenySetNetwork()) {
+            std::set<CServer> vAllowedUnixServers;
+            for (const CServer* pServer : pNetwork->GetServers()) {
+                if (pServer->IsUnixSocket()) {
+                    vAllowedUnixServers.insert(*pServer);
+                }
+            }
             pNetwork->DelServers();
             WebSock.GetRawParam("servers").Split("\n", vsArgs);
             for (const CString& sServer : vsArgs) {
+                CServer Server = CServer::Parse(sServer);
+                if (Server.IsUnixSocket() && !spSession->IsAdmin() &&
+                    vAllowedUnixServers.count(Server) == 0) {
+                    // For non-admins, allow unix sockets only if they had these
+                    // exact servers before.
+                    continue;
+                }
                 pNetwork->AddServer(sServer.Trim_n());
             }
         }
@@ -1404,9 +1418,11 @@ class CWebAdminMod : public CModule {
                 l["IRCNick"] = pNetwork->GetIRCNick().GetNick();
                 CServer* pServer = pNetwork->GetCurrentServer();
                 if (pServer) {
-                    l["Server"] = pServer->GetName() + ":" +
-                                  (pServer->IsSSL() ? "+" : "") +
-                                  CString(pServer->GetPort());
+                    l["Server"] = pServer->IsUnixSocket()
+                                      ? "unix:" + pServer->GetName()
+                                      : pServer->GetName() + ":" +
+                                            (pServer->IsSSL() ? "+" : "") +
+                                            CString(pServer->GetPort());
                 }
             }
 

@@ -23,13 +23,21 @@
 class CServer {
   public:
     CServer(const CString& sName, unsigned short uPort = 6667,
-            const CString& sPass = "", bool bSSL = false);
+            const CString& sPass = "", bool bSSL = false,
+            bool bUnixSocket = false);
     ~CServer();
+
+    // TODO: use C++20's =default and <=>
+    bool operator==(const CServer&) const;
+    bool operator<(const CServer&) const;
+
+    static CServer Parse(CString sLine);
 
     const CString& GetName() const;
     unsigned short GetPort() const;
     const CString& GetPass() const;
     bool IsSSL() const;
+    bool IsUnixSocket() const;
     CString GetString(bool bIncludePassword = true) const;
     static bool IsValidHostName(const CString& sHostName);
 
@@ -39,6 +47,7 @@ class CServer {
     unsigned short m_uPort;
     CString m_sPass;
     bool m_bSSL;
+    bool m_bUnixSocket;
 };
 
 #endif  // !ZNC_SERVER_H

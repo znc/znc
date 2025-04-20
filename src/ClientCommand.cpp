@@ -817,7 +817,7 @@ void CClient::UserCommand(CString& sLine) {
             return;
         }
 
-        CString sServer = sLine.Token(1);
+        CString sServer = sLine.Token(1, true);
 
         if (!m_pNetwork) {
             PutStatus(t_s(
@@ -827,10 +827,20 @@ void CClient::UserCommand(CString& sLine) {
 
         if (sServer.empty()) {
             PutStatus(t_s("Usage: AddServer <host> [[+]port] [pass]"));
+            if (m_pUser->IsAdmin()) {
+                PutStatus(t_s("Or: AddServer unix:[ssl:]/path/to/socket"));
+            }
+            PutStatus(t_s("+ means SSL"));
             return;
         }
 
-        if (m_pNetwork->AddServer(sLine.Token(1, true))) {
+        CServer Server = CServer::Parse(sServer);
+        if (Server.IsUnixSocket() && !m_pUser->IsAdmin()) {
+            PutStatus(t_s("Access denied!"));
+            return;
+        }
+
+        if (m_pNetwork->AddServer(std::move(Server))) {
             PutStatus(t_s("Server added"));
         } else {
             PutStatus(
@@ -849,11 +859,9 @@ void CClient::UserCommand(CString& sLine) {
             return;
         }
 
-        CString sServer = sLine.Token(1);
-        unsigned short uPort = sLine.Token(2).ToUShort();
-        CString sPass = sLine.Token(3);
+        CServer Server = CServer::Parse(sLine.Token(1, true));
 
-        if (sServer.empty()) {
+        if (Server.GetName().empty()) {
             PutStatus(t_s("Usage: DelServer <host> [port] [pass]"));
             return;
         }
@@ -863,7 +871,9 @@ void CClient::UserCommand(CString& sLine) {
             return;
         }
 
-        if (m_pNetwork->DelServer(sServer, uPort, sPass)) {
+        // Unix sockets can be removed with "unix:" prefix and without, both
+        // work.
+        if (m_pNetwork->DelServer(Server)) {
             PutStatus(t_s("Server removed"));
         } else {
             PutStatus(t_s("No such server"));
@@ -888,9 +898,12 @@ void CClient::UserCommand(CString& sLine) {
                 Table.AddRow();
                 Table.SetCell(
                     t_s("Host", "listservers"),
-                    pServer->GetName() + (pServer == pCurServ ? "*" : ""));
-                Table.SetCell(t_s("Port", "listservers"),
-                              CString(pServer->GetPort()));
+                    (pServer->IsUnixSocket() ? pServer->GetString(false)
+                                             : pServer->GetName()) +
+                        (pServer == pCurServ ? "*" : ""));
+                if (!pServer->IsUnixSocket())
+                    Table.SetCell(t_s("Port", "listservers"),
+                                  CString(pServer->GetPort()));
                 Table.SetCell(
                     t_s("SSL", "listservers"),
                     (pServer->IsSSL()) ? t_s("SSL", "listservers|cell") : "");
