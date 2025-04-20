@@ -778,7 +778,7 @@ sub Connect {
 	$self->GetModule->GetManager->Connect(
 			$host,
 			$port,
-			"perl-socket",
+			$self->ConstructSockName("Perl-C"),
 			$arg{timeout}//60,
 			$arg{ssl}//0,
 			$arg{bindhost}//'',
@@ -786,11 +786,26 @@ sub Connect {
 			);
 }
 
+sub ConnectUnix {
+	my $self = shift;
+	my $path = shift;
+	$self->GetModule->GetManager->ConnectUnix(
+		$self->ConstructSockName("Perl-CU"),
+		$path, $self->{_csock}
+	);
+}
+
 sub Listen {
 	my $self = shift;
 	my %arg = @_;
 	my $addrtype = $ZNC::ADDR_ALL;
 	if (defined $arg{addrtype}) {
+		if ($arg{addrtype} =~ /^unix$/i) {
+			return $self->GetModule->GetManager->ListenUnix(
+				$self->ConstructSockName("Perl-LU"),
+				$arg{path}, $self->{_csock},
+			);
+		}
 		if ($arg{addrtype} =~ /^ipv4$/i) { $addrtype = $ZNC::ADDR_IPV4ONLY }
 		elsif ($arg{addrtype} =~ /^ipv6$/i) { $addrtype = $ZNC::ADDR_IPV6ONLY }
 		elsif ($arg{addrtype} =~ /^all$/i)  { }
@@ -799,7 +814,7 @@ sub Listen {
 	if (defined $arg{port}) {
 		return $arg{port} if $self->GetModule->GetManager->ListenHost(
 				$arg{port},
-				"perl-socket",
+				$self->ConstructSockName("Perl-L"),
 				$arg{bindhost}//'',
 				$arg{ssl}//0,
 				$arg{maxconns}//ZNC::_GetSOMAXCONN,
@@ -810,7 +825,7 @@ sub Listen {
 		return 0;
 	}
 	$self->GetModule->GetManager->ListenRand(
-			"perl-socket",
+			$self->ConstructSockName("Perl-L"),
 			$arg{bindhost}//'',
 			$arg{ssl}//0,
 			$arg{maxconns}//ZNC::_GetSOMAXCONN,

@@ -97,13 +97,8 @@ bool CUnixListener::Listen() {
     m_pListener = new CRealListener(*this);
     SetupSSL();
 
-    if (m_pListener->ListenUnix(m_sPath)) {
-        CZNC::Get().GetManager().AddSock(m_pListener, "UNIX_LISTENER");
-        return true;
-    }
-
-    delete m_pListener;
-    return false;
+    return CZNC::Get().GetManager().ListenUnix("UNIX_LISTENER", m_sPath,
+                                               m_pListener);
 }
 
 CConfig CUnixListener::ToConfig() const {
