@@ -42,10 +42,12 @@
 
 #include "cygwin.h"
 
-#define _GNU_SOURCE
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/un.h>
+
+#include <qglobal.h>
+#undef QT_THREADSAFE_CLOEXEC
 #include <QFile>
 #include <QtNetwork/private/qlocalsocket_p.h>
 #include <QtNetwork/private/qnet_unix_p.h>
