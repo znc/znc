@@ -27,6 +27,4 @@ build_script:
     - c:\cygwin-root\bin\sh -lc "rebase -s -v $(cat /tmp/files-to-rebase)"
 test_script:
     - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make VERBOSE=1 unittest < /dev/null"
-    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; env ZNC_QT_VER=5 make VERBOSE=1 inttest_bin < /dev/null"
-    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; git clone --depth=1 https://github.com/google/gtest-parallel"
-    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; gtest-parallel/gtest-parallel test/integration/inttest"
+    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; env ZNC_QT_VER=5 make VERBOSE=1 inttest < /dev/null"
