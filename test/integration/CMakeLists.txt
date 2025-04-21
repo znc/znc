@@ -56,3 +56,10 @@ target_include_directories(inttest PUBLIC
 	"${GMOCK_ROOT}" "${GMOCK_ROOT}/include")
 target_compile_definitions(inttest PRIVATE
 	"ZNC_BIN_DIR=\"${ZNC_BIN_DIR}\"")
+
+if(CYGWIN)
+	# This workaround contains a sizeable modified copypaste of Qt's qlocalsocket_unix.cpp, which is LGPL, so has to be in a separate shared library.
+	add_library(inttest_cygwin SHARED framework/cygwin.cpp)
+	target_link_libraries(inttest_cygwin Qt${ZNC_QT_VER}::NetworkPrivate)
+	target_link_libraries(inttest inttest_cygwin)
+endif()

@@ -17,6 +17,7 @@
 #include <QRegularExpression>
 #include <QProcess>
 #include "znctest.h"
+#include "cygwin.h"
 
 #ifndef ZNC_BIN_DIR
 #define ZNC_BIN_DIR ""
@@ -76,7 +77,12 @@ Socket ZNCTest::ConnectIRCd() {
 Socket ZNCTest::ConnectClient() {
     m_clients.emplace_back();
     QLocalSocket& sock = m_clients.back();
-    sock.connectToServer(m_dir.path() + "/inttest.znc");
+    sock.setServerName(m_dir.path() + "/inttest.znc");
+#ifdef __CYGWIN__
+    znc_inttest_cygwin::CygwinWorkaroundLocalConnect(sock);
+#else
+    sock.connectToServer();
+#endif
     [&] {
         ASSERT_TRUE(sock.waitForConnected())
             << sock.errorString().toStdString();

@@ -242,6 +242,8 @@ TEST_F(ZNCTest, KeepNickModule) {
 }
 
 TEST_F(ZNCTest, ModuleCSRFOverride) {
+    // TODO: Qt 6.8 introduced QNetworkRequest::FullLocalServerNameAttribute to
+    // let it connect to unix socket
     int port = PickPortNumber();
     auto znc = Run();
     auto ircd = ConnectIRCd();
