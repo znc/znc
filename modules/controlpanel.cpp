@@ -21,7 +21,7 @@
 #include <znc/IRCNetwork.h>
 #include <znc/Chan.h>
 #include <znc/IRCSock.h>
-#include "znc/Server.h"
+#include <znc/Server.h>
 
 using std::map;
 using std::vector;
