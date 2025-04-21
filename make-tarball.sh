@@ -45,6 +45,8 @@ mkdir -p --mode=0755 $TMPDIR/$ZNCDIR/third_party/Csocket
 cp -p third_party/Csocket/Csocket.cc third_party/Csocket/Csocket.h $TMPDIR/$ZNCDIR/third_party/Csocket/
 mkdir -p --mode=0755 $TMPDIR/$ZNCDIR/third_party/cctz
 cp -Rp third_party/cctz/src third_party/cctz/include third_party/cctz/LICENSE.txt $TMPDIR/$ZNCDIR/third_party/cctz/
+mkdir -p --mode=0755 $TMPDIR/$ZNCDIR/third_party/gtest-parallel
+cp -p third_party/gtest-parallel/LICENSE third_party/gtest-parallel/gtest-parallel third_party/gtest-parallel/gtest-parallel.py $TMPDIR/$ZNCDIR/third_party/gtest-parallel/
 (
 	cd $TMPDIR2
 	cmake $TMPDIR/$ZNCDIR -DWANT_PERL=yes -DWANT_PYTHON=yes

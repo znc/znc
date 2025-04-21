@@ -10,3 +10,6 @@
 [submodule "third_party/cctz"]
 	path = third_party/cctz
 	url = https://github.com/google/cctz
+[submodule "third_party/gtest-parallel"]
+	path = third_party/gtest-parallel
+	url = https://github.com/google/gtest-parallel

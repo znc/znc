@@ -17,6 +17,7 @@ ZNC includes code from Selectize (http://brianreavis.github.io/selectize.js/), l
 ZNC includes modified code from CMakeFindFrameworks.cmake by Kitware, Inc., licensed under BSD License.
 ZNC includes modified code from TestLargeFiles.cmake, licensed under Boost Software License, Version 1.0.
 ZNC includes code from cctz (https://github.com/google/cctz), licensed under the Apache License 2.0.
+ZNC includes code from gtest-parallel (https://github.com/google/gtest-parallel), licensed under the Apache License 2.0.
 
 ZNC is developed by these people:
 
