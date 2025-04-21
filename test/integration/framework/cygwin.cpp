@@ -42,10 +42,13 @@
 
 #include "cygwin.h"
 
+#define _GNU_SOURCE
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/un.h>
 #include <QFile>
 #include <QtNetwork/private/qlocalsocket_p.h>
 #include <QtNetwork/private/qnet_unix_p.h>
-#include <sys/un.h>
 
 namespace znc_inttest_cygwin {
 // https://stackoverflow.com/questions/424104/can-i-access-private-members-from-outside-the-class-without-using-friends
@@ -61,7 +64,7 @@ template struct Rob<A_member, &QObject::d_ptr>;
 
 // This function is inspired by QLocalSocket::connectToServer() and QLocalSocketPrivate::_q_connectToSocket()
 void CygwinWorkaroundLocalConnect(QLocalSocket& sock) {
-    QObjectData* o = (sock.*get(A_member())).get();
+    QObjectData* o = (sock.*get(A_member())).data();
     QLocalSocketPrivate* d = reinterpret_cast<QLocalSocketPrivate*>(o);
     d->unixSocket.setSocketState(QAbstractSocket::ConnectingState);
     d->state = QLocalSocket::ConnectingState;
@@ -69,7 +72,7 @@ void CygwinWorkaroundLocalConnect(QLocalSocket& sock) {
 
     if ((d->connectingSocket = qt_safe_socket(PF_UNIX, SOCK_STREAM, 0, 0)) ==
         -1) {
-        sock.errorOccurred(QLocalSocket::UnsupportedSocketOperationError);
+        qDebug() << "CygwinWorkaroundLocalConnect: qt_safe_socket errored";
         return;
     }
 
@@ -83,14 +86,17 @@ void CygwinWorkaroundLocalConnect(QLocalSocket& sock) {
              encodedConnectingPathName.size() + 1);
     if (qt_safe_connect(d->connectingSocket, (struct sockaddr*)&name,
                         sizeof(name)) == -1) {
-        sock.errorOccurred(QLocalSocket::UnknownSocketError);
+        qDebug() << "CygwinWorkaroundLocalConnect: qt_safe_connect errored";
         return;
     }
 
     ::fcntl(d->connectingSocket, F_SETFL,
             ::fcntl(d->connectingSocket, F_GETFL) | O_NONBLOCK);
-    d->unixSocket.setSocketDescriptor(d->connectingSocket,
-                                      QAbstractSocket::ConnectedState);
+    if (!d->unixSocket.setSocketDescriptor(d->connectingSocket,
+                                           QAbstractSocket::ConnectedState)) {
+        qDebug() << "CygwinWorkaroundLocalConnect: setSocketDescriptor errored";
+        return;
+    }
     sock.QIODevice::open(QLocalSocket::ReadWrite | QLocalSocket::Unbuffered);
     sock.connected();
     d->connectingSocket = -1;
