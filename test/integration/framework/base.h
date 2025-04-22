@@ -20,11 +20,10 @@
 
 #include <QCoreApplication>
 #include <QDateTime>
-#include <QProcess>
 #include <QLocalSocket>
+#include <QProcess>
+#include <QRegularExpression>
 #include <QTcpSocket>
-
-#include <memory>
 
 namespace znc_inttest {
 
@@ -35,6 +34,7 @@ class IO {
         : m_device(device), m_verbose(verbose) {}
     virtual ~IO() {}
     void ReadUntil(QByteArray pattern);
+    void ReadUntilRe(QString pattern);
     /*
      * Reads from Device until pattern is matched and returns this pattern
      * up to and excluding the first newline. Pattern itself can contain a newline.
@@ -116,7 +116,36 @@ void IO<Device>::ReadUntil(QByteArray pattern) {
         }
         const int timeout_ms =
             QDateTime::currentDateTime().msecsTo(deadline);
-        ASSERT_GT(timeout_ms, 0) << "Wanted:" << pattern.toStdString();
+        ASSERT_GT(timeout_ms, 0) << "Wanted: " << pattern.toStdString();
+        ASSERT_TRUE(m_device->waitForReadyRead(timeout_ms))
+            << "Wanted: " << pattern.toStdString();
+        QByteArray chunk = m_device->readAll();
+        if (m_verbose) {
+            std::cout << chunk.toStdString() << std::flush;
+        }
+        m_readed += chunk;
+    }
+}
+
+template <typename Device>
+void IO<Device>::ReadUntilRe(QString pattern) {
+    QRegularExpression expr(pattern);
+    auto deadline = QDateTime::currentDateTime().addSecs(60);
+    while (true) {
+        QRegularExpressionMatch match =
+            expr.match(QString::fromUtf8(m_readed), 0,
+                          QRegularExpression::PartialPreferCompleteMatch);
+        if (match.hasMatch()) {
+            m_readed.remove(0, match.capturedEnd());
+            return;
+        }
+        if (!match.hasPartialMatch()) {
+            m_readed.clear();
+        }
+        const int timeout_ms =
+            QDateTime::currentDateTime().msecsTo(deadline);
+        ASSERT_GT(timeout_ms, 0)
+            << "Wanted: " << pattern.toStdString();
         ASSERT_TRUE(m_device->waitForReadyRead(timeout_ms))
             << "Wanted: " << pattern.toStdString();
         QByteArray chunk = m_device->readAll();
@@ -158,7 +187,7 @@ void IO<Device>::ReadUntilAndGet(QByteArray pattern, QByteArray& match) {
         }
         const int timeout_ms =
             QDateTime::currentDateTime().msecsTo(deadline);
-        ASSERT_GT(timeout_ms, 0) << "Wanted:" << pattern.toStdString();
+        ASSERT_GT(timeout_ms, 0) << "Wanted: " << pattern.toStdString();
         ASSERT_TRUE(m_device->waitForReadyRead(timeout_ms))
             << "Wanted: " << pattern.toStdString();
         QByteArray chunk = m_device->readAll();

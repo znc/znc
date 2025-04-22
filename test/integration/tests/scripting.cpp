@@ -490,9 +490,9 @@ TEST_F(ZNCTest, ModpythonSaslAuth) {
     client2.Write("AUTHENTICATE FOO");
     client2.ReadUntil("AUTHENTICATE " + QByteArrayLiteral("Welcome").toBase64());
     client2.Write("AUTHENTICATE +");
-    client2.ReadUntil(
-        ":irc.znc.in 900 nick nick!user@localhost user :You are now logged in "
-        "as user");
+    client2.ReadUntilRe(
+        ":irc.znc.in 900 nick nick!user@(localhost)? user :You are now logged "
+        "in as user");
 }
 
 TEST_F(ZNCTest, ModperlSaslAuth) {
@@ -547,9 +547,9 @@ TEST_F(ZNCTest, ModperlSaslAuth) {
     client2.Write("AUTHENTICATE FOO");
     client2.ReadUntil("AUTHENTICATE " + QByteArrayLiteral("Welcome").toBase64());
     client2.Write("AUTHENTICATE +");
-    client2.ReadUntil(
-        ":irc.znc.in 900 nick nick!user@localhost user :You are now logged in "
-        "as user");
+    client2.ReadUntilRe(
+        ":irc.znc.in 900 nick nick!user@(localhost)? user :You are now logged "
+        "in as user");
 }
 
 }  // namespace
