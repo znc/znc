@@ -18,6 +18,7 @@ ZNC includes modified code from CMakeFindFrameworks.cmake by Kitware, Inc., lice
 ZNC includes modified code from TestLargeFiles.cmake, licensed under Boost Software License, Version 1.0.
 ZNC includes code from cctz (https://github.com/google/cctz), licensed under the Apache License 2.0.
 ZNC includes code from gtest-parallel (https://github.com/google/gtest-parallel), licensed under the Apache License 2.0.
+ZNC integration test includes modified code from Qt, licensed under LGPL.
 
 ZNC is developed by these people:
 
