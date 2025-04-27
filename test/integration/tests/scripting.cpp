@@ -243,6 +243,7 @@ TEST_F(ZNCTest, ModperlUnixSocket) {
     auto client = LoginClient();
     client.Write("znc loadmod modperl");
     client.Write("znc loadmod socktest");
+    sleep(1);
     client.Write("PRIVMSG *socktest :foo");
     client.ReadUntil("received 4 bytes");
 }
@@ -267,6 +268,7 @@ TEST_F(ZNCTest, ModpythonVCString) {
     auto client = LoginClient();
     client.Write("znc loadmod modpython");
     client.Write("znc loadmod test");
+    sleep(1);
     client.Write("PRIVMSG *test :foo");
     client.ReadUntil("'*test', 'foo'");
 }
