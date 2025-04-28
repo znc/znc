@@ -79,6 +79,10 @@ Note for FreeBSD users:
 By default base OpenSSL is selected.
 If you want the one from ports, use `-DOPENSSL_ROOT_DIR=/usr/local`.
 
+If you want to install ZNC in a custom path, run `cmake` with the `-DCMAKE_INSTALL_PREFIX` argument.
+Example:
+`cmake .. -DCMAKE_INSTALL_PREFIX=/home/user/znc`
+
 For troubleshooting, `cmake --system-information` will show you details.
 
 ## Setting up znc.conf
