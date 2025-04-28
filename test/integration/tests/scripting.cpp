@@ -180,18 +180,26 @@ TEST_F(ZNCTest, ModpythonUnixSocket) {
         class socktest(znc.Module):
             def OnLoad(self, args, ret):
                 listen = self.CreateSocket(lis)
-                return listen.Listen(addrtype='unix', path=self.GetSavePath() + "/sock")
+                return listen.Listen(addrtype='unix', path=self.TestSockPath())
 
             def OnModCommand(self, cmd):
                 sock = self.CreateSocket()
-                sock.ConnectUnix(self.GetSavePath() + "/sock")
+                sock.ConnectUnix(self.TestSockPath())
                 sock.WriteBytes(b'blah')
+
+            def TestSockPath(self):
+                path = self.GetSavePath() + "/sock"
+                # https://unix.stackexchange.com/questions/367008/why-is-socket-path-length-limited-to-a-hundred-chars
+                if len(path) < 100:
+                    return path
+                return "./testsock.modpython"
     )");
 
     auto ircd = ConnectIRCd();
     auto client = LoginClient();
     client.Write("znc loadmod modpython");
     client.Write("znc loadmod socktest");
+    client.ReadUntil("Loaded module socktest");
     client.Write("PRIVMSG *socktest :foo");
     client.ReadUntil("received 4 bytes");
 }
@@ -227,13 +235,22 @@ TEST_F(ZNCTest, ModperlUnixSocket) {
         sub OnLoad {
             my $self = shift;
             my $listen = $self->CreateSocket('socktest::lis');
-            $listen->Listen(addrtype=>'unix', path=>$self->GetSavePath . "/sock");
+            $listen->Listen(addrtype=>'unix', path=>$self->TestSockPath);
         }
         sub OnModCommand {
             my ($self, $cmd) = @_;
             my $sock = $self->CreateSocket('socktest::conn');
-            $sock->ConnectUnix($self->GetSavePath . "/sock");
+            $sock->ConnectUnix($self->TestSockPath);
             $sock->Write('blah');
+        }
+        sub TestSockPath {
+            my $self = shift;
+            my $path = $self->GetSavePath . "/sock";
+            # https://unix.stackexchange.com/questions/367008/why-is-socket-path-length-limited-to-a-hundred-chars
+            if (length($path) < 100) {
+                return $path;
+            }
+            return "./testsock.modperl";
         }
 
         1;
@@ -243,7 +260,7 @@ TEST_F(ZNCTest, ModperlUnixSocket) {
     auto client = LoginClient();
     client.Write("znc loadmod modperl");
     client.Write("znc loadmod socktest");
-    sleep(1);
+    client.ReadUntil("Loaded module socktest");
     client.Write("PRIVMSG *socktest :foo");
     client.ReadUntil("received 4 bytes");
 }
