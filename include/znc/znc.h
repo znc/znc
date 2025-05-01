@@ -202,11 +202,22 @@ class CZNC : private CCoreTranslationMixin {
     // Listener yummy
     CListener* FindListener(u_short uPort, const CString& BindHost,
                             EAddrType eAddr);
+    CListener* FindUnixListener(const CString& sPath);
     bool AddListener(CListener*);
+    bool AddTCPListener(unsigned short uPort, const CString& sBindHost,
+                        const CString& sURIPrefix, bool bSSL, EAddrType eAddr,
+                        CListener::EAcceptType eAccept, CString& sError);
+    bool AddUnixListener(const CString& sPath, const CString& sURIPrefix, bool bSSL,
+                         CListener::EAcceptType eAccept, CString& sError);
+    bool DelListener(CListener*);
+
+    // For backwards-compatibility TODO: Remove
+    /// @deprecated use AddTCPListener
     bool AddListener(unsigned short uPort, const CString& sBindHost,
                      const CString& sURIPrefix, bool bSSL, EAddrType eAddr,
-                     CListener::EAcceptType eAccept, CString& sError);
-    bool DelListener(CListener*);
+                     CListener::EAcceptType eAccept, CString& sError) {
+        return AddTCPListener(uPort, sBindHost, sURIPrefix, bSSL, eAddr, eAccept, sError);
+    }
 
     // Message of the Day
     void SetMotd(const CString& sMessage) {
@@ -267,6 +278,8 @@ class CZNC : private CCoreTranslationMixin {
     CString MakeConfigHeader();
     bool AddListener(const CString& sLine, CString& sError);
     bool AddListener(CConfig* pConfig, CString& sError);
+    bool CheckSslAndPemFile(bool bSSL, CString& sError);
+    bool FinishAddingListener(CListener* pListener, CString& sError);
 
   protected:
     time_t m_TimeStarted;

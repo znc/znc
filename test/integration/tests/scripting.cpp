@@ -156,6 +156,121 @@ TEST_F(ZNCTest, ModperlSocket) {
     client.ReadUntil("received 4 bytes");
 }
 
+TEST_F(ZNCTest, ModpythonUnixSocket) {
+#ifndef WANT_PYTHON
+    GTEST_SKIP() << "Modpython is disabled";
+#endif
+#ifdef __CYGWIN__
+    GTEST_SKIP() << "Bug to fix: https://github.com/znc/znc/issues/1947";
+#endif
+    auto znc = Run();
+    znc->CanLeak();
+
+    InstallModule("socktest.py", R"(
+        import znc
+
+        class acc(znc.Socket):
+            def OnReadData(self, data):
+                self.GetModule().PutModule('received {} bytes'.format(len(data)))
+                self.Close()
+
+        class lis(znc.Socket):
+            def OnAccepted(self, host, port):
+                sock = self.GetModule().CreateSocket(acc)
+                sock.DisableReadLine()
+                return sock
+
+        class socktest(znc.Module):
+            def OnLoad(self, args, ret):
+                listen = self.CreateSocket(lis)
+                return listen.Listen(addrtype='unix', path=self.TestSockPath())
+
+            def OnModCommand(self, cmd):
+                sock = self.CreateSocket()
+                sock.ConnectUnix(self.TestSockPath())
+                sock.WriteBytes(b'blah')
+
+            def TestSockPath(self):
+                path = self.GetSavePath() + "/sock"
+                # https://unix.stackexchange.com/questions/367008/why-is-socket-path-length-limited-to-a-hundred-chars
+                if len(path) < 100:
+                    return path
+                return "./testsock.modpython"
+    )");
+
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod modpython");
+    client.Write("znc loadmod socktest");
+    client.ReadUntil("Loaded module socktest");
+    client.Write("PRIVMSG *socktest :foo");
+    client.ReadUntil("received 4 bytes");
+}
+
+TEST_F(ZNCTest, ModperlUnixSocket) {
+#ifndef WANT_PERL
+    GTEST_SKIP() << "Modperl is disabled";
+#endif
+#ifdef __CYGWIN__
+    GTEST_SKIP() << "Bug to fix: https://github.com/znc/znc/issues/1947";
+#endif
+    auto znc = Run();
+    znc->CanLeak();
+
+    InstallModule("socktest.pm", R"(
+        package socktest::acc;
+        use base 'ZNC::Socket';
+        sub OnReadData {
+            my ($self, $data, $len) = @_;
+            $self->GetModule->PutModule("received $len bytes");
+            $self->Close;
+        }
+
+        package socktest::lis;
+        use base 'ZNC::Socket';
+        sub OnAccepted {
+            my $self = shift;
+            return $self->GetModule->CreateSocket('socktest::acc');
+        }
+
+        package socktest::conn;
+        use base 'ZNC::Socket';
+
+        package socktest;
+        use base 'ZNC::Module';
+        sub OnLoad {
+            my $self = shift;
+            my $listen = $self->CreateSocket('socktest::lis');
+            $listen->Listen(addrtype=>'unix', path=>$self->TestSockPath);
+        }
+        sub OnModCommand {
+            my ($self, $cmd) = @_;
+            my $sock = $self->CreateSocket('socktest::conn');
+            $sock->ConnectUnix($self->TestSockPath);
+            $sock->Write('blah');
+        }
+        sub TestSockPath {
+            my $self = shift;
+            my $path = $self->GetSavePath . "/sock";
+            # https://unix.stackexchange.com/questions/367008/why-is-socket-path-length-limited-to-a-hundred-chars
+            if (length($path) < 100) {
+                return $path;
+            }
+            return "./testsock.modperl";
+        }
+
+        1;
+    )");
+
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod modperl");
+    client.Write("znc loadmod socktest");
+    client.ReadUntil("Loaded module socktest");
+    client.Write("PRIVMSG *socktest :foo");
+    client.ReadUntil("received 4 bytes");
+}
+
 TEST_F(ZNCTest, ModpythonVCString) {
 #ifndef WANT_PYTHON
     GTEST_SKIP() << "Modpython is disabled";
@@ -176,6 +291,7 @@ TEST_F(ZNCTest, ModpythonVCString) {
     auto client = LoginClient();
     client.Write("znc loadmod modpython");
     client.Write("znc loadmod test");
+    sleep(1);
     client.Write("PRIVMSG *test :foo");
     client.ReadUntil("'*test', 'foo'");
 }
@@ -399,9 +515,9 @@ TEST_F(ZNCTest, ModpythonSaslAuth) {
     client2.Write("AUTHENTICATE FOO");
     client2.ReadUntil("AUTHENTICATE " + QByteArrayLiteral("Welcome").toBase64());
     client2.Write("AUTHENTICATE +");
-    client2.ReadUntil(
-        ":irc.znc.in 900 nick nick!user@127.0.0.1 user :You are now logged in "
-        "as user");
+    client2.ReadUntilRe(
+        ":irc.znc.in 900 nick nick!user@(localhost)? user :You are now logged "
+        "in as user");
 }
 
 TEST_F(ZNCTest, ModperlSaslAuth) {
@@ -456,9 +572,9 @@ TEST_F(ZNCTest, ModperlSaslAuth) {
     client2.Write("AUTHENTICATE FOO");
     client2.ReadUntil("AUTHENTICATE " + QByteArrayLiteral("Welcome").toBase64());
     client2.Write("AUTHENTICATE +");
-    client2.ReadUntil(
-        ":irc.znc.in 900 nick nick!user@127.0.0.1 user :You are now logged in "
-        "as user");
+    client2.ReadUntilRe(
+        ":irc.znc.in 900 nick nick!user@(localhost)? user :You are now logged "
+        "in as user");
 }
 
 }  // namespace

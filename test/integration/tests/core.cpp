@@ -90,7 +90,14 @@ TEST_F(ZNCTest, Channel) {
 TEST_F(ZNCTest, HTTP) {
     auto znc = Run();
     auto ircd = ConnectIRCd();
-    auto reply = HttpGet(QNetworkRequest(QUrl("http://127.0.0.1:12345/")));
+
+    auto client = LoginClient();
+    int port = PickPortNumber();
+    client.Write(QStringLiteral("znc addport %1 all all").arg(port).toUtf8());
+    client.ReadUntil(":Port added");
+
+    auto reply = HttpGet(QNetworkRequest(
+        QUrl(QStringLiteral("http://127.0.0.1:%1/").arg(port))));
     EXPECT_THAT(reply->rawHeader("Server").toStdString(), HasSubstr("ZNC"));
 }
 
@@ -102,10 +109,17 @@ TEST_F(ZNCTest, FixCVE20149403) {
     ircd.Write(":server PING :1");
     ircd.ReadUntil("PONG 1");
 
+    auto client = LoginClient();
+    int port = PickPortNumber();
+    client.Write(QStringLiteral("znc addport %1 all all").arg(port).toUtf8());
+    client.ReadUntil(":Port added");
+
     QNetworkRequest request;
     request.setRawHeader("Authorization",
                          "Basic " + QByteArray("user:hunter2").toBase64());
-    request.setUrl(QUrl("http://127.0.0.1:12345/mods/global/webadmin/addchan"));
+    request.setUrl(
+        QUrl(QStringLiteral("http://127.0.0.1:%1/mods/global/webadmin/addchan")
+                 .arg(port)));
     HttpPost(request, {
                           {"user", "user"},
                           {"network", "test"},
@@ -136,10 +150,18 @@ TEST_F(ZNCTest, FixFixOfCVE20149403) {
     ircd.Write(":server PING :12345");
     ircd.ReadUntil("PONG 12345");
 
+    auto client = LoginClient();
+    int port = PickPortNumber();
+    client.Write(QStringLiteral("znc addport %1 all all").arg(port).toUtf8());
+    client.ReadUntil(":Port added");
+
     QNetworkRequest request;
     request.setRawHeader("Authorization",
                          "Basic " + QByteArray("user:hunter2").toBase64());
-    request.setUrl(QUrl("http://127.0.0.1:12345/mods/global/webadmin/addchan"));
+    request.setUrl(
+        QUrl(QStringLiteral("http://127.0.0.1:%1/mods/global/webadmin/addchan")
+                 .arg(port)
+                 .toUtf8()));
     auto reply = HttpPost(request, {
                                        {"user", "user"},
                                        {"network", "test"},
@@ -968,13 +990,13 @@ TEST_F(ZNCTest, SpacedServerPassword) {
     auto znc = Run();
     auto ircd = ConnectIRCd();
     auto client = LoginClient();
-    client.Write("znc delserver 127.0.0.1");
-    client.Write("znc addserver 127.0.0.1 6667 a b");
+    client.Write(("znc delserver unix:" + m_dir.path() + "/inttest.ircd").toUtf8());
+    client.Write(("znc addserver unix:" + m_dir.path() + "/inttest.ircd a b").toUtf8());
     client.Write("znc jump");
     auto ircd2 = ConnectIRCd();
     ircd2.ReadUntil("PASS :a b");
-    client.Write("znc delserver 127.0.0.1");
-    client.Write("znc addserver 127.0.0.1 6667 a");
+    client.Write(("znc delserver unix:" + m_dir.path() + "/inttest.ircd").toUtf8());
+    client.Write(("znc addserver unix:" + m_dir.path() + "/inttest.ircd a").toUtf8());
     client.Write("znc jump");
     auto ircd3 = ConnectIRCd();
     // No :

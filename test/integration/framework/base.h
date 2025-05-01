@@ -20,10 +20,10 @@
 
 #include <QCoreApplication>
 #include <QDateTime>
+#include <QLocalSocket>
 #include <QProcess>
+#include <QRegularExpression>
 #include <QTcpSocket>
-
-#include <memory>
 
 namespace znc_inttest {
 
@@ -34,6 +34,7 @@ class IO {
         : m_device(device), m_verbose(verbose) {}
     virtual ~IO() {}
     void ReadUntil(QByteArray pattern);
+    void ReadUntilRe(QString pattern);
     /*
      * Reads from Device until pattern is matched and returns this pattern
      * up to and excluding the first newline. Pattern itself can contain a newline.
@@ -49,6 +50,7 @@ class IO {
     // Need to flush QTcpSocket, and QIODevice doesn't have flush at all...
     static void FlushIfCan(QIODevice*) {}
     static void FlushIfCan(QTcpSocket* sock) { sock->flush(); }
+    static void FlushIfCan(QLocalSocket* sock) { sock->flush(); }
 
     Device* m_device;
     bool m_verbose;
@@ -60,7 +62,7 @@ IO<Device> WrapIO(Device* d) {
     return IO<Device>(d);
 }
 
-using Socket = IO<QTcpSocket>;
+using Socket = IO<QLocalSocket>;
 
 class Process : public IO<QProcess> {
   public:
@@ -114,7 +116,36 @@ void IO<Device>::ReadUntil(QByteArray pattern) {
         }
         const int timeout_ms =
             QDateTime::currentDateTime().msecsTo(deadline);
-        ASSERT_GT(timeout_ms, 0) << "Wanted:" << pattern.toStdString();
+        ASSERT_GT(timeout_ms, 0) << "Wanted: " << pattern.toStdString();
+        ASSERT_TRUE(m_device->waitForReadyRead(timeout_ms))
+            << "Wanted: " << pattern.toStdString();
+        QByteArray chunk = m_device->readAll();
+        if (m_verbose) {
+            std::cout << chunk.toStdString() << std::flush;
+        }
+        m_readed += chunk;
+    }
+}
+
+template <typename Device>
+void IO<Device>::ReadUntilRe(QString pattern) {
+    QRegularExpression expr(pattern);
+    auto deadline = QDateTime::currentDateTime().addSecs(60);
+    while (true) {
+        QRegularExpressionMatch match =
+            expr.match(QString::fromUtf8(m_readed), 0,
+                          QRegularExpression::PartialPreferCompleteMatch);
+        if (match.hasMatch()) {
+            m_readed.remove(0, match.capturedEnd());
+            return;
+        }
+        if (!match.hasPartialMatch()) {
+            m_readed.clear();
+        }
+        const int timeout_ms =
+            QDateTime::currentDateTime().msecsTo(deadline);
+        ASSERT_GT(timeout_ms, 0)
+            << "Wanted: " << pattern.toStdString();
         ASSERT_TRUE(m_device->waitForReadyRead(timeout_ms))
             << "Wanted: " << pattern.toStdString();
         QByteArray chunk = m_device->readAll();
@@ -156,7 +187,7 @@ void IO<Device>::ReadUntilAndGet(QByteArray pattern, QByteArray& match) {
         }
         const int timeout_ms =
             QDateTime::currentDateTime().msecsTo(deadline);
-        ASSERT_GT(timeout_ms, 0) << "Wanted:" << pattern.toStdString();
+        ASSERT_GT(timeout_ms, 0) << "Wanted: " << pattern.toStdString();
         ASSERT_TRUE(m_device->waitForReadyRead(timeout_ms))
             << "Wanted: " << pattern.toStdString();
         QByteArray chunk = m_device->readAll();
@@ -202,6 +233,9 @@ void IO<Device>::Write(QByteArray s, bool new_line) {
     FlushIfCan(m_device);
 }
 
+inline void DisconnectFromServer(QTcpSocket* s) { s->disconnectFromHost(); }
+inline void DisconnectFromServer(QLocalSocket* s) { s->disconnectFromServer(); }
+
 template <typename Device>
 void IO<Device>::Close() {
 #ifdef __CYGWIN__
@@ -209,8 +243,10 @@ void IO<Device>::Close() {
     // without this line
     sleep(1);
 #endif
-    m_device->disconnectFromHost();
+    DisconnectFromServer(m_device);
 }
+
+int PickPortNumber();
 
 }  // namespace znc_inttest
 

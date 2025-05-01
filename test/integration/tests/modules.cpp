@@ -20,6 +20,7 @@
 #include "znctest.h"
 
 #include <QSslSocket>
+#include <QTcpServer>
 
 using testing::HasSubstr;
 using testing::Not;
@@ -38,23 +39,23 @@ TEST_F(ZNCTest, NotifyConnectModule) {
     client2.Write("PASS :hunter2");
     client2.Write("NICK nick");
     client2.Write("USER user/test x x :x");
-    client.ReadUntil("NOTICE nick :*** user attached from 127.0.0.1");
+    client.ReadUntil("NOTICE nick :*** user attached from ");
 
     auto client3 = ConnectClient();
     client3.Write("PASS :hunter2");
     client3.Write("NICK nick");
     client3.Write("USER user@identifier/test x x :x");
     client.ReadUntil(
-        "NOTICE nick :*** user@identifier attached from 127.0.0.1");
+        "NOTICE nick :*** user@identifier attached from ");
     client2.ReadUntil(
-        "NOTICE nick :*** user@identifier attached from 127.0.0.1");
+        "NOTICE nick :*** user@identifier attached from ");
 
     client2.Write("QUIT");
-    client.ReadUntil("NOTICE nick :*** user detached from 127.0.0.1");
+    client.ReadUntil("NOTICE nick :*** user detached from ");
 
     client3.Close();
     client.ReadUntil(
-        "NOTICE nick :*** user@identifier detached from 127.0.0.1");
+        "NOTICE nick :*** user@identifier detached from ");
 }
 
 TEST_F(ZNCTest, ClientNotifyModule) {
@@ -64,41 +65,46 @@ TEST_F(ZNCTest, ClientNotifyModule) {
     client.Write("znc loadmod clientnotify");
     client.ReadUntil("Loaded module");
 
-    auto check_not_sent = [](Socket& client, std::string wrongAnswer){
-        auto result = QString{client.ReadRemainder()}.toStdString();
-        EXPECT_THAT(result, Not(HasSubstr((wrongAnswer)))) << "Got an answer from the ClientNotifyModule even though we didnt want one with the given configuration";
+    auto check_not_sent = [](Socket& client, QString wrongAnswer) {
+        QString result = QString::fromUtf8(client.ReadRemainder());
+        QRegularExpression expr(wrongAnswer);
+        QRegularExpressionMatch match = expr.match(result);
+        EXPECT_FALSE(match.hasMatch())
+            << "Got an answer from the ClientNotifyModule even though we didnt "
+               "want one with the given configuration: "
+            << wrongAnswer.toStdString() << result.toStdString();
     };
 
     auto client2 = LoginClient();
-    client.ReadUntil(":Another client (127.0.0.1) authenticated as your user. Use the 'ListClients' command to see all 2 clients.");
+    client.ReadUntilRe(R"(:Another client \((localhost)?\) authenticated as your user. Use the 'ListClients' command to see all 2 clients.)");
     auto client3 = LoginClient();
-    client.ReadUntil(":Another client (127.0.0.1) authenticated as your user. Use the 'ListClients' command to see all 3 clients.");
+    client.ReadUntilRe(R"(:Another client \((localhost)?\) authenticated as your user. Use the 'ListClients' command to see all 3 clients.)");
 
     // disable notifications for every message
     client.Write("PRIVMSG *clientnotify :NewOnly on");
 
     // check that we do not ge a notification after connecting from a know ip
     auto client4 = LoginClient();
-    check_not_sent(client, ":Another client (127.0.0.1) authenticated as your user. Use the 'ListClients' command to see all 4 clients.");
+    check_not_sent(client, ":Another client (.*) authenticated as your user. Use the 'ListClients' command to see all 4 clients.");
 
     // choose to notify only on new client ids
     client.Write("PRIVMSG *clientnotify :NotifyOnNewID on");
 
     auto client5 = LoginClient("identifier123");
-    client.ReadUntil(":Another client (127.0.0.1 / identifier123) authenticated as your user. Use the 'ListClients' command to see all 5 clients.");
+    client.ReadUntilRe(R"(:Another client \((localhost)? / identifier123\) authenticated as your user. Use the 'ListClients' command to see all 5 clients.)");
     auto client6 = LoginClient("identifier123");
-    check_not_sent(client, ":Another client (127.0.0.1 / identifier123) authenticated as your user. Use the 'ListClients' command to see all 6 clients.");
+    check_not_sent(client, ":Another client (.* / identifier123) authenticated as your user. Use the 'ListClients' command to see all 6 clients.");
 
     auto client7 = LoginClient("not_identifier123");
-    client.ReadUntil(":Another client (127.0.0.1 / not_identifier123) authenticated as your user. Use the 'ListClients' command to see all 7 clients.");
+    client.ReadUntilRe(R"(:Another client \((localhost)? / not_identifier123\) authenticated as your user. Use the 'ListClients' command to see all 7 clients.)");
 
     // choose to notify from both clientids and new IPs
     client.Write("PRIVMSG *clientnotify :NotifyOnNewIP on");
 
     auto client8 = LoginClient();
-    check_not_sent(client, ":Another client (127.0.0.1 / identifier123) authenticated as your user. Use the 'ListClients' command to see all 8 clients.");
+    check_not_sent(client, ":Another client (.* / identifier123) authenticated as your user. Use the 'ListClients' command to see all 8 clients.");
     auto client9 = LoginClient("definitely_not_identifier123");
-    client.ReadUntil(":Another client (127.0.0.1 / definitely_not_identifier123) authenticated as your user. Use the 'ListClients' command to see all 9 clients.");
+    client.ReadUntilRe(R"(:Another client \((localhost)? / definitely_not_identifier123\) authenticated as your user. Use the 'ListClients' command to see all 9 clients.)");
 }
 
 TEST_F(ZNCTest, ShellModule) {
@@ -241,13 +247,18 @@ TEST_F(ZNCTest, KeepNickModule) {
 }
 
 TEST_F(ZNCTest, ModuleCSRFOverride) {
+    // TODO: Qt 6.8 introduced QNetworkRequest::FullLocalServerNameAttribute to
+    // let it connect to unix socket
+    int port = PickPortNumber();
     auto znc = Run();
     auto ircd = ConnectIRCd();
     auto client = LoginClient();
+    client.Write(QStringLiteral("znc addport %1 all all").arg(port).toUtf8());
     client.Write("znc loadmod samplewebapi");
     client.ReadUntil("Loaded module");
     auto request = QNetworkRequest(
-        QUrl("http://127.0.0.1:12345/mods/global/samplewebapi/"));
+        QUrl(QStringLiteral("http://127.0.0.1:%1/mods/global/samplewebapi/")
+                 .arg(port)));
     auto reply =
         HttpPost(request, {{"text", "ipsum"}})->readAll().toStdString();
     EXPECT_THAT(reply, HasSubstr("ipsum"));
@@ -352,9 +363,12 @@ TEST_F(ZNCTest, SaslAuthPlainImapAuth) {
     auto znc = Run();
     auto ircd = ConnectIRCd();
     QTcpServer imap;
-    ASSERT_TRUE(imap.listen(QHostAddress::LocalHost, 12346)) << imap.errorString().toStdString();
+    ASSERT_TRUE(imap.listen(QHostAddress::LocalHost)) << imap.errorString().toStdString();
     auto client = LoginClient();
-    client.Write("znc loadmod imapauth 127.0.0.1 12346 %@mail.test.com");
+    client.Write(
+        QStringLiteral("znc loadmod imapauth 127.0.0.1 %1 %@mail.test.com")
+            .arg(imap.serverPort())
+            .toUtf8());
     client.ReadUntil("Loaded");
 
     auto client2 = ConnectClient();
@@ -375,11 +389,13 @@ TEST_F(ZNCTest, SaslAuthPlainImapAuth) {
 }
 
 TEST_F(ZNCTest, SaslAuthExternal) {
+    int port = PickPortNumber();
+
     auto znc = Run();
     auto ircd = ConnectIRCd();
     ircd.Write(":server 001 nick :Hello");
     auto client = LoginClient();
-    client.Write("znc addport +12346 all all");
+    client.Write(QStringLiteral("znc addport +%1 all all").arg(port).toUtf8());
     client.ReadUntil(":Port added");
     client.Write("znc loadmod certauth");
     client.ReadUntil("Loaded");
@@ -390,7 +406,7 @@ TEST_F(ZNCTest, SaslAuthExternal) {
     sock.setLocalCertificate(m_dir.path() + "/znc.pem");
     sock.setPrivateKey(m_dir.path() + "/znc.pem");
     sock.setPeerVerifyMode(QSslSocket::VerifyNone);
-    sock.connectToHostEncrypted("127.0.0.1", 12346);
+    sock.connectToHostEncrypted("127.0.0.1", port);
     ASSERT_TRUE(sock.waitForConnected()) << sock.errorString().toStdString();
     ASSERT_TRUE(sock.waitForEncrypted()) << sock.errorString().toStdString();
     auto client2 = WrapIO(&sock);
@@ -404,7 +420,7 @@ TEST_F(ZNCTest, SaslAuthExternal) {
         client2.Close();
         ASSERT_TRUE(sock.state() == QAbstractSocket::UnconnectedState || sock.waitForDisconnected())
             << sock.errorString().toStdString();
-        sock.connectToHostEncrypted("127.0.0.1", 12346);
+        sock.connectToHostEncrypted("127.0.0.1", port);
         ASSERT_TRUE(sock.waitForConnected())
             << sock.errorString().toStdString();
         ASSERT_TRUE(sock.waitForEncrypted())

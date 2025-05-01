@@ -32,7 +32,7 @@ sudo make install
 /usr/local/bin/znc --version
 
 # TODO: use DEVEL_COVER_OPTIONS for https://metacpan.org/pod/Devel::Cover
-env LLVM_PROFILE_FILE="$PWD/inttest.profraw" ZNC_MODPERL_COVERAGE_OPTS="-db,$PWD/cover_db" PYTHONWARNINGS=error make VERBOSE=1 inttest
+env LLVM_PROFILE_FILE="$PWD/inttest.profraw.%p" ZNC_MODPERL_COVERAGE_OPTS="-db,$PWD/cover_db" PYTHONWARNINGS=error make VERBOSE=1 inttest
 ls -lRa
 
 ~/perl5/bin/cover --no-gcov --report=clover
@@ -47,7 +47,7 @@ case "${CC:-gcc}" in
 			export PATH=$PATH:/Library/Developer/CommandLineTools/usr/bin
 		fi
 		llvm-profdata merge unittest.profraw -o unittest.profdata
-		llvm-profdata merge inttest.profraw -o inttest.profdata
+		llvm-profdata merge inttest.profraw* -o inttest.profdata
 		llvm-cov show -show-line-counts-or-regions -instr-profile=unittest.profdata test/unittest_bin > unittest-cmake-coverage.txt
 		llvm-cov show -show-line-counts-or-regions -instr-profile=inttest.profdata /usr/local/bin/znc > inttest-znc-coverage.txt
 		find /usr/local/lib/znc -name '*.so' -or -name '*.bundle' | while read f; do llvm-cov show -show-line-counts-or-regions -instr-profile=inttest.profdata $f > inttest-$(basename $f)-coverage.txt; done

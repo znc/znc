@@ -12,9 +12,9 @@
 						<tr>
 						    <th><? FORMAT "Port" ?></th>
 						    <th><? FORMAT "BindHost" ?></th>
-						    <th><? FORMAT "SSL" ?></th>
 						    <th><? FORMAT "IPv4" ?></th>
 						    <th><? FORMAT "IPv6" ?></th>
+						    <th><? FORMAT "SSL" ?></th>
 						    <th><? FORMAT "IRC" ?></th>
 						    <th><? FORMAT "HTTP" ?></th>
 						    <th><? FORMAT "URIPrefix" ?></th>
@@ -24,16 +24,20 @@
 
 				<? LOOP ListenLoop ?>
 					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
+						<? IF Type == "TCP" ?>
 						<td><? VAR Port ?></td>
 						<td><? VAR BindHost DEFAULT=** ?></td>
-						<td class="listener_show_ssl">
-							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsSSL ?>checked="checked"<? ENDIF ?>/></div>
-						</td>
 						<td>
 							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsIPV4 ?>checked="checked"<? ENDIF ?>/></div>
 						</td>
 						<td>
 							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsIPV6 ?>checked="checked"<? ENDIF ?>/></div>
+						</td>
+						<? ELSE ?>
+						<td colspan="4">unix:<? VAR Path ?></td>
+						<? ENDIF ?>
+						<td class="listener_show_ssl">
+							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsSSL ?>checked="checked"<? ENDIF ?>/></div>
 						</td>
 						<td>
 							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsIRC ?>checked="checked"<? ENDIF ?>/></div>
@@ -46,10 +50,15 @@
 							<? IF SuggestDeletion ?>
 							<form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>del_listener" method="post">
 								<? INC _csrf_check.tmpl ?>
+								<input name="type" type="hidden" value="<? VAR Type ?>"/>
+								<? IF Type == "TCP" ?>
 								<input name="host" type="hidden" value="<? VAR BindHost ?>"/>
 								<input name="port" type="hidden" value="<? VAR Port ?>"/>
 								<input name="ipv4" type="hidden" value="<? VAR IsIPV4 ?>"/>
 								<input name="ipv6" type="hidden" value="<? VAR IsIPV6 ?>"/>
+								<? ELSE ?>
+								<input name="path" type="hidden" value="<? VAR Path ?>"/>
+								<? ENDIF ?>
 								<input type="submit" value="<? FORMAT "Del" ?>"/>
 							</form>
 							<? ELSE ?>
@@ -61,11 +70,24 @@
 					<tr>
 						<form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>add_listener" method="post">
 							<? INC _csrf_check.tmpl ?>
+							<input name="type" type="hidden" value="TCP"/>
 							<td><input name="port" type="number" min="1" max="65535" class="number third"/></td>
 							<td><input name="host" type="text" value="*" class="sixth"/></td>
-							<td><div class="checkbox"><input name="ssl" type="checkbox"/></div></td>
 							<td><div class="checkbox"><input name="ipv4" type="checkbox" checked="checked"/></div></td>
 							<td><div class="checkbox"><input name="ipv6" type="checkbox" checked="checked"/></div></td>
+							<td><div class="checkbox"><input name="ssl" type="checkbox"/></div></td>
+							<td><div class="checkbox"><input name="irc" type="checkbox" checked="checked"/></div></td>
+							<td><div class="checkbox"><input name="web" type="checkbox" checked="checked"/></div></td>
+							<td><input name="uriprefix" type="text" value="/" class="sixth"/></td>
+							<td><input type="submit" value="<? FORMAT "Add" ?>"/></td>
+						</form>
+					</tr>
+					<tr>
+						<form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>add_listener" method="post">
+							<? INC _csrf_check.tmpl ?>
+							<input name="type" type="hidden" value="Unix"/>
+							<td colspan="4">unix:<input name="path" type="text" value="/" class="third"/></td>
+							<td><div class="checkbox"><input name="ssl" type="checkbox"/></div></td>
 							<td><div class="checkbox"><input name="irc" type="checkbox" checked="checked"/></div></td>
 							<td><div class="checkbox"><input name="web" type="checkbox" checked="checked"/></div></td>
 							<td><input name="uriprefix" type="text" value="/" class="sixth"/></td>

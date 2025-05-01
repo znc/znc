@@ -539,24 +539,17 @@ bool CSocket::Connect(const CString& sHostname, unsigned short uPort, bool bSSL,
     }
 
     CUser* pUser = m_pModule->GetUser();
-    CString sSockName = "MOD::C::" + m_pModule->GetModName();
     CString sBindHost;
 
     if (pUser) {
-        sSockName += "::" + pUser->GetUsername();
         sBindHost = pUser->GetBindHost();
         CIRCNetwork* pNetwork = m_pModule->GetNetwork();
         if (pNetwork) {
-            sSockName += "::" + pNetwork->GetName();
             sBindHost = pNetwork->GetBindHost();
         }
     }
 
-    // Don't overwrite the socket name if one is already set
-    if (!GetSockName().empty()) {
-        sSockName = GetSockName();
-    }
-
+    CString sSockName = ConstructSockName("C");
     m_pModule->GetManager()->Connect(sHostname, uPort, sSockName, uTimeout,
                                      bSSL, sBindHost, this);
     return true;
@@ -570,19 +563,48 @@ bool CSocket::Listen(unsigned short uPort, bool bSSL, unsigned int uTimeout) {
         return false;
     }
 
-    CUser* pUser = m_pModule->GetUser();
-    CString sSockName = "MOD::L::" + m_pModule->GetModName();
-
-    if (pUser) {
-        sSockName += "::" + pUser->GetUsername();
-    }
-    // Don't overwrite the socket name if one is already set
-    if (!GetSockName().empty()) {
-        sSockName = GetSockName();
-    }
-
+    CString sSockName = ConstructSockName("L");
     return m_pModule->GetManager()->ListenAll(uPort, sSockName, bSSL, SOMAXCONN,
                                               this);
+}
+
+bool CSocket::ListenUnix(const CString& sPath) {
+    if (!m_pModule) {
+        DEBUG(
+            "ERROR: CSocket::Listen called on instance without m_pModule "
+            "handle!");
+        return false;
+    }
+
+    CString sSockName = ConstructSockName("LU");
+    return m_pModule->GetManager()->ListenUnix(sSockName, sPath, this);
+}
+
+bool CSocket::ConnectUnix(const CString& sPath) {
+    if (!m_pModule) {
+        DEBUG(
+            "ERROR: CSocket::Listen called on instance without m_pModule "
+            "handle!");
+        return false;
+    }
+
+    CString sSockName = ConstructSockName("CU");
+    return m_pModule->GetManager()->ConnectUnix(sSockName, sPath, this);
+}
+
+CString CSocket::ConstructSockName(const CString& sPart) const {
+    CString sSockName = GetSockName();
+    if (!sSockName.empty()) return sSockName;
+
+    sSockName = "MOD::" + sPart + "::" + m_pModule->GetModName();
+
+    if (CUser* pUser = m_pModule->GetUser()) {
+        sSockName += "::" + pUser->GetUsername();
+        if (CIRCNetwork* pNetwork = m_pModule->GetNetwork()) {
+            sSockName += "::" + pNetwork->GetName();
+        }
+    }
+    return sSockName;
 }
 
 CModule* CSocket::GetModule() const { return m_pModule; }

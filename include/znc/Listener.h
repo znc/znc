@@ -22,33 +22,26 @@
 
 // Forward Declarations
 class CRealListener;
+class CConfig;
 // !Forward Declarations
 
 class CListener {
   public:
     typedef enum { ACCEPT_IRC, ACCEPT_HTTP, ACCEPT_ALL } EAcceptType;
 
-    CListener(unsigned short uPort, const CString& sBindHost,
-              const CString& sURIPrefix, bool bSSL, EAddrType eAddr,
-              EAcceptType eAccept)
+    CListener(const CString& sURIPrefix, bool bSSL, EAcceptType eAccept)
         : m_bSSL(bSSL),
-          m_eAddr(eAddr),
-          m_uPort(uPort),
-          m_sBindHost(sBindHost),
           m_sURIPrefix(sURIPrefix),
           m_pListener(nullptr),
           m_eAcceptType(eAccept) {}
 
-    ~CListener();
+    virtual ~CListener();
 
     CListener(const CListener&) = delete;
     CListener& operator=(const CListener&) = delete;
 
     // Getters
     bool IsSSL() const { return m_bSSL; }
-    EAddrType GetAddrType() const { return m_eAddr; }
-    unsigned short GetPort() const { return m_uPort; }
-    const CString& GetBindHost() const { return m_sBindHost; }
     CRealListener* GetRealListener() const { return m_pListener; }
     const CString& GetURIPrefix() const { return m_sURIPrefix; }
     EAcceptType GetAcceptType() const { return m_eAcceptType; }
@@ -58,18 +51,69 @@ class CListener {
     // except this one, so don't add other setters!
     void SetAcceptType(EAcceptType eType) { m_eAcceptType = eType; }
 
-    bool Listen();
+    virtual bool Listen() = 0;
     void ResetRealListener();
+    virtual CConfig ToConfig() const;
 
   private:
   protected:
+    void SetupSSL() const;
+
     bool m_bSSL;
-    EAddrType m_eAddr;
-    unsigned short m_uPort;
-    CString m_sBindHost;
     CString m_sURIPrefix;
     CRealListener* m_pListener;
     EAcceptType m_eAcceptType;
+};
+
+class CTCPListener : public CListener {
+  public:
+    CTCPListener(unsigned short uPort, const CString& sBindHost,
+                 const CString& sURIPrefix, bool bSSL, EAddrType eAddr,
+                 EAcceptType eAccept)
+        : CListener(sURIPrefix, bSSL, eAccept),
+          m_eAddr(eAddr),
+          m_uPort(uPort),
+          m_sBindHost(sBindHost) {}
+    ~CTCPListener();
+
+    CTCPListener(const CTCPListener&) = delete;
+    CTCPListener& operator=(const CTCPListener&) = delete;
+
+    // Getters
+    EAddrType GetAddrType() const { return m_eAddr; }
+    unsigned short GetPort() const { return m_uPort; }
+    const CString& GetBindHost() const { return m_sBindHost; }
+    // !Getters
+
+    bool Listen() override;
+    CConfig ToConfig() const override;
+
+  protected:
+    EAddrType m_eAddr;
+    unsigned short m_uPort;
+    CString m_sBindHost;
+};
+
+class CUnixListener : public CListener {
+  public:
+    CUnixListener(const CString& sPath, const CString& sURIPrefix, bool bSSL,
+                 EAcceptType eAccept)
+        : CListener(sURIPrefix, bSSL, eAccept),
+          m_sPath(sPath) {}
+    ~CUnixListener();
+
+    CUnixListener(const CUnixListener&) = delete;
+    CUnixListener& operator=(const CUnixListener&) = delete;
+
+    // Getters
+    const CString& GetPath() const { return m_sPath; }
+    // !Getters
+
+    bool Listen() override;
+    CConfig ToConfig() const override;
+
+  protected:
+    CString m_sPath;
 };
 
 class CRealListener : public CZNCSock {

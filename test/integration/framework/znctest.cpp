@@ -15,7 +15,9 @@
  */
 
 #include <QRegularExpression>
+#include <QProcess>
 #include "znctest.h"
+#include "cygwin.h"
 
 #ifndef ZNC_BIN_DIR
 #define ZNC_BIN_DIR ""
@@ -24,13 +26,15 @@
 namespace znc_inttest {
 
 void WriteConfig(QString path) {
+    Process p(ZNC_BIN_DIR "/znc",
+              QStringList() << "--debug" << "--datadir" << path << "--makeconf",
+              [=](QProcess* p) {
+                  auto env = p->processEnvironment();
+                  env.insert("ZNC_LISTEN_UNIX_SOCKET",
+                             path + "/inttest.znc");
+                  p->setProcessEnvironment(env);
+              });
     // clang-format off
-    Process p(ZNC_BIN_DIR "/znc", QStringList() << "--debug"
-                                                << "--datadir" << path
-                                                << "--makeconf");
-    p.ReadUntil("Listen on port");          p.Write("12345");
-    p.ReadUntil("Listen using SSL");        p.Write();
-    p.ReadUntil("IPv6");                    p.Write();
     p.ReadUntil("Username");                p.Write("user");
     p.ReadUntil("password");                p.Write("hunter2", false);
     p.ReadUntil("Confirm");                 p.Write("hunter2", false);
@@ -41,7 +45,7 @@ void WriteConfig(QString path) {
     p.ReadUntil("Bind host");               p.Write();
     p.ReadUntil("Set up a network?");       p.Write();
     p.ReadUntil("Name [libera]");           p.Write("test");
-    p.ReadUntil("Server host (host only)"); p.Write("127.0.0.1");
+    p.ReadUntil("Server host (host only)"); p.Write("unix:" + path.toUtf8() + "/inttest.ircd");
     p.ReadUntil("Server uses SSL?");        p.Write();
     p.ReadUntil("6667");                    p.Write();
     p.ReadUntil("password");                p.Write();
@@ -61,7 +65,7 @@ void WriteConfig(QString path) {
 
 void ZNCTest::SetUp() {
     WriteConfig(m_dir.path());
-    ASSERT_TRUE(m_server.listen(QHostAddress::LocalHost, 6667))
+    ASSERT_TRUE(m_server.listen(m_dir.path() + "/inttest.ircd"))
         << m_server.errorString().toStdString();
 }
 
@@ -72,8 +76,13 @@ Socket ZNCTest::ConnectIRCd() {
 
 Socket ZNCTest::ConnectClient() {
     m_clients.emplace_back();
-    QTcpSocket& sock = m_clients.back();
-    sock.connectToHost("127.0.0.1", 12345);
+    QLocalSocket& sock = m_clients.back();
+    sock.setServerName(m_dir.path() + "/inttest.znc");
+#ifdef __CYGWIN__
+    znc_inttest_cygwin::CygwinWorkaroundLocalConnect(sock);
+#else
+    sock.connectToServer();
+#endif
     [&] {
         ASSERT_TRUE(sock.waitForConnected())
             << sock.errorString().toStdString();

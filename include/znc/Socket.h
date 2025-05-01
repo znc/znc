@@ -159,6 +159,28 @@ class CSockManager : public TSocketManager<CZNCSock>,
                  const CString& sSockName, int iTimeout = 60, bool bSSL = false,
                  const CString& sBindHost = "", CZNCSock* pcSock = nullptr);
 
+    bool ListenUnix(const CString& sSockName, const CString& sPath,
+                    CZNCSock* pcSock = nullptr) {
+        if (pcSock->ListenUnixInternal(sPath)) {
+            AddSock(pcSock, sSockName);
+            return true;
+        }
+
+        delete pcSock;
+        return false;
+    }
+
+    bool ConnectUnix(const CString& sSockName, const CString& sPath,
+                     CZNCSock* pcSock = nullptr) {
+        if (pcSock->ConnectUnixInternal(sPath)) {
+            AddSock(pcSock, sSockName);
+            return true;
+        }
+
+        delete pcSock;
+        return false;
+    }
+
     unsigned int GetAnonConnectionCount(const CString& sIP) const;
     void DelSockByAddr(Csock* pcSock) override;
 
@@ -280,6 +302,10 @@ class CSocket : public CZNCSock {
                  bool bSSL = false, unsigned int uTimeout = 60);
     //! Ease of use Listen, assigned to the manager and is subsequently tracked
     bool Listen(unsigned short uPort, bool bSSL, unsigned int uTimeout = 0);
+    bool ConnectUnix(const CString& sPath);
+    bool ListenUnix(const CString& sPath);
+    //! Helper for modperl and modpython, modules don't normally need to call this
+    CString ConstructSockName(const CString& sPart) const;
 
     // Getters
     CModule* GetModule() const;

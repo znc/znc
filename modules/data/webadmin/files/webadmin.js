@@ -106,9 +106,11 @@ function serverlist_init($) {
 			var pass = $(".servers_row_pass", $(this)).val();
 			if (host.length == 0) return;
 			text += host;
-			text += " ";
-			if (ssl) text += "+";
-			text += port;
+			if (!host.startsWith("unix:")) {
+				text += " ";
+				if (ssl) text += "+";
+				text += port;
+			}
 			text += " ";
 			text += pass;
 			text += "\n";
@@ -122,14 +124,15 @@ function serverlist_init($) {
 			serialize();
 		}
 		if (NetworkEdit) {
+			var disable = host.startsWith("unix:") && !EditUnixSockets;
 			row.append(
-				$("<td/>").append($("<input/>").attr({"type":"text"})
+				$("<td/>").append($("<input/>").attr({"type":"text","disabled":disable})
 					.addClass("servers_row_host").val(host)),
-				$("<td/>").append($("<input/>").attr({"type":"number"})
+				$("<td/>").append($("<input/>").attr({"type":"number","disabled":disable})
 					.addClass("servers_row_port").val(port)),
-				$("<td/>").append($("<input/>").attr({"type":"checkbox"})
+				$("<td/>").append($("<input/>").attr({"type":"checkbox","disabled":disable})
 					.addClass("servers_row_ssl").prop("checked", ssl)),
-				$("<td/>").append($("<input/>").attr({"type":"text"})
+				$("<td/>").append($("<input/>").attr({"type":"text","disabled":disable})
 					.addClass("servers_row_pass").val(pass)),
 				$("<td/>").append($("<input/>").attr({"type":"button"})
 					.val("X").click(delete_row))
@@ -147,6 +150,25 @@ function serverlist_init($) {
 			);
 		}
 		$("input", row).change(serialize);
+		$("input.servers_row_host", row).change(function (ev) {
+			var host = ev.target.value;
+			if (host.startsWith("unix:")) {
+				$("input.servers_row_ssl", row)[0].checked = host.startsWith("unix:ssl:");
+			}
+		});
+		$("input.servers_row_ssl", row).change(function (ev) {
+			var host = $("input.servers_row_host", row).val();
+			if (host.startsWith("unix:")) {
+				if (ev.target.checked != host.startsWith("unix:ssl:")) {
+					if (host.startsWith("unix:ssl:")) {
+						host = host.substr(9);
+					} else {
+						host = host.substr(5);
+					}
+					$("input.servers_row_host", row).val("unix:" + (ev.target.checked ? "ssl:" : "") + host);
+				}
+			}
+		});
 		$("#servers_tbody").append(row);
 	}
 
@@ -157,14 +179,20 @@ function serverlist_init($) {
 			if (line.length == 0) return;
 			line = line.split(" ");
 			var host = line[0];
-			var port = line[1] || "6667";
-			var pass = line[2] || "";
-			var ssl;
-			if (port.match(/^\+/)) {
-				ssl = true;
-				port = port.substr(1);
+			var unix = host.startsWith("unix:");
+			var port = "0";
+			var pass = line[unix ? 1 : 2] || "";
+			var ssl = false;
+			if (unix) {
+				if (host.startsWith("unix:ssl:")) {
+					ssl = true;
+				}
 			} else {
-				ssl = false;
+				port = line[1] || "6667";
+				if (port.match(/^\+/)) {
+					ssl = true;
+					port = port.substr(1);
+				}
 			}
 			add_row(host, port, ssl, pass);
 		});

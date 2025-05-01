@@ -15,37 +15,98 @@
  */
 
 #include <znc/Listener.h>
+#include <znc/Config.h>
 #include <znc/znc.h>
 
 CListener::~CListener() {
     if (m_pListener) CZNC::Get().GetManager().DelSockByAddr(m_pListener);
 }
 
-bool CListener::Listen() {
+CConfig CListener::ToConfig() const {
+    CConfig listenerConfig;
+
+    listenerConfig.AddKeyValuePair("URIPrefix", GetURIPrefix() + "/");
+
+    listenerConfig.AddKeyValuePair("SSL", CString(IsSSL()));
+
+    listenerConfig.AddKeyValuePair(
+        "AllowIRC",
+        CString(GetAcceptType() != CListener::ACCEPT_HTTP));
+    listenerConfig.AddKeyValuePair(
+        "AllowWeb",
+        CString(GetAcceptType() != CListener::ACCEPT_IRC));
+
+    return listenerConfig;
+}
+
+void CListener::SetupSSL() const {
+#ifdef HAVE_LIBSSL
+    if (IsSSL()) {
+        m_pListener->SetSSL(true);
+        m_pListener->SetPemLocation(CZNC::Get().GetPemLocation());
+        m_pListener->SetKeyLocation(CZNC::Get().GetKeyLocation());
+        m_pListener->SetDHParamLocation(CZNC::Get().GetDHParamLocation());
+    }
+#endif
+}
+
+CTCPListener::~CTCPListener() {
+}
+
+bool CTCPListener::Listen() {
     if (!m_uPort || m_pListener) {
         errno = EINVAL;
         return false;
     }
 
     m_pListener = new CRealListener(*this);
-
-    bool bSSL = false;
-#ifdef HAVE_LIBSSL
-    if (IsSSL()) {
-        bSSL = true;
-        m_pListener->SetPemLocation(CZNC::Get().GetPemLocation());
-        m_pListener->SetKeyLocation(CZNC::Get().GetKeyLocation());
-        m_pListener->SetDHParamLocation(CZNC::Get().GetDHParamLocation());
-    }
-#endif
+    SetupSSL();
 
     // If e.g. getaddrinfo() fails, the following might not set errno.
     // Make sure there is a consistent error message, not something random
     // which might even be "Error: Success".
     errno = EINVAL;
     return CZNC::Get().GetManager().ListenHost(m_uPort, "_LISTENER",
-                                               m_sBindHost, bSSL, SOMAXCONN,
+                                               m_sBindHost, IsSSL(), SOMAXCONN,
                                                m_pListener, 0, m_eAddr);
+}
+
+CConfig CTCPListener::ToConfig() const {
+    CConfig listenerConfig = CListener::ToConfig();
+
+    listenerConfig.AddKeyValuePair("Host", GetBindHost());
+    listenerConfig.AddKeyValuePair("Port", CString(GetPort()));
+
+    listenerConfig.AddKeyValuePair(
+        "IPv4", CString(GetAddrType() != ADDR_IPV6ONLY));
+    listenerConfig.AddKeyValuePair(
+        "IPv6", CString(GetAddrType() != ADDR_IPV4ONLY));
+
+    return listenerConfig;
+}
+
+CUnixListener::~CUnixListener() {
+}
+
+bool CUnixListener::Listen() {
+    if (m_pListener) {
+        errno = EINVAL;
+        return false;
+    }
+
+    m_pListener = new CRealListener(*this);
+    SetupSSL();
+
+    return CZNC::Get().GetManager().ListenUnix("UNIX_LISTENER", m_sPath,
+                                               m_pListener);
+}
+
+CConfig CUnixListener::ToConfig() const {
+    CConfig listenerConfig = CListener::ToConfig();
+
+    listenerConfig.AddKeyValuePair("Path", GetPath());
+
+    return listenerConfig;
 }
 
 void CListener::ResetRealListener() { m_pListener = nullptr; }

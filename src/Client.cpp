@@ -1341,7 +1341,7 @@ void CClient::RefuseSASLLogin(const CString& sReason) {
 
 void CClient::AcceptSASLLogin(CUser& User) {
     PutClient(":irc.znc.in 900 " + GetNick() + " " + GetNick() + "!" +
-              User.GetIdent() + "@" + GetHostName() + " " + User.GetUsername() +
+              User.GetIdent() + "@" + GetRemoteIP() + " " + User.GetUsername() +
               " :You are now logged in as " + User.GetUsername());
     PutClient(":irc.znc.in 903 " + GetNick() +
               " :SASL authentication successful");
