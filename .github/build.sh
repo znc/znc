@@ -32,7 +32,7 @@ sudo make install
 /usr/local/bin/znc --version
 
 # TODO: use DEVEL_COVER_OPTIONS for https://metacpan.org/pod/Devel::Cover
-env LLVM_PROFILE_FILE="$PWD/inttest.profraw" ZNC_MODPERL_COVERAGE_OPTS="-db,$PWD/cover_db" PYTHONWARNINGS=error make VERBOSE=1 inttest
+env LLVM_PROFILE_FILE="$PWD/inttest.profraw.%p" ZNC_MODPERL_COVERAGE_OPTS="-db,$PWD/cover_db" PYTHONWARNINGS=error make VERBOSE=1 inttest
 ls -lRa
 
 ~/perl5/bin/cover --no-gcov --report=clover

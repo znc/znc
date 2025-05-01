@@ -102,7 +102,6 @@ add_custom_target(inttest COMMAND
 	# znc-buildmod should use the correct compiler.
 	# https://bugs.gentoo.org/699258 is an example of how it can go wrong.
 	${CMAKE_COMMAND} -E env MAKEFLAGS= CXX=${CMAKE_CXX_COMPILER}
-	"INTTEST_BIN=${CMAKE_CURRENT_BINARY_DIR}/integration/inttest"
 	"${PROJECT_SOURCE_DIR}/third_party/gtest-parallel/gtest-parallel"
-	"${CMAKE_CURRENT_SOURCE_DIR}/integration/wrapper.py")
+	"${CMAKE_CURRENT_BINARY_DIR}/integration/inttest")
 add_dependencies(inttest inttest_bin)
