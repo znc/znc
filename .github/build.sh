@@ -47,7 +47,7 @@ case "${CC:-gcc}" in
 			export PATH=$PATH:/Library/Developer/CommandLineTools/usr/bin
 		fi
 		llvm-profdata merge unittest.profraw -o unittest.profdata
-		llvm-profdata merge inttest.profraw -o inttest.profdata
+		llvm-profdata merge inttest.profraw* -o inttest.profdata
 		llvm-cov show -show-line-counts-or-regions -instr-profile=unittest.profdata test/unittest_bin > unittest-cmake-coverage.txt
 		llvm-cov show -show-line-counts-or-regions -instr-profile=inttest.profdata /usr/local/bin/znc > inttest-znc-coverage.txt
 		find /usr/local/lib/znc -name '*.so' -or -name '*.bundle' | while read f; do llvm-cov show -show-line-counts-or-regions -instr-profile=inttest.profdata $f > inttest-$(basename $f)-coverage.txt; done

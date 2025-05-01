@@ -160,6 +160,9 @@ TEST_F(ZNCTest, ModpythonUnixSocket) {
 #ifndef WANT_PYTHON
     GTEST_SKIP() << "Modpython is disabled";
 #endif
+#ifdef __CYGWIN__
+    GTEST_SKIP() << "Bug to fix: https://github.com/znc/znc/issues/1947";
+#endif
     auto znc = Run();
     znc->CanLeak();
 
@@ -207,6 +210,9 @@ TEST_F(ZNCTest, ModpythonUnixSocket) {
 TEST_F(ZNCTest, ModperlUnixSocket) {
 #ifndef WANT_PERL
     GTEST_SKIP() << "Modperl is disabled";
+#endif
+#ifdef __CYGWIN__
+    GTEST_SKIP() << "Bug to fix: https://github.com/znc/znc/issues/1947";
 #endif
     auto znc = Run();
     znc->CanLeak();
