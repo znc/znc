@@ -87,6 +87,14 @@ class CMessage {
         Topic,
         Wallops,
     };
+    /**
+     * Returns which type of message this is.
+     *
+     * This is mostly about which subclass of CMessage is intended to be used,
+     * but does not map 1:1 to the subclasses. The number is NOT guaranteed to
+     * be the same across ZNC versions. For practical purposes, GetCommand() may
+     * be more useful.
+     */
     Type GetType() const { return m_eType; }
 
     bool Equals(const CMessage& Other) const;
