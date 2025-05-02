@@ -1732,7 +1732,7 @@ void CClient::UserPortCommand(CString& sLine) {
 
             std::unique_ptr<CListener> pListener;
             if (sPort.TrimPrefix("unix:")) {
-                bool bSSL = sPort.TrimPrefix("+");
+                bool bSSL = sPort.TrimPrefix("ssl:");
                 const CString& sPath = sPort;
                 CListener::EAcceptType eAccept = ParseEAccept(sLine.Token(2));
                 CString sURIPrefix = sLine.Token(3);
@@ -1763,10 +1763,10 @@ void CClient::UserPortCommand(CString& sLine) {
             PutStatus(
                 t_s("Usage: AddPort <[+]port> <ipv4|ipv6|all> <web|irc|all> "
                     "[bindhost [uriprefix]]"));
-            PutStatus(
-                t_s("Or: AddPort unix:[+]/path/to/socket <web|irc|all> "
-                    "[uriprefix]"));
             PutStatus(t_s("+ means SSL"));
+            PutStatus(
+                t_s("Or: AddPort unix:[ssl:]/path/to/socket <web|irc|all> "
+                    "[uriprefix]"));
         }
     } else if (sCommand.Equals("DELPORT")) {
         try {
@@ -1775,7 +1775,7 @@ void CClient::UserPortCommand(CString& sLine) {
             }
             CListener* pListener;
             if (sPort.TrimPrefix("unix:")) {
-                sPort.TrimPrefix("+");
+                sPort.TrimPrefix("ssl:");
                 pListener = CZNC::Get().FindUnixListener(sPort);
             } else {
                 CString sAddr = sLine.Token(2);
