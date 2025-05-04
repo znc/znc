@@ -444,6 +444,10 @@ TEST_F(ZNCTest, ModpythonCommand) {
     client.Write("PRIVMSG *cmdtest :ping or");
     client.ReadUntil(":*cmdtest!cmdtest@znc.in PRIVMSG nick :ping or pong");
 
+#ifndef HAVE_I18N
+    GTEST_SKIP() << "I18N is disabled, skipping the rest of this test";
+#endif
+
     InstallTranslation("cmdtest", "ru_RU", R"(
         msgid ""
         msgstr ""

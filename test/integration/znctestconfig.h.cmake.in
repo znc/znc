@@ -19,5 +19,6 @@
 
 #cmakedefine WANT_PYTHON 1
 #cmakedefine WANT_PERL 1
+#cmakedefine HAVE_I18N 1
 
 #endif /* ZNCTESTCONFIG_H */
