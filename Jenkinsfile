@@ -24,7 +24,7 @@ timestamps {
           }
         }
         stage('Integration test') {
-          withEnv(['GTEST_OUTPUT=xml:integration-test.xml']) {
+          withEnv(['GTEST_OUTPUT=xml:integration-XXX-test.xml']) {
             sh 'make install'
             sh 'make inttest'
           }
