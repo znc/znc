@@ -51,7 +51,7 @@ Character Encodings:
 * To get proper character encoding and charsets install ICU (`libicu4-dev`)
 
 I18N (UI translation):
-* Boost.Locale
+* Boost.Locale 1.70 or later
 * gettext is a build dependency
 
 Argon2 password hash:
