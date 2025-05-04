@@ -40,12 +40,13 @@ pid = os.getpid()
 rand = random.randint(0, 1000)
 value = f'{pid}-{rand}'
 for var in ['GTEST_OUTPUT']:
-    if test == '':
-        # Avoid outputting xml during test discovery
-        # Otherwise jenkins counts every test twice
-        del os.environ[var]
-    elif var in os.environ:
-        os.environ[var] = os.environ[var].replace('XXX', value)
+    if var in os.environ:
+        if test == '':
+            # Avoid outputting xml during test discovery
+            # Otherwise jenkins counts every test twice
+            del os.environ[var]
+        else:
+            os.environ[var] = os.environ[var].replace('XXX', value)
 
 binary = os.environ['INTTEST_BIN']
 sys.argv[0] = binary
