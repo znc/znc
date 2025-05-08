@@ -83,6 +83,8 @@ class CZNC : private CCoreTranslationMixin {
     void ClearTrustedProxies();
     bool AddTrustedProxy(const CString& sHost);
     bool RemTrustedProxy(const CString& sHost);
+    const SCString& GetClientCapBlacklist() const { return m_ssClientCapBlacklist; }
+    const SCString& GetServerCapBlacklist() const { return m_ssServerCapBlacklist; }
     void Broadcast(const CString& sMessage, bool bAdminOnly = false,
                    CUser* pSkipUser = nullptr, CClient* pSkipClient = nullptr);
     void AddBytesRead(unsigned long long u) { m_uBytesRead += u; }
@@ -307,6 +309,8 @@ class CZNC : private CCoreTranslationMixin {
     VCString m_vsBindHosts;  // TODO: remove (deprecated in 1.7.0)
     VCString m_vsTrustedProxies;
     VCString m_vsMotd;
+    SCString m_ssClientCapBlacklist;
+    SCString m_ssServerCapBlacklist;
     CFile* m_pLockFile;
     unsigned int m_uiConnectDelay;
     unsigned int m_uiAnonIPLimit;

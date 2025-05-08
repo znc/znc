@@ -815,7 +815,8 @@ void CClient::RespondCap(const CString& sResponse) {
     PutClient(":irc.znc.in CAP " + GetNick() + " " + sResponse);
 }
 
-static VCString MultiLine(const SCString& ssCaps) {
+template <typename ManyStrings>
+static VCString MultiLine(const ManyStrings& ssCaps) {
     VCString vsRes = {""};
     for (const CString& sCap : ssCaps) {
         if (vsRes.back().length() + sCap.length() > 400) {
@@ -917,7 +918,15 @@ void CClient::HandleCap(const CMessage& Message) {
             }
         }
         NETWORKMODULECALL(OnClientCapLs(this, ssOfferCaps), GetUser(), GetNetwork(), this, NOTHING);
-        VCString vsCaps = MultiLine(ssOfferCaps);
+        VCString vsFilteredCaps;
+        vsFilteredCaps.reserve(ssOfferCaps.size());
+        for (CString sCap : std::move(ssOfferCaps)) {
+            if (!CZNC::Get().GetClientCapBlacklist().count(
+                    sCap.Token(0, false, "="))) {
+                vsFilteredCaps.push_back(std::move(sCap));
+            }
+        }
+        VCString vsCaps = MultiLine(vsFilteredCaps);
         m_bInCap = true;
         if (HasCap302()) {
             m_bCapNotify = true;
@@ -961,7 +970,7 @@ void CClient::HandleCap(const CMessage& Message) {
             NETWORKMODULECALL(IsClientCapSupported(this, sCap, bVal), GetUser(), GetNetwork(), this,
                              &bAccepted);
 
-            if (!bAccepted) {
+            if (!bAccepted || CZNC::Get().GetClientCapBlacklist().count(sCap)) {
                 // Some unsupported capability is requested
                 RespondCap("NAK :" + Message.GetParam(1));
                 return;

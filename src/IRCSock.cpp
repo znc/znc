@@ -416,6 +416,9 @@ bool CIRCSock::OnCapabilityMessage(CMessage& Message) {
                 sCap = sToken.substr(0, eq);
                 sValue = sToken.substr(eq + 1);
             }
+            if (CZNC::Get().GetServerCapBlacklist().count(sCap)) {
+                continue;
+            }
             m_msCapLsValues[sCap] = sValue;
             if (OnServerCapAvailable(sCap, sValue) || mSupportedCaps.count(sCap)) {
                 m_ssPendingCaps.insert(sCap);

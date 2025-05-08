@@ -55,11 +55,14 @@ CZNC::CZNC()
       m_vsBindHosts(),
       m_vsTrustedProxies(),
       m_vsMotd(),
+      m_ssClientCapBlacklist(),
+      m_ssServerCapBlacklist(),
       m_pLockFile(nullptr),
       m_uiConnectDelay(5),
       m_uiAnonIPLimit(10),
       m_uiMaxBufferSize(500),
-      m_uDisabledSSLProtocols(Csock::EDP_SSL | Csock::EDP_TLSv1 | Csock::EDP_TLSv1_1),
+      m_uDisabledSSLProtocols(Csock::EDP_SSL | Csock::EDP_TLSv1 |
+                              Csock::EDP_TLSv1_1),
       m_pModules(new CModules),
       m_uBytesRead(0),
       m_uBytesWritten(0),
@@ -1183,6 +1186,17 @@ bool CZNC::LoadGlobal(CConfig& config, CString& sError) {
     config.FindStringVector("trustedproxy", vsList);
     for (const CString& sProxy : vsList) {
         AddTrustedProxy(sProxy);
+    }
+
+    m_ssClientCapBlacklist.clear();
+    config.FindStringVector("disableclientcap", vsList);
+    for (const CString& sCap : vsList) {
+        m_ssClientCapBlacklist.insert(sCap);
+    }
+    m_ssServerCapBlacklist.clear();
+    config.FindStringVector("disableservercap", vsList);
+    for (const CString& sCap : vsList) {
+        m_ssServerCapBlacklist.insert(sCap);
     }
 
     CString sVal;

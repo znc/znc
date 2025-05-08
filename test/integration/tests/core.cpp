@@ -1104,5 +1104,29 @@ TEST_F(ZNCTest, InviteNotify) {
     ASSERT_THAT(ircd.ReadRemainder().toStdString(), Not(HasSubstr("__INV__")));
 }
 
+TEST_F(ZNCTest, DisableCap) {
+    {
+        QFile conf(m_dir.path() + "/configs/znc.conf");
+        ASSERT_TRUE(conf.open(QIODevice::Append | QIODevice::Text));
+        QTextStream out(&conf);
+        out << R"(
+            DisableClientCap = sasl
+            DisableServerCap = chghost
+        )";
+    }
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+
+    ircd.Write("CAP user LS :chghost");
+    ASSERT_THAT(ircd.ReadRemainder().toStdString(), Not(HasSubstr("chghost")));
+
+    auto client = ConnectClient();
+    client.Write("NICK foo");
+    client.Write("CAP LS 302");
+    ASSERT_THAT(client.ReadRemainder().toStdString(), Not(HasSubstr("sasl")));
+    client.Write("CAP REQ sasl");
+    client.ReadUntil("CAP foo NAK :sasl");
+}
+
 }  // namespace
 }  // namespace znc_inttest
