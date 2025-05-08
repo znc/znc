@@ -1111,6 +1111,7 @@ TEST_F(ZNCTest, DisableCap) {
         QTextStream out(&conf);
         out << R"(
             DisableClientCap = sasl
+            DisableClientCap = away-notify
             DisableServerCap = chghost
         )";
     }
@@ -1126,6 +1127,19 @@ TEST_F(ZNCTest, DisableCap) {
     ASSERT_THAT(client.ReadRemainder().toStdString(), Not(HasSubstr("sasl")));
     client.Write("CAP REQ sasl");
     client.ReadUntil("CAP foo NAK :sasl");
+
+    client.Write("PASS :hunter2");
+    client.Write("USER user/test x x :x");
+    client.Write("CAP END");
+    client.ReadUntil("001");
+
+    // Server-dependent
+    ircd.Write("001 nick Welcome");
+    ircd.Write("CAP nick NEW away-notify");
+    ircd.ReadUntil("CAP REQ :away-notify");
+    ircd.Write("CAP nick ACK away-notify");
+    ASSERT_THAT(client.ReadRemainder().toStdString(),
+                Not(AllOf(HasSubstr("NEW"), HasSubstr("away-notify"))));
 }
 
 }  // namespace

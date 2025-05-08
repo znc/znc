@@ -1070,7 +1070,7 @@ void CClient::SetTagSupport(const CString& sTag, bool bState) {
 }
 
 void CClient::NotifyServerDependentCap(const CString& sCap, bool bValue, const CString& sValue) {
-    if (bValue) {
+    if (bValue && !CZNC::Get().GetClientCapBlacklist().count(sCap)) {
         if (HasCapNotify()) {
             if (HasCap302() && !sValue.empty()) {
                 PutClient(":irc.znc.in CAP " + GetNick() + " NEW :" + sCap + "=" + sValue);
