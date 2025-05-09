@@ -226,6 +226,7 @@ class CIRCSock : public CIRCSocket {
     unsigned int m_uCapPaused;
     SCString m_ssAcceptedCaps;
     SCString m_ssPendingCaps;
+    SCString m_ssPendingCapsPhase2;
     MCString m_msCapLsValues;
     time_t m_lastCTCP;
     unsigned int m_uNumCTCP;

@@ -249,17 +249,42 @@ void CIRCSock::ReadLine(const CString& sData) {
 }
 
 void CIRCSock::SendNextCap() {
-    if (!m_uCapPaused) {
-        if (m_ssPendingCaps.empty()) {
-            // We already got all needed ACK/NAK replies.
-            if (!m_bAuthed) {
-                PutIRC("CAP END");
+    if (m_uCapPaused) {
+        return;
+    }
+
+    if (!m_ssPendingCaps.empty()) {
+        CString sCaps = std::move(*m_ssPendingCaps.begin());
+        m_ssPendingCaps.erase(m_ssPendingCaps.begin());
+        while (!m_ssPendingCaps.empty()) {
+            const CString& sNext = *m_ssPendingCaps.begin();
+            // Old version of cap spec allowed NAK to only contain first 100
+            // symbols of the REQ message.
+            // Alternatively, instead of parsing NAK we could remember the last
+            // REQ sent, but this is simpler, as we need the splitting logic anyway.
+            // TODO: lift this limit to something more reasonable, e.g. 400
+            if (sCaps.length() + sNext.length() > 98) {
+                break;
             }
-        } else {
-            CString sCap = *m_ssPendingCaps.begin();
+            sCaps += " " + sNext;
             m_ssPendingCaps.erase(m_ssPendingCaps.begin());
-            PutIRC("CAP REQ :" + sCap);
         }
+        PutIRC("CAP REQ :" + sCaps);
+        return;
+    }
+
+    if (!m_ssPendingCapsPhase2.empty()) {
+        // Those which NAKed in first phase, try them again, one by one,
+        // to know which of them failed.
+        CString sCap = std::move(*m_ssPendingCapsPhase2.begin());
+        m_ssPendingCapsPhase2.erase(m_ssPendingCapsPhase2.begin());
+        PutIRC("CAP REQ :" + sCap);
+        return;
+    }
+
+    // We already got all needed ACK/NAK replies.
+    if (!m_bAuthed) {
+        PutIRC("CAP END");
     }
 }
 
@@ -436,7 +461,16 @@ bool CIRCSock::OnCapabilityMessage(CMessage& Message) {
         // This should work because there's no [known]
         // capability with length of name more than 100 characters.
         sArgs.Trim();
-        RemoveCap(sArgs);
+        VCString vsCaps;
+        sArgs.Split(" ", vsCaps, false);
+        if (vsCaps.size() == 1) {
+            RemoveCap(sArgs);
+        } else {
+            // Retry them one by one
+            for (CString& sCap : vsCaps) {
+                m_ssPendingCapsPhase2.insert(std::move(sCap));
+            }
+        }
     } else if (sSubCmd == "DEL") {
         VCString vsTokens;
         sArgs.Split(" ", vsTokens, false);

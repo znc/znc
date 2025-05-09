@@ -22,6 +22,10 @@
 
 using testing::HasSubstr;
 using testing::ContainsRegex;
+using testing::SizeIs;
+using testing::Lt;
+using testing::Gt;
+using testing::AllOf;
 
 namespace znc_inttest {
 namespace {
@@ -1140,6 +1144,32 @@ TEST_F(ZNCTest, DisableCap) {
     ircd.Write("CAP nick ACK away-notify");
     ASSERT_THAT(client.ReadRemainder().toStdString(),
                 Not(AllOf(HasSubstr("NEW"), HasSubstr("away-notify"))));
+}
+
+TEST_F(ZNCTest, ManyCapsInReq) {
+    constexpr int prefix = std::string_view("CAP NAK :").length();
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    ircd.Write(
+        "CAP user LS :away-notify invite-notify extended-join "
+        "userhost-in-names multi-prefix cap-notify "
+        "sasl=ANONYMOUS,EXTERNAL,PLAIN setname tls chghost account-notify "
+        "message-tags batch server-time account-tag echo-message "
+        "labeled-response");
+    QByteArray caps, caps2, caps3;
+    ircd.ReadUntilAndGet("CAP REQ :", caps);
+    caps.remove(0, prefix);
+    EXPECT_THAT(caps.toStdString(), SizeIs(AllOf(Gt(10), Lt(100))));
+    ircd.Write("CAP user NAK :" + caps);
+    ircd.ReadUntilAndGet("CAP REQ :", caps2);
+    caps2.remove(0, prefix);
+    EXPECT_THAT(caps2.toStdString(), SizeIs(AllOf(Gt(10), Lt(100))));
+    ircd.Write("CAP user ACK :" + caps2);
+    // Now it should retry one of the first batch
+    ircd.ReadUntilAndGet("CAP REQ :", caps3);
+    caps3.remove(0, prefix);
+    EXPECT_THAT(caps3.toStdString(), Not(HasSubstr(" ")));
+    EXPECT_TRUE(caps.split(' ').contains(caps3));
 }
 
 }  // namespace
