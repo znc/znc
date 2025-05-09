@@ -55,28 +55,28 @@ msgstr ""
 "module&gt;</code>”). Depois de carregar alguns módulos habilitados para a "
 "Web, o menu será expandido."
 
-#: znc.cpp:1556
+#: znc.cpp:1570
 msgid "User already exists"
 msgstr "O usuário já existe"
 
-#: znc.cpp:1652
+#: znc.cpp:1666
 msgid "SSL is not enabled"
 msgstr "O SSL não está habilitado"
 
-#: znc.cpp:1660
+#: znc.cpp:1674
 #, c++-format
 msgid "Unable to locate pem file: {1}"
 msgstr "Falha ao localizar o arquivo PEM: {1}"
 
-#: znc.cpp:1705
+#: znc.cpp:1719
 msgid "IPv6 is not enabled"
 msgstr "O IPv6 não está habilitado"
 
-#: znc.cpp:1714
+#: znc.cpp:1728
 msgid "Invalid port"
 msgstr "Porta inválida"
 
-#: znc.cpp:1855 ClientCommand.cpp:1754
+#: znc.cpp:1869 ClientCommand.cpp:1754
 #, c++-format
 msgid "Unable to bind: {1}"
 msgstr "Não foi possível vincular: {1}"
@@ -128,75 +128,75 @@ msgstr ""
 msgid "Some module aborted the connection attempt"
 msgstr "Algum módulo cancelou a tentativa de conexão"
 
-#: IRCSock.cpp:596
+#: IRCSock.cpp:599
 #, c++-format
 msgid "Error from server: {1}"
 msgstr "Erro do servidor: {1}"
 
-#: IRCSock.cpp:804
+#: IRCSock.cpp:807
 msgid "ZNC seems to be connected to itself, disconnecting..."
 msgstr "Parece que o ZNC está conectado a si mesmo. Desconectando..."
 
-#: IRCSock.cpp:851
+#: IRCSock.cpp:854
 #, c++-format
 msgid "Server {1} redirects us to {2}:{3} with reason: {4}"
 msgstr "Servidor {1} redireciona a {2}:{3} com motivo: {4}"
 
-#: IRCSock.cpp:855
+#: IRCSock.cpp:858
 msgid "Perhaps you want to add it as a new server."
 msgstr "Talvez você queira adicioná-lo como um novo servidor."
 
-#: IRCSock.cpp:1085
+#: IRCSock.cpp:1088
 #, c++-format
 msgid "Channel {1} is linked to another channel and was thus disabled."
 msgstr "O canal {1} foi desabilitado por estar vinculado a outro canal."
 
-#: IRCSock.cpp:1097
+#: IRCSock.cpp:1100
 msgid "Switched to SSL (STARTTLS)"
 msgstr "Alternado para SSL (STARTTLS)"
 
-#: IRCSock.cpp:1150
+#: IRCSock.cpp:1153
 #, c++-format
 msgid "You quit: {1}"
 msgstr "Você saiu: {1}"
 
-#: IRCSock.cpp:1401
+#: IRCSock.cpp:1404
 msgid "Disconnected from IRC. Reconnecting..."
 msgstr "Desconectado. Reconectando..."
 
-#: IRCSock.cpp:1432
+#: IRCSock.cpp:1435
 #, c++-format
 msgid "Cannot connect to IRC ({1}). Retrying..."
 msgstr "Não foi possível conectar-se ao IRC ({1}). Tentando novamente..."
 
-#: IRCSock.cpp:1435
+#: IRCSock.cpp:1438
 #, c++-format
 msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr "Desconectado do IRC ({1}). Reconectando..."
 
-#: IRCSock.cpp:1471
+#: IRCSock.cpp:1474
 #, c++-format
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 "Caso confie neste certificado, digite /znc AddTrustedServerFingerprint {1}"
 
-#: IRCSock.cpp:1480
+#: IRCSock.cpp:1483
 msgid "IRC connection timed out.  Reconnecting..."
 msgstr "A conexão ao servidor expirou. Reconectando..."
 
-#: IRCSock.cpp:1492
+#: IRCSock.cpp:1495
 msgid "Connection Refused.  Reconnecting..."
 msgstr "Conexão rejeitada. Reconectando..."
 
-#: IRCSock.cpp:1500
+#: IRCSock.cpp:1503
 msgid "Received a too long line from the IRC server!"
 msgstr "Uma linha muito longa foi recebida do servidor de IRC!"
 
-#: IRCSock.cpp:1614
+#: IRCSock.cpp:1617
 msgid "No free nick available"
 msgstr "Não há apelidos livres disponíveis"
 
-#: IRCSock.cpp:1622
+#: IRCSock.cpp:1625
 msgid "No free nick found"
 msgstr "Nenhum apelido livre foi encontrado"
 
@@ -265,35 +265,35 @@ msgstr ""
 "Você está sendo desconectado porque outro usuário acabou de autenticar-se "
 "como você."
 
-#: Client.cpp:1417
+#: Client.cpp:1426
 #, c++-format
 msgid "Your CTCP to {1} got lost, you are not connected to IRC!"
 msgstr "O seu CTCP para {1} foi perdido, você não está conectado ao IRC!"
 
-#: Client.cpp:1544
+#: Client.cpp:1553
 #, c++-format
 msgid "Your notice to {1} got lost, you are not connected to IRC!"
 msgstr "O seu aviso para {1} foi perdido, você não está conectado ao IRC!"
 
-#: Client.cpp:1582
+#: Client.cpp:1591
 #, c++-format
 msgid "Removing channel {1}"
 msgstr "Removendo canal {1}"
 
-#: Client.cpp:1695
+#: Client.cpp:1704
 #, c++-format
 msgid "Your message to {1} got lost, you are not connected to IRC!"
 msgstr "Sua mensagem para {1} foi perdida, você não está conectado ao IRC!"
 
-#: Client.cpp:1747 Client.cpp:1753
+#: Client.cpp:1756 Client.cpp:1762
 msgid "Hello. How may I help you?"
 msgstr "Olá. Como posso ajudá-lo(a)?"
 
-#: Client.cpp:1767
+#: Client.cpp:1776
 msgid "Usage: /attach <#chans>"
 msgstr "Sintaxe: /attach <#canais>"
 
-#: Client.cpp:1774 Client.cpp:1796 ClientCommand.cpp:129 ClientCommand.cpp:151
+#: Client.cpp:1783 Client.cpp:1805 ClientCommand.cpp:129 ClientCommand.cpp:151
 #: ClientCommand.cpp:423 ClientCommand.cpp:450
 #, c++-format
 msgid "There was {1} channel matching [{2}]"
@@ -301,18 +301,18 @@ msgid_plural "There were {1} channels matching [{2}]"
 msgstr[0] "Foi encontrado {1} canal correspondente a [{2}]"
 msgstr[1] "Foi encontrado {1} canal correspondentes a [{2}]"
 
-#: Client.cpp:1777 ClientCommand.cpp:132
+#: Client.cpp:1786 ClientCommand.cpp:132
 #, c++-format
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] "{1} canal foi anexado"
 msgstr[1] "{1} canais foram anexados"
 
-#: Client.cpp:1789
+#: Client.cpp:1798
 msgid "Usage: /detach <#chans>"
 msgstr "Sintaxe: /detach <#canais>"
 
-#: Client.cpp:1799 ClientCommand.cpp:154
+#: Client.cpp:1808 ClientCommand.cpp:154
 #, c++-format
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
