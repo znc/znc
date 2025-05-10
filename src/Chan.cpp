@@ -143,7 +143,9 @@ void CChan::JoinUser(const CString& sKey) {
     if (!IsOn() && !sKey.empty()) {
         SetKey(sKey);
     }
-    m_pNetwork->PutIRC("JOIN " + GetName() + " " + GetKey());
+    if (m_pNetwork->IsIRCConnected()) {
+        m_pNetwork->PutIRC("JOIN " + GetName() + " " + GetKey());
+    }
 }
 
 void CChan::AttachUser(CClient* pClient) {

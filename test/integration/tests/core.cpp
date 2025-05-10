@@ -1172,5 +1172,19 @@ TEST_F(ZNCTest, ManyCapsInReq) {
     EXPECT_TRUE(caps.split(' ').contains(caps3));
 }
 
+TEST_F(ZNCTest, JoinWhileRegistration) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    // First JOIN just adds channel to the list, second one updates the key and
+    // sends JOIN from CChan::JoinUser. Both should be delayed until
+    // registration ends.
+    client.Write("JOIN #foo");
+    client.Write("JOIN #foo");
+    EXPECT_THAT(ircd.ReadRemainder().toStdString(), Not(HasSubstr("JOIN")));
+    ircd.Write(":server 001 nick :Hello");
+    ircd.ReadUntil("JOIN #foo");
+}
+
 }  // namespace
 }  // namespace znc_inttest

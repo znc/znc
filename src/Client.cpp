@@ -1477,13 +1477,13 @@ bool CClient::OnJoinMessage(CJoinMessage& Message) {
                     pChan->SetKey(sKey);
                 }
             }
-        }
 
-        if (!sChannel.empty()) {
-            sChans += (sChans.empty()) ? sChannel : CString("," + sChannel);
+            if (!sChannel.empty() && m_pNetwork->IsIRCConnected()) {
+                sChans += (sChans.empty()) ? sChannel : CString("," + sChannel);
 
-            if (!vsKeys.empty()) {
-                sKeys += (sKeys.empty()) ? sKey : CString("," + sKey);
+                if (!vsKeys.empty()) {
+                    sKeys += (sKeys.empty()) ? sKey : CString("," + sKey);
+                }
             }
         }
     }
