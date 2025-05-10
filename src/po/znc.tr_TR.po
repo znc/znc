@@ -126,76 +126,76 @@ msgstr "ZNC, SSL desteğiyle derlenmediğinden {1}'e bağlanılamıyor."
 msgid "Some module aborted the connection attempt"
 msgstr "Bazı modüller bağlantı girişimini iptal etti"
 
-#: IRCSock.cpp:599
+#: IRCSock.cpp:633
 #, c++-format
 msgid "Error from server: {1}"
 msgstr "Sunucudan gelen hata: {1}"
 
-#: IRCSock.cpp:807
+#: IRCSock.cpp:841
 msgid "ZNC seems to be connected to itself, disconnecting..."
 msgstr "ZNC kendine bağlı görünüyor, bağlantı kesiliyor..."
 
-#: IRCSock.cpp:854
+#: IRCSock.cpp:888
 #, c++-format
 msgid "Server {1} redirects us to {2}:{3} with reason: {4}"
 msgstr "{1} sunucusu bizi şu nedenle {2}:{3} adresine yönlendiriyor: {4}"
 
-#: IRCSock.cpp:858
+#: IRCSock.cpp:892
 msgid "Perhaps you want to add it as a new server."
 msgstr "Belki onu yeni bir sunucu olarak eklemek istersiniz."
 
-#: IRCSock.cpp:1088
+#: IRCSock.cpp:1122
 #, c++-format
 msgid "Channel {1} is linked to another channel and was thus disabled."
 msgstr "{1} kanalı başka bir kanala bağlı olduğundan devre dışı bırakıldı."
 
-#: IRCSock.cpp:1100
+#: IRCSock.cpp:1134
 msgid "Switched to SSL (STARTTLS)"
 msgstr "SSL'ye (STARTTLS) geçildi"
 
-#: IRCSock.cpp:1153
+#: IRCSock.cpp:1187
 #, c++-format
 msgid "You quit: {1}"
 msgstr "Çıktınız: {1}"
 
-#: IRCSock.cpp:1404
+#: IRCSock.cpp:1438
 msgid "Disconnected from IRC. Reconnecting..."
 msgstr "IRC'den bağlantı kesildi. Yeniden bağlanılıyor..."
 
-#: IRCSock.cpp:1435
+#: IRCSock.cpp:1469
 #, c++-format
 msgid "Cannot connect to IRC ({1}). Retrying..."
 msgstr "IRC'ye ({1}) bağlanılamıyor. Yeniden deneniyor..."
 
-#: IRCSock.cpp:1438
+#: IRCSock.cpp:1472
 #, c++-format
 msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr "IRC'den bağlantı kesildi. Yeniden bağlanılıyor..."
 
-#: IRCSock.cpp:1474
+#: IRCSock.cpp:1508
 #, c++-format
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 "Bu sertifikaya güveniyorsanız /znc AddTrustedServerFingerprint {1} komutunu "
 "kullanın"
 
-#: IRCSock.cpp:1483
+#: IRCSock.cpp:1517
 msgid "IRC connection timed out.  Reconnecting..."
 msgstr "IRC bağlantısı zaman aşımına uğradı. Yeniden bağlanılıyor..."
 
-#: IRCSock.cpp:1495
+#: IRCSock.cpp:1529
 msgid "Connection Refused.  Reconnecting..."
 msgstr "Bağlantı reddedildi. Yeniden bağlanılıyor..."
 
-#: IRCSock.cpp:1503
+#: IRCSock.cpp:1537
 msgid "Received a too long line from the IRC server!"
 msgstr "IRC sunucusundan çok uzun bir hat alındı!"
 
-#: IRCSock.cpp:1617
+#: IRCSock.cpp:1651
 msgid "No free nick available"
 msgstr "Kullanılabilir nick yok"
 
-#: IRCSock.cpp:1625
+#: IRCSock.cpp:1659
 msgid "No free nick found"
 msgstr "Kullanılabilir nick bulunamadı"
 
