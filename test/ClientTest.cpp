@@ -293,6 +293,16 @@ TEST_F(ClientTest, OnUserNoticeMessage) {
 }
 
 TEST_F(ClientTest, OnUserJoinMessage) {
+    // JOIN only is sent to server after registration is complete, so make sure
+    // it is complete. But it requires clearing the state afterwards.
+    m_pTestSock->ReadLine("001");
+    m_pTestModule->vsHooks.clear();
+    m_pTestModule->vsMessages.clear();
+    m_pTestModule->vNetworks.clear();
+    m_pTestModule->vClients.clear();
+    m_pTestModule->vChannels.clear();
+    m_pTestSock->vsLines.clear();
+
     CMessage msg("JOIN #chan key");
     m_pTestModule->eAction = CModule::HALT;
     m_pTestClient->ReadLine(msg.ToString());
