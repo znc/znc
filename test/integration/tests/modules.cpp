@@ -480,5 +480,41 @@ TEST_F(ZNCTest, SaslAuthExternal) {
         ":irc.znc.in 904 nick :SASL authentication failed");
 }
 
+TEST_F(ZNCTest, AutoMode) {
+    // TODO: Figure out how to use CHALLANGE.
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod automode");
+    client.Write("PRIVMSG *automode :adduser test *!*@test.com v __NOKEY__ #test");
+    client.ReadUntil("User test added with hostmask(s) *!*@test.com");
+    client.Write("PRIVMSG *automode :adduser example *!*@example.com o __NOKEY__ #test");
+    client.Write("PRIVMSG *automode :listusers");
+    client.ReadUntil("| test    | *!*@test.com    | v    | __NOKEY__ | #test    |");
+    // Test module setting +v and +o.
+    ircd.Write(":server 001 nick :Hello");
+    ircd.Write(":nick JOIN :#test");
+    ircd.Write(":server 353 nick #test :nick");
+    ircd.Write(":server 366 nick #test :End of /NAMES list");
+    ircd.Write(":server MODE #test +o nick");
+    ircd.Write(":test!test@test.com JOIN #test");
+    ircd.ReadUntil("MODE #test +v test");
+    ircd.Write(":example!example@example.com JOIN #test");
+    ircd.ReadUntil("MODE #test +o example");
+    // Verify module saved entries.
+    client.Write("znc unloadmod automode");
+    client.Write("znc loadmod automode");
+    client.Write("PRIVMSG *automode :listusers");
+    client.ReadUntil("| test    | *!*@test.com    | v    | __NOKEY__ | #test    |");
+    // Verify module cleared entries.
+    client.Write("PRIVMSG *automode :clear");
+    client.ReadUntil("All entries cleared.");
+    client.Write("znc unloadmod automode");
+    client.Write("znc loadmod automode");
+    client.ReadUntil("Loaded module automode");
+    client.Write("PRIVMSG *automode :listusers");
+    client.ReadUntil("There are no users defined");
+}
+
 }  // namespace
 }  // namespace znc_inttest
