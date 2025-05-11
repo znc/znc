@@ -51,7 +51,7 @@ class CIRCNetworkPingTimer : public CCron {
 
         if (pIRCSock &&
             pIRCSock->GetTimeSinceLastDataTransaction() >= uFrequency) {
-            pIRCSock->PutIRC("PING :ZNC");
+            pIRCSock->PutIRCQuick("PING :ZNC");
         }
 
         const vector<CClient*>& vClients = m_pNetwork->GetClients();
