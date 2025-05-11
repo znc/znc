@@ -238,6 +238,7 @@ class CIRCSock : public CIRCSocket {
     unsigned short int m_uFloodBurst;
     double m_fFloodRate;
     bool m_bFloodProtection;
+    unsigned long long m_lastFloodWarned;
     SCString m_ssSupportedTags;
     VCString m_vsSSLError;
 

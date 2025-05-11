@@ -89,7 +89,8 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork)
       m_iSendsAllowed(pNetwork->GetFloodBurst()),
       m_uFloodBurst(pNetwork->GetFloodBurst()),
       m_fFloodRate(pNetwork->GetFloodRate()),
-      m_bFloodProtection(IsFloodProtected(pNetwork->GetFloodRate())) {
+      m_bFloodProtection(IsFloodProtected(pNetwork->GetFloodRate())),
+      m_lastFloodWarned(0) {
     EnableReadLine();
     m_Nick.SetIdent(m_pNetwork->GetIdent());
     m_Nick.SetHost(m_pNetwork->GetBindHost());
@@ -1383,6 +1384,17 @@ void CIRCSock::TrySend() {
             PutIRCRaw(Message.ToString());
         }
         m_vSendQueue.pop_front();
+
+        if (m_vSendQueue.size() * m_fFloodRate > 600) {
+            unsigned long long now = CUtils::GetMillTime();
+            // Warn no more often than once every 2 minutes
+            if (now > m_lastFloodWarned + 2 * 60'000) {
+                m_lastFloodWarned = now;
+                this->GetNetwork()->PutStatus(
+                    t_f("Warning: flood protection is delaying your messages "
+                        "by {1} seconds")(m_vSendQueue.size() * m_fFloodRate));
+            }
+        }
     }
 }
 
