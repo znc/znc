@@ -21,6 +21,7 @@
 #include "znctestconfig.h"
 
 using testing::HasSubstr;
+using testing::Contains;
 using testing::ContainsRegex;
 using testing::SizeIs;
 using testing::Lt;
@@ -1169,7 +1170,7 @@ TEST_F(ZNCTest, ManyCapsInReq) {
     ircd.ReadUntilAndGet("CAP REQ :", caps3);
     caps3.remove(0, prefix);
     EXPECT_THAT(caps3.toStdString(), Not(HasSubstr(" ")));
-    EXPECT_TRUE(caps.split(' ').contains(caps3));
+    EXPECT_THAT(caps.split(' '), Contains(caps3));
 }
 
 TEST_F(ZNCTest, JoinWhileRegistration) {

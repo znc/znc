@@ -450,17 +450,19 @@ bool CIRCSock::OnCapabilityMessage(CMessage& Message) {
             }
         }
     } else if (sSubCmd == "ACK") {
-        sArgs.Trim();
-        IRCSOCKMODULECALL(OnServerCapResult(sArgs, true), NOTHING);
-        auto it = mSupportedCaps.find(sArgs);
-        if (it != mSupportedCaps.end()) {
-            it->second(true);
+        VCString vsCaps;
+        sArgs.Split(" ", vsCaps, false);
+        for (CString& sCap : vsCaps) {
+            IRCSOCKMODULECALL(OnServerCapResult(sCap, true), NOTHING);
+            auto it = mSupportedCaps.find(sCap);
+            if (it != mSupportedCaps.end()) {
+                it->second(true);
+            }
+            m_ssAcceptedCaps.insert(std::move(sCap));
         }
-        m_ssAcceptedCaps.insert(sArgs);
     } else if (sSubCmd == "NAK") {
         // This should work because there's no [known]
         // capability with length of name more than 100 characters.
-        sArgs.Trim();
         VCString vsCaps;
         sArgs.Split(" ", vsCaps, false);
         if (vsCaps.size() == 1) {

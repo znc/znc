@@ -305,9 +305,9 @@ TEST_P(SaslModuleTest, Test) {
     client.Write("znc jump");
     ircd = ConnectIRCd();
     ircd.ReadUntil("CAP LS");
-    ircd.Write("CAP * LS :sasl");
-    ircd.ReadUntil("CAP REQ :sasl");
-    ircd.Write("CAP * ACK :sasl");
+    ircd.Write("CAP * LS :away-notify sasl");
+    ircd.ReadUntil("CAP REQ :away-notify sasl");
+    ircd.Write("CAP * ACK :away-notify sasl");
     ircd.ReadUntil("AUTHENTICATE EXTERNAL");
     ircd.Write(":server 904 *");
     ircd.ReadUntil("AUTHENTICATE PLAIN");
