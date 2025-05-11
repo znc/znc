@@ -320,11 +320,11 @@ msgstr[1] "Отцепляю {1} канала"
 msgstr[2] "Отцепляю {1} каналов"
 msgstr[3] "Отцепляю {1} каналов"
 
-#: Chan.cpp:680
+#: Chan.cpp:682
 msgid "Buffer Playback..."
 msgstr "Воспроизведение буфера..."
 
-#: Chan.cpp:718
+#: Chan.cpp:720
 msgid "Playback Complete."
 msgstr "Воспроизведение завершено."
 

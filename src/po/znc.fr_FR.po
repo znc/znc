@@ -324,11 +324,11 @@ msgid_plural "Detached {1} channels"
 msgstr[0] "A détaché {1} salon"
 msgstr[1] "A détaché {1} salons"
 
-#: Chan.cpp:680
+#: Chan.cpp:682
 msgid "Buffer Playback..."
 msgstr "Répétition du tampon..."
 
-#: Chan.cpp:718
+#: Chan.cpp:720
 msgid "Playback Complete."
 msgstr "Répétition terminée."
 

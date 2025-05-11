@@ -316,11 +316,11 @@ msgid_plural "Detached {1} channels"
 msgstr[0] "Откачен е канал {1}"
 msgstr[1] "Откачени са канали {1}"
 
-#: Chan.cpp:680
+#: Chan.cpp:682
 msgid "Buffer Playback..."
 msgstr "Възпроизвеждане на буфер..."
 
-#: Chan.cpp:718
+#: Chan.cpp:720
 msgid "Playback Complete."
 msgstr "Възпроизвеждането е изпълнено."
 

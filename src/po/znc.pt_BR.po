@@ -319,11 +319,11 @@ msgid_plural "Detached {1} channels"
 msgstr[0] "{1} canal foi desanexado"
 msgstr[1] "{1} canais foram desanexados"
 
-#: Chan.cpp:680
+#: Chan.cpp:682
 msgid "Buffer Playback..."
 msgstr "Reprodução de buffer..."
 
-#: Chan.cpp:718
+#: Chan.cpp:720
 msgid "Playback Complete."
 msgstr "Reprodução completa."
 

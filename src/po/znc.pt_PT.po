@@ -317,11 +317,11 @@ msgid_plural "Detached {1} channels"
 msgstr[0] "{1} canal desunido"
 msgstr[1] "{1} canais desunidos"
 
-#: Chan.cpp:680
+#: Chan.cpp:682
 msgid "Buffer Playback..."
 msgstr "Reprodução do buffer..."
 
-#: Chan.cpp:718
+#: Chan.cpp:720
 msgid "Playback Complete."
 msgstr "Reprodução Concluída."
 

@@ -327,11 +327,11 @@ msgstr[1] "Odpięto {1} kanały"
 msgstr[2] "Odpięto {1} kanałów"
 msgstr[3] "Odpięto {1} kanały/ów"
 
-#: Chan.cpp:680
+#: Chan.cpp:682
 msgid "Buffer Playback..."
 msgstr "Odtwarzanie bufora..."
 
-#: Chan.cpp:718
+#: Chan.cpp:720
 msgid "Playback Complete."
 msgstr "Odtwarzanie zakończone."
 
