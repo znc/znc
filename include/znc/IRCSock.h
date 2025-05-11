@@ -228,9 +228,9 @@ class CIRCSock : public CIRCSocket {
     SCString m_ssPendingCaps;
     SCString m_ssPendingCapsPhase2;
     MCString m_msCapLsValues;
-    time_t m_lastCTCP;
+    unsigned long long m_lastCTCP;
     unsigned int m_uNumCTCP;
-    static const time_t m_uCTCPFloodTime;
+    static const unsigned long long m_uCTCPFloodTime;
     static const unsigned int m_uCTCPFloodCount;
     MCString m_mISupport;
     std::deque<CMessage> m_vSendQueue;

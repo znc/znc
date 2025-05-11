@@ -31,7 +31,7 @@ using std::map;
     NETWORKMODULECALL(macFUNC, m_pNetwork->GetUser(), m_pNetwork, nullptr, \
                       macEXITER)
 // These are used in OnGeneralCTCP()
-const time_t CIRCSock::m_uCTCPFloodTime = 5;
+const unsigned long long CIRCSock::m_uCTCPFloodTime = 5000;
 const unsigned int CIRCSock::m_uCTCPFloodCount = 5;
 
 // It will be bad if user sets it to 0.00000000000001
@@ -544,7 +544,7 @@ bool CIRCSock::OnCTCPMessage(CCTCPMessage& Message) {
     }
 
     if (!sReply.empty()) {
-        time_t now = time(nullptr);
+        unsigned long long now = CUtils::GetMillTime();
         // If the last CTCP is older than m_uCTCPFloodTime, reset the counter
         if (m_lastCTCP + m_uCTCPFloodTime < now) m_uNumCTCP = 0;
         m_lastCTCP = now;
