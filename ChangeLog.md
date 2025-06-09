@@ -1,3 +1,54 @@
+# ZNC 1.10.0 (2025-06-09)
+
+## New
+
+* Implemented several IRCv3 features:
+    * SASL [v3.1](https://ircv3.net/specs/extensions/sasl-3.1) and [v3.2](https://ircv3.net/specs/extensions/sasl-3.2) for clients. It's possible to optionally pass network name and/or client id in the "authorization ID" field of SASL, with the same syntax as without SASL: `user@client/network`. Core gained several new module hooks, the specific mechanisms are implemented in modules:
+        * saslplainauth implements PLAIN mechanism; this module is loaded by default for new installations, and it supports checking the password using other modules such as imapauth.
+        * certauth implements EXTERNAL mechanism.
+    * [message-tags](https://ircv3.net/specs/extensions/message-tags) capability. Several message tags had been supported already, but in a limited way: no arbitrary tags, no TAGMSG, and only sending tags to client; now these limitations are gone.
+    * [chghost](https://ircv3.net/specs/extensions/chghost) capability. The fallback for clients which don't support it is as usual: QUIT followed by JOIN and MODE.
+    * [invite-notify](https://ircv3.net/specs/extensions/invite-notify) capability.
+* Added a way to disable capabilities, both on client side and server side, using `DisableClientCap = ...` and `DisableServerCap = ...` in config respectively. If disabled, the client cap will be missing from CAP LS and CAP NEW, NAKed if requested by client, and the server cap won't be requested from IRC server, though it won't prevent usage of e.g. send_raw to request it anyway.
+* Warn user if flood protection is delaying the messages for too long.
+* Added experimental support for unix sockets: for listeners, for connections to server, and for modules. The syntax for `/znc AddServer` and `/znc AddPort` is `unix:/path` and `unix:ssl:/path`, and only admins are allowed to add such servers. Note that on certain platforms (e.g. cygwin) this doesn't work very well.
+* `znc --makepem` now takes the CN from `gethostname()` and `uname()` if available. This is still overrideable via `HOSTNAME` environment variable.
+
+## Fixes
+
+* Fixed high CPU usage when ZNC is connecting to a server.
+* Sped up capability negotiation with the server: now several capabilities are requested together, and retried one by one later only if server rejected the whole message. This should decrease "Registration timeout" errors.
+* Don't forward client JOINs during registration, as client autojoining channels may interfere with registration. This also should decrease "Registration timeout" errors.
+* Fixed the translation pipeline again, pulled latest translations from crowdin - the pipeline had broken before 1.9.1, but we didn't notice, leaving translations outdated.
+* Fixed sending server passwords with spaces in them.
+* CTCP sent to `*status` shouldn't reach server.
+* Made PING skip the flood protection queue just like PONG does. This was rarely an issue in practice, but on very quiet servers where nothing is going on, ZNC could disconnect due to timeout because the PING message which server would reply to with PONG is also stuck in the queue and not sent.
+* Made CTCP flood timer use monotonic time.
+
+## Modules
+
+* certauth:
+    * it's no longer required to send a garbage password via `PASS` command, if the client uses SASL EXTERNAL.
+    * switched fingerprints from SHA-1 to more secure SHA-256. For now it still accepts old configs, and if the correct certificate is present, automatically replaces the stored fingerprint with SHA-256, but the support for SHA-1 will be removed in some future version.
+* log: don't log user quits to logs of channels that are disabled.
+* modperl: removed usage of deprecated keywords `given`/`when`.
+* sasl: if RequireAuth is set, but SASL failed, don't disable the network anymore, simply disconnect, and try later, because such issue is often transient, while IRC services are down.
+* webadmin:
+    * fixed editing fields which are allowed to be edited while `DenySetNetwork` is set.
+    * removed old compatibility code for pre-0.090 versions of parsing arguments to module to open another web port.
+
+## Notes for package maintainers
+
+Minimum version of Boost for the optional I18N support is now 1.70 for [compatibility with new CMake](https://cmake.org/cmake/help/latest/policy/CMP0167.html).
+
+## Internal
+
+* Updated integration tests to Qt 6; Qt 5 is still supported, use `export ZNC_QT_VER=5` to use it instead of Qt 6.
+* Made integration tests run in parallel.
+* Don't test presence of i18n in the test when it's disabled.
+* Moved the base64 table from header to .cpp
+
+
 # ZNC 1.9.1 (2024-07-03)
 
 * This is a security release to fix CVE-2024-39844: remote code execution vulnerability in modtcl.
