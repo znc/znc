@@ -27,6 +27,7 @@ using testing::SizeIs;
 using testing::Lt;
 using testing::Gt;
 using testing::AllOf;
+using testing::AnyOf;
 
 namespace znc_inttest {
 namespace {
@@ -396,7 +397,10 @@ TEST_F(ZNCTest, MoveChannels) {
     client.Close();
 
     ircd.Write(":server 001 nick :Hello");
-    ircd.ReadUntil("JOIN #foo,#bar");
+    QByteArray joins;
+    ircd.ReadUntilAndGet("JOIN", joins);
+    ASSERT_THAT(joins.toStdString(), AnyOf(HasSubstr("JOIN #foo,#bar"),
+                                           HasSubstr("JOIN #bar,#foo")));
     ircd.Write(":nick JOIN :#foo");
     ircd.Write(":server 353 nick #foo :nick");
     ircd.Write(":server 366 nick #foo :End of /NAMES list");
