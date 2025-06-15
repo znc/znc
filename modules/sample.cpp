@@ -36,7 +36,7 @@ class CSampleJob : public CModuleJob {
 
     void runThread() override {
         // Cannot safely use GetModule() in here, because this runs in its
-        // own thread and such an access would require synchronisation
+        // own thread and such an access would require synchronization
         // between this thread and the main thread!
 
         for (int i = 0; i < 10; i++) {
@@ -158,14 +158,19 @@ class CSampleMod : public CModule {
         return CONTINUE;
     }
 
-    void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel,
-                const CString& sMessage) override {
+    void OnKickMessage(CKickMessage& Message) override {
+        const CNick& OpNick = Message.GetNick();
+        const CString sKickedNick = Message.GetKickedNick();
+        CChan& Channel = *Message.GetChan();
+        const CString sMessage = Message.GetReason();
         PutModule(t_f("{1} kicked {2} from {3} with the msg {4}")(
             OpNick.GetNick(), sKickedNick, Channel.GetName(), sMessage));
     }
 
-    void OnQuit(const CNick& Nick, const CString& sMessage,
-                const vector<CChan*>& vChans) override {
+    void OnQuitMessage(CQuitMessage& Message,
+                       const vector<CChan*>& vChans) override {
+        const CNick& Nick = Message.GetNick();
+        const CString sMessage = Message.GetReason();
         PutModule(t_p("* {1} ({2}@{3}) quits ({4}) from channel: {6}",
                       "* {1} ({2}@{3}) quits ({4}) from {5} channels: {6}",
                       vChans.size())(
@@ -178,63 +183,81 @@ class CSampleMod : public CModule {
         return CONTINUE;
     }
 
-    void OnJoin(const CNick& Nick, CChan& Channel) override {
+    void OnJoinMessage(CJoinMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        CChan& Channel = *Message.GetChan();
         PutModule(t_f("* {1} ({2}@{3}) joins {4}")(
             Nick.GetNick(), Nick.GetIdent(), Nick.GetHost(),
             Channel.GetName()));
     }
 
-    void OnPart(const CNick& Nick, CChan& Channel,
-                const CString& sMessage) override {
-        PutModule(t_f("* {1} ({2}@{3}) parts {4}")(
-            Nick.GetNick(), Nick.GetIdent(), Nick.GetHost(),
-            Channel.GetName()));
+    void OnPartMessage(CPartMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        CChan& Channel = *Message.GetChan();
+        const CString sMessage = Message.GetReason();
+        PutModule(t_f("* {1} ({2}@{3}) parts {4} with message: {5}")(
+            Nick.GetNick(), Nick.GetIdent(), Nick.GetHost(), Channel.GetName(),
+            sMessage));
     }
 
-    EModRet OnInvite(const CNick& Nick, const CString& sChan) override {
-        if (sChan.Equals("#test")) {
+    EModRet OnInviteMessage(CInviteMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        const CString Channel = Message.GetParam(1);
+        if (Channel.Equals("#test")) {
             PutModule(t_f("{1} invited us to {2}, ignoring invites to {2}")(
-                Nick.GetNick(), sChan));
+                Nick.GetNick(), Channel));
             return HALT;
         }
 
-        PutModule(t_f("{1} invited us to {2}")(Nick.GetNick(), sChan));
+        PutModule(t_f("{1} invited us to {2}")(Nick.GetNick(), Channel));
         return CONTINUE;
     }
 
-    void OnNick(const CNick& OldNick, const CString& sNewNick,
-                const vector<CChan*>& vChans) override {
+    void OnNickMessage(CNickMessage& Message,
+                       const vector<CChan*>& vChans) override {
+        const CNick& OldNick = Message.GetNick();
+        const CString sNewNick = Message.GetNewNick();
         PutModule(t_f("{1} is now known as {2}")(OldNick.GetNick(), sNewNick));
     }
 
-    EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage) override {
+    EModRet OnUserCTCPReplyMessage(CCTCPMessage& Message) override {
+        CString sTarget = Message.GetTarget();
+        CString sMessage = Message.GetText();
         PutModule("[" + sTarget + "] userctcpreply [" + sMessage + "]");
         sMessage = "\037" + sMessage + "\037";
 
         return CONTINUE;
     }
 
-    EModRet OnCTCPReply(CNick& Nick, CString& sMessage) override {
+    EModRet OnCTCPReplyMessage(CCTCPMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        CString sMessage = Message.GetText();
         PutModule("[" + Nick.GetNick() + "] ctcpreply [" + sMessage + "]");
 
         return CONTINUE;
     }
 
-    EModRet OnUserCTCP(CString& sTarget, CString& sMessage) override {
+    EModRet OnUserCTCPMessage(CCTCPMessage& Message) override {
+        CString sTarget = Message.GetTarget();
+        CString sMessage = Message.GetText();
         PutModule("[" + sTarget + "] userctcp [" + sMessage + "]");
 
         return CONTINUE;
     }
 
-    EModRet OnPrivCTCP(CNick& Nick, CString& sMessage) override {
+    EModRet OnPrivCTCPMessage(CCTCPMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        CString sMessage = Message.GetText();
         PutModule("[" + Nick.GetNick() + "] privctcp [" + sMessage + "]");
         sMessage = "\002" + sMessage + "\002";
 
         return CONTINUE;
     }
 
-    EModRet OnChanCTCP(CNick& Nick, CChan& Channel,
-                       CString& sMessage) override {
+    EModRet OnChanCTCPMessage(CCTCPMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        CString sMessage = Message.GetText();
+        CChan& Channel = *Message.GetChan();
         PutModule("[" + Nick.GetNick() + "] chanctcp [" + sMessage + "] to [" +
                   Channel.GetName() + "]");
         sMessage = "\00311,5 " + sMessage + " \003";
@@ -242,22 +265,29 @@ class CSampleMod : public CModule {
         return CONTINUE;
     }
 
-    EModRet OnUserNotice(CString& sTarget, CString& sMessage) override {
+    EModRet OnUserNoticeMessage(CNoticeMessage& Message) override {
+        CIRCNetwork* pNetwork = GetNetwork();
+        CString sTarget = Message.GetTarget();
+        CString sMessage = Message.GetText();
         PutModule("[" + sTarget + "] usernotice [" + sMessage + "]");
         sMessage = "\037" + sMessage + "\037";
 
         return CONTINUE;
     }
 
-    EModRet OnPrivNotice(CNick& Nick, CString& sMessage) override {
+    EModRet OnPrivNoticeMessage(CNoticeMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        CString sMessage = Message.GetText();
         PutModule("[" + Nick.GetNick() + "] privnotice [" + sMessage + "]");
         sMessage = "\002" + sMessage + "\002";
 
         return CONTINUE;
     }
 
-    EModRet OnChanNotice(CNick& Nick, CChan& Channel,
-                         CString& sMessage) override {
+    EModRet OnChanNoticeMessage(CNoticeMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        CString sMessage = Message.GetText();
+        CChan& Channel = *Message.GetChan();
         PutModule("[" + Nick.GetNick() + "] channotice [" + sMessage +
                   "] to [" + Channel.GetName() + "]");
         sMessage = "\00311,5 " + sMessage + " \003";
@@ -265,36 +295,50 @@ class CSampleMod : public CModule {
         return CONTINUE;
     }
 
-    EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) override {
+    EModRet OnTopicMessage(CTopicMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        CChan& Channel = *Message.GetChan();
+        CString sTopic = Message.GetTopic();
         PutModule(t_f("{1} changes topic on {2} to {3}")(
             Nick.GetNick(), Channel.GetName(), sTopic));
 
         return CONTINUE;
     }
 
-    EModRet OnUserTopic(CString& sTarget, CString& sTopic) override {
-        PutModule(t_f("{1} changes topic on {2} to {3}")(GetClient()->GetNick(),
-                                                         sTarget, sTopic));
+    EModRet OnUserTopicMessage(CTopicMessage& Message) override {
+        CChan& Channel = *Message.GetChan();
+        CString sTopic = Message.GetTopic();
+        PutModule(t_f("{1} changes topic on {2} to {3}")(
+            GetClient()->GetNick(), Channel.GetName(), sTopic));
 
         return CONTINUE;
     }
+
     // Appends "Sample:" to an outgoing message and colors it red.
-    EModRet OnUserMsg(CString& sTarget, CString& sMessage) override {
+    EModRet OnUserTextMessage(CTextMessage& Message) override {
+        CIRCNetwork* pNetwork = GetNetwork();
+        CString sTarget = Message.GetTarget();
+        CString sMessage = Message.GetText();
         PutModule("[" + sTarget + "] usermsg [" + sMessage + "]");
         sMessage = "Sample: \0034" + sMessage + "\003";
 
         return CONTINUE;
     }
-    
+
     // Bolds an incoming message.
-    EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override {
+    EModRet OnPrivTextMessage(CTextMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        CString sMessage = Message.GetText();
         PutModule("[" + Nick.GetNick() + "] privmsg [" + sMessage + "]");
         sMessage = "\002" + sMessage + "\002";
 
         return CONTINUE;
     }
 
-    EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override {
+    EModRet OnChanTextMessage(CTextMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        CString sMessage = Message.GetText();
+        CChan& Channel = *Message.GetChan();
         if (sMessage == "!ping") {
             PutIRC("PRIVMSG " + Channel.GetName() + " :PONG?");
         }
