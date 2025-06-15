@@ -517,6 +517,13 @@ bool CZNC::WriteConfig() {
         config.AddKeyValuePair("SSLProtocols", m_sSSLProtocols);
     }
 
+    for (const CString& sLine : m_ssClientCapBlacklist) {
+        config.AddKeyValuePair("DisableClientCap", sLine.FirstLine());
+    }
+    for (const CString& sLine : m_ssServerCapBlacklist) {
+        config.AddKeyValuePair("DisableServerCap", sLine.FirstLine());
+    }
+
     for (const CString& sLine : m_vsMotd) {
         config.AddKeyValuePair("Motd", sLine.FirstLine());
     }
