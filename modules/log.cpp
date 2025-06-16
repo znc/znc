@@ -437,12 +437,12 @@ void CLogMod::OnKickMessage(CKickMessage& Message) {
 
 void CLogMod::OnQuitMessage(CQuitMessage& Message,
                             const vector<CChan*>& vChans) {
-    const CNick& Nick = Message.GetNick();
-    const CString sMessage = Message.GetReason();
     if (NeedQuits()) {
+        const CNick& Nick = Message.GetNick();
+        const CString sMessage = Message.GetReason();
         for (CChan* pChan : vChans) {
             // Core calls this only for enabled channels, but
-            // OnSendToIRCMessage() below calls OnQuit() for all channels.
+            // OnSendToIRCMessage() below calls OnQuitMessage() for all channels.
             if (pChan->IsDisabled()) continue;
             PutLog("*** Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() +
                        "@" + Nick.GetHost() + ") (" + sMessage + ")",
@@ -456,9 +456,10 @@ CModule::EModRet CLogMod::OnSendToIRCMessage(CMessage& Message) {
         return CONTINUE;
     }
     CIRCNetwork* pNetwork = Message.GetNetwork();
-    OnQuit(pNetwork->GetIRCNick(),
-            Message.As<CQuitMessage>().GetReason(),
-            pNetwork->GetChans());
+    CQuitMessage& QuitMsg = Message.As<CQuitMessage>();
+    QuitMsg.SetNick(pNetwork->GetIRCNick());
+
+    OnQuitMessage(QuitMsg, pNetwork->GetChans());
     return CONTINUE;
 }
 
