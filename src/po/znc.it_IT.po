@@ -6,8 +6,8 @@ msgstr ""
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: it\n"
-"X-Crowdin-File: /1.10.x/src/po/znc.pot\n"
-"X-Crowdin-File-ID: 546\n"
+"X-Crowdin-File: /master/src/po/znc.pot\n"
+"X-Crowdin-File-ID: 146\n"
 "Project-Id-Version: znc-bouncer\n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -55,28 +55,28 @@ msgstr ""
 "loadmod &lt;nome del modulo&gt;</code>”). Dopo aver caricato alcuni moduli "
 "abilitati per il web, il menù si espanderà."
 
-#: znc.cpp:1570
+#: znc.cpp:1577
 msgid "User already exists"
 msgstr "Utente già esistente"
 
-#: znc.cpp:1666
+#: znc.cpp:1673
 msgid "SSL is not enabled"
 msgstr "SSL non è abilitata"
 
-#: znc.cpp:1674
+#: znc.cpp:1681
 #, c++-format
 msgid "Unable to locate pem file: {1}"
 msgstr "Impossibile localizzare il file pem: {1}"
 
-#: znc.cpp:1719
+#: znc.cpp:1726
 msgid "IPv6 is not enabled"
 msgstr "IPv6 non è abilitato"
 
-#: znc.cpp:1728
+#: znc.cpp:1735
 msgid "Invalid port"
 msgstr "Porta non valida"
 
-#: znc.cpp:1869 ClientCommand.cpp:1754
+#: znc.cpp:1876 ClientCommand.cpp:1754
 #, c++-format
 msgid "Unable to bind: {1}"
 msgstr "Impossibile associare: {1}"

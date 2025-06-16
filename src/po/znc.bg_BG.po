@@ -6,8 +6,8 @@ msgstr ""
 "X-Crowdin-Project: znc-bouncer\n"
 "X-Crowdin-Project-ID: 289533\n"
 "X-Crowdin-Language: bg\n"
-"X-Crowdin-File: /1.10.x/src/po/znc.pot\n"
-"X-Crowdin-File-ID: 546\n"
+"X-Crowdin-File: /master/src/po/znc.pot\n"
+"X-Crowdin-File-ID: 146\n"
 "Project-Id-Version: znc-bouncer\n"
 "Language-Team: Bulgarian\n"
 "Language: bg_BG\n"
@@ -54,28 +54,28 @@ msgstr ""
 "help</code>” и “<code>/msg *status loadmod &lt;module&gt;</code>”). След "
 "като сте заредили някои уеб модули, менюто ще се разшири."
 
-#: znc.cpp:1570
+#: znc.cpp:1577
 msgid "User already exists"
 msgstr "Потребителят вече съществува"
 
-#: znc.cpp:1666
+#: znc.cpp:1673
 msgid "SSL is not enabled"
 msgstr "SSL не е включен"
 
-#: znc.cpp:1674
+#: znc.cpp:1681
 #, c++-format
 msgid "Unable to locate pem file: {1}"
 msgstr "Не може да се намери pem файлът: {1}"
 
-#: znc.cpp:1719
+#: znc.cpp:1726
 msgid "IPv6 is not enabled"
 msgstr "IPv6 не е включен"
 
-#: znc.cpp:1728
+#: znc.cpp:1735
 msgid "Invalid port"
 msgstr "Невалиден порт"
 
-#: znc.cpp:1869 ClientCommand.cpp:1754
+#: znc.cpp:1876 ClientCommand.cpp:1754
 #, c++-format
 msgid "Unable to bind: {1}"
 msgstr "Не може да се върже порт: {1}"
