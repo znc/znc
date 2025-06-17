@@ -161,7 +161,7 @@ msgstr "Çıktınız: {1}"
 #: IRCSock.cpp:1394
 #, c++-format
 msgid "Warning: flood protection is delaying your messages by {1} seconds"
-msgstr ""
+msgstr "Uyarı: Flood koruması mesajlarınızı {1} saniye geciktiriyor"
 
 #: IRCSock.cpp:1452
 msgid "Disconnected from IRC. Reconnecting..."
@@ -175,7 +175,7 @@ msgstr "IRC'ye ({1}) bağlanılamıyor. Yeniden deneniyor..."
 #: IRCSock.cpp:1486
 #, c++-format
 msgid "Disconnected from IRC ({1}). Reconnecting..."
-msgstr "IRC'den bağlantı kesildi. Yeniden bağlanılıyor..."
+msgstr "IRC ({1})'den bağlantı kesildi. Yeniden bağlanılıyor..."
 
 #: IRCSock.cpp:1522
 #, c++-format
@@ -989,11 +989,11 @@ msgstr "Kullanımı: AddServer <host> [[+]port] [şifre]"
 
 #: ClientCommand.cpp:831
 msgid "Or: AddServer unix:[ssl:]/path/to/socket"
-msgstr ""
+msgstr "Ya da: AddServer unix:[ssl:]/path/to/socket"
 
 #: ClientCommand.cpp:833 ClientCommand.cpp:1766
 msgid "+ means SSL"
-msgstr ""
+msgstr "+ SSL anlamına gelir"
 
 #: ClientCommand.cpp:844
 msgid "Server added"
@@ -1068,7 +1068,7 @@ msgstr "Kanal"
 #: ClientCommand.cpp:969 ClientCommand.cpp:975
 msgctxt "topicscmd"
 msgid "Set By"
-msgstr "Ayarla:"
+msgstr "Ayarlayan"
 
 #: ClientCommand.cpp:970 ClientCommand.cpp:976
 msgctxt "topicscmd"
@@ -1528,7 +1528,7 @@ msgstr ""
 
 #: ClientCommand.cpp:1768
 msgid "Or: AddPort unix:[ssl:]/path/to/socket <web|irc|all> [uriprefix]"
-msgstr ""
+msgstr "Ya da: AddPort unix:[ssl:]/path/to/socket <web|irc|all> [uriprefix]"
 
 #: ClientCommand.cpp:1789
 msgid "Deleted Port"
@@ -1544,7 +1544,7 @@ msgstr "Kullanımı: DelPort <port> <ipv4|ipv6|all> [bindhost]"
 
 #: ClientCommand.cpp:1795
 msgid "Or: DelPort unix:/path/to/socket"
-msgstr ""
+msgstr "Ya da: DelPort unix:/path/to/socket"
 
 #: ClientCommand.cpp:1802 ClientCommand.cpp:1817
 msgctxt "helpcmd"

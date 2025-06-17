@@ -15,3 +15,5 @@ msgstr ""
 #: saslplainauth.cpp:55
 msgid "Allows users to authenticate via the PLAIN SASL mechanism."
 msgstr ""
+"Kullanıcıların PLAIN SASL mekanizması aracılığıyla kimlik doğrulaması "
+"yapmasına olanak tanır."

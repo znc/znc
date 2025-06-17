@@ -20,7 +20,7 @@ msgstr "<kurallar>"
 msgid "Set logging rules, use !#chan or !query to negate and * "
 msgstr ""
 "Günlük kurallarını belirleyin, terse çevirmek/reddetmek için !#kanal veya !"
-"sorgu ve * kullanın"
+"sorgu ve * kullanın "
 
 #: log.cpp:62
 msgid "Clear all logging rules"
@@ -82,27 +82,27 @@ msgstr ""
 
 #: log.cpp:197
 msgid "Will log joins"
-msgstr "joins (kanala girişler) günlüğe kaydedilecek"
+msgstr "Kanala girişler (joins) günlüğe kaydedilecek"
 
 #: log.cpp:197
 msgid "Will not log joins"
-msgstr "joins (kanala girişler) günlüğe kaydedilmeyecek"
+msgstr "Kanala girişler (joins) günlüğe kaydedilmeyecek"
 
 #: log.cpp:198
 msgid "Will log quits"
-msgstr "quits (IRC çıkışları) günlüğe kaydedilecek"
+msgstr "IRC çıkışları (quits) günlüğe kaydedilecek"
 
 #: log.cpp:198
 msgid "Will not log quits"
-msgstr "quits (IRC çıkışları) günlüğe kaydedilmeyecek"
+msgstr "IRC çıkışları (quits) günlüğe kaydedilmeyecek"
 
 #: log.cpp:200
 msgid "Will log nick changes"
-msgstr "nickchanges (nick değişiklikleri) günlüğe kaydedilecek"
+msgstr "Rumuz değişiklikleri (nickchanges) günlüğe kaydedilecek"
 
 #: log.cpp:200
 msgid "Will not log nick changes"
-msgstr "nickchanges (nick değişiklikleri) günlüğe kaydedilmeyecek"
+msgstr "Rumuz değişiklikleri (nickchanges) günlüğe kaydedilmeyecek"
 
 #: log.cpp:204
 msgid "Unknown variable. Known variables: joins, quits, nickchanges"
@@ -112,27 +112,27 @@ msgstr ""
 
 #: log.cpp:212
 msgid "Logging joins"
-msgstr "joins (kanala girişler) günlüğe kaydediliyor"
+msgstr "Kanala girişler (joins) günlüğe kaydediliyor"
 
 #: log.cpp:212
 msgid "Not logging joins"
-msgstr "joins (kanala girişler) günlüğe kaydedilmiyor"
+msgstr "Kanala girişler (joins) günlüğe kaydedilmiyor"
 
 #: log.cpp:213
 msgid "Logging quits"
-msgstr "quits (IRC çıkışları) günlüğe kaydediliyor"
+msgstr "IRC çıkışları (quits) günlüğe kaydediliyor"
 
 #: log.cpp:213
 msgid "Not logging quits"
-msgstr "quits (IRC çıkışları) günlüğe kaydedilmiyor"
+msgstr "IRC çıkışları (quits) günlüğe kaydedilmiyor"
 
 #: log.cpp:214
 msgid "Logging nick changes"
-msgstr "nickchanges (nick değişiklikleri) günlüğe kaydediliyor"
+msgstr "Rumuz değişiklikleri (nickchanges) günlüğe kaydediliyor"
 
 #: log.cpp:215
 msgid "Not logging nick changes"
-msgstr "nickchanges (nick değişiklikleri) günlüğe kaydedilmiyor"
+msgstr "Rumuz değişiklikleri (nickchanges) günlüğe kaydedilmiyor"
 
 #: log.cpp:352
 #, c++-format

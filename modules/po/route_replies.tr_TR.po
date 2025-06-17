@@ -31,7 +31,7 @@ msgid ""
 "a bug."
 msgstr ""
 "Ancak, bu sorunu yeniden oluşturmak için gerekli adımları sağlayabilirseniz, "
-"lütfen bir hata raporlayın"
+"lütfen bir hata raporlayın."
 
 #: route_replies.cpp:381
 #, c++-format
