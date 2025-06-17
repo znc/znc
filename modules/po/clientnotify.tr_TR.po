@@ -70,7 +70,7 @@ msgstr "Kullanımı: Method <message|notice|off>"
 #: clientnotify.cpp:153 clientnotify.cpp:166 clientnotify.cpp:179
 #: clientnotify.cpp:192 clientnotify.cpp:205
 msgid "Saved."
-msgstr "Kaydedildi"
+msgstr "Kaydedildi."
 
 #: clientnotify.cpp:160
 msgid "Usage: NewOnly <on|off>"

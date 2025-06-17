@@ -394,11 +394,11 @@ msgstr "Kullanımı: AddServer <kullanıcı_adı> <ağ> <sunucu> [[+]port] [şif
 
 #: controlpanel.cpp:1254
 msgid "Or: AddServer <username> <network> unix:[ssl:]/path/to/socket"
-msgstr ""
+msgstr "Ya da: AddServer <username> <network> unix:[ssl:]/path/to/socket"
 
 #: controlpanel.cpp:1256
 msgid "+ means SSL"
-msgstr ""
+msgstr "+ SSL anlamına gelir"
 
 #: controlpanel.cpp:1280
 #, c++-format

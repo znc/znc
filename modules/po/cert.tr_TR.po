@@ -65,7 +65,7 @@ msgstr "Sertifikanız yok. Sertifika eklemek için lütfen web arayüzünü kull
 #: cert.cpp:44
 #, c++-format
 msgid "Alternatively you can place one at {1}"
-msgstr ""
+msgstr "Alternatif olarak {1}'e de bir tane yerleştirebilirsiniz"
 
 #: cert.cpp:52
 msgid "Delete the current certificate"
