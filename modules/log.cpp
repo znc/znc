@@ -98,6 +98,9 @@ class CLogMod : public CModule {
     void OnKickMessage(CKickMessage& Message) override;
     void OnQuitMessage(CQuitMessage& Message,
                        const vector<CChan*>& vChans) override;
+    void LogQuitHelper(const CNick& Nick, const CString& sMessage,
+                       const vector<CChan*>& vChans);
+
     void OnJoinMessage(CJoinMessage& Message) override;
     void OnPartMessage(CPartMessage& Message) override;
     void OnNickMessage(CNickMessage& Message,
@@ -435,11 +438,9 @@ void CLogMod::OnKickMessage(CKickMessage& Message) {
            Channel);
 }
 
-void CLogMod::OnQuitMessage(CQuitMessage& Message,
-                            const vector<CChan*>& vChans) {
+void CLogMod::LogQuitHelper(const CNick& Nick, const CString& sMessage,
+                           const vector<CChan*>& vChans) {
     if (NeedQuits()) {
-        const CNick& Nick = Message.GetNick();
-        const CString sMessage = Message.GetReason();
         for (CChan* pChan : vChans) {
             // Core calls this only for enabled channels, but
             // OnSendToIRCMessage() below calls OnQuitMessage() for all channels.
@@ -451,17 +452,27 @@ void CLogMod::OnQuitMessage(CQuitMessage& Message,
     }
 }
 
+void CLogMod::OnQuitMessage(CQuitMessage& Message,
+                            const vector<CChan*>& vChans) {
+    LogQuitHelper(Message.GetNick(), Message.GetReason(), vChans);
+}
+
 CModule::EModRet CLogMod::OnSendToIRCMessage(CMessage& Message) {
     if (Message.GetType() != CMessage::Type::Quit) {
         return CONTINUE;
     }
     CIRCNetwork* pNetwork = Message.GetNetwork();
     CQuitMessage& QuitMsg = Message.As<CQuitMessage>();
-    QuitMsg.SetNick(pNetwork->GetIRCNick());
 
-    OnQuitMessage(QuitMsg, pNetwork->GetChans());
+    // Log our quit message first
+    QuitMsg.SetNick(pNetwork->GetIRCNick());
+    LogQuitHelper(QuitMsg.GetNick(), QuitMsg.GetReason(), pNetwork->GetChans());
+
+    // Strip :nick!ident@host and only send "QUIT :reason"
+    QuitMsg.SetNick(CNick{});
     return CONTINUE;
 }
+
 
 void CLogMod::OnJoinMessage(CJoinMessage& Message) {
     if (!NeedJoins())
