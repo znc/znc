@@ -464,12 +464,8 @@ CModule::EModRet CLogMod::OnSendToIRCMessage(CMessage& Message) {
     CIRCNetwork* pNetwork = Message.GetNetwork();
     CQuitMessage& QuitMsg = Message.As<CQuitMessage>();
 
-    // Log our quit message first
-    QuitMsg.SetNick(pNetwork->GetIRCNick());
-    LogQuitHelper(QuitMsg.GetNick(), QuitMsg.GetReason(), pNetwork->GetChans());
+    LogQuitHelper(pNetwork->GetIRCNick(), QuitMsg.GetReason(), pNetwork->GetChans());
 
-    // Strip :nick!ident@host and only send "QUIT :reason"
-    QuitMsg.SetNick(CNick{});
     return CONTINUE;
 }
 
