@@ -95,35 +95,34 @@ class CLogMod : public CModule {
 
     void OnRawMode2(const CNick* pOpNick, CChan& Channel, const CString& sModes,
                     const CString& sArgs) override;
-    void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel,
-                const CString& sMessage) override;
-    void OnQuit(const CNick& Nick, const CString& sMessage,
-                const vector<CChan*>& vChans) override;
+    void OnKickMessage(CKickMessage& Message) override;
+    void OnQuitMessage(CQuitMessage& Message,
+                       const vector<CChan*>& vChans) override;
+    void LogQuitHelper(const CNick& Nick, const CString& sMessage,
+                       const vector<CChan*>& vChans);
+
     void OnJoinMessage(CJoinMessage& Message) override;
-    void OnPart(const CNick& Nick, CChan& Channel,
-                const CString& sMessage) override;
-    void OnNick(const CNick& OldNick, const CString& sNewNick,
-                const vector<CChan*>& vChans) override;
-    EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) override;
+    void OnPartMessage(CPartMessage& Message) override;
+    void OnNickMessage(CNickMessage& Message,
+                       const vector<CChan*>& vChans) override;
+    EModRet OnTopicMessage(CTopicMessage& Message) override;
 
     EModRet OnSendToIRCMessage(CMessage& Message) override;
 
     /* notices */
-    EModRet OnUserNotice(CString& sTarget, CString& sMessage) override;
-    EModRet OnPrivNotice(CNick& Nick, CString& sMessage) override;
-    EModRet OnChanNotice(CNick& Nick, CChan& Channel,
-                         CString& sMessage) override;
+    EModRet OnUserNoticeMessage(CNoticeMessage& Message) override;
+    EModRet OnPrivNoticeMessage(CNoticeMessage& Message) override;
+    EModRet OnChanNoticeMessage(CNoticeMessage& Message) override;
 
     /* actions */
-    EModRet OnUserAction(CString& sTarget, CString& sMessage) override;
-    EModRet OnPrivAction(CNick& Nick, CString& sMessage) override;
-    EModRet OnChanAction(CNick& Nick, CChan& Channel,
-                         CString& sMessage) override;
+    EModRet OnUserActionMessage(CActionMessage& Message) override;
+    EModRet OnPrivActionMessage(CActionMessage& Message) override;
+    EModRet OnChanActionMessage(CActionMessage& Message) override;
 
     /* msgs */
-    EModRet OnUserMsg(CString& sTarget, CString& sMessage) override;
-    EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override;
-    EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override;
+    EModRet OnUserTextMessage(CTextMessage& Message) override;
+    EModRet OnPrivTextMessage(CTextMessage& Message) override;
+    EModRet OnChanTextMessage(CTextMessage& Message) override;
 
   private:
     bool NeedJoins() const;
@@ -429,19 +428,22 @@ void CLogMod::OnRawMode2(const CNick* pOpNick, CChan& Channel,
     PutLog("*** " + sNick + " sets mode: " + sModes + " " + sArgs, Channel);
 }
 
-void CLogMod::OnKick(const CNick& OpNick, const CString& sKickedNick,
-                     CChan& Channel, const CString& sMessage) {
+void CLogMod::OnKickMessage(CKickMessage& Message) {
+    const CNick& OpNick = Message.GetNick();
+    const CString sKickedNick = Message.GetKickedNick();
+    CChan& Channel = *Message.GetChan();
+    const CString sMessage = Message.GetReason();
     PutLog("*** " + sKickedNick + " was kicked by " + OpNick.GetNick() + " (" +
                sMessage + ")",
            Channel);
 }
 
-void CLogMod::OnQuit(const CNick& Nick, const CString& sMessage,
-                     const vector<CChan*>& vChans) {
+void CLogMod::LogQuitHelper(const CNick& Nick, const CString& sMessage,
+                           const vector<CChan*>& vChans) {
     if (NeedQuits()) {
         for (CChan* pChan : vChans) {
             // Core calls this only for enabled channels, but
-            // OnSendToIRCMessage() below calls OnQuit() for all channels.
+            // OnSendToIRCMessage() below calls OnQuitMessage() for all channels.
             if (pChan->IsDisabled()) continue;
             PutLog("*** Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() +
                        "@" + Nick.GetHost() + ") (" + sMessage + ")",
@@ -450,16 +452,23 @@ void CLogMod::OnQuit(const CNick& Nick, const CString& sMessage,
     }
 }
 
+void CLogMod::OnQuitMessage(CQuitMessage& Message,
+                            const vector<CChan*>& vChans) {
+    LogQuitHelper(Message.GetNick(), Message.GetReason(), vChans);
+}
+
 CModule::EModRet CLogMod::OnSendToIRCMessage(CMessage& Message) {
     if (Message.GetType() != CMessage::Type::Quit) {
         return CONTINUE;
     }
     CIRCNetwork* pNetwork = Message.GetNetwork();
-    OnQuit(pNetwork->GetIRCNick(),
-            Message.As<CQuitMessage>().GetReason(),
-            pNetwork->GetChans());
+    CQuitMessage& QuitMsg = Message.As<CQuitMessage>();
+
+    LogQuitHelper(pNetwork->GetIRCNick(), QuitMsg.GetReason(), pNetwork->GetChans());
+
     return CONTINUE;
 }
+
 
 void CLogMod::OnJoinMessage(CJoinMessage& Message) {
     if (!NeedJoins())
@@ -485,15 +494,19 @@ void CLogMod::OnJoinMessage(CJoinMessage& Message) {
            Channel);
 }
 
-void CLogMod::OnPart(const CNick& Nick, CChan& Channel,
-                     const CString& sMessage) {
+void CLogMod::OnPartMessage(CPartMessage& Message) {
+    const CNick& Nick = Message.GetNick();
+    CChan& Channel = *Message.GetChan();
+    const CString sMessage = Message.GetReason();
     PutLog("*** Parts: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" +
                Nick.GetHost() + ") (" + sMessage + ")",
            Channel);
 }
 
-void CLogMod::OnNick(const CNick& OldNick, const CString& sNewNick,
-                     const vector<CChan*>& vChans) {
+void CLogMod::OnNickMessage(CNickMessage& Message,
+                            const vector<CChan*>& vChans) {
+    const CNick& OldNick = Message.GetNick();
+    const CString sNewNick = Message.GetNewNick();
     if (NeedNickChanges()) {
         for (CChan* pChan : vChans)
             PutLog("*** " + OldNick.GetNick() + " is now known as " + sNewNick,
@@ -501,16 +514,20 @@ void CLogMod::OnNick(const CNick& OldNick, const CString& sNewNick,
     }
 }
 
-CModule::EModRet CLogMod::OnTopic(CNick& Nick, CChan& Channel,
-                                  CString& sTopic) {
+CModule::EModRet CLogMod::OnTopicMessage(CTopicMessage& Message) {
+    const CNick& Nick = Message.GetNick();
+    CChan& Channel = *Message.GetChan();
+    CString sTopic = Message.GetTopic();
     PutLog("*** " + Nick.GetNick() + " changes topic to '" + sTopic + "'",
            Channel);
     return CONTINUE;
 }
 
 /* notices */
-CModule::EModRet CLogMod::OnUserNotice(CString& sTarget, CString& sMessage) {
+CModule::EModRet CLogMod::OnUserNoticeMessage(CNoticeMessage& Message) {
     CIRCNetwork* pNetwork = GetNetwork();
+    CString sTarget = Message.GetTarget();
+    CString sMessage = Message.GetText();
     if (pNetwork) {
         PutLog("-" + pNetwork->GetCurNick() + "- " + sMessage, sTarget);
     }
@@ -518,20 +535,26 @@ CModule::EModRet CLogMod::OnUserNotice(CString& sTarget, CString& sMessage) {
     return CONTINUE;
 }
 
-CModule::EModRet CLogMod::OnPrivNotice(CNick& Nick, CString& sMessage) {
+CModule::EModRet CLogMod::OnPrivNoticeMessage(CNoticeMessage& Message) {
+    const CNick& Nick = Message.GetNick();
+    CString sMessage = Message.GetText();
     PutLog("-" + Nick.GetNick() + "- " + sMessage, Nick);
     return CONTINUE;
 }
 
-CModule::EModRet CLogMod::OnChanNotice(CNick& Nick, CChan& Channel,
-                                       CString& sMessage) {
+CModule::EModRet CLogMod::OnChanNoticeMessage(CNoticeMessage& Message) {
+    const CNick& Nick = Message.GetNick();
+    CString sMessage = Message.GetText();
+    CChan& Channel = *Message.GetChan();
     PutLog("-" + Nick.GetNick() + "- " + sMessage, Channel);
     return CONTINUE;
 }
 
 /* actions */
-CModule::EModRet CLogMod::OnUserAction(CString& sTarget, CString& sMessage) {
+CModule::EModRet CLogMod::OnUserActionMessage(CActionMessage& Message) {
     CIRCNetwork* pNetwork = GetNetwork();
+    CString sMessage = Message.GetText();
+    CString sTarget = Message.GetTarget();
     if (pNetwork) {
         PutLog("* " + pNetwork->GetCurNick() + " " + sMessage, sTarget);
     }
@@ -539,20 +562,26 @@ CModule::EModRet CLogMod::OnUserAction(CString& sTarget, CString& sMessage) {
     return CONTINUE;
 }
 
-CModule::EModRet CLogMod::OnPrivAction(CNick& Nick, CString& sMessage) {
+CModule::EModRet CLogMod::OnPrivActionMessage(CActionMessage& Message) {
+    const CNick& Nick = Message.GetNick();
+    CString sMessage = Message.GetText();
     PutLog("* " + Nick.GetNick() + " " + sMessage, Nick);
     return CONTINUE;
 }
 
-CModule::EModRet CLogMod::OnChanAction(CNick& Nick, CChan& Channel,
-                                       CString& sMessage) {
+CModule::EModRet CLogMod::OnChanActionMessage(CActionMessage& Message) {
+    const CNick& Nick = Message.GetNick();
+    CString sMessage = Message.GetText();
+    CChan& Channel = *Message.GetChan();
     PutLog("* " + Nick.GetNick() + " " + sMessage, Channel);
     return CONTINUE;
 }
 
 /* msgs */
-CModule::EModRet CLogMod::OnUserMsg(CString& sTarget, CString& sMessage) {
+CModule::EModRet CLogMod::OnUserTextMessage(CTextMessage& Message) {
     CIRCNetwork* pNetwork = GetNetwork();
+    CString sTarget = Message.GetTarget();
+    CString sMessage = Message.GetText();
     if (pNetwork) {
         PutLog("<" + pNetwork->GetCurNick() + "> " + sMessage, sTarget);
     }
@@ -560,13 +589,17 @@ CModule::EModRet CLogMod::OnUserMsg(CString& sTarget, CString& sMessage) {
     return CONTINUE;
 }
 
-CModule::EModRet CLogMod::OnPrivMsg(CNick& Nick, CString& sMessage) {
+CModule::EModRet CLogMod::OnPrivTextMessage(CTextMessage& Message) {
+    const CNick& Nick = Message.GetNick();
+    CString sMessage = Message.GetText();
     PutLog("<" + Nick.GetNick() + "> " + sMessage, Nick);
     return CONTINUE;
 }
 
-CModule::EModRet CLogMod::OnChanMsg(CNick& Nick, CChan& Channel,
-                                    CString& sMessage) {
+CModule::EModRet CLogMod::OnChanTextMessage(CTextMessage& Message) {
+    const CNick& Nick = Message.GetNick();
+    CString sMessage = Message.GetText();
+    CChan& Channel = *Message.GetChan();
     PutLog("<" + Nick.GetNick() + "> " + sMessage, Channel);
     return CONTINUE;
 }
