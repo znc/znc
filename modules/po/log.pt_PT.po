@@ -40,96 +40,96 @@ msgstr "Define uma das seguintes opções: joins, quits, nickchanges"
 msgid "Show current settings set by Set command"
 msgstr "Mostra as definições atuais definidas pelo comando Set"
 
-#: log.cpp:143
+#: log.cpp:142
 msgid "Usage: SetRules <rules>"
 msgstr "Utilização: SetRules <regras>"
 
-#: log.cpp:144
+#: log.cpp:143
 msgid "Wildcards are allowed"
 msgstr "Wildcards são permitidas"
 
-#: log.cpp:156 log.cpp:179
+#: log.cpp:155 log.cpp:178
 msgid "No logging rules. Everything is logged."
 msgstr "Sem regras de registo. Tudo é registado."
 
-#: log.cpp:161
+#: log.cpp:160
 #, c++-format
 msgid "1 rule removed: {2}"
 msgid_plural "{1} rules removed: {2}"
 msgstr[0] "1 regra removida: {2}"
 msgstr[1] "{1} regras removidas: {2}"
 
-#: log.cpp:168 log.cpp:174
+#: log.cpp:167 log.cpp:173
 msgctxt "listrules"
 msgid "Rule"
 msgstr "Regra"
 
-#: log.cpp:169 log.cpp:175
+#: log.cpp:168 log.cpp:174
 msgctxt "listrules"
 msgid "Logging enabled"
 msgstr "Registo ativado"
 
-#: log.cpp:190
+#: log.cpp:189
 msgid ""
 "Usage: Set <var> true|false, where <var> is one of: joins, quits, nickchanges"
 msgstr ""
 "Utilização: Set <var> true|false, onde <var> é um de: joins, quits, "
 "nickchanges"
 
-#: log.cpp:197
+#: log.cpp:196
 msgid "Will log joins"
 msgstr "Irá registar entradas"
 
-#: log.cpp:197
+#: log.cpp:196
 msgid "Will not log joins"
 msgstr "Não irá registar entradas"
 
-#: log.cpp:198
+#: log.cpp:197
 msgid "Will log quits"
 msgstr "Irá registar saídas"
 
-#: log.cpp:198
+#: log.cpp:197
 msgid "Will not log quits"
 msgstr "Não irá registar saídas"
 
-#: log.cpp:200
+#: log.cpp:199
 msgid "Will log nick changes"
 msgstr "Irá registar alterações de nick"
 
-#: log.cpp:200
+#: log.cpp:199
 msgid "Will not log nick changes"
 msgstr "Não irá registar alterações de nick"
 
-#: log.cpp:204
+#: log.cpp:203
 msgid "Unknown variable. Known variables: joins, quits, nickchanges"
 msgstr ""
 "Variável não reconhecida. -Variáveis conhecidas: joins, quits, nickchanges"
 
-#: log.cpp:212
+#: log.cpp:211
 msgid "Logging joins"
 msgstr "A registar entradas"
 
-#: log.cpp:212
+#: log.cpp:211
 msgid "Not logging joins"
 msgstr "Não está a registar entradas"
 
-#: log.cpp:213
+#: log.cpp:212
 msgid "Logging quits"
 msgstr "A registar saídas"
 
-#: log.cpp:213
+#: log.cpp:212
 msgid "Not logging quits"
 msgstr "Não está a registar saídas"
 
-#: log.cpp:214
+#: log.cpp:213
 msgid "Logging nick changes"
 msgstr "A registar alterações de nick"
 
-#: log.cpp:215
+#: log.cpp:214
 msgid "Not logging nick changes"
 msgstr "Não está a registar alterações de nick"
 
-#: log.cpp:352
+#: log.cpp:351
 #, c++-format
 msgid ""
 "Invalid args [{1}]. Only one log path allowed.  Check that there are no "
@@ -138,20 +138,20 @@ msgstr ""
 "Argumentos inválidos [{1}]. Só um caminho de registo permitido.  Veja se não "
 "espaços no caminho."
 
-#: log.cpp:402
+#: log.cpp:401
 #, c++-format
 msgid "Invalid log path [{1}]"
 msgstr "Caminho de registo inválido [{1}]"
 
-#: log.cpp:405
+#: log.cpp:404
 #, c++-format
 msgid "Logging to [{1}]. Using timestamp format '{2}'"
 msgstr "A registar para [{1}]. A utilizar formato de data e hora '{2}'"
 
-#: log.cpp:580
+#: log.cpp:613
 msgid "[-sanitize] Optional path where to store logs."
 msgstr "[-sanitize] Camiho opcional para onde guardar os registos."
 
-#: log.cpp:584
+#: log.cpp:617
 msgid "Writes IRC logs."
 msgstr "Escreve registos do IRC."

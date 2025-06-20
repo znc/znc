@@ -42,19 +42,19 @@ msgstr ""
 msgid "Show current settings set by Set command"
 msgstr ""
 
-#: log.cpp:143
+#: log.cpp:142
 msgid "Usage: SetRules <rules>"
 msgstr ""
 
-#: log.cpp:144
+#: log.cpp:143
 msgid "Wildcards are allowed"
 msgstr ""
 
-#: log.cpp:156 log.cpp:179
+#: log.cpp:155 log.cpp:178
 msgid "No logging rules. Everything is logged."
 msgstr ""
 
-#: log.cpp:161
+#: log.cpp:160
 #, c++-format
 msgid "1 rule removed: {2}"
 msgid_plural "{1} rules removed: {2}"
@@ -63,94 +63,94 @@ msgstr[1] ""
 msgstr[2] ""
 msgstr[3] ""
 
-#: log.cpp:168 log.cpp:174
+#: log.cpp:167 log.cpp:173
 msgctxt "listrules"
 msgid "Rule"
 msgstr ""
 
-#: log.cpp:169 log.cpp:175
+#: log.cpp:168 log.cpp:174
 msgctxt "listrules"
 msgid "Logging enabled"
 msgstr ""
 
-#: log.cpp:190
+#: log.cpp:189
 msgid ""
 "Usage: Set <var> true|false, where <var> is one of: joins, quits, nickchanges"
 msgstr ""
 
-#: log.cpp:197
+#: log.cpp:196
 msgid "Will log joins"
 msgstr ""
 
-#: log.cpp:197
+#: log.cpp:196
 msgid "Will not log joins"
 msgstr ""
 
-#: log.cpp:198
+#: log.cpp:197
 msgid "Will log quits"
 msgstr ""
 
-#: log.cpp:198
+#: log.cpp:197
 msgid "Will not log quits"
 msgstr ""
 
-#: log.cpp:200
+#: log.cpp:199
 msgid "Will log nick changes"
 msgstr ""
 
-#: log.cpp:200
+#: log.cpp:199
 msgid "Will not log nick changes"
 msgstr ""
 
-#: log.cpp:204
+#: log.cpp:203
 msgid "Unknown variable. Known variables: joins, quits, nickchanges"
 msgstr ""
 
-#: log.cpp:212
+#: log.cpp:211
 msgid "Logging joins"
 msgstr ""
 
-#: log.cpp:212
+#: log.cpp:211
 msgid "Not logging joins"
 msgstr ""
 
-#: log.cpp:213
+#: log.cpp:212
 msgid "Logging quits"
 msgstr ""
 
-#: log.cpp:213
+#: log.cpp:212
 msgid "Not logging quits"
 msgstr ""
 
-#: log.cpp:214
+#: log.cpp:213
 msgid "Logging nick changes"
 msgstr ""
 
-#: log.cpp:215
+#: log.cpp:214
 msgid "Not logging nick changes"
 msgstr ""
 
-#: log.cpp:352
+#: log.cpp:351
 #, c++-format
 msgid ""
 "Invalid args [{1}]. Only one log path allowed.  Check that there are no "
 "spaces in the path."
 msgstr ""
 
-#: log.cpp:402
+#: log.cpp:401
 #, c++-format
 msgid "Invalid log path [{1}]"
 msgstr ""
 
-#: log.cpp:405
+#: log.cpp:404
 #, c++-format
 msgid "Logging to [{1}]. Using timestamp format '{2}'"
 msgstr ""
 
-#: log.cpp:580
+#: log.cpp:613
 msgid "[-sanitize] Optional path where to store logs."
 msgstr ""
 
-#: log.cpp:584
+#: log.cpp:617
 msgid "Writes IRC logs."
 msgstr ""
