@@ -1657,7 +1657,7 @@ bool CClient::OnTagMessage(CTargetMessage& Message) {
         if (m_pNetwork) {
             AddBuffer(Message);
             EchoMessage(Message);
-            if (GetIRCSock()->HasMessageTagCap()) {
+            if (GetIRCSock() && GetIRCSock()->HasMessageTagCap()) {
                 PutIRCStripping(Message);
             }
         }

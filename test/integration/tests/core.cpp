@@ -1210,5 +1210,16 @@ TEST_F(ZNCTest, Issue1960) {
     ircd2.ReadUntil("@foo TAGMSG #bar");
 }
 
+TEST_F(ZNCTest, DisconnectedTagmsgCrash) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc disconnect");
+    client.ReadUntil("Disconnected");
+    client.Write("@foo TAGMSG #foo");
+    client.Write("znc help");
+    client.ReadUntil("AddServer");
+}
+
 }  // namespace
 }  // namespace znc_inttest
