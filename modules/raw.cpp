@@ -32,6 +32,11 @@ class CRawMod : public CModule {
         PutModule("YOU -> [" + sLine + "]");
         return CONTINUE;
     }
+
+    EModRet OnSendToIRCMessage(CMessage& Message) override {
+        PutModule("ZNC -> [" + Message.ToString() + "]");
+        return CONTINUE;
+    }
 };
 
 template <>
