@@ -1191,5 +1191,24 @@ TEST_F(ZNCTest, JoinWhileRegistration) {
     ircd.ReadUntil("JOIN #foo");
 }
 
+TEST_F(ZNCTest, Issue1960) {
+    auto znc = Run();
+    auto ircd1 = ConnectIRCd();
+    auto client = LoginClient();
+    ircd1.Write("CAP user ACK :message-tags");
+    ircd1.Write(":server 001 nick :Hello");
+    ircd1.Write(":server 005 nick blahblah");
+    client.ReadUntil("blahblah");
+    client.Write("znc addnetwork second");
+    client.Write("znc jumpnetwork second");
+    client.Write("znc addserver unix:" + m_dir.path().toUtf8() + "/inttest.ircd");
+    auto ircd2 = ConnectIRCd();
+    ircd2.Write("CAP user ACK :message-tags");
+    ircd2.Write(":server 001 nick :Hello");
+    client.ReadUntil("Connected");
+    client.Write("@foo TAGMSG #bar");
+    ircd2.ReadUntil("@foo TAGMSG #bar");
+}
+
 }  // namespace
 }  // namespace znc_inttest
