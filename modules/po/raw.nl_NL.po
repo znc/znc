@@ -12,6 +12,6 @@ msgstr ""
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
 
-#: raw.cpp:43
+#: raw.cpp:48
 msgid "View all of the raw traffic"
 msgstr "Laat al het onbewerkte verkeer zien"

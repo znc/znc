@@ -13,6 +13,6 @@ msgstr ""
 "Language-Team: Romanian\n"
 "Language: ro_RO\n"
 
-#: raw.cpp:43
+#: raw.cpp:48
 msgid "View all of the raw traffic"
 msgstr ""

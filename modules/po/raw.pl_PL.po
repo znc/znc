@@ -14,6 +14,6 @@ msgstr ""
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
 
-#: raw.cpp:43
+#: raw.cpp:48
 msgid "View all of the raw traffic"
 msgstr "Pokazuje cały surowy ruch"

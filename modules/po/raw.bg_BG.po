@@ -12,6 +12,6 @@ msgstr ""
 "Language-Team: Bulgarian\n"
 "Language: bg_BG\n"
 
-#: raw.cpp:43
+#: raw.cpp:48
 msgid "View all of the raw traffic"
 msgstr "Поглед на всичкия суров трафик"

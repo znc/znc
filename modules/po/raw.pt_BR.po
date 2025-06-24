@@ -12,6 +12,6 @@ msgstr ""
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
 
-#: raw.cpp:43
+#: raw.cpp:48
 msgid "View all of the raw traffic"
 msgstr ""
