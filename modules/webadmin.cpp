@@ -1910,8 +1910,10 @@ class CWebAdminMod : public CModule {
                                               eAddr, eAccept, sMessage);
         } else {
             CString sPath = WebSock.GetParam("path");
+            CString sMode = WebSock.GetParam("mode");
+            CString sGroup = WebSock.GetParam("group");
             bResult = CZNC::Get().AddUnixListener(sPath, sURIPrefix, bSSL,
-                                                  eAccept, sMessage);
+                                                  eAccept, sGroup, sMode, sMessage);
         }
 
         if (bResult) {
@@ -2030,6 +2032,8 @@ class CWebAdminMod : public CModule {
                         dynamic_cast<const CUnixListener*>(pListener)) {
                     l["Type"] = "Unix";
                     l["Path"] = pUnixListener->GetPath();
+                    l["Mode"] = pUnixListener->GetMode();
+                    l["Group"] = pUnixListener->GetGroup();
                     // We can't determine whether it's the same port, as it's
                     // always "localhost". Just assume the user knows what he's
                     // doing. Unix sockets are advanced topic anyway.

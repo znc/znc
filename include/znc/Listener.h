@@ -97,9 +97,7 @@ class CTCPListener : public CListener {
 class CUnixListener : public CListener {
   public:
     CUnixListener(const CString& sPath, const CString& sURIPrefix, bool bSSL,
-                 EAcceptType eAccept)
-        : CListener(sURIPrefix, bSSL, eAccept),
-          m_sPath(sPath) {}
+                  EAcceptType eAccept, const CString& sGid, const CString& sMode);
     ~CUnixListener();
 
     CUnixListener(const CUnixListener&) = delete;
@@ -107,6 +105,8 @@ class CUnixListener : public CListener {
 
     // Getters
     const CString& GetPath() const { return m_sPath; }
+    const CString& GetGroup() const { return m_sGid; }
+    CString GetMode() const;
     // !Getters
 
     bool Listen() override;
@@ -114,6 +114,8 @@ class CUnixListener : public CListener {
 
   protected:
     CString m_sPath;
+    CString m_sGid;
+    int m_iMode;
 };
 
 class CRealListener : public CZNCSock {
