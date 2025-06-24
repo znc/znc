@@ -408,22 +408,28 @@ bool CIRCSock::OnCapabilityMessage(CMessage& Message) {
         sArgs = Message.GetParam(2);
     }
 
-    static std::map<CString, std::function<void(bool bVal)>> mSupportedCaps = {
-        {"multi-prefix", [this](bool bVal) { m_bNamesx = bVal; }},
-        {"userhost-in-names", [this](bool bVal) { m_bUHNames = bVal; }},
-        {"cap-notify", [](bool bVal) {}},
-        {"invite-notify", [](bool bVal) {}},
-        {"server-time", [this](bool bVal) { m_bServerTime = bVal; }},
-        {"znc.in/server-time-iso", [this](bool bVal) { m_bServerTime = bVal; }},
-        {"chghost", [](bool) {}},
-        {"message-tags", [this](bool bVal) { m_bMessageTagCap = bVal; }},
-    };
+    static std::map<CString, std::function<void(CIRCSock * pSock, bool bVal)>>
+        mSupportedCaps = {
+            {"multi-prefix",
+             [](CIRCSock* pSock, bool bVal) { pSock->m_bNamesx = bVal; }},
+            {"userhost-in-names",
+             [](CIRCSock* pSock, bool bVal) { pSock->m_bUHNames = bVal; }},
+            {"cap-notify", [](CIRCSock* pSock, bool bVal) {}},
+            {"invite-notify", [](CIRCSock* pSock, bool bVal) {}},
+            {"server-time",
+             [](CIRCSock* pSock, bool bVal) { pSock->m_bServerTime = bVal; }},
+            {"znc.in/server-time-iso",
+             [](CIRCSock* pSock, bool bVal) { pSock->m_bServerTime = bVal; }},
+            {"chghost", [](CIRCSock* pSock, bool) {}},
+            {"message-tags", [](CIRCSock* pSock,
+                                bool bVal) { pSock->m_bMessageTagCap = bVal; }},
+        };
 
     auto RemoveCap = [&](const CString& sCap) {
         IRCSOCKMODULECALL(OnServerCapResult(sCap, false), NOTHING);
         auto it = mSupportedCaps.find(sCap);
         if (it != mSupportedCaps.end()) {
-            it->second(false);
+            it->second(this, false);
         }
         m_ssAcceptedCaps.erase(sCap);
         m_ssPendingCaps.erase(sCap);
@@ -457,7 +463,7 @@ bool CIRCSock::OnCapabilityMessage(CMessage& Message) {
             IRCSOCKMODULECALL(OnServerCapResult(sCap, true), NOTHING);
             auto it = mSupportedCaps.find(sCap);
             if (it != mSupportedCaps.end()) {
-                it->second(true);
+                it->second(this, true);
             }
             m_ssAcceptedCaps.insert(std::move(sCap));
         }

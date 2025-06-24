@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+#include <sys/types.h>
+#include <grp.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 #include <znc/Listener.h>
 #include <znc/Config.h>
 #include <znc/znc.h>
@@ -85,8 +91,20 @@ CConfig CTCPListener::ToConfig() const {
     return listenerConfig;
 }
 
-CUnixListener::~CUnixListener() {
+CUnixListener::CUnixListener(const CString& sPath, const CString& sURIPrefix,
+                             bool bSSL, EAcceptType eAccept,
+                             const CString& sGid, const CString& sMode)
+    : CListener(sURIPrefix, bSSL, eAccept),
+      m_sPath(sPath),
+      m_sGid(sGid),
+      m_iMode(-1) {
+    if (!sMode.empty()) {
+        std::istringstream s(sMode);
+        s >> std::oct >> m_iMode;
+    }
 }
+
+CUnixListener::~CUnixListener() {}
 
 bool CUnixListener::Listen() {
     if (m_pListener) {
@@ -97,16 +115,83 @@ bool CUnixListener::Listen() {
     m_pListener = new CRealListener(*this);
     SetupSSL();
 
-    return CZNC::Get().GetManager().ListenUnix("UNIX_LISTENER", m_sPath,
-                                               m_pListener);
+    if (!CZNC::Get().GetManager().ListenUnix("UNIX_LISTENER", m_sPath,
+                                             m_pListener))
+        return false;
+
+    if (!m_sGid.empty()) {
+        bool bSuccess = [&]() -> bool {
+            std::vector<char> buffer(100);
+            group gr{};
+            group* result;
+        retrysize:
+            int err = getgrnam_r(m_sGid.c_str(), &gr, buffer.data(),
+                                 buffer.size(), &result);
+            switch (err) {
+                case ERANGE: {
+                    if (buffer.size() > 10000) {
+                        DEBUG("Can't get gid due to memory size");
+                        return false;
+                    }
+                    buffer.resize(buffer.size() + 100);
+                    goto retrysize;
+                }
+                case 0: {
+                    if (!result) {
+                        DEBUG("Group not found");
+                        return false;
+                    }
+                    if (chown(m_sPath.c_str(), -1, result->gr_gid)) {
+                        char* e = strerror(errno);
+                        DEBUG("Can't chmod: " << e);
+                        return false;
+                    }
+                    break;
+                }
+                default: {
+                    char* e = strerror(err);
+                    DEBUG("Error while getting gid " << e);
+                    return false;
+                }
+            }
+            return true;
+        }();
+        if (!bSuccess) {
+            m_pListener->Close();
+            return false;
+        }
+    }
+
+    if (m_iMode != -1) {
+        if (chmod(m_sPath.c_str(), m_iMode)) {
+            char* e = strerror(errno);
+            DEBUG("Error while chmod " << e);
+            m_pListener->Close();
+            return false;
+        }
+    }
+
+    return true;
 }
 
 CConfig CUnixListener::ToConfig() const {
     CConfig listenerConfig = CListener::ToConfig();
 
     listenerConfig.AddKeyValuePair("Path", GetPath());
+    if (!m_sGid.empty()) listenerConfig.AddKeyValuePair("Group", m_sGid);
+    if (m_iMode != -1) {
+        listenerConfig.AddKeyValuePair("Mode", GetMode());
+    }
 
     return listenerConfig;
+}
+
+CString CUnixListener::GetMode() const {
+    std::ostringstream s;
+    if (m_iMode != -1) {
+        s << std::oct << m_iMode;
+    }
+    return s.str();
 }
 
 void CListener::ResetRealListener() { m_pListener = nullptr; }

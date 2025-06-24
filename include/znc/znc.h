@@ -209,8 +209,9 @@ class CZNC : private CCoreTranslationMixin {
     bool AddTCPListener(unsigned short uPort, const CString& sBindHost,
                         const CString& sURIPrefix, bool bSSL, EAddrType eAddr,
                         CListener::EAcceptType eAccept, CString& sError);
-    bool AddUnixListener(const CString& sPath, const CString& sURIPrefix, bool bSSL,
-                         CListener::EAcceptType eAccept, CString& sError);
+    bool AddUnixListener(const CString& sPath, const CString& sURIPrefix,
+                         bool bSSL, CListener::EAcceptType eAccept,
+                         const CString& sGroup, const CString& sMode, CString& sError);
     bool DelListener(CListener*);
 
     // For backwards-compatibility TODO: Remove
