@@ -21,10 +21,9 @@
 						    <th><? FORMAT "Delete" ?></th>
 						</tr>
 					</thead>
-
-				<? LOOP ListenLoop ?>
+					<? LOOP ListenLoop ?>
+					<? IF Type == "TCP" ?>
 					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
-						<? IF Type == "TCP" ?>
 						<td><? VAR Port ?></td>
 						<td><? VAR BindHost DEFAULT=** ?></td>
 						<td>
@@ -33,9 +32,6 @@
 						<td>
 							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsIPV6 ?>checked="checked"<? ENDIF ?>/></div>
 						</td>
-						<? ELSE ?>
-						<td colspan="4">unix:<? VAR Path ?></td>
-						<? ENDIF ?>
 						<td class="listener_show_ssl">
 							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsSSL ?>checked="checked"<? ENDIF ?>/></div>
 						</td>
@@ -51,14 +47,10 @@
 							<form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>del_listener" method="post">
 								<? INC _csrf_check.tmpl ?>
 								<input name="type" type="hidden" value="<? VAR Type ?>"/>
-								<? IF Type == "TCP" ?>
 								<input name="host" type="hidden" value="<? VAR BindHost ?>"/>
 								<input name="port" type="hidden" value="<? VAR Port ?>"/>
 								<input name="ipv4" type="hidden" value="<? VAR IsIPV4 ?>"/>
 								<input name="ipv6" type="hidden" value="<? VAR IsIPV6 ?>"/>
-								<? ELSE ?>
-								<input name="path" type="hidden" value="<? VAR Path ?>"/>
-								<? ENDIF ?>
 								<input type="submit" value="<? FORMAT "Del" ?>"/>
 							</form>
 							<? ELSE ?>
@@ -66,7 +58,8 @@
 							<? ENDIF ?>
 						</td>
 					</tr>
-				<? ENDLOOP ?>
+					<? ENDIF ?>
+					<? ENDLOOP ?>
 					<tr>
 						<form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>add_listener" method="post">
 							<? INC _csrf_check.tmpl ?>
@@ -82,11 +75,58 @@
 							<td><input type="submit" value="<? FORMAT "Add" ?>"/></td>
 						</form>
 					</tr>
+				</table>
+			</div>
+
+			<div class="subsection">
+				<table>
+					<thead>
+						<tr>
+						    <th><? FORMAT "Path" ?></th>
+						    <th><? FORMAT "Mode" ?></th>
+						    <th><? FORMAT "Group" ?></th>
+						    <th><? FORMAT "SSL" ?></th>
+						    <th><? FORMAT "IRC" ?></th>
+						    <th><? FORMAT "HTTP" ?></th>
+						    <th><? FORMAT "URIPrefix" ?></th>
+						    <th><? FORMAT "Delete" ?></th>
+						</tr>
+					</thead>
+
+					<? LOOP ListenLoop ?>
+					<? IF Type == "Unix" ?>
+					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
+						<td>unix:<? VAR Path ?></td>
+						<td><? VAR Mode ?></td>
+						<td><? VAR Group ?></td>
+						<td class="listener_show_ssl">
+							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsSSL ?>checked="checked"<? ENDIF ?>/></div>
+						</td>
+						<td>
+							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsIRC ?>checked="checked"<? ENDIF ?>/></div>
+						</td>
+						<td>
+							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsHTTP ?>checked="checked"<? ENDIF ?>/></div>
+						</td>
+						<td><? VAR URIPrefix ?></td>
+						<td>
+							<form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>del_listener" method="post">
+								<? INC _csrf_check.tmpl ?>
+								<input name="type" type="hidden" value="<? VAR Type ?>"/>
+								<input name="path" type="hidden" value="<? VAR Path ?>"/>
+								<input type="submit" value="<? FORMAT "Del" ?>"/>
+							</form>
+						</td>
+					</tr>
+					<? ENDIF ?>
+					<? ENDLOOP ?>
 					<tr>
 						<form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>add_listener" method="post">
 							<? INC _csrf_check.tmpl ?>
 							<input name="type" type="hidden" value="Unix"/>
-							<td colspan="4">unix:<input name="path" type="text" value="/" class="third"/></td>
+							<td>unix:<input name="path" type="text" value="/" class="third"/></td>
+							<td><input name="mode" type="number" min="-1" max="777" class="number third" value="-1" title="<? FORMAT "Octal number; -1 means do not chmod" ?>"/></td>
+							<td><input name="group" type="text" value="" class="sixth"/></td>
 							<td><div class="checkbox"><input name="ssl" type="checkbox"/></div></td>
 							<td><div class="checkbox"><input name="irc" type="checkbox" checked="checked"/></div></td>
 							<td><div class="checkbox"><input name="web" type="checkbox" checked="checked"/></div></td>

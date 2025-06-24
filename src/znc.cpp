@@ -1744,13 +1744,16 @@ bool CZNC::AddTCPListener(unsigned short uPort, const CString& sBindHost,
 
 bool CZNC::AddUnixListener(const CString& sPath, const CString& sURIPrefix,
                            bool bSSL, CListener::EAcceptType eAccept,
-                           CString& sError) {
-    CUtils::PrintAction("Binding to path [" + sPath + "]" + (bSSL ? " with SSL" : ""));
+                           const CString& sGroup, const CString& sMode, CString& sError) {
+    CUtils::PrintAction("Binding to path [" + sPath + "]" +
+                        (bSSL ? " with SSL" : "") +
+                        (sGroup.empty() ? CString() : " gid=" + sGroup) +
+                        (sMode.empty() ? CString() : " mode=" + sMode));
 
     if (!CheckSslAndPemFile(bSSL, sError)) return false;
 
     CListener* pListener =
-        new CUnixListener(sPath, sURIPrefix, bSSL, eAccept);
+        new CUnixListener(sPath, sURIPrefix, bSSL, eAccept, sGroup, sMode);
     return FinishAddingListener(pListener, sError);
 }
 
@@ -1841,8 +1844,13 @@ bool CZNC::AddListener(CConfig* pConfig, CString& sError) {
 
         return AddTCPListener(uPort, sBindHost, sURIPrefix, bSSL, eAddr,
                               eAccept, sError);
+    } else {
+        CString sGroup;
+        CString sMode;
+        pConfig->FindStringEntry("group", sGroup);
+        pConfig->FindStringEntry("mode", sMode);
+        return AddUnixListener(sPath, sURIPrefix, bSSL, eAccept, sGroup, sMode, sError);
     }
-    return AddUnixListener(sPath, sURIPrefix, bSSL, eAccept, sError);
 }
 
 bool CZNC::AddListener(CListener* pListener) {
