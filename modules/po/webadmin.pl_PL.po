@@ -232,6 +232,7 @@ msgstr "Port"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:110
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:17
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:88
 msgid "SSL"
 msgstr "SSL"
 
@@ -339,8 +340,8 @@ msgstr "Będziesz mógł tutaj dodawać + modyfikować kanały po utworzeniu sie
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:140
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:373
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:15
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:82
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:94
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:75
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:134
 msgid "Add"
 msgstr "Dodaj"
 
@@ -350,7 +351,7 @@ msgstr "Indeks"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:199
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:449
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:259
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:299
 msgid "Save"
 msgstr "Zapisz"
 
@@ -358,7 +359,7 @@ msgstr "Zapisz"
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:242
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:146
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:191
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:198
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:238
 msgid "Name"
 msgstr "Nazwa"
 
@@ -390,7 +391,8 @@ msgstr "Edytuj"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:216
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:162
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:62
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:54
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:117
 msgid "Del"
 msgstr "Usuń"
 
@@ -401,13 +403,13 @@ msgstr "Moduły"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:243
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:192
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:199
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:239
 msgid "Arguments"
 msgstr "Argumenty"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:244
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:193
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:200
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:240
 msgid "Description"
 msgstr "Opis"
 
@@ -457,7 +459,7 @@ msgid "Please re-type the above password."
 msgstr "Proszę powtórzyć powyższe hasło."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:48
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:173
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:213
 msgid "Auth only via module:"
 msgstr ""
 
@@ -498,12 +500,12 @@ msgid "The Ident is sent to server as username."
 msgstr "Ident jest wysyłany do serwera jako nazwa użytkownika."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:90
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:124
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:164
 msgid "Status prefix:"
 msgstr ""
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:92
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:126
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:166
 msgid "The prefix for the status and module queries."
 msgstr "Przedrostek dla modułu status i pozostałych zapytań modułów."
 
@@ -553,7 +555,7 @@ msgstr ""
 "Będziesz mógł tutaj dodawać + modyfikować sieci po utworzeniu użytkownika."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:195
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:201
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:241
 msgid "Loaded by networks"
 msgstr "Załadowany przez sieci"
 
@@ -721,7 +723,7 @@ msgid "Response"
 msgstr "Odpowiedź"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:392
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:112
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:152
 msgid "Skin:"
 msgstr "Skórka:"
 
@@ -730,7 +732,7 @@ msgid "- Global -"
 msgstr "- Globalna -"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:398
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:116
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:156
 msgid "Default"
 msgstr "Domyślna"
 
@@ -839,6 +841,7 @@ msgstr "Nazwa użytkownika"
 
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:29
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:21
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:92
 msgid "Delete"
 msgstr "Usuń"
 
@@ -859,18 +862,21 @@ msgid "IPv6"
 msgstr "IPv6"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:18
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:89
 msgid "IRC"
 msgstr "IRC"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:19
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:90
 msgid "HTTP"
 msgstr "HTTP"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:20
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:91
 msgid "URIPrefix"
 msgstr "PrzedrostekURI"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:65
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:57
 msgid ""
 "To delete port which you use to access webadmin itself, either connect to "
 "webadmin via another port, or do it in IRC (/znc DelPort)"
@@ -878,31 +884,47 @@ msgstr ""
 "Aby usunąć port, którego używasz do uzyskania dostępu do samego webadmin, "
 "albo połącz się z webadmin przez inny port, albo zrób to w IRC (/znc DelPort)"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:65
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:57
 msgid "Current"
 msgstr "Bieżący"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:108
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:85
+msgid "Path"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:86
+msgid "Mode"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:87
+msgid "Group"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:128
+msgid "Octal number; -1 means do not chmod"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:148
 msgid "Settings"
 msgstr "Ustawienia"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:127
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:167
 msgid "Default for new users only."
 msgstr "Jest to wartość domyślna dla nowych użytkowników."
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:132
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:172
 msgid "Maximum buffer size:"
 msgstr ""
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:134
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:174
 msgid "Sets the global Max Buffer Size a user can have."
 msgstr "Ustawia globalny maksymalny rozmiar bufora, jaki może mieć użytkownik."
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:139
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:179
 msgid "Connect delay:"
 msgstr ""
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:141
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:181
 msgid ""
 "The time between connection attempts to IRC servers, in seconds. This "
 "affects the connection between ZNC and the IRC server; not the connection "
@@ -912,11 +934,11 @@ msgstr ""
 "połączenie między ZNC a serwerem IRC; nie na połączenie między Twoim "
 "klientem IRC a ZNC."
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:146
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:186
 msgid "Server throttle:"
 msgstr ""
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:148
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:188
 msgid ""
 "The minimal time between two connect attempts to the same hostname, in "
 "seconds. Some servers refuse your connection if you reconnect too fast."
@@ -925,48 +947,48 @@ msgstr ""
 "sekundach. Niektóre serwery odmawiają połączenia, jeśli nastąpi zbyt szybkie "
 "ponowne połączenie."
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:153
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:193
 msgid "Anonymous connection limit per IP:"
 msgstr ""
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:155
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:195
 msgid "Limits the number of unidentified connections per IP."
 msgstr "Ogranicza liczbę niezidentyfikowanych połączeń na IP."
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:160
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:200
 msgid "Protect web sessions:"
 msgstr ""
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:162
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:202
 msgid "Disallow IP changing during each web session"
 msgstr "Nie zezwalaj na zmianę adresu IP podczas każdej sesji WWW"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:167
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:207
 msgid "Hide ZNC version:"
 msgstr ""
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:169
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:209
 msgid "Hide version number from non-ZNC users"
 msgstr "Ukryj numer wersji przed użytkownikami spoza ZNC"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:175
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:215
 msgid "Allow user authentication by external modules only"
 msgstr "Zezwól na uwierzytelnianie użytkownika tylko przez moduły zewnętrzne"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:180
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:220
 msgid "MOTD:"
 msgstr "Wiadomość dnia:"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:184
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:224
 msgid "“Message of the Day”, sent to all ZNC users on connect."
 msgstr ""
 "„Wiadomość dnia”, wysyłana do wszystkich użytkowników ZNC na połączeniu."
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:192
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:232
 msgid "Global Modules"
 msgstr "Moduły globalne"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:202
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:242
 msgid "Loaded by users"
 msgstr "Załadowany przez użytkowników"
 
@@ -1043,7 +1065,7 @@ msgstr "Użytkownik"
 msgid "Network"
 msgstr "Sieć"
 
-#: webadmin.cpp:91 webadmin.cpp:1979
+#: webadmin.cpp:91 webadmin.cpp:1981
 msgid "Global Settings"
 msgstr "Ustawienia globalne"
 
@@ -1071,7 +1093,7 @@ msgstr "Niepoprawne przesłanie [Hasła do siebie nie pasują]"
 msgid "Timeout can't be less than 30 seconds!"
 msgstr "Limit czasu nie może być krótszy niż 30 sekund!"
 
-#: webadmin.cpp:360 webadmin.cpp:388 webadmin.cpp:1210 webadmin.cpp:2180
+#: webadmin.cpp:360 webadmin.cpp:388 webadmin.cpp:1210 webadmin.cpp:2184
 #, c++-format
 msgid "Unable to load module [{1}]: {2}"
 msgstr "Nie można załadować modułu [{1}]: {2}"
@@ -1193,7 +1215,7 @@ msgstr "Dodaj sieć"
 msgid "Network name is a required argument"
 msgstr "Nazwa sieci jest wymaganym argumentem"
 
-#: webadmin.cpp:1217 webadmin.cpp:2187
+#: webadmin.cpp:1217 webadmin.cpp:2191
 #, c++-format
 msgid "Unable to reload module [{1}]: {2}"
 msgstr "Nie można przeładować modułu [{1}]: {2}"
@@ -1319,19 +1341,19 @@ msgstr "Wybierz IRC, HTTP lub oba."
 msgid "Choose either IPv4 or IPv6 or both."
 msgstr "Wybierz IPv4 lub IPv6 lub oba."
 
-#: webadmin.cpp:1923 webadmin.cpp:1965
+#: webadmin.cpp:1925 webadmin.cpp:1967
 msgid "Port was changed, but config file was not written"
 msgstr "Port został zmieniony, ale plik konfiguracyjny nie został zapisany"
 
-#: webadmin.cpp:1952
+#: webadmin.cpp:1954
 msgid "Invalid request."
 msgstr "Nieprawidłowe zapytanie."
 
-#: webadmin.cpp:1969
+#: webadmin.cpp:1971
 msgid "The specified listener was not found."
 msgstr "Określony nasłuchiwacz nie został znaleziony."
 
-#: webadmin.cpp:2216
+#: webadmin.cpp:2220
 msgid "Settings were changed, but config file was not written"
 msgstr ""
 "Ustawienia zostały zmienione, ale plik konfiguracyjny nie został zapisany"
