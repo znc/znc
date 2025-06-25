@@ -84,11 +84,11 @@ msgstr ""
 msgid "Will log joins"
 msgstr "Kanala girişler (joins) günlüğe kaydedilecek"
 
-#: log.cpp:197
+#: log.cpp:196
 msgid "Will not log joins"
 msgstr "Kanala girişler (joins) günlüğe kaydedilmeyecek"
 
-#: log.cpp:198
+#: log.cpp:197
 msgid "Will log quits"
 msgstr "IRC çıkışları (quits) günlüğe kaydedilecek"
 
@@ -114,23 +114,23 @@ msgstr ""
 msgid "Logging joins"
 msgstr "Kanala girişler (joins) günlüğe kaydediliyor"
 
-#: log.cpp:212
+#: log.cpp:211
 msgid "Not logging joins"
 msgstr "Kanala girişler (joins) günlüğe kaydedilmiyor"
 
-#: log.cpp:213
+#: log.cpp:212
 msgid "Logging quits"
 msgstr "IRC çıkışları (quits) günlüğe kaydediliyor"
 
-#: log.cpp:213
+#: log.cpp:212
 msgid "Not logging quits"
 msgstr "IRC çıkışları (quits) günlüğe kaydedilmiyor"
 
-#: log.cpp:214
+#: log.cpp:213
 msgid "Logging nick changes"
 msgstr "Rumuz değişiklikleri (nickchanges) günlüğe kaydediliyor"
 
-#: log.cpp:215
+#: log.cpp:214
 msgid "Not logging nick changes"
 msgstr "Rumuz değişiklikleri (nickchanges) günlüğe kaydedilmiyor"
 

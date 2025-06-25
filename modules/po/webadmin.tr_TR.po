@@ -229,6 +229,7 @@ msgstr "Port"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:110
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:17
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:88
 msgid "SSL"
 msgstr "SSL"
 
@@ -336,8 +337,8 @@ msgstr "Ağı oluşturduktan sonra buraya kanal ekleyip değiştirebileceksiniz.
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:140
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:373
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:15
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:82
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:94
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:75
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:134
 msgid "Add"
 msgstr "Ekle"
 
@@ -347,7 +348,7 @@ msgstr "Dizin"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:199
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:449
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:259
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:299
 msgid "Save"
 msgstr "Kaydet"
 
@@ -355,7 +356,7 @@ msgstr "Kaydet"
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:242
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:146
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:191
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:198
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:238
 msgid "Name"
 msgstr "Adı"
 
@@ -387,7 +388,8 @@ msgstr "Düzenle"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:216
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:162
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:62
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:54
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:117
 msgid "Del"
 msgstr "Sil"
 
@@ -398,13 +400,13 @@ msgstr "Modüller"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:243
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:192
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:199
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:239
 msgid "Arguments"
 msgstr "Argümanlar"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_network.tmpl:244
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:193
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:200
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:240
 msgid "Description"
 msgstr "Açıklama"
 
@@ -454,7 +456,7 @@ msgid "Please re-type the above password."
 msgstr "Lütfen yukarıdaki şifreyi tekrar yazın."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:48
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:173
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:213
 msgid "Auth only via module:"
 msgstr "Yalnızca modül aracılığıyla kimlik doğrulama:"
 
@@ -495,12 +497,12 @@ msgid "The Ident is sent to server as username."
 msgstr "Ident, kullanıcı adı olarak sunucuya gönderilir."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:90
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:124
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:164
 msgid "Status prefix:"
 msgstr "Durum öneki:"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:92
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:126
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:166
 msgid "The prefix for the status and module queries."
 msgstr "Durum ve modül sorgularının öneki."
 
@@ -550,7 +552,7 @@ msgstr ""
 "Kullanıcıyı oluşturduktan sonra buraya ağ ekleyip değiştirebileceksiniz."
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:195
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:201
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:241
 msgid "Loaded by networks"
 msgstr "Ağlar tarafından yüklendi"
 
@@ -716,7 +718,7 @@ msgid "Response"
 msgstr "Yanıt"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:392
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:112
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:152
 msgid "Skin:"
 msgstr "Tema:"
 
@@ -725,7 +727,7 @@ msgid "- Global -"
 msgstr "- Global -"
 
 #: modules/po/../data/webadmin/tmpl/add_edit_user.tmpl:398
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:116
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:156
 msgid "Default"
 msgstr "Varsayılan"
 
@@ -834,6 +836,7 @@ msgstr "Kullanıcı Adı"
 
 #: modules/po/../data/webadmin/tmpl/listusers.tmpl:29
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:21
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:92
 msgid "Delete"
 msgstr "Sil"
 
@@ -854,18 +857,21 @@ msgid "IPv6"
 msgstr "IPv6"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:18
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:89
 msgid "IRC"
 msgstr "IRC"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:19
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:90
 msgid "HTTP"
 msgstr "HTTP"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:20
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:91
 msgid "URIPrefix"
 msgstr "URI Öneki"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:65
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:57
 msgid ""
 "To delete port which you use to access webadmin itself, either connect to "
 "webadmin via another port, or do it in IRC (/znc DelPort)"
@@ -873,32 +879,48 @@ msgstr ""
 "Webadmin'e erişmek için kullandığınız portlarını silmek için webadmin'e "
 "başka bir port üzerinden bağlanın veya bunu IRC'de (/znc DelPort) yapın."
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:65
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:57
 msgid "Current"
 msgstr "Geçerli"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:108
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:85
+msgid "Path"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:86
+msgid "Mode"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:87
+msgid "Group"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:128
+msgid "Octal number; -1 means do not chmod"
+msgstr ""
+
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:148
 msgid "Settings"
 msgstr "Ayarlar"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:127
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:167
 msgid "Default for new users only."
 msgstr "Yalnızca yeni kullanıcılar için varsayılandır."
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:132
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:172
 msgid "Maximum buffer size:"
 msgstr "Maksimum arabellek boyutu:"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:134
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:174
 msgid "Sets the global Max Buffer Size a user can have."
 msgstr ""
 "Bir kullanıcının sahip olabileceği genel Maksimum Arabellek Boyutunu ayarlar."
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:139
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:179
 msgid "Connect delay:"
 msgstr "Bağlantı gecikmesi:"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:141
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:181
 msgid ""
 "The time between connection attempts to IRC servers, in seconds. This "
 "affects the connection between ZNC and the IRC server; not the connection "
@@ -908,11 +930,11 @@ msgstr ""
 "ZNC ile IRC sunucusu arasındaki bağlantıyı etkiler; IRC istemciniz ile ZNC "
 "arasındaki bağlantı değil."
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:146
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:186
 msgid "Server throttle:"
 msgstr "Sunucu kısıtı:"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:148
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:188
 msgid ""
 "The minimal time between two connect attempts to the same hostname, in "
 "seconds. Some servers refuse your connection if you reconnect too fast."
@@ -921,47 +943,47 @@ msgstr ""
 "minimum süre. Çok hızlı yeniden bağlanırsanız bazı sunucular bağlantınızı "
 "reddeder."
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:153
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:193
 msgid "Anonymous connection limit per IP:"
 msgstr "IP başına anonim bağlantı limiti:"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:155
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:195
 msgid "Limits the number of unidentified connections per IP."
 msgstr "IP başına tanımlanamayan bağlantı sayısını sınırlar."
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:160
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:200
 msgid "Protect web sessions:"
 msgstr "Web oturumları koruması:"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:162
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:202
 msgid "Disallow IP changing during each web session"
 msgstr "Her web oturumu sırasında IP değişimine izin verme"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:167
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:207
 msgid "Hide ZNC version:"
 msgstr "ZNC sürümünügizle:"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:169
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:209
 msgid "Hide version number from non-ZNC users"
 msgstr "Sürüm numarasını ZNC üyesi olmayan kullanıcılardan gizler"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:175
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:215
 msgid "Allow user authentication by external modules only"
 msgstr "Yalnızca harici modüllerle kullanıcı kimlik doğrulamasına izin ver"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:180
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:220
 msgid "MOTD:"
 msgstr "MOTD:"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:184
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:224
 msgid "“Message of the Day”, sent to all ZNC users on connect."
 msgstr "Bağlanınca tüm ZNC kullanıcılarına gönderilen \"MOTD-Günün Mesajı\"."
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:192
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:232
 msgid "Global Modules"
 msgstr "Global Modüller"
 
-#: modules/po/../data/webadmin/tmpl/settings.tmpl:202
+#: modules/po/../data/webadmin/tmpl/settings.tmpl:242
 msgid "Loaded by users"
 msgstr "Kullanıcılar tarafından yüklendi"
 
@@ -1038,7 +1060,7 @@ msgstr "Kullanıcı"
 msgid "Network"
 msgstr "Ağ"
 
-#: webadmin.cpp:91 webadmin.cpp:1979
+#: webadmin.cpp:91 webadmin.cpp:1981
 msgid "Global Settings"
 msgstr "Global Ayarlar"
 
@@ -1066,7 +1088,7 @@ msgstr "Geçersiz Gönderim [Şifreler eşleşmiyor]"
 msgid "Timeout can't be less than 30 seconds!"
 msgstr "Zaman aşımı 30 saniyeden az olamaz!"
 
-#: webadmin.cpp:360 webadmin.cpp:388 webadmin.cpp:1210 webadmin.cpp:2180
+#: webadmin.cpp:360 webadmin.cpp:388 webadmin.cpp:1210 webadmin.cpp:2184
 #, c++-format
 msgid "Unable to load module [{1}]: {2}"
 msgstr "[{1}] modülü yüklenemiyor: {2}"
@@ -1186,7 +1208,7 @@ msgstr "Ağ Ekle"
 msgid "Network name is a required argument"
 msgstr "Ağ adı gerekli bir argümandır"
 
-#: webadmin.cpp:1217 webadmin.cpp:2187
+#: webadmin.cpp:1217 webadmin.cpp:2191
 #, c++-format
 msgid "Unable to reload module [{1}]: {2}"
 msgstr "[{1}] modülü yeniden yüklenemiyor: {2}"
@@ -1315,18 +1337,18 @@ msgstr "IRC'yi veya HTTP'yi veya her ikisini de seçin."
 msgid "Choose either IPv4 or IPv6 or both."
 msgstr "IPv4'ü veya IPv6'yı ya da her ikisini birden seçin."
 
-#: webadmin.cpp:1923 webadmin.cpp:1965
+#: webadmin.cpp:1925 webadmin.cpp:1967
 msgid "Port was changed, but config file was not written"
 msgstr "Port değiştirildi ancak yapılandırma dosyası yazılamadı"
 
-#: webadmin.cpp:1952
+#: webadmin.cpp:1954
 msgid "Invalid request."
 msgstr "Geçersiz istek."
 
-#: webadmin.cpp:1969
+#: webadmin.cpp:1971
 msgid "The specified listener was not found."
 msgstr "Belirtilen dinleyici bulunamadı."
 
-#: webadmin.cpp:2216
+#: webadmin.cpp:2220
 msgid "Settings were changed, but config file was not written"
 msgstr "Ayarlar değiştirildi ancak yapılandırma dosyası yazılamadı"
