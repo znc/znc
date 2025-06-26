@@ -322,8 +322,25 @@ static void FixupChanNick(CNick& Nick, CChan* pChan) {
     }
 }
 
+// #1826: CAP away-notify clients shouldn't receive notifications if all shared
+// channels are detached
+// This applies to account, away-notify, and chghost.
+bool CIRCSock::IsNickVisibleInAttachedChannels(const CString& sNick) const {
+    const vector<CChan*>& vChans = m_pNetwork->GetChans();
+    for (const CChan* pChan : vChans) {
+        if (!pChan->IsDetached() && pChan->FindNick(sNick)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool CIRCSock::OnAccountMessage(CMessage& Message) {
     // TODO: IRCSOCKMODULECALL(OnAccountMessage(Message)) ?
+    // Do not send ACCOUNT if all shared channels are detached.
+    if (!IsNickVisibleInAttachedChannels(Message.GetNick().GetNick())) {
+        return true;
+    }
     return false;
 }
 
@@ -377,6 +394,10 @@ bool CIRCSock::OnActionMessage(CActionMessage& Message) {
 
 bool CIRCSock::OnAwayMessage(CMessage& Message) {
     // TODO: IRCSOCKMODULECALL(OnAwayMessage(Message)) ?
+    // Do not send away-notify if all shared channels are detached.
+    if (!IsNickVisibleInAttachedChannels(Message.GetNick().GetNick())) {
+        return true;
+    }
     return false;
 }
 
@@ -570,6 +591,10 @@ bool CIRCSock::OnCTCPMessage(CCTCPMessage& Message) {
 }
 
 bool CIRCSock::OnChgHostMessage(CChgHostMessage& Message) {
+    // Do not send chghost if all shared channels are detached.
+    if (!IsNickVisibleInAttachedChannels(Message.GetNick().GetNick())) {
+        return true;
+    }
     // The emulation of QUIT+JOIN would be cleaner inside CClient::PutClient()
     // but computation of new modes is difficult enough so that I don't want to
     // repeat it for every client
