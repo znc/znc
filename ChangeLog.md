@@ -1,3 +1,18 @@
+# ZNC 1.10.1 (2025-07-01)
+
+This release fixes several regressions and features introduced in 1.10.0.
+
+## Fixes
+
+* Fix use-after-free in capabilities handling. The visible effect of this was either crash, or some capabilities having wrong state.
+* Fix nullptr dereference in TAGMSG handling.
+* Preserve `DisableClientCap/DisableServerCap` settings when writing config.
+
+## New
+
+* The listening unix socket can now be configured to belong to a specific group and/or to have a specific file access mode. The syntax for AddPort command is `unix:ssl,group=mygroup,mode=666:/path`, some of these options can be skipped if the feature is not needed.
+
+
 # ZNC 1.10.0 (2025-06-09)
 
 ## New
