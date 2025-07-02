@@ -1221,5 +1221,58 @@ TEST_F(ZNCTest, DisconnectedTagmsgCrash) {
     client.ReadUntil("AddServer");
 }
 
+// https://github.com/znc/znc/issues/1826
+TEST_F(ZNCTest, CAPDetached) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+
+    ircd.Write("CAP user LS :away-notify");
+    ircd.ReadUntil("CAP REQ :away-notify");
+    ircd.Write("CAP user ACK :away-notify");
+
+    ircd.Write("CAP user LS :chghost");
+    ircd.ReadUntil("CAP REQ :chghost");
+    ircd.Write("CAP user ACK :chghost");
+
+    ircd.Write("CAP user LS :account-notify");
+    ircd.ReadUntil("CAP REQ :account-notify");
+    ircd.Write("CAP user ACK :account-notify");
+
+    auto client = LoginClient();
+
+    client.Write("CAP LS");
+
+    client.Write("CAP REQ :cap-notify");
+    client.ReadUntil("ACK :cap-notify");
+    client.Write("CAP REQ :away-notify");
+    client.ReadUntil("ACK :away-notify");
+    client.Write("CAP REQ :chghost");
+    client.ReadUntil("ACK :chghost");
+    client.Write("CAP REQ :account-notify");
+    client.ReadUntil("ACK :account-notify");
+    client.Write("CAP END");
+
+    client.Write(":nick!ident@host JOIN #test");
+    ircd.Write(":test!test@test JOIN #test");
+    client.ReadUntil(":test!test@test JOIN #test");
+    ircd.Write("353 nick = #test :nick!ident@host test!test@test");
+    ircd.Write("366 nick #test :End of /NAMES list.");
+    client.ReadUntil("#test :End of /NAMES");
+    client.Write("znc detach #test");
+    client.ReadUntil(":*status!status@znc.in PRIVMSG nick :Detached 1 channel");
+
+    ircd.Write(":test!test@test ACCOUNT test");
+    EXPECT_THAT(client.ReadRemainder().toStdString(), Not(HasSubstr(":test!test@test ACCOUNT test")))
+        << "Client saw account-notify even though all channels are detached";
+
+    ircd.Write(":test!test@test AWAY :going away");
+    EXPECT_THAT(client.ReadRemainder().toStdString(), Not(HasSubstr(":test!test@test AWAY :going away")))
+        << "Client saw away-notify even though all channels are detached";
+
+    ircd.Write(":test!test@test CHGHOST test detached.test");
+    EXPECT_THAT(client.ReadRemainder().toStdString(), Not(HasSubstr(":test!test@test CHGHOST test detached.test")))
+        << "Client saw chghost even though all channels are detached";
+}
+
 }  // namespace
 }  // namespace znc_inttest

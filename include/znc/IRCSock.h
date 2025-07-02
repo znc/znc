@@ -171,6 +171,8 @@ class CIRCSock : public CIRCSocket {
     // TODO move this function to CIRCNetwork and make it non-static?
     static bool IsFloodProtected(double fRate);
 
+    bool IsNickVisibleInAttachedChannels(const CString& sNick) const;
+
   private:
     // Message Handlers
     bool OnAccountMessage(CMessage& Message);
