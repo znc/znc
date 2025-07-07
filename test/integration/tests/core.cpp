@@ -292,6 +292,10 @@ TEST_F(ZNCTest, AwayNotify) {
     client.ReadUntil("CAP user NEW :away-notify");
     client.Write("CAP REQ :away-notify");
     client.ReadUntil("ACK :away-notify");
+    // Fix for #1826 breaks this test. Join channel so this test does not fail.
+    client.Write(":nick JOIN #test");
+    ircd.ReadUntil("JOIN #test");
+    ircd.Write(":x!y@z JOIN #test");
     ircd.Write(":x!y@z AWAY :reason");
     client.ReadUntil(":x!y@z AWAY :reason");
     ircd.Close();
