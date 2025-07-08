@@ -124,81 +124,81 @@ msgstr "Nu mă pot conecta la {1}, deoarece ZNC nu este compilat cu suport SSL."
 msgid "Some module aborted the connection attempt"
 msgstr "Unele module au întrerupt încercarea de conectare"
 
-#: IRCSock.cpp:642
+#: IRCSock.cpp:667
 #, c++-format
 msgid "Error from server: {1}"
 msgstr "Eroare de la server: {1}"
 
-#: IRCSock.cpp:850
+#: IRCSock.cpp:875
 msgid "ZNC seems to be connected to itself, disconnecting..."
 msgstr "ZNC pare să fie conectat la sine, deconectare..."
 
-#: IRCSock.cpp:897
+#: IRCSock.cpp:922
 #, c++-format
 msgid "Server {1} redirects us to {2}:{3} with reason: {4}"
 msgstr "Serverul {1} mă redirecționează către {2}: {3} cu motivul: {4}"
 
-#: IRCSock.cpp:901
+#: IRCSock.cpp:926
 msgid "Perhaps you want to add it as a new server."
 msgstr "Poate dorești să îl adaugi ca un server nou."
 
-#: IRCSock.cpp:1131
+#: IRCSock.cpp:1156
 #, c++-format
 msgid "Channel {1} is linked to another channel and was thus disabled."
 msgstr "Canalul {1} este conectat la un alt canal și a fost astfel dezactivat."
 
-#: IRCSock.cpp:1143
+#: IRCSock.cpp:1168
 msgid "Switched to SSL (STARTTLS)"
 msgstr "Comutat la SSL (STARTTLS)"
 
-#: IRCSock.cpp:1196
+#: IRCSock.cpp:1221
 #, c++-format
 msgid "You quit: {1}"
 msgstr "Ai ieșit: {1}"
 
-#: IRCSock.cpp:1400
+#: IRCSock.cpp:1425
 #, c++-format
 msgid "Warning: flood protection is delaying your messages by {1} seconds"
 msgstr ""
 
-#: IRCSock.cpp:1458
+#: IRCSock.cpp:1483
 msgid "Disconnected from IRC. Reconnecting..."
 msgstr "Deconectat de la IRC. Se reconectează..."
 
-#: IRCSock.cpp:1489
+#: IRCSock.cpp:1514
 #, c++-format
 msgid "Cannot connect to IRC ({1}). Retrying..."
 msgstr "Nu se poate conecta la IRC ({1}). Se reîncearcă..."
 
-#: IRCSock.cpp:1492
+#: IRCSock.cpp:1517
 #, c++-format
 msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr "Deconectat de la IRC ({1}). Se reconectează..."
 
-#: IRCSock.cpp:1528
+#: IRCSock.cpp:1553
 #, c++-format
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 "Dacă ai încredere în acest certificat, tastează /znc "
 "AddTrustedServerFingerprint {1}"
 
-#: IRCSock.cpp:1537
+#: IRCSock.cpp:1562
 msgid "IRC connection timed out.  Reconnecting..."
 msgstr "Conexiunea IRC a picat. Se reconectează..."
 
-#: IRCSock.cpp:1549
+#: IRCSock.cpp:1574
 msgid "Connection Refused.  Reconnecting..."
 msgstr "Conexiune refuzata. Se reconectează..."
 
-#: IRCSock.cpp:1557
+#: IRCSock.cpp:1582
 msgid "Received a too long line from the IRC server!"
 msgstr "Am primit un rând prea lung de la serverul IRC!"
 
-#: IRCSock.cpp:1671
+#: IRCSock.cpp:1696
 msgid "No free nick available"
 msgstr "Nu este disponibil niciun nume de utilizator"
 
-#: IRCSock.cpp:1679
+#: IRCSock.cpp:1704
 msgid "No free nick found"
 msgstr "Nu a fost găsit niciun nume de utilizator"
 

@@ -75,61 +75,61 @@ msgstr "{1} {2} neemt stem van {3} op {4}"
 msgid "* {1} sets mode: {2} {3} on {4}"
 msgstr "* {1} stelt modus in: {2} {3} op {4}"
 
-#: sample.cpp:163
+#: sample.cpp:166
 #, c++-format
 msgid "{1} kicked {2} from {3} with the msg {4}"
 msgstr "{1} geschopt {2} van {3} met het bericht {4}"
 
-#: sample.cpp:169
+#: sample.cpp:179
 #, c++-format
 msgid "* {1} ({2}@{3}) quits ({4}) from channel: {6}"
 msgid_plural "* {1} ({2}@{3}) quits ({4}) from {5} channels: {6}"
 msgstr[0] "* {1} ({2}@{3}) verlaat ({4}) van kanaal: {6}"
 msgstr[1] "* {1} ({2}@{3}) verlaat ({4}) van {5} kanalen: {6}"
 
-#: sample.cpp:177
+#: sample.cpp:187
 #, c++-format
 msgid "Attempting to join {1}"
 msgstr "Proberen toe te treden tot {1}"
 
-#: sample.cpp:182
+#: sample.cpp:194
 #, c++-format
 msgid "* {1} ({2}@{3}) joins {4}"
 msgstr "* {1} ({2}@{3}) treed toe in {4}"
 
-#: sample.cpp:189
+#: sample.cpp:203
 #, c++-format
-msgid "* {1} ({2}@{3}) parts {4}"
-msgstr "* {1} ({2}@{3}) verlaat {4}"
+msgid "* {1} ({2}@{3}) parts {4} with message: {5}"
+msgstr ""
 
-#: sample.cpp:196
+#: sample.cpp:212
 #, c++-format
 msgid "{1} invited us to {2}, ignoring invites to {2}"
 msgstr "{1} nodigt ons uit in {2}, negeer uitnodigingen naar {2}"
 
-#: sample.cpp:201
+#: sample.cpp:217
 #, c++-format
 msgid "{1} invited us to {2}"
 msgstr "{1} nodigt ons uit in {2}"
 
-#: sample.cpp:207
+#: sample.cpp:225
 #, c++-format
 msgid "{1} is now known as {2}"
 msgstr "{1} staat nu bekend als {2}"
 
-#: sample.cpp:269 sample.cpp:276
+#: sample.cpp:307 sample.cpp:316
 #, c++-format
 msgid "{1} changes topic on {2} to {3}"
 msgstr "{1} veranderd onderwerp in {2} naar {3}"
 
-#: sample.cpp:317
+#: sample.cpp:366
 msgid "Hi, I'm your friendly sample module."
 msgstr "Hey, ik ben je vriendelijke voorbeeldmodule."
 
-#: sample.cpp:330
+#: sample.cpp:379
 msgid "Description of module arguments goes here."
 msgstr "Beschrijving van module argumenten komen hier."
 
-#: sample.cpp:333
+#: sample.cpp:382
 msgid "To be used as a sample for writing modules"
 msgstr "Om gebruikt te worden als voorbeeld voor het schrijven van modulen"

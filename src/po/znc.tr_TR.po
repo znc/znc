@@ -126,81 +126,81 @@ msgstr "ZNC, SSL desteğiyle derlenmediğinden {1}'e bağlanılamıyor."
 msgid "Some module aborted the connection attempt"
 msgstr "Bazı modüller bağlantı girişimini iptal etti"
 
-#: IRCSock.cpp:642
+#: IRCSock.cpp:667
 #, c++-format
 msgid "Error from server: {1}"
 msgstr "Sunucudan gelen hata: {1}"
 
-#: IRCSock.cpp:850
+#: IRCSock.cpp:875
 msgid "ZNC seems to be connected to itself, disconnecting..."
 msgstr "ZNC kendine bağlı görünüyor, bağlantı kesiliyor..."
 
-#: IRCSock.cpp:897
+#: IRCSock.cpp:922
 #, c++-format
 msgid "Server {1} redirects us to {2}:{3} with reason: {4}"
 msgstr "{1} sunucusu bizi şu nedenle {2}:{3} adresine yönlendiriyor: {4}"
 
-#: IRCSock.cpp:901
+#: IRCSock.cpp:926
 msgid "Perhaps you want to add it as a new server."
 msgstr "Belki onu yeni bir sunucu olarak eklemek istersiniz."
 
-#: IRCSock.cpp:1131
+#: IRCSock.cpp:1156
 #, c++-format
 msgid "Channel {1} is linked to another channel and was thus disabled."
 msgstr "{1} kanalı başka bir kanala bağlı olduğundan devre dışı bırakıldı."
 
-#: IRCSock.cpp:1143
+#: IRCSock.cpp:1168
 msgid "Switched to SSL (STARTTLS)"
 msgstr "SSL'ye (STARTTLS) geçildi"
 
-#: IRCSock.cpp:1196
+#: IRCSock.cpp:1221
 #, c++-format
 msgid "You quit: {1}"
 msgstr "Çıktınız: {1}"
 
-#: IRCSock.cpp:1400
+#: IRCSock.cpp:1425
 #, c++-format
 msgid "Warning: flood protection is delaying your messages by {1} seconds"
 msgstr "Uyarı: Flood koruması mesajlarınızı {1} saniye geciktiriyor"
 
-#: IRCSock.cpp:1458
+#: IRCSock.cpp:1483
 msgid "Disconnected from IRC. Reconnecting..."
 msgstr "IRC'den bağlantı kesildi. Yeniden bağlanılıyor..."
 
-#: IRCSock.cpp:1489
+#: IRCSock.cpp:1514
 #, c++-format
 msgid "Cannot connect to IRC ({1}). Retrying..."
 msgstr "IRC'ye ({1}) bağlanılamıyor. Yeniden deneniyor..."
 
-#: IRCSock.cpp:1492
+#: IRCSock.cpp:1517
 #, c++-format
 msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr "IRC ({1})'den bağlantı kesildi. Yeniden bağlanılıyor..."
 
-#: IRCSock.cpp:1528
+#: IRCSock.cpp:1553
 #, c++-format
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 "Bu sertifikaya güveniyorsanız /znc AddTrustedServerFingerprint {1} komutunu "
 "kullanın"
 
-#: IRCSock.cpp:1537
+#: IRCSock.cpp:1562
 msgid "IRC connection timed out.  Reconnecting..."
 msgstr "IRC bağlantısı zaman aşımına uğradı. Yeniden bağlanılıyor..."
 
-#: IRCSock.cpp:1549
+#: IRCSock.cpp:1574
 msgid "Connection Refused.  Reconnecting..."
 msgstr "Bağlantı reddedildi. Yeniden bağlanılıyor..."
 
-#: IRCSock.cpp:1557
+#: IRCSock.cpp:1582
 msgid "Received a too long line from the IRC server!"
 msgstr "IRC sunucusundan çok uzun bir hat alındı!"
 
-#: IRCSock.cpp:1671
+#: IRCSock.cpp:1696
 msgid "No free nick available"
 msgstr "Kullanılabilir nick yok"
 
-#: IRCSock.cpp:1679
+#: IRCSock.cpp:1704
 msgid "No free nick found"
 msgstr "Kullanılabilir nick bulunamadı"
 
@@ -1468,17 +1468,17 @@ msgstr "Web"
 #: ClientCommand.cpp:1653 ClientCommand.cpp:1686
 msgctxt "listports"
 msgid "Path"
-msgstr ""
+msgstr "Yol"
 
 #: ClientCommand.cpp:1654 ClientCommand.cpp:1688
 msgctxt "listports"
 msgid "Mode"
-msgstr ""
+msgstr "Mod"
 
 #: ClientCommand.cpp:1655 ClientCommand.cpp:1690
 msgctxt "listports"
 msgid "Group"
-msgstr ""
+msgstr "Grup"
 
 #: ClientCommand.cpp:1679
 msgctxt "listports"
@@ -1546,6 +1546,8 @@ msgid ""
 "Or: AddPort unix:[ssl,mode=NNN,group=foo]:/path/to/socket <web|irc|all> "
 "[uriprefix]"
 msgstr ""
+"Ya da: AddPort unix:[ssl,mode=NNN,group=foo]:/soket/yolu <web|irc|all> "
+"[uriprefix]"
 
 #: ClientCommand.cpp:1826
 msgid "Deleted Port"

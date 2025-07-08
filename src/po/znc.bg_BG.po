@@ -127,81 +127,81 @@ msgstr ""
 msgid "Some module aborted the connection attempt"
 msgstr "Някой модул отказа опитът за връзка."
 
-#: IRCSock.cpp:642
+#: IRCSock.cpp:667
 #, c++-format
 msgid "Error from server: {1}"
 msgstr "Грешка от съврър: {1}"
 
-#: IRCSock.cpp:850
+#: IRCSock.cpp:875
 msgid "ZNC seems to be connected to itself, disconnecting..."
 msgstr "Изглежда че ZNC е свързан към себе си, изключване..."
 
-#: IRCSock.cpp:897
+#: IRCSock.cpp:922
 #, c++-format
 msgid "Server {1} redirects us to {2}:{3} with reason: {4}"
 msgstr "Сървъра{1} ни пренасочва към {2}:{3} с причина: {4}"
 
-#: IRCSock.cpp:901
+#: IRCSock.cpp:926
 msgid "Perhaps you want to add it as a new server."
 msgstr "Може би искате да го добавите като нов сървър."
 
-#: IRCSock.cpp:1131
+#: IRCSock.cpp:1156
 #, c++-format
 msgid "Channel {1} is linked to another channel and was thus disabled."
 msgstr "Каналът {1} е свързан към друг канал и поради тази причина е изключен."
 
-#: IRCSock.cpp:1143
+#: IRCSock.cpp:1168
 msgid "Switched to SSL (STARTTLS)"
 msgstr "Превключване към SSL (STARTTLS)"
 
-#: IRCSock.cpp:1196
+#: IRCSock.cpp:1221
 #, c++-format
 msgid "You quit: {1}"
 msgstr "Вие напуснахте {1}"
 
-#: IRCSock.cpp:1400
+#: IRCSock.cpp:1425
 #, c++-format
 msgid "Warning: flood protection is delaying your messages by {1} seconds"
 msgstr ""
 
-#: IRCSock.cpp:1458
+#: IRCSock.cpp:1483
 msgid "Disconnected from IRC. Reconnecting..."
 msgstr "Изключихте се от IRC. Опит за повторно свързване..."
 
-#: IRCSock.cpp:1489
+#: IRCSock.cpp:1514
 #, c++-format
 msgid "Cannot connect to IRC ({1}). Retrying..."
 msgstr "Не може да се свържите към IRC ({1}). Опитване отново..."
 
-#: IRCSock.cpp:1492
+#: IRCSock.cpp:1517
 #, c++-format
 msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr "Изключихте се от IRC ({1}). Повторно свързване..."
 
-#: IRCSock.cpp:1528
+#: IRCSock.cpp:1553
 #, c++-format
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 "Ако имате доверие на този сертификат, напишете /znc "
 "AddTrustedServerFingerprint {1}"
 
-#: IRCSock.cpp:1537
+#: IRCSock.cpp:1562
 msgid "IRC connection timed out.  Reconnecting..."
 msgstr "IRC връзката изтече. Повторно свързване..."
 
-#: IRCSock.cpp:1549
+#: IRCSock.cpp:1574
 msgid "Connection Refused.  Reconnecting..."
 msgstr "Връзката е отказана. Повторно свързване... "
 
-#: IRCSock.cpp:1557
+#: IRCSock.cpp:1582
 msgid "Received a too long line from the IRC server!"
 msgstr "Получихте твърде дълъг ред от IRC сървъра!"
 
-#: IRCSock.cpp:1671
+#: IRCSock.cpp:1696
 msgid "No free nick available"
 msgstr "Нямате наличен прякор"
 
-#: IRCSock.cpp:1679
+#: IRCSock.cpp:1704
 msgid "No free nick found"
 msgstr "Нямате свободен прякор"
 

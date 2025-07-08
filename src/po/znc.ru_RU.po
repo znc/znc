@@ -127,81 +127,81 @@ msgstr "Не могу подключиться к {1}, т. к. ZNC собран 
 msgid "Some module aborted the connection attempt"
 msgstr "Какой-то модуль оборвал попытку соединения"
 
-#: IRCSock.cpp:642
+#: IRCSock.cpp:667
 #, c++-format
 msgid "Error from server: {1}"
 msgstr "Ошибка от сервера: {1}"
 
-#: IRCSock.cpp:850
+#: IRCSock.cpp:875
 msgid "ZNC seems to be connected to itself, disconnecting..."
 msgstr "Похоже, ZNC подключён к самому себе, отключаюсь..."
 
-#: IRCSock.cpp:897
+#: IRCSock.cpp:922
 #, c++-format
 msgid "Server {1} redirects us to {2}:{3} with reason: {4}"
 msgstr ""
 
-#: IRCSock.cpp:901
+#: IRCSock.cpp:926
 msgid "Perhaps you want to add it as a new server."
 msgstr "Возможно, вам стоит добавить его в качестве нового сервера."
 
-#: IRCSock.cpp:1131
+#: IRCSock.cpp:1156
 #, c++-format
 msgid "Channel {1} is linked to another channel and was thus disabled."
 msgstr "Канал {1} отсылает к другому каналу и потому будет выключен."
 
-#: IRCSock.cpp:1143
+#: IRCSock.cpp:1168
 msgid "Switched to SSL (STARTTLS)"
 msgstr "Перешёл на SSL (STARTTLS)"
 
-#: IRCSock.cpp:1196
+#: IRCSock.cpp:1221
 #, c++-format
 msgid "You quit: {1}"
 msgstr "Вы вышли: {1}"
 
-#: IRCSock.cpp:1400
+#: IRCSock.cpp:1425
 #, c++-format
 msgid "Warning: flood protection is delaying your messages by {1} seconds"
 msgstr ""
 
-#: IRCSock.cpp:1458
+#: IRCSock.cpp:1483
 msgid "Disconnected from IRC. Reconnecting..."
 msgstr "Отключён от IRC. Переподключаюсь..."
 
-#: IRCSock.cpp:1489
+#: IRCSock.cpp:1514
 #, c++-format
 msgid "Cannot connect to IRC ({1}). Retrying..."
 msgstr "Не могу подключиться к IRC ({1}). Пытаюсь ещё раз..."
 
-#: IRCSock.cpp:1492
+#: IRCSock.cpp:1517
 #, c++-format
 msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr "Отключён от IRC ({1}). Переподключаюсь..."
 
-#: IRCSock.cpp:1528
+#: IRCSock.cpp:1553
 #, c++-format
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 "Если вы доверяете этому сертификату, введите /znc "
 "AddTrustedServerFingerprint {1}"
 
-#: IRCSock.cpp:1537
+#: IRCSock.cpp:1562
 msgid "IRC connection timed out.  Reconnecting..."
 msgstr "Подключение IRC завершилось по тайм-ауту. Переподключаюсь..."
 
-#: IRCSock.cpp:1549
+#: IRCSock.cpp:1574
 msgid "Connection Refused.  Reconnecting..."
 msgstr "В соединении отказано. Переподключаюсь..."
 
-#: IRCSock.cpp:1557
+#: IRCSock.cpp:1582
 msgid "Received a too long line from the IRC server!"
 msgstr "От IRC-сервера получена слишком длинная строка!"
 
-#: IRCSock.cpp:1671
+#: IRCSock.cpp:1696
 msgid "No free nick available"
 msgstr "Не могу найти свободный ник"
 
-#: IRCSock.cpp:1679
+#: IRCSock.cpp:1704
 msgid "No free nick found"
 msgstr "Не могу найти свободный ник"
 
