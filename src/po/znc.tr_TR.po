@@ -1468,17 +1468,17 @@ msgstr "Web"
 #: ClientCommand.cpp:1653 ClientCommand.cpp:1686
 msgctxt "listports"
 msgid "Path"
-msgstr ""
+msgstr "Yol"
 
 #: ClientCommand.cpp:1654 ClientCommand.cpp:1688
 msgctxt "listports"
 msgid "Mode"
-msgstr ""
+msgstr "Mod"
 
 #: ClientCommand.cpp:1655 ClientCommand.cpp:1690
 msgctxt "listports"
 msgid "Group"
-msgstr ""
+msgstr "Grup"
 
 #: ClientCommand.cpp:1679
 msgctxt "listports"
@@ -1546,6 +1546,8 @@ msgid ""
 "Or: AddPort unix:[ssl,mode=NNN,group=foo]:/path/to/socket <web|irc|all> "
 "[uriprefix]"
 msgstr ""
+"Ya da: AddPort unix:[ssl,mode=NNN,group=foo]:/soket/yolu <web|irc|all> "
+"[uriprefix]"
 
 #: ClientCommand.cpp:1826
 msgid "Deleted Port"
