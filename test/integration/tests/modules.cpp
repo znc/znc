@@ -480,5 +480,57 @@ TEST_F(ZNCTest, SaslAuthExternal) {
         ":irc.znc.in 904 nick :SASL authentication failed");
 }
 
+TEST_F(ZNCTest, StripControlsModule) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+
+    client.Write("znc loadmod stripcontrols");
+    client.ReadUntil("Loaded module");
+
+    ircd.Write(":server 001 nick :Hello");
+    client.Write(":nick JOIN #test");
+    ircd.ReadUntil("JOIN #test");
+
+    // OnChanCTCPMessage
+    ircd.Write(":user!id@host PRIVMSG #test :\001\002bold\002 \003\034red\003 test\001");
+    client.ReadUntil(":user!id@host PRIVMSG #test :\001bold red test\001");
+
+    // OnChanNoticeMessage
+    ircd.Write(":user!id@host NOTICE #test :\002bold\002 \003\034red\003 test");
+    client.ReadUntil(":user!id@host NOTICE #test :bold red test");
+
+    // OnChanTextMessage
+    ircd.Write(":user!id@host PRIVMSG #test :\002bold\002 \003\034red\003 test");
+    client.ReadUntil(":user!id@host PRIVMSG #test :bold red test");
+
+    // OnPrivCTCPMessage
+    ircd.Write(":user!id@host PRIVMSG nick :\001\002bold\002 \003\034red\003 test\001");
+    client.ReadUntil(":user!id@host PRIVMSG nick :\001bold red test\001");
+
+    // OnPrivNoticeMessage
+    ircd.Write(":user!id@host NOTICE nick :\002bold\002 \003\034red\003 test");
+    client.ReadUntil(":user!id@host NOTICE nick :bold red test");
+
+    // OnPrivTextMessage
+    ircd.Write(":user!id@host PRIVMSG nick :\002bold\002 \003\034red\003 test");
+    client.ReadUntil(":user!id@host PRIVMSG nick :bold red test");
+
+    // OnTopicMessage
+    ircd.Write(":user!id@host TOPIC  #test :\002bold\002 \003\034red\003 test");
+    client.ReadUntil(":user!id@host TOPIC #test :bold red test");
+
+    // OnNumericMessage
+    // Topic from joining channel.
+    ircd.Write("332 nick #test :\002bold\002 \003\034red\003 test");
+    client.ReadUntil("332 nick #test :bold red test");
+
+    // Topic from /list
+    //ircd.Write("321 nick Channel :Users  Name]");
+    ircd.Write("322 nick #test 42 :\002bold\002 \003\034red\003 test");
+    client.ReadUntil("322 nick #test 42 :bold red test");
+
+}
+
 }  // namespace
 }  // namespace znc_inttest
