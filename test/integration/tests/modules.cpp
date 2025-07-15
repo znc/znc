@@ -517,7 +517,7 @@ TEST_F(ZNCTest, StripControlsModule) {
     client.ReadUntil(":user!id@host PRIVMSG nick :bold red test");
 
     // OnTopicMessage
-    ircd.Write(":user!id@host TOPIC  #test :\002bold\002 \003\034red\003 test");
+    ircd.Write(":user!id@host TOPIC #test :\002bold\002 \003\034red\003 test");
     client.ReadUntil(":user!id@host TOPIC #test :bold red test");
 
     // OnNumericMessage
