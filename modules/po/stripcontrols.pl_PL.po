@@ -14,7 +14,7 @@ msgstr ""
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
 
-#: stripcontrols.cpp:63
+#: stripcontrols.cpp:79
 msgid ""
 "Strips control codes (Colors, Bold, ..) from channel and private messages."
 msgstr ""

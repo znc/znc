@@ -14,7 +14,7 @@ msgstr ""
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
 
-#: stripcontrols.cpp:63
+#: stripcontrols.cpp:79
 msgid ""
 "Strips control codes (Colors, Bold, ..) from channel and private messages."
 msgstr ""
