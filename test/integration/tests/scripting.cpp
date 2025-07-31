@@ -581,5 +581,43 @@ TEST_F(ZNCTest, ModperlSaslAuth) {
         "in as user");
 }
 
+TEST_F(ZNCTest, ModperlStringSet) {
+#ifndef WANT_PERL
+    GTEST_SKIP() << "Modperl is disabled";
+#endif
+    auto znc = Run();
+    znc->CanLeak();
+
+    InstallModule("sasltest.pm", R"(
+		package sasltest;
+		use base 'ZNC::Module';
+		sub module_types { $ZNC::CModInfo::GlobalModule }
+
+		sub OnClientGetSASLMechanisms {
+			my $self = shift;
+			my $mechs = shift;
+			$mechs->insert('FOO');
+			$self->GetClient->PutClientRaw("Test1: <" .
+					$mechs->has_key('AAA') . '/' .
+					$mechs->has_key('FOO') . '>');
+			$self->GetClient->PutClientRaw("Test2: " .
+					join('+', $mechs->keys) . '.');
+		}
+
+		1;
+)");
+
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod modperl");
+    client.Write("znc loadmod sasltest");
+    client.ReadUntil("Loaded");
+
+    auto client2 = ConnectClient();
+    client2.Write("CAP LS 302");
+    client2.ReadUntil("Test1: </1>");
+    client2.ReadUntil("Test2: FOO+PLAIN.");
+}
+
 }  // namespace
 }  // namespace znc_inttest
