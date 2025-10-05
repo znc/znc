@@ -1,49 +1,83 @@
 @charset "UTF-8";
 
 :root {
+  /* color-scheme is needed for form controls that cannot be completely styled
+   * Browsers not supporting it will use the light colors for this controls.
+   * The affected controls are:
+   *
+   * - checkboxes when unchecked
+   * - radio buttons when not selected
+   * - dropdown menu of select
+   */
   color-scheme: light dark;
-  --page-background-color: light-dark(#ffffff, #131314);
-  --page-color: light-dark(#000000, #fafafa);
 
-  --page-title-background-color: light-dark(#aaaaaa, #3e3e3f);
+  --banner-background-color: #cccccc;
+  --banner-link-color: #000000;
+  --breadcrumb-border-color: #aaaaaa;
+  --button-background-color: #cccccc;
+  --button-border-color: #aaaaaa;
+  --button-color: #000000;
+  --errorbar-background-color: #900000;
+  --errorbar-color: #ffffff;
+  --infobar-background-color: #cccccc;
+  --infobar-color: #333333;
+  --infobar-input-background-color: #ffffff;
+  --infobar-input-border-color: #333333;
+  --input-border-color: #cccccc;
+  --input-background-color: #ffffff;
+  --input-focus-box-shadow-color: #aaaaaa;
+  --link-color: #00008b;
+  --main-link-visited-color: #99008B;
+  --menu-border-color: #aaaaaa;
+  --page-background-color: #ffffff;
+  --page-color: #000000;
+  --page-title-background-color: #aaaaaa;
+  --submit-line-border-color: #aaaaaa;
+  --successbar-background-color: #009000;
+  --successbar-color: #ffffff;
+  --table-border-color: #cccccc;
+  --table-cell-background-color: #cecece;
+  --table-even-row-background-color: #dadada;
+  --table-header-background-color: #a0a0a0;
+  --wrapper-background-color: #eeeeee;
+  --wrapper-border-color: #cccccc;
+  --wrapper-box-shadow-color: #666666;
+}
 
-  --wrapper-background-color: light-dark(#eeeeee, #1b1b1c);
-  --wrapper-border-color: light-dark(#cccccc, #464646);
-  --wrapper-box-shadow-color: light-dark(#666666, #29292a);
-
-  --link-color: light-dark(#00008b, #4493f8);
-
-  --main-link-visited-color: light-dark(#99008B, #b74cad);
-
-  --menu-border-color: light-dark(#aaaaaa, #3e3e3f);
-
-  --breadcrumb-border-color: light-dark(#aaaaaa, #3e3e3f);
-
-  --submit-line-border-color: light-dark(#aaaaaa, #3e3e3f);
-
-  --errorbar-background-color: light-dark(#900000, #5d0000);
-  --errorbar-color: light-dark(#ffffff, #dcdcdc);
-
-  --successbar-background-color: light-dark(#009000, #005d00);
-  --successbar-color: light-dark(#ffffff, #dcdcdc);
-
-  --banner-background-color: light-dark(#cccccc, #2a2a2b);
-  --banner-link-color: light-dark(#000000, #fafafa);
-
-  --infobar-background-color: light-dark(#cccccc, #2a2a2b);
-  --infobar-color: light-dark(#333333, #dcdcdc);
-
-  --infobar-input-background-color: light-dark(#ffffff, #0c0c0d);
-  --infobar-input-border-color: light-dark(#333333, #6b6b6c);
-
-  --input-border-color: light-dark(#cccccc, #3e3e3f);
-  --input-background-color: light-dark(#ffffff, #0c0c0d);
-  --input-focus-box-shadow-color: light-dark(#aaaaaa, #6b6b6c);
-
-  --table-border-color: light-dark(#cccccc, #3e3e3f);
-  --table-cell-background-color: light-dark(#cecece, #131314);
-  --table-even-row-background-color: light-dark(#dadada, #1e1e1f);
-  --table-header-background-color: light-dark(#a0a0a0, #29292a);
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    --banner-background-color: #2a2a2b;
+    --banner-link-color: #fafafa;
+    --button-background-color: #2a2a2b;
+    --button-border-color: #3e3e3f;
+    --button-color: #fafafa;
+    --breadcrumb-border-color: #3e3e3f;
+    --errorbar-background-color: #5d0000;
+    --errorbar-color: #dcdcdc;
+    --infobar-background-color: #2a2a2b;
+    --infobar-color: #dcdcdc;
+    --infobar-input-background-color: #0c0c0d;
+    --infobar-input-border-color: #6b6b6c;
+    --input-border-color: #3e3e3f;
+    --input-background-color: #0c0c0d;
+    --input-focus-box-shadow-color: #6b6b6c;
+    --link-color: #4493f8;
+    --main-link-visited-color: #b74cad;
+    --menu-border-color: #3e3e3f;
+    --page-background-color: #131314;
+    --page-color: #fafafa;
+    --page-title-background-color: #3e3e3f;
+    --submit-line-border-color: #3e3e3f;
+    --successbar-background-color: #005d00;
+    --successbar-color: #dcdcdc;
+    --table-border-color: #3e3e3f;
+    --table-cell-background-color: #131314;
+    --table-even-row-background-color: #1e1e1f;
+    --table-header-background-color: #29292a;
+    --wrapper-background-color: #1b1b1c;
+    --wrapper-border-color: #464646;
+    --wrapper-box-shadow-color: #29292a;
+  }
 }
 
 * {
