@@ -106,6 +106,16 @@ a:hover {
 	text-decoration: underline;
 }
 
+button,
+input[type="button"],
+input[type="submit"],
+.sectionbody input[type="button"] {
+  background-color: var(--button-background-color);
+  border: 1px solid var(--button-border-color);
+  border-radius: 4px;
+  color: var(--button-color);
+}
+
 #main a:visited {
 	color: var(--main-link-visited-color);
 }
