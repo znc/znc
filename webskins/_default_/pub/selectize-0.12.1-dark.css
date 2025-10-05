@@ -1,0 +1,32 @@
+:root {
+	--selectize-input-background-color: #ffffff;
+  --selectize-input-border-color: #cccccc;
+  --selectize-input-div-background-color: #eeeeee;
+  --selectize-input-div-color: #000000;
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+	  --selectize-input-background-color: #0c0c0d;
+    --selectize-input-border-color: #3e3e3f;
+    --selectize-input-div-background-color: #2a2a2b;
+    --selectize-input-div-color: #fafafa;
+  }
+}
+
+/* jQuery UI components */
+.selectize-input,
+.selectize-control.single
+.selectize-input.input-active {
+	background: var(--selectize-input-background-color);
+}
+
+.selectize-input {
+	border: 1px solid var(--selectize-input-border-color);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.selectize-control.multi .selectize-input > div {
+  background: var(--selectize-input-div-background-color);
+  color: var(--selectize-input-div-color);
+}
