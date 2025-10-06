@@ -1,0 +1,71 @@
+/* selectize-znc-dark.css
+ *
+ * This file is part of ZNC. It contains CSS rules that adds a dark theme to the
+ * upstream selectize project.
+ */
+:root {
+  --selectize-dropdown-background-color: #ffffff;
+  --selectize-dropdown-border-color: #cccccc;
+  --selectize-dropdown-box-shadow-color: rgba(0, 0, 0, 0.1);
+  --selectize-dropdown-color: #000000;
+  --selectize-dropdown-content-active-background-color: #eeeeee;
+  --selectize-dropdown-content-active-color: #000000;
+	--selectize-input-background-color: #ffffff;
+  --selectize-input-border-color: #cccccc;
+  --selective-input-color: #000000;
+  --selectize-input-div-background-color: #eeeeee;
+  --selectize-input-div-color: #000000;
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    --selectize-dropdown-background-color: #0c0c0d;
+    --selectize-dropdown-border-color: #3e3e3f;
+    --selectize-dropdown-box-shadow-color: rgb(250, 250, 250, 0.1);
+    --selectize-dropdown-color: #fafafa;
+    --selectize-dropdown-content-active-background-color: #2a2a2b;
+    --selectize-dropdown-content-active-color: #fafafa;
+	  --selectize-input-background-color: #0c0c0d;
+    --selectize-input-border-color: #3e3e3f;
+    --selective-input-color: #fafafa;
+    --selectize-input-div-background-color: #2a2a2b;
+    --selectize-input-div-color: #fafafa;
+  }
+}
+
+/* jQuery UI components */
+.selectize-input,
+.selectize-control.single
+.selectize-input.input-active {
+	background: var(--selectize-input-background-color);
+}
+
+.selectize-input {
+	border: 1px solid var(--selectize-input-border-color);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.selectize-dropdown,
+.selectize-input,
+.selectize-input input {
+	color: var(--selectize-input-color);
+}
+
+.selectize-dropdown {
+  background: var(--selectize-dropdown-background-color);
+  border: 1px solid var(--selectize-dropdown-border-color);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px var(--selectize-dropdown-box-shadow-color);
+  color: var(--selectize-dropdown-color);
+}
+
+.selectize-dropdown-content > .active {
+  background: var(--selectize-dropdown-content-active-background-color);
+  color: var(--selectize-dropdown-content-active-color);
+}
+
+
+.selectize-control.multi .selectize-input > div {
+  background: var(--selectize-input-div-background-color);
+  color: var(--selectize-input-div-color);
+}

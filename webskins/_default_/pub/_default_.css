@@ -1,5 +1,85 @@
 @charset "UTF-8";
 
+:root {
+  /* color-scheme is needed for form controls that cannot be completely styled
+   * Browsers not supporting it will use the light colors for this controls.
+   * The affected controls are:
+   *
+   * - checkboxes when unchecked
+   * - radio buttons when not selected
+   * - dropdown menu of select
+   */
+  color-scheme: light dark;
+
+  --banner-background-color: #cccccc;
+  --banner-link-color: #000000;
+  --breadcrumb-border-color: #aaaaaa;
+  --button-background-color: #cccccc;
+  --button-border-color: #aaaaaa;
+  --button-color: #000000;
+  --errorbar-background-color: #900000;
+  --errorbar-color: #ffffff;
+  --infobar-background-color: #cccccc;
+  --infobar-color: #333333;
+  --infobar-input-background-color: #ffffff;
+  --infobar-input-border-color: #333333;
+  --input-border-color: #cccccc;
+  --input-background-color: #ffffff;
+  --input-focus-box-shadow-color: #aaaaaa;
+  --link-color: #00008b;
+  --main-link-visited-color: #99008B;
+  --menu-border-color: #aaaaaa;
+  --page-background-color: #ffffff;
+  --page-color: #000000;
+  --page-title-background-color: #aaaaaa;
+  --submit-line-border-color: #aaaaaa;
+  --successbar-background-color: #009000;
+  --successbar-color: #ffffff;
+  --table-border-color: #cccccc;
+  --table-cell-background-color: #cecece;
+  --table-even-row-background-color: #dadada;
+  --table-header-background-color: #a0a0a0;
+  --wrapper-background-color: #eeeeee;
+  --wrapper-border-color: #cccccc;
+  --wrapper-box-shadow-color: #666666;
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    --banner-background-color: #2a2a2b;
+    --banner-link-color: #fafafa;
+    --button-background-color: #2a2a2b;
+    --button-border-color: #3e3e3f;
+    --button-color: #fafafa;
+    --breadcrumb-border-color: #3e3e3f;
+    --errorbar-background-color: #5d0000;
+    --errorbar-color: #dcdcdc;
+    --infobar-background-color: #2a2a2b;
+    --infobar-color: #dcdcdc;
+    --infobar-input-background-color: #0c0c0d;
+    --infobar-input-border-color: #6b6b6c;
+    --input-border-color: #3e3e3f;
+    --input-background-color: #0c0c0d;
+    --input-focus-box-shadow-color: #6b6b6c;
+    --link-color: #4493f8;
+    --main-link-visited-color: #b74cad;
+    --menu-border-color: #3e3e3f;
+    --page-background-color: #131314;
+    --page-color: #fafafa;
+    --page-title-background-color: #3e3e3f;
+    --submit-line-border-color: #3e3e3f;
+    --successbar-background-color: #005d00;
+    --successbar-color: #dcdcdc;
+    --table-border-color: #3e3e3f;
+    --table-cell-background-color: #131314;
+    --table-even-row-background-color: #1e1e1f;
+    --table-header-background-color: #29292a;
+    --wrapper-background-color: #1b1b1c;
+    --wrapper-border-color: #464646;
+    --wrapper-box-shadow-color: #29292a;
+  }
+}
+
 * {
 	margin: 0;
 	padding: 0;
@@ -11,13 +91,13 @@ html {
 
 body {
 	height: 100%;
-	background-color: #fff;
-	color: #000;
+	background-color: var(--page-background-color);
+	color: var(--page-color);
 	font-family: Tahoma, sans-serif;
 }
 
 a, a:link, a:active, a:visited, a:focus {
-	color: #00008B;
+  color: var(--link-color);
 	text-decoration: none;
 	outline: none;
 }
@@ -26,30 +106,39 @@ a:hover {
 	text-decoration: underline;
 }
 
+button,
+input[type="button"],
+input[type="submit"],
+.sectionbody input[type="button"],
+.sectionbody input[type="submit"] {
+  background-color: var(--button-background-color);
+  border: 1px solid var(--button-border-color);
+  border-radius: 4px;
+  color: var(--button-color);
+}
+
 #main a:visited {
-	color: #99008B;
+	color: var(--main-link-visited-color);
 }
 
 #wrapper {
-	background-color: #eee;
+  background-color: var(--wrapper-background-color);
 	min-height: 80%;
 	overflow: hidden;
 	margin: 0 auto;
 	width: 900px;
 
-	border: 1px solid #ccc;
+  border: 1px solid var(--wrapper-border-color);
 	border-top: none;
-	-moz-box-shadow: 0 0 1em #666;
-	-webkit-box-shadow: 0 0 1em #666;
-	box-shadow: 0 0 1em #666;
+	box-shadow: 0 0 1em var(--wrapper-box-shadow-color);
 }
 
 #banner_top {
-	background-color: #ccc;
+  background-color: var(--banner-background-color);
 }
 
 #banner_top a {
-	color: #000;
+	color: var(--banner-link-color);
 	text-decoration: none;
 }
 
@@ -58,7 +147,7 @@ h1 {
 	padding: 0 0.9em 0 0.6em;
 	width: 50px;
 	text-align: center;
-	background-color: #aaa;
+  background-color: var(--page-title-background-color);
 	font-weight: normal;
 	font-style: italic;
 	font-size: 100%;
@@ -79,7 +168,7 @@ h1 {
 }
 
 #menu {
-	border-left: 2px solid #aaa;
+	border-left: 2px solid var(--menu-border-color);
 	padding-left: 10px;
 	position: absolute;
 	margin-left: 700px;
@@ -131,8 +220,8 @@ ul.nav li.subitem {
 	position: relative;
 	top: -30px;
 	margin-left: 485px;
-	background-color: #ccc;
-	color: #333;
+	background-color: var(--infobar-background-color);
+  color: var(--infobar-color)
 	padding: 0 6px 3px 0;
 }
 
@@ -141,6 +230,7 @@ ul.nav li.subitem {
 }
 
 #infobar input {
+  background-color: var(--infobar-input-background-color);
 	border: none;
 	font-family: Tahoma, sans-serif;
 	padding: 1px;
@@ -150,7 +240,7 @@ ul.nav li.subitem {
 }
 
 #infobar input.submit {
-	border: 1px solid #333;
+	border: 1px solid var(--infobar-input-border-color);
 	font-size: 12px;
 	width: 60px;
 }
@@ -171,14 +261,15 @@ ul.nav li.subitem {
 .successbar,
 .errorbar {
 	width: 100%;
-	background-color: #900;
+	background-color: var(--errorbar-background-color);
+  color: var(--errorbar-color);
 	padding: 5px 10px;
 	font-weight: bold;
-	color: #fff;
 }
 
 .successbar {
-	background-color: #070;
+	background-color: var(--successbar-background-color);
+  color: var(--successbar-color);
 }
 
 h2 {
@@ -204,16 +295,15 @@ h3 {
 }
 
 .sectionbody input, textarea, select {
-	border: 2px solid #ccc;
+  background-color: var(--input-background-color);
+	border: 2px solid var(--input-border-color);
 	font-family: Tahoma, sans-serif;
 	padding: 3px;
 	font-size: 14px;
 }
 
 input:focus, textarea:focus, select:focus {
-	-moz-box-shadow: 0 0 0.4em #aaa;
-	-webkit-box-shadow: 0 0 0.4em #aaa;
-	box-shadow: 0 0 0.4em #aaa;
+	box-shadow: 0 0 0.4em var(--input-focus-box-shadow-color);
 	outline: none; /* for webkit */
 }
 
@@ -224,7 +314,7 @@ textarea {
 div.submitline {
 	margin: 1em;
 	padding-top: 1em;
-	border-top: 1px solid #aaa;
+	border-top: 1px solid var(--submit-line-border-color);
 }
 
 .submitline input {
@@ -263,7 +353,7 @@ input[type=number] {
 }
 
 table {
-	border: 1px solid #ccc;
+	border: 1px solid var(--table-border-color);
 	border-spacing: 1px;
 }
 
@@ -273,7 +363,7 @@ td, th {
 }
 
 thead td, th {
-	background-color: #a0a0a0;
+	background-color: var(--table-header-background-color);
 }
 
 th {
@@ -281,11 +371,11 @@ th {
 }
 
 tbody td {
-	background-color: #cecece;
+  background-color: var(--table-cell-background-color);
 }
 
 tr.evenrow td {
-	background-color: #dadada;
+	background-color: var(--table-even-row-background-color);
 }
 
 .info {
@@ -378,7 +468,7 @@ td.center {
 	width: 670px;
 	padding: 0 0 3px 1px;
 	margin-bottom: 10px;
-	border-bottom: 1px solid #aaa;
+	border-bottom: 1px solid var(--breadcrumb-border-color);
 }
 
 #servers_js > div:first-child {
