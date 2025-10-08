@@ -24,8 +24,7 @@ msgid ""
 "current certificate. Alternatively click {1} to delete your certificate."
 msgstr ""
 "Вече имате зададен сертификат, използвайте полето отдолу за да презапишете "
-"текущият сертификат. Като друга опция, натиснете {1} за да изтриете вашия "
-"сертификат."
+"текущия сертификат. Или натиснете {1} за да изтриете вашия сертификат."
 
 #: modules/po/../data/cert/tmpl/index.tmpl:8
 msgid "You do not have a certificate yet."
@@ -49,7 +48,7 @@ msgstr "Pem файла е изтрит"
 
 #: cert.cpp:31
 msgid "The pem file doesn't exist or there was a error deleting the pem file."
-msgstr "Pem файлът не съществува или има грешка в изтриването му."
+msgstr "Pem файла не съществува или има грешка в изтриването му."
 
 #: cert.cpp:38
 #, c++-format
@@ -66,7 +65,7 @@ msgstr ""
 #: cert.cpp:44
 #, c++-format
 msgid "Alternatively you can place one at {1}"
-msgstr ""
+msgstr "Освен това може да сложите един в {1}"
 
 #: cert.cpp:52
 msgid "Delete the current certificate"
@@ -74,8 +73,8 @@ msgstr "Изтриване на текущия сертификат"
 
 #: cert.cpp:54
 msgid "Show the current certificate"
-msgstr "Показва текущият сертификат"
+msgstr "Покажи текущия сертификат"
 
 #: cert.cpp:105
 msgid "Use a ssl certificate to connect to a server"
-msgstr "Използване на SSL сертификат за да се свържите към сървър"
+msgstr "Използвай Ssl сертификат за свързване към сървър"

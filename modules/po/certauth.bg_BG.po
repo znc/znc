@@ -14,7 +14,7 @@ msgstr ""
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:7
 msgid "Add a key"
-msgstr "Добавяне на ключ"
+msgstr "Добавете ключ"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:11
 msgid "Key:"
@@ -22,7 +22,7 @@ msgstr "Ключ:"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:15
 msgid "Add Key"
-msgstr "Добавяне на ключ"
+msgstr "Добавете ключ"
 
 #: modules/po/../data/certauth/tmpl/index.tmpl:23
 msgid "You have no keys."
@@ -53,7 +53,7 @@ msgstr "id"
 
 #: certauth.cpp:35
 msgid "Delete a key by its number in List"
-msgstr "Изтрива ключ по номера му в списъка"
+msgstr "Изтрий ключ по номера му в списъка"
 
 #: certauth.cpp:37
 msgid "List your public keys"
@@ -61,7 +61,7 @@ msgstr "Показва вашите публични ключове"
 
 #: certauth.cpp:39
 msgid "Print your current key"
-msgstr "Изкарва вашият текущ ключ"
+msgstr "Принтирайте вашия текущ ключ"
 
 #: certauth.cpp:239
 msgid "You are not connected with any valid public key"
@@ -74,12 +74,12 @@ msgstr "Вашият публичен ключ: {1}"
 
 #: certauth.cpp:254
 msgid "You did not supply a public key or connect with one."
-msgstr "Вие не сте определили публичен ключ, или не сте се свързали с такъв."
+msgstr "Не сте определили публичен ключ, или не сте се свързали с такъв."
 
 #: certauth.cpp:257
 #, c++-format
 msgid "Key '{1}' added."
-msgstr "Ключ '{1}' е добавен."
+msgstr "Ключът '{1}' е добавен."
 
 #: certauth.cpp:259
 #, c++-format
