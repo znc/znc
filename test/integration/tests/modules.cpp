@@ -532,5 +532,78 @@ TEST_F(ZNCTest, StripControlsModule) {
 
 }
 
+TEST_F(ZNCTest, AutoModeKeyAuthentication) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+
+    client.Write("znc loadmod automode");
+    client.ReadUntil("Loaded module");
+
+    ircd.Write(":server 001 nick :Welcome");
+    ircd.Write(":nick JOIN #test");
+    ircd.Write(":server 353 nick #test :nick");
+    ircd.Write(":server 366 nick #test :End of /NAMES");
+    ircd.Write("MODE #test +o nick");
+    client.ReadUntil("MODE #test +o nick");
+
+    client.Write("PRIVMSG *automode :AddUser keyuser test!*@host.com ov secretkey #test");
+    client.ReadUntil("User keyuser added");
+    ircd.Write(":test!user@host.com JOIN #test");
+
+    QByteArray fullLine;
+    ircd.ReadUntilAndGet("NOTICE test :!ZNCAO CHALLENGE ", fullLine);
+
+    QString challengeString = QString(fullLine).trimmed();
+    QString fullMessage = QString(fullLine);
+    QString prefix = "NOTICE test :!ZNCAO CHALLENGE ";
+
+    if (fullMessage.startsWith(prefix)) {
+        challengeString = fullMessage.mid(prefix.length()).trimmed();
+    }
+    // Hash only "secretkey::" + the clean challenge string
+    QString responseString = QString("secretkey::") + challengeString;
+    QByteArray response = QCryptographicHash::hash(responseString.toUtf8(), QCryptographicHash::Md5).toHex();
+
+    // Leave for debugging.
+    // qDebug() << "Hashing:" << responseString;
+    // qDebug() << "Result:" << response;
+    ircd.Write(":test!user@host.com NOTICE nick :!ZNCAO RESPONSE " + response);
+    ircd.ReadUntil("MODE #test +ov test test");
+
+}
+
+TEST_F(ZNCTest, AutoModeNoKeyAuthentication) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+
+    client.Write("znc loadmod automode");
+    client.ReadUntil("Loaded");
+
+    client.Write("PRIVMSG *automode :AddUser testuser test!*@host.com ov __NOKEY__ #test");
+    client.ReadUntil("User testuser added");
+
+    ircd.Write(":server 001 nick :Welcome");
+    ircd.Write(":nick JOIN #test");
+    ircd.Write(":server 353 nick #test :@nick");
+    ircd.Write(":server 366 nick #test :End of /NAMES");
+    ircd.Write("MODE #test +o nick");
+    client.ReadUntil("MODE #test +o nick");
+
+    ircd.Write(":test!user@host.com JOIN #test");
+    ircd.ReadUntil("MODE #test +ov test");
+
+    client.Write("PRIVMSG *automode :delmodes testuser o");
+    client.ReadUntil("Updated modes for [testuser]: v");
+
+    ircd.Write(":test!user@host.com PART #test");
+    client.ReadUntil("PART #test");
+
+    ircd.Write(":test!user@host.com JOIN #test");
+    ircd.ReadUntil("MODE #test +v test");
+
+}
+
 }  // namespace
 }  // namespace znc_inttest
