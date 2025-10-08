@@ -100,7 +100,7 @@ msgstr ""
 #: sample.cpp:189
 #, c++-format
 msgid "* {1} ({2}@{3}) parts {4}"
-msgstr ""
+msgstr "* {1} ({2}@{3}) разделя {4}"
 
 #: sample.cpp:196
 #, c++-format
