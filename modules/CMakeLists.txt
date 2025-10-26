@@ -17,6 +17,8 @@
 # This is not recommended, but whatever.
 file(GLOB all_modules LIST_DIRECTORIES FALSE "*")
 
+set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS}")
+
 function(add_cxx_module mod modpath)
 	znc_add_library("module_${mod}" MODULE "${modpath}")
 	set_target_properties("module_${mod}" PROPERTIES
