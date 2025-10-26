@@ -890,19 +890,19 @@ msgstr "Bieżący"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:85
 msgid "Path"
-msgstr ""
+msgstr "Ścieżka"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:86
 msgid "Mode"
-msgstr ""
+msgstr "Tryb"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:87
 msgid "Group"
-msgstr ""
+msgstr "Grupa"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:128
 msgid "Octal number; -1 means do not chmod"
-msgstr ""
+msgstr "Liczba ósemkowa; -1 oznacza nie modyfikować uprawnień dostępu"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:148
 msgid "Settings"

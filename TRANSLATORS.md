@@ -39,6 +39,7 @@ These people helped translating ZNC to various languages:
 * simos (filippo.cortigiani)
 * sukien
 * SunOS
+* szakalidomin (Alosza Denaturow)
 * tojestzart (tojestzart)
 * Un1matr1x (Falk Seidel)
 * unavailable (style)
