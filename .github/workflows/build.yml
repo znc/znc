@@ -16,7 +16,7 @@ jobs:
       - uses: codecov/codecov-action@v5
         with:
           name: ${{ github.job }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: codecov debug results ${{ github.job }}
           path: "/tmp/codecov.*.gz"
@@ -36,7 +36,7 @@ jobs:
           cd znc-git-$date
           export CFGFLAGS="--with-gtest=$GITHUB_WORKSPACE/third_party/googletest/googletest --with-gmock=$GITHUB_WORKSPACE/third_party/googletest/googlemock --disable-swig"
           source $GITHUB_WORKSPACE/.github/build.sh
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: znc-tarball
           path: /tmp/znc-git*.tar.gz
@@ -61,7 +61,7 @@ jobs:
       - uses: codecov/codecov-action@v5
         with:
           name: ${{ github.job }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: codecov debug results ${{ github.job }}
           path: "/tmp/codecov.*.gz"
