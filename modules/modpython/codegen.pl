@@ -120,7 +120,7 @@ namespace {
 	}
 
 #else
-	// For SWIG < 4.2.0
+	// TODO: at some point drop support for SWIG<4.2.0 (drop this branch of ifdef)
 
 	// This is copied from older SWIG versions from pystrings.swg
 	inline int ZNC_SWIG_AsCharPtrAndSize(PyObject *obj, char** cptr, size_t* psize, int *alloc) {
@@ -229,6 +229,63 @@ namespace {
 }
 
 EOF
+=b
+bool OnFoo(const CString& x) {
+	PyObject* pyName = Py_BuildValue("s", "OnFoo");
+	if (!pyName) {
+		CString s = GetPyExceptionStr();
+		DEBUG("modpython: username/module/OnFoo: can't name method to call: " << s);
+		return default;
+	}
+	PyObject* pyArg1 = Py_BuildValue("s", x.c_str());
+	if (!pyArg1) {
+		CString s = GetPyExceptionStr();
+		DEBUG("modpython: username/module/OnFoo: can't convert parameter x to PyObject*: " << s);
+		Py_CLEAR(pyName);
+		return default;
+	}
+	PyObject* pyArg2 = ...;
+	if (!pyArg2) {
+		CString s = ...;
+		DEBUG(...);
+		Py_CLEAR(pyName);
+		Py_CLEAR(pyArg1);
+		return default;
+	}
+	PyObject* pyArg3 = ...;
+	if (!pyArg3) {
+		CString s = ...;
+		DEBUG(...);
+		Py_CLEAR(pyName);
+		Py_CLEAR(pyArg1);
+		Py_CLEAR(pyArg2);
+		return default;
+	}
+	PyObject* pyRes = PyObject_CallMethodObjArgs(m_pyObj, pyName, pyArg1, pyArg2, pyArg3, nullptr);
+	if (!pyRes) {
+		CString s = ...;
+		DEBUG("modpython: username/module/OnFoo failed: " << s);
+		Py_CLEAR(pyName);
+		Py_CLEAR(pyArg1);
+		Py_CLEAR(pyArg2);
+		Py_CLEAR(pyArg3);
+		return default;
+	}
+	Py_CLEAR(pyName);
+	Py_CLEAR(pyArg1);
+	Py_CLEAR(pyArg2);
+	Py_CLEAR(pyArg3);
+	bool res = PyLong_AsLong(pyRes);
+	if (PyErr_Occured()) {
+		CString s = GetPyExceptionStr();
+		DEBUG("modpython: username/module/OnFoo returned unexpected value: " << s);
+		Py_CLEAR(pyRes);
+		return default;
+	}
+	Py_CLEAR(pyRes);
+	return res;
+}
+=cut
 
 while (<$in>) {
 	my ($type, $name, $args, $default) = /(\S+)\s+(\w+)\((.*)\)(?:=(\w+))?/ or next;
