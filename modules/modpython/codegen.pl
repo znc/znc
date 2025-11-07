@@ -92,7 +92,6 @@ namespace {
 			/* The returned string is only duplicated if the char * returned is not owned and memory managed by obj */
 			if (bytes && cptr) {
 				if (alloc) {
-					//cstr = %new_copy_array(cstr, len + 1, char);
 					cstr = (char *)memcpy((char *)malloc((len + 1)*sizeof(char)), cstr, sizeof(char)*(len + 1));
 					*alloc = SWIG_NEWOBJ;
 				} else {
@@ -121,79 +120,81 @@ namespace {
 	}
 
 #else
-	// TODO: at some point drop support for SWIG<4.2.0 (drop this branch of ifdef)
+	// For SWIG < 4.2.0
 
-	// This is copied from some old SWIG version from pystrings.swg
+	// This is copied from older SWIG versions from pystrings.swg
 	inline int ZNC_SWIG_AsCharPtrAndSize(PyObject *obj, char** cptr, size_t* psize, int *alloc) {
 #if PY_VERSION_HEX>=0x03000000
 		if (PyUnicode_Check(obj))
 #else
-			if (PyString_Check(obj))
+		if (PyString_Check(obj))
 #endif
-			{
-				char *cstr; Py_ssize_t len;
+		{
+			char *cstr; Py_ssize_t len;
 #if PY_VERSION_HEX>=0x03000000
-				if (!alloc && cptr) {
-					/* We can't allow converting without allocation, since the internal
-					   representation of string in Python 3 is UCS-2/UCS-4 but we require
-					   a UTF-8 representation.
-					   TODO(bhy) More detailed explanation */
-					return SWIG_RuntimeError;
-				}
-				obj = PyUnicode_AsUTF8String(obj);
-				PyBytes_AsStringAndSize(obj, &cstr, &len);
-				if(alloc) *alloc = SWIG_NEWOBJ;
+			if (!alloc && cptr) {
+				/* We can't allow converting without allocation, since the internal
+				   representation of string in Python 3 is UCS-2/UCS-4 but we require
+				   a UTF-8 representation.
+				   TODO(bhy) More detailed explanation */
+				return SWIG_RuntimeError;
+			}
+			obj = PyUnicode_AsUTF8String(obj);
+			if (!obj)
+				return SWIG_TypeError;
+			PyBytes_AsStringAndSize(obj, &cstr, &len);
+			if (alloc) *alloc = SWIG_NEWOBJ;
 #else
-				PyString_AsStringAndSize(obj, &cstr, &len);
+			PyString_AsStringAndSize(obj, &cstr, &len);
 #endif
-				if (cptr) {
-					if (alloc) {
-						/*
-						   In python the user should not be able to modify the inner
-						   string representation. To warranty that, if you define
-						   SWIG_PYTHON_SAFE_CSTRINGS, a new/copy of the python string
-						   buffer is always returned.
+			if (cptr) {
+				if (alloc) {
+					/*
+					   In python the user should not be able to modify the inner
+					   string representation. To warranty that, if you define
+					   SWIG_PYTHON_SAFE_CSTRINGS, a new/copy of the python string
+					   buffer is always returned.
 
-						   The default behavior is just to return the pointer value,
-						   so, be careful.
-						 */
+					   The default behavior is just to return the pointer value,
+					   so, be careful.
+					 */
 #if defined(SWIG_PYTHON_SAFE_CSTRINGS)
-						if (*alloc != SWIG_OLDOBJ)
+					if (*alloc != SWIG_OLDOBJ)
 #else
-							if (*alloc == SWIG_NEWOBJ)
+					if (*alloc == SWIG_NEWOBJ)
 #endif
-							{
-								*cptr = (char *)memcpy((char *)malloc((len + 1)*sizeof(char)), cstr, sizeof(char)*(len + 1));
-								*alloc = SWIG_NEWOBJ;
-							}
-							else {
-								*cptr = cstr;
-								*alloc = SWIG_OLDOBJ;
-							}
+					{
+						*cptr = (char *)memcpy((char *)malloc((len + 1)*sizeof(char)), cstr, sizeof(char)*(len + 1));
+						*alloc = SWIG_NEWOBJ;
 					} else {
-#if PY_VERSION_HEX>=0x03000000
-						assert(0); /* Should never reach here in Python 3 */
-#endif
-						*cptr = SWIG_Python_str_AsChar(obj);
+						*cptr = cstr;
+						*alloc = SWIG_OLDOBJ;
 					}
-				}
-				if (psize) *psize = len + 1;
+				} else {
 #if PY_VERSION_HEX>=0x03000000
-				Py_XDECREF(obj);
+					assert(0); /* Should never reach here in Python 3 */
+#else
+					*cptr = SWIG_Python_str_AsChar(obj);
 #endif
-				return SWIG_OK;
-			} else {
-				swig_type_info* pchar_descriptor = ZNC_SWIG_pchar_descriptor();
-				if (pchar_descriptor) {
-					void* vptr = 0;
-					if (SWIG_ConvertPtr(obj, &vptr, pchar_descriptor, 0) == SWIG_OK) {
-						if (cptr) *cptr = (char *) vptr;
-						if (psize) *psize = vptr ? (strlen((char *)vptr) + 1) : 0;
-						if (alloc) *alloc = SWIG_OLDOBJ;
-						return SWIG_OK;
-					}
 				}
 			}
+			if (psize) *psize = len + 1;
+#if PY_VERSION_HEX>=0x03000000
+			Py_XDECREF(obj);
+#endif
+			return SWIG_OK;
+		} else {
+			swig_type_info* pchar_descriptor = ZNC_SWIG_pchar_descriptor();
+			if (pchar_descriptor) {
+				void* vptr = 0;
+				if (SWIG_ConvertPtr(obj, &vptr, pchar_descriptor, 0) == SWIG_OK) {
+					if (cptr) *cptr = (char *) vptr;
+					if (psize) *psize = vptr ? (strlen((char *)vptr) + 1) : 0;
+					if (alloc) *alloc = SWIG_OLDOBJ;
+					return SWIG_OK;
+				}
+			}
+		}
 		return SWIG_TypeError;
 	}
 #endif
@@ -228,63 +229,6 @@ namespace {
 }
 
 EOF
-=b
-bool OnFoo(const CString& x) {
-	PyObject* pyName = Py_BuildValue("s", "OnFoo");
-	if (!pyName) {
-		CString s = GetPyExceptionStr();
-		DEBUG("modpython: username/module/OnFoo: can't name method to call: " << s);
-		return default;
-	}
-	PyObject* pyArg1 = Py_BuildValue("s", x.c_str());
-	if (!pyArg1) {
-		CString s = GetPyExceptionStr();
-		DEBUG("modpython: username/module/OnFoo: can't convert parameter x to PyObject*: " << s);
-		Py_CLEAR(pyName);
-		return default;
-	}
-	PyObject* pyArg2 = ...;
-	if (!pyArg2) {
-		CString s = ...;
-		DEBUG(...);
-		Py_CLEAR(pyName);
-		Py_CLEAR(pyArg1);
-		return default;
-	}
-	PyObject* pyArg3 = ...;
-	if (!pyArg3) {
-		CString s = ...;
-		DEBUG(...);
-		Py_CLEAR(pyName);
-		Py_CLEAR(pyArg1);
-		Py_CLEAR(pyArg2);
-		return default;
-	}
-	PyObject* pyRes = PyObject_CallMethodObjArgs(m_pyObj, pyName, pyArg1, pyArg2, pyArg3, nullptr);
-	if (!pyRes) {
-		CString s = ...;
-		DEBUG("modpython: username/module/OnFoo failed: " << s);
-		Py_CLEAR(pyName);
-		Py_CLEAR(pyArg1);
-		Py_CLEAR(pyArg2);
-		Py_CLEAR(pyArg3);
-		return default;
-	}
-	Py_CLEAR(pyName);
-	Py_CLEAR(pyArg1);
-	Py_CLEAR(pyArg2);
-	Py_CLEAR(pyArg3);
-	bool res = PyLong_AsLong(pyRes);
-	if (PyErr_Occured()) {
-		CString s = GetPyExceptionStr();
-		DEBUG("modpython: username/module/OnFoo returned unexpected value: " << s);
-		Py_CLEAR(pyRes);
-		return default;
-	}
-	Py_CLEAR(pyRes);
-	return res;
-}
-=cut
 
 while (<$in>) {
 	my ($type, $name, $args, $default) = /(\S+)\s+(\w+)\((.*)\)(?:=(\w+))?/ or next;
