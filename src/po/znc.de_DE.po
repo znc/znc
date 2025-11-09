@@ -1006,7 +1006,7 @@ msgstr ""
 
 #: ClientCommand.cpp:833 ClientCommand.cpp:1803
 msgid "+ means SSL"
-msgstr ""
+msgstr "+ bedeutet SSL"
 
 #: ClientCommand.cpp:844
 msgid "Server added"
@@ -1485,17 +1485,17 @@ msgstr "Web"
 #: ClientCommand.cpp:1653 ClientCommand.cpp:1686
 msgctxt "listports"
 msgid "Path"
-msgstr ""
+msgstr "Pfad"
 
 #: ClientCommand.cpp:1654 ClientCommand.cpp:1688
 msgctxt "listports"
 msgid "Mode"
-msgstr ""
+msgstr "Modus"
 
 #: ClientCommand.cpp:1655 ClientCommand.cpp:1690
 msgctxt "listports"
 msgid "Group"
-msgstr ""
+msgstr "Gruppe"
 
 #: ClientCommand.cpp:1679
 msgctxt "listports"
