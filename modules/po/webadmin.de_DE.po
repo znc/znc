@@ -902,19 +902,19 @@ msgstr "Aktuell"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:85
 msgid "Path"
-msgstr ""
+msgstr "Pfad"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:86
 msgid "Mode"
-msgstr ""
+msgstr "Modus"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:87
 msgid "Group"
-msgstr ""
+msgstr "Gruppe"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:128
 msgid "Octal number; -1 means do not chmod"
-msgstr ""
+msgstr "Oktalzahl; -1 bedeutet nicht \"chmod“"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:148
 msgid "Settings"
@@ -977,7 +977,7 @@ msgstr "Verbiete IP Änderungen während einer Web Sitzung"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:207
 msgid "Hide ZNC version:"
-msgstr ""
+msgstr "Verstecke ZNC Version"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:209
 msgid "Hide version number from non-ZNC users"
@@ -1015,24 +1015,24 @@ msgstr "Laufzeit"
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:18
 msgid "Total users"
-msgstr ""
+msgstr "Alle Benutzer"
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:22
 msgid "Total networks"
-msgstr ""
+msgstr "Alle Netzwerke"
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:26
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:43
 msgid "Attached networks"
-msgstr ""
+msgstr "Verbundene Netzwerke"
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:30
 msgid "Total client connections"
-msgstr ""
+msgstr "Alle verbundenen Clients"
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:34
 msgid "Total IRC connections"
-msgstr ""
+msgstr "Alle verbundenen IRC Verbindungen"
 
 #: modules/po/../data/webadmin/tmpl/traffic.tmpl:47
 msgid "Client Connections"

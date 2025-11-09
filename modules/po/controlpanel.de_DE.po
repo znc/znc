@@ -395,7 +395,7 @@ msgstr ""
 
 #: controlpanel.cpp:1256
 msgid "+ means SSL"
-msgstr ""
+msgstr "bedeutet SSL"
 
 #: controlpanel.cpp:1280
 #, c++-format
