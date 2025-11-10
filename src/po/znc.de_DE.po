@@ -167,6 +167,8 @@ msgstr "Du hast die Verbindung getrennt: {1}"
 #, c++-format
 msgid "Warning: flood protection is delaying your messages by {1} seconds"
 msgstr ""
+"Warnung: Flood-Schutz (Nachrichtenflut) verzögert Ihre Nachrichten um {1} "
+"Sekunden"
 
 #: IRCSock.cpp:1458
 msgid "Disconnected from IRC. Reconnecting..."
@@ -1002,7 +1004,7 @@ msgstr "Verwendung: AddServer<Host> [[+]Port] [Pass]"
 
 #: ClientCommand.cpp:831
 msgid "Or: AddServer unix:[ssl:]/path/to/socket"
-msgstr ""
+msgstr "Oder: AddServer unix:[ssl:]/Pfad/zum/Socket"
 
 #: ClientCommand.cpp:833 ClientCommand.cpp:1803
 msgid "+ means SSL"
@@ -1563,6 +1565,8 @@ msgid ""
 "Or: AddPort unix:[ssl,mode=NNN,group=foo]:/path/to/socket <web|irc|all> "
 "[uriprefix]"
 msgstr ""
+"Oder: AddPort unix:[ssl,mode=NNN,group=foo]:/path/to/socket <web|irc|all> "
+"[uriprefix]"
 
 #: ClientCommand.cpp:1826
 msgid "Deleted Port"
@@ -1578,7 +1582,7 @@ msgstr "Verwendung: DelPort <port> <ipv4|ipv6|all> [Bindhost]"
 
 #: ClientCommand.cpp:1832
 msgid "Or: DelPort unix:/path/to/socket"
-msgstr ""
+msgstr "Oder: DelPort unix:/Pfad/zum/Socket"
 
 #: ClientCommand.cpp:1839 ClientCommand.cpp:1854
 msgctxt "helpcmd"
