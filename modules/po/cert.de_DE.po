@@ -67,7 +67,7 @@ msgstr ""
 #: cert.cpp:44
 #, c++-format
 msgid "Alternatively you can place one at {1}"
-msgstr ""
+msgstr "Alternativ können Sie eine an {1} platzieren"
 
 #: cert.cpp:52
 msgid "Delete the current certificate"

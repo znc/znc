@@ -895,19 +895,19 @@ msgstr "Huidige"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:85
 msgid "Path"
-msgstr ""
+msgstr "Pad"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:86
 msgid "Mode"
-msgstr ""
+msgstr "Modus"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:87
 msgid "Group"
-msgstr ""
+msgstr "Groep"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:128
 msgid "Octal number; -1 means do not chmod"
-msgstr ""
+msgstr "Octaal getal; -1 betekent niet chmod"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:148
 msgid "Settings"

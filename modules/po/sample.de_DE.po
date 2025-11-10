@@ -100,7 +100,7 @@ msgstr "* {1} ({2}@{3}) joins {4}"
 #: sample.cpp:203
 #, c++-format
 msgid "* {1} ({2}@{3}) parts {4} with message: {5}"
-msgstr ""
+msgstr "* {1} ({2}@{3}) Teile {4} mit der Meldung: {5}"
 
 #: sample.cpp:212
 #, c++-format
