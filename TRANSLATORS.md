@@ -4,7 +4,6 @@ These people helped translating ZNC to various languages:
 * Altay
 * aycanuAydemir
 * bashgeek (Daniel)
-* bastelratte
 * CaPaCuL
 * casmo (Casper)
 * ChaosEngine (Andrzej Pauli)
