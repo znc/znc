@@ -18,6 +18,7 @@ These people helped translating ZNC to various languages:
 * eleanorsilly (ellie is not coding in the slightest)
 * freonesuka (Андрей Вальтер)
 * gremax
+* hickhack
 * hypech
 * JakaMedia (Jaka Media Teknologi)
 * Jay2k1
