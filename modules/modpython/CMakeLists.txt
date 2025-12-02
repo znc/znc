@@ -29,6 +29,17 @@ if(APPLE)
 endif()
 
 if(SWIG_FOUND)
+	set(SWIG_VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/swig_version.h")
+
+	add_custom_command(
+	    OUTPUT "${SWIG_VERSION_HEADER}"
+	    COMMAND ${CMAKE_COMMAND}
+	            -DSWIG_EXECUTABLE=${SWIG_EXECUTABLE}
+	            -DSWIG_VERSION_HEADER=${SWIG_VERSION_HEADER}
+	            -P "${CMAKE_CURRENT_SOURCE_DIR}/generate_swig_version.cmake"
+	    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/generate_swig_version.cmake"
+	)
+
 	add_custom_command(
 		OUTPUT "pyfunctions.cpp"
 		COMMAND "${PERL_EXECUTABLE}"
@@ -36,7 +47,7 @@ if(SWIG_FOUND)
 		"${CMAKE_CURRENT_SOURCE_DIR}/functions.in"
 		"pyfunctions.cpp"
 		VERBATIM
-		DEPENDS codegen.pl functions.in)
+		DEPENDS codegen.pl functions.in "${SWIG_VERSION_HEADER}")
 
 	add_custom_command(
 		OUTPUT "swigpyrun.h"
@@ -98,7 +109,7 @@ endfunction()
 add_custom_target(modpython_dist
 	COMMAND "${CMAKE_COMMAND}" -E tar cz
 	"${CMAKE_CURRENT_SOURCE_DIR}/generated.tar.gz"
-	"swigpyrun.h" "znc_core.py" "modpython_biglib.cpp" "pyfunctions.cpp"
-	DEPENDS swigpyrun.h znc_core.py modpython_biglib.cpp pyfunctions.cpp
+	"swigpyrun.h" "znc_core.py" "modpython_biglib.cpp" "pyfunctions.cpp" "${SWIG_VERSION_HEADER}"
+	DEPENDS swigpyrun.h znc_core.py modpython_biglib.cpp pyfunctions.cpp "${SWIG_VERSION_HEADER}"
 	VERBATIM)
 add_dependencies(modpython_dist copy_csocket_h)
