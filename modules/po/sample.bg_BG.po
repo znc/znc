@@ -98,9 +98,9 @@ msgid "* {1} ({2}@{3}) joins {4}"
 msgstr ""
 
 #: sample.cpp:203
-#, c++-format
+#, fuzzy, c++-format
 msgid "* {1} ({2}@{3}) parts {4} with message: {5}"
-msgstr ""
+msgstr "* {1} ({2}@{3}) разделя {4}"
 
 #: sample.cpp:212
 #, c++-format

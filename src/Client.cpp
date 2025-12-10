@@ -1361,8 +1361,9 @@ void CClient::AcceptSASLLogin(CUser& User) {
 
 SCString CClient::EnumerateSASLMechanisms() const {
     SCString ssMechanisms;
-    // FIXME Currently GetClient()==nullptr due to const
-    GLOBALMODULECALL(OnClientGetSASLMechanisms(ssMechanisms), NOTHING);
+    // FIXME Fix this const_cast
+    _GLOBALMODULECALL(OnClientGetSASLMechanisms(ssMechanisms), nullptr, nullptr,
+                      const_cast<CClient*>(this), NOTHING);
     return ssMechanisms;
 }
 

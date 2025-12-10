@@ -82,7 +82,9 @@ namespace std {
                 return i != self->end();
             }
             SV* keys_() {
-                AV* av = newAV_alloc_x(self->size());
+                // TODO: switch to newAV_alloc_x, requires perl 5.35.1
+                AV *av = newAV();
+                av_extend(av, self->size());
                 // assume SCString
                 int i = 0;
                 for (const auto& a : *self) {

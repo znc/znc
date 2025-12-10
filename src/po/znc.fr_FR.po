@@ -274,36 +274,36 @@ msgstr ""
 "Vous avez été déconnecté car un autre utilisateur s'est authentifié avec le "
 "même identifiant."
 
-#: Client.cpp:1426
+#: Client.cpp:1427
 #, c++-format
 msgid "Your CTCP to {1} got lost, you are not connected to IRC!"
 msgstr ""
 "Votre connexion CTCP vers {1} a été perdue, vous n'êtes plus connecté à IRC !"
 
-#: Client.cpp:1553
+#: Client.cpp:1554
 #, c++-format
 msgid "Your notice to {1} got lost, you are not connected to IRC!"
 msgstr "Votre notice vers {1} a été perdue, vous n'êtes plus connecté à IRC !"
 
-#: Client.cpp:1591
+#: Client.cpp:1592
 #, c++-format
 msgid "Removing channel {1}"
 msgstr "Suppression du salon {1}"
 
-#: Client.cpp:1704
+#: Client.cpp:1705
 #, c++-format
 msgid "Your message to {1} got lost, you are not connected to IRC!"
 msgstr "Votre message à {1} a été perdu, vous n'êtes pas connecté à IRC !"
 
-#: Client.cpp:1756 Client.cpp:1762
+#: Client.cpp:1757 Client.cpp:1763
 msgid "Hello. How may I help you?"
 msgstr "Bonjour. Comment puis-je vous aider ?"
 
-#: Client.cpp:1776
+#: Client.cpp:1777
 msgid "Usage: /attach <#chans>"
 msgstr "Utilisation : /attach <#salons>"
 
-#: Client.cpp:1783 Client.cpp:1805 ClientCommand.cpp:129 ClientCommand.cpp:151
+#: Client.cpp:1784 Client.cpp:1806 ClientCommand.cpp:129 ClientCommand.cpp:151
 #: ClientCommand.cpp:423 ClientCommand.cpp:450
 #, c++-format
 msgid "There was {1} channel matching [{2}]"
@@ -311,18 +311,18 @@ msgid_plural "There were {1} channels matching [{2}]"
 msgstr[0] "Il y avait {1} salon correspondant [{2}]"
 msgstr[1] "Il y avait {1} salons correspondant [{2}]"
 
-#: Client.cpp:1786 ClientCommand.cpp:132
+#: Client.cpp:1787 ClientCommand.cpp:132
 #, c++-format
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] "A attaché {1} salon"
 msgstr[1] "A attaché {1} salons"
 
-#: Client.cpp:1798
+#: Client.cpp:1799
 msgid "Usage: /detach <#chans>"
 msgstr "Utilisation : /detach <#salons>"
 
-#: Client.cpp:1808 ClientCommand.cpp:154
+#: Client.cpp:1809 ClientCommand.cpp:154
 #, c++-format
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
