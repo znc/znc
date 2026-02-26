@@ -181,7 +181,7 @@ function serverlist_init($) {
 			var host = line[0];
 			var unix = host.startsWith("unix:");
 			var port = "0";
-			var pass = line[unix ? 1 : 2] || "";
+			var pass = line.slice(unix ? 1 : 2).join(" ") || "";
 			var ssl = false;
 			if (unix) {
 				if (host.startsWith("unix:ssl:")) {
