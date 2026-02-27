@@ -230,39 +230,36 @@ class CCryptMod : public CModule {
     }
 
     EModRet OnUserTextMessage(CTextMessage& Message) override {
-        FilterOutgoing(Message);
-        return CONTINUE;
+        return HandlePayloads(Message, false);
     }
 
     EModRet OnUserNoticeMessage(CNoticeMessage& Message) override {
-        FilterOutgoing(Message);
-        return CONTINUE;
+        return HandlePayloads(Message, false);
     }
 
     EModRet OnUserActionMessage(CActionMessage& Message) override {
-        FilterOutgoing(Message);
-        return CONTINUE;
+        return HandlePayloads(Message, false);
     }
 
     EModRet OnUserTopicMessage(CTopicMessage& Message) override {
-        FilterOutgoing(Message);
-        return CONTINUE;
+        return HandlePayloads(Message, false);
     }
 
-    EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override {
-        FilterIncoming(Nick.GetNick(), Nick, sMessage);
-        return CONTINUE;
+    EModRet OnPrivTextMessage(CTextMessage& Message) override {
+        return HandlePayloads(Message);
     }
 
-    EModRet OnPrivNotice(CNick& Nick, CString& sMessage) override {
-        CString sCommand = sMessage.Token(0);
-        CString sOtherPubKey = sMessage.Token(1);
+    EModRet OnPrivNoticeMessage(CNoticeMessage& Message) override {
+        CString sCommand = Message.GetCommand();
+        CString sMessage = Message.GetText();
+        CNick Nick = Message.GetNick();
+        CString sOtherPubKey = sMessage.Token(0);
 
         if ((sCommand.Equals("DH1080_INIT") ||
              sCommand.Equals("DH1080_INIT_CBC")) &&
             !sOtherPubKey.empty()) {
             CString sSecretKey;
-            CString sTail = sMessage.Token(2); /* For fish10 */
+            CString sTail = sMessage.Token(1); /* For fish10 */
 
             /* remove trailing A */
             if (sOtherPubKey.TrimSuffix("A") && DH1080_gen() &&
@@ -304,88 +301,182 @@ class CCryptMod : public CModule {
             return CONTINUE;
         }
 
-        FilterIncoming(Nick.GetNick(), Nick, sMessage);
-        return CONTINUE;
+        return HandlePayloads(Message);
     }
 
-    EModRet OnPrivAction(CNick& Nick, CString& sMessage) override {
-        FilterIncoming(Nick.GetNick(), Nick, sMessage);
-        return CONTINUE;
+    EModRet OnPrivActionMessage(CActionMessage& Message) override {
+        return HandlePayloads(Message);
     }
 
-    EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override {
-        FilterIncoming(Channel.GetName(), Nick, sMessage);
-        return CONTINUE;
+    EModRet OnChanTextMessage(CTextMessage& Message) override {
+        return HandlePayloads(Message);
     }
 
-    EModRet OnChanNotice(CNick& Nick, CChan& Channel,
-                         CString& sMessage) override {
-        FilterIncoming(Channel.GetName(), Nick, sMessage);
-        return CONTINUE;
+    EModRet OnSendToClientMessage(CMessage& Message) override {
+        return HandlePayloads(Message);
     }
 
-    EModRet OnChanAction(CNick& Nick, CChan& Channel,
-                         CString& sMessage) override {
-        FilterIncoming(Channel.GetName(), Nick, sMessage);
-        return CONTINUE;
+    EModRet OnChanNoticeMessage(CNoticeMessage& Message) override {
+        return HandlePayloads(Message);
     }
 
-    EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sMessage) override {
-        FilterIncoming(Channel.GetName(), Nick, sMessage);
-        return CONTINUE;
+    EModRet OnChanActionMessage(CActionMessage& Message) override {
+        return HandlePayloads(Message);
+    }
+
+    EModRet OnTopicMessage(CTopicMessage& Message) override {
+        return HandlePayloads(Message);
     }
 
     EModRet OnNumericMessage(CNumericMessage& Message) override {
-        if (Message.GetCode() != 332) {
-            return CONTINUE;
-        }
-
-        CChan* pChan = GetNetwork()->FindChan(Message.GetParam(1));
-        if (pChan) {
-            CNick* Nick = pChan->FindNick(Message.GetParam(0));
-            CString sTopic = Message.GetParam(2);
-
-            FilterIncoming(pChan->GetName(), *Nick, sTopic);
-            Message.SetParam(2, sTopic);
-        }
-
-        return CONTINUE;
+        return HandlePayloads(Message);
     }
 
-    template <typename T>
-    void FilterOutgoing(T& Msg) {
-        CString sTarget = Msg.GetTarget();
-        sTarget.TrimPrefix(NickPrefix());
-        Msg.SetTarget(sTarget);
+    bool HasSomethingToDecrypt(CString sMessage) {
+        return sMessage.StartsWith("+OK *");
+    }
 
-        CString sMessage = Msg.GetText();
+    void DecryptPayload(CString& sMessage, CString sKey) {
+        if (!sMessage.TrimPrefix("+OK *")) return;
 
-        if (sMessage.TrimPrefix("``")) {
-            return;
-        }
+        sMessage.Base64Decode();
+        sMessage.Decrypt(sKey);
+        sMessage.LeftChomp(8);
+        sMessage = sMessage.c_str();
+    }
 
+    void EncryptPayload(CString& sMessage, CString sKey){
+        sMessage = MakeIvec() + sMessage;
+        sMessage.Encrypt(sKey);
+        sMessage.Base64Encode();
+        sMessage = "+OK *" + sMessage;
+    }
+
+    void HandleEncryption(CString& sTarget, CString& sMessage, bool bInbound = true){
         MCString::iterator it = FindNV(sTarget.AsLower());
-        if (it != EndNV()) {
-            sMessage = MakeIvec() + sMessage;
-            sMessage.Encrypt(it->second);
-            sMessage.Base64Encode();
-            Msg.SetText("+OK *" + sMessage);
+
+        if (it == EndNV()) return;
+
+        CString sKey = it->second;
+
+        if(bInbound) return DecryptPayload(sMessage, sKey);
+
+        if(sMessage.TrimPrefix("``")) return;
+
+        return EncryptPayload(sMessage, sKey);
+    }
+
+    void RemoveTargetPrefixIfExists(CString& sTarget) {
+        sTarget.TrimPrefix(NickPrefix());
+    }
+
+    void AddTargetPrefixIfNeeded(CString& sTarget) {
+        if (!sTarget.StartsWith("#")) {
+            sTarget = NickPrefix() + sTarget;
         }
     }
 
-    void FilterIncoming(const CString& sTarget, CNick& Nick,
-                        CString& sMessage) {
-        if (sMessage.TrimPrefix("+OK *")) {
-            MCString::iterator it = FindNV(sTarget.AsLower());
-
-            if (it != EndNV()) {
-                sMessage.Base64Decode();
-                sMessage.Decrypt(it->second);
-                sMessage.LeftChomp(8);
-                sMessage = sMessage.c_str();
+    EModRet HandlePayloads(CMessage& Message, bool bInbound = true) {
+        CString sMessage, sTarget;
+        CNick& Nick = Message.GetNick();
+        std::function<void(CString& sTarget, CString& sMessage)> mUpdatePayload;
+        CMessage::Type MessageType = Message.GetType();
+        switch (MessageType) {
+            case CMessage::Type::Numeric: {
+                CNumericMessage& NumericMessage =
+                    Message.As<CNumericMessage>();
+                if (NumericMessage.GetCode() != 332) return CONTINUE;
+                CChan* pChan = GetNetwork()->FindChan(Message.GetParam(1));
+                if (!pChan) return CONTINUE;
+                sMessage = Message.GetParam(2);
+                if (!HasSomethingToDecrypt(sMessage)) return CONTINUE;
+                Nick = *pChan->FindNick(Message.GetParam(0));
+                sTarget = pChan->GetName();
+                RemoveTargetPrefixIfExists(sTarget);
+                DecryptPayload(sTarget, sMessage);
+                Message.SetParam(2, sMessage);
                 Nick.SetNick(NickPrefix() + Nick.GetNick());
+                return CONTINUE;
+            }
+            case CMessage::Type::Notice: {
+                CNoticeMessage& NoticeMessage = Message.As<CNoticeMessage>();
+                sTarget = NoticeMessage.GetTarget();
+                sMessage = NoticeMessage.GetText();
+                mUpdatePayload = [&](CString& sTarget, CString& sMessage){
+                    NoticeMessage.SetTarget(sTarget);
+                    NoticeMessage.SetText(sMessage);
+                };
+                break;
+            }
+            case CMessage::Type::Action: {
+                CActionMessage& ActionMessage = Message.As<CActionMessage>();
+                sTarget = ActionMessage.GetTarget();
+                sMessage = ActionMessage.GetText();
+                mUpdatePayload = [&](CString& sTarget, CString& sMessage){
+                    ActionMessage.SetTarget(sTarget);
+                    ActionMessage.SetText(sMessage);
+                };
+                break;
+            }
+            case CMessage::Type::Topic: {
+                CTopicMessage& TopicMessage = Message.As<CTopicMessage>();
+                sTarget = TopicMessage.GetTarget();
+                sMessage = TopicMessage.GetText();
+                mUpdatePayload = [&](CString& sTarget, CString& sMessage){
+                    TopicMessage.SetTarget(sTarget);
+                    TopicMessage.SetText(sMessage);
+                };
+                break;
+            }
+            case CMessage::Type::Text: {
+                CTextMessage& TextMessage = Message.As<CTextMessage>();
+                sTarget = TextMessage.GetTarget();
+                sMessage = TextMessage.GetText();
+                mUpdatePayload = [&](CString& sTarget, CString& sMessage){
+                    TextMessage.SetTarget(sTarget);
+                    TextMessage.SetText(sMessage);
+                };
+                break;
+            }
+            default: {
+                return CONTINUE;
             }
         }
+
+        if(bInbound && !HasSomethingToDecrypt(sMessage)) return CONTINUE;
+
+        Nick = Message.GetNick();
+        CString sNick = Nick.GetNick();
+
+        // This check specifically is for self-messages where we encrypted a
+        // payload on the way out and get a message back from the server/bouncer
+        // with encrypted text. Almost all inbound messages use Nick or Channel
+        // (Target when channel is not null) but if the messages is a self
+        // message, we need to use Target.
+        CIRCNetwork* Network = Message.GetNetwork();
+        
+        bool bSelfMessage = bInbound && Network->GetNick() == sNick;
+
+        CChan* Channel = Message.GetChan();
+
+        // If the message is outbound, from ourself, or to a Channel, we keep
+        // the existing set sTarget, otherwise we have to use Nick to decrypt.
+        sTarget = !bInbound || bSelfMessage || Channel != nullptr ? sTarget : sNick;
+        
+        RemoveTargetPrefixIfExists(sTarget);
+        HandleEncryption(sTarget, sMessage, bInbound);
+
+        if (bInbound) {
+            AddTargetPrefixIfNeeded(sTarget);
+            Nick.SetNick(NickPrefix() + sNick);
+        }
+
+        // If we had access to buffer, we could fix the line so it didn't have
+        // to decrypt every time here.
+
+        mUpdatePayload(sTarget, sMessage);
+
+        return CONTINUE;
     }
 
     void OnDelKeyCommand(const CString& sCommand) {
@@ -426,7 +517,9 @@ class CCryptMod : public CModule {
             if (DH1080_gen()) {
                 PutIRC("NOTICE " + sTarget + " :DH1080_INIT " + m_sPubKey +
                        "A");
-                PutModule(t_f("Sent my DH1080 public key to {1}, waiting for reply ...")(sTarget));
+                PutModule(t_f(
+                    "Sent my DH1080 public key to {1}, waiting for reply ...")(
+                    sTarget));
             } else {
                 PutModule(t_s("Error generating our keys, nothing sent."));
             }
