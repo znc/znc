@@ -1626,7 +1626,7 @@ void CClient::UserCommand(CString& sLine) {
         PutStatus(t_f("Running for {1}")(CZNC::Get().GetUptime()));
     } else if (m_pUser->IsAdmin() &&
                (sCommand.Equals("LISTPORTS") || sCommand.Equals("ADDPORT") ||
-                sCommand.Equals("DELPORT"))) {
+                sCommand.Equals("DELPORT") || sCommand.Equals("EDITPORT"))) {
         UserPortCommand(sLine);
     } else {
         PutStatus(t_s("Unknown command, try 'Help'"));
@@ -1805,6 +1805,54 @@ void CClient::UserPortCommand(CString& sLine) {
                 t_s("Or: AddPort unix:[ssl,mode=NNN,group=foo]:/path/to/socket <web|irc|all> "
                     "[uriprefix]"));
         }
+    } else if (sCommand.Equals("EDITPORT")) {
+        CListener::EAcceptType eAccept = CListener::ACCEPT_ALL;
+        CString sAccept = sLine.Token(3);
+
+        if (sAccept.Equals("WEB")) {
+            eAccept = CListener::ACCEPT_HTTP;
+        } else if (sAccept.Equals("IRC")) {
+            eAccept = CListener::ACCEPT_IRC;
+        } else if (sAccept.Equals("ALL")) {
+            eAccept = CListener::ACCEPT_ALL;
+        } else {
+            sAccept.clear();
+        }
+
+        if (sPort.empty() || sAddr.empty() || sAccept.empty()) {
+            PutStatus(
+                t_s("Usage: EditPort <[+]port> <ipv4|ipv6|all> <web|irc|all> "
+                    "[bindhost [uriprefix]]"));
+        } else {
+            bool bSSL = (sPort.StartsWith("+"));
+            const CString sBindHost = sLine.Token(4);
+            const CString sURIPrefix = sLine.Token(5);
+
+            CListener* pListener =
+                CZNC::Get().FindListener(uPort, sBindHost, eAddr);
+
+            if (pListener) {
+                const CString sPortDel = std::to_string(Csock::GetLocalPort());
+                CZNC::Get().DelListener(pListener);
+
+                CListener* pListener = new CListener(uPort, sBindHost, sURIPrefix,
+                                                 bSSL, eAddr, eAccept);
+
+                if (!pListener->Listen()) {
+                    auto e = errno;
+                    delete pListener;
+                    PutStatus(t_f("Unable to bind: {1}")(CString(strerror(e))));
+                } else {
+                   if (CZNC::Get().AddListener(pListener)) {
+                       PutStatus(t_s("Port modified"));
+                    } else {
+                       PutStatus(t_s("Port removed, couldn't modify port"));
+                    }
+                }
+            } else {
+                PutStatus(t_s("Unable to find a matching port"));
+            }
+        }
     } else if (sCommand.Equals("DELPORT")) {
         try {
             if (sPort.empty()) {
@@ -1821,7 +1869,10 @@ void CClient::UserPortCommand(CString& sLine) {
                     uPort, sBindHost, ParseEAddr(sAddr));
             }
 
-            if (pListener) {
+            const CString sPortDel = std::to_string(Csock::GetLocalPort());
+            if (sPort.Equals(sPortDel)) {
+               PutStatus(t_f("Port {1} is the active port and cannot be removed")(sPort));
+            } else if (pListener) {
                 CZNC::Get().DelListener(pListener);
                 PutStatus(t_s("Deleted Port"));
             } else {
@@ -2040,6 +2091,12 @@ void CClient::HelpUser(const CString& sFilter) {
                            "[uriprefix]]",
                            "helpcmd|AddPort|args"),
                        t_s("Add another port for ZNC to listen on",
+                           "helpcmd|AddPort|desc"));
+        AddCommandHelp("EditPort",
+                       t_s("<[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost "
+                           "[uriprefix]]",
+                           "helpcmd|EditPort|args"),
+                       t_s("Edit a port that ZNC listens on",
                            "helpcmd|AddPort|desc"));
         AddCommandHelp(
             "DelPort",
