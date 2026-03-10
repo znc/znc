@@ -945,7 +945,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
     CUtils::PrintMessage("");
     CUtils::PrintMessage("Try something like this in your IRC client...", true);
     CUtils::PrintMessage("/server <znc_server_ip> " + sSSL +
-                             CString(uListenPort) + " " + sUser + "/<network>:<pass>",
+                             CString(uListenPort) + " " + sUser + "/" + sNetwork + ":<pass>",
                          true);
     CUtils::PrintMessage("");
     CUtils::PrintMessage(
