@@ -51,7 +51,7 @@ void CMessage::SetCommand(const CString& sCommand) {
 }
 
 CString CMessage::GetParamsColon(unsigned int uIdx, unsigned int uLen) const {
-    if (m_vsParams.empty() || uLen == 0) {
+    if (m_vsParams.empty() || uLen == 0 || uIdx >= m_vsParams.size()) {
         return "";
     }
     if (uLen > m_vsParams.size() - uIdx - 1) {
