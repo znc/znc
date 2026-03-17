@@ -16,5 +16,73 @@
 		<!-- LowerBanner -->
 		<? INC LowerBanner.tmpl ?>
 		<!-- !LowerBanner -->
+
+		<script>
+		    document.addEventListener("DOMContentLoaded", function () {
+		        console.log("Sorting script loaded");
+		
+		        const table = document.querySelector("table");
+		        if (!table) return console.log("No talbe found");
+		
+		        const rows = Array.from(table.querySelectorAll("tr"));
+		        if (rows.length < 2) return console.log("Not enough rows");
+		
+		        const headerRow = rows[0];
+		        const headers = Array.from(headerRow.children);
+		
+		        if (!headers.length) return console.log("No header cells found");
+		
+		        // Only apply to the log viewer table
+		        if (!headers[1].innerText.includes("Last Modified")) {
+		            console.log("Not a log viewer table");
+		            return;
+		        }
+		
+		        console.log("Log viewer table detected");
+		
+		        // Add sort indicators and click handlers
+		        headers.forEach((header, index) => {
+		            header.style.cursor = "pointer";
+		            header.dataset.sortDir = "desc"; // default direction
+		
+		            const arrow = document.createElement("span");
+		            arrow.style.marginLeft = "6px";
+		            arrow.textContent = "";
+		            header.appendChild(arrow);
+		
+		            header.addEventListener("click", () => {
+		                const rows = Array.from(table.querySelectorAll("tr")).slice(1);
+		                const dir = header.dataset.sortDir === "asc" ? 1 : -1;
+		
+		                rows.sort((a, b) => {
+		                    const A = a.children[index].innerText.trim();
+		                    const B = b.children[index].innerText.trim();
+		
+		                    // Column 1 = Last Modified → parse as date
+		                    if (index === 1) {
+		                        return (new Date(A) - new Date(B)) * dir;
+		                    }
+		
+		                    // Column 0 = filename → string compare
+		                    return A.localeCompare(B) * dir;
+		                });
+		
+		                const tbody = table.querySelector("tbody") || table;
+		                rows.forEach(row => tbody.appendChild(row));
+		
+		                // Toggle direction
+		                header.dataset.sortDir = header.dataset.sortDir === "asc" ? "desc" : "asc";
+		
+		                // Update arrows
+		                headers.forEach(h => h.querySelector("span").textContent = "");
+		                arrow.textContent = header.dataset.sortDir === "asc" ? "▲" : "▼";
+		            });
+		        });
+		
+		        // Auto-sort by Last Modified on page load (newest first)
+		        headers[1].click();
+		    });
+		</script>
+
 	</body>
 </html>
