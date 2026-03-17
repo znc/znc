@@ -72,6 +72,40 @@ TEST(MessageTest, GetParams) {
     EXPECT_EQ(CMessage("CMD p1 :p2 p3").GetParams(-1, 10), "");
 }
 
+TEST(MessageTest, GetParamsColon) {
+    EXPECT_EQ(CMessage("CMD").GetParamsColon(0), "");
+    EXPECT_EQ(CMessage("CMD").GetParamsColon(1), "");
+    EXPECT_EQ(CMessage("CMD").GetParamsColon(-1), "");
+
+    EXPECT_EQ(CMessage("CMD").GetParamsColon(0, 0), "");
+    EXPECT_EQ(CMessage("CMD").GetParamsColon(1, 0), "");
+    EXPECT_EQ(CMessage("CMD").GetParamsColon(-1, 0), "");
+
+    EXPECT_EQ(CMessage("CMD").GetParamsColon(0, 1), "");
+    EXPECT_EQ(CMessage("CMD").GetParamsColon(1, 1), "");
+    EXPECT_EQ(CMessage("CMD").GetParamsColon(-1, 1), "");
+
+    EXPECT_EQ(CMessage("CMD p1 :p2 p3").GetParamsColon(0), "p1 :p2 p3");
+    EXPECT_EQ(CMessage("CMD p1 :p2 p3").GetParamsColon(1), ":p2 p3");
+    EXPECT_EQ(CMessage("CMD p1 :p2 p3").GetParamsColon(-1), "");
+
+    EXPECT_EQ(CMessage("CMD p1 :p2 p3").GetParamsColon(0, 0), "");
+    EXPECT_EQ(CMessage("CMD p1 :p2 p3").GetParamsColon(1, 0), "");
+    EXPECT_EQ(CMessage("CMD p1 :p2 p3").GetParamsColon(-1, 0), "");
+
+    EXPECT_EQ(CMessage("CMD p1 :p2 p3").GetParamsColon(0, 1), "p1");
+    EXPECT_EQ(CMessage("CMD p1 :p2 p3").GetParamsColon(1, 1), ":p2 p3");
+    EXPECT_EQ(CMessage("CMD p1 :p2 p3").GetParamsColon(-1, 1), "");
+
+    EXPECT_EQ(CMessage("CMD p1 :p2 p3").GetParamsColon(0, 10), "p1 :p2 p3");
+    EXPECT_EQ(CMessage("CMD p1 :p2 p3").GetParamsColon(1, 10), ":p2 p3");
+    EXPECT_EQ(CMessage("CMD p1 :p2 p3").GetParamsColon(-1, 10), "");
+
+    // uIdx past the end must return "" without undefined behaviour (#1994)
+    EXPECT_EQ(CMessage("MODE #chan +b").GetParamsColon(2, 1), "");
+    EXPECT_EQ(CMessage("MODE #chan +b").GetParamsColon(3, 1), "");
+}
+
 TEST(MessageTest, GetParamsSplit) {
     EXPECT_THAT(CMessage("CMD").GetParamsSplit(0), IsEmpty());
     EXPECT_THAT(CMessage("CMD").GetParamsSplit(1), IsEmpty());
