@@ -161,6 +161,31 @@ TEST(UtilsTest, ParseServerTime) {
     tzset();
 }
 
+TEST(UtilsTest, ParseServerTimeOutOfRange) {
+    // Years past 5 digits trigger int64 overflow inside cctz' microseconds
+    // conversion (`seconds * 1_000_000`). Reject up front (#2008).
+    timeval tv = CUtils::ParseServerTime("999999-01-01T00:00:00.000Z");
+    EXPECT_EQ(tv.tv_sec, 0);
+    EXPECT_EQ(tv.tv_usec, 0);
+
+    tv = CUtils::ParseServerTime("12345678-01-01T00:00:00.000Z");
+    EXPECT_EQ(tv.tv_sec, 0);
+    EXPECT_EQ(tv.tv_usec, 0);
+
+    // Junk and empty input still return a zeroed timeval.
+    tv = CUtils::ParseServerTime("");
+    EXPECT_EQ(tv.tv_sec, 0);
+    EXPECT_EQ(tv.tv_usec, 0);
+
+    tv = CUtils::ParseServerTime("not-a-date-at-all");
+    EXPECT_EQ(tv.tv_sec, 0);
+    EXPECT_EQ(tv.tv_usec, 0);
+
+    // Canonical input still parses (regression).
+    tv = CUtils::ParseServerTime("2011-10-19T16:40:51.620Z");
+    EXPECT_EQ(CUtils::FormatServerTime(tv), "2011-10-19T16:40:51.620Z");
+}
+
 class TimeTest : public testing::TestWithParam<
                      std::tuple<timeval, CString, CString, CString>> {};
 
