@@ -1054,6 +1054,25 @@ CConfig CUser::ToConfig() const {
     return config;
 }
 
+// Constant-time byte-wise compare of two strings. Returns true only if the
+// strings have the same length and the same contents. Runs in time
+// proportional to the shorter of the two lengths and does not short-circuit
+// on the first differing byte, so a remote attacker can't learn the stored
+// hash byte-by-byte via timing. Local helper to avoid a new OpenSSL
+// dependency for builds without libssl.
+static bool ConstantTimeEquals(const CString& a, const CString& b) {
+    if (a.length() != b.length()) {
+        return false;
+    }
+    unsigned char acc = 0;
+    const unsigned char* pa = reinterpret_cast<const unsigned char*>(a.data());
+    const unsigned char* pb = reinterpret_cast<const unsigned char*>(b.data());
+    for (size_t i = 0; i < a.length(); ++i) {
+        acc |= pa[i] ^ pb[i];
+    }
+    return acc == 0;
+}
+
 bool CUser::CheckPass(const CString& sPass) {
     if(AuthOnlyViaModule() || CZNC::Get().GetAuthOnlyViaModule()) {
         return false;
@@ -1063,11 +1082,13 @@ bool CUser::CheckPass(const CString& sPass) {
     bool bUpgrade = false;
     switch (m_eHashType) {
         case HASH_MD5:
-            bResult = m_sPass.Equals(CUtils::SaltedMD5Hash(sPass, m_sPassSalt));
+            bResult = ConstantTimeEquals(
+                m_sPass, CUtils::SaltedMD5Hash(sPass, m_sPassSalt));
             bUpgrade = true;
             break;
         case HASH_SHA256:
-            bResult = m_sPass.Equals(CUtils::SaltedSHA256Hash(sPass, m_sPassSalt));
+            bResult = ConstantTimeEquals(
+                m_sPass, CUtils::SaltedSHA256Hash(sPass, m_sPassSalt));
 #if ZNC_HAVE_ARGON
             bUpgrade = true;
 #endif
@@ -1082,7 +1103,7 @@ bool CUser::CheckPass(const CString& sPass) {
         case HASH_NONE:
             // Don't upgrade hash, since the only valid use case for plain are
             // manual tests, where it's simpler this way
-            return (sPass == m_sPass);
+            return ConstantTimeEquals(sPass, m_sPass);
     }
 
     if (bResult && bUpgrade) {
