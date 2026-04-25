@@ -763,6 +763,13 @@ void CHTTPSock::SetContentType(const CString& sContentType) {
 }
 
 void CHTTPSock::AddHeader(const CString& sName, const CString& sValue) {
+    // Reject CR/LF in either half so we never emit a malformed header or
+    // give a caller (e.g. a future module) a cheap response-splitting
+    // primitive. No in-tree caller reaches this with attacker-controlled
+    // bytes today; this is a defensive guard, not a fix for an existing
+    // exploit.
+    if (sName.find_first_of("\r\n") != CString::npos) return;
+    if (sValue.find_first_of("\r\n") != CString::npos) return;
     m_msHeaders[sName] = sValue;
 }
 
