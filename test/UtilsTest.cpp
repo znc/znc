@@ -141,6 +141,34 @@ TEST(UtilsTest, ServerTime) {
     tzset();
 }
 
+TEST(UtilsTest, ConstantTimeEquals) {
+    // Functional correctness for the helper introduced for #2011.
+    // We can't measure timing in a unit test, so we verify the boolean
+    // contract: equal inputs match, any difference (length or content)
+    // does not.
+    EXPECT_TRUE(CUtils::ConstantTimeEquals("", ""));
+    EXPECT_TRUE(CUtils::ConstantTimeEquals("abc", "abc"));
+    EXPECT_TRUE(CUtils::ConstantTimeEquals(CString("\x00\x01\x02", 3),
+                                            CString("\x00\x01\x02", 3)));
+
+    // Differs in last byte (the hardest case for short-circuit compare).
+    EXPECT_FALSE(CUtils::ConstantTimeEquals("abc", "abd"));
+    // Differs in first byte.
+    EXPECT_FALSE(CUtils::ConstantTimeEquals("abc", "Xbc"));
+    // Length mismatch on either side.
+    EXPECT_FALSE(CUtils::ConstantTimeEquals("abc", "abcd"));
+    EXPECT_FALSE(CUtils::ConstantTimeEquals("abcd", "abc"));
+    EXPECT_FALSE(CUtils::ConstantTimeEquals("", "x"));
+    EXPECT_FALSE(CUtils::ConstantTimeEquals("x", ""));
+    // Case-sensitive (unlike CString::Equals default).
+    EXPECT_FALSE(CUtils::ConstantTimeEquals("abc", "ABC"));
+    // Embedded NUL is compared, not used as a terminator.
+    EXPECT_FALSE(CUtils::ConstantTimeEquals(CString("a\x00""c", 3),
+                                             CString("a\x00""d", 3)));
+    EXPECT_TRUE(CUtils::ConstantTimeEquals(CString("a\x00""c", 3),
+                                            CString("a\x00""c", 3)));
+}
+
 TEST(UtilsTest, ParseServerTime) {
     char* oldTZ = getenv("TZ");
     if (oldTZ) oldTZ = strdup(oldTZ);

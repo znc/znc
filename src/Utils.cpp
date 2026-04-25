@@ -271,6 +271,23 @@ CString CUtils::SaltedHash(const CString& sPass, const CString& sSalt) {
 #endif
 }
 
+bool CUtils::ConstantTimeEquals(const CString& a, const CString& b) {
+    // Length is leaked, but for the cases this is used in (fixed-size
+    // hex hashes for MD5 / SHA256) the lengths are constant. Plain-text
+    // mode does leak length, but plain-text passwords are deprecated and
+    // discouraged in znc.conf.
+    if (a.length() != b.length()) {
+        return false;
+    }
+    unsigned char acc = 0;
+    const unsigned char* pa = reinterpret_cast<const unsigned char*>(a.data());
+    const unsigned char* pb = reinterpret_cast<const unsigned char*>(b.data());
+    for (size_t i = 0; i < a.length(); ++i) {
+        acc |= static_cast<unsigned char>(pa[i] ^ pb[i]);
+    }
+    return acc == 0;
+}
+
 CString CUtils::GetPass(const CString& sPrompt) {
 #ifdef HAVE_TCSETATTR
     // Disable echo

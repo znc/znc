@@ -16,6 +16,7 @@
 
 #include <gtest/gtest.h>
 #include <znc/User.h>
+#include <znc/Utils.h>
 #include <znc/znc.h>
 
 class UserTest : public ::testing::Test {
@@ -148,4 +149,52 @@ TEST_F(UserTest, TestAuthOnlyViaModule) {
     EXPECT_FALSE(user.CheckPass("password"));
 
     CZNC::Get().SetAuthOnlyViaModule(bAuthOnlyViaModuleDefault);
+}
+
+// Functional regression for the constant-time CheckPass paths (#2011).
+// We can't measure timing in a unit test, but we verify the boolean
+// contract for each hash mode: correct password matches, wrong password
+// (including same-length and length-mismatch variants) does not.
+TEST_F(UserTest, CheckPassPlain) {
+    CUser user("user");
+    user.SetPass("plaintext", CUser::HASH_NONE);
+
+    EXPECT_FALSE(user.CheckPass(""));
+    EXPECT_FALSE(user.CheckPass("plaintex"));    // shorter
+    EXPECT_FALSE(user.CheckPass("plaintextX"));  // longer
+    EXPECT_FALSE(user.CheckPass("plaintexT"));   // case-sensitive
+    EXPECT_FALSE(user.CheckPass("Xlaintext"));   // first byte differs
+    EXPECT_FALSE(user.CheckPass("plaintexX"));   // last byte differs
+    EXPECT_TRUE(user.CheckPass("plaintext"));
+}
+
+TEST_F(UserTest, CheckPassMD5) {
+    CUser user("user");
+    CString sSalt = "the-salt";
+    CString sCorrect = "correct-password";
+    user.SetPass(CUtils::SaltedMD5Hash(sCorrect, sSalt), CUser::HASH_MD5,
+                 sSalt);
+
+    // Wrong inputs first; the success path may upgrade the stored hash
+    // to argon2id, after which the hash type is no longer MD5.
+    EXPECT_FALSE(user.CheckPass(""));
+    EXPECT_FALSE(user.CheckPass("wrong-password"));
+    EXPECT_FALSE(user.CheckPass("correct-passworX"));  // last byte differs
+    EXPECT_FALSE(user.CheckPass("Xorrect-password"));  // first byte differs
+    EXPECT_FALSE(user.CheckPass("Correct-password"));  // case-sensitive
+    EXPECT_TRUE(user.CheckPass(sCorrect));
+}
+
+TEST_F(UserTest, CheckPassSHA256) {
+    CUser user("user");
+    CString sSalt = "another-salt";
+    CString sCorrect = "another-password";
+    user.SetPass(CUtils::SaltedSHA256Hash(sCorrect, sSalt),
+                 CUser::HASH_SHA256, sSalt);
+
+    EXPECT_FALSE(user.CheckPass(""));
+    EXPECT_FALSE(user.CheckPass("wrong"));
+    EXPECT_FALSE(user.CheckPass("another-passworX"));
+    EXPECT_FALSE(user.CheckPass("Another-password"));
+    EXPECT_TRUE(user.CheckPass(sCorrect));
 }
