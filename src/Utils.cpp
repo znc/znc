@@ -568,10 +568,21 @@ CString CUtils::FormatServerTime(const timeval& tv) {
 
 timeval CUtils::ParseServerTime(const CString& sTime) {
     using namespace std::chrono;
-    system_clock::time_point tp;
-    cctz::parse("%Y-%m-%dT%H:%M:%E*SZ", sTime, cctz::utc_time_zone(), &tp);
     struct timeval tv;
     memset(&tv, 0, sizeof(tv));
+    // Reject obviously out-of-range years up front so we don't hand cctz
+    // an input whose internal `seconds * 1_000_000` conversion would
+    // overflow signed int64 (UB). A 5-digit year is plenty for any
+    // legitimate IRCv3 @time tag.
+    CString sYear = sTime.Token(0, false, "-");
+    if (sYear.length() > 5) {
+        return tv;
+    }
+    system_clock::time_point tp;
+    if (!cctz::parse("%Y-%m-%dT%H:%M:%E*SZ", sTime, cctz::utc_time_zone(),
+                     &tp)) {
+        return tv;
+    }
     microseconds usec = duration_cast<microseconds>(tp.time_since_epoch());
     tv.tv_sec = usec.count() / 1000000;
     tv.tv_usec = usec.count() % 1000000;
