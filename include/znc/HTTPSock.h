@@ -52,6 +52,10 @@ class CHTTPSock : public CSocket {
                      unsigned int uStatusId = 200,
                      const CString& sStatusMsg = "OK");
     void AddHeader(const CString& sName, const CString& sValue);
+    /** Returns false if `s` contains CR or LF. Used by AddHeader to reject
+     * inputs that could split the response into a separate header or body
+     * (RFC 7230 disallows obs-fold; treat any bare CR/LF as invalid). */
+    static bool IsValidHeaderField(const CString& s);
     void SetContentType(const CString& sContentType);
 
     bool PrintNotFound();
