@@ -190,7 +190,7 @@ TEST(StringTest, Split) {
     // element (or zero elements if the input itself is empty).
     VCString vempty;
     EXPECT_EQ(CS("abc").Split("", vempty, false), 1u);
-    EXPECT_EQ(vempty, VCString({"abc"}));
+    EXPECT_THAT(vempty, ElementsAre("abc"));
     EXPECT_EQ(CS("abc").Split("", vempty, true), 1u);
     EXPECT_EQ(vempty, VCString({"abc"}));
     EXPECT_EQ(CS("").Split("", vempty, false), 0u);
