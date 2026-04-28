@@ -194,7 +194,7 @@ TEST(StringTest, Split) {
     EXPECT_EQ(CS("abc").Split("", vempty, true), 1u);
     EXPECT_EQ(vempty, VCString({"abc"}));
     EXPECT_EQ(CS("").Split("", vempty, false), 0u);
-    EXPECT_TRUE(vempty.empty());
+    EXPECT_THAT(vempty, IsEmpty());
 }
 
 TEST(StringTest, NamedFormat) {
