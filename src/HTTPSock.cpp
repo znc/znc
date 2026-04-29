@@ -740,6 +740,8 @@ bool CHTTPSock::PrintHeader(off_t uContentLength, const CString& sContentType,
     }
     Write("Content-Type: " + m_sContentType + "\r\n");
 
+    WriteHardeningHeaders(uStatusId);
+
     for (const auto& it : m_msResponseCookies) {
         Write("Set-Cookie: " + it.first.Escape_n(CString::EURL) + "=" +
               it.second.Escape_n(CString::EURL) + "; HttpOnly; path=/;" +
@@ -774,6 +776,38 @@ void CHTTPSock::AddHeader(const CString& sName, const CString& sValue) {
     // exploit.
     if (!IsValidHeaderField(sName) || !IsValidHeaderField(sValue)) return;
     m_msHeaders[sName] = sValue;
+}
+
+void CHTTPSock::OmitHardeningHeader(const CString& sName) {
+    m_ssOmitHardening.insert(sName);
+}
+
+void CHTTPSock::WriteHardeningHeaders(unsigned int uStatusId) {
+    auto writeIfWanted = [&](const CString& sName, const CString& sValue) {
+        if (m_msHeaders.find(sName) != m_msHeaders.end()) return;
+        if (m_ssOmitHardening.find(sName) != m_ssOmitHardening.end()) return;
+        Write(sName + ": " + sValue + "\r\n");
+    };
+
+    // Always-on defaults: callers can override via AddHeader, or skip
+    // entirely via OmitHardeningHeader, before PrintHeader runs.
+    writeIfWanted("X-Frame-Options", "SAMEORIGIN");
+    writeIfWanted("X-Content-Type-Options", "nosniff");
+    writeIfWanted("Referrer-Policy", "same-origin");
+
+    // Don't cache authenticated/dynamic responses. Skip for 304 and for
+    // static asset MIME types that the ETag/Last-Modified path handles
+    // explicitly via PrintFile.
+    const bool bStaticLike =
+        uStatusId == 304 || m_sContentType.StartsWith("image/") ||
+        m_sContentType.StartsWith("font/") ||
+        m_sContentType.StartsWith("text/css") ||
+        m_sContentType.StartsWith("application/javascript");
+    if (!bStaticLike) {
+        writeIfWanted("Cache-Control",
+                      "no-store, no-cache, must-revalidate, max-age=0");
+        writeIfWanted("Pragma", "no-cache");
+    }
 }
 
 bool CHTTPSock::Redirect(const CString& sURL) {
