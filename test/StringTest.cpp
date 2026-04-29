@@ -204,7 +204,9 @@ TEST(StringTest, Base64) {
     sInvalid.Base64Decode(sOut);  // must not crash or trigger UB
 
     // Mixed-validity input (a single non-alphabet byte inside a quad).
-    CString sMixed = CString("AA\xffA", 4);
+    // Split the literal so GCC does not parse \xff and the following A as
+    // a single \xffA hex escape (out of range for char).
+    CString sMixed = CString("AA\xff" "A", 4);
     sMixed.Base64Decode(sOut);  // must not crash or trigger UB
 }
 
