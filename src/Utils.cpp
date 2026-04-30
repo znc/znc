@@ -28,6 +28,7 @@
 #ifdef HAVE_LIBSSL
 #include <openssl/ssl.h>
 #include <openssl/bn.h>
+#include <openssl/crypto.h>
 #include <openssl/rsa.h>
 #if (OPENSSL_VERSION_NUMBER < 0x10100000L) || (defined(LIBRESSL_VERSION_NUMBER) && (LIBRESSL_VERSION_NUMBER < 0x20700000L))
 #define X509_getm_notBefore X509_get_notBefore
@@ -268,6 +269,32 @@ CString CUtils::SaltedHash(const CString& sPass, const CString& sSalt) {
     return SaltedArgonHash(sPass, sSalt);
 #else
     return SaltedSHA256Hash(sPass, sSalt);
+#endif
+}
+
+bool CUtils::ConstantTimeEquals(const CString& a, const CString& b) {
+    // Length is leaked, but for the cases this is used in (fixed-size
+    // hex hashes for MD5 / SHA256) the lengths are constant. Plain-text
+    // mode does leak length, but plain-text passwords are deprecated and
+    // discouraged in znc.conf.
+    if (a.length() != b.length()) {
+        return false;
+    }
+#ifdef HAVE_LIBSSL
+    return CRYPTO_memcmp(a.data(), b.data(), a.length()) == 0;
+#else
+    // Best-effort fallback when OpenSSL is unavailable: an optimizer is
+    // in principle allowed to short-circuit this loop, so the volatile
+    // accumulator and pointers are a hint rather than a guarantee.
+    volatile unsigned char acc = 0;
+    const volatile unsigned char* pa =
+        reinterpret_cast<const volatile unsigned char*>(a.data());
+    const volatile unsigned char* pb =
+        reinterpret_cast<const volatile unsigned char*>(b.data());
+    for (size_t i = 0; i < a.length(); ++i) {
+        acc |= static_cast<unsigned char>(pa[i] ^ pb[i]);
+    }
+    return acc == 0;
 #endif
 }
 
