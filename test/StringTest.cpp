@@ -179,6 +179,37 @@ TEST(StringTest, NamedFormat) {
     EXPECT_EQ(CString::NamedFormat(CS("\\{x{a}y{a}"), m), "{xbyb");
 }
 
+TEST(StringTest, Base64) {
+    // Round-trip regression: encode/decode of normal text still works.
+    CString sIn = "Hello, World!";
+    CString sEncoded = sIn.Base64Encode_n();
+    EXPECT_EQ(sEncoded, "SGVsbG8sIFdvcmxkIQ==");
+    EXPECT_EQ(sEncoded.Base64Decode_n(), sIn);
+
+    // All-zero bytes round-trip cleanly.
+    CString sBin = CString("\0\0\0", 3);
+    EXPECT_EQ(sBin.Base64Encode_n().Base64Decode_n(), sBin);
+
+    // Inputs containing bytes outside the base64 alphabet must not invoke
+    // undefined behaviour. base64_table maps such bytes to the sentinel
+    // 0xff; the old code cast that to signed char (-1) and then evaluated
+    // (c << 2) and (c << 6), both UB on signed shifts. Run under UBSan to
+    // catch a regression of #2013.
+    CString sInvalid;
+    sInvalid += '\xff';
+    sInvalid += '\xff';
+    sInvalid += '\xff';
+    sInvalid += '\xff';
+    CString sOut;
+    sInvalid.Base64Decode(sOut);  // must not crash or trigger UB
+
+    // Mixed-validity input (a single non-alphabet byte inside a quad).
+    // Split the literal so GCC does not parse \xff and the following A as
+    // a single \xffA hex escape (out of range for char).
+    CString sMixed = CString("AA\xff" "A", 4);
+    sMixed.Base64Decode(sOut);  // must not crash or trigger UB
+}
+
 TEST(StringTest, Hash) {
     EXPECT_EQ(CS("").MD5(), "d41d8cd98f00b204e9800998ecf8427e");
     EXPECT_EQ(CS("a").MD5(), "0cc175b9c0f1b6a831c399e269772661");

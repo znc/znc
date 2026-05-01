@@ -1087,21 +1087,25 @@ unsigned long CString::Base64Decode(CString& sRet) const {
     sTmp.Replace("\n", "");
 
     const char* in = sTmp.c_str();
-    char c, c1, *p;
+    // Keep c and c1 unsigned so left-shifts are well-defined even when the
+    // input contains bytes outside the base64 alphabet (base64_table maps
+    // those to the sentinel 0xff, which used to become signed -1).
+    unsigned char c, c1;
+    char* p;
     unsigned long i;
     unsigned long uLen = sTmp.size();
     char* out = new char[uLen + 1]{};
 
     for (i = 0, p = out; i < uLen; i++) {
-        c = (char)base64_table[(unsigned char)in[i++]];
-        c1 = (char)base64_table[(unsigned char)in[i++]];
+        c = base64_table[(unsigned char)in[i++]];
+        c1 = base64_table[(unsigned char)in[i++]];
         *p++ = char((c << 2) | ((c1 >> 4) & 0x3));
 
         if (i < uLen) {
             if (in[i] == '=') {
                 break;
             }
-            c = (char)base64_table[(unsigned char)in[i]];
+            c = base64_table[(unsigned char)in[i]];
             *p++ = char(((c1 << 4) & 0xf0) | ((c >> 2) & 0xf));
         }
 
@@ -1110,7 +1114,7 @@ unsigned long CString::Base64Decode(CString& sRet) const {
                 break;
             }
             *p++ = char(((c << 6) & 0xc0) |
-                        (char)base64_table[(unsigned char)in[i]]);
+                        base64_table[(unsigned char)in[i]]);
         }
     }
 
