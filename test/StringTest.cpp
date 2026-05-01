@@ -128,6 +128,18 @@ TEST(StringTest, Replace) {
     EXPECT_EQ(CString("(a()a)").Replace_n("a", "b"), "(b()b)");
     EXPECT_EQ(CString("(a()a)").Replace_n("a", "b", "(", ")"), "(a()b)");
     EXPECT_EQ(CString("(a()a)").Replace_n("a", "b", "(", ")", true), "a(b)");
+
+    // An empty needle must return the input unchanged with a 0 count
+    // instead of looping forever appending sWith (#2009).
+    CString sStr = "abc";
+    EXPECT_EQ(CString::Replace(sStr, "", "X"), 0u);
+    EXPECT_EQ(sStr, "abc");
+
+    sStr = "";
+    EXPECT_EQ(CString::Replace(sStr, "", "X"), 0u);
+    EXPECT_EQ(sStr, "");
+
+    EXPECT_EQ(CString("abc").Replace_n("", "X"), "abc");
 }
 
 TEST(StringTest, Misc) {
@@ -172,6 +184,17 @@ TEST(StringTest, Split) {
 
     CS("a=x&c=d&a=b").URLSplit(mresult);
     EXPECT_EQ(mexpected, mresult) << "URLSplit";
+
+    // Empty delimiter must not spin in the prefix-skip loop (#2009).
+    // With nothing to split on, the whole input is returned as a single
+    // element (or zero elements if the input itself is empty).
+    VCString vempty;
+    EXPECT_EQ(CS("abc").Split("", vempty, false), 1u);
+    EXPECT_THAT(vempty, ElementsAre("abc"));
+    EXPECT_EQ(CS("abc").Split("", vempty, true), 1u);
+    EXPECT_EQ(vempty, VCString({"abc"}));
+    EXPECT_EQ(CS("").Split("", vempty, false), 0u);
+    EXPECT_THAT(vempty, IsEmpty());
 }
 
 TEST(StringTest, NamedFormat) {

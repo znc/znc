@@ -626,6 +626,14 @@ unsigned int CString::Replace(const CString& sReplace, const CString& sWith,
 unsigned int CString::Replace(CString& sStr, const CString& sReplace,
                               const CString& sWith, const CString& sLeft,
                               const CString& sRight, bool bRemoveDelims) {
+    // An empty needle would make strncmp(_, _, 0) match at every position
+    // and `p += uReplaceWidth - 1` underflow to SIZE_MAX, producing an
+    // infinite loop that appends sWith until OOM. Guard at the entry so
+    // the invariant "the loop always advances" holds.
+    if (sReplace.empty()) {
+        return 0;
+    }
+
     unsigned int uRet = 0;
     CString sCopy = sStr;
     sStr.clear();
@@ -851,7 +859,10 @@ CString::size_type CString::Split(const CString& sDelim, VCString& vsRet,
     size_type uRightLen = sRight.length();
     const char* p = c_str();
 
-    if (!bAllowEmpty) {
+    // An empty delimiter with bAllowEmpty=false would spin forever in the
+    // prefix-skip / post-token loops below because `strncasecmp(_, _, 0)`
+    // returns 0 and `p += 0` never advances.
+    if (!bAllowEmpty && uDelimLen) {
         while (strncasecmp(p, sDelim.c_str(), uDelimLen) == 0) {
             p += uDelimLen;
         }
@@ -890,7 +901,8 @@ CString::size_type CString::Split(const CString& sDelim, VCString& vsRet,
             sTmp.clear();
             p += uDelimLen;
 
-            if (!bAllowEmpty) {
+            // Same zero-width guard as at the top of the function.
+            if (!bAllowEmpty && uDelimLen) {
                 while (strncasecmp(p, sDelim.c_str(), uDelimLen) == 0) {
                     p += uDelimLen;
                 }
