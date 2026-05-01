@@ -2134,7 +2134,7 @@ msgstr "Nome de usuário está vazio"
 msgid "Username is invalid"
 msgstr "Nome de usuário inválido"
 
-#: User.cpp:1249
+#: User.cpp:1251
 #, c++-format
 msgid "Unable to find modinfo {1}: {2}"
 msgstr "Não foi possível encontrar o modinfo {1}: {2}"

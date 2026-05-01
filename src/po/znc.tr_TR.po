@@ -2137,7 +2137,7 @@ msgstr "Kullanıcı adı boş"
 msgid "Username is invalid"
 msgstr "Kullanıcı adı geçersiz"
 
-#: User.cpp:1249
+#: User.cpp:1251
 #, c++-format
 msgid "Unable to find modinfo {1}: {2}"
 msgstr "{1} modülü yüklenemiyor: {2}"

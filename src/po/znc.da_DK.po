@@ -2074,7 +2074,7 @@ msgstr ""
 msgid "Username is invalid"
 msgstr ""
 
-#: User.cpp:1249
+#: User.cpp:1251
 #, c++-format
 msgid "Unable to find modinfo {1}: {2}"
 msgstr ""

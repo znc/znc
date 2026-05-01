@@ -2162,7 +2162,7 @@ msgstr "Benutzername ist leer"
 msgid "Username is invalid"
 msgstr "Benutzername ist ungültig"
 
-#: User.cpp:1249
+#: User.cpp:1251
 #, c++-format
 msgid "Unable to find modinfo {1}: {2}"
 msgstr "Kann Modulinformationen für {1} nicht finden: {2}"

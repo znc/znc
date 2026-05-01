@@ -2127,7 +2127,7 @@ msgstr "Потребителското име е празно"
 msgid "Username is invalid"
 msgstr "Потребителското име е невалидно"
 
-#: User.cpp:1249
+#: User.cpp:1251
 #, c++-format
 msgid "Unable to find modinfo {1}: {2}"
 msgstr "Не може да се намери modinfo {1}: {2}"
