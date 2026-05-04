@@ -19,8 +19,7 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 #include <znc/WebModules.h>
-#include <dirent.h>
-#include <sys/stat.h>
+#include <algorithm>
 
 class CLogViewerMod : public CModule {
   public:
@@ -108,25 +107,21 @@ class CLogViewerMod : public CModule {
   private:
     void CollectLogFiles(const CString& sBase, const CString& sCurrent,
                          VCString& vsFiles) {
-        DIR* pDir = opendir(sCurrent.c_str());
-        if (!pDir) return;
+        CDir dir;
+        if (!dir.Fill(sCurrent)) return;
 
-        struct dirent* pEntry;
-        while ((pEntry = readdir(pDir)) != nullptr) {
-            CString sName(pEntry->d_name);
+        for (CFile* pFile : dir) {
+            CString sName = pFile->GetShortName();
             if (sName == "." || sName == "..") continue;
 
             CString sFullPath = sCurrent + "/" + sName;
-            struct stat st;
-            if (stat(sFullPath.c_str(), &st) != 0) continue;
 
-            if (S_ISDIR(st.st_mode)) {
+            if (pFile->IsDir()) {
                 CollectLogFiles(sBase, sFullPath, vsFiles);
-            } else if (S_ISREG(st.st_mode) && sName.Right(4) == ".log") {
+            } else if (pFile->IsReg() && sName.Right(4) == ".log") {
                 vsFiles.push_back(sFullPath.substr(sBase.length() + 1));
             }
         }
-        closedir(pDir);
     }
 };
 
