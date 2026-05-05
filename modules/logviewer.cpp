@@ -32,8 +32,24 @@ class CLogViewerMod : public CModule {
         if (sPageName != "logviewer")
             return false;
 
-        CString sLogPath = GetSavePath();
+        CString sLogPath = GetUser()->GetUserPath() + "/moddata/log";
         CString sFileParam = WebSock.GetParam("file");
+
+        // Check if log directory exists
+        CFile file(sLogPath);
+        if (!file.Exists() || !file.IsDir()) {
+            WebSock.PrintHeader(200, "text/html");
+            WebSock.Write("<!DOCTYPE html><html><head><meta charset=\"UTF-8\">"
+                          "<title>ZNC Log Viewer</title>"
+                          "<style>body{font-family:sans-serif;background:#111;color:#eee;padding:1em;}"
+                          "a{color:#7af;}ul{list-style:none;padding:0;}li{padding:0.2em 0;}"
+                          "</style></head><body><h1>ZNC Log Viewer</h1>"
+                          "<p>No log files found in <code>" +
+                          sLogPath.Escape_n(CString::EHTML) + "</code>.</p>"
+                          "</body></html>");
+            WebSock.Close(Csock::CLT_AFTERWRITE);
+            return true;
+        }
 
         if (!sFileParam.empty()) {
             if (sFileParam.find("..") != CString::npos ||
