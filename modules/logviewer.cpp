@@ -19,12 +19,13 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 #include <znc/WebModules.h>
+#include <znc/Translation.h>
 #include <algorithm>
 
 class CLogViewerMod : public CModule {
   public:
     MODCONSTRUCTOR(CLogViewerMod) {
-        AddSubPage(std::make_shared<CWebSubPage>("logviewer", "Log Viewer", VPair(), 0));
+        AddSubPage(std::make_shared<CWebSubPage>("logviewer", t_s("Log Viewer"), VPair(), 0));
     }
 
     bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
@@ -39,19 +40,15 @@ class CLogViewerMod : public CModule {
         sLogPath = CDir::CheckPathPrefix(GetUser()->GetUserPath(), sLogPath);
         CString sFileParam = WebSock.GetParam("file");
 
+        // Set template variables
+        Tmpl["LogPath"] = sLogPath;
+
         // Check if log directory exists
         CFile file(sLogPath);
         if (!file.Exists() || !file.IsDir()) {
-            WebSock.PrintHeader(200, "text/html");
-            WebSock.Write("<!DOCTYPE html><html><head><meta charset=\"UTF-8\">"
-                          "<title>ZNC Log Viewer</title>"
-                          "<style>body{font-family:sans-serif;background:#111;color:#eee;padding:1em;}"
-                          "a{color:#7af;}ul{list-style:none;padding:0;}li{padding:0.2em 0;}"
-                          "</style></head><body><h1>ZNC Log Viewer</h1>"
-                          "<p>No log files found in <code>" +
-                          sLogPath.Escape(CString::EHTML) + "</code>.</p>"
-                          "</body></html>");
-            WebSock.Close(Csock::CLT_AFTERWRITE);
+            CString sPageRet;
+            WebSock.PrintTemplate("index", sPageRet, this);
+            WebSock.Write(sPageRet);
             return true;
         }
 
@@ -60,27 +57,21 @@ class CLogViewerMod : public CModule {
             if (sFileParam.find("..") != CString::npos ||
                 sFileParam.find('/') != CString::npos ||
                 sFileParam.Left(1) == "/") {
-                WebSock.PrintHeader(403, "text/html");
-                WebSock.Write("<html><body><h1>403 Forbidden</h1></body></html>");
-                WebSock.Close(Csock::CLT_AFTERWRITE);
+                WebSock.PrintErrorPage("403 Forbidden");
                 return true;
             }
 
             // Ensure the file is within the log directory
             CString sFullPath = CDir::CheckPathPrefix(sLogPath, sLogPath + "/" + sFileParam);
             if (sFullPath.empty()) {
-                WebSock.PrintHeader(403, "text/html");
-                WebSock.Write("<html><body><h1>403 Forbidden</h1></body></html>");
-                WebSock.Close(Csock::CLT_AFTERWRITE);
+                WebSock.PrintErrorPage("403 Forbidden");
                 return true;
             }
 
             CFile LogFile(sFullPath);
 
             if (!LogFile.Exists() || !LogFile.IsReg()) {
-                WebSock.PrintHeader(404, "text/html");
-                WebSock.Write("<html><body><h1>404 Not Found</h1></body></html>");
-                WebSock.Close(Csock::CLT_AFTERWRITE);
+                WebSock.PrintErrorPage("404 Not Found");
                 return true;
             }
 
@@ -89,17 +80,12 @@ class CLogViewerMod : public CModule {
             LogFile.ReadFile(sContent);
             LogFile.Close();
 
-            WebSock.PrintHeader(200, "text/html");
-            WebSock.Write("<!DOCTYPE html><html><head><meta charset=\"UTF-8\">"
-                          "<title>Log: " + sFileParam.Escape(CString::EHTML) + "</title>"
-                          "<style>body{font-family:monospace;background:#111;color:#eee;padding:1em;}"
-                          "pre{white-space:pre-wrap;word-break:break-all;}a{color:#7af;}"
-                          "</style></head><body>"
-                          "<p><a href=\"?\">&larr; Back</a></p>"
-                          "<h2>" + sFileParam.Escape(CString::EHTML) + "</h2>"
-                          "<pre>" + sContent.Escape(CString::EHTML) + "</pre>"
-                          "</body></html>");
-            WebSock.Close(Csock::CLT_AFTERWRITE);
+            Tmpl["LogFileName"] = sFileParam;
+            Tmpl["LogContent"] = sContent;
+
+            CString sPageRet;
+            WebSock.PrintTemplate("index", sPageRet, this);
+            WebSock.Write(sPageRet);
             return true;
         }
 
@@ -108,66 +94,49 @@ class CLogViewerMod : public CModule {
         CollectLogFiles(sLogPath, sLogPath, vsFiles);
         std::sort(vsFiles.begin(), vsFiles.end());
 
-        WebSock.PrintHeader(200, "text/html");
-        WebSock.Write("<!DOCTYPE html><html><head><meta charset=\"UTF-8\">"
-                      "<title>ZNC Log Viewer</title>"
-                      "<style>body{font-family:sans-serif;background:#111;color:#eee;padding:1em;}"
-                      "a{color:#7af;}ul{list-style:none;padding:0;}li{padding:0.2em 0;}"
-                      "details{margin-left:1em;}summary{margin-left:-1em;cursor:pointer;}"
-                      "</style></head><body><h1>ZNC Log Viewer</h1>");
-
         if (vsFiles.empty()) {
-            WebSock.Write("<p>No log files found in <code>" +
-                          sLogPath.Escape(CString::EHTML) + "</code>.</p>");
-        } else {
-            // Group files by directory
-            std::map<CString, VCString> mDirs;
-            for (const CString& sFile : vsFiles) {
-                size_t iSlash = sFile.find_last_of('/');
-                if (iSlash == CString::npos) {
-                    mDirs[""].push_back(sFile);
-                } else {
-                    CString sDir = sFile.substr(0, iSlash);
-                    CString sName = sFile.substr(iSlash + 1);
-                    mDirs[sDir].push_back(sName);
-                }
+            CString sPageRet;
+            WebSock.PrintTemplate("index", sPageRet, this);
+            WebSock.Write(sPageRet);
+            return true;
+        }
+
+        // Group files by directory
+        std::map<CString, VCString> mDirs;
+        for (const CString& sFile : vsFiles) {
+            size_t iSlash = sFile.find_last_of('/');
+            if (iSlash == CString::npos) {
+                mDirs[""].push_back(sFile);
+            } else {
+                CString sDir = sFile.substr(0, iSlash);
+                CString sName = sFile.substr(iSlash + 1);
+                mDirs[sDir].push_back(sName);
             }
+        }
 
-            WebSock.Write("<p>Log directory: <code>" +
-                          sLogPath.Escape(CString::EHTML) + "</code></p>");
-
-            // Output files grouped by directory
-            for (const auto& [sDir, vsNames] : mDirs) {
-                if (sDir.empty()) {
-                    WebSock.Write("<ul>");
-                    for (const CString& sName : vsNames) {
-                        CString sEscapedURL = sName;
-                        CString sEscapedHTML = sName;
-                        WebSock.Write("<li><a href=\"?file=" +
-                                      sEscapedURL.Escape(CString::EURL) + "\">" +
-                                      sEscapedHTML.Escape(CString::EHTML) + "</a></li>");
-                    }
-                    WebSock.Write("</ul>");
-                } else {
-                    CString sEscapedDir = sDir;
-                    WebSock.Write("<details><summary>" +
-                                  sEscapedDir.Escape(CString::EHTML) +
-                                  "</summary><ul>");
-                    for (const CString& sName : vsNames) {
-                        CString sFullPath = sDir + "/" + sName;
-                        CString sEscapedURL = sFullPath;
-                        CString sEscapedHTML = sName;
-                        WebSock.Write("<li><a href=\"?file=" +
-                                      sEscapedURL.Escape(CString::EURL) + "\">" +
-                                      sEscapedHTML.Escape(CString::EHTML) + "</a></li>");
-                    }
-                    WebSock.Write("</ul></details>");
+        // Add files to template
+        for (const auto& [sDir, vsNames] : mDirs) {
+            if (sDir.empty()) {
+                CTemplate& Row = Tmpl.AddRow("RootFilesLoop");
+                for (const CString& sName : vsNames) {
+                    CTemplate& FileRow = Row.AddRow("LogFilesLoop");
+                    FileRow["FileName"] = sName;
+                    FileRow["FilePath"] = sName;
+                }
+            } else {
+                CTemplate& DirRow = Tmpl.AddRow("LogDirsLoop");
+                DirRow["DirName"] = sDir;
+                for (const CString& sName : vsNames) {
+                    CTemplate& FileRow = DirRow.AddRow("LogFilesLoop");
+                    FileRow["FileName"] = sName;
+                    FileRow["FilePath"] = sDir + "/" + sName;
                 }
             }
         }
 
-        WebSock.Write("</body></html>");
-        WebSock.Close(Csock::CLT_AFTERWRITE);
+        CString sPageRet;
+        WebSock.PrintTemplate("index", sPageRet, this);
+        WebSock.Write(sPageRet);
         return true;
     }
 
@@ -187,7 +156,7 @@ class CLogViewerMod : public CModule {
 
             if (pFile->IsDir()) {
                 CollectLogFiles(sBase, sCurrent + "/" + sName, vsFiles);
-            } else if (pFile->IsReg() && sName.Right(4).Equals(".log")) {
+            } else if (pFile->IsReg() && sName.EndsWith(".log")) {
                 CString sRelativePath = sCurrent + "/" + sName;
                 sRelativePath = sRelativePath.substr(sBase.length() + 1);
                 vsFiles.push_back(sRelativePath);
