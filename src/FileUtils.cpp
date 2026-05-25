@@ -256,7 +256,16 @@ bool CFile::Copy(const CString& sOldFileName, const CString& sNewFileName,
         return false;
     }
 
-    if (!NewFile.Open(O_WRONLY | O_CREAT | O_TRUNC)) {
+    // Stat the source up front so the new file is created with the
+    // same mode instead of appearing at the default 0644 for the
+    // duration of the copy.
+    struct stat st;
+    mode_t iMode = 0600;
+    if (GetInfo(sOldFileName, st) == 0) {
+        iMode = st.st_mode & 07777;
+    }
+
+    if (!NewFile.Open(O_WRONLY | O_CREAT | O_TRUNC, iMode)) {
         return false;
     }
 
@@ -280,9 +289,9 @@ bool CFile::Copy(const CString& sOldFileName, const CString& sNewFileName,
     OldFile.Close();
     NewFile.Close();
 
-    struct stat st;
-    GetInfo(sOldFileName, st);
-    Chmod(sNewFileName, st.st_mode);
+    // open(O_CREAT|O_TRUNC) doesn't update the mode of an existing
+    // file, so apply it here for the overwrite path.
+    Chmod(sNewFileName, iMode);
 
     return true;
 }
