@@ -791,7 +791,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
         }
 
         CString sHost, sPass, sHint;
-        bool bSSL = false;
+        bool bSSL = true;
         unsigned int uServerPort = 0;
 
         if (sNetwork.Equals("libera")) {
