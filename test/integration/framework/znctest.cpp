@@ -49,7 +49,7 @@ void WriteConfig(QString path) {
 #if HAVE_LIBSSL
     p.ReadUntil("Server uses SSL?");        p.Write();
 #endif
-    p.ReadUntil("Server port");                    p.Write();
+    p.ReadUntil("Server port");             p.Write();
     p.ReadUntil("password");                p.Write();
     p.ReadUntil("channels");                p.Write();
     p.ReadUntil("Launch ZNC now?");         p.Write("no");
