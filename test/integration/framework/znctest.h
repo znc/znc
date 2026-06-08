@@ -27,6 +27,7 @@
 #include <QUrlQuery>
 
 #include "base.h"
+#include "znctestconfig.h"
 
 namespace znc_inttest {
 
