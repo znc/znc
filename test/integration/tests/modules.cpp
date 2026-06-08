@@ -139,6 +139,10 @@ TEST_F(ZNCTest, WatchModule) {
 }
 
 TEST_F(ZNCTest, ModuleCrypt) {
+#ifndef HAVE_LIBSSL
+    GTEST_SKIP() << "SSL is disabled";
+#endif
+
     QFile conf(m_dir.path() + "/configs/znc.conf");
     ASSERT_TRUE(conf.open(QIODevice::Append | QIODevice::Text));
     QTextStream(&conf) << "ServerThrottle = 1\n";
@@ -389,6 +393,10 @@ TEST_F(ZNCTest, SaslAuthPlainImapAuth) {
 }
 
 TEST_F(ZNCTest, SaslAuthExternal) {
+#ifndef HAVE_LIBSSL
+    GTEST_SKIP() << "SSL is disabled";
+#endif
+
     int port = PickPortNumber();
 
     auto znc = Run();
