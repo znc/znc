@@ -1,4 +1,4 @@
-/*
+        /*
  * Copyright (C) 2004-2026 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -791,14 +791,15 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
         }
 
         CString sHost, sPass, sHint;
-        bool bSSL = true;
+        #ifdef HAVE_LIBSSL
+            bool bSSL = true;
+        #else
+            bool bSSL = false;
+        #endif
         unsigned int uServerPort = 0;
 
         if (sNetwork.Equals("libera")) {
             sHost = "irc.libera.chat";
-#ifdef HAVE_LIBSSL
-            bSSL = true;
-#endif
         } else {
             sHint = "host only";
         }
