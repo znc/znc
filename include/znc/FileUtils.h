@@ -106,7 +106,7 @@ class CFile {
     bool Open(const CString& sFileName, int iFlags = O_RDONLY,
               mode_t iMode = 0644);
     bool Open(int iFlags = O_RDONLY, mode_t iMode = 0644);
-    ssize_t Read(char* pszBuffer, int iBytes);
+    [[nodiscard]] ssize_t Read(char* pszBuffer, int iBytes);
     bool ReadLine(CString& sData, const CString& sDelimiter = "\n");
     bool ReadFile(CString& sData, size_t iMaxSize = 512 * 1024);
     ssize_t Write(const char* pszBuffer, size_t iBytes);

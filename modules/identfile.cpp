@@ -111,10 +111,7 @@ class CIdentFileModule : public CModule {
             return false;
         }
 
-        char buf[1024];
-        memset((char*)buf, 0, 1024);
-        m_pISpoofLockFile->Read(buf, 1024);
-        m_sOrigISpoof = buf;
+        m_pISpoofLockFile->ReadFile(m_sOrigISpoof);
 
         if (!m_pISpoofLockFile->Seek(0) || !m_pISpoofLockFile->Truncate()) {
             delete m_pISpoofLockFile;
