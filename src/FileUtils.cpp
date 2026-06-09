@@ -265,7 +265,11 @@ bool CFile::Copy(const CString& sOldFileName, const CString& sNewFileName,
         iMode = st.st_mode & 07777;
     }
 
-    if (!NewFile.Open(O_WRONLY | O_CREAT | O_TRUNC, iMode)) {
+    // Force owner read+write while copying so the write still works for a
+    // source that lacks them (e.g. r-xr-xr-x); the trailing Chmod() puts
+    // the exact source mode back. This only ever adds owner bits, so the
+    // group/other bits stay as restrictive as the source the whole time.
+    if (!NewFile.Open(O_WRONLY | O_CREAT | O_TRUNC, iMode | S_IRUSR | S_IWUSR)) {
         return false;
     }
 
