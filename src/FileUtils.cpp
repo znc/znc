@@ -256,7 +256,20 @@ bool CFile::Copy(const CString& sOldFileName, const CString& sNewFileName,
         return false;
     }
 
-    if (!NewFile.Open(O_WRONLY | O_CREAT | O_TRUNC)) {
+    // Stat the source up front so the new file is created with the
+    // same mode instead of appearing at the default 0644 for the
+    // duration of the copy.
+    struct stat st;
+    mode_t iMode = 0600;
+    if (GetInfo(sOldFileName, st) == 0) {
+        iMode = st.st_mode & 07777;
+    }
+
+    // Force owner read+write while copying so the write still works for a
+    // source that lacks them (e.g. r-xr-xr-x); the trailing Chmod() puts
+    // the exact source mode back. This only ever adds owner bits, so the
+    // group/other bits stay as restrictive as the source the whole time.
+    if (!NewFile.Open(O_WRONLY | O_CREAT | O_TRUNC, iMode | S_IRUSR | S_IWUSR)) {
         return false;
     }
 
@@ -280,9 +293,9 @@ bool CFile::Copy(const CString& sOldFileName, const CString& sNewFileName,
     OldFile.Close();
     NewFile.Close();
 
-    struct stat st;
-    GetInfo(sOldFileName, st);
-    Chmod(sNewFileName, st.st_mode);
+    // open(O_CREAT|O_TRUNC) doesn't update the mode of an existing
+    // file, so apply it here for the overwrite path.
+    Chmod(sNewFileName, iMode);
 
     return true;
 }

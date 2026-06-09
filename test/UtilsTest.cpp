@@ -18,6 +18,61 @@
 #include <znc/FileUtils.h>
 #include <znc/Utils.h>
 
+namespace {
+CString WriteTempFile(const CString& sContent, mode_t iMode) {
+    char sName[] = "./copytest-XXXXXX";
+    int fd = mkstemp(sName);
+    EXPECT_NE(fd, -1);
+    close(fd);
+
+    CFile File(sName);
+    EXPECT_TRUE(File.Open(O_WRONLY | O_TRUNC));
+    File.Write(sContent);
+    File.Close();
+    EXPECT_TRUE(CFile::Chmod(sName, iMode));
+    return sName;
+}
+
+unsigned ModeOf(const CString& sFile) {
+    struct stat st;
+    EXPECT_EQ(CFile::GetInfo(sFile, st), 0);
+    return st.st_mode & 07777;
+}
+}  // namespace
+
+// A 0600 source must never widen to the default 0644 during the copy, so the
+// destination ends up restricted too.
+TEST(FileUtilsTest, CopyKeepsRestrictiveMode) {
+    CString sSrc = WriteTempFile("secret", 0600);
+    CString sDst = sSrc + "-copy";
+
+    EXPECT_TRUE(CFile::Copy(sSrc, sDst));
+    EXPECT_EQ(ModeOf(sDst), 0600u);
+
+    CFile::Delete(sSrc);
+    CFile::Delete(sDst);
+}
+
+// A source the owner can't write to (r-xr-xr-x) must still copy and keep its
+// mode; the copy forces owner write internally and chmods it back afterwards.
+TEST(FileUtilsTest, CopyReadOnlySource) {
+    CString sSrc = WriteTempFile("public", 0555);
+    CString sDst = sSrc + "-copy";
+
+    EXPECT_TRUE(CFile::Copy(sSrc, sDst));
+    EXPECT_EQ(ModeOf(sDst), 0555u);
+
+    CString sContent;
+    CFile Dst(sDst);
+    ASSERT_TRUE(Dst.Open());
+    Dst.ReadFile(sContent);
+    Dst.Close();
+    EXPECT_EQ(sContent, "public");
+
+    CFile::Delete(sSrc);
+    CFile::Delete(sDst);
+}
+
 TEST(IRC32, GetMessageTags) {
     EXPECT_EQ(CUtils::GetMessageTags(""), MCString());
     EXPECT_EQ(CUtils::GetMessageTags(
