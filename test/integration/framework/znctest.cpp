@@ -46,8 +46,10 @@ void WriteConfig(QString path) {
     p.ReadUntil("Set up a network?");       p.Write();
     p.ReadUntil("Name [libera]");           p.Write("test");
     p.ReadUntil("Server host (host only)"); p.Write("unix:" + path.toUtf8() + "/inttest.ircd");
+#if HAVE_LIBSSL
     p.ReadUntil("Server uses SSL?");        p.Write();
-    p.ReadUntil("6697");                    p.Write();
+#endif
+    p.ReadUntil("Server port");             p.Write();
     p.ReadUntil("password");                p.Write();
     p.ReadUntil("channels");                p.Write();
     p.ReadUntil("Launch ZNC now?");         p.Write("no");

@@ -21,6 +21,21 @@ jobs:
           name: codecov debug results ${{ github.job }}
           path: "/tmp/codecov.*.gz"
 
+  nossl:
+    name: NoSSL
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: true
+      - run: source .github/ubuntu_deps.sh
+      - run: |
+          export CFGFLAGS="--disable-openssl"
+          source .github/build.sh
+      - uses: codecov/codecov-action@v6
+        with:
+          name: ${{ github.job }}
+
   tarball:
     name: Tarball
     runs-on: ubuntu-24.04
