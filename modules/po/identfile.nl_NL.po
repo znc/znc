@@ -73,7 +73,7 @@ msgstr "identiteitbestand is vrij"
 msgid "Access denied"
 msgstr "Toegang geweigerd"
 
-#: identfile.cpp:181
+#: identfile.cpp:178
 msgid ""
 "Aborting connection, another user or network is currently connecting and "
 "using the ident spoof file"
@@ -81,12 +81,12 @@ msgstr ""
 "Verbinding afbreken, een andere gebruiker of netwerk is momenteel aan het "
 "verbinden en gebruikt het identiteitsbestand"
 
-#: identfile.cpp:189
+#: identfile.cpp:186
 #, c++-format
 msgid "[{1}] could not be written, retrying..."
 msgstr "Kon niet schrijven naar [{1}], opnieuw aan het proberen..."
 
-#: identfile.cpp:223
+#: identfile.cpp:220
 msgid "Write the ident of a user to a file when they are trying to connect."
 msgstr ""
 "Schrijf de identiteit van een gebruiker naar een bestand wanneer zij "

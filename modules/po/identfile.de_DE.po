@@ -73,7 +73,7 @@ msgstr "Ident-Datei ist frei"
 msgid "Access denied"
 msgstr "Zugriff verweigert"
 
-#: identfile.cpp:181
+#: identfile.cpp:178
 msgid ""
 "Aborting connection, another user or network is currently connecting and "
 "using the ident spoof file"
@@ -81,12 +81,12 @@ msgstr ""
 "Breche Verbindung ab, ein anderer Benutzer oder ein anderes Netzwerk "
 "verbindet sich aktuell und verwendet die Ident-Spoof-Datei"
 
-#: identfile.cpp:189
+#: identfile.cpp:186
 #, c++-format
 msgid "[{1}] could not be written, retrying..."
 msgstr "[{1}] konnte nicht geschrieben werden, versuche erneut..."
 
-#: identfile.cpp:223
+#: identfile.cpp:220
 msgid "Write the ident of a user to a file when they are trying to connect."
 msgstr ""
 "Schreibe den Ident eines Benutzers in eine Datei wenn er versucht sich zu "
