@@ -129,7 +129,8 @@ void CUtils::GenerateCert(FILE* pOut) {
     sEmailAddr += "@";
     sEmailAddr += sHostName;
 
-    X509_NAME* pName = X509_get_subject_name(pCert.get());
+    X509_NAME* pName = X509_NAME_new();
+    if (!pName) return;
     X509_NAME_add_entry_by_txt(pName, "OU", MBSTRING_ASC,
                                (unsigned char*)pLogName, -1, -1, 0);
     X509_NAME_add_entry_by_txt(pName, "CN", MBSTRING_ASC,
@@ -137,7 +138,9 @@ void CUtils::GenerateCert(FILE* pOut) {
     X509_NAME_add_entry_by_txt(pName, "emailAddress", MBSTRING_ASC,
                                (unsigned char*)sEmailAddr.c_str(), -1, -1, 0);
 
+    X509_set_subject_name(pCert.get(), pName);
     X509_set_issuer_name(pCert.get(), pName);
+    X509_NAME_free(pName);
 
     if (!X509_sign(pCert.get(), pKey.get(), EVP_sha256())) return;
 
