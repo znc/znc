@@ -306,8 +306,8 @@ typedef enum {
 static HostnameValidationResult matches_common_name(const char* hostname,
                                                     const X509* server_cert) {
     int common_name_loc = -1;
-    X509_NAME_ENTRY* common_name_entry = nullptr;
-    ASN1_STRING* common_name_asn1 = nullptr;
+    const X509_NAME_ENTRY* common_name_entry = nullptr;
+    const ASN1_STRING* common_name_asn1 = nullptr;
     CONST_ASN1_STRING_DATA char* common_name_str = nullptr;
 
     // Find the position of the CN field in the Subject field of the certificate
