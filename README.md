@@ -30,7 +30,7 @@ Core:
 ## Optional Requirements
 
 SSL/TLS support:
-* openssl 0.9.7d or later
+* openssl 1.1.1 or later
     * try installing openssl-dev, openssl-devel or libssl-dev
     * macOS: OpenSSL from Homebrew is preferred over system
 

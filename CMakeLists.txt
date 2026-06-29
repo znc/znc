@@ -83,7 +83,7 @@ set(zncpubdeps)
 
 tristate_option(OPENSSL "Support SSL")
 if(WANT_OPENSSL)
-	find_package(OpenSSL ${TRISTATE_OPENSSL_REQUIRED})
+	find_package(OpenSSL 1.1.1 ${TRISTATE_OPENSSL_REQUIRED})
 
 	if(OPENSSL_FOUND)
 		# SSL_SESSION was made opaque in OpenSSL 1.1.0;
