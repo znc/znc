@@ -19,87 +19,6 @@
 #include <time.h>
 #include <thread>
 
-#if defined(HAVE_LIBSSL) && defined(HAVE_PTHREAD) && \
-    (!defined(OPENSSL_VERSION_NUMBER) || OPENSSL_VERSION_NUMBER < 0x10100004)
-/* Starting with version 1.1.0-pre4, OpenSSL has a new threading implementation
-   that doesn't need locking callbacks.
-
-     "OpenSSL now uses a new threading API. It is no longer necessary to set
-     locking callbacks to use OpenSSL in a multi-threaded environment. There are
-     two supported threading models: pthreads and windows threads. It is also
-     possible to configure OpenSSL at compile time for "no-threads". The old
-     threading API should no longer be used. The functions have been replaced
-     with "no-op" compatibility macros."
-
-   See openssl/openssl@2e52e7df518d80188c865ea3f7bb3526d14b0c08. */
-#include <znc/Threads.h>
-#include <openssl/crypto.h>
-#include <memory>
-
-static std::vector<std::unique_ptr<CMutex>> lock_cs;
-
-static void locking_callback(int mode, int type, const char* file, int line) {
-    if (mode & CRYPTO_LOCK) {
-        lock_cs[type]->lock();
-    } else {
-        lock_cs[type]->unlock();
-    }
-}
-
-#if OPENSSL_VERSION_NUMBER >= 0x10000000
-static void thread_id_callback(CRYPTO_THREADID *id) {
-    CRYPTO_THREADID_set_numeric(id, (unsigned long)pthread_self());
-}
-#else
-static unsigned long thread_id_callback() {
-    return (unsigned long)pthread_self();
-}
-#endif
-
-static CRYPTO_dynlock_value* dyn_create_callback(const char* file, int line) {
-    return (CRYPTO_dynlock_value*)new CMutex;
-}
-
-static void dyn_lock_callback(int mode, CRYPTO_dynlock_value* dlock,
-                              const char* file, int line) {
-    CMutex* mtx = (CMutex*)dlock;
-
-    if (mode & CRYPTO_LOCK) {
-        mtx->lock();
-    } else {
-        mtx->unlock();
-    }
-}
-
-static void dyn_destroy_callback(CRYPTO_dynlock_value* dlock, const char* file,
-                                 int line) {
-    CMutex* mtx = (CMutex*)dlock;
-
-    delete mtx;
-}
-
-static void thread_setup() {
-    lock_cs.resize(CRYPTO_num_locks());
-
-    for (std::unique_ptr<CMutex>& mtx : lock_cs)
-        mtx = std::unique_ptr<CMutex>(new CMutex());
-
-#if OPENSSL_VERSION_NUMBER >= 0x10000000
-    CRYPTO_THREADID_set_callback(&thread_id_callback);
-#else
-    CRYPTO_set_id_callback(&thread_id_callback);
-#endif
-    CRYPTO_set_locking_callback(&locking_callback);
-
-    CRYPTO_set_dynlock_create_callback(&dyn_create_callback);
-    CRYPTO_set_dynlock_lock_callback(&dyn_lock_callback);
-    CRYPTO_set_dynlock_destroy_callback(&dyn_destroy_callback);
-}
-
-#else
-#define thread_setup()
-#endif
-
 using std::cout;
 using std::endl;
 using std::set;
@@ -294,8 +213,6 @@ static void seedPRNG() {
 int main(int argc, char** argv) {
     CString sConfig;
     CString sDataDir = "";
-
-    thread_setup();
 
     seedPRNG();
     CDebug::SetStdoutIsTTY(isatty(1));

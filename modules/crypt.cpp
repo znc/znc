@@ -68,43 +68,6 @@ class CCryptMod : public CModule {
     CString m_sPrivKey;
     CString m_sPubKey;
 
-#if OPENSSL_VERSION_NUMBER < 0X10100000L || \
-    (defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x02070000fL)
-    static int DH_set0_pqg(DH* dh, BIGNUM* p, BIGNUM* q, BIGNUM* g) {
-        /* If the fields p and g in dh are nullptr, the corresponding input
-         * parameters MUST be non-nullptr.  q may remain nullptr.
-         */
-        if (dh == nullptr || (dh->p == nullptr && p == nullptr) ||
-            (dh->g == nullptr && g == nullptr))
-            return 0;
-
-        if (p != nullptr) {
-            BN_free(dh->p);
-            dh->p = p;
-        }
-        if (g != nullptr) {
-            BN_free(dh->g);
-            dh->g = g;
-        }
-        if (q != nullptr) {
-            BN_free(dh->q);
-            dh->q = q;
-            dh->length = BN_num_bits(q);
-        }
-
-        return 1;
-    }
-
-    static void DH_get0_key(const DH* dh, const BIGNUM** pub_key,
-                            const BIGNUM** priv_key) {
-        if (dh != nullptr) {
-            if (pub_key != nullptr) *pub_key = dh->pub_key;
-            if (priv_key != nullptr) *priv_key = dh->priv_key;
-        }
-    }
-
-#endif
-
     bool DH1080_gen() {
         /* Generate our keys on first call */
         if (m_sPrivKey.empty() || m_sPubKey.empty()) {

@@ -19,12 +19,6 @@
 #include <arpa/inet.h>
 
 #ifdef HAVE_LIBSSL
-#if defined(OPENSSL_VERSION_NUMBER) && !defined(LIBRESSL_VERSION_NUMBER) && OPENSSL_VERSION_NUMBER >= 0x10100007
-# define CONST_ASN1_STRING_DATA const /* 1.1.0-pre7: openssl/openssl@17ebf85abda18c3875b1ba6670fe7b393bc1f297 */
-#else
-# define ASN1_STRING_get0_data( x ) ASN1_STRING_data( x )
-# define CONST_ASN1_STRING_DATA
-#endif
 
 #include <openssl/x509v3.h>
 
@@ -308,7 +302,7 @@ static HostnameValidationResult matches_common_name(const char* hostname,
     int common_name_loc = -1;
     const X509_NAME_ENTRY* common_name_entry = nullptr;
     const ASN1_STRING* common_name_asn1 = nullptr;
-    CONST_ASN1_STRING_DATA char* common_name_str = nullptr;
+    const char* common_name_str = nullptr;
 
     // Find the position of the CN field in the Subject field of the certificate
     common_name_loc = X509_NAME_get_index_by_NID(
@@ -330,7 +324,7 @@ static HostnameValidationResult matches_common_name(const char* hostname,
         return Error;
     }
     common_name_str =
-        (CONST_ASN1_STRING_DATA char*)ASN1_STRING_get0_data(common_name_asn1);
+        (const char*)ASN1_STRING_get0_data(common_name_asn1);
 
     // Make sure there isn't an embedded NUL character in the CN
     if (ASN1_STRING_length(common_name_asn1) !=
@@ -384,8 +378,8 @@ static HostnameValidationResult matches_subject_alternative_name(
 
         if (current_name->type == GEN_DNS) {
             // Current name is a DNS name, let's check it
-            CONST_ASN1_STRING_DATA char* dns_name =
-                (CONST_ASN1_STRING_DATA char*)ASN1_STRING_get0_data(
+            const char* dns_name =
+                (const char*)ASN1_STRING_get0_data(
                     current_name->d.dNSName);
 
             // Make sure there isn't an embedded NUL character in the DNS name

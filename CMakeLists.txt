@@ -86,16 +86,6 @@ if(WANT_OPENSSL)
 	find_package(OpenSSL 1.1.1 ${TRISTATE_OPENSSL_REQUIRED})
 
 	if(OPENSSL_FOUND)
-		# SSL_SESSION was made opaque in OpenSSL 1.1.0;
-		# LibreSSL gained that function later too.
-		# TODO: maybe remove this check at some point, and stop supporting old
-		# libssl versions
-		cmake_push_check_state(RESET)
-			set(CMAKE_REQUIRED_LIBRARIES ${OPENSSL_LIBRARIES})
-			set(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIR})
-			check_cxx_symbol_exists(SSL_SESSION_get0_cipher openssl/ssl.h
-				HAVE_SSL_SESSION_get0_cipher)
-		cmake_pop_check_state()
 		set(ZNC_CMAKE_FIND_DEPS
 			"${ZNC_CMAKE_FIND_DEPS}\nfind_dependency(OpenSSL)")
 		list(APPEND zncpubdeps OpenSSL::SSL)
