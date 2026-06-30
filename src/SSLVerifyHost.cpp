@@ -21,6 +21,8 @@
 #ifdef HAVE_LIBSSL
 #if defined(OPENSSL_VERSION_NUMBER) && !defined(LIBRESSL_VERSION_NUMBER) && OPENSSL_VERSION_NUMBER >= 0x10100007
 # define CONST_ASN1_STRING_DATA const /* 1.1.0-pre7: openssl/openssl@17ebf85abda18c3875b1ba6670fe7b393bc1f297 */
+#elif defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER >= 0x20700000L
+# define CONST_ASN1_STRING_DATA const
 #else
 # define ASN1_STRING_get0_data( x ) ASN1_STRING_data( x )
 # define CONST_ASN1_STRING_DATA
