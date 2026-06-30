@@ -30,10 +30,6 @@
 #include <openssl/bn.h>
 #include <openssl/crypto.h>
 #include <openssl/rsa.h>
-#if (OPENSSL_VERSION_NUMBER < 0x10100000L) || (defined(LIBRESSL_VERSION_NUMBER) && (LIBRESSL_VERSION_NUMBER < 0x20700000L))
-#define X509_getm_notBefore X509_get_notBefore
-#define X509_getm_notAfter X509_get_notAfter
-#endif
 #endif /* HAVE_LIBSSL */
 #include <memory>
 #include <unistd.h>
