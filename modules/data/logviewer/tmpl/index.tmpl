@@ -1,0 +1,57 @@
+
+<? I18N znc-logviewer ?>
+<? INC Header.tmpl ?>
+
+<div class="section">
+    <h3><? FORMAT "ZNC Log Viewer" ?></h3>
+    <div class="sectionbg">
+        <div class="sectionbody">
+            <? IF !LogFilesLoop ?>
+                <p><? FORMAT "No log files found in" ?> <code><? VAR LogPath ESC=HTML ?></code>.</p>
+            <? ELSE ?>
+                <p><? FORMAT "Log directory:" ?> <code><? VAR LogPath ESC=HTML ?></code></p>
+
+                <? LOOP LogDirsLoop ?>
+                    <details>
+                        <summary><? VAR DirName ESC=HTML ?></summary>
+                        <ul>
+                            <? LOOP LogFilesLoop ?>
+                                <li>
+                                    <a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>?file=<? VAR FilePath ESC=URL,HTML ?>">
+                                        <? VAR FileName ESC=HTML ?>
+                                    </a>
+                                </li>
+                            <? ENDLOOP ?>
+                        </ul>
+                    </details>
+                <? ENDLOOP ?>
+
+                <? LOOP RootFilesLoop ?>
+                    <ul>
+                        <? LOOP LogFilesLoop ?>
+                            <li>
+                                <a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>?file=<? VAR FilePath ESC=URL,HTML ?>">
+                                    <? VAR FileName ESC=HTML ?>
+                                </a>
+                            </li>
+                        <? ENDLOOP ?>
+                    </ul>
+                <? ENDLOOP ?>
+            <? ENDIF ?>
+        </div>
+    </div>
+</div>
+
+<? IF LogContent ?>
+<div class="section">
+    <h3><? FORMAT "Log File:" ?> <? VAR LogFileName ESC=HTML ?></h3>
+    <div class="sectionbg">
+        <div class="sectionbody">
+            <p><a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>">&larr; <? FORMAT "Back" ?></a></p>
+            <pre><? VAR LogContent ESC=HTML ?></pre>
+        </div>
+    </div>
+</div>
+<? ENDIF ?>
+
+<? INC Footer.tmpl ?>
