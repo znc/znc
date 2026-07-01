@@ -2082,15 +2082,15 @@ msgid "Some socket reached its max buffer limit and was closed!"
 msgstr ""
 "Някой сокет достигна максималният си ограничение за буфер и беше затворен!"
 
-#: SSLVerifyHost.cpp:481
+#: SSLVerifyHost.cpp:475
 msgid "hostname doesn't match"
 msgstr "името на хост не съвпада"
 
-#: SSLVerifyHost.cpp:485
+#: SSLVerifyHost.cpp:479
 msgid "malformed hostname in certificate"
 msgstr "неправилно формирано име на хост в сертификата"
 
-#: SSLVerifyHost.cpp:489
+#: SSLVerifyHost.cpp:483
 msgid "hostname verification error"
 msgstr "грешка в проверката на името на хоста"
 

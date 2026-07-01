@@ -14,143 +14,143 @@ msgstr ""
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
 
-#: crypt.cpp:199
+#: crypt.cpp:162
 msgid "<#chan|Nick>"
 msgstr "<#chan|Nick>"
 
-#: crypt.cpp:200
+#: crypt.cpp:163
 msgid "Remove a key for nick or channel"
 msgstr "Usuń klucz dla nicka lub kanału"
 
-#: crypt.cpp:202
+#: crypt.cpp:165
 msgid "<#chan|Nick> <Key>"
 msgstr "<#chan|Nick> <Key>"
 
-#: crypt.cpp:203
+#: crypt.cpp:166
 msgid "Set a key for nick or channel"
 msgstr "Ustaw klucz dla nicka lub kanału"
 
-#: crypt.cpp:205
+#: crypt.cpp:168
 msgid "List all keys"
 msgstr "Listuj wszystkie klucze"
 
-#: crypt.cpp:207
+#: crypt.cpp:170
 msgid "<Nick>"
 msgstr "<Nick>"
 
-#: crypt.cpp:208
+#: crypt.cpp:171
 msgid "Start a DH1080 key exchange with nick"
 msgstr "Rozpocznij wymianę kluczy DH1080 z nickiem"
 
-#: crypt.cpp:211
+#: crypt.cpp:174
 msgid "Get the nick prefix"
 msgstr "Zdobądź prefix nicka"
 
-#: crypt.cpp:214
+#: crypt.cpp:177
 msgid "[Prefix]"
 msgstr "[Prefix]"
 
-#: crypt.cpp:215
+#: crypt.cpp:178
 msgid "Set the nick prefix, with no argument it's disabled."
 msgstr "Ustaw prefix nicka, bez argumentu będzie wyłączony."
 
-#: crypt.cpp:271
+#: crypt.cpp:234
 #, c++-format
 msgid "Received DH1080 public key from {1}, sending mine..."
 msgstr "Otrzymano klucz publiczny DH1080 {1}, wysyłanie własnego..."
 
-#: crypt.cpp:276 crypt.cpp:297
+#: crypt.cpp:239 crypt.cpp:260
 #, c++-format
 msgid "Key for {1} successfully set."
 msgstr "Klucz dla {1} pomyślnie ustawiony."
 
-#: crypt.cpp:279 crypt.cpp:300
+#: crypt.cpp:242 crypt.cpp:263
 #, c++-format
 msgid "Error in {1} with {2}: {3}"
 msgstr "Błąd w {1} z {2}: {3}"
 
-#: crypt.cpp:281 crypt.cpp:302
+#: crypt.cpp:244 crypt.cpp:265
 msgid "no secret key computed"
 msgstr "nie obliczono tajnego klucza"
 
-#: crypt.cpp:396
+#: crypt.cpp:359
 #, c++-format
 msgid "Target [{1}] deleted"
 msgstr "Cel [{1}] skasowany"
 
-#: crypt.cpp:398
+#: crypt.cpp:361
 #, c++-format
 msgid "Target [{1}] not found"
 msgstr "Cel [{1}] nie znaleziony"
 
-#: crypt.cpp:401
+#: crypt.cpp:364
 msgid "Usage DelKey <#chan|Nick>"
 msgstr "Użycie DelKey <#chan|Nick>"
 
-#: crypt.cpp:416
+#: crypt.cpp:379
 #, c++-format
 msgid "Set encryption key for [{1}] to [{2}]"
 msgstr "Ustaw klucz szyfrowania dla [{1}] do [{2}]"
 
-#: crypt.cpp:418
+#: crypt.cpp:381
 msgid "Usage: SetKey <#chan|Nick> <Key>"
 msgstr "Użycie: SetKey <#chan|Nick> <Key>"
 
-#: crypt.cpp:429
+#: crypt.cpp:392
 #, c++-format
 msgid "Sent my DH1080 public key to {1}, waiting for reply ..."
 msgstr "Ustaw mój klucz publiczny DH1080 dla {1}, oczekuję na odpowiedź ..."
 
-#: crypt.cpp:431
+#: crypt.cpp:394
 msgid "Error generating our keys, nothing sent."
 msgstr "Błąd generowania naszych kluczy, nic nie wysłano."
 
-#: crypt.cpp:434
+#: crypt.cpp:397
 msgid "Usage: KeyX <Nick>"
 msgstr "Użycie: KeyX <Nick>"
 
-#: crypt.cpp:441
+#: crypt.cpp:404
 msgid "Nick Prefix disabled."
 msgstr "Prefix Nick wyłączony."
 
-#: crypt.cpp:443
+#: crypt.cpp:406
 #, c++-format
 msgid "Nick Prefix: {1}"
 msgstr "Prrefix Nicka: {1}"
 
-#: crypt.cpp:452
+#: crypt.cpp:415
 msgid "You cannot use :, even followed by other symbols, as Nick Prefix."
 msgstr ""
 "Nie możesz użyć :, nawet poprzedzony przez inny symbol, jako prefix Nicka."
 
-#: crypt.cpp:461
+#: crypt.cpp:424
 #, c++-format
 msgid "Overlap with Status Prefix ({1}), this Nick Prefix will not be used!"
 msgstr ""
 
-#: crypt.cpp:466
+#: crypt.cpp:429
 msgid "Disabling Nick Prefix."
 msgstr ""
 
-#: crypt.cpp:468
+#: crypt.cpp:431
 #, c++-format
 msgid "Setting Nick Prefix to {1}"
 msgstr ""
 
-#: crypt.cpp:475 crypt.cpp:482
+#: crypt.cpp:438 crypt.cpp:445
 msgctxt "listkeys"
 msgid "Target"
 msgstr ""
 
-#: crypt.cpp:476 crypt.cpp:483
+#: crypt.cpp:439 crypt.cpp:446
 msgctxt "listkeys"
 msgid "Key"
 msgstr ""
 
-#: crypt.cpp:487
+#: crypt.cpp:450
 msgid "You have no encryption keys set."
 msgstr ""
 
-#: crypt.cpp:509
+#: crypt.cpp:472
 msgid "Encryption for channel/private messages"
 msgstr ""

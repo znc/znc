@@ -2097,15 +2097,15 @@ msgstr "O endereço do servidor é apenas IPv6, mas bindhost apenas IPv4"
 msgid "Some socket reached its max buffer limit and was closed!"
 msgstr "Algum socket atingiu o seu limite máximo de buffer e foi fechado!"
 
-#: SSLVerifyHost.cpp:481
+#: SSLVerifyHost.cpp:475
 msgid "hostname doesn't match"
 msgstr "hostname não coincide"
 
-#: SSLVerifyHost.cpp:485
+#: SSLVerifyHost.cpp:479
 msgid "malformed hostname in certificate"
 msgstr "hostname mal-formado no certificado"
 
-#: SSLVerifyHost.cpp:489
+#: SSLVerifyHost.cpp:483
 msgid "hostname verification error"
 msgstr "erro de verificação do hostname"
 

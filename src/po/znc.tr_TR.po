@@ -2093,15 +2093,15 @@ msgstr "Sunucu adresi yalnızca IPv6'dır, ancak bind host yalnızca IPv4'tür"
 msgid "Some socket reached its max buffer limit and was closed!"
 msgstr "Bazı soketler maksimum arabellek sınırına ulaştı ve kapatıldı!"
 
-#: SSLVerifyHost.cpp:481
+#: SSLVerifyHost.cpp:475
 msgid "hostname doesn't match"
 msgstr "hostname eşleşmiyor"
 
-#: SSLVerifyHost.cpp:485
+#: SSLVerifyHost.cpp:479
 msgid "malformed hostname in certificate"
 msgstr "sertifikada hatalı biçimlendirilmiş hostname"
 
-#: SSLVerifyHost.cpp:489
+#: SSLVerifyHost.cpp:483
 msgid "hostname verification error"
 msgstr "hostname doğrulama hatası"
 

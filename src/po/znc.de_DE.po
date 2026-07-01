@@ -2117,15 +2117,15 @@ msgstr ""
 "Eine Verbindung hat ihre maximale Puffergrenze erreicht und wurde "
 "geschlossen!"
 
-#: SSLVerifyHost.cpp:481
+#: SSLVerifyHost.cpp:475
 msgid "hostname doesn't match"
 msgstr "hostname passt nicht"
 
-#: SSLVerifyHost.cpp:485
+#: SSLVerifyHost.cpp:479
 msgid "malformed hostname in certificate"
 msgstr "fehlerhafter Hostname im Zertifikat"
 
-#: SSLVerifyHost.cpp:489
+#: SSLVerifyHost.cpp:483
 msgid "hostname verification error"
 msgstr "hostnamen-Überprüfung fehlgeschlagen"
 

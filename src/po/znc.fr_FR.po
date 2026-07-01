@@ -2106,15 +2106,15 @@ msgstr ""
 msgid "Some socket reached its max buffer limit and was closed!"
 msgstr "Un socket a atteint sa limite maximale de tampon et s'est fermé !"
 
-#: SSLVerifyHost.cpp:481
+#: SSLVerifyHost.cpp:475
 msgid "hostname doesn't match"
 msgstr "le nom d'hôte ne correspond pas"
 
-#: SSLVerifyHost.cpp:485
+#: SSLVerifyHost.cpp:479
 msgid "malformed hostname in certificate"
 msgstr "le nom d'hôte du certificat est incorrect"
 
-#: SSLVerifyHost.cpp:489
+#: SSLVerifyHost.cpp:483
 msgid "hostname verification error"
 msgstr "erreur de vérification du nom d'hôte"
 

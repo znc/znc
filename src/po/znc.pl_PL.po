@@ -2114,15 +2114,15 @@ msgstr ""
 "Niektóre gniazda osiągnęły limit swego maksymalnego bufora i zostały "
 "zamknięte!"
 
-#: SSLVerifyHost.cpp:481
+#: SSLVerifyHost.cpp:475
 msgid "hostname doesn't match"
 msgstr "nazwa hosta nie pasuje"
 
-#: SSLVerifyHost.cpp:485
+#: SSLVerifyHost.cpp:479
 msgid "malformed hostname in certificate"
 msgstr "zniekształcona nazwa hosta w certyfikacie"
 
-#: SSLVerifyHost.cpp:489
+#: SSLVerifyHost.cpp:483
 msgid "hostname verification error"
 msgstr "błąd weryfikacji hosta"
 
