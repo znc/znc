@@ -1595,7 +1595,15 @@ void CIRCSock::ParseISupport(const CMessage& Message) {
             break;
         }
 
-        m_mISupport[sName] = sValue;
+        bool bAdding = 0 < sName.length() && '-' != sName[0];
+        if (bAdding) {
+            m_mISupport[sName] = sValue;
+         } else if (2 < sName.length()) {
+            sName.LeftChomp();
+            m_mISupport.erase(sName);
+        } else {
+            continue; // Malformed token.
+        }
 
         if (sName.Equals("PREFIX")) {
             CString sPrefixes = sValue.Token(1, false, ")");
