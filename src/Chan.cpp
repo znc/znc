@@ -378,6 +378,18 @@ void CChan::ModeChange(const CString& sModes, const VCString& vsModes,
                                 m_pNetwork->GetUser(), m_pNetwork, nullptr,
                                 NOTHING);
                         }
+                    } else if (cMode == CChan::M_HalfOp) {
+                        if (bAdd) {
+                            NETWORKMODULECALL(
+                                OnHalfOp(pOpNick, *pNick, *this, bNoChange),
+                                m_pNetwork->GetUser(), m_pNetwork, nullptr,
+                                NOTHING);
+                        } else {
+                            NETWORKMODULECALL(
+                                OnDeHalfOp(pOpNick, *pNick, *this, bNoChange),
+                                m_pNetwork->GetUser(), m_pNetwork, nullptr,
+                                NOTHING);
+                        }
                     } else if (cMode == CChan::M_Voice) {
                         if (bAdd) {
                             NETWORKMODULECALL(
