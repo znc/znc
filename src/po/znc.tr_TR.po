@@ -322,11 +322,11 @@ msgid_plural "Detached {1} channels"
 msgstr[0] "{1} kanalı ayrıldı"
 msgstr[1] "{1} kanalları ayrıldı"
 
-#: Chan.cpp:682
+#: Chan.cpp:691
 msgid "Buffer Playback..."
 msgstr "Tampon Oynatma..."
 
-#: Chan.cpp:720
+#: Chan.cpp:729
 msgid "Playback Complete."
 msgstr "Oynatma Tamamlandı."
 

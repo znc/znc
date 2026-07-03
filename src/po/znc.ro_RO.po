@@ -322,11 +322,11 @@ msgstr[0] "Detașează {1} canal"
 msgstr[1] ""
 msgstr[2] "Detașează {1} canale"
 
-#: Chan.cpp:682
+#: Chan.cpp:691
 msgid "Buffer Playback..."
 msgstr "Redare buffer..."
 
-#: Chan.cpp:720
+#: Chan.cpp:729
 msgid "Playback Complete."
 msgstr "Redare completă."
 
