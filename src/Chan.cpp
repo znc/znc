@@ -149,30 +149,21 @@ void CChan::JoinUser(const CString& sKey) {
 }
 
 void CChan::AttachUser(CClient* pClient) {
-
-    // Sending '/znc attach #channel' applies for all clients connected.
-    // Sending '/join #channel' only applies for the client that sent
-    // the command. This causes a de-sync with IRC events like QUIT
-    // displaying in the other clients server/status window.
-
-    // Make '/join #channel' work the same as '/znc attach #channel'
-	CClient* pTarget = IsDetached() ? nullptr : pClient;
-
     m_pNetwork->PutUser(
         ":" + m_pNetwork->GetIRCNick().GetNickMask() + " JOIN :" + GetName(),
-        pTarget);
+        pClient);
 
     if (!GetTopic().empty()) {
         m_pNetwork->PutUser(":" + m_pNetwork->GetIRCServer() + " 332 " +
                                 m_pNetwork->GetIRCNick().GetNick() + " " +
                                 GetName() + " :" + GetTopic(),
-                            pTarget);
+                            pClient);
         if (!GetTopicOwner().empty()) {
             m_pNetwork->PutUser(":" + m_pNetwork->GetIRCServer() + " 333 " +
                                     m_pNetwork->GetIRCNick().GetNick() + " " +
                                     GetName() + " " + GetTopicOwner() + " " +
                                     CString(GetTopicDate()),
-                                pTarget);
+                                pClient);
         }
     }
 
@@ -185,10 +176,10 @@ void CChan::AttachUser(CClient* pClient) {
     const vector<CClient*>& vpClients = m_pNetwork->GetClients();
     for (CClient* pEachClient : vpClients) {
         CClient* pThisClient;
-        if (!pTarget)
+        if (!pClient)
             pThisClient = pEachClient;
         else
-            pThisClient = pTarget;
+            pThisClient = pClient;
 
         for (map<CString, CNick>::iterator a = m_msNicks.begin();
              a != m_msNicks.end(); ++a) {
@@ -219,18 +210,18 @@ void CChan::AttachUser(CClient* pClient) {
             }
         }
 
-        if (pTarget)
+        if (pClient)  // We only want to do this for one client
             break;
     }
 
     m_pNetwork->PutUser(":" + m_pNetwork->GetIRCServer() + " 366 " +
                             m_pNetwork->GetIRCNick().GetNick() + " " +
                             GetName() + " :End of /NAMES list.",
-                        pTarget);
+                        pClient);
     m_bDetached = false;
 
     // Send Buffer
-    SendBuffer(pTarget);
+    SendBuffer(pClient);
 }
 
 void CChan::DetachUser() {

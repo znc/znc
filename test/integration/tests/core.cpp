@@ -1278,43 +1278,5 @@ TEST_F(ZNCTest, CAPDetached) {
         << "Client saw chghost even though all channels are detached";
 }
 
-// Test for CChan::AttachUser()
-TEST_F(ZNCTest, JoinDetachedChannelMultiClient) {
-    auto znc = Run();
-    auto ircd = ConnectIRCd();
-
-    auto client1 = LoginClient();
-    ircd.Write(":server 001 nick :Hello");
-    client1.Write("JOIN #test");
-    ircd.ReadUntil("JOIN #test");
-    ircd.Write(":nick JOIN :#test");
-    ircd.Write(":server 353 nick #test :nick");
-    ircd.Write(":server 366 nick #test :End of /NAMES list");
-    client1.ReadUntil("End of /NAMES");
-
-    client1.Write("DETACH #test");
-    client1.ReadUntil("Detached 1 channel");
-
-    auto client2 = LoginClient();
-    client2.ReadUntil("001");
-
-    // Both client1 and client2 should be in #test
-    client2.Write("JOIN #test");
-
-    client1.ReadUntil(":nick JOIN :#test");
-    client2.ReadUntil(":nick JOIN :#test");
-
-    client1.ReadUntil("353");
-    client2.ReadUntil("353");
-
-    ircd.Write(":other!user@host JOIN :#test");
-    client1.ReadUntil(":other!user@host JOIN :#test");
-    client2.ReadUntil(":other!user@host JOIN :#test");
-
-    ircd.Write(":other!user@host QUIT :quit message");
-    client1.ReadUntil(":other!user@host QUIT :quit message");
-    client2.ReadUntil(":other!user@host QUIT :quit message");
-}
-
 }  // namespace
 }  // namespace znc_inttest
