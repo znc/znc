@@ -1316,5 +1316,28 @@ TEST_F(ZNCTest, JoinDetachedChannelMultiClient) {
     client2.ReadUntil(":other!user@host QUIT :quit message");
 }
 
+// Commit ad7bd6d7eed84648638e1b6fd69546b9fe496576
+// prevented rejoining when a client cycles a channel.
+TEST_F(ZNCTest, ClientCycleChannels) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+
+    ircd.Write(":server 001 nick :Hello");
+    client.Write("JOIN #test");
+    ircd.ReadUntil("JOIN #test");
+
+    ircd.Write(":nick JOIN :#test");
+    ircd.Write(":server 353 nick #test :nick");
+    ircd.Write(":server 366 nick #test :End of /NAMES list");
+    client.ReadUntil("End of /NAMES");
+
+    // Clients have '/hop' or '/cycle' command that sends
+    // 'PART #channel' and 'JOIN #channel'. Verify ZNC rejoins..
+    client.Write(":nick PART #test");
+    client.Write(":nick JOIN #test");
+    ircd.ReadUntil("JOIN #test");
+}
+
 }  // namespace
 }  // namespace znc_inttest

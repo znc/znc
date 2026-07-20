@@ -1592,6 +1592,7 @@ bool CClient::OnPartMessage(CPartMessage& Message) {
             PutStatusNotice(t_f("Removing channel {1}")(sChan));
             m_pNetwork->DelChan(sChan);
         } else {
+            if (pChan) pChan->SetIsOn(false);
             sChans += (sChans.empty()) ? sChan : CString("," + sChan);
         }
     }
