@@ -30,6 +30,7 @@ CChan::CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig,
              CConfig* pConfig)
     : m_bDetached(false),
       m_bIsOn(false),
+      m_bParting(false),
       m_bAutoClearChanBuffer(pNetwork->GetUser()->AutoClearChanBuffer()),
       m_bInConfig(bInConfig),
       m_bDisabled(false),
@@ -84,6 +85,7 @@ CChan::~CChan() { ClearNicks(); }
 
 void CChan::Reset() {
     m_bIsOn = false;
+    m_bParting = false;
     m_bModeKnown = false;
     m_mcsModes.clear();
     m_sTopic = "";
@@ -143,7 +145,7 @@ void CChan::JoinUser(const CString& sKey) {
     if (!IsOn() && !sKey.empty()) {
         SetKey(sKey);
     }
-    if (m_pNetwork->IsIRCConnected() && !IsOn()) {
+    if (m_pNetwork->IsIRCConnected() && (!IsOn() || IsParting())) {
         m_pNetwork->PutIRC("JOIN " + GetName() + " " + GetKey());
     }
 }

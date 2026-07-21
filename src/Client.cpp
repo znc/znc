@@ -1469,7 +1469,7 @@ bool CClient::OnJoinMessage(CJoinMessage& Message) {
             if (pChan) {
                 if (pChan->IsDetached())
                     pChan->AttachUser(this);
-                else
+                else if (!pChan->IsOn() || pChan->IsParting())
                     pChan->JoinUser(sKey);
                 continue;
             } else if (!sChannel.empty()) {
@@ -1592,7 +1592,7 @@ bool CClient::OnPartMessage(CPartMessage& Message) {
             PutStatusNotice(t_f("Removing channel {1}")(sChan));
             m_pNetwork->DelChan(sChan);
         } else {
-            if (pChan) pChan->SetIsOn(false);
+            if (pChan) pChan->SetParting(true);
             sChans += (sChans.empty()) ? sChan : CString("," + sChan);
         }
     }
