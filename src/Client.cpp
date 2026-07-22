@@ -1469,7 +1469,7 @@ bool CClient::OnJoinMessage(CJoinMessage& Message) {
             if (pChan) {
                 if (pChan->IsDetached())
                     pChan->AttachUser(this);
-                else if (!pChan->IsOn() || pChan->IsParting())
+                else
                     pChan->JoinUser(sKey);
                 continue;
             } else if (!sChannel.empty()) {

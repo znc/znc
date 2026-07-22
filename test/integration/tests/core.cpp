@@ -1316,6 +1316,22 @@ TEST_F(ZNCTest, JoinDetachedChannelMultiClient) {
     client2.ReadUntil(":other!user@host QUIT :quit message");
 }
 
+// Goguma does this
+TEST_F(ZNCTest, ClientRejoiningJoinedChannel) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+
+    ircd.Write(":server 001 nick :Hello");
+    client.Write("JOIN #test");
+    ircd.ReadUntil(":nick JOIN #test");
+
+    client.Write("JOIN #test");
+    client.Write("JOIN #test");
+    client.Write("JOIN #test");
+    ASSERT_THAT(ircd.ReadRemainder().toStdString(), Not(HasSubstr("JOIN")));
+}
+
 // Commit ad7bd6d7eed84648638e1b6fd69546b9fe496576
 // prevented rejoining when a client cycles a channel.
 TEST_F(ZNCTest, ClientCycleChannel) {
@@ -1337,9 +1353,7 @@ TEST_F(ZNCTest, ClientCycleChannel) {
     client.Write(":nick PART #test");
 
     // Verify PART is forwarded to server
-    QByteArray partMsg;
-    ircd.ReadUntilAndGet("PART", partMsg);
-    EXPECT_THAT(partMsg.toStdString(), HasSubstr("PART #test"));
+    ircd.ReadUntil("PART #test");
 
     ircd.Write(":nick PART #test");
     client.ReadUntil(":nick PART #test");
@@ -1405,9 +1419,7 @@ TEST_F(ZNCTest, PartWithError442) {
     client.ReadUntil(":nick JOIN :#test");
     client.Write("PART #test :leaving");
 
-    QByteArray partMsg;
-    ircd.ReadUntilAndGet("PART", partMsg);
-    EXPECT_THAT(partMsg.toStdString(), HasSubstr("PART #test"));
+    ircd.ReadUntil("PART #test");
 
     // Server returns 442 error (ERR_NOTONCHANNEL) instead of confirming
     ircd.Write(":server 442 nick #test :You're not on that channel");
