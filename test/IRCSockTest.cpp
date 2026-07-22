@@ -574,9 +574,6 @@ TEST_F(IRCSockTest, PartingFlag) {
     CMessage serverPart(":me PART #chan");
     m_pTestSock->ReadLine(serverPart.ToString());
 
-    // IsParting() should be free
-    EXPECT_FALSE(m_pTestChan->IsParting());
-
     // Verify channel was deleted
     EXPECT_EQ(m_pTestNetwork->FindChan("#chan"), nullptr);
 }
@@ -593,7 +590,7 @@ TEST_F(IRCSockTest, PartingFlagOnError) {
     CMessage errorMsg(":server 442 me #chan :You're not on that channel");
     m_pTestSock->ReadLine(errorMsg.ToString());
 
-    // IsParting() should be free
+    // IsParting() should be cleared
     EXPECT_FALSE(m_pTestChan->IsParting());
 
     // Verify channel was deleted

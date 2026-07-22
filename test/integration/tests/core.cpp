@@ -1368,9 +1368,7 @@ TEST_F(ZNCTest, PartWithError403) {
     client.ReadUntil(":nick JOIN :#test");
     client.Write("PART #test");
 
-    QByteArray partMsg;
-    ircd.ReadUntilAndGet("PART", partMsg);
-    EXPECT_THAT(partMsg.toStdString(), HasSubstr("PART #test"));
+    ircd.ReadUntil("PART #test");
 
     // Server returns 403 error (ERR_NOSUCHCHANNEL) instead of confirming
     ircd.Write(":server 403 nick #test :No such channel");

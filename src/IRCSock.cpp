@@ -1204,7 +1204,6 @@ bool CIRCSock::OnPartMessage(CPartMessage& Message) {
     }
 
     if (Nick.NickEquals(GetNick())) {
-        if (pChan) pChan->SetParting(false);
         m_pNetwork->DelChan(sChan);
     }
 
