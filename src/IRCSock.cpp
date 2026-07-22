@@ -692,6 +692,7 @@ bool CIRCSock::OnJoinMessage(CJoinMessage& Message) {
         if (pChan) {
             pChan->Enable();
             pChan->SetIsOn(true);
+            pChan->SetParting(false);
             PutIRC("MODE " + sChan);
         }
     } else {
@@ -727,6 +728,7 @@ bool CIRCSock::OnKickMessage(CKickMessage& Message) {
 
     if (GetNick().Equals(sKickedNick) && pChan) {
         pChan->SetIsOn(false);
+        pChan->SetParting(false);
 
         // Don't try to rejoin!
         pChan->Disable();
@@ -1117,6 +1119,19 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
         case 376:  // end motd
             if (m_pNetwork->GetIRCServer().Equals(sServer)) {
                 m_pNetwork->AddMotdBuffer(BufferMessage(Message));
+            }
+            break;
+        case 403:  // ERR_NOSUCHCHANNEL
+        case 442:  // ERR_NOTONCHANNEL
+            {
+                CString sChan = Message.GetParam(1);
+                CChan* pChan = m_pNetwork->FindChan(sChan);
+                if (pChan && pChan->IsParting()) {
+                    pChan->SetIsOn(false);
+                    pChan->SetParting(false);
+                    m_pNetwork->PutStatus(
+                        t_f("PART failed for channel {1}")(sChan));
+                }
             }
             break;
         case 437:

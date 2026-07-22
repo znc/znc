@@ -558,3 +558,41 @@ TEST_F(IRCSockTest, ChanMode) {
         ":are supported by this server");
 	m_pTestSock->ReadLine(":irc.znc.in 324 me #chan +ntf ");
 }
+
+TEST_F(IRCSockTest, PartingFlag) {
+    // Set channel as joined
+    m_pTestChan->SetIsOn(true);
+
+    CMessage clientPart("PART #chan");
+    m_pTestClient->ReadLine(clientPart.ToString());
+
+    EXPECT_THAT(m_pTestSock->vsLines, ElementsAre("PART #chan"));
+    EXPECT_TRUE(m_pTestChan->IsParting());
+
+    m_pTestSock->Reset();
+
+    CMessage serverPart(":me PART #chan");
+    m_pTestSock->ReadLine(serverPart.ToString());
+
+    // Verify channel was deleted
+    EXPECT_EQ(m_pTestNetwork->FindChan("#chan"), nullptr);
+}
+
+TEST_F(IRCSockTest, PartingFlagOnError) {
+    // Set channel as joined
+    m_pTestChan->SetIsOn(true);
+
+    CMessage clientPart("PART #chan");
+    m_pTestClient->ReadLine(clientPart.ToString());
+
+    m_pTestSock->Reset();
+
+    CMessage errorMsg(":server 442 me #chan :You're not on that channel");
+    m_pTestSock->ReadLine(errorMsg.ToString());
+
+    // IsParting() should be cleared
+    EXPECT_FALSE(m_pTestChan->IsParting());
+
+    // Verify channel was deleted
+    EXPECT_NE(m_pTestNetwork->FindChan("#chan"), nullptr);
+}

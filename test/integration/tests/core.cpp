@@ -1278,5 +1278,151 @@ TEST_F(ZNCTest, CAPDetached) {
         << "Client saw chghost even though all channels are detached";
 }
 
+// Test for CChan::AttachUser()
+TEST_F(ZNCTest, JoinDetachedChannelMultiClient) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+
+    auto client1 = LoginClient();
+    ircd.Write(":server 001 nick :Hello");
+    client1.Write("JOIN #test");
+    ircd.ReadUntil("JOIN #test");
+    ircd.Write(":nick JOIN :#test");
+    ircd.Write(":server 353 nick #test :nick");
+    ircd.Write(":server 366 nick #test :End of /NAMES list");
+    client1.ReadUntil("End of /NAMES");
+
+    client1.Write("DETACH #test");
+    client1.ReadUntil("Detached 1 channel");
+
+    auto client2 = LoginClient();
+    client2.ReadUntil("001");
+
+    // Both client1 and client2 should be in #test
+    client2.Write("JOIN #test");
+
+    client1.ReadUntil(":nick JOIN :#test");
+    client2.ReadUntil(":nick JOIN :#test");
+
+    client1.ReadUntil("353");
+    client2.ReadUntil("353");
+
+    ircd.Write(":other!user@host JOIN :#test");
+    client1.ReadUntil(":other!user@host JOIN :#test");
+    client2.ReadUntil(":other!user@host JOIN :#test");
+
+    ircd.Write(":other!user@host QUIT :quit message");
+    client1.ReadUntil(":other!user@host QUIT :quit message");
+    client2.ReadUntil(":other!user@host QUIT :quit message");
+}
+
+// Commit ad7bd6d7eed84648638e1b6fd69546b9fe496576
+// prevented rejoining when a client cycles a channel.
+TEST_F(ZNCTest, ClientCycleChannel) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+
+    ircd.Write(":server 001 nick :Hello");
+    client.Write("JOIN #test");
+    ircd.ReadUntil("JOIN #test");
+
+    ircd.Write(":nick JOIN :#test");
+    ircd.Write(":server 353 nick #test :nick");
+    ircd.Write(":server 366 nick #test :End of /NAMES list");
+    client.ReadUntil("End of /NAMES");
+
+    // Clients have '/hop' or '/cycle' command that sends
+    // 'PART #channel' and 'JOIN #channel'. Verify ZNC rejoins.
+    client.Write(":nick PART #test");
+
+    // Verify PART is forwarded to server
+    QByteArray partMsg;
+    ircd.ReadUntilAndGet("PART", partMsg);
+    EXPECT_THAT(partMsg.toStdString(), HasSubstr("PART #test"));
+
+    ircd.Write(":nick PART #test");
+    client.ReadUntil(":nick PART #test");
+
+    client.Write(":nick JOIN #test");
+    ircd.ReadUntil("JOIN #test");
+}
+
+TEST_F(ZNCTest, PartWithError403) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+
+    // Join a channel first
+    client.Write("JOIN #test");
+    client.Close();
+
+    ircd.Write(":server 001 nick :Hello");
+    ircd.ReadUntil("JOIN #test");
+    ircd.Write(":nick JOIN :#test");
+    ircd.Write(":server 353 nick #test :nick");
+    ircd.Write(":server 366 nick #test :End of /NAMES list");
+
+    // Reconnect client and send PART
+    client = LoginClient();
+    client.ReadUntil(":nick JOIN :#test");
+    client.Write("PART #test");
+
+    ircd.ReadUntil("PART #test");
+
+    // Server returns 403 error (ERR_NOSUCHCHANNEL) instead of confirming
+    ircd.Write(":server 403 nick #test :No such channel");
+
+    // Verify client receives the status message about PART failure
+    client.ReadUntil("PART failed for channel #test");
+
+    // Verify channel still exists by trying to rejoin
+    client.Write("JOIN #test");
+    ircd.ReadUntil("JOIN #test");
+    ircd.Write(":nick JOIN :#test");
+    ircd.Write(":server 353 nick #test :nick");
+    ircd.Write(":server 366 nick #test :End of /NAMES list");
+    client.ReadUntil(":nick JOIN :#test");
+}
+
+TEST_F(ZNCTest, PartWithError442) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+
+    // Join a channel first
+    client.Write("JOIN #test");
+    client.Close();
+
+    ircd.Write(":server 001 nick :Hello");
+    ircd.ReadUntil("JOIN #test");
+    ircd.Write(":nick JOIN :#test");
+    ircd.Write(":server 353 nick #test :nick");
+    ircd.Write(":server 366 nick #test :End of /NAMES list");
+
+    // Reconnect client and send PART
+    client = LoginClient();
+    client.ReadUntil(":nick JOIN :#test");
+    client.Write("PART #test :leaving");
+
+    QByteArray partMsg;
+    ircd.ReadUntilAndGet("PART", partMsg);
+    EXPECT_THAT(partMsg.toStdString(), HasSubstr("PART #test"));
+
+    // Server returns 442 error (ERR_NOTONCHANNEL) instead of confirming
+    ircd.Write(":server 442 nick #test :You're not on that channel");
+
+    // Verify client receives the status message about PART failure
+    client.ReadUntil("PART failed for channel #test");
+
+    // Verify channel still exists by trying to rejoin
+    client.Write("JOIN #test");
+    ircd.ReadUntil("JOIN #test");
+    ircd.Write(":nick JOIN :#test");
+    ircd.Write(":server 353 nick #test :nick");
+    ircd.Write(":server 366 nick #test :End of /NAMES list");
+    client.ReadUntil(":nick JOIN :#test");
+}
+
 }  // namespace
 }  // namespace znc_inttest

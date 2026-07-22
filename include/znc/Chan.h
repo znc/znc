@@ -168,6 +168,7 @@ class CChan : private CCoreTranslationMixin {
     void Enable();
     void IncJoinTries() { m_uJoinTries++; }
     void ResetJoinTries() { m_uJoinTries = 0; }
+    void SetParting(bool b) { m_bParting = b; }
     // !Setters
 
     // Getters
@@ -199,6 +200,7 @@ class CChan : private CCoreTranslationMixin {
     bool HasAutoClearChanBufferSet() const {
         return m_bHasAutoClearChanBufferSet;
     }
+    bool IsParting() const { return m_bParting; }
     // !Getters
   private:
   protected:
@@ -223,6 +225,7 @@ class CChan : private CCoreTranslationMixin {
     CBuffer m_Buffer;
 
     bool m_bModeKnown;
+    bool m_bParting;
     std::map<char, CString> m_mcsModes;
 };
 
