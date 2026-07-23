@@ -358,6 +358,8 @@ sub OnBroadcast {}
 sub OnChanPermission {}
 sub OnOp {}
 sub OnDeop {}
+sub OnHalfOp {}
+sub OnDeHalfOp {}
 sub OnVoice {}
 sub OnDevoice {}
 sub OnMode {}
