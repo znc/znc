@@ -1110,15 +1110,25 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 
             break;
         }
-        case 375:  // begin motd
-        case 422:  // MOTD File is missing
+        case 263:  // RPL_TRYAGAIN - RFC2812 - Rate limited.
+            if (Message.GetParam(1).Equals("MOTD")) {
+                // Set false to prevent multiple "End of /MOTD command."
+                m_bMotdBegun = false;
+            }
+            break;
+        case 375:  // RPL_MOTDSTART - Begin MOTD
+        case 422:  // ERR_NOMOTD - MOTD File is missing
             if (m_pNetwork->GetIRCServer().Equals(sServer)) {
                 m_pNetwork->ClearMotdBuffer();
+                m_bMotdBegun = true;
             }
-        case 372:  // motd
-        case 376:  // end motd
-            if (m_pNetwork->GetIRCServer().Equals(sServer)) {
+        case 372:  // RPL_MOTD - Print MOTD
+        case 376:  // RPL_ENDOFMOTD - Print "End of /MOTD command"
+            if (m_bMotdBegun && m_pNetwork->GetIRCServer().Equals(sServer)) {
                 m_pNetwork->AddMotdBuffer(BufferMessage(Message));
+            }
+            if (uRaw == 376) {
+                m_bMotdBegun = false;
             }
             break;
         case 403:  // ERR_NOSUCHCHANNEL

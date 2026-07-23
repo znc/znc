@@ -1438,5 +1438,35 @@ TEST_F(ZNCTest, PartWithError442) {
     client.ReadUntil(":nick JOIN :#test");
 }
 
+// https://github.com/znc/znc/issues/1460
+TEST_F(ZNCTest, MotdBufferDoesNotAccumulate376) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+
+    ircd.Write(":server 001 nick :Hello");
+    ircd.Write(":server 375 nick :- server Message of the Day -");
+    ircd.Write(":server 372 nick :- First MOTD line");
+    ircd.Write(":server 376 nick :End of /MOTD command");
+    client.ReadUntil("End of /MOTD command");
+
+    ircd.Write(":server 263 nick MOTD :This command could not be completed because it has been used recently, and is rate-limited.");
+    ircd.Write(":server 376 nick :End of /MOTD command");
+
+    client.Close();
+    client = LoginClient();
+    ircd.Write(":server 001 nick :Hello");
+
+    ircd.Write(":server 375 nick :- server Message of the Day -");
+    ircd.Write(":server 372 nick :- Hello world.");
+    ircd.Write(":server 376 nick :End of /MOTD command");
+
+    client.ReadUntil("End of /MOTD command");
+
+    // Verify no duplicate 376 messages in the remainder
+    ASSERT_THAT(client.ReadRemainder().toStdString(),
+                Not(HasSubstr("End of /MOTD command")));
+}
+
 }  // namespace
 }  // namespace znc_inttest
