@@ -131,76 +131,81 @@ msgstr "Bazı modüller bağlantı girişimini iptal etti"
 msgid "Error from server: {1}"
 msgstr "Sunucudan gelen hata: {1}"
 
-#: IRCSock.cpp:875
+#: IRCSock.cpp:877
 msgid "ZNC seems to be connected to itself, disconnecting..."
 msgstr "ZNC kendine bağlı görünüyor, bağlantı kesiliyor..."
 
-#: IRCSock.cpp:922
+#: IRCSock.cpp:924
 #, c++-format
 msgid "Server {1} redirects us to {2}:{3} with reason: {4}"
 msgstr "{1} sunucusu bizi şu nedenle {2}:{3} adresine yönlendiriyor: {4}"
 
-#: IRCSock.cpp:926
+#: IRCSock.cpp:928
 msgid "Perhaps you want to add it as a new server."
 msgstr "Belki onu yeni bir sunucu olarak eklemek istersiniz."
 
-#: IRCSock.cpp:1156
+#: IRCSock.cpp:1133
+#, c++-format
+msgid "PART failed for channel {1}"
+msgstr ""
+
+#: IRCSock.cpp:1171
 #, c++-format
 msgid "Channel {1} is linked to another channel and was thus disabled."
 msgstr "{1} kanalı başka bir kanala bağlı olduğundan devre dışı bırakıldı."
 
-#: IRCSock.cpp:1168
+#: IRCSock.cpp:1183
 msgid "Switched to SSL (STARTTLS)"
 msgstr "SSL'ye (STARTTLS) geçildi"
 
-#: IRCSock.cpp:1221
+#: IRCSock.cpp:1236
 #, c++-format
 msgid "You quit: {1}"
 msgstr "Çıktınız: {1}"
 
-#: IRCSock.cpp:1425
+#: IRCSock.cpp:1440
 #, c++-format
 msgid "Warning: flood protection is delaying your messages by {1} seconds"
 msgstr "Uyarı: Flood koruması mesajlarınızı {1} saniye geciktiriyor"
 
-#: IRCSock.cpp:1483
+#: IRCSock.cpp:1498
 msgid "Disconnected from IRC. Reconnecting..."
 msgstr "IRC'den bağlantı kesildi. Yeniden bağlanılıyor..."
 
-#: IRCSock.cpp:1514
+#: IRCSock.cpp:1529
 #, c++-format
 msgid "Cannot connect to IRC ({1}). Retrying..."
 msgstr "IRC'ye ({1}) bağlanılamıyor. Yeniden deneniyor..."
 
-#: IRCSock.cpp:1517
+#: IRCSock.cpp:1532
 #, c++-format
 msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr "IRC ({1})'den bağlantı kesildi. Yeniden bağlanılıyor..."
 
-#: IRCSock.cpp:1553
+#: IRCSock.cpp:1568
 #, c++-format
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 "Bu sertifikaya güveniyorsanız /znc AddTrustedServerFingerprint {1} komutunu "
 "kullanın"
 
-#: IRCSock.cpp:1562
+#: IRCSock.cpp:1577
 msgid "IRC connection timed out.  Reconnecting..."
 msgstr "IRC bağlantısı zaman aşımına uğradı. Yeniden bağlanılıyor..."
 
-#: IRCSock.cpp:1574
+#: IRCSock.cpp:1589
 msgid "Connection Refused.  Reconnecting..."
 msgstr "Bağlantı reddedildi. Yeniden bağlanılıyor..."
 
-#: IRCSock.cpp:1582
+#: IRCSock.cpp:1597
 msgid "Received a too long line from the IRC server!"
 msgstr "IRC sunucusundan çok uzun bir hat alındı!"
 
-#: IRCSock.cpp:1696
+#: IRCSock.cpp:1711
 msgid "No free nick available"
 msgstr "Kullanılabilir nick yok"
 
-#: IRCSock.cpp:1704
+#: IRCSock.cpp:1719
 msgid "No free nick found"
 msgstr "Kullanılabilir nick bulunamadı"
 
@@ -283,20 +288,20 @@ msgstr "{1}'a gönderdiğiniz bildirim kayboldu, IRC'ye bağlı değilsiniz!"
 msgid "Removing channel {1}"
 msgstr "{1} kanalı kaldırılıyor"
 
-#: Client.cpp:1705
+#: Client.cpp:1706
 #, c++-format
 msgid "Your message to {1} got lost, you are not connected to IRC!"
 msgstr "{1}'a gönderdiğiniz mesaj kayboldu, IRC'ye bağlı değilsiniz!"
 
-#: Client.cpp:1757 Client.cpp:1763
+#: Client.cpp:1758 Client.cpp:1764
 msgid "Hello. How may I help you?"
 msgstr "Merhaba. Size nasıl yardım edebilirim?"
 
-#: Client.cpp:1777
+#: Client.cpp:1778
 msgid "Usage: /attach <#chans>"
 msgstr "Kullanımı: attach <#kanallar>"
 
-#: Client.cpp:1784 Client.cpp:1806 ClientCommand.cpp:129 ClientCommand.cpp:151
+#: Client.cpp:1785 Client.cpp:1807 ClientCommand.cpp:129 ClientCommand.cpp:151
 #: ClientCommand.cpp:423 ClientCommand.cpp:450
 #, c++-format
 msgid "There was {1} channel matching [{2}]"
@@ -304,29 +309,29 @@ msgid_plural "There were {1} channels matching [{2}]"
 msgstr[0] "[{2}] ile eşleşen {1} kanal vardı"
 msgstr[1] "[{2}] ile eşleşen {1} kanal vardı"
 
-#: Client.cpp:1787 ClientCommand.cpp:132
+#: Client.cpp:1788 ClientCommand.cpp:132
 #, c++-format
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
 msgstr[0] "{1} kanalı eklendi"
 msgstr[1] "{1} kanalları eklendi"
 
-#: Client.cpp:1799
+#: Client.cpp:1800
 msgid "Usage: /detach <#chans>"
 msgstr "Kullanımı: detach <#kanallar>"
 
-#: Client.cpp:1809 ClientCommand.cpp:154
+#: Client.cpp:1810 ClientCommand.cpp:154
 #, c++-format
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
 msgstr[0] "{1} kanalı ayrıldı"
 msgstr[1] "{1} kanalları ayrıldı"
 
-#: Chan.cpp:682
+#: Chan.cpp:693
 msgid "Buffer Playback..."
 msgstr "Tampon Oynatma..."
 
-#: Chan.cpp:720
+#: Chan.cpp:731
 msgid "Playback Complete."
 msgstr "Oynatma Tamamlandı."
 

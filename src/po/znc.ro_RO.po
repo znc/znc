@@ -129,76 +129,81 @@ msgstr "Unele module au întrerupt încercarea de conectare"
 msgid "Error from server: {1}"
 msgstr "Eroare de la server: {1}"
 
-#: IRCSock.cpp:875
+#: IRCSock.cpp:877
 msgid "ZNC seems to be connected to itself, disconnecting..."
 msgstr "ZNC pare să fie conectat la sine, deconectare..."
 
-#: IRCSock.cpp:922
+#: IRCSock.cpp:924
 #, c++-format
 msgid "Server {1} redirects us to {2}:{3} with reason: {4}"
 msgstr "Serverul {1} mă redirecționează către {2}: {3} cu motivul: {4}"
 
-#: IRCSock.cpp:926
+#: IRCSock.cpp:928
 msgid "Perhaps you want to add it as a new server."
 msgstr "Poate dorești să îl adaugi ca un server nou."
 
-#: IRCSock.cpp:1156
+#: IRCSock.cpp:1133
+#, c++-format
+msgid "PART failed for channel {1}"
+msgstr ""
+
+#: IRCSock.cpp:1171
 #, c++-format
 msgid "Channel {1} is linked to another channel and was thus disabled."
 msgstr "Canalul {1} este conectat la un alt canal și a fost astfel dezactivat."
 
-#: IRCSock.cpp:1168
+#: IRCSock.cpp:1183
 msgid "Switched to SSL (STARTTLS)"
 msgstr "Comutat la SSL (STARTTLS)"
 
-#: IRCSock.cpp:1221
+#: IRCSock.cpp:1236
 #, c++-format
 msgid "You quit: {1}"
 msgstr "Ai ieșit: {1}"
 
-#: IRCSock.cpp:1425
+#: IRCSock.cpp:1440
 #, c++-format
 msgid "Warning: flood protection is delaying your messages by {1} seconds"
 msgstr ""
 
-#: IRCSock.cpp:1483
+#: IRCSock.cpp:1498
 msgid "Disconnected from IRC. Reconnecting..."
 msgstr "Deconectat de la IRC. Se reconectează..."
 
-#: IRCSock.cpp:1514
+#: IRCSock.cpp:1529
 #, c++-format
 msgid "Cannot connect to IRC ({1}). Retrying..."
 msgstr "Nu se poate conecta la IRC ({1}). Se reîncearcă..."
 
-#: IRCSock.cpp:1517
+#: IRCSock.cpp:1532
 #, c++-format
 msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr "Deconectat de la IRC ({1}). Se reconectează..."
 
-#: IRCSock.cpp:1553
+#: IRCSock.cpp:1568
 #, c++-format
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 "Dacă ai încredere în acest certificat, tastează /znc "
 "AddTrustedServerFingerprint {1}"
 
-#: IRCSock.cpp:1562
+#: IRCSock.cpp:1577
 msgid "IRC connection timed out.  Reconnecting..."
 msgstr "Conexiunea IRC a picat. Se reconectează..."
 
-#: IRCSock.cpp:1574
+#: IRCSock.cpp:1589
 msgid "Connection Refused.  Reconnecting..."
 msgstr "Conexiune refuzata. Se reconectează..."
 
-#: IRCSock.cpp:1582
+#: IRCSock.cpp:1597
 msgid "Received a too long line from the IRC server!"
 msgstr "Am primit un rând prea lung de la serverul IRC!"
 
-#: IRCSock.cpp:1696
+#: IRCSock.cpp:1711
 msgid "No free nick available"
 msgstr "Nu este disponibil niciun nume de utilizator"
 
-#: IRCSock.cpp:1704
+#: IRCSock.cpp:1719
 msgid "No free nick found"
 msgstr "Nu a fost găsit niciun nume de utilizator"
 
@@ -280,20 +285,20 @@ msgstr ""
 msgid "Removing channel {1}"
 msgstr "Eliminare canal {1}"
 
-#: Client.cpp:1705
+#: Client.cpp:1706
 #, c++-format
 msgid "Your message to {1} got lost, you are not connected to IRC!"
 msgstr ""
 
-#: Client.cpp:1757 Client.cpp:1763
+#: Client.cpp:1758 Client.cpp:1764
 msgid "Hello. How may I help you?"
 msgstr "Salut. Cu ce te pot ajuta?"
 
-#: Client.cpp:1777
+#: Client.cpp:1778
 msgid "Usage: /attach <#chans>"
 msgstr "Utilizează: /attach <#canale>"
 
-#: Client.cpp:1784 Client.cpp:1806 ClientCommand.cpp:129 ClientCommand.cpp:151
+#: Client.cpp:1785 Client.cpp:1807 ClientCommand.cpp:129 ClientCommand.cpp:151
 #: ClientCommand.cpp:423 ClientCommand.cpp:450
 #, c++-format
 msgid "There was {1} channel matching [{2}]"
@@ -302,7 +307,7 @@ msgstr[0] "A existat {1} canal care se potrivește cu [{2}]"
 msgstr[1] ""
 msgstr[2] "Au existat {1} canale care se potrivesc cu [{2}]"
 
-#: Client.cpp:1787 ClientCommand.cpp:132
+#: Client.cpp:1788 ClientCommand.cpp:132
 #, c++-format
 msgid "Attached {1} channel"
 msgid_plural "Attached {1} channels"
@@ -310,11 +315,11 @@ msgstr[0] "Am atașat {1} canal"
 msgstr[1] ""
 msgstr[2] "Am atașat {1} canale"
 
-#: Client.cpp:1799
+#: Client.cpp:1800
 msgid "Usage: /detach <#chans>"
 msgstr "Utilizează: /detach <#canale>"
 
-#: Client.cpp:1809 ClientCommand.cpp:154
+#: Client.cpp:1810 ClientCommand.cpp:154
 #, c++-format
 msgid "Detached {1} channel"
 msgid_plural "Detached {1} channels"
@@ -322,11 +327,11 @@ msgstr[0] "Detașează {1} canal"
 msgstr[1] ""
 msgstr[2] "Detașează {1} canale"
 
-#: Chan.cpp:682
+#: Chan.cpp:693
 msgid "Buffer Playback..."
 msgstr "Redare buffer..."
 
-#: Chan.cpp:720
+#: Chan.cpp:731
 msgid "Playback Complete."
 msgstr "Redare completă."
 
