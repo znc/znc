@@ -1325,6 +1325,8 @@ TEST_F(ZNCTest, ClientRejoiningJoinedChannel) {
     ircd.Write(":server 001 nick :Hello");
     client.Write("JOIN #test");
     ircd.ReadUntil("JOIN #test");
+    ircd.Write(":nick JOIN #test");
+    client.ReadUntil(":nick JOIN #test");
 
     client.Write("JOIN #test");
     client.Write("JOIN #test");
