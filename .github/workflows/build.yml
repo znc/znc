@@ -7,7 +7,7 @@ jobs:
   gcc:
     name: GCC
     runs-on: ubuntu-24.04
-    steps:
+    steps: &commonsteps
       - uses: actions/checkout@v7
         with:
           submodules: true
@@ -24,17 +24,9 @@ jobs:
   nossl:
     name: NoSSL
     runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          submodules: true
-      - run: source .github/ubuntu_deps.sh
-      - run: |
-          export CFGFLAGS="--disable-openssl"
-          source .github/build.sh
-      - uses: codecov/codecov-action@v7
-        with:
-          name: ${{ github.job }}
+    env:
+      CFGFLAGS: --disable-openssl
+    steps: *commonsteps
 
   tarball:
     name: Tarball
@@ -60,66 +52,36 @@ jobs:
         with:
           name: ${{ github.job }}
 
-  # can be removed when asan below is fixed
   clang:
     name: Clang
     runs-on: ubuntu-24.04
     env:
       CXX: clang++
       CC: clang
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          submodules: true
-      - run: source .github/ubuntu_deps.sh
-      - run: source .github/build.sh
-      - uses: codecov/codecov-action@v7
-        with:
-          name: ${{ github.job }}
-      - uses: actions/upload-artifact@v7
-        with:
-          name: codecov debug results ${{ github.job }}
-          path: "/tmp/codecov.*.gz"
-
+    steps: *commonsteps
  
-  #clang_asan:
-    #name: Clang ASAN
-    #runs-on: ubuntu-24.04
-    #env:
-      #CXX: clang++
-      #CC: clang
-      #CXXFLAGS: "-fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fPIE"
-      #LDFLAGS: "-fsanitize=address -pie"
-    #steps:
-      #- uses: actions/checkout@v7
-        #with:
-          #submodules: true
-      #- run: source .github/ubuntu_deps.sh
-      #- run: source .github/build.sh
-      #- uses: codecov/codecov-action@v7
+  asan:
+    name: GCC ASan
+    runs-on: ubuntu-24.04
+    env:
+      CXXFLAGS: "-fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fPIE"
+      LDFLAGS: "-fsanitize=address -pie"
+    steps: *commonsteps
 
-  #clang_tsan:
-    #name: Clang TSAN
+  #tsan:
+    #name: GCC TSan
     #runs-on: ubuntu-24.04
     #env:
-      #CXX: clang++
-      #CC: clang
       #CXXFLAGS: "-fsanitize=thread -O1 -fPIE"
       #LDFLAGS: "-fsanitize=thread"
-    #steps:
-      #- uses: actions/checkout@v7
-        #with:
-          #submodules: true
-      #- run: source .github/ubuntu_deps.sh
-      #- run: source .github/build.sh
-      #- uses: codecov/codecov-action@v7
+    #steps: *commonsteps
 
-      # TODO: enable
-      #CXXFLAGS: "-fsanitize=memory -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize-memory-track-origins"
-      #LDFLAGS: "-fsanitize=memory"
+    # TODO: enable
+    #CXXFLAGS: "-fsanitize=memory -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize-memory-track-origins"
+    #LDFLAGS: "-fsanitize=memory"
 
-      #CXXFLAGS: "-fsanitize=undefined -O1 -fPIE -fno-sanitize-recover"
-      #LDFLAGS: "-fsanitize=undefined -pie -fno-sanitize-recover"
+    #CXXFLAGS: "-fsanitize=undefined -O1 -fPIE -fno-sanitize-recover"
+    #LDFLAGS: "-fsanitize=undefined -pie -fno-sanitize-recover"
 
   macos:
     name: macOS
@@ -148,6 +110,7 @@ jobs:
       - gcc
       - tarball
       - clang
+      - asan
     steps:
       - uses: actions/checkout@v7
         with:
