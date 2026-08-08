@@ -33,20 +33,24 @@ msgstr "Active ou désactive les notifications pour les connections non vues"
 msgid ""
 "Specifies whether you want to be notified about new connections with new IPs"
 msgstr ""
+"Spécifie si vous voulez être notifié de nouvelles connections avec de "
+"nouvelles IPs"
 
 #: clientnotify.cpp:64
 msgid ""
 "Specifies whether you want to be notified about new connections with new "
 "client IDs"
 msgstr ""
+"Spécifie si vous voulez être notifié de nouvelles connections avec de "
+"nouveaux identifiants de clients"
 
 #: clientnotify.cpp:69
 msgid "Turns notifications for clients disconnecting on or off"
-msgstr ""
+msgstr "Active ou désactive les notifications pour les clients se déconnectant"
 
 #: clientnotify.cpp:71
 msgid "Shows the current settings"
-msgstr ""
+msgstr "Montre les réglages actuels"
 
 #: clientnotify.cpp:104 clientnotify.cpp:134
 #, c++-format
@@ -54,8 +58,10 @@ msgid "<This message is impossible for 1 client>"
 msgid_plural ""
 "Another client ({1}) authenticated as your user. Use the 'ListClients' "
 "command to see all {2} clients."
-msgstr[0] ""
+msgstr[0] "<This message is impossible for 1 client>"
 msgstr[1] ""
+"Un autre client ({1}) vient de se connecter en tant que votre utilisateur. "
+"Utilisez la commande 'ListClients' pour voir les {2} clients."
 
 #: clientnotify.cpp:147
 msgid "Usage: Method <message|notice|off>"

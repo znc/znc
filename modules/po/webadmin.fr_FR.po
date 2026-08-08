@@ -899,19 +899,19 @@ msgstr "Actuel"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:85
 msgid "Path"
-msgstr ""
+msgstr "Chemin"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:86
 msgid "Mode"
-msgstr ""
+msgstr "Mode"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:87
 msgid "Group"
-msgstr ""
+msgstr "Groupe"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:128
 msgid "Octal number; -1 means do not chmod"
-msgstr ""
+msgstr "Nombre octal ; -1 désactive le chmod"
 
 #: modules/po/../data/webadmin/tmpl/settings.tmpl:148
 msgid "Settings"
