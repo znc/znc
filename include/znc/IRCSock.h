@@ -216,6 +216,7 @@ class CIRCSock : public CIRCSocket {
     bool m_bExtendedJoin;
     bool m_bServerTime;
     bool m_bMessageTagCap;
+    bool m_bMotdBegun = false;
     CString m_sPerms;
     CString m_sPermModes;
     std::set<char> m_scUserModes;
