@@ -153,69 +153,69 @@ msgstr "Server {1} stuurt ons door naar {2}:{3} met reden: {4}"
 msgid "Perhaps you want to add it as a new server."
 msgstr "Misschien wil je het toevoegen als nieuwe server."
 
-#: IRCSock.cpp:1133
+#: IRCSock.cpp:1143
 #, c++-format
 msgid "PART failed for channel {1}"
 msgstr ""
 
-#: IRCSock.cpp:1171
+#: IRCSock.cpp:1181
 #, c++-format
 msgid "Channel {1} is linked to another channel and was thus disabled."
 msgstr ""
 "Kanaal {1} is verbonden naar een andere kanaal en is daarom uitgeschakeld."
 
-#: IRCSock.cpp:1183
+#: IRCSock.cpp:1193
 msgid "Switched to SSL (STARTTLS)"
 msgstr "Omgeschakeld naar een veilige verbinding (STARTTLS)"
 
-#: IRCSock.cpp:1236
+#: IRCSock.cpp:1246
 #, c++-format
 msgid "You quit: {1}"
 msgstr "Je hebt het netwerk verlaten: {1}"
 
-#: IRCSock.cpp:1440
+#: IRCSock.cpp:1450
 #, c++-format
 msgid "Warning: flood protection is delaying your messages by {1} seconds"
 msgstr ""
 
-#: IRCSock.cpp:1498
+#: IRCSock.cpp:1508
 msgid "Disconnected from IRC. Reconnecting..."
 msgstr "Verbinding met IRC verbroken. We proberen opnieuw te verbinden..."
 
-#: IRCSock.cpp:1529
+#: IRCSock.cpp:1539
 #, c++-format
 msgid "Cannot connect to IRC ({1}). Retrying..."
 msgstr "Kan niet verbinden met IRC ({1}). We proberen opnieuw te verbinden..."
 
-#: IRCSock.cpp:1532
+#: IRCSock.cpp:1542
 #, c++-format
 msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr ""
 "Verbinding met IRC verbroken ({1}). We proberen opnieuw te verbinden..."
 
-#: IRCSock.cpp:1568
+#: IRCSock.cpp:1578
 #, c++-format
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 "Als je dit certificaat vertrouwt, doe: /znc AddTrustedServerFingerprint {1}"
 
-#: IRCSock.cpp:1577
+#: IRCSock.cpp:1587
 msgid "IRC connection timed out.  Reconnecting..."
 msgstr "IRC verbinding time-out. We proberen opnieuw te verbinden..."
 
-#: IRCSock.cpp:1589
+#: IRCSock.cpp:1599
 msgid "Connection Refused.  Reconnecting..."
 msgstr "Verbinding geweigerd. We proberen opnieuw te verbinden..."
 
-#: IRCSock.cpp:1597
+#: IRCSock.cpp:1607
 msgid "Received a too long line from the IRC server!"
 msgstr "Een te lange regel ontvangen van de IRC server!"
 
-#: IRCSock.cpp:1711
+#: IRCSock.cpp:1721
 msgid "No free nick available"
 msgstr "Geen beschikbare bijnaam"
 
-#: IRCSock.cpp:1719
+#: IRCSock.cpp:1729
 msgid "No free nick found"
 msgstr "Geen beschikbare bijnaam gevonden"
 

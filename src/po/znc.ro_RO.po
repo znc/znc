@@ -142,68 +142,68 @@ msgstr "Serverul {1} mă redirecționează către {2}: {3} cu motivul: {4}"
 msgid "Perhaps you want to add it as a new server."
 msgstr "Poate dorești să îl adaugi ca un server nou."
 
-#: IRCSock.cpp:1133
+#: IRCSock.cpp:1143
 #, c++-format
 msgid "PART failed for channel {1}"
 msgstr ""
 
-#: IRCSock.cpp:1171
+#: IRCSock.cpp:1181
 #, c++-format
 msgid "Channel {1} is linked to another channel and was thus disabled."
 msgstr "Canalul {1} este conectat la un alt canal și a fost astfel dezactivat."
 
-#: IRCSock.cpp:1183
+#: IRCSock.cpp:1193
 msgid "Switched to SSL (STARTTLS)"
 msgstr "Comutat la SSL (STARTTLS)"
 
-#: IRCSock.cpp:1236
+#: IRCSock.cpp:1246
 #, c++-format
 msgid "You quit: {1}"
 msgstr "Ai ieșit: {1}"
 
-#: IRCSock.cpp:1440
+#: IRCSock.cpp:1450
 #, c++-format
 msgid "Warning: flood protection is delaying your messages by {1} seconds"
 msgstr ""
 
-#: IRCSock.cpp:1498
+#: IRCSock.cpp:1508
 msgid "Disconnected from IRC. Reconnecting..."
 msgstr "Deconectat de la IRC. Se reconectează..."
 
-#: IRCSock.cpp:1529
+#: IRCSock.cpp:1539
 #, c++-format
 msgid "Cannot connect to IRC ({1}). Retrying..."
 msgstr "Nu se poate conecta la IRC ({1}). Se reîncearcă..."
 
-#: IRCSock.cpp:1532
+#: IRCSock.cpp:1542
 #, c++-format
 msgid "Disconnected from IRC ({1}). Reconnecting..."
 msgstr "Deconectat de la IRC ({1}). Se reconectează..."
 
-#: IRCSock.cpp:1568
+#: IRCSock.cpp:1578
 #, c++-format
 msgid "If you trust this certificate, do /znc AddTrustedServerFingerprint {1}"
 msgstr ""
 "Dacă ai încredere în acest certificat, tastează /znc "
 "AddTrustedServerFingerprint {1}"
 
-#: IRCSock.cpp:1577
+#: IRCSock.cpp:1587
 msgid "IRC connection timed out.  Reconnecting..."
 msgstr "Conexiunea IRC a picat. Se reconectează..."
 
-#: IRCSock.cpp:1589
+#: IRCSock.cpp:1599
 msgid "Connection Refused.  Reconnecting..."
 msgstr "Conexiune refuzata. Se reconectează..."
 
-#: IRCSock.cpp:1597
+#: IRCSock.cpp:1607
 msgid "Received a too long line from the IRC server!"
 msgstr "Am primit un rând prea lung de la serverul IRC!"
 
-#: IRCSock.cpp:1711
+#: IRCSock.cpp:1721
 msgid "No free nick available"
 msgstr "Nu este disponibil niciun nume de utilizator"
 
-#: IRCSock.cpp:1719
+#: IRCSock.cpp:1729
 msgid "No free nick found"
 msgstr "Nu a fost găsit niciun nume de utilizator"
 
