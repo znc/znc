@@ -32,6 +32,7 @@ Makefile
 /modules/modpython/modpython_biglib.cpp
 /modules/modpython/pyfunctions.cpp
 /modules/modpython/swigpyrun.h
+/modules/modpython/swig_version.h
 /modules/modpython/znc_core.py
 *.pyc
 __pycache__
@@ -39,6 +40,8 @@ __pycache__
 /unittest
 /test/gtest.zip
 /test/gtest-*
+/test/integration/CMakeCache.txt
+/test/integration/znctestconfig.h
 
 # Compiled Object files
 *.o
@@ -81,3 +84,7 @@ CMakeFiles/
 # LSP
 .clangd/
 compile_commands.json
+
+# Cygwin
+*.dll
+*.exe
