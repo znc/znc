@@ -1455,11 +1455,6 @@ TEST_F(ZNCTest, MotdBufferDoesNotAccumulate376) {
 
     client.Close();
     client = LoginClient();
-    ircd.Write(":server 001 nick :Hello");
-
-    ircd.Write(":server 375 nick :- server Message of the Day -");
-    ircd.Write(":server 372 nick :- Hello world.");
-    ircd.Write(":server 376 nick :End of /MOTD command");
 
     client.ReadUntil("End of /MOTD command");
 
