@@ -336,6 +336,31 @@ TEST_F(ZNCTest, KeepNickModule) {
     client.ReadUntil(
         ":*keepnick!keepnick@znc.in PRIVMSG user_ "
         ":Unable to obtain nick user: Nope :-P, #error");
+
+    client.Write("PRIVMSG *keepnick :state");
+    client.ReadUntil("Currently disabled");
+
+    client.Write("NICK user_");
+    ircd.ReadUntil("NICK user_");
+    client.Write("JOIN #test");
+    ircd.ReadUntil("JOIN #test");
+    ircd.Write(":server 353 nick = #test :user_ user");
+    ircd.Write(":server 366 nick #test :End of /NAMES list");
+
+    client.Write("PRIVMSG *keepnick :enable");
+    client.ReadUntil("Trying to get");
+
+    // OnQuitMessage
+    ircd.Write(":user QUIT :Leaving");
+    ircd.ReadUntil("NICK user");
+
+    // OnNickMessage
+    client.Write("NICK test");
+    ircd.ReadUntil("NICK test");
+    ircd.Write(":user!ident@host JOIN #test");
+    client.ReadUntil("JOIN");
+    ircd.Write(":user!ident@host NICK user2");
+    ircd.ReadUntil("NICK user");
 }
 
 TEST_F(ZNCTest, ModuleCSRFOverride) {
