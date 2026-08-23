@@ -209,20 +209,24 @@ class CChanAttach : public CModule {
         }
     }
 
-    EModRet OnChanNotice(CNick& Nick, CChan& Channel,
-                         CString& sMessage) override {
-        TryAttach(Nick, Channel, sMessage);
+    EModRet OnChanNoticeMessage(CNoticeMessage& Message) override {
+        CString sText = Message.GetText();
+        TryAttach(Message.GetNick(), *Message.GetChan(), sText);
+        Message.SetText(sText);
         return CONTINUE;
     }
 
-    EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override {
-        TryAttach(Nick, Channel, sMessage);
+    EModRet OnChanTextMessage(CTextMessage& Message) override {
+        CString sText = Message.GetText();
+        TryAttach(Message.GetNick(), *Message.GetChan(), sText);
+        Message.SetText(sText);
         return CONTINUE;
     }
 
-    EModRet OnChanAction(CNick& Nick, CChan& Channel,
-                         CString& sMessage) override {
-        TryAttach(Nick, Channel, sMessage);
+    EModRet OnChanActionMessage(CActionMessage& Message) override {
+        CString sText = Message.GetText();
+        TryAttach(Message.GetNick(), *Message.GetChan(), sText);
+        Message.SetText(sText);
         return CONTINUE;
     }
 

@@ -291,6 +291,8 @@ TEST_F(ZNCTest, AutoAttachModule) {
     ircd.Write(":nick JOIN :#znc");
     ircd.Write(":server 353 nick #znc :nick");
     ircd.Write(":server 366 nick #znc :End of /NAMES list");
+
+    // OnChanTextMessage
     ircd.Write(":foo PRIVMSG #znc :hi");
     client.ReadUntil(":foo PRIVMSG");
     client.Write("detach #znc");
@@ -298,6 +300,24 @@ TEST_F(ZNCTest, AutoAttachModule) {
     ircd.Write(":foo PRIVMSG #znc :hello");
     ircd.ReadUntil("TEST");
     client.ReadUntil("hello");
+
+    // OnChanActionMessage
+    ircd.Write(":foo PRIVMSG #znc :hi");
+    client.ReadUntil(":foo PRIVMSG");
+    client.Write("detach #znc");
+    client.ReadUntil("Detached");
+    ircd.Write(":foo PRIVMSG #znc :\001ACTION hello\001");
+    ircd.ReadUntil("TEST");
+    client.ReadUntil("\001ACTION hello\001");
+
+    // OnChanNoticeMessage
+    ircd.Write(":foo NOTICE #znc :hi");
+    client.ReadUntil(":foo NOTICE");
+    client.Write("detach #znc");
+    client.ReadUntil("Detached");
+    ircd.Write(":foo NOTICE #znc :hello NOTICE");
+    ircd.ReadUntil("TEST");
+    client.ReadUntil("hello NOTICE");
 }
 
 TEST_F(ZNCTest, KeepNickModule) {
