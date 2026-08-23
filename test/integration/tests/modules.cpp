@@ -928,5 +928,34 @@ TEST_F(ZNCTest, KickRejoinModule) {
     ircd.ReadUntil("JOIN #test");
 }
 
+TEST_F(ZNCTest, NickServModule) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+
+    client.Write("znc loadmod nickserv");
+    client.ReadUntil("Loaded module");
+
+    client.Write("PRIVMSG *nickserv :set hunter2");
+    client.ReadUntil("Password set");
+
+    ircd.Write(":server 001 nick :Hello");
+
+    // OnPrivNoticeMessage
+    ircd.Write(
+        ":NickServ!services@network NOTICE nick :This nickname is registered. "
+        "Please choose a different nickname, or identify via /msg NickServ "
+        "identify <password>.");
+    ircd.ReadUntil("NICKSERV IDENTIFY hunter2");
+
+    // OnPrivTextMessage
+    ircd.Write(
+        ":NickServ!services@network PRIVMSG nick :This nickname is registered. "
+        "Please choose a different nickname, or identify via /msg NickServ "
+        "identify <password>.");
+    ircd.ReadUntil("NICKSERV IDENTIFY hunter2");
+}
+
+
 }  // namespace
 }  // namespace znc_inttest

@@ -128,13 +128,13 @@ class CNickServ : public CModule {
         }
     }
 
-    EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override {
-        HandleMessage(Nick, sMessage);
+    EModRet OnPrivTextMessage(CTextMessage& Message) override {
+        HandleMessage(Message.GetNick(), Message.GetText());
         return CONTINUE;
     }
 
-    EModRet OnPrivNotice(CNick& Nick, CString& sMessage) override {
-        HandleMessage(Nick, sMessage);
+    EModRet OnPrivNoticeMessage(CNoticeMessage& Message) override {
+        HandleMessage(Message.GetNick(), Message.GetText());
         return CONTINUE;
     }
 };
