@@ -911,5 +911,22 @@ TEST_F(ZNCTest, FloodDetachModule) {
     client.ReadUntil("Channel #test-ctcp was flooded");
 }
 
+TEST_F(ZNCTest, KickRejoinModule) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+
+    client.Write("znc loadmod kickrejoin");
+    client.ReadUntil("Loaded module");
+
+    ircd.Write(":server 001 nick :Hello");
+    ircd.Write(":nick JOIN :#test");
+    ircd.Write(":server 353 nick = #test :nick @foobar");
+    ircd.Write(":server 366 nick #test :End of /NAMES list");
+
+    ircd.Write(":foobar!user@host KICK #test nick :Kicked!");
+    ircd.ReadUntil("JOIN #test");
+}
+
 }  // namespace
 }  // namespace znc_inttest

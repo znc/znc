@@ -109,15 +109,16 @@ class CRejoinMod : public CModule {
             PutModule(t_s("Rejoin delay is disabled"));
     }
 
-    void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& pChan,
-                const CString& sMessage) override {
+    void OnKickMessage(CKickMessage& Message) override {
+        const CString sKickedNick = Message.GetKickedNick();
+        CChan& Channel = *Message.GetChan();
         if (GetNetwork()->GetCurNick().Equals(sKickedNick)) {
             if (!delay) {
-                PutIRC("JOIN " + pChan.GetName() + " " + pChan.GetKey());
-                pChan.Enable();
+                PutIRC("JOIN " + Channel.GetName() + " " + Channel.GetKey());
+                Channel.Enable();
                 return;
             }
-            AddTimer(new CRejoinJob(this, delay, 1, "Rejoin " + pChan.GetName(),
+            AddTimer(new CRejoinJob(this, delay, 1, "Rejoin " + Channel.GetName(),
                                     "Rejoin channel after a delay"));
         }
     }
