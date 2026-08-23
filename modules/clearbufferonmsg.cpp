@@ -68,37 +68,37 @@ class CClearBufferOnMsgMod : public CModule {
         }
     }
 
-    EModRet OnUserMsg(CString& sTarget, CString& sMessage) override {
+    EModRet OnUserTextMessage(CTextMessage& Message) override {
         if (m_bRules[RULE_MSG]) ClearAllBuffers();
         return CONTINUE;
     }
 
-    EModRet OnUserCTCP(CString& sTarget, CString& sMessage) override {
+    EModRet OnUserCTCPMessage(CCTCPMessage& Message) override {
         if (m_bRules[RULE_CTCP]) ClearAllBuffers();
         return CONTINUE;
     }
 
-    EModRet OnUserAction(CString& sTarget, CString& sMessage) override {
+    EModRet OnUserActionMessage(CActionMessage& Message) override {
         if (m_bRules[RULE_ACTION]) ClearAllBuffers();
         return CONTINUE;
     }
 
-    EModRet OnUserNotice(CString& sTarget, CString& sMessage) override {
+    EModRet OnUserNoticeMessage(CNoticeMessage& Message) override {
         if (m_bRules[RULE_NOTICE]) ClearAllBuffers();
         return CONTINUE;
     }
 
-    EModRet OnUserPart(CString& sChannel, CString& sMessage) override {
+    EModRet OnUserPartMessage(CPartMessage& Message) override {
         if (m_bRules[RULE_PART]) ClearAllBuffers();
         return CONTINUE;
     }
 
-    EModRet OnUserTopic(CString& sChannel, CString& sTopic) override {
+    EModRet OnUserTopicMessage(CTopicMessage& Message) override {
         if (m_bRules[RULE_TOPIC]) ClearAllBuffers();
         return CONTINUE;
     }
 
-    EModRet OnUserQuit(CString& sMessage) override {
+    EModRet OnUserQuitMessage(CQuitMessage& Message) override {
         if (m_bRules[RULE_QUIT]) ClearAllBuffers();
         return CONTINUE;
     }

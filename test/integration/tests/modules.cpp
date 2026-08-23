@@ -699,5 +699,103 @@ TEST_F(ZNCTest, ChanSaverModule) {
     client.ReadUntil("No channels matching [#test] found");
 }
 
+TEST_F(ZNCTest, ClearBufferOnMsgModule) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+
+    client.Write("znc loadmod clearbufferonmsg");
+    client.ReadUntil("Loaded module");
+
+    ircd.Write(":server 001 nick :Hello");
+    ircd.Write(":nick JOIN :#test");
+    ircd.Write(":server 353 nick = #test :nick someone");
+    ircd.Write(":server 366 nick #test :End of /NAMES list");
+    client.ReadUntil("End of /NAMES");
+
+    // OnUserTextMessage
+    ircd.Write(":someone!user@host PRIVMSG #test :testing - OnUserTextMessage");
+    client.ReadUntil("testing - OnUserTextMessage");
+    client.Write("PRIVMSG #test :test");
+    ircd.ReadUntil("PRIVMSG");
+    client.Write("DETACH #test");
+    client.ReadUntil("Detached");
+    client.Write("ATTACH #test");
+    client.ReadUntil("End of /NAMES list");
+    QByteArray remainder = client.ReadRemainder();
+    EXPECT_THAT(remainder, Not(HasSubstr("OnUserTextMessage")))
+        << "OnUserTextMessage failed to clear buffer";
+
+    // OnUserActionMessage
+    ircd.Write(":someone!user@host PRIVMSG #test :testing - OnUserActionMessage");
+    client.ReadUntil("testing - OnUserActionMessage");
+    client.Write("PRIVMSG #test :\001ACTION testing\001");
+    ircd.ReadUntil("PRIVMSG");
+    client.Write("DETACH #test");
+    client.ReadUntil("Detached");
+    client.Write("ATTACH #test");
+    client.ReadUntil("End of /NAMES list");
+    remainder = client.ReadRemainder();
+    EXPECT_THAT(remainder, Not(HasSubstr("OnUserActionMessage")))
+        << "OnUserActionMessage failed to clear buffer";
+
+    // OnUserCTCPMessage
+    ircd.Write(":someone!user@host PRIVMSG #test :testing - OnUserCTCPMessage");
+    client.ReadUntil("testing - OnUserCTCPMessage");
+    client.Write("PRIVMSG #test :\001VERSION\001");
+    ircd.ReadUntil("PRIVMSG");
+    client.Write("DETACH #test");
+    client.ReadUntil("Detached");
+    client.Write("ATTACH #test");
+    client.ReadUntil("End of /NAMES list");
+    remainder = client.ReadRemainder();
+    EXPECT_THAT(remainder, Not(HasSubstr("OnUserCTCPMessage")))
+        << "OnUserCTCPMessage failed to clear buffer";
+
+    // OnUserNoticeMessage
+    ircd.Write(":someone!user@host PRIVMSG #test :testing - OnUserNoticeMessage");
+    client.ReadUntil("testing - OnUserNoticeMessage");
+    client.Write("NOTICE #test :testing");
+    ircd.ReadUntil("NOTICE");
+    client.Write("DETACH #test");
+    client.ReadUntil("Detached");
+    client.Write("ATTACH #test");
+    client.ReadUntil("End of /NAMES list");
+    remainder = client.ReadRemainder();
+    EXPECT_THAT(remainder, Not(HasSubstr("OnUserNoticeMessage")))
+        << "OnUserNoticeMessage failed to clear buffer";
+
+    // OnUserPartMessage
+    ircd.Write(":someone!user@host PRIVMSG #test :testing - OnUserPartMessage");
+    client.ReadUntil("testing - OnUserPartMessage");
+    client.Write("PART #test :testing");
+    ircd.ReadUntil("PART");
+    client.Write("JOIN #test");
+    ircd.ReadUntil("JOIN");
+    ircd.Write(":server 353 nick = #test :nick someone");
+    ircd.Write(":server 366 nick #test :End of /NAMES list");
+    client.ReadUntil("End of /NAMES");
+    client.Write("DETACH #test");
+    client.ReadUntil("Detached");
+    client.Write("ATTACH #test");
+    client.ReadUntil("End of /NAMES list");
+    remainder = client.ReadRemainder();
+    EXPECT_THAT(remainder, Not(HasSubstr("OnUserPartMessage")))
+        << "OnUserPartMessage failed to clear buffer";
+
+    // OnUserTopicMessage
+    ircd.Write(":someone!user@host PRIVMSG #test :testing - OnUserTopicMessage");
+    client.ReadUntil("testing - OnUserTopicMessage");
+    client.Write("TOPIC #test :testing");
+    ircd.ReadUntil("TOPIC");
+    client.Write("DETACH #test");
+    client.ReadUntil("Detached");
+    client.Write("ATTACH #test");
+    client.ReadUntil("End of /NAMES list");
+    remainder = client.ReadRemainder();
+    EXPECT_THAT(remainder, Not(HasSubstr("OnUserTopicMessage")))
+        << "OnUserTopicMessage failed to clear buffer";
+}
+
 }  // namespace
 }  // namespace znc_inttest
