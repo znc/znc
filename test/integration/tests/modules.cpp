@@ -118,24 +118,77 @@ TEST_F(ZNCTest, ShellModule) {
 }
 
 TEST_F(ZNCTest, WatchModule) {
-    // TODO test other messages
     // TODO test options
     auto znc = Run();
     auto ircd = ConnectIRCd();
     auto client = LoginClient();
     client.Write("znc loadmod watch");
+    client.ReadUntil("Loaded module");
+
     client.Write("PRIVMSG *watch :add *");
     client.ReadUntil("Adding entry:");
+
+    client.Write("PRIVMSG *watch :add * *spaces *word1 word2*");
+    client.ReadUntil("Adding entry:");
+
     ircd.Write(":server 001 nick :Hello");
     ircd.Write(":nick JOIN :#znc");
+
+    // OnChanCTCPMessage / OnChanActionMessage
     ircd.Write(":n!i@h PRIVMSG #znc :\001ACTION foo\001");
     client.ReadUntil(
         ":$*!watch@znc.in PRIVMSG nick :* CTCP: n [ACTION foo] to [#znc]");
-    client.Write("PRIVMSG *watch :add * *spaces *word1 word2*");
-    client.ReadUntil("Adding entry:");
+
+    // OnChanNoticeMessage
+    ircd.Write(":n!i@h NOTICE #znc :Channel notice");
+    client.ReadUntil(":$*!watch@znc.in PRIVMSG nick :-n:#znc- Channel notice");
+
+    // OnChanTextMessage
     ircd.Write(":n!i@h PRIVMSG #znc :SOMETHING word1 word2 SOMETHING");
     client.ReadUntil(
-        ":*spaces!watch@znc.in PRIVMSG nick :<n:#znc> SOMETHING word1 word2 SOMETHING");
+        ":*spaces!watch@znc.in PRIVMSG nick :<n:#znc> SOMETHING word1 word2 "
+        "SOMETHING");
+
+    // OnPrivCTCPMessage / OnPrivActionMessage
+    ircd.Write(":n!i@h PRIVMSG nick :\001ACTION foo\001");
+    client.ReadUntil(":$*!watch@znc.in PRIVMSG nick :* CTCP: n [ACTION foo]");
+
+    // OnPrivNoticeMessage
+    ircd.Write(":n!i@h NOTICE nick :Private notice");
+    client.ReadUntil(":$*!watch@znc.in PRIVMSG nick :-n- Private notice");
+
+    // OnPrivTextMessage
+    ircd.Write(":n!i@h PRIVMSG nick :Hello there");
+    client.ReadUntil(":$*!watch@znc.in PRIVMSG nick :<n> Hello there");
+
+    // OnJoinMessage
+    ircd.Write(":join!i@h JOIN :#znc");
+    client.ReadUntil(":$*!watch@znc.in PRIVMSG nick :* join (i@h) joins #znc");
+
+    // OnKickMessage
+    ircd.Write(":kick!i@h JOIN :#znc");
+    ircd.Write(":n!i@h KICK #znc kick :Test Kick");
+    client.ReadUntil(":$*!watch@znc.in PRIVMSG nick :* n kicked kick from #znc because "
+        "[Test Kick]");
+
+    // OnNickMessage
+    ircd.Write(":someone!i@h JOIN :#znc");
+    ircd.Write(":someone!i@h NICK :newname");
+    client.ReadUntil(":$*!watch@znc.in PRIVMSG nick :* someone is now known as newname");
+
+    // OnPartMessage
+    ircd.Write(":part!i@h JOIN :#znc");
+    ircd.Write(":part!i@h PART #znc :Leaving");
+    client.ReadUntil(":$*!watch@znc.in PRIVMSG nick :* part (i@h) parts #znc(Leaving)");
+
+    // OnQuitMessage
+    ircd.Write(":quit!i@h JOIN :#znc");
+    ircd.Write(":quit!i@h QUIT :Goodbye");
+    client.ReadUntil(":$*!watch@znc.in PRIVMSG nick :* Quits: quit (i@h) (Goodbye)");
+
+    // OnRawMode
+    ircd.Write(":n!i@h MODE #znc +o op");
+    client.ReadUntil(":$*!watch@znc.in PRIVMSG nick :* n sets mode: +o op on #znc");
 }
 
 TEST_F(ZNCTest, CryptModule) {

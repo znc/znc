@@ -235,10 +235,10 @@ class CWatcherMod : public CModule {
 
         if (bWarn)
             sMessage = t_s("WARNING: malformed entry found while loading");
-        
+
         return true;
     }
-    
+
     void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes,
                    const CString& sArgs) override {
         Process(OpNick, "* " + OpNick.GetNick() + " sets mode: " + sModes +
@@ -246,88 +246,112 @@ class CWatcherMod : public CModule {
                 Channel.GetName());
     }
 
-    void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel,
-                const CString& sMessage) override {
+    void OnKickMessage(CKickMessage& Message) {
+        const CNick& OpNick = Message.GetNick();
+        const CString sKickedNick = Message.GetKickedNick();
+        CChan& Channel = *Message.GetChan();
+        const CString sMessage = Message.GetReason();
         Process(OpNick,
                 "* " + OpNick.GetNick() + " kicked " + sKickedNick + " from " +
                     Channel.GetName() + " because [" + sMessage + "]",
                 Channel.GetName());
     }
 
-    void OnQuit(const CNick& Nick, const CString& sMessage,
-                const vector<CChan*>& vChans) override {
+    void OnQuitMessage(CQuitMessage& Message,
+                       const vector<CChan*>& vChans) override {
+        const CNick& Nick = Message.GetNick();
         Process(Nick, "* Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() +
-                          "@" + Nick.GetHost() +
-                          ") "
-                          "(" +
-                          sMessage + ")",
-                "");
+                          "@" + Nick.GetHost() + ") (" + Message.GetReason() + ")", "");
     }
 
-    void OnJoin(const CNick& Nick, CChan& Channel) override {
-        Process(Nick, "* " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" +
-                          Nick.GetHost() + ") joins " + Channel.GetName(),
+    void OnJoinMessage(CJoinMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        CChan& Channel = *Message.GetChan();
+        Process(Nick,
+                "* " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" +
+                    Nick.GetHost() + ") joins " + Channel.GetName(),
                 Channel.GetName());
     }
 
-    void OnPart(const CNick& Nick, CChan& Channel,
-                const CString& sMessage) override {
-        Process(Nick, "* " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" +
-                          Nick.GetHost() + ") parts " + Channel.GetName() +
-                          "(" + sMessage + ")",
+    void OnPartMessage(CPartMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        CChan& Channel = *Message.GetChan();
+        const CString sMessage = Message.GetReason();
+        Process(Nick,
+                "* " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" +
+                    Nick.GetHost() + ") parts " + Channel.GetName() + "(" +
+                    sMessage + ")",
                 Channel.GetName());
     }
 
-    void OnNick(const CNick& OldNick, const CString& sNewNick,
-                const vector<CChan*>& vChans) override {
+    void OnNickMessage(CNickMessage& Message,
+                       const vector<CChan*>& vChans) override {
+        const CNick& OldNick = Message.GetNick();
+        const CString sNewNick = Message.GetNewNick();
         Process(OldNick,
                 "* " + OldNick.GetNick() + " is now known as " + sNewNick, "");
     }
 
-    EModRet OnCTCPReply(CNick& Nick, CString& sMessage) override {
+    EModRet OnCTCPReplyMessage(CCTCPMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        CString sMessage = Message.GetText();
         Process(Nick, "* CTCP: " + Nick.GetNick() + " reply [" + sMessage + "]",
                 "priv");
         return CONTINUE;
     }
 
-    EModRet OnPrivCTCP(CNick& Nick, CString& sMessage) override {
+    EModRet OnPrivCTCPMessage(CCTCPMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        CString sMessage = Message.GetText();
         Process(Nick, "* CTCP: " + Nick.GetNick() + " [" + sMessage + "]",
                 "priv");
         return CONTINUE;
     }
 
-    EModRet OnChanCTCP(CNick& Nick, CChan& Channel,
-                       CString& sMessage) override {
-        Process(Nick, "* CTCP: " + Nick.GetNick() + " [" + sMessage +
-                          "] to "
-                          "[" +
-                          Channel.GetName() + "]",
+    EModRet OnChanCTCPMessage(CCTCPMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        CString sMessage = Message.GetText();
+        CChan& Channel = *Message.GetChan();
+        Process(Nick,
+                "* CTCP: " + Nick.GetNick() + " [" + sMessage + "] to [" +
+                    Channel.GetName() + "]",
                 Channel.GetName());
         return CONTINUE;
     }
 
-    EModRet OnPrivNotice(CNick& Nick, CString& sMessage) override {
+    EModRet OnPrivNoticeMessage(CNoticeMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        CString sMessage = Message.GetText();
         Process(Nick, "-" + Nick.GetNick() + "- " + sMessage, "priv");
         return CONTINUE;
     }
 
-    EModRet OnChanNotice(CNick& Nick, CChan& Channel,
-                         CString& sMessage) override {
-        Process(Nick, "-" + Nick.GetNick() + ":" + Channel.GetName() + "- " +
-                          sMessage,
-                Channel.GetName());
+    EModRet OnChanNoticeMessage(CNoticeMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        CString sMessage = Message.GetText();
+        CChan& Channel = *Message.GetChan();
+        Process(
+            Nick,
+            "-" + Nick.GetNick() + ":" + Channel.GetName() + "- " + sMessage,
+            Channel.GetName());
         return CONTINUE;
     }
 
-    EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override {
+    EModRet OnPrivTextMessage(CTextMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        CString sMessage = Message.GetText();
         Process(Nick, "<" + Nick.GetNick() + "> " + sMessage, "priv");
         return CONTINUE;
     }
 
-    EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override {
-        Process(Nick, "<" + Nick.GetNick() + ":" + Channel.GetName() + "> " +
-                          sMessage,
-                Channel.GetName());
+    EModRet OnChanTextMessage(CTextMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        CString sMessage = Message.GetText();
+        CChan& Channel = *Message.GetChan();
+        Process(
+            Nick,
+            "<" + Nick.GetNick() + ":" + Channel.GetName() + "> " + sMessage,
+            Channel.GetName());
         return CONTINUE;
     }
 
@@ -361,7 +385,7 @@ class CWatcherMod : public CModule {
                 } else {
                     CQuery* pQuery = pNetwork->AddQuery(WatchEntry.GetTarget());
                     if (pQuery) {
-                        
+
                         pQuery->AddBuffer(":" + _NAMEDFMT(WatchEntry.GetTarget()) +
                                           "!watch@znc.in PRIVMSG {target} :{text}",
                                           sMessage);
@@ -406,13 +430,13 @@ class CWatcherMod : public CModule {
         bool bDetachedClientOnly = sLine.Token(2).ToBool();
         CString sTok = sLine.Token(1);
         unsigned int uIdx;
-        
+
         if (sTok == "*") {
             uIdx = ~0;
         } else {
             uIdx = sTok.ToUInt();
         }
-        
+
         if (uIdx == (unsigned int)~0) {
             for (list<CWatchEntry>::iterator it = m_lsWatchers.begin();
                  it != m_lsWatchers.end(); ++it) {
@@ -454,7 +478,7 @@ class CWatcherMod : public CModule {
         } else {
             uIdx = sTok.ToUInt();
         }
-        
+
         if (uIdx == (unsigned int)~0) {
             for (list<CWatchEntry>::iterator it = m_lsWatchers.begin();
                  it != m_lsWatchers.end(); ++it) {
@@ -571,7 +595,7 @@ class CWatcherMod : public CModule {
     void SetSources(const CString& sLine) {
         unsigned int uIdx = sLine.Token(1).ToUInt();
         CString sSources = sLine.Token(2, true);
-        
+
         uIdx--;  // "convert" index to zero based
         if (uIdx >= m_lsWatchers.size()) {
             PutModule(t_s("Invalid Id"));
@@ -594,7 +618,7 @@ class CWatcherMod : public CModule {
             SetDisabled(sTok.ToUInt(), false);
         }
     }
-    
+
     void Disable(const CString& sLine) {
         CString sTok = sLine.Token(1);
         if (sTok == "*") {
@@ -611,9 +635,9 @@ class CWatcherMod : public CModule {
     }
 
     void Remove(const CString& sLine) {
-        
+
         unsigned int uIdx = sLine.Token(1).ToUInt();
-        
+
         uIdx--;  // "convert" index to zero based
         if (uIdx >= m_lsWatchers.size()) {
             PutModule(t_s("Invalid Id"));
@@ -629,7 +653,7 @@ class CWatcherMod : public CModule {
     }
 
     void Watch(const CString& sLine) {
-    
+
         CString sHostMask = sLine.Token(1);
         CString sTarget = sLine.Token(2);
         CString sPattern = sLine.Token(3, true);
