@@ -152,31 +152,41 @@ class CFloodDetachMod : public CModule {
         }
     }
 
-    EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override {
-        Message(Channel);
+    EModRet OnChanTextMessage(CTextMessage& TextMessage) override {
+        CChan* pChan = TextMessage.GetChan();
+        if (pChan) {
+            Message(*pChan);
+        }
         return CONTINUE;
     }
 
-    // This also catches OnChanAction()
-    EModRet OnChanCTCP(CNick& Nick, CChan& Channel,
-                       CString& sMessage) override {
-        Message(Channel);
+    // This also catches OnChanActionMessage()
+    EModRet OnChanCTCPMessage(CCTCPMessage& TextMessage) override {
+        CChan* pChan = TextMessage.GetChan();
+        if (pChan) {
+            Message(*pChan);
+        }
         return CONTINUE;
     }
 
-    EModRet OnChanNotice(CNick& Nick, CChan& Channel,
-                         CString& sMessage) override {
-        Message(Channel);
+    EModRet OnChanNoticeMessage(CNoticeMessage& TextMessage) override {
+        CChan* pChan = TextMessage.GetChan();
+        if (pChan) {
+            Message(*pChan);
+        }
         return CONTINUE;
     }
 
-    EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) override {
-        Message(Channel);
+    EModRet OnTopicMessage(CTopicMessage& TextMessage) override {
+        CChan* pChan = TextMessage.GetChan();
+        if (pChan) {
+            Message(*pChan);
+        }
         return CONTINUE;
     }
 
-    void OnNick(const CNick& Nick, const CString& sNewNick,
-                const std::vector<CChan*>& vChans) override {
+    void OnNickMessage(CNickMessage& NickMessage,
+                       const std::vector<CChan*>& vChans) override {
         for (CChan* pChan : vChans) {
             Message(*pChan);
         }

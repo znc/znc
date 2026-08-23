@@ -820,5 +820,71 @@ TEST_F(ZNCTest, CtcpFloodModule) {
     client.ReadUntil("Limit reached by");
 }
 
+TEST_F(ZNCTest, FloodDetachModule) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+
+    client.Write("znc loadmod flooddetach");
+    client.ReadUntil("Loaded module");
+    ircd.Write(":server 001 nick :Hello");
+
+    auto JoinChan = [&](const QString& sChan) {
+        ircd.Write((":nick JOIN :" + sChan).toUtf8());
+        ircd.Write((":server 353 nick = " + sChan + " :nick someone").toUtf8());
+        ircd.Write(
+            (":server 366 nick " + sChan + " :End of /NAMES list").toUtf8());
+        client.ReadUntil("End of /NAMES");
+    };
+    // Just use 10 for everything.
+
+    // OnChanMessage
+    JoinChan("#test-privmsg");
+    for (int i = 1; i <= 10; i++) {
+        ircd.Write((":someone!user@host PRIVMSG #test-privmsg :message" +
+                    QString::number(i))
+                       .toUtf8());
+    }
+    client.ReadUntil("Channel #test-privmsg was flooded");
+
+    // OnNickMessage
+    JoinChan("#test-nick");
+    QString sNick = "someone";
+    for (int i = 1; i <= 10; i++) {
+        QString sNewNick = "someone" + QString::number(i + 1);
+        ircd.Write((":" + sNick + "!user@host NICK " + sNewNick).toUtf8());
+        sNick = sNewNick;
+    }
+    client.ReadUntil("Channel #test-nick was flooded");
+
+    // OnTopicMessage
+    JoinChan("#test-topic");
+    for (int i = 1; i <= 10; i++) {
+        ircd.Write(
+            (":someone!user@host TOPIC #test-topic :TOPIC" + QString::number(i))
+                .toUtf8());
+    }
+    client.ReadUntil("Channel #test-topic was flooded");
+
+    // OnNoticeMessage
+    JoinChan("#test-notice");
+    for (int i = 1; i <= 10; i++) {
+        ircd.Write((":someone!user@host NOTICE #test-notice :notice" +
+                    QString::number(i))
+                       .toUtf8());
+    }
+    client.ReadUntil("Channel #test-notice was flooded");
+
+    // OnChanActionMessage / OnChanCTCPMessage
+    JoinChan("#test-ctcp");
+    for (int i = 1; i <= 10; i++) {
+        ircd.Write((":someone!user@host PRIVMSG #test-ctcp :\001"
+                    "ACTION action" +
+                    QString::number(i) + "\001")
+                       .toUtf8());
+    }
+    client.ReadUntil("Channel #test-ctcp was flooded");
+}
+
 }  // namespace
 }  // namespace znc_inttest
