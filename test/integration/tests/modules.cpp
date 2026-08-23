@@ -652,5 +652,28 @@ TEST_F(ZNCTest, AutoReplyModule) {
     ircd.Write(":thirduser!third@host PRIVMSG nick :Are you there?");
 }
 
+TEST_F(ZNCTest, BounceDCCModule) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+
+    client.Write("znc loadmod bouncedcc");
+    client.ReadUntil("Loaded module");
+
+    ircd.Write(":server 001 nick :Hello");
+
+    // OnUserCTCPMessage
+    client.Write("PRIVMSG friend :\001DCC CHAT chat 3232235521 12345\001");
+    QByteArray line;
+    ircd.ReadUntilAndGet("PRIVMSG friend :\001DCC CHAT chat", line);
+    EXPECT_THAT(line.toStdString(), Not(HasSubstr("3232235521 12345")));
+
+    // OnPrivCTCPMessage
+    ircd.Write(":friend!user@host PRIVMSG nick :\001DCC CHAT chat 3232235521 54321\001");
+    QByteArray line2;
+    client.ReadUntilAndGet(":friend!user@host PRIVMSG nick :\001DCC CHAT chat", line2);
+    EXPECT_THAT(line2.toStdString(), Not(HasSubstr("3232235521 54321")));
+}
+
 }  // namespace
 }  // namespace znc_inttest

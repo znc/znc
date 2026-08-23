@@ -163,7 +163,9 @@ class CBounceDCCMod : public CModule {
 
     bool UseClientIP() { return GetNV("UseClientIP").ToBool(); }
 
-    EModRet OnUserCTCP(CString& sTarget, CString& sMessage) override {
+    EModRet OnUserCTCPMessage(CCTCPMessage& Message) override {
+        CString sTarget = Message.GetTarget();
+        CString sMessage = Message.GetText();
         if (sMessage.StartsWith("DCC ")) {
             CString sType =
                 sMessage.Token(1, false, " ", false, "\"", "\"", true);
@@ -236,7 +238,9 @@ class CBounceDCCMod : public CModule {
         return CONTINUE;
     }
 
-    EModRet OnPrivCTCP(CNick& Nick, CString& sMessage) override {
+    EModRet OnPrivCTCPMessage(CCTCPMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        CString sMessage = Message.GetText();
         CIRCNetwork* pNetwork = GetNetwork();
         if (sMessage.StartsWith("DCC ") && pNetwork->IsUserAttached()) {
             // DCC CHAT chat 2453612361 44592
