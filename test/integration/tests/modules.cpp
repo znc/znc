@@ -675,5 +675,29 @@ TEST_F(ZNCTest, BounceDCCModule) {
     EXPECT_THAT(line2.toStdString(), Not(HasSubstr("3232235521 54321")));
 }
 
+TEST_F(ZNCTest, ChanSaverModule) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+
+    client.Write("PRIVMSG *controlpanel :GetChan InConfig $me $network #test");
+    client.ReadUntil("No channels matching [#test] found");
+
+    client.Write("JOIN #test");
+    ircd.Write(":server 001 nick :Hello");
+    ircd.ReadUntil("JOIN #test");
+    ircd.Write(":nick JOIN :#test");
+
+    client.Write("PRIVMSG *controlpanel :GetChan InConfig $me $network #test");
+    client.ReadUntil("InConfig = true");
+
+    client.Write("PART #test");
+    ircd.ReadUntil("PART #test");
+    ircd.Write(":nick PART #test");
+
+    client.Write("PRIVMSG *controlpanel :GetChan InConfig $me $network #test");
+    client.ReadUntil("No channels matching [#test] found");
+}
+
 }  // namespace
 }  // namespace znc_inttest

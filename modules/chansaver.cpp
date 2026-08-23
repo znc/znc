@@ -64,15 +64,18 @@ class CChanSaverMod : public CModule {
         }
     }
 
-    void OnJoin(const CNick& Nick, CChan& Channel) override {
+    void OnJoinMessage(CJoinMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        CChan& Channel = *Message.GetChan();
         if (!Channel.InConfig() &&
             GetNetwork()->GetIRCNick().NickEquals(Nick.GetNick())) {
             Channel.SetInConfig(true);
         }
     }
 
-    void OnPart(const CNick& Nick, CChan& Channel,
-                const CString& sMessage) override {
+    void OnPartMessage(CPartMessage& Message) override {
+        const CNick& Nick = Message.GetNick();
+        CChan& Channel = *Message.GetChan();
         if (Channel.InConfig() &&
             GetNetwork()->GetIRCNick().NickEquals(Nick.GetNick())) {
             Channel.SetInConfig(false);
