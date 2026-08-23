@@ -65,8 +65,8 @@ class CAutoReplyMod : public CModule {
         PutIRC("NOTICE " + sNick + " :" + GetReply());
     }
 
-    EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override {
-        Handle(Nick.GetNick());
+    EModRet OnPrivTextMessage(CTextMessage& Message) override {
+        Handle(Message.GetNick().GetNick());
         return CONTINUE;
     }
 

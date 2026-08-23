@@ -628,5 +628,29 @@ TEST_F(ZNCTest, StripControlsModule) {
 
 }
 
+TEST_F(ZNCTest, AutoReplyModule) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+
+    client.Write("znc loadmod autoreply I'm currently away");
+    client.ReadUntil("Loaded module");
+
+    ircd.Write(":server 001 nick :Hello");
+
+    client.Write("QUIT :Going away");
+    client.Close();
+
+    ircd.Write(":testuser!test@host PRIVMSG nick :Hello there");
+    ircd.ReadUntil("NOTICE testuser :I'm currently away");
+
+    ircd.Write(":testuser!test@host PRIVMSG nick :Another message");
+    ircd.Write(":otheruser!other@host PRIVMSG nick :Hi nick");
+    ircd.ReadUntil("NOTICE otheruser :I'm currently away");
+
+    auto client2 = LoginClient();
+    ircd.Write(":thirduser!third@host PRIVMSG nick :Are you there?");
+}
+
 }  // namespace
 }  // namespace znc_inttest
