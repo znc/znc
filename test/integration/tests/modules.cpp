@@ -797,5 +797,28 @@ TEST_F(ZNCTest, ClearBufferOnMsgModule) {
         << "OnUserTopicMessage failed to clear buffer";
 }
 
+TEST_F(ZNCTest, CtcpFloodModule) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+
+    client.Write("znc loadmod ctcpflood");
+    client.ReadUntil("Loaded module");
+
+    ircd.Write(":server 001 nick :Hello");
+    ircd.Write(":nick JOIN :#test");
+    ircd.Write(":server 353 nick = #test :nick someone");
+    ircd.Write(":server 366 nick #test :End of /NAMES list");
+
+    ircd.Write(":someone!user@host PRIVMSG #test :\001message1\001");
+    ircd.Write(":someone!user@host PRIVMSG #test :\001message2\001");
+    ircd.Write(":someone!user@host PRIVMSG #test :\001message3\001");
+    ircd.Write(":someone!user@host PRIVMSG #test :\001message4\001");
+    ircd.Write(":someone!user@host PRIVMSG #test :\001message5\001");
+    ircd.Write(":someone!user@host PRIVMSG #test :\001message6\001");
+    ircd.Write(":someone!user@host PRIVMSG #test :\001message7\001");
+    client.ReadUntil("Limit reached by");
+}
+
 }  // namespace
 }  // namespace znc_inttest

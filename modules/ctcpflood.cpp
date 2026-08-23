@@ -82,13 +82,12 @@ class CCtcpFloodMod : public CModule {
         return HALT;
     }
 
-    EModRet OnPrivCTCP(CNick& Nick, CString& sMessage) override {
-        return Message(Nick, sMessage);
+    EModRet OnPrivCTCPMessage(CCTCPMessage& CTCPMessage) override {
+        return Message(CTCPMessage.GetNick(), CTCPMessage.GetText());
     }
 
-    EModRet OnChanCTCP(CNick& Nick, CChan& Channel,
-                       CString& sMessage) override {
-        return Message(Nick, sMessage);
+    EModRet OnChanCTCPMessage(CCTCPMessage& CTCPMessage) override {
+        return Message(CTCPMessage.GetNick(), CTCPMessage.GetText());
     }
 
     void OnSecsCommand(const CString& sCommand) {
