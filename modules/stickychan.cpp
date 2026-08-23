@@ -36,11 +36,11 @@ class CStickyChan : public CModule {
 
     bool OnLoad(const CString& sArgs, CString& sMessage) override;
 
-    EModRet OnUserPart(CString& sChannel, CString& sMessage) override {
+    EModRet OnUserPartMessage(CPartMessage& Message) override {
         if (!GetNetwork()) {
             return CONTINUE;
         }
-
+        CString sChannel = Message.GetTarget();
         for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
             if (sChannel.Equals(it->first)) {
                 CChan* pChan = GetNetwork()->FindChan(sChannel);

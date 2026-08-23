@@ -956,6 +956,26 @@ TEST_F(ZNCTest, NickServModule) {
     ircd.ReadUntil("NICKSERV IDENTIFY hunter2");
 }
 
+TEST_F(ZNCTest, StickyChanModule) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+
+    client.Write("znc loadmod stickychan");
+    client.ReadUntil("Loaded module");
+
+    client.Write("PRIVMSG *stickychan :stick #sticky");
+    client.ReadUntil("Stuck #stick");
+
+    ircd.Write("001 nick Welcome");
+    ircd.Write(":nick JOIN :#sticky");
+
+    client.Write("PART #sticky :leaving");
+
+    client.Write("PRIVMSG *controlpanel :GetChan InConfig $me $network #sticky");
+    client.ReadUntil("InConfig = true");
+}
+
 
 }  // namespace
 }  // namespace znc_inttest
