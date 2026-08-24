@@ -714,11 +714,16 @@ TEST_F(ZNCTest, AutoReplyModule) {
     client.Write("znc loadmod autoreply I'm currently away");
     client.ReadUntil("Loaded module");
 
+    // Set for 1 second instead of waiting 15 seconds.
+    client.Write("PRIVMSG *simple_away :SetTimer 1");
+    client.ReadUntil("1 second");
+
     ircd.Write(":server 001 nick :Hello");
 
     client.Write("QUIT :Going away");
     client.Close();
 
+    ircd.ReadUntil("AWAY :Auto away");
     ircd.Write(":testuser!test@host PRIVMSG nick :Hello there");
     ircd.ReadUntil("NOTICE testuser :I'm currently away");
 
@@ -766,6 +771,7 @@ TEST_F(ZNCTest, ChanSaverModule) {
     ircd.ReadUntil("JOIN #test");
     ircd.Write(":nick JOIN :#test");
 
+    client.ReadUntil(":nick JOIN :#test");
     client.Write("PRIVMSG *controlpanel :GetChan InConfig $me $network #test");
     client.ReadUntil("InConfig = true");
 
@@ -1018,12 +1024,15 @@ TEST_F(ZNCTest, StickyChanModule) {
     client.ReadUntil("Loaded module");
 
     client.Write("PRIVMSG *stickychan :stick #sticky");
-    client.ReadUntil("Stuck #stick");
+    client.ReadUntil("Stuck #sticky");
 
     ircd.Write("001 nick Welcome");
     ircd.Write(":nick JOIN :#sticky");
 
+    client.ReadUntil("JOIN :#sticky");
     client.Write("PART #sticky :leaving");
+
+    ASSERT_THAT(ircd.ReadRemainder(), Not(HasSubstr("PART")));
 
     client.Write("PRIVMSG *controlpanel :GetChan InConfig $me $network #sticky");
     client.ReadUntil("InConfig = true");
