@@ -763,21 +763,26 @@ TEST_F(ZNCTest, ChanSaverModule) {
     auto ircd = ConnectIRCd();
     auto client = LoginClient();
 
+    ircd.Write(":server 001 nick :Hello");
+    client.ReadUntil("001");
+
     client.Write("PRIVMSG *controlpanel :GetChan InConfig $me $network #test");
     client.ReadUntil("No channels matching [#test] found");
 
     client.Write("JOIN #test");
-    ircd.Write(":server 001 nick :Hello");
     ircd.ReadUntil("JOIN #test");
-    ircd.Write(":nick JOIN :#test");
+    ircd.Write(":nick JOIN #test");
+    ircd.Write(":server 353 nick #test :nick");
+    ircd.Write(":server 366 nick #test :End of /NAMES list.");
+    client.ReadUntil(":nick JOIN #test");
 
-    client.ReadUntil(":nick JOIN :#test");
     client.Write("PRIVMSG *controlpanel :GetChan InConfig $me $network #test");
     client.ReadUntil("InConfig = true");
 
     client.Write("PART #test");
     ircd.ReadUntil("PART #test");
     ircd.Write(":nick PART #test");
+    client.ReadUntil(":nick PART #test");
 
     client.Write("PRIVMSG *controlpanel :GetChan InConfig $me $network #test");
     client.ReadUntil("No channels matching [#test] found");
