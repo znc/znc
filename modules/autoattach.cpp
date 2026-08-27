@@ -187,7 +187,7 @@ class CChanAttach : public CModule {
         return true;
     }
 
-    void TryAttach(const CNick& Nick, CChan& Channel, CString& Message) {
+    void TryAttach(const CNick& Nick, CChan& Channel, const CString& Message) {
         const CString& sChan = Channel.GetName();
         const CString& sHost = Nick.GetHostMask();
         const CString& sMessage = Message;
@@ -210,23 +210,17 @@ class CChanAttach : public CModule {
     }
 
     EModRet OnChanNoticeMessage(CNoticeMessage& Message) override {
-        CString sText = Message.GetText();
-        TryAttach(Message.GetNick(), *Message.GetChan(), sText);
-        Message.SetText(sText);
+        TryAttach(Message.GetNick(), *Message.GetChan(), Message.GetText());
         return CONTINUE;
     }
 
     EModRet OnChanTextMessage(CTextMessage& Message) override {
-        CString sText = Message.GetText();
-        TryAttach(Message.GetNick(), *Message.GetChan(), sText);
-        Message.SetText(sText);
+        TryAttach(Message.GetNick(), *Message.GetChan(), Message.GetText());
         return CONTINUE;
     }
 
     EModRet OnChanActionMessage(CActionMessage& Message) override {
-        CString sText = Message.GetText();
-        TryAttach(Message.GetNick(), *Message.GetChan(), sText);
-        Message.SetText(sText);
+        TryAttach(Message.GetNick(), *Message.GetChan(), Message.GetText());
         return CONTINUE;
     }
 
