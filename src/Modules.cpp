@@ -36,67 +36,45 @@ bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
 #warning "your crap box doesn't define RTLD_LOCAL !?"
 #endif
 
-#define MODUNLOADCHK(func)                              \
-    for (CModule * pMod : *this) {                      \
-        try {                                           \
-            CClient* pOldClient = pMod->GetClient();    \
-            pMod->SetClient(m_pClient);                 \
-            CUser* pOldUser = nullptr;                  \
-            if (m_pUser) {                              \
-                pOldUser = pMod->GetUser();             \
-                pMod->SetUser(m_pUser);                 \
-            }                                           \
-            CIRCNetwork* pNetwork = nullptr;            \
-            if (m_pNetwork) {                           \
-                pNetwork = pMod->GetNetwork();          \
-                pMod->SetNetwork(m_pNetwork);           \
-            }                                           \
-            pMod->func;                                 \
-            if (m_pUser) pMod->SetUser(pOldUser);       \
-            if (m_pNetwork) pMod->SetNetwork(pNetwork); \
-            pMod->SetClient(pOldClient);                \
-        } catch (const CModule::EModException& e) {     \
-            if (e == CModule::UNLOAD) {                 \
-                UnloadModule(pMod->GetModName());       \
-            }                                           \
-        }                                               \
+#define MODUNLOADCHK(func)                                       \
+    for (CModule* pMod : *this) {                                \
+        try {                                                    \
+            CModCallProtector inside(*pMod);                     \
+            CTemporaryModClient TempClient(*pMod, m_pClient);    \
+            CTemporaryModUser TempUser(*pMod, m_pUser);          \
+            CTemporaryModNetwork TempNetwork(*pMod, m_pNetwork); \
+            pMod->func;                                          \
+        } catch (const CModule::EModException& e) {              \
+            if (e == CModule::UNLOAD) {                          \
+                UnloadModule(pMod->GetModName());                \
+            }                                                    \
+        }                                                        \
     }
 
-#define MODHALTCHK(func)                                \
-    bool bHaltCore = false;                             \
-    for (CModule * pMod : *this) {                      \
-        try {                                           \
-            CModule::EModRet e = CModule::CONTINUE;     \
-            CClient* pOldClient = pMod->GetClient();    \
-            pMod->SetClient(m_pClient);                 \
-            CUser* pOldUser = nullptr;                  \
-            if (m_pUser) {                              \
-                pOldUser = pMod->GetUser();             \
-                pMod->SetUser(m_pUser);                 \
-            }                                           \
-            CIRCNetwork* pNetwork = nullptr;            \
-            if (m_pNetwork) {                           \
-                pNetwork = pMod->GetNetwork();          \
-                pMod->SetNetwork(m_pNetwork);           \
-            }                                           \
-            e = pMod->func;                             \
-            if (m_pUser) pMod->SetUser(pOldUser);       \
-            if (m_pNetwork) pMod->SetNetwork(pNetwork); \
-            pMod->SetClient(pOldClient);                \
-            if (e == CModule::HALTMODS) {               \
-                break;                                  \
-            } else if (e == CModule::HALTCORE) {        \
-                bHaltCore = true;                       \
-            } else if (e == CModule::HALT) {            \
-                bHaltCore = true;                       \
-                break;                                  \
-            }                                           \
-        } catch (const CModule::EModException& e) {     \
-            if (e == CModule::UNLOAD) {                 \
-                UnloadModule(pMod->GetModName());       \
-            }                                           \
-        }                                               \
-    }                                                   \
+#define MODHALTCHK(func)                                         \
+    bool bHaltCore = false;                                      \
+    for (CModule* pMod : *this) {                                \
+        try {                                                    \
+            CModCallProtector inside(*pMod);                     \
+            CModule::EModRet e = CModule::CONTINUE;              \
+            CTemporaryModClient TempClient(*pMod, m_pClient);    \
+            CTemporaryModUser TempUser(*pMod, m_pUser);          \
+            CTemporaryModNetwork TempNetwork(*pMod, m_pNetwork); \
+            e = pMod->func;                                      \
+            if (e == CModule::HALTMODS) {                        \
+                break;                                           \
+            } else if (e == CModule::HALTCORE) {                 \
+                bHaltCore = true;                                \
+            } else if (e == CModule::HALT) {                     \
+                bHaltCore = true;                                \
+                break;                                           \
+            }                                                    \
+        } catch (const CModule::EModException& e) {              \
+            if (e == CModule::UNLOAD) {                          \
+                UnloadModule(pMod->GetModName());                \
+            }                                                    \
+        }                                                        \
+    }                                                            \
     return bHaltCore;
 
 /////////////////// Timer ///////////////////
@@ -204,6 +182,8 @@ CModule::~CModule() {
 void CModule::SetUser(CUser* pUser) { m_pUser = pUser; }
 void CModule::SetNetwork(CIRCNetwork* pNetwork) { m_pNetwork = pNetwork; }
 void CModule::SetClient(CClient* pClient) { m_pClient = pClient; }
+
+bool CModule::IsCallStackEmpty() const { return m_iCallStackDepth == 0; }
 
 CString CModule::ExpandString(const CString& sStr) const {
     CString sRet;
@@ -621,6 +601,11 @@ bool CModule::ValidateWebRequestCSRFCheck(CWebSock& WebSock,
 bool CModule::OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName,
                                    CTemplate& Tmpl) {
     return false;
+}
+bool CModule::DoEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName,
+                                   CTemplate& Tmpl) {
+    CModCallProtector inside(*this);
+    return OnEmbeddedWebRequest(WebSock, sPageName, Tmpl);
 }
 // !Webmods
 
@@ -1950,6 +1935,11 @@ bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
 
     if (!pModule) {
         sRetMsg = t_f("Module [{1}] not loaded.")(sMod);
+        return false;
+    }
+
+    if (!pModule->IsCallStackEmpty()) {
+        sRetMsg = t_f("Module [{1}] is being called, cannot unload.")(sMod);
         return false;
     }
 

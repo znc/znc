@@ -742,7 +742,7 @@ class CWebAdminMod : public CModule {
                 CTemplate& mod = Tmpl.AddRow("EmbeddedModuleLoop");
                 mod.insert(Tmpl.begin(), Tmpl.end());
                 mod["WebadminAction"] = "display";
-                if ((*i)->OnEmbeddedWebRequest(WebSock, "webadmin/channel",
+                if ((*i)->DoEmbeddedWebRequest(WebSock, "webadmin/channel",
                                                mod)) {
                     mod["Embed"] = WebSock.FindTmpl(*i, "WebadminChan.tmpl");
                     mod["ModName"] = (*i)->GetModName();
@@ -816,7 +816,7 @@ class CWebAdminMod : public CModule {
         TmplMod["ChanName"] = pChan->GetName();
         TmplMod["WebadminAction"] = "change";
         FOR_EACH_MODULE(it, pNetwork) {
-            (*it)->OnEmbeddedWebRequest(WebSock, "webadmin/channel", TmplMod);
+            (*it)->DoEmbeddedWebRequest(WebSock, "webadmin/channel", TmplMod);
         }
 
         if (!CZNC::Get().WriteConfig()) {
@@ -1027,7 +1027,7 @@ class CWebAdminMod : public CModule {
                 CTemplate& mod = Tmpl.AddRow("EmbeddedModuleLoop");
                 mod.insert(Tmpl.begin(), Tmpl.end());
                 mod["WebadminAction"] = "display";
-                if ((*i)->OnEmbeddedWebRequest(WebSock, "webadmin/network",
+                if ((*i)->DoEmbeddedWebRequest(WebSock, "webadmin/network",
                                                mod)) {
                     mod["Embed"] = WebSock.FindTmpl(*i, "WebadminNetwork.tmpl");
                     mod["ModName"] = (*i)->GetModName();
@@ -1246,7 +1246,7 @@ class CWebAdminMod : public CModule {
         TmplMod["Name"] = pNetwork->GetName();
         TmplMod["WebadminAction"] = "change";
         FOR_EACH_MODULE(it, make_pair(pUser, pNetwork)) {
-            (*it)->OnEmbeddedWebRequest(WebSock, "webadmin/network", TmplMod);
+            (*it)->DoEmbeddedWebRequest(WebSock, "webadmin/network", TmplMod);
         }
 
         if (!CZNC::Get().WriteConfig()) {
@@ -1670,7 +1670,7 @@ class CWebAdminMod : public CModule {
                 CTemplate& mod = Tmpl.AddRow("EmbeddedModuleLoop");
                 mod.insert(Tmpl.begin(), Tmpl.end());
                 mod["WebadminAction"] = "display";
-                if ((*i)->OnEmbeddedWebRequest(WebSock, "webadmin/user", mod)) {
+                if ((*i)->DoEmbeddedWebRequest(WebSock, "webadmin/user", mod)) {
                     mod["Embed"] = WebSock.FindTmpl(*i, "WebadminUser.tmpl");
                     mod["ModName"] = (*i)->GetModName();
                 }
@@ -1731,7 +1731,7 @@ class CWebAdminMod : public CModule {
         TmplMod["Username"] = sUsername;
         TmplMod["WebadminAction"] = "change";
         FOR_EACH_MODULE(it, pUser) {
-            (*it)->OnEmbeddedWebRequest(WebSock, "webadmin/user", TmplMod);
+            (*it)->DoEmbeddedWebRequest(WebSock, "webadmin/user", TmplMod);
         }
 
         if (!CZNC::Get().WriteConfig()) {

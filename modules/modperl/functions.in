@@ -66,7 +66,7 @@ void OnServerCapResult(const CString& sCap, bool bSuccess)
 void OnClientAttached()
 void OnClientDetached()
 EModRet OnTimerAutoJoin(CChan& Channel)
-bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl)
+bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl)=false
 EModRet OnAddNetwork(CIRCNetwork& Network, CString& sErrorRet)
 EModRet OnDeleteNetwork(CIRCNetwork& Network)
 EModRet OnSendToClient(CString& sLine, CClient& Client)

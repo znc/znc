@@ -56,21 +56,12 @@ extern bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
 #define _GLOBALMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER) \
     do {                                                                      \
         CModules& GMods = CZNC::Get().GetModules();                           \
-        CUser* pOldGUser = GMods.GetUser();                                   \
-        CIRCNetwork* pOldGNetwork = GMods.GetNetwork();                       \
-        CClient* pOldGClient = GMods.GetClient();                             \
-        GMods.SetUser(macUSER);                                               \
-        GMods.SetNetwork(macNETWORK);                                         \
-        GMods.SetClient(macCLIENT);                                           \
+        CTemporaryModsUser TempUser(GMods, macUSER);                          \
+        CTemporaryModsNetwork TempNetwork(GMods, macNETWORK);                 \
+        CTemporaryModsClient TempClient(GMods, macCLIENT);                    \
         if (GMods.macFUNC) {                                                  \
-            GMods.SetUser(pOldGUser);                                         \
-            GMods.SetNetwork(pOldGNetwork);                                   \
-            GMods.SetClient(pOldGClient);                                     \
             *macEXITER = true;                                                \
         }                                                                     \
-        GMods.SetUser(pOldGUser);                                             \
-        GMods.SetNetwork(pOldGNetwork);                                       \
-        GMods.SetClient(pOldGClient);                                         \
     } while (false)
 
 #define _USERMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER) \
@@ -84,17 +75,11 @@ extern bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
         }                                                                   \
         if (macUSER != nullptr) {                                           \
             CModules& UMods = macUSER->GetModules();                        \
-            CIRCNetwork* pOldUNetwork = UMods.GetNetwork();                 \
-            CClient* pOldUClient = UMods.GetClient();                       \
-            UMods.SetNetwork(macNETWORK);                                   \
-            UMods.SetClient(macCLIENT);                                     \
+            CTemporaryModsNetwork TempNetwork(UMods, macNETWORK);           \
+            CTemporaryModsClient TempClient(UMods, macCLIENT);              \
             if (UMods.macFUNC) {                                            \
-                UMods.SetNetwork(pOldUNetwork);                             \
-                UMods.SetClient(pOldUClient);                               \
                 *macEXITER = true;                                          \
             }                                                               \
-            UMods.SetNetwork(pOldUNetwork);                                 \
-            UMods.SetClient(pOldUClient);                                   \
         }                                                                   \
     } while (false)
 
@@ -109,13 +94,10 @@ extern bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
         }                                                                     \
         if (macNETWORK != nullptr) {                                          \
             CModules& NMods = macNETWORK->GetModules();                       \
-            CClient* pOldNClient = NMods.GetClient();                         \
-            NMods.SetClient(macCLIENT);                                       \
+            CTemporaryModsClient TempClient(NMods, macCLIENT);                \
             if (NMods.macFUNC) {                                              \
-                NMods.SetClient(pOldNClient);                                 \
                 *macEXITER = true;                                            \
             }                                                                 \
-            NMods.SetClient(pOldNClient);                                     \
         }                                                                     \
     } while (false)
 

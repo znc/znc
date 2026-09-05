@@ -465,6 +465,9 @@ class CModule {
     void SetNetwork(CIRCNetwork* pNetwork);
     void SetClient(CClient* pClient);
 
+    /** True if the module can be safely unloaded. */
+    bool IsCallStackEmpty() const;
+
     /** This function throws CModule::UNLOAD which causes this module to be unloaded.
      */
     void Unload() { throw UNLOAD; }
@@ -535,9 +538,11 @@ class CModule {
      *  @return The List.
      */
     virtual VWebSubPages& GetSubPages() { return m_vSubPages; }
+  private:
     /** Using this hook, module can embed web stuff directly to different places.
-     *  This method is called whenever embededded modules I/O happens.
+     *  This method is called whenever embedded modules I/O happens.
      *  Name of used .tmpl file (if any) is up to caller.
+     *  Callers call it via `DoEmbeddedWebRequest()`.
      *  @param WebSock Socket for web connection, don't do bad things with it.
      *  @param sPageName Describes the place where web stuff is embedded to.
      *  @param Tmpl Template. Depending on context, you can do various stuff with it.
@@ -547,6 +552,9 @@ class CModule {
     virtual bool OnEmbeddedWebRequest(CWebSock& WebSock,
                                       const CString& sPageName,
                                       CTemplate& Tmpl);
+  public:
+    bool DoEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName,
+                              CTemplate& Tmpl);
 
     /** Called just before znc.conf is rehashed */
     virtual void OnPreRehash();
@@ -1528,6 +1536,9 @@ class CModule {
         m_mssRegistry;  //!< way to save name/value pairs. Note there is no encryption involved in this
     VWebSubPages m_vSubPages;
     std::map<CString, CModCommand> m_mCommands;
+    int m_iCallStackDepth = 0;
+
+    friend struct CModCallProtector;
 };
 
 class CModules : public std::vector<CModule*>, private CCoreTranslationMixin {
@@ -1765,5 +1776,63 @@ class CModules : public std::vector<CModule*>, private CCoreTranslationMixin {
     CIRCNetwork* m_pNetwork;
     CClient* m_pClient;
 };
+
+struct CModCallProtector {
+    explicit CModCallProtector(CModule& pMod) : m_pMod(&pMod) {
+        pMod.m_iCallStackDepth++;
+    }
+    ~CModCallProtector() { m_pMod->m_iCallStackDepth--; }
+
+    CModule* m_pMod;
+};
+
+#ifndef SWIG
+template <typename T, T* (CModule::*Getter)() const, void (CModule::*Setter)(T*)>
+struct CTemporaryModField {
+    CTemporaryModField(CModule& pMod, T* pValue) {
+        m_pMod = &pMod;
+        m_pOldT = (pMod.*Getter)();
+        if (pValue) {
+            (pMod.*Setter)(pValue);
+        }
+    }
+
+    ~CTemporaryModField() { (m_pMod->*Setter)(m_pOldT); }
+
+    CModule* m_pMod;
+    T* m_pOldT;
+};
+
+using CTemporaryModClient =
+    CTemporaryModField<CClient, &CModule::GetClient, &CModule::SetClient>;
+using CTemporaryModNetwork =
+    CTemporaryModField<CIRCNetwork, &CModule::GetNetwork, &CModule::SetNetwork>;
+using CTemporaryModUser =
+    CTemporaryModField<CUser, &CModule::GetUser, &CModule::SetUser>;
+
+// Same as above, but for plural CModules
+template <typename T, T* (CModules::*Getter)() const, void (CModules::*Setter)(T*)>
+struct CTemporaryModsField {
+    CTemporaryModsField(CModules& pMods, T* pValue) {
+        m_pMods = &pMods;
+        m_pOldT = (pMods.*Getter)();
+        if (pValue) {
+            (pMods.*Setter)(pValue);
+        }
+    }
+
+    ~CTemporaryModsField() { (m_pMods->*Setter)(m_pOldT); }
+
+    CModules* m_pMods;
+    T* m_pOldT;
+};
+
+using CTemporaryModsClient =
+    CTemporaryModsField<CClient, &CModules::GetClient, &CModules::SetClient>;
+using CTemporaryModsNetwork =
+    CTemporaryModsField<CIRCNetwork, &CModules::GetNetwork, &CModules::SetNetwork>;
+using CTemporaryModsUser =
+    CTemporaryModsField<CUser, &CModules::GetUser, &CModules::SetUser>;
+#endif
 
 #endif  // !ZNC_MODULES_H
