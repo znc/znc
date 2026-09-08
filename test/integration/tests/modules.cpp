@@ -1043,6 +1043,119 @@ TEST_F(ZNCTest, StickyChanModule) {
     client.ReadUntil("InConfig = true");
 }
 
+TEST_F(ZNCTest, AwayStoreModule) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+
+    client.Write("znc loadmod awaystore testpass");
+    client.ReadUntil("Loaded module");
+
+    ircd.Write(":server 001 nick :Hello");
+    client.ReadUntil("001");
+
+    client.Write("PRIVMSG *awaystore :timer");
+    client.ReadUntil("Current timer setting");
+    client.Write("PRIVMSG *awaystore :settimer 1");
+    client.ReadUntil("Timer set to 1");
+
+    client.Write("PRIVMSG *awaystore :away Test reason");
+    client.ReadUntil("You have been marked as away");
+    ircd.ReadUntil("AWAY :Test reason");
+
+    ircd.Write(":TestUser!test@host PRIVMSG nick :Normal message");
+
+    // Test for #815 - awaystore replay does not work
+    ircd.Write(":TestUser!test@host PRIVMSG nick :AAA:BBB:CCC");
+    ircd.Write(":TestUser!test@host PRIVMSG nick :\001ACTION does something\001");
+
+    // Test for #267 - AwayStore IPv6 parsing issue
+    ircd.Write(":IPv6!test@2001:db8:1234:5678:abcd:ef01:2345:6789 PRIVMSG nick :Normal message");
+    ircd.Write(":IPv6!test@2001:db8:1234:5678:abcd:ef01:2345:6789 PRIVMSG nick :AAA:BBB:CCC");
+    ircd.Write(":IPv6!test@2001:db8:1234:5678:abcd:ef01:2345:6789 PRIVMSG nick :\001ACTION does something\001");
+
+    client.Write("PRIVMSG *awaystore :messages");
+    client.ReadUntil("TestUser!test@host Normal message");
+    client.ReadUntil("TestUser!test@host AAA:BBB:CCC");
+    client.ReadUntil("TestUser!test@host * does something");
+
+    client.ReadUntil("IPv6!test@2001:db8:1234:5678:abcd:ef01:2345:6789 Normal message");
+    client.ReadUntil("IPv6!test@2001:db8:1234:5678:abcd:ef01:2345:6789 AAA:BBB:CCC");
+    client.ReadUntil("IPv6!test@2001:db8:1234:5678:abcd:ef01:2345:6789 * does something");
+
+    client.Write("PRIVMSG *awaystore :show");
+
+    client.ReadUntil("IPv6!test@2001:db8:1234:5678:abcd:ef01:2345:6789");
+    client.ReadUntil("Normal message");
+    client.ReadUntil("AAA:BBB:CCC");
+    client.ReadUntil("* does something");
+
+    client.ReadUntil("TestUser!test@host");
+    client.ReadUntil("Normal message");
+    client.ReadUntil("AAA:BBB:CCC");
+    client.ReadUntil("* does something");
+    client.ReadUntil("#--- End of messages");
+
+    client.Write("PRIVMSG *awaystore :delete 0");
+    client.ReadUntil("Message erased");
+
+    client.Write("PRIVMSG *awaystore :back");
+    client.ReadUntil("Welcome back!");
+    ircd.ReadUntil("away");
+
+    client.Write("PRIVMSG *awaystore :replay");
+    client.ReadUntil(":TestUser!test@host PRIVMSG nick :AAA:BBB:CCC");
+    client.ReadUntil(":TestUser!test@host PRIVMSG nick :* does something");
+
+    client.Write("PRIVMSG *awaystore :save");
+    client.ReadUntil("Messages saved to disk");
+
+    client.Write("PRIVMSG *awaystore :delete all");
+    client.ReadUntil("Deleted 5 messages");
+
+    client.Write("PRIVMSG *awaystore :save");
+    client.ReadUntil("Messages saved to disk");
+
+    client.Write("PRIVMSG *status :unloadmod awaystore");
+    client.ReadUntil("unloaded");
+
+    // Begin 'pass' bug not using CBlowfish::MD5()
+    client.Write("znc loadmod awaystore testpass");
+    client.ReadUntil("Loaded module");
+
+    client.Write("PRIVMSG *awaystore :away Not here");
+    client.ReadUntil("You have been marked as away");
+    ircd.Write(":TestUser!test@host PRIVMSG nick :should survive");
+
+    client.Write("PRIVMSG *awaystore :pass newpass");
+    client.ReadUntil("Password updated to [newpass]");
+
+    client.Write("PRIVMSG *awaystore :save");
+    client.ReadUntil("Messages saved to disk");
+
+    client.Write("znc unloadmod awaystore");
+    client.ReadUntil("unloaded");
+
+    client.Write("znc loadmod awaystore newpass");
+    client.ReadUntil("Loaded module");
+
+    client.Write("znc unloadmod awaystore");
+    client.ReadUntil("unloaded");
+    // End 'pass' bug test
+
+    // Begin 'away' not updating bug test
+    client.Write("znc loadmod awaystore newpass");
+    client.ReadUntil("Loaded module");
+
+    client.Write("PRIVMSG *awaystore :away first reason");
+    client.ReadUntil("You have been marked as away");
+    ircd.ReadUntil("AWAY :first reason");
+
+    client.Write("PRIVMSG *awaystore :away second reason");
+    client.ReadUntil("You have been marked as away");
+    ircd.ReadUntil("AWAY :second reason");
+    // End 'away' bug test
+}
 
 }  // namespace
 }  // namespace znc_inttest

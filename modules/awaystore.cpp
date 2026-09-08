@@ -70,7 +70,8 @@ class CAway : public CModule {
                                          GetUser()->GetTimezone());
         }
 
-        Away(false, sReason);
+        // Update with new message if already away.
+        Away(true, sReason);
     }
 
     void BackCommand(const CString& sCommand) {
@@ -88,8 +89,8 @@ class CAway : public CModule {
     void ReplayCommand(const CString& sCommand) {
         CString nick = GetClient()->GetNick();
         for (u_int a = 0; a < m_vMessages.size(); a++) {
-            CString sWhom = m_vMessages[a].Token(1, false, ":");
-            CString sMessage = m_vMessages[a].Token(2, true, ":");
+            CString sWhom = m_vMessages[a].Token(1, false, " ");
+            CString sMessage = m_vMessages[a].Token(2, true, " ");
             PutUser(":" + sWhom + " PRIVMSG " + nick + " :" + sMessage);
         }
     }
@@ -131,8 +132,10 @@ class CAway : public CModule {
     }
 
     void PassCommand(const CString& sCommand) {
-        m_sPassword = sCommand.Token(1);
-        PutModNotice(t_f("Password updated to [{1}]")(m_sPassword));
+        CString sNewPass = sCommand.Token(1);
+        m_sPassword = CBlowfish::MD5(sNewPass);
+        SaveBufferToDisk();
+        PutModNotice(t_f("Password updated to [{1}]")(sNewPass));
     }
 
     void ShowCommand(const CString& sCommand) {
@@ -223,7 +226,7 @@ class CAway : public CModule {
                    static_cast<CModCommand::ModCmdFunc>(&CAway::BackCommand),
                    "[-quiet]");
         AddCommand("Messages",
-                   static_cast<CModCommand::ModCmdFunc>(&CAway::BackCommand));
+                   static_cast<CModCommand::ModCmdFunc>(&CAway::MessagesCommand));
         AddCommand("Delete",
                    static_cast<CModCommand::ModCmdFunc>(&CAway::DeleteCommand),
                    "delete <num|all>");
@@ -392,47 +395,53 @@ class CAway : public CModule {
         m_sReason = "";
     }
 
-    EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override {
-        if (m_bIsAway) AddMessage(time(nullptr), Nick, sMessage);
-        return (CONTINUE);
-    }
-
-    EModRet OnChanMsg(CNick& nick, CChan& channel, CString& sMessage) override {
-        if (m_bIsAway && m_chanMessages &&
-            sMessage.AsLower().find(m_pNetwork->GetCurNick().AsLower()) !=
-                CString::npos) {
-            AddMessage(time(nullptr), nick, channel.GetName() + " " + sMessage);
-        }
-
-        return (CONTINUE);
-    }
-
-    EModRet OnPrivAction(CNick& Nick, CString& sMessage) override {
+    EModRet OnPrivTextMessage(CTextMessage& Message) override {
         if (m_bIsAway) {
+            const CNick& Nick = Message.GetNick();
+            CString sMessage = Message.GetText();
+            AddMessage(time(nullptr), Nick, sMessage);
+        }
+        return CONTINUE;
+    }
+
+    EModRet OnChanTextMessage(CTextMessage& Message) override {
+        if (m_bIsAway && m_chanMessages) {
+            const CNick& nick = Message.GetNick();
+            CChan& channel = *Message.GetChan();
+            CString sMessage = Message.GetText();
+
+            if (sMessage.AsLower().find(m_pNetwork->GetCurNick().AsLower()) != CString::npos) {
+                AddMessage(time(nullptr), nick, channel.GetName() + " " + sMessage);
+            }
+        }
+        return CONTINUE;
+    }
+
+    EModRet OnPrivActionMessage(CActionMessage& Message) override {
+        if (m_bIsAway) {
+            const CNick& Nick = Message.GetNick();
+            CString sMessage = Message.GetText();
             AddMessage(time(nullptr), Nick, "* " + sMessage);
         }
-        return (CONTINUE);
+        return CONTINUE;
     }
 
-    EModRet OnUserNotice(CString& sTarget, CString& sMessage) override {
+    EModRet OnUserTextMessage(CTextMessage& Message) override {
         Ping();
         if (m_bIsAway) Back();
-
-        return (CONTINUE);
+        return CONTINUE;
     }
 
-    EModRet OnUserMsg(CString& sTarget, CString& sMessage) override {
+    EModRet OnUserNoticeMessage(CNoticeMessage& Message) override {
         Ping();
         if (m_bIsAway) Back();
-
-        return (CONTINUE);
+        return CONTINUE;
     }
 
-    EModRet OnUserAction(CString& sTarget, CString& sMessage) override {
+    EModRet OnUserActionMessage(CActionMessage& Message) override {
         Ping();
         if (m_bIsAway) Back();
-
-        return (CONTINUE);
+        return CONTINUE;
     }
 
     time_t GetTimeStamp() const { return (m_iLastSentData); }
@@ -514,7 +523,7 @@ void TModInfo<CAway>(CModInfo& Info) {
     Info.SetHasArgs(true);
     Info.SetArgsHelpText(Info.t_s(
         "[ -notimer | -timer N ] [-chans]  passw0rd . N is number of seconds, "
-        "600 by default."));
+        "300 by default."));
 }
 
 NETWORKMODULEDEFS(
