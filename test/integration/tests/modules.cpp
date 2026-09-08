@@ -1044,6 +1044,9 @@ TEST_F(ZNCTest, StickyChanModule) {
 }
 
 TEST_F(ZNCTest, AwayStoreModule) {
+#ifndef HAVE_LIBSSL
+    GTEST_SKIP() << "SSL is disabled";
+#endif
     auto znc = Run();
     auto ircd = ConnectIRCd();
     auto client = LoginClient();
@@ -1064,15 +1067,21 @@ TEST_F(ZNCTest, AwayStoreModule) {
     ircd.ReadUntil("AWAY :Test reason");
 
     ircd.Write(":TestUser!test@host PRIVMSG nick :Normal message");
+    client.ReadUntil(":TestUser!test@host PRIVMSG nick :Normal message");
 
     // Test for #815 - awaystore replay does not work
     ircd.Write(":TestUser!test@host PRIVMSG nick :AAA:BBB:CCC");
+    client.ReadUntil(":TestUser!test@host PRIVMSG nick :AAA:BBB:CCC");
     ircd.Write(":TestUser!test@host PRIVMSG nick :\001ACTION does something\001");
+    client.ReadUntil(":TestUser!test@host PRIVMSG nick :\001ACTION does something\001");
 
     // Test for #267 - AwayStore IPv6 parsing issue
     ircd.Write(":IPv6!test@2001:db8:1234:5678:abcd:ef01:2345:6789 PRIVMSG nick :Normal message");
+    client.ReadUntil(":IPv6!test@2001:db8:1234:5678:abcd:ef01:2345:6789 PRIVMSG nick :Normal message");
     ircd.Write(":IPv6!test@2001:db8:1234:5678:abcd:ef01:2345:6789 PRIVMSG nick :AAA:BBB:CCC");
+    client.ReadUntil(":IPv6!test@2001:db8:1234:5678:abcd:ef01:2345:6789 PRIVMSG nick :AAA:BBB:CCC");
     ircd.Write(":IPv6!test@2001:db8:1234:5678:abcd:ef01:2345:6789 PRIVMSG nick :\001ACTION does something\001");
+    client.ReadUntil(":IPv6!test@2001:db8:1234:5678:abcd:ef01:2345:6789 PRIVMSG nick :\001ACTION does something\001");
 
     client.Write("PRIVMSG *awaystore :messages");
     client.ReadUntil("TestUser!test@host Normal message");
@@ -1126,6 +1135,7 @@ TEST_F(ZNCTest, AwayStoreModule) {
     client.Write("PRIVMSG *awaystore :away Not here");
     client.ReadUntil("You have been marked as away");
     ircd.Write(":TestUser!test@host PRIVMSG nick :should survive");
+    client.ReadUntil(":TestUser!test@host PRIVMSG nick :should survive");
 
     client.Write("PRIVMSG *awaystore :pass newpass");
     client.ReadUntil("Password updated to [newpass]");
