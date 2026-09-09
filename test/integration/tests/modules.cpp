@@ -153,6 +153,10 @@ TEST_F(ZNCTest, WatchModule) {
     ircd.Write(":n!i@h PRIVMSG nick :\001ACTION foo\001");
     client.ReadUntil(":$*!watch@znc.in PRIVMSG nick :* CTCP: n [ACTION foo]");
 
+    // OnPrivCTCPReplyMessage
+    ircd.Write(":n!i@h NOTICE nick :\001VERSION znc 1.0\001");
+    client.ReadUntil(":$*!watch@znc.in PRIVMSG nick :* CTCP: n reply [VERSION znc 1.0]");
+
     // OnPrivNoticeMessage
     ircd.Write(":n!i@h NOTICE nick :Private notice");
     client.ReadUntil(":$*!watch@znc.in PRIVMSG nick :-n- Private notice");
@@ -308,7 +312,7 @@ TEST_F(ZNCTest, CryptModule) {
     ircd2.Write(":user!user@user/test " + chanActionMsg);
     client2.ReadUntil("dances");
 
-    // OnTopicMessage / OnNumericMessage
+    // OnUserTopicMessage / OnNumericMessage
     client1.Write("TOPIC #test :new chan topic");
     QByteArray chanTopicEncrypted;
     ircd1.ReadUntilAndGet("TOPIC #test :+OK ", chanTopicEncrypted);
@@ -316,6 +320,11 @@ TEST_F(ZNCTest, CryptModule) {
                                       chanTopicEncrypted.lastIndexOf(' ') + 1);
     ircd2.Write(":ircd2 332 nick2 #test :" + chanTopicEncrypted);
     client2.ReadUntil("new chan topic");
+
+    // OnTopicMessage
+    ircd2.Write(":user!user@user/test TOPIC #test :" + chanTopicEncrypted);
+    QByteArray topicLine;
+    client2.ReadUntilAndGet("TOPIC #test :", topicLine);
 }
 
 TEST_F(ZNCTest, AutoAttachModule) {
@@ -884,6 +893,26 @@ TEST_F(ZNCTest, ClearBufferOnMsgModule) {
     remainder = client.ReadRemainder();
     EXPECT_THAT(remainder, Not(HasSubstr("OnUserTopicMessage")))
         << "OnUserTopicMessage failed to clear buffer";
+
+    // OnUserQuitMessage
+    client.Write("znc unloadmod clearbufferonmsg");
+    client.ReadUntil("unloaded");
+
+    // quit is set as false by default
+    client.Write("znc loadmod clearbufferonmsg quit");
+    client.ReadUntil("Loaded module");
+
+    ircd.Write(":other!user@host PRIVMSG #test :buffered message");
+    client.ReadUntil("buffered message");
+    client.Write("QUIT :bye");
+    client.Close();
+
+    auto client2 = LoginClient();
+    client2.ReadUntil("001");
+    client2.Write("JOIN #test");
+    ASSERT_THAT(client2.ReadRemainder().toStdString(),
+                Not(HasSubstr("buffered message")));
+
 }
 
 TEST_F(ZNCTest, CtcpFloodModule) {
@@ -899,6 +928,7 @@ TEST_F(ZNCTest, CtcpFloodModule) {
     ircd.Write(":server 353 nick = #test :nick someone");
     ircd.Write(":server 366 nick #test :End of /NAMES list");
 
+    // OnChanCTCPMessage
     ircd.Write(":someone!user@host PRIVMSG #test :\001message1\001");
     ircd.Write(":someone!user@host PRIVMSG #test :\001message2\001");
     ircd.Write(":someone!user@host PRIVMSG #test :\001message3\001");
@@ -906,6 +936,23 @@ TEST_F(ZNCTest, CtcpFloodModule) {
     ircd.Write(":someone!user@host PRIVMSG #test :\001message5\001");
     ircd.Write(":someone!user@host PRIVMSG #test :\001message6\001");
     ircd.Write(":someone!user@host PRIVMSG #test :\001message7\001");
+    client.ReadUntil("Limit reached by");
+
+    // Unload to reset timer.
+    client.Write("znc unloadmod ctcpflood");
+    client.ReadUntil("unloaded");
+
+    client.Write("znc loadmod ctcpflood");
+    client.ReadUntil("Loaded module");
+
+    // OnPrivCTCPMessage
+    ircd.Write(":query!user@host PRIVMSG nick :\001message1\001");
+    ircd.Write(":query!user@host PRIVMSG nick :\001message2\001");
+    ircd.Write(":query!user@host PRIVMSG nick :\001message3\001");
+    ircd.Write(":query!user@host PRIVMSG nick :\001message4\001");
+    ircd.Write(":query!user@host PRIVMSG nick :\001message5\001");
+    ircd.Write(":query!user@host PRIVMSG nick :\001message6\001");
+    ircd.Write(":query!user@host PRIVMSG nick :\001message7\001");
     client.ReadUntil("Limit reached by");
 }
 
