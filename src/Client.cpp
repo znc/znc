@@ -375,7 +375,7 @@ void CClient::AuthUser() {
     }
 }
 
-/** Username+password auth, which reports success/failure to client via SASL. */ 
+/** Username+password auth, which reports success/failure to client via SASL. */
 class CClientSASLAuth : public CClientAuth {
   public:
     using CClientAuth::CClientAuth;
@@ -1463,7 +1463,7 @@ bool CClient::OnJoinMessage(CJoinMessage& Message) {
                 else
                     pChan->JoinUser(sKey);
                 continue;
-            } else if (!sChannel.empty()) {
+            } else if (!sChannel.empty() && m_pNetwork->IsChan(sChannel)) {
                 pChan = new CChan(sChannel, m_pNetwork, false);
                 if (m_pNetwork->AddChan(pChan)) {
                     pChan->SetKey(sKey);
