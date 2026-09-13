@@ -1463,5 +1463,28 @@ TEST_F(ZNCTest, MotdBufferDoesNotAccumulate376) {
                 Not(HasSubstr("End of /MOTD command")));
 }
 
+// https://github.com/znc/znc/issues/1794
+TEST_F(ZNCTest, PrependJoinBug) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+
+    ircd.Write(":server 001 nick :Hello");
+    ircd.Write(":server 005 nick CHANTYPES=# :supports");
+    client.ReadUntil("005");
+
+    client.Write("JOIN 0");
+    ircd.ReadUntil("JOIN 0");
+
+    client.Write("znc listchans");
+    ASSERT_THAT(client.ReadRemainder().toStdString(), Not(HasSubstr("#0")));
+
+    client.Write("JOIN test");
+    ircd.ReadUntil("JOIN test");
+
+    client.Write("znc listchans");
+    ASSERT_THAT(client.ReadRemainder().toStdString(), Not(HasSubstr("#test")));
+}
+
 }  // namespace
 }  // namespace znc_inttest
