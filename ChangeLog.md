@@ -1,3 +1,31 @@
+# ZNC 1.10.3 (2026-09-13)
+
+This is a security release to fix the following issues:
+
+## CVE-2026-82373
+
+Use-after-free when unloading modules, triggered by unprivileged users.
+
+Note that the fix required a slight API change for `OnEmbeddedWebRequest`:
+now the callers (webadmin is the only known caller of it) call it via
+`DoEmbeddedWebRequest()` instead. The modules which implement this hook
+need no changes.
+
+To mitigate, set `DenyLoadMod` to true.
+
+Found by Claude from Anthropic, reported by Ada Logics.
+
+## CVE-2026-82374
+
+Null pointer dereference in crypt module, triggered by IRC server.
+
+Found and fixed by KindOne.
+
+## CVE-2020-11022, CVE-2020-11023
+
+Updated the old bundled vulnerable version of jQuery to 3.5.1.
+
+
 # ZNC 1.10.2 (2026-05-07)
 
 ## Fixes
