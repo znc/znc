@@ -211,13 +211,19 @@ class CCryptMod : public CModule {
         FilterOutgoing(Message);
         return CONTINUE;
     }
+    EModRet OnPrivTextMessage(CTextMessage& Message) override {
+        CNick& Nick = Message.GetNick();
+        CString sMessage = Message.GetText();
+        CString sHostmask = Nick.GetHostMask();
 
-    EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override {
         FilterIncoming(Nick.GetNick(), Nick, sMessage);
+        Message.SetText(sMessage);
         return CONTINUE;
     }
 
-    EModRet OnPrivNotice(CNick& Nick, CString& sMessage) override {
+    EModRet OnPrivNoticeMessage(CNoticeMessage& Message) override {
+        CNick& Nick = Message.GetNick();
+        CString sMessage = Message.GetText();
         CString sCommand = sMessage.Token(0);
         CString sOtherPubKey = sMessage.Token(1);
 
@@ -268,33 +274,42 @@ class CCryptMod : public CModule {
         }
 
         FilterIncoming(Nick.GetNick(), Nick, sMessage);
+        Message.SetText(sMessage);
         return CONTINUE;
     }
 
-    EModRet OnPrivAction(CNick& Nick, CString& sMessage) override {
-        FilterIncoming(Nick.GetNick(), Nick, sMessage);
+    EModRet OnPrivActionMessage(CActionMessage& Message) override {
+        CString sText = Message.GetText();
+        FilterIncoming(Message.GetNick().GetNick(), Message.GetNick(), sText);
+        Message.SetText(sText);
         return CONTINUE;
     }
 
-    EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override {
-        FilterIncoming(Channel.GetName(), Nick, sMessage);
+    EModRet OnChanTextMessage(CTextMessage& Message) override {
+        CString sText = Message.GetText();
+        FilterIncoming(Message.GetTarget(), Message.GetNick(), sText);
+        Message.SetText(sText);
         return CONTINUE;
     }
 
-    EModRet OnChanNotice(CNick& Nick, CChan& Channel,
-                         CString& sMessage) override {
-        FilterIncoming(Channel.GetName(), Nick, sMessage);
+    EModRet OnChanNoticeMessage(CNoticeMessage& Message) override {
+        CString sText = Message.GetText();
+        FilterIncoming(Message.GetTarget(), Message.GetNick(), sText);
+        Message.SetText(sText);
         return CONTINUE;
     }
 
-    EModRet OnChanAction(CNick& Nick, CChan& Channel,
-                         CString& sMessage) override {
-        FilterIncoming(Channel.GetName(), Nick, sMessage);
+    EModRet OnChanActionMessage(CActionMessage& Message) override {
+        CString sText = Message.GetText();
+        FilterIncoming(Message.GetTarget(), Message.GetNick(), sText);
+        Message.SetText(sText);
         return CONTINUE;
     }
 
-    EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sMessage) override {
-        FilterIncoming(Channel.GetName(), Nick, sMessage);
+    EModRet OnTopicMessage(CTopicMessage& Message) override {
+        CString sText = Message.GetText();
+        FilterIncoming(Message.GetTarget(), Message.GetNick(), sText);
+        Message.SetText(sText);
         return CONTINUE;
     }
 
@@ -305,10 +320,16 @@ class CCryptMod : public CModule {
 
         CChan* pChan = GetNetwork()->FindChan(Message.GetParam(1));
         if (pChan) {
-            CNick* Nick = pChan->FindNick(Message.GetParam(0));
+            CNick* pNick = pChan->FindNick(Message.GetParam(0));
             CString sTopic = Message.GetParam(2);
 
-            FilterIncoming(pChan->GetName(), *Nick, sTopic);
+            if (pNick) {
+                FilterIncoming(pChan->GetName(), *pNick, sTopic);
+            } else {
+                // 332 can arrive before ZNC has this nick in the nicklist.
+                CNick TempNick(Message.GetParam(0));
+                FilterIncoming(pChan->GetName(), TempNick, sTopic);
+            }
             Message.SetParam(2, sTopic);
         }
 

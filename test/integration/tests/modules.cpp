@@ -138,7 +138,7 @@ TEST_F(ZNCTest, WatchModule) {
         ":*spaces!watch@znc.in PRIVMSG nick :<n:#znc> SOMETHING word1 word2 SOMETHING");
 }
 
-TEST_F(ZNCTest, ModuleCrypt) {
+TEST_F(ZNCTest, CryptModule) {
 #ifndef HAVE_LIBSSL
     GTEST_SKIP() << "SSL is disabled";
 #endif
@@ -188,6 +188,8 @@ TEST_F(ZNCTest, ModuleCrypt) {
     QByteArray key2("");
     client2.ReadUntilAndGet("\002user\017: ", key2);
     ASSERT_EQ(key1.mid(9), key2.mid(8));
+
+    // OnPrivTextMessage
     client1.Write("CAP REQ :echo-message");
     client1.Write("PRIVMSG .nick2 :Hello");
     QByteArray secretmsg;
@@ -195,6 +197,72 @@ TEST_F(ZNCTest, ModuleCrypt) {
     ircd2.Write(":user!user@user/test " + secretmsg);
     client2.ReadUntil("Hello");
     client1.ReadUntil(secretmsg);  // by echo-message
+
+    client1.Write("PRIVMSG *crypt :SetNickPrefix .");
+    client1.ReadUntil("Setting Nick Prefix to .");
+    client2.Write("PRIVMSG *crypt :SetNickPrefix .");
+    client2.ReadUntil("Setting Nick Prefix to .");
+
+    // OnPrivNoticeMessage
+    client1.Write("NOTICE .nick2 :secret notice");
+    QByteArray noticeMsg;
+    ircd1.ReadUntilAndGet("NOTICE nick2 :+OK ", noticeMsg);
+    ircd2.Write(":user!user@user/test " + noticeMsg);
+    QByteArray noticeLine;
+    client2.ReadUntilAndGet("NOTICE nick2 :", noticeLine);
+    QByteArray noticemessage = noticeLine.mid(noticeLine.lastIndexOf(':') + 1);
+    EXPECT_EQ(noticemessage, "secret notice");
+
+    // OnUserActionMessage
+    client1.Write("PRIVMSG .nick2 :\001ACTION waves\001");
+    QByteArray actionMsg;
+    ircd1.ReadUntilAndGet("PRIVMSG nick2 :\001ACTION +OK ", actionMsg);
+    ircd2.Write(":user!user@user/test " + actionMsg);
+    QByteArray actionLine;
+    client2.ReadUntilAndGet("PRIVMSG nick2 :", actionLine);
+    QByteArray actionMessage = actionLine.mid(actionLine.lastIndexOf(':') + 1);
+    EXPECT_EQ(actionMessage, "\001ACTION waves\001");
+
+    client1.Write("JOIN #test");
+    client2.Write("JOIN #test");
+
+    QByteArray chanKey = "channelKey123";
+    client1.Write(QByteArray("PRIVMSG *crypt :SetKey #test ") + chanKey);
+    client1.ReadUntil(QByteArray("Set encryption key for [#test] to [") +
+                      chanKey + "]");
+    client2.Write(QByteArray("PRIVMSG *crypt :SetKey #test ") + chanKey);
+    client2.ReadUntil(QByteArray("Set encryption key for [#test] to [") +
+                      chanKey + "]");
+
+    // OnChanTextMessage
+    client1.Write("PRIVMSG #test :channel secret");
+    QByteArray chanMsg;
+    ircd1.ReadUntilAndGet("PRIVMSG #test :+OK ", chanMsg);
+    ircd2.Write(":user!user@user/test " + chanMsg);
+    client2.ReadUntil("channel secret");
+
+    // OnChanNoticeMessage
+    client1.Write("NOTICE #test :chan notice");
+    QByteArray chanNoticeMsg;
+    ircd1.ReadUntilAndGet("NOTICE #test :+OK ", chanNoticeMsg);
+    ircd2.Write(":user!user@user/test " + chanNoticeMsg);
+    client2.ReadUntil("chan notice");
+
+    // OnChanActionMessage
+    client1.Write("PRIVMSG #test :\001ACTION dances\001");
+    QByteArray chanActionMsg;
+    ircd1.ReadUntilAndGet("PRIVMSG #test :\001ACTION +OK ", chanActionMsg);
+    ircd2.Write(":user!user@user/test " + chanActionMsg);
+    client2.ReadUntil("dances");
+
+    // OnTopicMessage / OnNumericMessage
+    client1.Write("TOPIC #test :new chan topic");
+    QByteArray chanTopicEncrypted;
+    ircd1.ReadUntilAndGet("TOPIC #test :+OK ", chanTopicEncrypted);
+    chanTopicEncrypted = "+OK " + chanTopicEncrypted.mid(
+                                      chanTopicEncrypted.lastIndexOf(' ') + 1);
+    ircd2.Write(":ircd2 332 nick2 #test :" + chanTopicEncrypted);
+    client2.ReadUntil("new chan topic");
 }
 
 TEST_F(ZNCTest, AutoAttachModule) {

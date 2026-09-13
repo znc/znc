@@ -21,8 +21,8 @@
 #include <znc/IRCNetwork.h>
 #include <znc/Query.h>
 
-using std::set;
 using std::map;
+using std::set;
 using std::vector;
 
 #define CALLMOD(MOD, CLIENT, USER, NETWORK, FUNC)                             \
@@ -30,10 +30,9 @@ using std::vector;
         CModule* pModule = nullptr;                                           \
         if (NETWORK && (pModule = (NETWORK)->GetModules().FindModule(MOD))) { \
             try {                                                             \
-                CClient* pOldClient = pModule->GetClient();                   \
-                pModule->SetClient(CLIENT);                                   \
+                CModCallProtector Inside(*pModule);                           \
+                CTemporaryModClient TempClient(*pModule, CLIENT);             \
                 pModule->FUNC;                                                \
-                pModule->SetClient(pOldClient);                               \
             } catch (const CModule::EModException& e) {                       \
                 if (e == CModule::UNLOAD) {                                   \
                     (NETWORK)->GetModules().UnloadModule(MOD);                \
@@ -41,13 +40,10 @@ using std::vector;
             }                                                                 \
         } else if ((pModule = (USER)->GetModules().FindModule(MOD))) {        \
             try {                                                             \
-                CClient* pOldClient = pModule->GetClient();                   \
-                CIRCNetwork* pOldNetwork = pModule->GetNetwork();             \
-                pModule->SetClient(CLIENT);                                   \
-                pModule->SetNetwork(NETWORK);                                 \
+                CModCallProtector Inside(*pModule);                           \
+                CTemporaryModClient TempClient(*pModule, CLIENT);             \
+                CTemporaryModNetwork TempNetwork(*pModule, NETWORK);          \
                 pModule->FUNC;                                                \
-                pModule->SetClient(pOldClient);                               \
-                pModule->SetNetwork(pOldNetwork);                             \
             } catch (const CModule::EModException& e) {                       \
                 if (e == CModule::UNLOAD) {                                   \
                     (USER)->GetModules().UnloadModule(MOD);                   \
@@ -55,16 +51,11 @@ using std::vector;
             }                                                                 \
         } else if ((pModule = CZNC::Get().GetModules().FindModule(MOD))) {    \
             try {                                                             \
-                CClient* pOldClient = pModule->GetClient();                   \
-                CIRCNetwork* pOldNetwork = pModule->GetNetwork();             \
-                CUser* pOldUser = pModule->GetUser();                         \
-                pModule->SetClient(CLIENT);                                   \
-                pModule->SetNetwork(NETWORK);                                 \
-                pModule->SetUser(USER);                                       \
+                CModCallProtector Inside(*pModule);                           \
+                CTemporaryModClient TempClient(*pModule, CLIENT);             \
+                CTemporaryModNetwork TempNetwork(*pModule, NETWORK);          \
+                CTemporaryModUser TempUser(*pModule, USER);                   \
                 pModule->FUNC;                                                \
-                pModule->SetClient(pOldClient);                               \
-                pModule->SetNetwork(pOldNetwork);                             \
-                pModule->SetUser(pOldUser);                                   \
             } catch (const CModule::EModException& e) {                       \
                 if (e == CModule::UNLOAD) {                                   \
                     CZNC::Get().GetModules().UnloadModule(MOD);               \
