@@ -161,6 +161,9 @@ class CSockManager : public TSocketManager<CZNCSock>,
 
     bool ListenUnix(const CString& sSockName, const CString& sPath,
                     CZNCSock* pcSock = nullptr) {
+        if (!pcSock) {
+            pcSock = GetSockObj("", 0);
+        }
         if (pcSock->ListenUnixInternal(sPath)) {
             AddSock(pcSock, sSockName);
             return true;
@@ -172,6 +175,9 @@ class CSockManager : public TSocketManager<CZNCSock>,
 
     bool ConnectUnix(const CString& sSockName, const CString& sPath,
                      CZNCSock* pcSock = nullptr) {
+        if (!pcSock) {
+            pcSock = GetSockObj("", 0);
+        }
         if (pcSock->ConnectUnixInternal(sPath)) {
             AddSock(pcSock, sSockName);
             return true;
