@@ -173,11 +173,11 @@ unsigned long CUtils::GetLongIP(const CString& sIP) {
                ip[2], ip[3]);
     if (i != 4) return 0;
 
-    // Beware that atoi("200") << 24 would overflow and turn negative!
-    ret = atol(ip[0]) << 24;
-    ret += atol(ip[1]) << 16;
-    ret += atol(ip[2]) << 8;
-    ret += atol(ip[3]) << 0;
+    // Beware that atol("200") << 24 could overflow and turn negative on 32-bit long!
+    ret = (unsigned long)atol(ip[0]) << 24;
+    ret += (unsigned long)atol(ip[1]) << 16;
+    ret += (unsigned long)atol(ip[2]) << 8;
+    ret += (unsigned long)atol(ip[3]) << 0;
 
     return ret;
 }
