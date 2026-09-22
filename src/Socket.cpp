@@ -396,10 +396,11 @@ CSockManager::~CSockManager() {}
 void CSockManager::Connect(const CString& sHostname, u_short iPort,
                            const CString& sSockName, int iTimeout, bool bSSL,
                            const CString& sBindHost, CZNCSock* pcSock) {
-    m_InFlightDnsSockets[pcSock] = false;
-    if (pcSock) {
-        pcSock->SetHostToVerifySSL(sHostname);
+    if (!pcSock) {
+        pcSock = GetSockObj("", 0);
     }
+    m_InFlightDnsSockets[pcSock] = false;
+    pcSock->SetHostToVerifySSL(sHostname);
 #ifdef HAVE_THREADED_DNS
     DEBUG("TDNS: initiating resolving of [" << sHostname << "] and bindhost ["
                                             << sBindHost << "]");
