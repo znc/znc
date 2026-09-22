@@ -70,6 +70,11 @@ class CCoreCaps : public CModule {
     }
 };
 
+template <>
+void TModInfo<CCoreCaps>(CModInfo& Info) {
+    Info.SetWikiPage("corecaps");
+}
+
 GLOBALMODULEDEFS(
     CCoreCaps,
     t_s("Adds support for several IRC capabilities, extracted from ZNC core."))
