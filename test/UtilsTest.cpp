@@ -200,3 +200,17 @@ TEST(UtilsTest, FormatTime) {
     CString str3 = CUtils::FormatTime(tv2, "a%fb", "UTC");
     EXPECT_EQ(str3, "a123b");
 }
+
+TEST(UtilsTest, GetLongIP) {
+    EXPECT_EQ(CUtils::GetLongIP("0.0.0.0"), 0UL);
+    EXPECT_EQ(CUtils::GetLongIP("127.0.0.1"), 2130706433UL);
+    EXPECT_EQ(CUtils::GetLongIP("192.168.1.1"), 3232235777UL);
+    // High bit set in the first octet: 255 << 24 overflows a signed 32-bit
+    // long, which is why the octets are cast to unsigned long first.
+    EXPECT_EQ(CUtils::GetLongIP("255.255.255.255"), 4294967295UL);
+    EXPECT_EQ(CUtils::GetLongIP("128.0.0.0"), 2147483648UL);
+    // Malformed input returns 0.
+    EXPECT_EQ(CUtils::GetLongIP(""), 0UL);
+    EXPECT_EQ(CUtils::GetLongIP("1.2.3"), 0UL);
+    EXPECT_EQ(CUtils::GetLongIP("not an ip"), 0UL);
+}
