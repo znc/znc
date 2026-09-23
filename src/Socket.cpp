@@ -397,7 +397,7 @@ void CSockManager::Connect(const CString& sHostname, u_short iPort,
                            const CString& sSockName, int iTimeout, bool bSSL,
                            const CString& sBindHost, CZNCSock* pcSock) {
     if (!pcSock) {
-        pcSock = GetSockObj("", 0);
+        pcSock = GetSockObj(sHostname, iPort);
     }
     m_InFlightDnsSockets[pcSock] = false;
     pcSock->SetHostToVerifySSL(sHostname);
