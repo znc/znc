@@ -1214,5 +1214,17 @@ TEST_F(ZNCTest, AwayStoreModule) {
     // End 'away' bug test
 }
 
+// https://github.com/znc/znc/issues/1910
+TEST_F(ZNCTest, ListSocketsModule) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod listsockets");
+    client.ReadUntil("Loaded module");
+    client.Write("PRIVMSG *listsockets :list");
+    ASSERT_THAT(client.ReadRemainder().toStdString(),
+                Not(HasSubstr("1970-")));
+}
+
 }  // namespace
 }  // namespace znc_inttest
