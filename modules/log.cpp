@@ -291,7 +291,6 @@ void CLogMod::PutLog(const CString& sLine,
                                          .Replace_n("\\", "-")).AsLower());
 
     // Check if it's allowed to write in this specific path
-    sPath = CDir::CheckPathPrefix(GetSavePath(), sPath);
     if (sPath.empty()) {
         DEBUG("Invalid log path [" << m_sLogPath << "].");
         return;
