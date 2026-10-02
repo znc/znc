@@ -153,9 +153,21 @@ class CListSockets : public CModule {
 
     CString GetCreatedTime(const Csock* pSocket) {
         unsigned long long iStartTime = pSocket->GetStartTime();
-        timeval tv;
-        tv.tv_sec = iStartTime / 1000;
-        tv.tv_usec = iStartTime % 1000 * 1000;
+        unsigned long long iNow = CUtils::GetMillTime();
+
+        // TODO This code would look simpler with std::chrono instead.
+        // Especially if socket API is changed to use that.
+        timeval tv = CUtils::GetTime();
+        unsigned long long iAgeUs = (iNow - iStartTime) * 1000;
+
+        tv.tv_sec -= iAgeUs / 1000000;
+        long long usec = tv.tv_usec - (long long)(iAgeUs % 1000000);
+        if (usec < 0) {
+            tv.tv_sec--;
+            usec += 1000000;
+        }
+        tv.tv_usec = usec;
+
         return CUtils::FormatTime(tv, "%Y-%m-%d %H:%M:%S.%f",
                                   GetUser()->GetTimezone());
     }

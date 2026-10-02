@@ -1214,5 +1214,20 @@ TEST_F(ZNCTest, AwayStoreModule) {
     // End 'away' bug test
 }
 
+// https://github.com/znc/znc/issues/1910
+TEST_F(ZNCTest, ListSocketsModule) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod listsockets");
+    client.ReadUntil("Loaded module");
+    client.Write("PRIVMSG *listsockets :list");
+    int year = QDate::currentDate().year();
+    ASSERT_THAT(client.ReadRemainder().toStdString(),
+                AnyOf(HasSubstr(std::to_string(year - 1) + "-"),
+                      HasSubstr(std::to_string(year) + "-"),
+                      HasSubstr(std::to_string(year + 1) + "-")));
+}
+
 }  // namespace
 }  // namespace znc_inttest
