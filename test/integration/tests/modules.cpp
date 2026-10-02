@@ -1222,8 +1222,11 @@ TEST_F(ZNCTest, ListSocketsModule) {
     client.Write("znc loadmod listsockets");
     client.ReadUntil("Loaded module");
     client.Write("PRIVMSG *listsockets :list");
+    int year = QDate::currentDate().year();
     ASSERT_THAT(client.ReadRemainder().toStdString(),
-                Not(HasSubstr("1970-")));
+                AnyOf(HasSubstr(std::to_string(year - 1) + "-"),
+                      HasSubstr(std::to_string(year) + "-"),
+                      HasSubstr(std::to_string(year + 1) + "-")));
 }
 
 }  // namespace

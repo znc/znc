@@ -155,6 +155,8 @@ class CListSockets : public CModule {
         unsigned long long iStartTime = pSocket->GetStartTime();
         unsigned long long iNow = CUtils::GetMillTime();
 
+        // TODO This code would look simpler with std::chrono instead.
+        // Especially if socket API is changed to use that.
         timeval tv = CUtils::GetTime();
         unsigned long long iAgeUs = (iNow - iStartTime) * 1000;
 
