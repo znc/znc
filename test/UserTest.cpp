@@ -121,6 +121,86 @@ TEST_F(UserTest, IsHostAllowed) {
     }
 }
 
+TEST_F(UserTest, AllowedHostCanonicalization) {
+    CUser user("user");
+
+    // Host bits are masked off; equivalent ranges collapse to one entry.
+    EXPECT_TRUE(user.AddAllowedHost("146.52.0.1/16"));
+    EXPECT_EQ(user.GetAllowedHosts().size(), 1u);
+    EXPECT_EQ(*user.GetAllowedHosts().begin(), "146.52.0.0/16");
+    EXPECT_FALSE(user.AddAllowedHost("146.52.0.0/16"));
+
+    // Empty input is rejected; duplicate non-CIDR entries are rejected.
+    EXPECT_FALSE(user.AddAllowedHost(""));
+    CUser dup("dup");
+    EXPECT_TRUE(dup.AddAllowedHost("192.168.*"));
+    EXPECT_FALSE(dup.AddAllowedHost("192.168.*"));
+    EXPECT_EQ(dup.GetAllowedHosts().size(), 1u);
+
+    // IPv6 too.
+    CUser user6("user6");
+    EXPECT_TRUE(user6.AddAllowedHost("2001:db8::1/32"));
+    EXPECT_EQ(*user6.GetAllowedHosts().begin(), "2001:db8::/32");
+}
+
+TEST_F(UserTest, AllowedHostContainment) {
+    // Narrower ranges are dropped once a broader one is added.
+    CUser a("a");
+    a.AddAllowedHost("146.52.0.0/17");
+    a.AddAllowedHost("146.52.128.0/17");
+    a.AddAllowedHost("146.52.0.0/16");
+    EXPECT_EQ(a.GetAllowedHosts().size(), 1u);
+    EXPECT_EQ(*a.GetAllowedHosts().begin(), "146.52.0.0/16");
+
+    // Broader first: narrower additions are rejected.
+    CUser b("b");
+    EXPECT_TRUE(b.AddAllowedHost("146.52.0.0/16"));
+    EXPECT_FALSE(b.AddAllowedHost("146.52.0.0/17"));
+    EXPECT_FALSE(b.AddAllowedHost("146.52.128.0/17"));
+    EXPECT_EQ(b.GetAllowedHosts().size(), 1u);
+
+    // Across address families nothing collapses.
+    CUser c("c");
+    c.AddAllowedHost("0.0.0.0/0");
+    c.AddAllowedHost("::/0");
+    EXPECT_EQ(c.GetAllowedHosts().size(), 2u);
+
+    // IPv6 containment works the same way.
+    CUser d("d");
+    d.AddAllowedHost("2001:db8::/33");
+    d.AddAllowedHost("2001:db8::/32");
+    EXPECT_EQ(d.GetAllowedHosts().size(), 1u);
+    EXPECT_EQ(*d.GetAllowedHosts().begin(), "2001:db8::/32");
+}
+
+TEST_F(UserTest, AllowedHostWildcardsUntouched) {
+    CUser user("user");
+    user.AddAllowedHost("192.168.*");
+    user.AddAllowedHost("146.52.0.0/16");
+    user.AddAllowedHost("146.52.0.0/17");
+
+    EXPECT_EQ(user.GetAllowedHosts().size(), 2u);
+    EXPECT_EQ(user.GetAllowedHosts().count("192.168.*"), 1u);
+    EXPECT_EQ(user.GetAllowedHosts().count("146.52.0.0/16"), 1u);
+    // Matching still works after collapsing.
+    EXPECT_TRUE(user.IsHostAllowed("146.52.5.5"));
+    EXPECT_TRUE(user.IsHostAllowed("192.168.0.1"));
+}
+
+TEST_F(UserTest, AllowedHostRemovalCanonicalizes) {
+    CUser user("user");
+    user.AddAllowedHost("146.52.0.0/16");
+    EXPECT_TRUE(user.RemAllowedHost("146.52.0.1/16"));
+    EXPECT_TRUE(user.GetAllowedHosts().empty());
+    EXPECT_FALSE(user.RemAllowedHost("146.52.0.0/16"));
+
+    // Non-CIDR entries can be removed too.
+    CUser wild("wild");
+    wild.AddAllowedHost("192.168.*");
+    EXPECT_TRUE(wild.RemAllowedHost("192.168.*"));
+    EXPECT_FALSE(wild.RemAllowedHost("192.168.*"));
+}
+
 TEST_F(UserTest, TestAuthOnlyViaModule) {
     CUser user("user");
     user.SetPass("password", CUser::HASH_NONE);
