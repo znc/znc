@@ -24,6 +24,7 @@
 #include <math.h>
 #include <time.h>
 #include <algorithm>
+#include <arpa/inet.h>
 
 #ifdef ZNC_HAVE_ARGON
 #include <argon2.h>
@@ -31,6 +32,83 @@
 
 using std::vector;
 using std::set;
+
+namespace {
+
+// Parsed representation of a CIDR range, with host bits already zeroed.
+struct SAllowedCIDR {
+    int iFamily;
+    int iLen;  // 4 for IPv4, 16 for IPv6
+    uint8_t abyAddr[16];
+    int iPrefix;
+};
+
+// Zeroes the host bits so equivalent ranges share a representation.
+void MaskHostBits(SAllowedCIDR& c) {
+    for (int i = (c.iPrefix + 7) / 8; i < c.iLen; ++i) {
+        c.abyAddr[i] = 0;
+    }
+    if (c.iPrefix % 8) {
+        c.abyAddr[c.iPrefix / 8] &= 0xffu << (8 - c.iPrefix % 8);
+    }
+}
+
+// Parses "addr/prefix" into a canonical SAllowedCIDR. Returns false for
+// anything that is not a plain CIDR range (bare IPs, wildcards such as
+// "192.168.*", hostnames, malformed prefixes, ...).
+bool ParseAllowedCIDR(const CString& sHostMask, SAllowedCIDR& sCIDR) {
+    VCString vsParts;
+    if (sHostMask.Split("/", vsParts, false) != 2) {
+        return false;
+    }
+    const CString& sAddr = vsParts[0];
+    const CString& sPrefix = vsParts[1];
+
+    const int iPrefix = sPrefix.ToInt();
+    if (iPrefix < 0 || sPrefix != CString(iPrefix)) {
+        return false;
+    }
+
+    memset(sCIDR.abyAddr, 0, sizeof(sCIDR.abyAddr));
+    if (iPrefix <= 32 &&
+        inet_pton(AF_INET, sAddr.c_str(), sCIDR.abyAddr) == 1) {
+        sCIDR.iFamily = AF_INET;
+        sCIDR.iLen = 4;
+        sCIDR.iPrefix = iPrefix;
+    } else if (iPrefix <= 128 &&
+               inet_pton(AF_INET6, sAddr.c_str(), sCIDR.abyAddr) == 1) {
+        sCIDR.iFamily = AF_INET6;
+        sCIDR.iLen = 16;
+        sCIDR.iPrefix = iPrefix;
+    } else {
+        return false;
+    }
+
+    MaskHostBits(sCIDR);
+    return true;
+}
+
+CString AllowedCIDRToString(const SAllowedCIDR& sCIDR) {
+    char sBuf[INET6_ADDRSTRLEN];
+    if (inet_ntop(sCIDR.iFamily, sCIDR.abyAddr, sBuf, sizeof(sBuf)) ==
+        nullptr) {
+        return "";
+    }
+    return CString(sBuf) + "/" + CString(sCIDR.iPrefix);
+}
+
+// Both ranges are canonical (host bits zeroed), so matching the network
+// bytes is enough to tell whether sInner lies within sOuter.
+bool CIDRContains(const SAllowedCIDR& sOuter, const SAllowedCIDR& sInner) {
+    if (sOuter.iFamily != sInner.iFamily ||
+        sOuter.iPrefix > sInner.iPrefix) {
+        return false;
+    }
+    return memcmp(sOuter.abyAddr, sInner.abyAddr,
+                  (sOuter.iPrefix + 7) / 8) == 0;
+}
+
+}  // namespace
 
 class CUserTimer : public CCron {
   public:
@@ -871,16 +949,44 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 }
 
 const set<CString>& CUser::GetAllowedHosts() const { return m_ssAllowedHosts; }
+
 bool CUser::AddAllowedHost(const CString& sHostMask) {
-    if (sHostMask.empty() ||
-        m_ssAllowedHosts.find(sHostMask) != m_ssAllowedHosts.end()) {
+    if (sHostMask.empty()) {
         return false;
     }
 
-    m_ssAllowedHosts.insert(sHostMask);
-    return true;
+    SAllowedCIDR sNew;
+    if (!ParseAllowedCIDR(sHostMask, sNew)) {
+        // Non-CIDR (bare IP, wildcard, hostname): plain exact-string dedupe.
+        return m_ssAllowedHosts.insert(sHostMask).second;
+    }
+
+    const CString sCanonical = AllowedCIDRToString(sNew);
+    bool bChanged = false;
+    for (auto it = m_ssAllowedHosts.begin(); it != m_ssAllowedHosts.end();) {
+        SAllowedCIDR sExisting;
+        if (ParseAllowedCIDR(*it, sExisting)) {
+            if (CIDRContains(sExisting, sNew)) {
+                // Already covered by a broader existing range.
+                return false;
+            }
+            if (CIDRContains(sNew, sExisting)) {
+                // New range makes this existing one redundant.
+                it = m_ssAllowedHosts.erase(it);
+                bChanged = true;
+                continue;
+            }
+        }
+        ++it;
+    }
+
+    return m_ssAllowedHosts.insert(sCanonical).second || bChanged;
 }
 bool CUser::RemAllowedHost(const CString& sHostMask) {
+    SAllowedCIDR sCIDR;
+    if (ParseAllowedCIDR(sHostMask, sCIDR)) {
+        return m_ssAllowedHosts.erase(AllowedCIDRToString(sCIDR)) > 0;
+    }
     return m_ssAllowedHosts.erase(sHostMask) > 0;
 }
 void CUser::ClearAllowedHosts() { m_ssAllowedHosts.clear(); }
