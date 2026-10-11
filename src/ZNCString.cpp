@@ -220,7 +220,7 @@ bool CString::WildCmp(const CString& sWild, CaseSensitivity cs) const {
 CString& CString::MakeUpper() {
     for (char& c : *this) {
         // TODO use unicode
-        c = (char)toupper(c);
+        c = (char)toupper((unsigned char)c);
     }
 
     return *this;
@@ -229,7 +229,7 @@ CString& CString::MakeUpper() {
 CString& CString::MakeLower() {
     for (char& c : *this) {
         // TODO use unicode
-        c = (char)tolower(c);
+        c = (char)tolower((unsigned char)c);
     }
 
     return *this;

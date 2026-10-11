@@ -921,7 +921,8 @@ bool CUser::IsValidUserName(const CString& sUsername) {
     }
 
     while (*p) {
-        if (*p != '@' && *p != '.' && *p != '-' && *p != '_' && !isalnum(*p)) {
+        if (*p != '@' && *p != '.' && *p != '-' && *p != '_' &&
+            !isalnum((unsigned char)*p)) {
             return false;
         }
 
@@ -1402,7 +1403,7 @@ bool CUser::SetStatusPrefix(const CString& s) {
 bool CUser::SetLanguage(const CString& s) {
     // They look like ru-RU
     for (char c : s) {
-        if (isalpha(c) || c == '-' || c == '_') {
+        if (isalpha((unsigned char)c) || c == '-' || c == '_') {
         } else {
             return false;
         }
