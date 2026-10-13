@@ -307,4 +307,16 @@ TEST(UtilsTest, FormatTime) {
     // Test suffix
     CString str3 = CUtils::FormatTime(tv2, "a%fb", "UTC");
     EXPECT_EQ(str3, "a123b");
+
+    // The zero-pad width in the %f handler is (iDigits - sVal.length())
+    // computed in size_t. A zero-width %0f field, and a negative tv_usec
+    // (which ParseServerTime() hands back for a pre-1970 IRCv3 @time tag),
+    // both make sVal at least as long as iDigits and used to underflow that
+    // width, aborting via std::length_error.
+    EXPECT_EQ(CUtils::FormatTime(timeval{42, 123456}, "%s.%0f", "UTC"), "42.0");
+
+    timeval tvNeg;
+    tvNeg.tv_sec = 0;
+    tvNeg.tv_usec = -500000;
+    EXPECT_NO_THROW(CUtils::FormatTime(tvNeg, "[%H:%M:%S.%f]", "UTC"));
 }
