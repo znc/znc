@@ -19,6 +19,7 @@
 #include <znc/Utils.h>
 #include <znc/MD5.h>
 #include <znc/SHA256.h>
+#include <random>
 #include <sstream>
 
 using std::stringstream;
@@ -998,12 +999,18 @@ CString CString::RandomString(unsigned int uLength) {
         "0123456789!?.,:;/*-+_()";
     // -1 because sizeof() includes the trailing '\0' byte
     const size_t len = sizeof(chars) / sizeof(chars[0]) - 1;
-    size_t p;
     CString sRet;
+    sRet.reserve(uLength);
+
+    // Draw from the system CSPRNG rather than rand(): this feeds web session
+    // ids (CWebSock::GetSession) and password salts (CUtils::GetSalt), and
+    // rand()'s stream is fully determined by the process seed set in
+    // seedPRNG() (startup time xored with the pid).
+    std::random_device rd;
+    std::uniform_int_distribution<size_t> distr(0, len - 1);
 
     for (unsigned int a = 0; a < uLength; a++) {
-        p = (size_t)(len * (rand() / (RAND_MAX + 1.0)));
-        sRet += chars[p];
+        sRet += chars[distr(rd)];
     }
 
     return sRet;
