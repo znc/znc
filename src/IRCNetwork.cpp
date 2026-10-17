@@ -117,7 +117,7 @@ bool CIRCNetwork::IsValidNetwork(const CString& sNetwork) {
 
     const char* p = sNetwork.c_str();
     while (*p) {
-        if (*p != '_' && *p != '-' && !isalnum(*p)) {
+        if (*p != '_' && *p != '-' && !isalnum((unsigned char)*p)) {
             return false;
         }
 

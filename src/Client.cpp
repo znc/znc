@@ -792,7 +792,7 @@ bool CClient::IsValidIdentifier(const CString& sIdentifier) {
 
     const char* p = sIdentifier.c_str();
     while (*p) {
-        if (*p != '_' && *p != '-' && !isalnum(*p)) {
+        if (*p != '_' && *p != '-' && !isalnum((unsigned char)*p)) {
             return false;
         }
 

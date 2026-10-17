@@ -254,8 +254,9 @@ void CMessage::InitTime() {
 }
 
 void CMessage::InitType() {
-    if (m_sCommand.length() == 3 && isdigit(m_sCommand[0]) &&
-        isdigit(m_sCommand[1]) && isdigit(m_sCommand[2])) {
+    if (m_sCommand.length() == 3 && isdigit((unsigned char)m_sCommand[0]) &&
+        isdigit((unsigned char)m_sCommand[1]) &&
+        isdigit((unsigned char)m_sCommand[2])) {
         m_eType = Type::Numeric;
     } else if (m_sCommand.Equals("PRIVMSG")) {
         CString sParam = GetParam(1);
