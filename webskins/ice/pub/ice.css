@@ -75,6 +75,8 @@ table {
 	border-spacing: 0;
 	border: 1px solid #000;
 	margin: 10px;
+	border-collapse: collapse; /* Remove extra line left side listen ports  */
+
 }
 
 td {
@@ -384,4 +386,26 @@ div.submitline {
 input.channel_index {
   width: 3em;
   min-width: unset;
+}
+
+/* https://github.com/znc/znc/issues/1975 */
+
+/* Prevent 'unix:' text from wrapping to a new line */
+.subsection table td:first-child {
+	white-space: nowrap;
+}
+
+/* unix: /path/to/socket */
+.subsection table input[name="path"] {
+	display: inline-block !important;
+	vertical-align: middle;
+	width: 115px !important;
+}
+
+/* Mode 777 */
+.subsection table td.third input[name="mode"],
+.subsection table input[name="mode"] {
+	display: inline-block !important;
+	vertical-align: middle;
+	width: 3em !important;
 }
