@@ -563,7 +563,9 @@ CString CUtils::FormatTime(const timeval& tv, const CString& sFormat,
                     sFormat2 += sFormat.substr(uLastCopied,
                         uFormatStart - uLastCopied);
                     CString sVal = CString(iVal);
-                    sFormat2 += CString(iDigits - sVal.length(), '0');
+                    if (static_cast<CString::size_type>(iDigits) >
+                        sVal.length())
+                        sFormat2 += CString(iDigits - sVal.length(), '0');
                     sFormat2 += sVal;
                     uLastCopied = i + 1;
                     bInFormat = false;
