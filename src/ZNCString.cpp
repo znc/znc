@@ -22,6 +22,10 @@
 #include <random>
 #include <sstream>
 
+#ifdef HAVE_LIBSSL
+#include <openssl/rand.h>
+#endif
+
 using std::stringstream;
 
 static constexpr unsigned char XX = 0xff;
@@ -1002,12 +1006,26 @@ CString CString::RandomString(unsigned int uLength) {
     CString sRet;
     sRet.reserve(uLength);
 
-    // Draw from the system CSPRNG rather than rand(): this feeds web session
-    // ids (CWebSock::GetSession) and password salts (CUtils::GetSalt), and
-    // rand()'s stream is fully determined by the process seed set in
-    // seedPRNG() (startup time xored with the pid).
-    std::random_device rd;
     std::uniform_int_distribution<size_t> distr(0, len - 1);
+#ifdef HAVE_LIBSSL
+    // OpenSSL's DRBG is seeded once and doesn't go back to the kernel for
+    // every call, unlike std::random_device.
+    struct {
+        using result_type = unsigned int;
+        static constexpr result_type min() { return 0; }
+        static constexpr result_type max() { return ~0u; }
+        result_type operator()() {
+            result_type r;
+            if (RAND_bytes(reinterpret_cast<unsigned char*>(&r), sizeof(r)) !=
+                1) {
+                r = std::random_device()();
+            }
+            return r;
+        }
+    } rd;
+#else
+    std::random_device rd;
+#endif
 
     for (unsigned int a = 0; a < uLength; a++) {
         sRet += chars[distr(rd)];
