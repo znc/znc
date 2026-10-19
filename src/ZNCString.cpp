@@ -19,7 +19,12 @@
 #include <znc/Utils.h>
 #include <znc/MD5.h>
 #include <znc/SHA256.h>
+#include <random>
 #include <sstream>
+
+#ifdef HAVE_LIBSSL
+#include <openssl/rand.h>
+#endif
 
 using std::stringstream;
 
@@ -998,12 +1003,32 @@ CString CString::RandomString(unsigned int uLength) {
         "0123456789!?.,:;/*-+_()";
     // -1 because sizeof() includes the trailing '\0' byte
     const size_t len = sizeof(chars) / sizeof(chars[0]) - 1;
-    size_t p;
     CString sRet;
+    sRet.reserve(uLength);
+
+    std::uniform_int_distribution<size_t> distr(0, len - 1);
+#ifdef HAVE_LIBSSL
+    // OpenSSL's DRBG is seeded once and doesn't go back to the kernel for
+    // every call, unlike std::random_device.
+    struct {
+        using result_type = unsigned int;
+        static constexpr result_type min() { return 0; }
+        static constexpr result_type max() { return ~0u; }
+        result_type operator()() {
+            result_type r;
+            if (RAND_bytes(reinterpret_cast<unsigned char*>(&r), sizeof(r)) !=
+                1) {
+                r = std::random_device()();
+            }
+            return r;
+        }
+    } rd;
+#else
+    std::random_device rd;
+#endif
 
     for (unsigned int a = 0; a < uLength; a++) {
-        p = (size_t)(len * (rand() / (RAND_MAX + 1.0)));
-        sRet += chars[p];
+        sRet += chars[distr(rd)];
     }
 
     return sRet;
