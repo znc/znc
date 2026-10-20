@@ -561,10 +561,32 @@ TEST_F(ZNCTest, SaslAuthPlainImapAuth) {
     ASSERT_TRUE(imap.waitForNewConnection(30000 /* msec */));
     auto imapsock = WrapIO(imap.nextPendingConnection());
     imapsock.Write("* OK IMAP4rev1 Service Ready");
-    imapsock.ReadUntil("AUTH LOGIN user@mail.test.com hunter3");
+    imapsock.ReadUntil("AUTH LOGIN \"user@mail.test.com\" \"hunter3\"");
     imapsock.Write("AUTH OK");
 
     client2.ReadUntil(":irc.znc.in 903 foo :SASL authentication successful");
+}
+
+TEST_F(ZNCTest, SaslAuthPlainImapAuthLineBreak) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    QTcpServer imap;
+    ASSERT_TRUE(imap.listen(QHostAddress::LocalHost)) << imap.errorString().toStdString();
+    auto client = LoginClient();
+    client.Write(QStringLiteral("znc loadmod imapauth 127.0.0.1 %1")
+                     .arg(imap.serverPort())
+                     .toUtf8());
+    client.ReadUntil("Loaded");
+
+    auto client2 = ConnectClient();
+    client2.Write("NICK foo");
+    client2.Write("CAP REQ :sasl");
+    client2.Write("USER bar");
+    client2.Write("AUTHENTICATE PLAIN");
+    client2.Write("AUTHENTICATE " +
+                  QByteArrayLiteral("\0user\0x\r\nAUTH2 LOGIN a b").toBase64());
+    client2.ReadUntil(":irc.znc.in 904 foo :Invalid Password");
+    EXPECT_FALSE(imap.hasPendingConnections());
 }
 
 TEST_F(ZNCTest, SaslAuthExternal) {
