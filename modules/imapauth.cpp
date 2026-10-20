@@ -40,6 +40,10 @@ class CIMAPSock : public CSocket {
     void ReadLine(const CString& sLine) override;
 
   private:
+    static CString Quote(const CString& s) {
+        return "\"" + s.Replace_n("\\", "\\\\").Replace_n("\"", "\\\"") + "\"";
+    }
+
   protected:
     CIMAPAuthMod* m_pIMAPMod;
     bool m_bSentLogin;
@@ -93,6 +97,14 @@ class CIMAPAuthMod : public CModule {
             return HALT;
         }
 
+        // CR, LF and NUL can't appear in an IMAP quoted string, and a line
+        // break would let the password inject further IMAP commands.
+        const CString sForbidden("\r\n\0", 3);
+        if (Auth->GetPassword().find_first_of(sForbidden) != CString::npos) {
+            Auth->RefuseLogin("Invalid Password");
+            return HALT;
+        }
+
         if (pUser &&
             m_Cache.HasItem(CString(Auth->GetUsername() + ":" +
                                     Auth->GetPassword()).MD5())) {
@@ -140,8 +152,8 @@ void CIMAPSock::ReadLine(const CString& sLine) {
             }
         }
 
-        Write("AUTH LOGIN " + sUsername + " " + m_spAuth->GetPassword() +
-              "\r\n");
+        Write("AUTH LOGIN " + Quote(sUsername) + " " +
+              Quote(m_spAuth->GetPassword()) + "\r\n");
     } else if (sLine.Left(5) == "AUTH ") {
         CUser* pUser = CZNC::Get().FindUser(m_spAuth->GetUsername());
 
