@@ -765,6 +765,14 @@ TEST_F(ZNCTest, BounceDCCModule) {
     QByteArray line2;
     client.ReadUntilAndGet(":friend!user@host PRIVMSG nick :\001DCC CHAT chat", line2);
     EXPECT_THAT(line2.toStdString(), Not(HasSubstr("3232235521 54321")));
+
+    // Peer must not be able to make ZNC connect to its own loopback
+    ircd.Write(":friend!user@host PRIVMSG nick :\001DCC CHAT chat 2130706433 6379\001");
+    client.ReadUntil("refused: bad address 2130706433");
+    ircd.Write(":friend!user@host PRIVMSG nick :\001DCC SEND f 2852039166 80 1\001");
+    client.ReadUntil("refused: bad address 2852039166");
+    ircd.Write(":friend!user@host PRIVMSG nick :\001DCC CHAT chat 6425673729 22\001");
+    client.ReadUntil("refused: bad address 6425673729");
 }
 
 TEST_F(ZNCTest, ChanSaverModule) {
