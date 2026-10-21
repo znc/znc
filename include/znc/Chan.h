@@ -52,6 +52,7 @@ class CChan : private CCoreTranslationMixin {
         M_Limit = 'l',
         M_Key = 'k',
         M_Op = 'o',
+        M_HalfOp = 'h',
         M_Voice = 'v',
         M_Ban = 'b',
         M_Except = 'e'
