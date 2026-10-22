@@ -167,6 +167,13 @@ void CWebAuth::AcceptedLogin(CUser& User) {
     if (m_pWebSock) {
         std::shared_ptr<CWebSession> spSession = m_pWebSock->GetSession();
 
+        // Don't let a session id which existed before the login become
+        // authenticated, otherwise whoever planted it can use it too.
+        if (spSession->GetUser() != &User) {
+            m_pWebSock->RenewSession();
+            spSession = m_pWebSock->GetSession();
+        }
+
         spSession->SetUser(&User);
 
         m_pWebSock->SetLoggedIn(true);
@@ -987,6 +994,12 @@ CString CWebSock::GetCSRFCheck() {
 
 bool CWebSock::ValidateCSRFCheck(const CString& sURI) {
     return sURI == "/login" || GetParam("_CSRF_Check") == GetCSRFCheck();
+}
+
+void CWebSock::RenewSession() {
+    Sessions.m_mspSessions.RemItem(GetSession()->GetId());
+    m_spSession.reset();
+    SendCookie("SessionId", GetSession()->GetId());
 }
 
 bool CWebSock::OnLogin(const CString& sUser, const CString& sPass,

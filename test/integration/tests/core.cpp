@@ -17,6 +17,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <QNetworkCookie>
+
 #include "znctest.h"
 #include "znctestconfig.h"
 
@@ -105,6 +107,55 @@ TEST_F(ZNCTest, HTTP) {
     auto reply = HttpGet(QNetworkRequest(
         QUrl(QStringLiteral("http://127.0.0.1:%1/").arg(port))));
     EXPECT_THAT(reply->rawHeader("Server").toStdString(), HasSubstr("ZNC"));
+}
+
+TEST_F(ZNCTest, WebLoginRenewsSessionId) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+
+    auto client = LoginClient();
+    int port = PickPortNumber();
+    client.Write(QStringLiteral("znc addport %1 all all").arg(port).toUtf8());
+    client.ReadUntil(":Port added");
+
+    const QByteArray sCookieName = QByteArray::number(port) + "-SessionId";
+    auto request = [&](QString sPath, QByteArray sSessionId) {
+        QNetworkRequest request(
+            QUrl(QStringLiteral("http://127.0.0.1:%1%2").arg(port).arg(sPath)));
+        request.setAttribute(QNetworkRequest::RedirectPolicyAttribute,
+                             QNetworkRequest::ManualRedirectPolicy);
+        request.setAttribute(QNetworkRequest::CookieLoadControlAttribute,
+                             QNetworkRequest::Manual);
+        request.setAttribute(QNetworkRequest::CookieSaveControlAttribute,
+                             QNetworkRequest::Manual);
+        if (!sSessionId.isEmpty()) {
+            request.setRawHeader("Cookie", sCookieName + "=" + sSessionId);
+        }
+        return request;
+    };
+    auto sessionId = [&](const std::unique_ptr<QNetworkReply>& reply) {
+        for (const QNetworkCookie& cookie :
+             reply->header(QNetworkRequest::SetCookieHeader)
+                 .value<QList<QNetworkCookie>>()) {
+            if (cookie.name() == sCookieName) return cookie.value();
+        }
+        return QByteArray();
+    };
+
+    QByteArray sOldId = sessionId(HttpGet(request("/", "")));
+    ASSERT_FALSE(sOldId.isEmpty());
+    auto login = HttpPost(request("/login", sOldId), {
+                                                         {"submitted", "1"},
+                                                         {"user", "user"},
+                                                         {"pass", "hunter2"},
+                                                     });
+    QByteArray sNewId = sessionId(login);
+    ASSERT_FALSE(sNewId.isEmpty());
+    EXPECT_NE(sNewId, sOldId);
+    EXPECT_THAT(HttpGet(request("/", sNewId))->readAll().toStdString(),
+                HasSubstr("Logged in as"));
+    EXPECT_THAT(HttpGet(request("/", sOldId))->readAll().toStdString(),
+                testing::Not(HasSubstr("Logged in as")));
 }
 
 TEST_F(ZNCTest, FixCVE20149403) {
