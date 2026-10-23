@@ -766,6 +766,15 @@ TEST_F(ZNCTest, BounceDCCModule) {
     client.ReadUntilAndGet(":friend!user@host PRIVMSG nick :\001DCC CHAT chat", line2);
     EXPECT_THAT(line2.toStdString(), Not(HasSubstr("3232235521 54321")));
 
+    // Only the user's own clients may connect to that bounce port. The test
+    // client is on a unix socket, so a TCP connection from anywhere is refused.
+    QByteArray bouncePort = line2.mid(line2.lastIndexOf(' ') + 1);
+    bouncePort.chop(1);  // trailing \001
+    QTcpSocket outsider;
+    outsider.connectToHost("127.0.0.1", bouncePort.toUShort());
+    outsider.waitForConnected();
+    client.ReadUntil("Refused connection from 127.0.0.1");
+
     // Peer must not be able to make ZNC connect to its own loopback
     ircd.Write(":friend!user@host PRIVMSG nick :\001DCC CHAT chat 2130706433 6379\001");
     client.ReadUntil("refused: bad address 2130706433");
