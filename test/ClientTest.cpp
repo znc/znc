@@ -390,3 +390,11 @@ TEST_F(ClientTest, OnSendToClientMessage) {
     EXPECT_THAT(m_pTestSock->vsLines, ElementsAre(msg.ToString()));
     m_pTestModule->bSendHooks = false;
 }
+
+TEST_F(ClientTest, AcceptSASLLoginAllowedHosts) {
+    TestClient client;
+    m_pTestUser->AddAllowedHost("203.0.113.0/24");
+    client.AcceptSASLLogin(*m_pTestUser);
+    EXPECT_THAT(client.vsLines,
+                ElementsAre(":irc.znc.in 904 me :Your host [] is not allowed"));
+}

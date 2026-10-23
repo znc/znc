@@ -589,6 +589,41 @@ TEST_F(ZNCTest, SaslAuthPlainImapAuthLineBreak) {
     EXPECT_FALSE(imap.hasPendingConnections());
 }
 
+TEST_F(ZNCTest, ImapAuthAllowedHosts) {
+    QTcpServer imap;
+    ASSERT_TRUE(imap.listen(QHostAddress::LocalHost)) << imap.errorString().toStdString();
+    QFile conf(m_dir.path() + "/configs/znc.conf");
+    ASSERT_TRUE(conf.open(QIODevice::Append | QIODevice::Text));
+    QTextStream(&conf) << R"(
+        <User foo>
+            Pass = plain#hunter2
+            Allow = 203.0.113.0/24
+        </User>
+    )";
+    conf.close();
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write(QStringLiteral("znc loadmod imapauth 127.0.0.1 %1")
+                     .arg(imap.serverPort())
+                     .toUtf8());
+    client.ReadUntil("Loaded");
+
+    auto client2 = ConnectClient();
+    client2.Write("PASS foo:hunter2");
+    client2.Write("NICK foo");
+    client2.Write("USER foo x x :x");
+
+    ASSERT_TRUE(imap.waitForNewConnection(30000 /* msec */));
+    auto imapsock = WrapIO(imap.nextPendingConnection());
+    imapsock.Write("* OK IMAP4rev1 Service Ready");
+    imapsock.ReadUntil("AUTH LOGIN \"foo\" \"hunter2\"");
+    imapsock.Write("AUTH OK");
+
+    client2.ReadUntil(":irc.znc.in 464 foo :Your host [");
+    client2.ReadUntil("] is not allowed");
+}
+
 TEST_F(ZNCTest, SaslAuthExternal) {
 #ifndef HAVE_LIBSSL
     GTEST_SKIP() << "SSL is disabled";
