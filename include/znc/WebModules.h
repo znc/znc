@@ -152,6 +152,7 @@ class CWebSock : public CHTTPSock {
     void PrintErrorPage(const CString& sMessage);
 
     std::shared_ptr<CWebSession> GetSession();
+    void RenewSession();
 
     Csock* GetSockObj(const CString& sHost, unsigned short uPort) override;
     static CString GetSkinPath(const CString& sSkinName);
