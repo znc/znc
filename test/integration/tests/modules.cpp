@@ -823,6 +823,25 @@ TEST_F(ZNCTest, BounceDCCModule) {
     QByteArray line2;
     client.ReadUntilAndGet(":friend!user@host PRIVMSG nick :\001DCC CHAT chat", line2);
     EXPECT_THAT(line2.toStdString(), Not(HasSubstr("3232235521 54321")));
+
+    // Only the user's own clients may connect to that bounce port. The test
+    // client is on a unix socket, so a TCP connection from anywhere is refused.
+    // The listener binds to the IRC socket's local address, which for a unix
+    // socket is "localhost" on Linux and may resolve to ::1 only.
+    QByteArray bouncePort = line2.mid(line2.lastIndexOf(' ') + 1);
+    bouncePort.chop(1);  // trailing \001
+    QTcpSocket outsider;
+    outsider.connectToHost("localhost", bouncePort.toUShort());
+    ASSERT_TRUE(outsider.waitForConnected());
+    client.ReadUntil("Refused connection from");
+
+    // Peer must not be able to make ZNC connect to its own loopback
+    ircd.Write(":friend!user@host PRIVMSG nick :\001DCC CHAT chat 2130706433 6379\001");
+    client.ReadUntil("refused: bad address 2130706433");
+    ircd.Write(":friend!user@host PRIVMSG nick :\001DCC SEND f 2852039166 80 1\001");
+    client.ReadUntil("refused: bad address 2852039166");
+    ircd.Write(":friend!user@host PRIVMSG nick :\001DCC CHAT chat 6425673729 22\001");
+    client.ReadUntil("refused: bad address 6425673729");
 }
 
 TEST_F(ZNCTest, ChanSaverModule) {

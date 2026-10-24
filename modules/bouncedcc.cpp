@@ -163,6 +163,24 @@ class CBounceDCCMod : public CModule {
 
     bool UseClientIP() { return GetNV("UseClientIP").ToBool(); }
 
+    bool IsClientIP(const CString& sIP) {
+        for (CClient* pClient : GetUser()->GetAllClients()) {
+            if (pClient->GetRemoteIP().Equals(sIP)) return true;
+        }
+        return false;
+    }
+
+    // The address in a DCC request from IRC is chosen by the remote peer, and
+    // ZNC is the one connecting to it, so don't let it point at ZNC's own
+    // host or at link-local services.
+    static bool IsAllowedPeerIP(unsigned long uLongIP) {
+        if (uLongIP > 0xFFFFFFFFUL) return false;
+        const unsigned long uFirst = uLongIP >> 24;
+        if (uFirst == 0 || uFirst == 127 || uFirst >= 224) return false;
+        if ((uLongIP >> 16) == 0xA9FE) return false;  // 169.254.0.0/16
+        return true;
+    }
+
     EModRet OnUserCTCPMessage(CCTCPMessage& Message) override {
         CString sTarget = Message.GetTarget();
         CString sMessage = Message.GetText();
@@ -254,6 +272,13 @@ class CBounceDCCMod : public CModule {
                                                   "\"", true).ToUShort();
             unsigned long uFileSize = sMessage.Token(5, false, " ", false, "\"",
                                                      "\"", true).ToULong();
+
+            if ((sType.Equals("CHAT") || sType.Equals("SEND")) &&
+                !IsAllowedPeerIP(uLongIP)) {
+                PutModule(t_f("DCC {1} from {2} refused: bad address {3}")(
+                    sType, Nick.GetNick(), CString(uLongIP)));
+                return HALTCORE;
+            }
 
             if (sType.Equals("CHAT")) {
                 CNick FromNick(Nick.GetNickMask());
@@ -488,6 +513,24 @@ void CDCCBounce::Shutdown() {
 }
 
 Csock* CDCCBounce::GetSockObj(const CString& sHost, unsigned short uPort) {
+    // m_sRemoteIP is only known up front when the request came from IRC. In
+    // that case ZNC connects out to the remote peer itself, so the only thing
+    // that should be connecting here is one of the user's own clients. Hand
+    // Csocket a throwaway socket that is closed straight away and keep
+    // listening for the real client.
+    if (!m_sRemoteIP.empty() && !m_pModule->IsClientIP(sHost)) {
+        DEBUG(GetSockName() << " == GetSockObj(" << sHost << ") refused");
+        CString sType = m_bIsChat ? t_s("Chat", "type") : t_s("Xfer", "type");
+        m_pModule->PutModule(
+            t_f("DCC {1} Bounce ({2}): Refused connection from {3}, which is "
+                "not one of your clients")(sType, m_sRemoteNick, sHost));
+        CDCCBounce* pRefused =
+            new CDCCBounce(m_pModule, sHost, uPort, m_sRemoteNick, m_sRemoteIP,
+                           m_sFileName, m_bIsChat);
+        pRefused->Close();
+        return pRefused;
+    }
+
     Close();
 
     if (m_sRemoteIP.empty()) {
