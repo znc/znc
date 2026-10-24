@@ -594,9 +594,10 @@ TEST_F(ZNCTest, ImapAuthAllowedHosts) {
     ASSERT_TRUE(imap.listen(QHostAddress::LocalHost)) << imap.errorString().toStdString();
     QFile conf(m_dir.path() + "/configs/znc.conf");
     ASSERT_TRUE(conf.open(QIODevice::Append | QIODevice::Text));
+    // Pass is never checked here, imapauth asks the IMAP server instead
     QTextStream(&conf) << R"(
         <User foo>
-            Pass = plain#hunter2
+            Pass = plain#unused
             Allow = 203.0.113.0/24
         </User>
     )";
