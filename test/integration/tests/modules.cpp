@@ -768,12 +768,14 @@ TEST_F(ZNCTest, BounceDCCModule) {
 
     // Only the user's own clients may connect to that bounce port. The test
     // client is on a unix socket, so a TCP connection from anywhere is refused.
+    // The listener binds to the IRC socket's local address, which for a unix
+    // socket is "localhost" on Linux and may resolve to ::1 only.
     QByteArray bouncePort = line2.mid(line2.lastIndexOf(' ') + 1);
     bouncePort.chop(1);  // trailing \001
     QTcpSocket outsider;
-    outsider.connectToHost("127.0.0.1", bouncePort.toUShort());
-    outsider.waitForConnected();
-    client.ReadUntil("Refused connection from 127.0.0.1");
+    outsider.connectToHost("localhost", bouncePort.toUShort());
+    ASSERT_TRUE(outsider.waitForConnected());
+    client.ReadUntil("Refused connection from");
 
     // Peer must not be able to make ZNC connect to its own loopback
     ircd.Write(":friend!user@host PRIVMSG nick :\001DCC CHAT chat 2130706433 6379\001");
