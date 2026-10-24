@@ -30,6 +30,8 @@ using testing::Lt;
 using testing::Gt;
 using testing::AllOf;
 using testing::AnyOf;
+using testing::IsEmpty;
+using testing::Not;
 
 namespace znc_inttest {
 namespace {
@@ -143,19 +145,19 @@ TEST_F(ZNCTest, WebLoginRenewsSessionId) {
     };
 
     QByteArray sOldId = sessionId(HttpGet(request("/", "")));
-    ASSERT_FALSE(sOldId.isEmpty());
+    ASSERT_THAT(sOldId, Not(IsEmpty()));
     auto login = HttpPost(request("/login", sOldId), {
                                                          {"submitted", "1"},
                                                          {"user", "user"},
                                                          {"pass", "hunter2"},
                                                      });
     QByteArray sNewId = sessionId(login);
-    ASSERT_FALSE(sNewId.isEmpty());
+    ASSERT_THAT(sNewId, Not(IsEmpty()));
     EXPECT_NE(sNewId, sOldId);
     EXPECT_THAT(HttpGet(request("/", sNewId))->readAll().toStdString(),
                 HasSubstr("Logged in as"));
     EXPECT_THAT(HttpGet(request("/", sOldId))->readAll().toStdString(),
-                testing::Not(HasSubstr("Logged in as")));
+                Not(HasSubstr("Logged in as")));
 }
 
 TEST_F(ZNCTest, FixCVE20149403) {
