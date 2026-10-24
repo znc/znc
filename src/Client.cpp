@@ -420,6 +420,13 @@ void CAuthBase::Invalidate() { m_pSock = nullptr; }
 
 void CAuthBase::AcceptLogin(CUser& User) {
     if (m_pSock) {
+        // Auth modules call this directly, so check allowed hosts here rather
+        // than only in CZNC::AuthUser()
+        CString sHost = GetRemoteIP();
+        if (!User.IsHostAllowed(sHost)) {
+            RefuseLogin("Your host [" + sHost + "] is not allowed");
+            return;
+        }
         AcceptedLogin(User);
     }
     Invalidate();
@@ -1340,6 +1347,11 @@ void CClient::RefuseSASLLogin(const CString& sReason) {
 }
 
 void CClient::AcceptSASLLogin(CUser& User) {
+    if (!User.IsHostAllowed(GetRemoteIP())) {
+        RefuseSASLLogin("Your host [" + GetRemoteIP() + "] is not allowed");
+        return;
+    }
+
     PutClient(":irc.znc.in 900 " + GetNick() + " " + GetNick() + "!" +
               User.GetIdent() + "@" + GetRemoteIP() + " " + User.GetUsername() +
               " :You are now logged in as " + User.GetUsername());

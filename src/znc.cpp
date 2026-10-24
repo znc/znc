@@ -1978,8 +1978,6 @@ CZNC::TrafficStatsMap CZNC::GetNetworkTrafficStats(const CString& sUsername,
 }
 
 void CZNC::AuthUser(std::shared_ptr<CAuthBase> AuthClass) {
-    // TODO unless the auth module calls it, CUser::IsHostAllowed() is not
-    // honoured
     bool bReturn = false;
     GLOBALMODULECALL(OnLoginAttempt(AuthClass), &bReturn);
     if (bReturn) return;
@@ -1991,13 +1989,7 @@ void CZNC::AuthUser(std::shared_ptr<CAuthBase> AuthClass) {
         return;
     }
 
-    CString sHost = AuthClass->GetRemoteIP();
-
-    if (!pUser->IsHostAllowed(sHost)) {
-        AuthClass->RefuseLogin("Your host [" + sHost + "] is not allowed");
-        return;
-    }
-
+    // CAuthBase::AcceptLogin() checks allowed hosts
     AuthClass->AcceptLogin(*pUser);
 }
 
