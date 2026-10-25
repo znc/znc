@@ -149,6 +149,7 @@ class CHTTPSock : public CSocket {
     CString m_sContentType;
     CString m_sDocRoot;
     CString m_sForwardedIP;
+    CString m_sForwardedFor;
     std::map<CString, VCString> m_msvsPOSTParams;
     std::map<CString, VCString> m_msvsGETParams;
     MCString m_msHeaders;

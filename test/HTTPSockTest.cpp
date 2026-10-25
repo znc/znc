@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
+#include <arpa/inet.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
 #include <znc/HTTPSock.h>
 #include <znc/znc.h>
 
@@ -149,4 +153,48 @@ TEST_F(HTTPSockHeadersTest, HardeningHeadersOmittedByCaller) {
     // Other defaults unaffected.
     EXPECT_THAT(sock.m_vsLines, Contains(StartsWith("X-Content-Type-Options: nosniff")));
     EXPECT_THAT(sock.m_vsLines, Contains(CString("Referrer-Policy: no-referrer\r\n")));
+}
+
+// Returns the server side of a loopback TCP connection, so that a socket
+// handed this fd reports 127.0.0.1 as its peer.
+static int LoopbackConnection() {
+    int iListen = socket(AF_INET, SOCK_STREAM, 0);
+    sockaddr_in addr{};
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+    socklen_t len = sizeof(addr);
+    EXPECT_EQ(bind(iListen, (sockaddr*)&addr, len), 0);
+    EXPECT_EQ(listen(iListen, 1), 0);
+    EXPECT_EQ(getsockname(iListen, (sockaddr*)&addr, &len), 0);
+    int iClient = socket(AF_INET, SOCK_STREAM, 0);
+    EXPECT_EQ(connect(iClient, (sockaddr*)&addr, len), 0);
+    int iServer = accept(iListen, nullptr, nullptr);
+    close(iClient);
+    close(iListen);
+    return iServer;
+}
+
+// Repeated X-Forwarded-For lines form one list (RFC 7230 3.2.2), and some
+// proxies (HAProxy's "option forwardfor") append their own line after
+// whatever the client sent instead of extending it. The client's line must
+// not be taken as the forwarded address.
+TEST_F(HTTPSockHeadersTest, ForwardedForSpansHeaderLines) {
+    CZNC::Get().AddTrustedProxy("127.0.0.1");
+    CCapturingHTTPSock sock;
+    sock.SetSock(LoopbackConnection());
+    sock.ReadLine("GET / HTTP/1.1\r\n");
+    sock.ReadLine("X-Forwarded-For: 203.0.113.5\r\n");   // sent by the client
+    sock.ReadLine("X-Forwarded-For: 198.51.100.7\r\n");  // added by the proxy
+    sock.ReadLine("\r\n");
+    EXPECT_EQ(sock.GetRemoteIP(), "198.51.100.7");
+}
+
+TEST_F(HTTPSockHeadersTest, ForwardedForSingleLine) {
+    CZNC::Get().AddTrustedProxy("127.0.0.1");
+    CCapturingHTTPSock sock;
+    sock.SetSock(LoopbackConnection());
+    sock.ReadLine("GET / HTTP/1.1\r\n");
+    sock.ReadLine("X-Forwarded-For: 203.0.113.5, 198.51.100.7\r\n");
+    sock.ReadLine("\r\n");
+    EXPECT_EQ(sock.GetRemoteIP(), "198.51.100.7");
 }

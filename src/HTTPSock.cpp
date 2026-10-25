@@ -51,6 +51,7 @@ CHTTPSock::CHTTPSock(CModule* pMod, const CString& sURIPrefix,
       m_sContentType(""),
       m_sDocRoot(""),
       m_sForwardedIP(""),
+      m_sForwardedFor(""),
       m_msvsPOSTParams(),
       m_msvsGETParams(),
       m_msHeaders(),
@@ -150,13 +151,28 @@ void CHTTPSock::ReadLine(const CString& sData) {
             PrintErrorPage(413, "Request Entity Too Large",
                            "The request you sent was too large.");
     } else if (sName.Equals("X-Forwarded-For:")) {
-        // X-Forwarded-For: client, proxy1, proxy2
-        if (m_sForwardedIP.empty()) {
+        // Repeated header lines form a single list (RFC 7230 3.2.2), and some
+        // proxies append their own line after the client's instead of
+        // extending it, so collect them all before picking the client.
+        if (!m_sForwardedFor.empty()) m_sForwardedFor += ",";
+        m_sForwardedFor += sLine.Token(1, true);
+    } else if (sName.Equals("If-None-Match:")) {
+        // this is for proper client cache support (HTTP 304) on static files:
+        m_sIfNoneMatch = sLine.Token(1, true);
+    } else if (sName.Equals("Accept-Encoding:") && !m_bHTTP10Client) {
+        SCString ssEncodings;
+        // trimming whitespace from the tokens is important:
+        sLine.Token(1, true)
+            .Split(",", ssEncodings, false, "", "", false, true);
+        m_bAcceptGzip = (ssEncodings.find("gzip") != ssEncodings.end());
+    } else if (sLine.empty()) {
+        if (m_sForwardedIP.empty() && !m_sForwardedFor.empty()) {
+            // X-Forwarded-For: client, proxy1, proxy2
             const VCString& vsTrustedProxies = CZNC::Get().GetTrustedProxies();
             CString sIP = GetRemoteIP();
 
             VCString vsIPs;
-            sLine.Token(1, true).Split(",", vsIPs, false, "", "", false, true);
+            m_sForwardedFor.Split(",", vsIPs, false, "", "", false, true);
 
             while (!vsIPs.empty()) {
                 // sIP told us that it got connection from vsIPs.back()
@@ -181,16 +197,7 @@ void CHTTPSock::ReadLine(const CString& sData) {
             // X-Forwarded-For list in both cases use it as the endpoind
             m_sForwardedIP = sIP;
         }
-    } else if (sName.Equals("If-None-Match:")) {
-        // this is for proper client cache support (HTTP 304) on static files:
-        m_sIfNoneMatch = sLine.Token(1, true);
-    } else if (sName.Equals("Accept-Encoding:") && !m_bHTTP10Client) {
-        SCString ssEncodings;
-        // trimming whitespace from the tokens is important:
-        sLine.Token(1, true)
-            .Split(",", ssEncodings, false, "", "", false, true);
-        m_bAcceptGzip = (ssEncodings.find("gzip") != ssEncodings.end());
-    } else if (sLine.empty()) {
+
         if (m_bBasicAuth && !m_bLoggedIn) {
             m_bLoggedIn = OnLogin(m_sUser, m_sPass, true);
             // After successful login ReadLine("") will be called again to
