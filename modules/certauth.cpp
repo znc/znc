@@ -375,7 +375,9 @@ class CSSLClientCertMod : public CModule {
             WebSock.Redirect(GetWebPath());
             return true;
         } else if (sPageName == "delete") {
-            DelKey(*pUser, WebSock.GetParam("key", false));
+            if (WebSock.IsPost()) {
+                DelKey(*pUser, WebSock.GetParam("key"));
+            }
             WebSock.Redirect(GetWebPath());
             return true;
         }

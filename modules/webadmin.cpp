@@ -568,7 +568,7 @@ class CWebAdminMod : public CModule {
             }
 
             if (pNetwork) {
-                return DelChan(WebSock, pNetwork);
+                return DelChan(WebSock, pNetwork, Tmpl);
             }
 
             WebSock.PrintErrorPage(t_s("No such user or network"));
@@ -1306,12 +1306,25 @@ class CWebAdminMod : public CModule {
         return false;
     }
 
-    bool DelChan(CWebSock& WebSock, CIRCNetwork* pNetwork) {
-        CString sChan = WebSock.GetParam("name", false);
+    bool DelChan(CWebSock& WebSock, CIRCNetwork* pNetwork, CTemplate& Tmpl) {
+        CString sChan = WebSock.GetParam("name");
+        if (sChan.empty() && !WebSock.IsPost()) {
+            sChan = WebSock.GetParam("name", false);
+        }
 
         if (sChan.empty()) {
             WebSock.PrintErrorPage(
                 t_s("That channel doesn't exist for this network"));
+            return true;
+        }
+
+        if (!WebSock.IsPost()) {
+            // Show the "Are you sure?" page:
+
+            Tmpl.SetFile("del_chan.tmpl");
+            Tmpl["Username"] = pNetwork->GetUser()->GetUsername();
+            Tmpl["Network"] = pNetwork->GetName();
+            Tmpl["Channel"] = sChan;
             return true;
         }
 
