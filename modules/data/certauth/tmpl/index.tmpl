@@ -33,7 +33,11 @@
 	<tbody>
 		<? LOOP KeyLoop ?>
 		<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
-			<td>[<a href="<? VAR ModPath ?>delete?key=<? VAR Key ESC=URL,HTML ?>"><? FORMAT "del" ?></a>]</td>
+			<td><form method="post" action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>delete">
+				<? INC _csrf_check.tmpl ?>
+				<input type="hidden" name="key" value="<? VAR Key ?>" />
+				<input type="submit" value="<? FORMAT "del" ?>" />
+			</form></td>
 			<td><? VAR Key ?></td>
 		</tr>
 		<? ENDLOOP ?>

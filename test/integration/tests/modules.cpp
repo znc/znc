@@ -443,6 +443,62 @@ TEST_F(ZNCTest, ModuleCSRFOverride) {
     EXPECT_THAT(reply, HasSubstr("ipsum"));
 }
 
+TEST_F(ZNCTest, WebDeleteNeedsPost) {
+    int port = PickPortNumber();
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write(QStringLiteral("znc addport %1 all all").arg(port).toUtf8());
+    client.ReadUntil(":Port added");
+    client.Write("znc loadmod notes");
+    client.ReadUntil("Loaded module");
+    client.Write("PRIVMSG *notes :Add secretkey lorem");
+    client.ReadUntil("Added note");
+
+    auto url = [&](const QString& path) {
+        QNetworkRequest request(
+            QUrl(QStringLiteral("http://127.0.0.1:%1%2").arg(port).arg(path)));
+        request.setRawHeader("Authorization",
+                             "Basic " + QByteArray("user:hunter2").toBase64());
+        return request;
+    };
+    HttpPost(url("/mods/global/webadmin/addchan"), {
+                                                       {"user", "user"},
+                                                       {"network", "test"},
+                                                       {"submitted", "1"},
+                                                       {"name", "#znc"},
+                                                       {"enabled", "1"},
+                                                   });
+    const QString sEditNetwork =
+        "/mods/global/webadmin/editnetwork?user=user&network=test";
+    const std::string sChanRow = "name=\"channel\" value=\"#znc\"";
+    EXPECT_THAT(HttpGet(url(sEditNetwork))->readAll().toStdString(),
+                HasSubstr(sChanRow));
+
+    // A plain GET, e.g. from an <img> on another page, must not delete
+    EXPECT_THAT(HttpGet(url("/mods/global/webadmin/"
+                            "delchan?user=user&network=test&name=%23znc"))
+                    ->readAll()
+                    .toStdString(),
+                HasSubstr("Confirm Channel Deletion"));
+    EXPECT_THAT(HttpGet(url(sEditNetwork))->readAll().toStdString(),
+                HasSubstr(sChanRow));
+    HttpGet(url("/mods/user/notes/delnote?key=secretkey"));
+    EXPECT_THAT(HttpGet(url("/mods/user/notes/"))->readAll().toStdString(),
+                HasSubstr("secretkey"));
+
+    HttpPost(url("/mods/global/webadmin/delchan"), {
+                                                       {"user", "user"},
+                                                       {"network", "test"},
+                                                       {"name", "#znc"},
+                                                   });
+    EXPECT_THAT(HttpGet(url(sEditNetwork))->readAll().toStdString(),
+                Not(HasSubstr(sChanRow)));
+    HttpPost(url("/mods/user/notes/delnote"), {{"key", "secretkey"}});
+    EXPECT_THAT(HttpGet(url("/mods/user/notes/"))->readAll().toStdString(),
+                Not(HasSubstr("secretkey")));
+}
+
 class SaslModuleTest : public ZNCTest,
                        public testing::WithParamInterface<
                            std::pair<int, std::vector<std::string>>> {

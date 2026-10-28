@@ -79,7 +79,8 @@ class CCertMod : public CModule {
         } else if (sPageName == "update") {
             CFile fPemFile(PemFile());
 
-            if (fPemFile.Open(O_WRONLY | O_TRUNC | O_CREAT)) {
+            if (WebSock.IsPost() &&
+                fPemFile.Open(O_WRONLY | O_TRUNC | O_CREAT)) {
                 fPemFile.Write(WebSock.GetParam("cert", true, ""));
                 fPemFile.Close();
             }
@@ -87,7 +88,9 @@ class CCertMod : public CModule {
             WebSock.Redirect(GetWebPath());
             return true;
         } else if (sPageName == "delete") {
-            CFile::Delete(PemFile());
+            if (WebSock.IsPost()) {
+                CFile::Delete(PemFile());
+            }
             WebSock.Redirect(GetWebPath());
             return true;
         }

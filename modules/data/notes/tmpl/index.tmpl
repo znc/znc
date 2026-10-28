@@ -38,7 +38,11 @@
 	<tbody>
 		<? LOOP NotesLoop ?>
 		<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
-			<td><a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>delnote?key=<? VAR Key ESC=URL,HTML ?>"><img src="<? VAR URIPrefix TOP ?><? VAR ModFilesPath TOP ?>trash.gif" alt="<? FORMAT "[del]" ?>" /></a></td>
+			<td><form method="post" action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>delnote">
+				<? INC _csrf_check.tmpl ?>
+				<input type="hidden" name="key" value="<? VAR Key ?>" />
+				<input type="image" src="<? VAR URIPrefix TOP ?><? VAR ModFilesPath TOP ?>trash.gif" alt="<? FORMAT "[del]" ?>" />
+			</form></td>
 			<td><? VAR Key ?></td>
 			<td><? VAR Note ?></td>
 		</tr>

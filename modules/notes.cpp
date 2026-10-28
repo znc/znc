@@ -203,7 +203,9 @@ class CNotesMod : public CModule {
 
             return true;
         } else if (sPageName == "delnote") {
-            DelNote(WebSock.GetParam("key", false));
+            if (WebSock.IsPost()) {
+                DelNote(WebSock.GetParam("key"));
+            }
             WebSock.Redirect(GetWebPath());
             return true;
         } else if (sPageName == "addnote") {
