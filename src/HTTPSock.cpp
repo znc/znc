@@ -27,6 +27,7 @@ using std::map;
 using std::set;
 
 #define MAX_POST_SIZE 1024 * 1024
+#define MAX_FORWARDED_FOR_SIZE 10240
 
 CHTTPSock::CHTTPSock(CModule* pMod, const CString& sURIPrefix)
     : CHTTPSock(pMod, sURIPrefix, "", 0) {
@@ -154,8 +155,16 @@ void CHTTPSock::ReadLine(const CString& sData) {
         // Repeated header lines form a single list (RFC 7230 3.2.2), and some
         // proxies append their own line after the client's instead of
         // extending it, so collect them all before picking the client.
-        if (!m_sForwardedFor.empty()) m_sForwardedFor += ",";
-        m_sForwardedFor += sLine.Token(1, true);
+        // Cap the total so a client can't grow it without limit.
+        CString sValue = sLine.Token(1, true);
+        if (m_sForwardedFor.length() + sValue.length() >=
+            MAX_FORWARDED_FOR_SIZE) {
+            PrintErrorPage(431, "Request Header Fields Too Large",
+                           "The headers you sent were too large.");
+        } else {
+            if (!m_sForwardedFor.empty()) m_sForwardedFor += ",";
+            m_sForwardedFor += sValue;
+        }
     } else if (sName.Equals("If-None-Match:")) {
         // this is for proper client cache support (HTTP 304) on static files:
         m_sIfNoneMatch = sLine.Token(1, true);
