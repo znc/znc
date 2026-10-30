@@ -27,7 +27,8 @@ using std::map;
 using std::set;
 
 #define MAX_POST_SIZE 1024 * 1024
-#define MAX_FORWARDED_FOR_SIZE 10240
+#define MAX_FORWARDED_FOR_ENTRIES 100
+#define MAX_FORWARDED_FOR_ENTRY_SIZE 64
 
 CHTTPSock::CHTTPSock(CModule* pMod, const CString& sURIPrefix)
     : CHTTPSock(pMod, sURIPrefix, "", 0) {
@@ -52,7 +53,7 @@ CHTTPSock::CHTTPSock(CModule* pMod, const CString& sURIPrefix,
       m_sContentType(""),
       m_sDocRoot(""),
       m_sForwardedIP(""),
-      m_sForwardedFor(""),
+      m_vsForwardedFor(),
       m_msvsPOSTParams(),
       m_msvsGETParams(),
       m_msHeaders(),
@@ -155,15 +156,21 @@ void CHTTPSock::ReadLine(const CString& sData) {
         // Repeated header lines form a single list (RFC 7230 3.2.2), and some
         // proxies append their own line after the client's instead of
         // extending it, so collect them all before picking the client.
-        // Cap the total so a client can't grow it without limit.
-        CString sValue = sLine.Token(1, true);
-        if (m_sForwardedFor.length() + sValue.length() >=
-            MAX_FORWARDED_FOR_SIZE) {
-            PrintErrorPage(431, "Request Header Fields Too Large",
-                           "The headers you sent were too large.");
+        // Cap the entries so a client can't grow the list without limit.
+        VCString vsIPs;
+        sLine.Token(1, true).Split(",", vsIPs, false, "", "", false, true);
+        bool bTooLarge =
+            m_vsForwardedFor.size() + vsIPs.size() > MAX_FORWARDED_FOR_ENTRIES;
+        for (const CString& sIP : vsIPs) {
+            if (sIP.length() > MAX_FORWARDED_FOR_ENTRY_SIZE) bTooLarge = true;
+        }
+        if (bTooLarge) {
+            PrintErrorPage(
+                431, "Request Header Fields Too Large",
+                "The X-Forwarded-For headers you sent were too large.");
         } else {
-            if (!m_sForwardedFor.empty()) m_sForwardedFor += ",";
-            m_sForwardedFor += sValue;
+            m_vsForwardedFor.insert(m_vsForwardedFor.end(), vsIPs.begin(),
+                                    vsIPs.end());
         }
     } else if (sName.Equals("If-None-Match:")) {
         // this is for proper client cache support (HTTP 304) on static files:
@@ -175,13 +182,12 @@ void CHTTPSock::ReadLine(const CString& sData) {
             .Split(",", ssEncodings, false, "", "", false, true);
         m_bAcceptGzip = (ssEncodings.find("gzip") != ssEncodings.end());
     } else if (sLine.empty()) {
-        if (m_sForwardedIP.empty() && !m_sForwardedFor.empty()) {
+        if (m_sForwardedIP.empty() && !m_vsForwardedFor.empty()) {
             // X-Forwarded-For: client, proxy1, proxy2
             const VCString& vsTrustedProxies = CZNC::Get().GetTrustedProxies();
             CString sIP = GetRemoteIP();
 
-            VCString vsIPs;
-            m_sForwardedFor.Split(",", vsIPs, false, "", "", false, true);
+            VCString vsIPs = m_vsForwardedFor;
 
             while (!vsIPs.empty()) {
                 // sIP told us that it got connection from vsIPs.back()

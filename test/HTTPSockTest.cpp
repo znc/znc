@@ -199,7 +199,7 @@ TEST_F(HTTPSockHeadersTest, ForwardedForSingleLine) {
     EXPECT_EQ(sock.GetRemoteIP(), "198.51.100.7");
 }
 
-// The collected X-Forwarded-For lines are bounded, so a client can't fill
+// The collected X-Forwarded-For entries are bounded, so a client can't fill
 // memory by repeating the header.
 TEST_F(HTTPSockHeadersTest, ForwardedForIsBounded) {
     CCapturingHTTPSock sock;
@@ -207,6 +207,16 @@ TEST_F(HTTPSockHeadersTest, ForwardedForIsBounded) {
     for (int i = 0; i < 10000 && sock.m_vsLines.empty(); ++i) {
         sock.ReadLine("X-Forwarded-For: 203.0.113.5\r\n");
     }
+    ASSERT_FALSE(sock.m_vsLines.empty());
+    EXPECT_EQ(sock.m_vsLines.front(),
+              "HTTP/1.1 431 Request Header Fields Too Large\r\n");
+    EXPECT_EQ(sock.GetCloseType(), Csock::CLT_AFTERWRITE);
+}
+
+TEST_F(HTTPSockHeadersTest, ForwardedForEntryIsBounded) {
+    CCapturingHTTPSock sock;
+    sock.ReadLine("GET / HTTP/1.1\r\n");
+    sock.ReadLine("X-Forwarded-For: " + CString(100, 'a') + "\r\n");
     ASSERT_FALSE(sock.m_vsLines.empty());
     EXPECT_EQ(sock.m_vsLines.front(),
               "HTTP/1.1 431 Request Header Fields Too Large\r\n");
