@@ -187,7 +187,7 @@ void CHTTPSock::ReadLine(const CString& sData) {
             const VCString& vsTrustedProxies = CZNC::Get().GetTrustedProxies();
             CString sIP = GetRemoteIP();
 
-            VCString vsIPs = m_vsForwardedFor;
+            VCString vsIPs = std::move(m_vsForwardedFor);
 
             while (!vsIPs.empty()) {
                 // sIP told us that it got connection from vsIPs.back()
