@@ -265,6 +265,7 @@ void CIncomingConnection::ReachedMaxBuffer() {
 
 void CIncomingConnection::ReadLine(const CString& sLine) {
     bool bIsHTTP = (sLine.WildCmp("GET * HTTP/1.?\r\n") ||
+                    sLine.WildCmp("HEAD * HTTP/1.?\r\n") ||
                     sLine.WildCmp("POST * HTTP/1.?\r\n"));
     bool bAcceptHTTP = (m_eAcceptType == CListener::ACCEPT_ALL) ||
                        (m_eAcceptType == CListener::ACCEPT_HTTP);
