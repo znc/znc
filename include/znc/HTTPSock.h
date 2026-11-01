@@ -61,6 +61,12 @@ class CHTTPSock : public CSocket {
      * sent at all (a different value can instead be supplied via
      * AddHeader). Must be called before PrintHeader. */
     void OmitHardeningHeader(const CString& sName);
+    /** Returns the nonce for inline scripts in this response. Calling it
+     * also sends a Content-Security-Policy which allows only scripts from
+     * this origin and inline scripts with this nonce; a page whose inline
+     * scripts can't carry it can drop the policy with OmitHardeningHeader.
+     */
+    const CString& GetCSPNonce();
     void SetContentType(const CString& sContentType);
 
     bool PrintNotFound();
@@ -154,6 +160,7 @@ class CHTTPSock : public CSocket {
     std::map<CString, VCString> m_msvsGETParams;
     MCString m_msHeaders;
     SCString m_ssOmitHardening;
+    CString m_sCSPNonce;
     bool m_bHTTP10Client;
     CString m_sIfNoneMatch;
     bool m_bAcceptGzip;

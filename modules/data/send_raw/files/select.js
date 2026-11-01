@@ -5,6 +5,7 @@ function updateUser() {
 }
 
 function init() {
+	document.getElementById('selectnetwork').addEventListener('change', updateUser);
 	updateUser();
 	document.getElementById('networklabel').firstChild.nodeValue = 'Network:';
 	document.getElementById('userblock').removeAttribute('style');

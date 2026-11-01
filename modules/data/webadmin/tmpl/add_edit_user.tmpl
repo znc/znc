@@ -3,7 +3,7 @@
 <? AddRow CSSLoop HREF=/modfiles/global/webadmin/webadmin.css ?>
 <? INC Header.tmpl ?>
 
-<script>
+<script nonce="<? VAR CSPNonce ?>">
 	var CTCPEdit = <? VAR CTCPEdit ?>;
 </script>
 
@@ -229,7 +229,7 @@
 								<? ENDIF ?>
 								disabled="disabled"/>
 								<? IF LoadedBySomeNetworks && !LoadedByAllNetworks ?>
-									<script type="text/javascript">
+									<script type="text/javascript" nonce="<? VAR CSPNonce ?>">
 										document.getElementById("loaded_by_net_<? VAR Name ?>").indeterminate = true;
 									</script>
 								<? ENDIF ?>
@@ -386,7 +386,7 @@
 						</datalist>
 					</div>
 				</div>
-				<script type="text/javascript">ctcpreplies_init(jQuery);</script>
+				<script type="text/javascript" nonce="<? VAR CSPNonce ?>">ctcpreplies_init(jQuery);</script>
 
 				<div class="subsection">
 					<div class="inputlabel"><label for="skin"><? FORMAT "Skin:" ?></label></div>
@@ -455,6 +455,6 @@
 		<? ENDIF ?>
 	</div>
 </form>
-<script>make_sortable();</script>
+<script nonce="<? VAR CSPNonce ?>">make_sortable();</script>
 
 <? INC Footer.tmpl ?>

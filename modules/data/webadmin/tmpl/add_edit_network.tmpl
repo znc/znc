@@ -3,7 +3,7 @@
 <? AddRow CSSLoop HREF=/modfiles/global/webadmin/webadmin.css ?>
 <? INC Header.tmpl ?>
 
-<script>
+<script nonce="<? VAR CSPNonce ?>">
 	var NetworkEdit = <? VAR NetworkEdit ?>;
 	var EditUnixSockets = <? VAR EditUnixSockets ?>;
 </script>
@@ -121,7 +121,7 @@
 						<? ENDIF ?>
 					</div>
 				</div>
-				<script type="text/javascript">serverlist_init(jQuery);</script>
+				<script type="text/javascript" nonce="<? VAR CSPNonce ?>">serverlist_init(jQuery);</script>
 
 				<div class="subsection full">
 					<div class="inputlabel"><label for="fingerprints"><? FORMAT "SHA-256 fingerprints of trusted SSL certificates of this IRC network:" ?></label></div>
@@ -136,7 +136,6 @@
 					<div class="checkbox">
 						<input type="checkbox" name="floodprotection" id="floodprotection_checkbox"
 							   title="<? FORMAT "You might enable the flood protection. This prevents “excess flood” errors, which occur, when your IRC bot is command flooded or spammed. After changing this, reconnect ZNC to server." ?>"
-							onchange="floodprotection_change();"
 							<? IF FloodProtection ?>checked="checked"<? ENDIF ?> />
 						<label for="floodprotection_checkbox"><? FORMAT CTX="Flood Protection" "Enabled" ?></label>
 					</div>
@@ -170,7 +169,10 @@
 					<? ENDSETBLOCK ?>
 					<? FORMAT "{1} seconds" "ChannelJoinDelayInputField ESC=" ?>
 				</div>
-				<script type="text/javascript">floodprotection_change();</script>
+				<script type="text/javascript" nonce="<? VAR CSPNonce ?>">
+					document.getElementById("floodprotection_checkbox").addEventListener("change", floodprotection_change);
+					floodprotection_change();
+				</script>
 
 				<div style="clear:both;"></div>
 				<div class="subsection" title="<? FORMAT "Character encoding used between ZNC and IRC server." ?>">
@@ -226,7 +228,7 @@
 			<? ENDLOOP ?>
 					</tbody>
 				</table>
-				<script>channellist_init(jQuery);</script>
+				<script nonce="<? VAR CSPNonce ?>">channellist_init(jQuery);</script>
 			</div>
 		</div>
 		<? ENDIF ?>

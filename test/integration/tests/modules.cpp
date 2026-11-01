@@ -19,6 +19,7 @@
 
 #include "znctest.h"
 
+#include <QRegularExpression>
 #include <QSslSocket>
 #include <QTcpServer>
 
@@ -497,6 +498,75 @@ TEST_F(ZNCTest, WebDeleteNeedsPost) {
     HttpPost(url("/mods/user/notes/delnote"), {{"key", "secretkey"}});
     EXPECT_THAT(HttpGet(url("/mods/user/notes/"))->readAll().toStdString(),
                 Not(HasSubstr("secretkey")));
+}
+
+TEST_F(ZNCTest, WebPagesAllowOnlyNoncedInlineScripts) {
+    int port = PickPortNumber();
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write(QStringLiteral("znc addport %1 all all").arg(port).toUtf8());
+    client.ReadUntil(":Port added");
+    client.Write("znc loadmod send_raw");
+    client.ReadUntil("Loaded module");
+    client.Write("znc loadmod sasl");
+    client.ReadUntil("Loaded module");
+    // The settings page has inline scripts for modules loaded by some
+    // networks only
+    client.Write("znc addnetwork second");
+    client.ReadUntil("Network added");
+    client.Write("znc loadmod --type=network log");
+    client.ReadUntil("Loaded module");
+
+    auto url = [&](const QString& path) {
+        QNetworkRequest request(
+            QUrl(QStringLiteral("http://127.0.0.1:%1%2").arg(port).arg(path)));
+        request.setRawHeader("Authorization",
+                             "Basic " + QByteArray("user:hunter2").toBase64());
+        return request;
+    };
+    const QRegularExpression nonceSource("'nonce-([^']+)'");
+    const QRegularExpression scriptTag("<script([^>]*)>");
+    const QRegularExpression inlineHandler(
+        "\\son[a-z]+\\s*=|javascript:",
+        QRegularExpression::CaseInsensitiveOption);
+    // Every page of the in-tree modules which has inline scripts
+    const QStringList pages = {
+        "/mods/global/webadmin/listusers",
+        "/mods/global/webadmin/settings",
+        "/mods/global/webadmin/edituser?user=user",
+        "/mods/global/webadmin/addnetwork?user=user",
+        "/mods/global/webadmin/editnetwork?user=user&network=test",
+        "/mods/user/send_raw/",
+        "/mods/network/test/sasl/",
+    };
+    QSet<QString> nonces;
+    for (const QString& page : pages) {
+        SCOPED_TRACE(page.toStdString());
+        auto reply = HttpGet(url(page));
+        QRegularExpressionMatch policy =
+            nonceSource.match(reply->rawHeader("Content-Security-Policy"));
+        ASSERT_TRUE(policy.hasMatch());
+        const QString nonce = policy.captured(1);
+        nonces.insert(nonce);
+
+        const QString body = reply->readAll();
+        int inlineScripts = 0;
+        auto scripts = scriptTag.globalMatch(body);
+        while (scripts.hasNext()) {
+            const QString attributes = scripts.next().captured(1);
+            if (attributes.contains("src=")) continue;
+            inlineScripts++;
+            EXPECT_THAT(
+                attributes.toStdString(),
+                HasSubstr(
+                    QStringLiteral("nonce=\"%1\"").arg(nonce).toStdString()));
+        }
+        EXPECT_GT(inlineScripts, 0);
+        EXPECT_FALSE(body.contains(inlineHandler));
+    }
+    // Each response gets its own nonce
+    EXPECT_EQ(nonces.size(), pages.size());
 }
 
 class SaslModuleTest : public ZNCTest,

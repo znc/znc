@@ -103,6 +103,17 @@ bool CZNCTagHandler::HandleTag(CTemplate& Tmpl, const CString& sName,
     return false;
 }
 
+bool CZNCTagHandler::HandleVar(CTemplate& Tmpl, const CString& sName,
+                               const CString& sArgs, CString& sOutput) {
+    // So that CSPNonce works inside loops and embedded templates too
+    if (sName.Equals("CSPNonce")) {
+        sOutput = m_WebSock.GetCSPNonce();
+        return true;
+    }
+
+    return false;
+}
+
 CWebSession::CWebSession(const CString& sId, const CString& sIP)
     : m_sId(sId),
       m_sIP(sIP),
@@ -367,6 +378,10 @@ void CWebSock::SetVars() {
     m_Template["Version"] = CZNC::GetVersion();
     m_Template["SkinName"] = GetSkinName();
     m_Template["_CSRF_Check"] = GetCSRFCheck();
+    // This sends the Content-Security-Policy for every page rendered from a
+    // template. A module whose templates have inline scripts without the
+    // nonce can drop it with OmitHardeningHeader("Content-Security-Policy").
+    m_Template["CSPNonce"] = GetCSPNonce();
     m_Template["URIPrefix"] = GetURIPrefix();
 
     if (GetSession()->IsAdmin()) {
