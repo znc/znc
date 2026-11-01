@@ -39,6 +39,8 @@ class CZNCTagHandler : public CTemplateTagHandler {
 
     bool HandleTag(CTemplate& Tmpl, const CString& sName, const CString& sArgs,
                    CString& sOutput) override;
+    bool HandleVar(CTemplate& Tmpl, const CString& sName, const CString& sArgs,
+                   CString& sOutput) override;
 
   private:
     CWebSock& m_WebSock;

@@ -804,6 +804,14 @@ void CHTTPSock::OmitHardeningHeader(const CString& sName) {
     m_ssOmitHardening.insert(sName);
 }
 
+const CString& CHTTPSock::GetCSPNonce() {
+    if (m_sCSPNonce.empty()) {
+        // RandomString() can return characters which a nonce can't contain
+        m_sCSPNonce = CString::RandomString(32).SHA256();
+    }
+    return m_sCSPNonce;
+}
+
 void CHTTPSock::WriteHardeningHeaders(unsigned int uStatusId) {
     auto writeIfWanted = [&](const CString& sName, const CString& sValue) {
         if (m_msHeaders.find(sName) != m_msHeaders.end()) return;
@@ -816,6 +824,14 @@ void CHTTPSock::WriteHardeningHeaders(unsigned int uStatusId) {
     writeIfWanted("X-Frame-Options", "SAMEORIGIN");
     writeIfWanted("X-Content-Type-Options", "nosniff");
     writeIfWanted("Referrer-Policy", "no-referrer");
+
+    // Only for pages which asked for a nonce, so that they could add it to
+    // their inline scripts.
+    if (!m_sCSPNonce.empty()) {
+        writeIfWanted("Content-Security-Policy",
+                      "script-src 'self' 'nonce-" + m_sCSPNonce +
+                          "'; object-src 'none'; base-uri 'none'");
+    }
 
     // Don't cache authenticated/dynamic responses. Skip for 304 and for
     // static asset MIME types that the ETag/Last-Modified path handles
