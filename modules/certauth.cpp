@@ -214,6 +214,11 @@ class CSSLClientCertMod : public CModule {
         }
 
         if (sUser.empty()) {
+            if (ssUsers.size() > 1) {
+                GetClient()->RefuseSASLLogin(
+                    "This key belongs to several users, specify which one");
+                return HALT;
+            }
             sUser = *ssUsers.begin();
         } else if (ssUsers.count(sUser) == 0) {
             GetClient()->RefuseSASLLogin(

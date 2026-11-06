@@ -777,6 +777,91 @@ TEST_F(ZNCTest, SaslAuthExternal) {
         ":irc.znc.in 904 nick :SASL authentication failed");
 }
 
+TEST_F(ZNCTest, SaslAuthExternalSharedKey) {
+#ifndef HAVE_LIBSSL
+    GTEST_SKIP() << "SSL is disabled";
+#endif
+
+    QFile conf(m_dir.path() + "/configs/znc.conf");
+    ASSERT_TRUE(conf.open(QIODevice::Append | QIODevice::Text));
+    QTextStream(&conf) << R"(
+        <User abc>
+            Pass = plain#hunter2
+        </User>
+    )";
+    conf.close();
+
+    int port = PickPortNumber();
+
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write(QStringLiteral("znc addport +%1 all all").arg(port).toUtf8());
+    client.ReadUntil(":Port added");
+    client.Write("znc loadmod certauth");
+    client.ReadUntil("Loaded");
+
+    QSslSocket sock;
+    sock.setLocalCertificate(m_dir.path() + "/znc.pem");
+    sock.setPrivateKey(m_dir.path() + "/znc.pem");
+    sock.setPeerVerifyMode(QSslSocket::VerifyNone);
+
+    auto Connect = [&] {
+        sock.connectToHostEncrypted("127.0.0.1", port);
+        ASSERT_TRUE(sock.waitForConnected())
+            << sock.errorString().toStdString();
+        ASSERT_TRUE(sock.waitForEncrypted())
+            << sock.errorString().toStdString();
+    };
+
+    Connect();
+    auto client2 = WrapIO(&sock);
+    client2.Write("PASS :hunter2");
+    client2.Write("NICK nick");
+    client2.Write("USER user/test x x :x");
+    client2.Write("privmsg *certauth add");
+    client2.ReadUntil("added");
+
+    // Another user registers the same key without having the private key
+    QByteArray fp = QSslCertificate::fromPath(m_dir.path() + "/znc.pem")
+                        .first()
+                        .digest(QCryptographicHash::Sha256)
+                        .toHex(':');
+    auto client3 = ConnectClient();
+    client3.Write("PASS abc:hunter2");
+    client3.Write("NICK abc");
+    client3.Write("USER abc x x :x");
+    client3.Write("privmsg *certauth :add " + fp);
+    client3.ReadUntil("Key '" + fp + "' added.");
+
+    auto Reconnect = [&] {
+        client2.Close();
+        ASSERT_TRUE(sock.state() == QAbstractSocket::UnconnectedState ||
+                    sock.waitForDisconnected())
+            << sock.errorString().toStdString();
+        Connect();
+        client2.Write("CAP REQ sasl");
+        client2.Write("NICK nick");
+        client2.Write("USER u x x :x");
+        client2.ReadUntil("ACK :sasl");
+        client2.Write("AUTHENTICATE EXTERNAL");
+        client2.ReadUntil("AUTHENTICATE +");
+    };
+
+    // Without authzid, don't pick one of the users
+    Reconnect();
+    client2.Write("AUTHENTICATE +");
+    client2.ReadUntil(
+        ":irc.znc.in 904 nick :This key belongs to several users, specify "
+        "which one");
+
+    Reconnect();
+    client2.Write("AUTHENTICATE " + QByteArrayLiteral("user").toBase64());
+    client2.ReadUntil(
+        ":irc.znc.in 900 nick nick!user@127.0.0.1 user :You are now logged in "
+        "as user");
+}
+
 TEST_F(ZNCTest, StripControlsModule) {
     auto znc = Run();
     auto ircd = ConnectIRCd();
