@@ -511,6 +511,8 @@ TEST_F(ZNCTest, WebPagesAllowOnlyNoncedInlineScripts) {
     client.ReadUntil("Loaded module");
     client.Write("znc loadmod sasl");
     client.ReadUntil("Loaded module");
+    client.Write("znc loadmod samplewebapi");
+    client.ReadUntil("Loaded module");
     // The settings page has inline scripts for modules loaded by some
     // networks only
     client.Write("znc addnetwork second");
@@ -567,6 +569,13 @@ TEST_F(ZNCTest, WebPagesAllowOnlyNoncedInlineScripts) {
     }
     // Each response gets its own nonce
     EXPECT_EQ(nonces.size(), pages.size());
+
+    // A response which isn't rendered from a template allows no inline
+    // scripts
+    auto raw = HttpPost(url("/mods/global/samplewebapi/"), {{"text", "ipsum"}});
+    EXPECT_EQ(raw->rawHeader("Content-Security-Policy").toStdString(),
+              "script-src 'self'; object-src 'none'; base-uri 'none'");
+    EXPECT_THAT(raw->readAll().toStdString(), HasSubstr("ipsum"));
 }
 
 class SaslModuleTest : public ZNCTest,

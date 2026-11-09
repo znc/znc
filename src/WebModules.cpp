@@ -378,9 +378,8 @@ void CWebSock::SetVars() {
     m_Template["Version"] = CZNC::GetVersion();
     m_Template["SkinName"] = GetSkinName();
     m_Template["_CSRF_Check"] = GetCSRFCheck();
-    // This sends the Content-Security-Policy for every page rendered from a
-    // template. A module whose templates have inline scripts without the
-    // nonce can drop it with OmitHardeningHeader("Content-Security-Policy").
+    // Inline scripts in templates need this nonce, or the
+    // Content-Security-Policy blocks them.
     m_Template["CSPNonce"] = GetCSPNonce();
     m_Template["URIPrefix"] = GetURIPrefix();
 

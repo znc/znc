@@ -156,15 +156,16 @@ TEST_F(HTTPSockHeadersTest, HardeningHeadersOmittedByCaller) {
     EXPECT_THAT(sock.m_vsLines, Contains(CString("Referrer-Policy: no-referrer\r\n")));
 }
 
-// Content-Security-Policy: sent only once the page asked for a nonce, it
-// allows inline scripts with that nonce only, and like the other hardening
+// Content-Security-Policy: sent with every response, it allows inline
+// scripts only once the page asked for a nonce, and like the other hardening
 // headers it can be replaced via AddHeader or dropped via
 // OmitHardeningHeader.
-TEST_F(HTTPSockHeadersTest, CSPOnlyWithNonce) {
+TEST_F(HTTPSockHeadersTest, CSPWithoutNonce) {
     CCapturingHTTPSock sock;
     sock.PrintHeader(0, "text/html");
     EXPECT_THAT(sock.m_vsLines,
-                Not(Contains(StartsWith("Content-Security-Policy:"))));
+                Contains(CString("Content-Security-Policy: script-src 'self'; "
+                                 "object-src 'none'; base-uri 'none'\r\n")));
 }
 
 TEST_F(HTTPSockHeadersTest, CSPAllowsNonce) {
@@ -205,6 +206,19 @@ TEST_F(HTTPSockHeadersTest, CSPOmittedByCaller) {
     sock.PrintHeader(0, "text/html");
     EXPECT_THAT(sock.m_vsLines,
                 Not(Contains(StartsWith("Content-Security-Policy:"))));
+}
+
+TEST_F(HTTPSockHeadersTest, CSPOnErrorPagesAndRedirects) {
+    const CString sPolicy =
+        "Content-Security-Policy: script-src 'self'; object-src 'none'; "
+        "base-uri 'none'\r\n";
+    CCapturingHTTPSock notFound;
+    notFound.PrintNotFound();
+    EXPECT_THAT(notFound.m_vsLines, Contains(sPolicy));
+
+    CCapturingHTTPSock redirect;
+    redirect.Redirect("/");
+    EXPECT_THAT(redirect.m_vsLines, Contains(sPolicy));
 }
 
 // Returns the server side of a loopback TCP connection, so that a socket
