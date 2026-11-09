@@ -411,11 +411,17 @@ add_subdirectory(modules)
 add_subdirectory(test)
 add_subdirectory(zz_msg)
 
+if(CMAKE_GENERATOR MATCHES "Ninja")
+	set(ZNC_BUILD_TOOL "ninja")
+else()
+	set(ZNC_BUILD_TOOL "make")
+endif()
+
 add_custom_target(msg_after_all ALL
 	COMMAND "${CMAKE_COMMAND}" -E echo
 	COMMAND "${CMAKE_COMMAND}" -E echo " ZNC was successfully compiled."
 	COMMAND "${CMAKE_COMMAND}" -E echo
-	" Use 'make install' to install ZNC to '${CMAKE_INSTALL_PREFIX}'."
+	" Use '${ZNC_BUILD_TOOL} install' to install ZNC to '${CMAKE_INSTALL_PREFIX}'."
 	COMMAND "${CMAKE_COMMAND}" -E echo
 	VERBATIM)
 add_dependencies(msg_after_all ${_all_targets})
@@ -469,5 +475,10 @@ include(render_framed_multiline)
 render_framed_multiline("${summary_lines}")
 
 message("")
-message("Now you can run 'make' to compile ZNC")
+if(CMAKE_GENERATOR MATCHES "Ninja")
+    set(ZNC_BUILD_CMD "ninja")
+else()
+    set(ZNC_BUILD_CMD "make")
+endif()
+message("Now you can run '${ZNC_BUILD_CMD}' to compile ZNC")
 message("")
