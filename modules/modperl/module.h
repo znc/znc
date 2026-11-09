@@ -61,6 +61,10 @@ class ZNC_EXPORT_LIB_EXPORT CPerlModule : public CModule {
                bool bNoChange) override;
     void OnDeop2(const CNick* pOpNick, const CNick& Nick, CChan& Channel,
                  bool bNoChange) override;
+    void OnHalfOp(const CNick* pOpNick, const CNick& Nick, CChan& Channel,
+               bool bNoChange) override;
+    void OnDeHalfOp(const CNick* pOpNick, const CNick& Nick, CChan& Channel,
+                 bool bNoChange) override;
     void OnVoice2(const CNick* pOpNick, const CNick& Nick, CChan& Channel,
                   bool bNoChange) override;
     void OnDevoice2(const CNick* pOpNick, const CNick& Nick, CChan& Channel,
