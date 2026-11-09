@@ -222,3 +222,51 @@ TEST_F(HTTPSockHeadersTest, ForwardedForEntryIsBounded) {
               "HTTP/1.1 431 Request Header Fields Too Large\r\n");
     EXPECT_EQ(sock.GetCloseType(), Csock::CLT_AFTERWRITE);
 }
+
+namespace {
+
+// Answers every request with a fixed page, so tests can tell whether the
+// body was written.
+class CPageHTTPSock : public CCapturingHTTPSock {
+  public:
+    void OnPageRequest(const CString& sURI) override {
+        PrintPage("<p>hello</p>");
+    }
+};
+
+}  // namespace
+
+// HEAD is routed like GET, but the response must not include a body
+// (RFC 9110 9.3.2). Monitoring tools rely on this to check the web UI.
+TEST_F(HTTPSockHeadersTest, GetSendsBody) {
+    CPageHTTPSock sock;
+    sock.ReadLine("GET / HTTP/1.1\r\n");
+    sock.ReadLine("\r\n");
+    ASSERT_FALSE(sock.m_vsLines.empty());
+    EXPECT_EQ(sock.m_vsLines.front(), "HTTP/1.1 200 OK\r\n");
+    EXPECT_THAT(sock.m_vsLines, Contains(CString("Content-Length: 12\r\n")));
+    EXPECT_THAT(sock.m_vsLines, Contains(CString("<p>hello</p>")));
+}
+
+TEST_F(HTTPSockHeadersTest, HeadSendsHeadersWithoutBody) {
+    CPageHTTPSock sock;
+    sock.ReadLine("HEAD / HTTP/1.1\r\n");
+    sock.ReadLine("\r\n");
+    ASSERT_FALSE(sock.m_vsLines.empty());
+    EXPECT_EQ(sock.m_vsLines.front(), "HTTP/1.1 200 OK\r\n");
+    // Same headers as GET, including the length of the body that GET sends.
+    EXPECT_THAT(sock.m_vsLines, Contains(CString("Content-Length: 12\r\n")));
+    EXPECT_THAT(sock.m_vsLines, Not(Contains(CString("<p>hello</p>"))));
+    EXPECT_EQ(sock.GetCloseType(), Csock::CLT_AFTERWRITE);
+}
+
+TEST_F(HTTPSockHeadersTest, HeadErrorPageHasNoBody) {
+    CCapturingHTTPSock sock;
+    sock.ReadLine("HEAD / HTTP/1.1\r\n");
+    sock.ReadLine("\r\n");
+    sock.m_vsLines.clear();
+    sock.PrintNotFound();
+    ASSERT_FALSE(sock.m_vsLines.empty());
+    EXPECT_EQ(sock.m_vsLines.front(), "HTTP/1.1 404 Not Found\r\n");
+    EXPECT_EQ(sock.m_vsLines.back(), "\r\n");
+}

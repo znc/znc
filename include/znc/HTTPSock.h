@@ -123,6 +123,10 @@ class CHTTPSock : public CSocket {
                                  const std::map<CString, VCString>& msvsParams,
                                  const CString& sFilter);
 
+    /** Write a chunk of the response body. Does nothing for HEAD requests. */
+    void WriteBody(const char* szData, size_t uLen);
+    void WriteBody(const CString& sData);
+
     void WriteFileUncompressed(CFile& File);
     void WriteFileGzipped(CFile& File);
 
@@ -139,6 +143,7 @@ class CHTTPSock : public CSocket {
     bool m_bGotHeader;
     bool m_bLoggedIn;
     bool m_bPost;
+    bool m_bHead;
     bool m_bDone;
     bool m_bBasicAuth;
     unsigned long m_uPostLen;

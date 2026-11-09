@@ -43,6 +43,7 @@ CHTTPSock::CHTTPSock(CModule* pMod, const CString& sURIPrefix,
       m_bGotHeader(false),
       m_bLoggedIn(false),
       m_bPost(false),
+      m_bHead(false),
       m_bDone(false),
       m_bBasicAuth(false),
       m_uPostLen(0),
@@ -119,8 +120,9 @@ void CHTTPSock::ReadLine(const CString& sData) {
 
     CString sName = sLine.Token(0);
 
-    if (sName.Equals("GET")) {
+    if (sName.Equals("GET") || sName.Equals("HEAD")) {
         m_bPost = false;
+        m_bHead = sName.Equals("HEAD");
         m_sURI = sLine.Token(1);
         m_bHTTP10Client = sLine.Token(2).Equals("HTTP/1.0");
         ParseURI();
@@ -320,7 +322,7 @@ void CHTTPSock::PrintPage(const CString& sPage) {
 
                 if ((zStatus == Z_OK || zStatus == Z_STREAM_END) &&
                     zStrm.avail_out < sizeof(szBuf)) {
-                    Write(szBuf, sizeof(szBuf) - zStrm.avail_out);
+                    WriteBody(szBuf, sizeof(szBuf) - zStrm.avail_out);
                 }
             } while (zStatus == Z_OK);
 
@@ -337,8 +339,18 @@ void CHTTPSock::PrintPage(const CString& sPage) {
         DEBUG("PrintPage(): Header was already sent");
     }
 
-    Write(sPage);
+    WriteBody(sPage);
     Close(Csock::CLT_AFTERWRITE);
+}
+
+void CHTTPSock::WriteBody(const char* szData, size_t uLen) {
+    // RFC 9110 9.3.2: a HEAD response has the same header section as the
+    // corresponding GET response, but must not contain a body.
+    if (!m_bHead) Write(szData, uLen);
+}
+
+void CHTTPSock::WriteBody(const CString& sData) {
+    if (!m_bHead) Write(sData);
 }
 
 bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
@@ -454,7 +466,7 @@ void CHTTPSock::WriteFileUncompressed(CFile& File) {
 
     // while we haven't reached iSize and read() succeeds...
     while (iLen < iSize && (i = File.Read(szBuf, sizeof(szBuf))) > 0) {
-        Write(szBuf, i);
+        WriteBody(szBuf, i);
         iLen += i;
     }
 
@@ -510,7 +522,7 @@ void CHTTPSock::WriteFileGzipped(CFile& File) {
         if ((zStatus == Z_OK || zStatus == Z_STREAM_END) &&
             zStrm.avail_out < sizeof(szBufOut)) {
             // there's data in the buffer:
-            Write(szBufOut, sizeof(szBufOut) - zStrm.avail_out);
+            WriteBody(szBufOut, sizeof(szBufOut) - zStrm.avail_out);
         }
 
     } while (zStatus == Z_OK);
@@ -705,7 +717,7 @@ bool CHTTPSock::PrintErrorPage(unsigned int uStatusId,
 
     PrintHeader(sPage.length(), "text/html; charset=utf-8", uStatusId,
                 sStatusMsg);
-    Write(sPage);
+    WriteBody(sPage);
     Close(Csock::CLT_AFTERWRITE);
 
     return true;
