@@ -24,6 +24,7 @@
 #include <znc/znc.h>
 
 using ::testing::Contains;
+using ::testing::HasSubstr;
 using ::testing::Not;
 using ::testing::StartsWith;
 
@@ -153,6 +154,71 @@ TEST_F(HTTPSockHeadersTest, HardeningHeadersOmittedByCaller) {
     // Other defaults unaffected.
     EXPECT_THAT(sock.m_vsLines, Contains(StartsWith("X-Content-Type-Options: nosniff")));
     EXPECT_THAT(sock.m_vsLines, Contains(CString("Referrer-Policy: no-referrer\r\n")));
+}
+
+// Content-Security-Policy: sent with every response, it allows inline
+// scripts only once the page asked for a nonce, and like the other hardening
+// headers it can be replaced via AddHeader or dropped via
+// OmitHardeningHeader.
+TEST_F(HTTPSockHeadersTest, CSPWithoutNonce) {
+    CCapturingHTTPSock sock;
+    sock.PrintHeader(0, "text/html");
+    EXPECT_THAT(sock.m_vsLines,
+                Contains(CString("Content-Security-Policy: script-src 'self'; "
+                                 "object-src 'none'; base-uri 'none'\r\n")));
+}
+
+TEST_F(HTTPSockHeadersTest, CSPAllowsNonce) {
+    CCapturingHTTPSock sock;
+    const CString sNonce = sock.GetCSPNonce();
+    EXPECT_EQ(sNonce, sock.GetCSPNonce());
+    // Only characters which a nonce source can contain
+    EXPECT_EQ(
+        sNonce.find_first_not_of(
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"),
+        CString::npos);
+    EXPECT_EQ(sNonce.length(), 64u);
+    sock.PrintHeader(0, "text/html");
+    EXPECT_THAT(sock.m_vsLines,
+                Contains(CString(
+                    "Content-Security-Policy: script-src 'self' 'nonce-" +
+                    sNonce + "'; object-src 'none'; base-uri 'none'\r\n")));
+
+    CCapturingHTTPSock other;
+    EXPECT_NE(sNonce, other.GetCSPNonce());
+}
+
+TEST_F(HTTPSockHeadersTest, CSPDefersToCaller) {
+    CCapturingHTTPSock sock;
+    sock.GetCSPNonce();
+    sock.AddHeader("Content-Security-Policy", "script-src 'none'");
+    sock.PrintHeader(0, "text/html");
+    EXPECT_THAT(
+        sock.m_vsLines,
+        Contains(CString("Content-Security-Policy: script-src 'none'\r\n")));
+    EXPECT_THAT(sock.m_vsLines, Not(Contains(HasSubstr("'nonce-"))));
+}
+
+TEST_F(HTTPSockHeadersTest, CSPOmittedByCaller) {
+    CCapturingHTTPSock sock;
+    sock.GetCSPNonce();
+    sock.OmitHardeningHeader("Content-Security-Policy");
+    sock.PrintHeader(0, "text/html");
+    EXPECT_THAT(sock.m_vsLines,
+                Not(Contains(StartsWith("Content-Security-Policy:"))));
+}
+
+TEST_F(HTTPSockHeadersTest, CSPOnErrorPagesAndRedirects) {
+    const CString sPolicy =
+        "Content-Security-Policy: script-src 'self'; object-src 'none'; "
+        "base-uri 'none'\r\n";
+    CCapturingHTTPSock notFound;
+    notFound.PrintNotFound();
+    EXPECT_THAT(notFound.m_vsLines, Contains(sPolicy));
+
+    CCapturingHTTPSock redirect;
+    redirect.Redirect("/");
+    EXPECT_THAT(redirect.m_vsLines, Contains(sPolicy));
 }
 
 // Returns the server side of a loopback TCP connection, so that a socket

@@ -17,7 +17,7 @@
 
 				<div class="subsection third">
 					<div class="inputlabel" id="networklabel"><? FORMAT "User/Network:" ?></div>
-					<select name="network" id="selectnetwork" onchange="javascript:updateUser()">
+					<select name="network" id="selectnetwork">
 						<? LOOP UserLoop ?>
 							<optgroup label="<? VAR Username ?>">
 								<? LOOP NetworkLoop ?>
@@ -49,6 +49,6 @@
 	</div>
 </form>
 
-<script type="text/javascript">init();</script>
+<script type="text/javascript" nonce="<? VAR CSPNonce ?>">init();</script>
 
 <? INC Footer.tmpl ?>

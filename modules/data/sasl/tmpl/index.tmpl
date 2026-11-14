@@ -56,7 +56,7 @@
 				<div class="subsection">
 					<div class="inputlabel"><? FORMAT "Selected mechanisms and their order:" ?></div>
 					<input type="text" name="mechanisms" id="mechanisms" value="<? VAR Mechanisms ?>" class="half"/>
-					<script>
+					<script nonce="<? VAR CSPNonce ?>">
 					$("#mechanisms").selectize({
 						plugins: ["drag_drop"],
 						delimiter: " ",

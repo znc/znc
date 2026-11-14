@@ -267,7 +267,7 @@
 								<? ENDIF ?>
 								disabled="disabled"/>
 								<? IF LoadedBySomeNetworks && !LoadedByAllNetworks ?>
-									<script type="text/javascript">
+									<script type="text/javascript" nonce="<? VAR CSPNonce ?>">
 										document.getElementById("loaded_by_net_<? VAR Name ?>").indeterminate = true;
 									</script>
 								<? ENDIF ?>
@@ -281,7 +281,7 @@
 								<? ENDIF ?>
 								disabled="disabled"/>
 								<? IF LoadedBySomeUsers && !LoadedByAllUsers ?>
-									<script type="text/javascript">
+									<script type="text/javascript" nonce="<? VAR CSPNonce ?>">
 										document.getElementById("loaded_by_user_<? VAR Name ?>").indeterminate = true;
 									</script>
 								<? ENDIF ?>

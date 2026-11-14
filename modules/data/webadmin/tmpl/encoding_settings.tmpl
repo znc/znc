@@ -34,7 +34,7 @@
 		<input type="text" name="encoding" value="<? VAR Encoding ?>" list="encoding_list"
 			   <? IF EncodingDisabled ?>disabled="disabled"<? ENDIF ?> />
 		<br /><div class="third"><span class="info"><? FORMAT "E.g. <code>UTF-8</code>, or <code>ISO-8859-15</code>" ?></span></div>
-		<script type="text/javascript">
+		<script type="text/javascript" nonce="<? VAR CSPNonce ?>">
 			function updateEncodingText() {
 				var value = jQuery("input[name=encoding]").val();
 				jQuery(".encoding-placeholder").each(function(index, element) {
