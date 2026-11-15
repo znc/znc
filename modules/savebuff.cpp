@@ -138,6 +138,16 @@ class CSaveBuff : public CModule {
         if (!pTarget->GetBuffer().IsEmpty())
             return;  // in this case the module was probably reloaded
 
+        ParseBuffer(sContent, [&](const CString& sFormat, const CString& sText,
+                                  const timeval* ts) {
+            pTarget->AddBuffer(sFormat, sText, ts);
+        });
+    }
+
+    // Calls AddLine(sFormat, sText, ts) for every saved line. The saved text
+    // only ever fills in {text} of its format, it's never a line of its own.
+    template <typename F>
+    void ParseBuffer(const CString& sContent, F AddLine) {
         VCString vsLines;
         VCString::iterator it;
 
@@ -158,10 +168,10 @@ class CSaveBuff : public CModule {
                 CString sText(*++it);
                 sText.Trim();
 
-                pTarget->AddBuffer(sFormat, sText, &ts);
+                AddLine(sFormat, sText, &ts);
             } else {
                 // Old format, escape the line and use as is.
-                pTarget->AddBuffer(_NAMEDFMT(sLine));
+                AddLine(_NAMEDFMT(sLine), "", nullptr);
             }
         }
     }
@@ -272,12 +282,16 @@ class CSaveBuff : public CModule {
         CString sName;
         PutUser(":***!znc@znc.in PRIVMSG " + sBuffer + " :Buffer Playback...");
         if (DecryptBuffer(GetPath(sBuffer), sFile, sName)) {
-            VCString vsLines;
-            sFile.Split("\n", vsLines);
-
-            for (const CString& sLine : vsLines) {
-                PutUser(sLine.Trim_n());
-            }
+            // Rebuild the lines like OnBoot() does instead of sending the
+            // saved file to the client as raw IRC.
+            MCString msParams;
+            msParams["target"] = GetClient()->GetNick();
+            ParseBuffer(sFile, [&](const CString& sFormat, const CString& sText,
+                                   const timeval* ts) {
+                CBufLine Line(sFormat, sText, ts);
+                GetNetwork()->PutUser(Line.ToMessage(*GetClient(), msParams),
+                                      GetClient());
+            });
         }
         PutUser(":***!znc@znc.in PRIVMSG " + sBuffer + " :Playback Complete.");
     }
@@ -332,10 +346,10 @@ class CSaveBuff : public CModule {
                 return ChanBuffer;
             } else if (sBuffer.TrimPrefix(CHAN_VERIFICATION_TOKEN)) {
                 sName = sBuffer.FirstLine();
-                if (sBuffer.TrimLeft(sName + "\n")) return ChanBuffer;
+                if (sBuffer.TrimPrefix(sName + "\n")) return ChanBuffer;
             } else if (sBuffer.TrimPrefix(QUERY_VERIFICATION_TOKEN)) {
                 sName = sBuffer.FirstLine();
-                if (sBuffer.TrimLeft(sName + "\n")) return QueryBuffer;
+                if (sBuffer.TrimPrefix(sName + "\n")) return QueryBuffer;
             }
 
             PutModule(t_f("Unable to decode Encrypted file {1}")(sPath));
