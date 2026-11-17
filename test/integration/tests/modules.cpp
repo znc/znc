@@ -1336,6 +1336,56 @@ TEST_F(ZNCTest, KickRejoinModule) {
     ircd.ReadUntil("JOIN #test");
 }
 
+TEST_F(ZNCTest, AutoOpOwnChallenge) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+
+    client.Write("znc loadmod autoop");
+    client.ReadUntil("Loaded module");
+    client.Write("PRIVMSG *autoop :AddUser bob *!bob@bob.example s3cret #a #b");
+    client.ReadUntil("User bob added");
+
+    ircd.Write(":server 001 nick :Hello");
+    ircd.Write(":nick JOIN :#a");
+    ircd.Write(":server 353 nick = #a :@nick @mallory");
+    ircd.Write(":server 366 nick #a :End of /NAMES list");
+    ircd.Write(":nick JOIN :#b");
+    ircd.Write(":server 353 nick = #b :@nick");
+    ircd.Write(":server 366 nick #b :End of /NAMES list");
+
+    auto response = [](const QByteArray& challenge) {
+        return QCryptographicHash::hash("s3cret::" + challenge,
+                                        QCryptographicHash::Md5)
+            .toHex();
+    };
+
+    // mallory matches bob's hostmask and is opped in #a, but doesn't know
+    // the key
+    ircd.Write(":mallory!bob@bob.example JOIN :#b");
+    QByteArray challenge;
+    ircd.ReadUntilAndGet("NOTICE mallory :!ZNCAO CHALLENGE ", challenge);
+    challenge = challenge.split(' ').last();
+
+    // Other challenges from an op matching bob are still answered
+    const QByteArray other = "0123456789abcdef0123456789abcdef";
+    ircd.Write(":mallory!bob@bob.example NOTICE nick :!ZNCAO CHALLENGE " +
+               other);
+    ircd.ReadUntil("NOTICE mallory :!ZNCAO RESPONSE " + response(other));
+
+    // Sending our challenge back doesn't get the answer to it
+    ircd.Write(":mallory!bob@bob.example NOTICE nick :!ZNCAO CHALLENGE " +
+               challenge);
+    client.ReadUntil("sent us our own challenge");
+    ASSERT_THAT(ircd.ReadRemainder().toStdString(),
+                Not(HasSubstr("!ZNCAO RESPONSE")));
+
+    // Someone who knows the key still gets opped
+    ircd.Write(":mallory!bob@bob.example NOTICE nick :!ZNCAO RESPONSE " +
+               response(challenge));
+    ircd.ReadUntil("MODE #b +o mallory");
+}
+
 TEST_F(ZNCTest, NickServModule) {
     auto znc = Run();
     auto ircd = ConnectIRCd();
