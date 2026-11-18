@@ -276,6 +276,12 @@ class CRouteRepliesMod : public CModule {
         SendRequest();
     }
 
+    void OnClientDetached() override {
+        // JumpNetwork: the client leaves this network without disconnecting,
+        // and OnClientDisconnect() won't reach this network when it does
+        OnClientDisconnect();
+    }
+
     EModRet OnRawMessage(CMessage& msg) override {
         CString sCmd = msg.GetCommand().AsUpper();
         size_t i = 0;
