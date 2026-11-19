@@ -724,6 +724,32 @@ TEST_F(ZNCTest, SaslAuthPlainImapAuthLineBreak) {
     EXPECT_FALSE(imap.hasPendingConnections());
 }
 
+TEST_F(ZNCTest, AdminLogEscapesLineBreaks) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod adminlog");
+    client.ReadUntil("Loaded");
+
+    auto client2 = ConnectClient();
+    client2.Write("NICK foo");
+    client2.Write("CAP REQ :sasl");
+    client2.Write("USER bar");
+    client2.Write("AUTHENTICATE PLAIN");
+    client2.Write(
+        "AUTHENTICATE " +
+        QByteArrayLiteral("\0x\n[2000-01-01 00:00:00] [user] forged\0y")
+            .toBase64());
+    client2.ReadUntil(":irc.znc.in 904 foo :Invalid Password");
+
+    QFile log(m_dir.path() + "/moddata/adminlog/znc.log");
+    ASSERT_TRUE(log.open(QIODevice::ReadOnly | QIODevice::Text));
+    std::string sLog = log.readAll().toStdString();
+    EXPECT_THAT(sLog, HasSubstr("[x\\n[2000-01-01 00:00:00] [user] forged] "
+                                "failed to login from"));
+    EXPECT_THAT(sLog, Not(HasSubstr("\n[2000-01-01 00:00:00] [user] forged")));
+}
+
 TEST_F(ZNCTest, ImapAuthAllowedHosts) {
     QTcpServer imap;
     ASSERT_TRUE(imap.listen(QHostAddress::LocalHost)) << imap.errorString().toStdString();

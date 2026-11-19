@@ -116,6 +116,12 @@ class CAdminLogMod : public CModule {
     }
 
     void Log(CString sLine, int iPrio = LOG_INFO) {
+        // The username of a failed login comes from the client before it is
+        // authenticated (SASL PLAIN, HTTP basic auth) and may contain line
+        // breaks. Don't let it start a new line in the log.
+        sLine.Replace("\r", "\\r");
+        sLine.Replace("\n", "\\n");
+
         if (m_eLogMode & LOG_TO_SYSLOG) syslog(iPrio, "%s", sLine.c_str());
 
         if (m_eLogMode & LOG_TO_FILE) {
