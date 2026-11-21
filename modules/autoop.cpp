@@ -547,6 +547,16 @@ class CAutoOpMod : public CModule {
             return false;
         }
 
+        // Both sides use the same key, so answering a challenge we sent out
+        // would hand over the response we expect back for it.
+        for (const auto& it : m_msQueue) {
+            if (it.second == sChallenge) {
+                PutModule(t_f("WARNING! [{1}] sent us our own challenge.")(
+                    Nick.GetHostMask()));
+                return false;
+            }
+        }
+
         CString sResponse = pUser->GetUserKey() + "::" + sChallenge;
         PutIRC("NOTICE " + Nick.GetNick() + " :!ZNCAO RESPONSE " +
                sResponse.MD5());
