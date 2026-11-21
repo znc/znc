@@ -1511,6 +1511,66 @@ TEST_F(ZNCTest, AwayStoreModule) {
     // End 'away' bug test
 }
 
+TEST_F(ZNCTest, SaveBuffModule) {
+#ifndef HAVE_LIBSSL
+    GTEST_SKIP() << "SSL is disabled";
+#endif
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+
+    client.Write("znc loadmod savebuff");
+    client.ReadUntil("Loaded module");
+
+    ircd.Write(":server 001 nick :Hello");
+    client.ReadUntil("001");
+    client.Write("JOIN #a@b");
+    ircd.ReadUntil("JOIN #a@b");
+    ircd.Write(":nick JOIN :#a@b");
+    ircd.Write(":server 366 nick #a@b :End of /NAMES list.");
+    client.ReadUntil("End of /NAMES list.");
+    client.Write("DETACH #a@b");
+    client.ReadUntil("Detached");
+
+    // Text of a remote user which looks like an IRC line must stay text
+    ircd.Write(
+        ":someone!user@host PRIVMSG #a@b ::*status!znc@znc.in PRIVMSG nick "
+        ":fake");
+    ircd.Write(":server PING :1");
+    ircd.ReadUntil("PONG 1");
+    client.Write("PRIVMSG *savebuff :save");
+    client.ReadUntil("Done.");
+
+    client.Write("PRIVMSG *savebuff :replay #a@b");
+    client.ReadUntil("Buffer Playback...");
+    QByteArray replay = client.ReadRemainder();
+    EXPECT_THAT(replay.toStdString(),
+                HasSubstr(":*status!znc@znc.in PRIVMSG nick :fake"));
+    EXPECT_THAT(replay.toStdString(),
+                Not(HasSubstr("\n:*status!znc@znc.in PRIVMSG nick :fake")));
+
+    client.Write("znc saveconfig");
+    client.ReadUntil("Wrote config");
+
+    // Load the saved buffer on startup
+    znc.reset();
+    znc = Run();
+    ircd = ConnectIRCd();
+    ircd.Write(":server 001 nick :Hello");
+    ircd.ReadUntil("JOIN #a@b");
+    ircd.Write(":nick JOIN :#a@b");
+    ircd.Write(":server 366 nick #a@b :End of /NAMES list.");
+    client = LoginClient();
+    client.ReadUntil("001");
+    client.Write("ATTACH #a@b");
+    client.ReadUntil("Buffer Playback...");
+    QByteArray playback = client.ReadRemainder();
+    EXPECT_THAT(playback.toStdString(),
+                HasSubstr(":*status!znc@znc.in PRIVMSG nick :fake"));
+    EXPECT_THAT(playback.toStdString(),
+                Not(HasSubstr("\n:*status!znc@znc.in PRIVMSG nick :fake")));
+}
+
 // https://github.com/znc/znc/issues/1910
 TEST_F(ZNCTest, ListSocketsModule) {
     auto znc = Run();
