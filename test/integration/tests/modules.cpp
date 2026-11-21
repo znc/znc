@@ -1662,5 +1662,32 @@ TEST_F(ZNCTest, ListSocketsModule) {
                       HasSubstr(std::to_string(year + 1) + "-")));
 }
 
+TEST_F(ZNCTest, RouteRepliesJumpNetwork) {
+    auto znc = Run();
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    ircd.Write(":server 001 nick :Hello");
+    client.ReadUntil("Hello");
+    client.Write("znc loadmod route_replies");
+    client.ReadUntil("Loaded module");
+    client.Write("znc addnetwork other");
+    client.ReadUntil("Network added");
+    auto client2 = LoginClient();
+    client2.ReadUntil("Hello");
+
+    // The client leaves the network, and then ZNC, before the reply arrives
+    client.Write("WHOIS someone");
+    ircd.ReadUntil("WHOIS someone");
+    client.Write("znc jumpnetwork other");
+    client.ReadUntil("Switched to other");
+    client.Close();
+    client2.Write("znc listnetworks");
+    client2.ReadUntil("other");
+
+    ircd.Write(":server 311 nick someone ident host * :Real Name");
+    ircd.Write(":server 318 nick someone :End of /WHOIS list.");
+    client2.ReadUntil(":server 311 nick someone");
+}
+
 }  // namespace
 }  // namespace znc_inttest
