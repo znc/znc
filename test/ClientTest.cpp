@@ -398,3 +398,32 @@ TEST_F(ClientTest, AcceptSASLLoginAllowedHosts) {
     EXPECT_THAT(client.vsLines,
                 ElementsAre(":irc.znc.in 904 me :Your host [] is not allowed"));
 }
+
+TEST_F(ClientTest, NewLoginAttemptInvalidatesPendingOne) {
+    // Like imapauth, which answers later from its own socket.
+    class PendingAuthModule : public TestModule {
+      public:
+        EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) override {
+            vAuths.push_back(Auth);
+            return HALT;
+        }
+        std::vector<std::shared_ptr<CAuthBase>> vAuths;
+    };
+    PendingAuthModule module;
+    CZNC::Get().GetModules().push_back(&module);
+
+    TestClient* pClient = new TestClient;
+    pClient->ReadLine("NICK me");
+    pClient->ReadLine("USER user 0 * :user");
+    pClient->ReadLine("PASS user:pass");
+    pClient->ReadLine("NICK me2");
+    pClient->StartSASLPasswordCheck("user", "pass", "user");
+    delete pClient;
+
+    // The module may still answer each attempt, it must not reach the client.
+    ASSERT_EQ(module.vAuths.size(), 3u);
+    for (const auto& spAuth : module.vAuths) {
+        ASSERT_EQ(spAuth->GetSocket(), nullptr);
+        spAuth->RefuseLogin("too late");
+    }
+}
