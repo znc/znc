@@ -24,6 +24,7 @@
 #include <znc/znc.h>
 
 using ::testing::Contains;
+using ::testing::IsEmpty;
 using ::testing::Not;
 using ::testing::StartsWith;
 
@@ -242,21 +243,21 @@ TEST_F(HTTPSockHeadersTest, GetSendsBody) {
     CPageHTTPSock sock;
     sock.ReadLine("GET / HTTP/1.1\r\n");
     sock.ReadLine("\r\n");
-    ASSERT_FALSE(sock.m_vsLines.empty());
+    ASSERT_THAT(sock.m_vsLines, Not(IsEmpty()));
     EXPECT_EQ(sock.m_vsLines.front(), "HTTP/1.1 200 OK\r\n");
-    EXPECT_THAT(sock.m_vsLines, Contains(CString("Content-Length: 12\r\n")));
-    EXPECT_THAT(sock.m_vsLines, Contains(CString("<p>hello</p>")));
+    EXPECT_THAT(sock.m_vsLines, Contains("Content-Length: 12\r\n"));
+    EXPECT_THAT(sock.m_vsLines, Contains("<p>hello</p>"));
 }
 
 TEST_F(HTTPSockHeadersTest, HeadSendsHeadersWithoutBody) {
     CPageHTTPSock sock;
     sock.ReadLine("HEAD / HTTP/1.1\r\n");
     sock.ReadLine("\r\n");
-    ASSERT_FALSE(sock.m_vsLines.empty());
+    ASSERT_THAT(sock.m_vsLines, Not(IsEmpty()));
     EXPECT_EQ(sock.m_vsLines.front(), "HTTP/1.1 200 OK\r\n");
     // Same headers as GET, including the length of the body that GET sends.
-    EXPECT_THAT(sock.m_vsLines, Contains(CString("Content-Length: 12\r\n")));
-    EXPECT_THAT(sock.m_vsLines, Not(Contains(CString("<p>hello</p>"))));
+    EXPECT_THAT(sock.m_vsLines, Contains("Content-Length: 12\r\n"));
+    EXPECT_THAT(sock.m_vsLines, Not(Contains("<p>hello</p>")));
     EXPECT_EQ(sock.GetCloseType(), Csock::CLT_AFTERWRITE);
 }
 
@@ -264,9 +265,8 @@ TEST_F(HTTPSockHeadersTest, HeadErrorPageHasNoBody) {
     CCapturingHTTPSock sock;
     sock.ReadLine("HEAD / HTTP/1.1\r\n");
     sock.ReadLine("\r\n");
-    sock.m_vsLines.clear();
     sock.PrintNotFound();
-    ASSERT_FALSE(sock.m_vsLines.empty());
+    ASSERT_THAT(sock.m_vsLines, Not(IsEmpty()));
     EXPECT_EQ(sock.m_vsLines.front(), "HTTP/1.1 404 Not Found\r\n");
     EXPECT_EQ(sock.m_vsLines.back(), "\r\n");
 }
