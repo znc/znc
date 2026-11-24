@@ -409,6 +409,10 @@ TEST_F(ClientTest, NewLoginAttemptInvalidatesPendingOne) {
         }
         std::vector<std::shared_ptr<CAuthBase>> vAuths;
     };
+    // module lives on the stack, so it would be gone by the time TearDown()
+    // clears the list. Nothing walks the global modules between here and the
+    // pop_back() below, and we remove it again before it goes out of scope, so
+    // it never dangles into another test.
     PendingAuthModule module;
     CZNC::Get().GetModules().push_back(&module);
 
@@ -426,4 +430,6 @@ TEST_F(ClientTest, NewLoginAttemptInvalidatesPendingOne) {
         ASSERT_EQ(spAuth->GetSocket(), nullptr);
         spAuth->RefuseLogin("too late");
     }
+
+    CZNC::Get().GetModules().pop_back();
 }
