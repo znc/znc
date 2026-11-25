@@ -362,6 +362,9 @@ void CClient::AuthUser() {
         return;
 
     if (m_sSASLUser.empty()) {
+        // An auth module may still be checking the previous attempt and keep
+        // it after we are gone, but only m_spAuth gets invalidated then.
+        if (m_spAuth) m_spAuth->Invalidate();
         m_spAuth = std::make_shared<CClientAuth>(this, m_sUser, m_sPass);
         CZNC::Get().AuthUser(m_spAuth);
     } else {
@@ -390,6 +393,7 @@ void CClient::StartSASLPasswordCheck(const CString& sUser,
         RefuseSASLLogin("No support for custom AuthzId");
     }
 
+    if (m_spAuth) m_spAuth->Invalidate();
     m_spAuth = std::make_shared<CClientSASLAuth>(this, m_sUser, sPassword);
 
     CZNC::Get().AuthUser(m_spAuth);
