@@ -475,6 +475,54 @@ TEST_F(ZNCTest, ModpythonCommand) {
     client.ReadUntil(":*cmdtest!cmdtest@znc.in PRIVMSG nick :ping понг");
 }
 
+TEST_F(ZNCTest, ModpythonCapabilityOnForeignModule) {
+#ifndef WANT_PYTHON
+    GTEST_SKIP() << "Modpython is disabled";
+#endif
+    auto znc = Run();
+    znc->CanLeak();
+
+    // corecaps is a C++ module, so its capability callbacks can never be
+    // reached through a CPyModule. Handing it a Python capability used to
+    // crash the error path on an invalid downcast (issue #2059).
+    InstallModule("foreigncap.py", R"(
+        import znc
+
+        class registercap(znc.Command):
+            command = 'register'
+
+            def __call__(self, line):
+                module = self.GetModule()
+                corecaps = znc.CZNC.Get().GetModules().FindModule('corecaps')
+                try:
+                    corecaps.AddServerDependentCapability(
+                        'foreigncap', self.on_change, self.on_change)
+                except TypeError as e:
+                    module.PutModule('rejected: ' + str(e))
+
+            def on_change(self, target, state):
+                raise RuntimeError('foreign capability callback')
+
+        class foreigncap(znc.Module):
+            description = "Registers capabilities on another module"
+
+            def OnLoad(self, args, ret):
+                self.AddCommand(registercap)
+                return True
+    )");
+
+    auto ircd = ConnectIRCd();
+    auto client = LoginClient();
+    client.Write("znc loadmod modpython");
+    client.Write("znc loadmod corecaps");
+    client.Write("znc loadmod foreigncap");
+    client.ReadUntil("Loaded module foreigncap");
+    client.Write("PRIVMSG *foreigncap :register");
+    client.ReadUntil(":*foreigncap!foreigncap@znc.in PRIVMSG nick :rejected: "
+                     "AddServerDependentCapability can only be called on a "
+                     "Python module");
+}
+
 TEST_F(ZNCTest, ModpythonSaslAuth) {
 #ifndef WANT_PYTHON
     GTEST_SKIP() << "Modpython is disabled";

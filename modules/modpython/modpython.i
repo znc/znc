@@ -241,9 +241,17 @@ class CPyRetBool {
 	bool ExistsNV(const CString& sName) {
 		return $self->EndNV() != $self->FindNV(sName);
 	}
-    void AddServerDependentCapability(const CString& sName, PyObject* serverCb,
-                                      PyObject* clientCb) {
+    PyObject* AddServerDependentCapability(const CString& sName,
+                                           PyObject* serverCb,
+                                           PyObject* clientCb) {
+        if (dynamic_cast<CPyModule*>($self) == nullptr) {
+            PyErr_SetString(PyExc_TypeError,
+                            "AddServerDependentCapability can only be called on"
+                            " a Python module");
+            return nullptr;
+        }
         $self->AddServerDependentCapability(sName, std::make_unique<CPyCapability>(serverCb, clientCb));
+        Py_RETURN_NONE;
 	}
 }
 
